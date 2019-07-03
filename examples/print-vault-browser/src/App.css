@@ -1,0 +1,24 @@
+.App {
+  display: flex;
+  justify-content: center;
+}
+
+form {
+  margin-top: 5rem;
+  max-width: 40rem;
+}
+
+input {
+  min-width: 20rem;
+  min-height: 1rem;
+}
+
+button {
+  margin-top: 2rem;
+  width: 5rem;
+  height: 2rem;
+}
+
+.data {
+  margin-top: 5rem;
+}

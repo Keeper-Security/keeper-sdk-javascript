@@ -1,0 +1,17 @@
+{
+  "name": "print-vault-node",
+  "description": "Sample utility to print Keeper Vault content",
+  "author": {
+    "email": "saldoukhov@keepersecurity.com",
+    "name": "Sergey Aldoukhov"
+  },
+  "license": "ISC",
+  "scripts": {
+    "print-vault-node": "ts-node index.ts",
+    "link-local": "yarn link keeperapi"
+  },
+  "dependencies": {
+    "@types/node": "^12.0.8",
+    "keeperapi": "0.1.0"
+  }
+}
