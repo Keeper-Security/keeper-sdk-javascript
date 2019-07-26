@@ -23,7 +23,9 @@ export interface Platform {
 
     calcAutoResponse(key: Uint8Array): Promise<string>;
 
-    restCall(url: string, request: Uint8Array): Promise<Uint8Array>;
+    get(url: string, headers: any): Promise<Uint8Array>;
+
+    post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array>;
 }
 
 export function connectPlatform(p: Platform) {

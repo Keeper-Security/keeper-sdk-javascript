@@ -26,7 +26,7 @@ export class AuthContext {
         this.endpoint = new KeeperEndpoint(this.options.host);
     }
 
-    public async login() {
+    async login() {
         let preLoginResponse = await this.endpoint.getPreLogin();
         let salt = preLoginResponse.salt[0];
         let authHashKey = await platform.deriveKey(this.options.password, salt.salt, salt.iterations);
@@ -43,7 +43,7 @@ export class AuthContext {
         this.dataKey = await decryptEncryptionParams(this.options.password, loginResponse.keys.encryption_params);
     }
 
-    public createCommand<T extends AuthorizedCommand>(commandType: {new():  T}): T {
+    createCommand<T extends AuthorizedCommand>(commandType: {new():  T}): T {
         let command = new commandType();
         command.command = command.constructor.name.split(/(?=[A-Z])/).slice(0, -1).join('_').toLowerCase();
         command.username = this.options.username;

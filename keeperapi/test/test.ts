@@ -1,5 +1,4 @@
 import {AuthContext} from "../src/authContext";
-import {KeeperEnvironment} from "../src/keeperSettings";
 import {Vault} from "../src/vault";
 import {connectPlatform} from "../src/platform";
 import {nodePlatform} from "../src/node/platform";

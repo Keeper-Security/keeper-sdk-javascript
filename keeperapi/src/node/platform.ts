@@ -74,13 +74,32 @@ export const nodePlatform: Platform = class {
         return Promise.resolve(crypto.createHash("SHA256").update(key).digest("base64"));
     }
 
-    static restCall(url: string, request: Uint8Array): Promise<Uint8Array> {
+    static get(url: string, headers: any): Promise<Uint8Array> {
+        return new Promise<Buffer>((resolve) => {
+            let get = https.request(url, {
+                method: "get",
+                headers: headers
+            }, (res) => {
+                res.on("data", data => {
+                    resolve(data);
+                });
+            });
+            get.end();
+        })
+    }
+
+    static post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array> {
+        console.log("posting");
         return new Promise<Buffer>((resolve) => {
             let post = https.request(url, {
                 method: "post",
                 headers: {
-                    "Content-Type": "application/octet-stream",
-                    "Content-Length": request.length
+                    ...{
+                        "Content-Type": "application/json",
+                        // "Content-Type": "application/octet-stream",
+                        "Content-Length": request.length
+                    },
+                    ...headers
                 }
             }, (res) => {
                 res.on("data", data => {

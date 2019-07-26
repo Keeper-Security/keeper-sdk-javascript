@@ -5,3 +5,8 @@ export interface ClientConfiguration {
     password: string;
     host: KeeperEnvironment | string;
 }
+
+export interface VendorConfiguration {
+    vendorId: string;
+    host: KeeperEnvironment | string;
+}

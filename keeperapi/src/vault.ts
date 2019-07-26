@@ -1,5 +1,5 @@
 import {AuthContext} from "./authContext";
-import {AuthorizedCommand, KeeperCommand, SyncDownCommand, SyncResponse} from "./commands";
+import {SyncDownCommand, SyncResponse} from "./commands";
 import {platform} from "./platform";
 import {normal64} from "./utils";
 
@@ -10,7 +10,7 @@ export class Vault {
     constructor(private authContext: AuthContext) {
     }
 
-    public async syncDown() {
+    async syncDown() {
         let syncDownCommand = this.authContext.createCommand(SyncDownCommand);
         syncDownCommand.client_time = new Date().getTime();
         let syncDownResponse = await this.authContext.endpoint.executeV2Command<SyncResponse>(syncDownCommand);
@@ -19,7 +19,7 @@ export class Vault {
             let encRecKey = platform.base64ToBytes(normal64(meta.record_key));
             let recordKey = await platform.aesCbcDecrypt(encRecKey, this.authContext.dataKey, true);
             let encRecData = platform.base64ToBytes(normal64(rec.data));
-            let recordData = await platform.aesCbcDecrypt(encRecData, recordKey, true)
+            let recordData = await platform.aesCbcDecrypt(encRecData, recordKey, true);
             let record = JSON.parse(platform.bytesToString(recordData)) as KeeperRecord;
             this._records.push(record);
         }

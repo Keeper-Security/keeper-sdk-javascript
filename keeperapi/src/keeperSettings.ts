@@ -1,6 +1,6 @@
 export enum KeeperEnvironment {
-    Prod = "keepersecurituy.com",
-    QA = "qa.keepersecurituy.com",
+    Prod = "keepersecurity.com",
+    QA = "qa.keepersecurity.com",
     DEV = "dev.keepersecurity.com"
 }
 

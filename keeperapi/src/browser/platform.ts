@@ -109,16 +109,25 @@ export const browserPlatform: Platform = class {
         return browserPlatform.bytesToBase64(new Uint8Array(digest));
     }
 
-    static async restCall(url: string, request: Uint8Array): Promise<Uint8Array> {
+    static async get(url: string, headers: any): Promise<Uint8Array> {
+        let resp = await fetch(url, {
+            method: "GET",
+            headers: Object.entries(headers),
+        });
+        let body = await resp.arrayBuffer();
+        return new Uint8Array(body);
+    }
+
+    static async post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array> {
         let resp = await fetch(url, {
             method: "POST",
             headers: [
                 ["Content-Type", "application/octet-stream"],
-                ["Content-Length", request.length.toString()]
+                ["Content-Length", request.length.toString()],
+                ...headers
             ],
             body: request
         });
-        console.log(resp);
         let body = await resp.arrayBuffer();
         return new Uint8Array(body);
     }

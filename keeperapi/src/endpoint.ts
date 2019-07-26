@@ -16,6 +16,7 @@ import {KeeperEnvironment} from "./keeperSettings";
 
 export class KeeperEndpoint {
     private transmissionKey: Uint8Array;
+    private publicKeyId: number;
     private encryptedTransmissionKey: Uint8Array;
     private deviceToken: Uint8Array;
 
@@ -23,11 +24,11 @@ export class KeeperEndpoint {
         this.generateTransmissionKey(1);
     }
 
-    getUrl(forPath: string): string {
+    private getUrl(forPath: string): string {
         return `https://${this.host}/api/rest/${forPath}`;
     }
 
-    public async getDeviceToken(): Promise<IDeviceResponse> {
+    async getDeviceToken(): Promise<IDeviceResponse> {
         let requestBytes = await this.prepareProtobufRequest<IDeviceRequest>(DeviceRequest, {
             clientVersion: "c14.0.0",
             deviceName: "JS Keeper API"
@@ -35,7 +36,7 @@ export class KeeperEndpoint {
         return await this.executeRest(DeviceResponse, this.getUrl("authentication/get_device_token"), requestBytes);
     }
 
-    public async getPreLogin(): Promise<PreLoginResponse> {
+    async getPreLogin(): Promise<PreLoginResponse> {
 
         if (!this.deviceToken) {
             let deviceResponse = await this.getDeviceToken();
@@ -53,8 +54,8 @@ export class KeeperEndpoint {
         return await this.executeRest(PreLoginResponse, this.getUrl("authentication/pre_login"), requestBytes);
     }
 
-    async executeRest<T>(classRef: Decodable<T>, url: string, request: Uint8Array): Promise<T> {
-        let response = await platform.restCall(url, request);
+    private async executeRest<T>(classRef: Decodable<T>, url: string, request: Uint8Array): Promise<T> {
+        let response = await platform.post(url, request);
         try {
             let decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
             return classRef.decode(decrypted);
@@ -65,9 +66,9 @@ export class KeeperEndpoint {
         }
     }
 
-    public async executeV2Command<T>(command: KeeperCommand): Promise<T> {
+    async executeV2Command<T>(command: KeeperCommand): Promise<T> {
         let requestBytes = await this.prepareRequest(command);
-        let response = await platform.restCall( this.getUrl("vault/execute_v2_command"), requestBytes);
+        let response = await platform.post( this.getUrl("vault/execute_v2_command"), requestBytes);
         let decrypted;
         try {
             decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
@@ -83,17 +84,67 @@ export class KeeperEndpoint {
         return json as T;
     }
 
-    generateTransmissionKey(keyNumber: number) {
+    async executeVendorGet<T>(vendorPath: string): Promise<T> {
+        let response = await platform.get( this.getUrl(`msp/v1/${vendorPath}`), {
+            Authorization: "Bearer Sesame,Open!",
+            TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
+            PublicKeyId: this.publicKeyId
+        });
+        let decrypted;
+        try {
+            decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
+        }
+        catch (e) {
+            let error = platform.bytesToString(response);
+            throw(`Unable to decrypt response: ${error}`);
+        }
+        let json = JSON.parse(platform.bytesToString(decrypted));
+        return json as T;
+    }
+
+    async executeVendorPost<T>(vendorPath: string, payload: any): Promise<T> {
+        let payloadBytes = Buffer.from(JSON.stringify(payload));
+        let encryptedPayloadBytes = await platform.aesGcmEncrypt(payloadBytes, this.transmissionKey);
+        console.log("executing post");
+
+        let response;
+        try {
+            let url = this.getUrl(`msp/v1/${vendorPath}`);
+            console.log(url);
+            response = await platform.post(url, encryptedPayloadBytes, {
+                Authorization: "Bearer Sesame,Open!",
+                TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
+                PublicKeyId: this.publicKeyId
+            });
+        }
+        catch (e) {
+            console.log("ERR:" + e);
+        }
+        console.log("post executed");
+        let decrypted;
+        try {
+            decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
+        }
+        catch (e) {
+            let error = platform.bytesToString(response);
+            throw(`Unable to decrypt response: ${error}`);
+        }
+        let json = JSON.parse(platform.bytesToString(decrypted));
+        return json as T;
+    }
+
+    private generateTransmissionKey(keyNumber: number) {
+        this.publicKeyId = keyNumber;
         this.transmissionKey = platform.getRandomBytes(32);
         let key = platform.keys[keyNumber - 1];
         this.encryptedTransmissionKey = platform.publicEncrypt(this.transmissionKey, key);
     }
 
-    prepareProtobufRequest<T>(classRef: Encodable<T>, message: T): Promise<Uint8Array> {
+    private prepareProtobufRequest<T>(classRef: Encodable<T>, message: T): Promise<Uint8Array> {
         return this.prepareRequest(classRef.encode(message).finish());
     }
 
-    async prepareRequest(payload: (Uint8Array | KeeperCommand)): Promise<Uint8Array> {
+    private async prepareRequest(payload: (Uint8Array | KeeperCommand)): Promise<Uint8Array> {
         let payloadBytes = payload instanceof Uint8Array
             ? payload
             : Buffer.from(JSON.stringify(payload));
@@ -105,7 +156,7 @@ export class KeeperEndpoint {
         let apiRequest = ApiRequest.create({
             encryptedTransmissionKey: this.encryptedTransmissionKey,
             encryptedPayload: encryptedRequestPayload,
-            publicKeyId: 1,
+            publicKeyId: this.publicKeyId,
             locale: 'en_US'
         });
         return ApiRequest.encode(apiRequest).finish();
