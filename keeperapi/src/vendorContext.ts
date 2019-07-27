@@ -10,10 +10,10 @@ export class VendorContext {
     }
 
     async getEnterprise(enterpriseID: number): Promise<Enterprise> {
-        return this.endpoint.executeVendorGet<Enterprise>(`${this.configuration.vendorId}/enterprise/${enterpriseID}`);
+        return this.endpoint.executeVendorRequest<Enterprise>(`${this.configuration.vendorId}/enterprise/${enterpriseID}`, this.configuration.privateKey);
     }
 
     async postEnterprise(enterprise: EnterpriseBase): Promise<Enterprise> {
-        return this.endpoint.executeVendorPost<Enterprise>(`${this.configuration.vendorId}/enterprise/`, enterprise);
+        return this.endpoint.executeVendorRequest<Enterprise>(`${this.configuration.vendorId}/enterprise/`, this.configuration.privateKey, enterprise);
     }
 }

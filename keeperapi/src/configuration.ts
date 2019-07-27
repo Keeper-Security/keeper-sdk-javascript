@@ -8,5 +8,6 @@ export interface ClientConfiguration {
 
 export interface VendorConfiguration {
     vendorId: string;
+    privateKey: string;
     host: KeeperEnvironment | string;
 }

@@ -23,11 +23,22 @@ export const nodePlatform: Platform = class {
         return Buffer.from(data).toString();
     }
 
+    static stringToBytes(data: string): Uint8Array {
+        return Buffer.from(data);
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         return crypto.publicEncrypt({
             key: key,
             padding: RSA_PKCS1_PADDING
         }, data);
+    }
+
+    static privateSign(data: Uint8Array, key: string): Promise<Uint8Array> {
+        return Promise.resolve(crypto
+            .createSign("SHA256")
+            .update(data)
+            .sign(key));
     }
 
     static aesGcmEncrypt(data: Uint8Array, key: Uint8Array): Promise<Uint8Array> {
@@ -95,8 +106,7 @@ export const nodePlatform: Platform = class {
                 method: "post",
                 headers: {
                     ...{
-                        "Content-Type": "application/json",
-                        // "Content-Type": "application/octet-stream",
+                        "Content-Type": "application/octet-stream",
                         "Content-Length": request.length
                     },
                     ...headers

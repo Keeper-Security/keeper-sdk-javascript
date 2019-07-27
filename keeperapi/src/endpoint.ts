@@ -59,8 +59,7 @@ export class KeeperEndpoint {
         try {
             let decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
             return classRef.decode(decrypted);
-        }
-        catch {
+        } catch {
             let error = platform.bytesToString(response);
             throw(`Unable to decrypt response: ${error}`);
         }
@@ -68,12 +67,11 @@ export class KeeperEndpoint {
 
     async executeV2Command<T>(command: KeeperCommand): Promise<T> {
         let requestBytes = await this.prepareRequest(command);
-        let response = await platform.post( this.getUrl("vault/execute_v2_command"), requestBytes);
+        let response = await platform.post(this.getUrl("vault/execute_v2_command"), requestBytes);
         let decrypted;
         try {
             decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
-        }
-        catch (e) {
+        } catch (e) {
             let error = platform.bytesToString(response);
             throw(`Unable to decrypt response: ${error}`);
         }
@@ -84,48 +82,32 @@ export class KeeperEndpoint {
         return json as T;
     }
 
-    async executeVendorGet<T>(vendorPath: string): Promise<T> {
-        let response = await platform.get( this.getUrl(`msp/v1/${vendorPath}`), {
-            Authorization: "Bearer Sesame,Open!",
-            TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
-            PublicKeyId: this.publicKeyId
-        });
-        let decrypted;
-        try {
-            decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
-        }
-        catch (e) {
-            let error = platform.bytesToString(response);
-            throw(`Unable to decrypt response: ${error}`);
-        }
-        let json = JSON.parse(platform.bytesToString(decrypted));
-        return json as T;
-    }
-
-    async executeVendorPost<T>(vendorPath: string, payload: any): Promise<T> {
-        let payloadBytes = Buffer.from(JSON.stringify(payload));
-        let encryptedPayloadBytes = await platform.aesGcmEncrypt(payloadBytes, this.transmissionKey);
-        console.log("executing post");
-
+    async executeVendorRequest<T>(vendorPath: string, privateKey: string, payload?: any): Promise<T> {
+        let url = this.getUrl(`msp/v1/${vendorPath}`);
+        let urlBytes = platform.stringToBytes(url.slice(url.indexOf("/rest/msp/v1/")));
+        let encryptedPayloadBytes = payload
+            ? await platform.aesGcmEncrypt(Buffer.from(JSON.stringify(payload)), this.transmissionKey)
+            : new Uint8Array();
+        let signatureBase = Uint8Array.of(...urlBytes, ...this.encryptedTransmissionKey, ...encryptedPayloadBytes);
+        let signature = await platform.privateSign(signatureBase, privateKey);
         let response;
         try {
-            let url = this.getUrl(`msp/v1/${vendorPath}`);
-            console.log(url);
-            response = await platform.post(url, encryptedPayloadBytes, {
+            let headers = {
                 Authorization: "Bearer Sesame,Open!",
                 TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
-                PublicKeyId: this.publicKeyId
-            });
-        }
-        catch (e) {
+                PublicKeyId: this.publicKeyId,
+                Signature: platform.bytesToBase64(signature)
+            };
+            response = payload
+                ? await platform.post(url, encryptedPayloadBytes, headers)
+                : await platform.get(url, headers);
+        } catch (e) {
             console.log("ERR:" + e);
         }
-        console.log("post executed");
         let decrypted;
         try {
             decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
-        }
-        catch (e) {
+        } catch (e) {
             let error = platform.bytesToString(response);
             throw(`Unable to decrypt response: ${error}`);
         }

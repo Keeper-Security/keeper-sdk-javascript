@@ -9,7 +9,11 @@ export interface Platform {
 
     bytesToString(data: Uint8Array): string;
 
+    stringToBytes(data: string): Uint8Array;
+
     publicEncrypt(data: Uint8Array, key: string): Uint8Array;
+
+    privateSign(data: Uint8Array, key: string): Promise<Uint8Array>;
 
     aesGcmEncrypt(data: Uint8Array, key: Uint8Array): Promise<Uint8Array>;
 

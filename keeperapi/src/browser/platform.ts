@@ -29,6 +29,10 @@ export const browserPlatform: Platform = class {
         return String.fromCharCode(...data);
     }
 
+    static stringToBytes(data: string): Uint8Array {
+        return new TextEncoder().encode(data);
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKeyHex = base64ToHex(key);
         const pos = _asnhex_getPosArrayOfChildren_AtObj(publicKeyHex, 0);
@@ -40,6 +44,21 @@ export const browserPlatform: Platform = class {
         const encryptedBinary = rsa.encryptBinary(hexBytes);
         const bytes = hexToBytes(encryptedBinary);
         return bytes;
+    }
+
+    // TODO Not tested
+    static async privateSign(data: Uint8Array, key: string): Promise<Uint8Array> {
+        let _key = await crypto.subtle.importKey("pkcs8",
+            browserPlatform.base64ToBytes(key),
+            "RSA-PSS",
+            true,
+            ["sign"]);
+        let signature = await crypto.subtle.sign(
+            "RSASSA-PKCS1-v1_5",
+            _key,
+            data
+        );
+        return new Uint8Array(signature);
     }
 
     static async aesGcmEncrypt(data: Uint8Array, key: Uint8Array): Promise<Uint8Array> {
@@ -92,7 +111,7 @@ export const browserPlatform: Platform = class {
     }
 
     static async deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        let key = await crypto.subtle.importKey("raw", utf8ToBytes(password), "PBKDF2", false, ["deriveBits"]);
+        let key = await crypto.subtle.importKey("raw", browserPlatform.stringToBytes(password), "PBKDF2", false, ["deriveBits"]);
         let derived = await crypto.subtle.deriveBits({
             name: "PBKDF2",
             salt: saltBytes,
@@ -132,10 +151,6 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(body);
     }
 };
-
-function utf8ToBytes(data: string): Uint8Array {
-    return new TextEncoder().encode(data);
-}
 
 function base64ToHex(data: string): string {
     let raw = atob(data);
