@@ -93,10 +93,9 @@ export class KeeperEndpoint {
         let response;
         try {
             let headers = {
-                Authorization: "Bearer Sesame,Open!",
+                Authorization: `Signature ${platform.bytesToBase64(signature)}`,
                 TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
                 PublicKeyId: this.publicKeyId,
-                Signature: platform.bytesToBase64(signature)
             };
             response = payload
                 ? await platform.post(url, encryptedPayloadBytes, headers)
