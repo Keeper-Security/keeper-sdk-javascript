@@ -100,7 +100,6 @@ export const nodePlatform: Platform = class {
     }
 
     static post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array> {
-        console.log("posting");
         return new Promise<Buffer>((resolve) => {
             let post = https.request(url, {
                 method: "post",
