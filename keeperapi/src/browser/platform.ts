@@ -138,12 +138,13 @@ export const browserPlatform: Platform = class {
     }
 
     static async post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array> {
+        let _headers: string[][]  = headers ? Object.entries(headers) : [];
         let resp = await fetch(url, {
             method: "POST",
             headers: [
                 ["Content-Type", "application/octet-stream"],
                 ["Content-Length", request.length.toString()],
-                ...headers
+                ..._headers
             ],
             body: request
         });
