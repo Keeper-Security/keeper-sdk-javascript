@@ -5,8 +5,9 @@ export class KeeperCommand {
 }
 
 export class LoginCommand extends KeeperCommand {
+    version: number;
     auth_response: string;
-    include: string[]
+    include: string[];
 }
 
 export class AuthorizedCommand extends KeeperCommand {
@@ -18,6 +19,12 @@ export class SyncDownCommand extends AuthorizedCommand {
     revision: number;
     include: string[];
     client_time: number
+}
+
+export interface KeeperHttpResponse {
+    statusCode: number;
+    headers: any;
+    data: Uint8Array;
 }
 
 export interface KeeperResponse {

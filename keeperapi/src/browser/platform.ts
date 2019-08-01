@@ -3,6 +3,7 @@ import {keeperKeys} from "../keeperSettings";
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
 import {AES, WordArray, pad, enc, mode} from "crypto-js";
+import {KeeperHttpResponse} from "../commands";
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
@@ -128,16 +129,20 @@ export const browserPlatform: Platform = class {
         return browserPlatform.bytesToBase64(new Uint8Array(digest));
     }
 
-    static async get(url: string, headers: any): Promise<Uint8Array> {
+    static async get(url: string, headers: any): Promise<KeeperHttpResponse> {
         let resp = await fetch(url, {
             method: "GET",
             headers: Object.entries(headers),
         });
         let body = await resp.arrayBuffer();
-        return new Uint8Array(body);
+        return {
+            statusCode: resp.status,
+            headers: resp.headers,
+            data: new Uint8Array(body)
+        }
     }
 
-    static async post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array> {
+    static async post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse> {
         let _headers: string[][]  = headers ? Object.entries(headers) : [];
         let resp = await fetch(url, {
             method: "POST",
@@ -149,7 +154,11 @@ export const browserPlatform: Platform = class {
             body: request
         });
         let body = await resp.arrayBuffer();
-        return new Uint8Array(body);
+        return {
+            statusCode: resp.status,
+            headers: resp.headers,
+            data: new Uint8Array(body)
+        }
     }
 };
 

@@ -3,6 +3,7 @@ import * as crypto from "crypto";
 import {RSA_PKCS1_PADDING} from "constants";
 import {keeperKeys} from "../keeperSettings";
 import * as https from "https";
+import {KeeperHttpResponse} from "../commands";
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;
@@ -85,22 +86,26 @@ export const nodePlatform: Platform = class {
         return Promise.resolve(crypto.createHash("SHA256").update(key).digest("base64"));
     }
 
-    static get(url: string, headers: any): Promise<Uint8Array> {
-        return new Promise<Buffer>((resolve) => {
+    static get(url: string, headers: any): Promise<KeeperHttpResponse> {
+        return new Promise<KeeperHttpResponse>((resolve) => {
             let get = https.request(url, {
                 method: "get",
                 headers: headers
             }, (res) => {
                 res.on("data", data => {
-                    resolve(data);
+                    resolve({
+                        statusCode: res.statusCode,
+                        headers: res.headers,
+                        data: data
+                    });
                 });
             });
             get.end();
         })
     }
 
-    static post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array> {
-        return new Promise<Buffer>((resolve) => {
+    static post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse> {
+        return new Promise<KeeperHttpResponse>((resolve) => {
             let post = https.request(url, {
                 method: "post",
                 headers: {
@@ -112,7 +117,11 @@ export const nodePlatform: Platform = class {
                 }
             }, (res) => {
                 res.on("data", data => {
-                    resolve(data);
+                    resolve({
+                        statusCode: res.statusCode,
+                        headers: res.headers,
+                        data: data
+                    });
                 });
             });
             post.write(request);

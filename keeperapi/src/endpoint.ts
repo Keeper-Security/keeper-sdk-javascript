@@ -13,6 +13,7 @@ import IPreLoginRequest = Authentication.IPreLoginRequest;
 import PreLoginRequest = Authentication.PreLoginRequest;
 import {platform} from "./platform";
 import {KeeperEnvironment} from "./keeperSettings";
+import {isTwoFactorResultCode} from "./utils";
 
 export class KeeperEndpoint {
     private transmissionKey: Uint8Array;
@@ -57,10 +58,10 @@ export class KeeperEndpoint {
     private async executeRest<T>(classRef: Decodable<T>, url: string, request: Uint8Array): Promise<T> {
         let response = await platform.post(url, request);
         try {
-            let decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
+            let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
             return classRef.decode(decrypted);
         } catch {
-            let error = platform.bytesToString(response);
+            let error = platform.bytesToString(response.data);
             throw(`Unable to decrypt response: ${error}`);
         }
     }
@@ -70,13 +71,13 @@ export class KeeperEndpoint {
         let response = await platform.post(this.getUrl("vault/execute_v2_command"), requestBytes);
         let decrypted;
         try {
-            decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
+            decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
         } catch (e) {
-            let error = platform.bytesToString(response);
+            let error = platform.bytesToString(response.data);
             throw(`Unable to decrypt response: ${error}`);
         }
         let json = JSON.parse(platform.bytesToString(decrypted));
-        if (json.result !== "success") {
+        if (json.result !== "success" && !isTwoFactorResultCode(json.result_code)) {
             throw(json.result_code);
         }
         return json as T;

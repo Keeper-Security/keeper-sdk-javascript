@@ -2,19 +2,12 @@ import {ClientConfiguration} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, LoginCommand, LoginResponse} from "./commands";
-import {normal64, webSafe64} from "./utils";
+import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
 
-// ApiContext - login and session
-// KeeperEndpoint - device and server
-
-
-// transmission key - ephemeral
-// device token - per user per environmement
-// username
-// password
-// environment
-
-// lastusers
+export interface AuthUI {
+    getTwoFactorCode(): Promise<string>;
+    displayDialog(): Promise<boolean>;
+}
 
 export class AuthContext {
 
@@ -22,7 +15,7 @@ export class AuthContext {
     private sessionToken: string;
     dataKey: Uint8Array;
 
-    constructor(private options: ClientConfiguration) {
+    constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
         this.endpoint = new KeeperEndpoint(this.options.host);
     }
 
@@ -34,16 +27,32 @@ export class AuthContext {
         let loginCommand: LoginCommand = {
             command: "login",
             username: this.options.username,
+            version: 2,
             auth_response: webSafe64(authHash),
             include: ["keys"], //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
             client_version: "c14.0.0"
         };
-        let loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
+        let loginResponse: LoginResponse;
+        while (true) {
+            loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
+            if (loginResponse.result_code === "auth_success")
+                break;
+            if (isTwoFactorResultCode(loginResponse.result_code)) {
+                if (!this.authUI)
+                    break;
+                let token = await this.authUI.getTwoFactorCode();
+                if (!token)
+                    break;
+                loginCommand["2fa_token"] = token;
+                loginCommand["2fa_type"] = "one_time";
+                loginCommand["device_token_expire_days"] = 9999;
+            }
+        }
         this.sessionToken = loginResponse.session_token;
         this.dataKey = await decryptEncryptionParams(this.options.password, loginResponse.keys.encryption_params);
     }
 
-    createCommand<T extends AuthorizedCommand>(commandType: {new():  T}): T {
+    createCommand<T extends AuthorizedCommand>(commandType: { new(): T }): T {
         let command = new commandType();
         command.command = command.constructor.name.split(/(?=[A-Z])/).slice(0, -1).join('_').toLowerCase();
         command.username = this.options.username;

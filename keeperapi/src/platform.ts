@@ -1,3 +1,5 @@
+import {KeeperHttpResponse} from "./commands";
+
 export interface Platform {
     keys: string[];
 
@@ -27,9 +29,9 @@ export interface Platform {
 
     calcAutoResponse(key: Uint8Array): Promise<string>;
 
-    get(url: string, headers: any): Promise<Uint8Array>;
+    get(url: string, headers: any): Promise<KeeperHttpResponse>;
 
-    post(url: string, request: Uint8Array, headers?: any): Promise<Uint8Array>;
+    post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse>;
 }
 
 export function connectPlatform(p: Platform) {
