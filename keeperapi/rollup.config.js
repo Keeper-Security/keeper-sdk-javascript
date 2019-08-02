@@ -1,5 +1,6 @@
 import typescript from "rollup-plugin-typescript2"
 import pkg from './package.json'
+import sourcemaps from "rollup-plugin-sourcemaps";
 
 export default [
     {
@@ -8,6 +9,7 @@ export default [
             {
                 file: pkg.browser,
                 format: 'es',
+                sourcemap: true
             },
             // {
             //     file: pkg.browsertest,
@@ -21,7 +23,8 @@ export default [
         plugins: [
             typescript({
                 tsconfig: "tsconfig.rollup.json"
-            })
+            }),
+            sourcemaps()
         ]
     },
     {
@@ -29,7 +32,8 @@ export default [
         output: [
             {
                 file: pkg.main,
-                format: 'cjs'
+                format: 'cjs',
+                sourcemap: true
             }
         ],
         external: [
@@ -39,7 +43,8 @@ export default [
         plugins: [
             typescript({
                 tsconfig: "tsconfig.rollup.json"
-            })
+            }),
+            sourcemaps()
         ]
     }
 ];
