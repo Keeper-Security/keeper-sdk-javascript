@@ -5,6 +5,7 @@ export * from "../vendorModel";
 export * from "../vault";
 export * from "../configuration";
 export * from "../keeperSettings";
+export * from "../commands";
 export * from "../APIRequest";
 import {connectPlatform} from "../platform";
 import {nodePlatform} from "./platform";

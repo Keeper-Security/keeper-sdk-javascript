@@ -2,7 +2,7 @@ export interface EnterpriseBase {
     name: string;
     region: string;
     email: string;
-    license: License;
+    license: MSPLicense;
 }
 
 export interface Enterprise extends EnterpriseBase {
@@ -10,7 +10,7 @@ export interface Enterprise extends EnterpriseBase {
     customers: Customer[];
 }
 
-export interface License {
+export interface MSPLicense {
     is_trial: boolean;
     seats: number;
     products: Product[];

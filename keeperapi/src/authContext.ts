@@ -10,9 +10,8 @@ export interface AuthUI {
 }
 
 export class AuthContext {
-
     endpoint: KeeperEndpoint;
-    private sessionToken: string;
+    private _sessionToken: string;
     dataKey: Uint8Array;
 
     constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
@@ -48,7 +47,7 @@ export class AuthContext {
                 loginCommand["device_token_expire_days"] = 9999;
             }
         }
-        this.sessionToken = loginResponse.session_token;
+        this._sessionToken = loginResponse.session_token;
         this.dataKey = await decryptEncryptionParams(this.options.password, loginResponse.keys.encryption_params);
     }
 
@@ -58,8 +57,12 @@ export class AuthContext {
         command.username = this.options.username;
         command.client_version = "c14.0.0";
         command.device_id = "JS Keeper API";
-        command.session_token = this.sessionToken;
+        command.session_token = this._sessionToken;
         return command;
+    }
+
+    get sessionToken(): string {
+        return this._sessionToken;
     }
 }
 

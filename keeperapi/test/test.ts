@@ -3,6 +3,7 @@ import {Vault} from "../src/vault";
 import {connectPlatform} from "../src/platform";
 import {nodePlatform} from "../src/node/platform";
 import * as readline from "readline";
+import {KeeperEnvironment} from "../src/keeperSettings";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -33,7 +34,7 @@ async function printVault() {
         let auth = new AuthContext({
             username: "saldoukhov@gmail.com",
             password: "111111",
-            host: "local.keepersecurity.com"
+            host: KeeperEnvironment.DEV
         }, authUI);
         await auth.login();
         console.log("login successful");
