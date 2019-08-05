@@ -106,9 +106,9 @@ export class KeeperEndpoint {
         }
         let decrypted;
         try {
-            decrypted = await platform.aesGcmDecrypt(response, this.transmissionKey);
+            decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
         } catch (e) {
-            let error = platform.bytesToString(response);
+            let error = platform.bytesToString(response.data);
             throw(`Unable to decrypt response: ${error}`);
         }
         let json = JSON.parse(platform.bytesToString(decrypted));
