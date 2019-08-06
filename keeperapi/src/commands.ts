@@ -21,6 +21,20 @@ export class SyncDownCommand extends AuthorizedCommand {
     client_time: number
 }
 
+export class RecordAddCommand {
+    record_uid: string;
+    record_key: string;
+    record_type: string;
+    folder_type: string;
+    how_long_ago: number;
+    folder_uid: string;
+    folder_key: string;
+    data: string;
+    extra: string;
+    non_shared_data: string;
+    file_ids: string[];
+}
+
 export interface KeeperHttpResponse {
     statusCode: number;
     headers: any;

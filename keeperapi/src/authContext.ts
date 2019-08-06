@@ -19,7 +19,7 @@ export class AuthContext {
     }
 
     async login() {
-        let preLoginResponse = await this.endpoint.getPreLogin();
+        let preLoginResponse = await this.endpoint.getPreLogin(this.options.username);
         let salt = preLoginResponse.salt[0];
         let authHashKey = await platform.deriveKey(this.options.password, salt.salt, salt.iterations);
         let authHash = await platform.calcAutoResponse(authHashKey);
@@ -49,6 +49,7 @@ export class AuthContext {
         }
         this._sessionToken = loginResponse.session_token;
         this.dataKey = await decryptEncryptionParams(this.options.password, loginResponse.keys.encryption_params);
+        console.log("l4");
     }
 
     createCommand<T extends AuthorizedCommand>(commandType: { new(): T }): T {

@@ -32,8 +32,8 @@ async function printVault() {
 
     try {
         let auth = new AuthContext({
-            username: "saldoukhov@gmail.com",
-            password: "111111",
+            username: "saldoukhov@keepersecurity.com",
+            password: "222222",
             host: KeeperEnvironment.DEV
         }, authUI);
         await auth.login();

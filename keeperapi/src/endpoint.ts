@@ -20,6 +20,7 @@ export class KeeperEndpoint {
     private publicKeyId: number;
     private encryptedTransmissionKey: Uint8Array;
     private deviceToken: Uint8Array;
+    private clientVersion = "c14.0.0";
 
     constructor(private host: KeeperEnvironment | string) {
         this.generateTransmissionKey(1);
@@ -31,13 +32,13 @@ export class KeeperEndpoint {
 
     async getDeviceToken(): Promise<IDeviceResponse> {
         let requestBytes = await this.prepareProtobufRequest<IDeviceRequest>(DeviceRequest, {
-            clientVersion: "c14.0.0",
+            clientVersion: this.clientVersion,
             deviceName: "JS Keeper API"
         });
         return await this.executeRest(DeviceResponse, this.getUrl("authentication/get_device_token"), requestBytes);
     }
 
-    async getPreLogin(): Promise<PreLoginResponse> {
+    async getPreLogin(username: string): Promise<Authentication.PreLoginResponse> {
 
         if (!this.deviceToken) {
             let deviceResponse = await this.getDeviceToken();
@@ -46,8 +47,8 @@ export class KeeperEndpoint {
 
         let requestBytes = await this.prepareProtobufRequest<IPreLoginRequest>(PreLoginRequest, {
             authRequest: {
-                clientVersion: "c14.0.0",
-                username: "saldoukhov@gmail.com",
+                clientVersion: this.clientVersion,
+                username: username,
                 encryptedDeviceToken: this.deviceToken
             },
             loginType: Authentication.LoginType.NORMAL

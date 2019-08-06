@@ -20,17 +20,41 @@ export class Vault {
             let recordKey = await platform.aesCbcDecrypt(encRecKey, this.authContext.dataKey, true);
             let encRecData = platform.base64ToBytes(normal64(rec.data));
             let recordData = await platform.aesCbcDecrypt(encRecData, recordKey, true);
-            let record = JSON.parse(platform.bytesToString(recordData)) as KeeperRecord;
+            let record: KeeperRecord = {
+                uid: meta.record_uid,
+                owner: meta.owner,
+                can_edit: meta.can_edit,
+                can_share: meta.can_share,
+                shared: rec.shared,
+                client_modified_time: new Date(rec.client_modified_time),
+                version: rec.version,
+                revision: rec.revision,
+                data: JSON.parse(platform.bytesToString(recordData))
+            };
             this._records.push(record);
         }
     }
+
+    // async AddRecord()
 
     get records(): KeeperRecord[] {
         return this._records;
     }
 }
 
-export interface KeeperRecord {
+export class KeeperRecord {
+    uid: string;
+    owner: boolean;
+    can_share: boolean;
+    can_edit: boolean;
+    shared: boolean;
+    client_modified_time: Date;
+    version: number;
+    revision: number;
+    data: KeeperRecordData;
+}
+
+export interface KeeperRecordData {
     title: string;
     secret1: string;
     secret2: string;
