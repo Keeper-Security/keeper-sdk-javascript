@@ -49,7 +49,6 @@ export class AuthContext {
         }
         this._sessionToken = loginResponse.session_token;
         this.dataKey = await decryptEncryptionParams(this.options.password, loginResponse.keys.encryption_params);
-        console.log("l4");
     }
 
     createCommand<T extends AuthorizedCommand>(commandType: { new(): T }): T {

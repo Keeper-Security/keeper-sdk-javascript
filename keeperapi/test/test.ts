@@ -40,8 +40,20 @@ async function printVault() {
         console.log("login successful");
         let vault = new Vault(auth);
         await vault.syncDown();
-        let record = vault.records[0];
-        console.log(record);
+        let rec = vault.records[1].data;
+        rec.title = "changed";
+        await vault.saveRecord(rec);
+        // await vault.addRecord({
+        //     title: "testadd",
+        //     notes: "note",
+        //     secret1: "s1",
+        //     secret2: "s2",
+        //     custom: [{
+        //         name: "custom1",
+        //         value: "val1"
+        //     }]
+        // });
+        // await vault.syncDown();
     } catch (e) {
         console.log(e);
     }

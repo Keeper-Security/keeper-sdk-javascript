@@ -1,7 +1,7 @@
 export class KeeperCommand {
-    public command: string;
-    public username: string;
-    public client_version: string;
+    command: string;
+    username: string;
+    client_version: string;
 }
 
 export class LoginCommand extends KeeperCommand {
@@ -21,7 +21,7 @@ export class SyncDownCommand extends AuthorizedCommand {
     client_time: number
 }
 
-export class RecordAddCommand {
+export class RecordAddCommand extends AuthorizedCommand {
     record_uid: string;
     record_key: string;
     record_type: string;
@@ -33,6 +33,28 @@ export class RecordAddCommand {
     extra: string;
     non_shared_data: string;
     file_ids: string[];
+}
+
+export class RecordUpdateCommand extends AuthorizedCommand {
+    pt: string;
+    client_time: number;
+    add_records: RecordUpdateRecord[];
+    update_records: RecordUpdateRecord[];
+    remove_records: string[];
+    delete_records: string[];
+}
+
+export interface RecordUpdateRecord {
+    record_uid: string;
+    record_key: string;
+    data: string;
+    extra: string;
+    udata: any;
+    revision: number;
+    version: number;
+    client_modified_time: number;
+    shared_folder_id: string;
+    team_uid: string;
 }
 
 export interface KeeperHttpResponse {
