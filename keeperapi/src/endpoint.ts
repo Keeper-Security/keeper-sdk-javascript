@@ -2,6 +2,9 @@ import {KeeperCommand} from "./commands";
 // @ts-ignore
 import {Writer} from "protobufjs";
 import {Authentication} from "./APIRequest";
+import {platform} from "./platform";
+import {KeeperEnvironment} from "./keeperSettings";
+import {isTwoFactorResultCode} from "./utils";
 import IDeviceResponse = Authentication.IDeviceResponse;
 import IDeviceRequest = Authentication.IDeviceRequest;
 import DeviceRequest = Authentication.DeviceRequest;
@@ -11,9 +14,6 @@ import ApiRequest = Authentication.ApiRequest;
 import PreLoginResponse = Authentication.PreLoginResponse;
 import IPreLoginRequest = Authentication.IPreLoginRequest;
 import PreLoginRequest = Authentication.PreLoginRequest;
-import {platform} from "./platform";
-import {KeeperEnvironment} from "./keeperSettings";
-import {isTwoFactorResultCode} from "./utils";
 
 export class KeeperEndpoint {
     private transmissionKey: Uint8Array;
@@ -31,11 +31,25 @@ export class KeeperEndpoint {
     }
 
     async getDeviceToken(): Promise<IDeviceResponse> {
-        let requestBytes = await this.prepareProtobufRequest<IDeviceRequest>(DeviceRequest, {
-            clientVersion: this.clientVersion,
-            deviceName: "JS Keeper API"
-        });
-        return await this.executeRest(DeviceResponse, this.getUrl("authentication/get_device_token"), requestBytes);
+        while (true)
+        {
+            let requestBytes = await this.prepareProtobufRequest<IDeviceRequest>(DeviceRequest, {
+                clientVersion: this.clientVersion,
+                deviceName: "JS Keeper API"
+            });
+            try {
+                return await this.executeRest(DeviceResponse, this.getUrl("authentication/get_device_token"), requestBytes);
+            }
+            catch (e) {
+                let errorObj = JSON.parse(e.response);
+                if ((errorObj.error === "key") && (this.publicKeyId <= 6)) {
+                    this.generateTransmissionKey(this.publicKeyId + 1);
+                }
+                else {
+                    throw(e);
+                }
+            }
+        }
     }
 
     async getPreLogin(username: string): Promise<Authentication.PreLoginResponse> {
@@ -62,8 +76,10 @@ export class KeeperEndpoint {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
             return classRef.decode(decrypted);
         } catch {
-            let error = platform.bytesToString(response.data);
-            throw(`Unable to decrypt response: ${error}`);
+            let errorMsg = platform.bytesToString(response.data);
+            let error = new Error(errorMsg);
+            error["response"] = errorMsg;
+            throw(error);
         }
     }
 
@@ -87,33 +103,41 @@ export class KeeperEndpoint {
     async executeVendorRequest<T>(vendorPath: string, privateKey: string, payload?: any): Promise<T> {
         let url = this.getUrl(`msp/v1/${vendorPath}`);
         let urlBytes = platform.stringToBytes(url.slice(url.indexOf("/rest/msp/v1/")));
-        let encryptedPayloadBytes = payload
-            ? await platform.aesGcmEncrypt(Buffer.from(JSON.stringify(payload)), this.transmissionKey)
-            : new Uint8Array();
-        let signatureBase = Uint8Array.of(...urlBytes, ...this.encryptedTransmissionKey, ...encryptedPayloadBytes);
-        let signature = await platform.privateSign(signatureBase, privateKey);
-        let response;
-        try {
-            let headers = {
-                Authorization: `Signature ${platform.bytesToBase64(signature)}`,
-                TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
-                PublicKeyId: this.publicKeyId,
-            };
-            response = payload
-                ? await platform.post(url, encryptedPayloadBytes, headers)
-                : await platform.get(url, headers);
-        } catch (e) {
-            console.log("ERR:" + e);
+        while (true) {
+            let encryptedPayloadBytes = payload
+                ? await platform.aesGcmEncrypt(Buffer.from(JSON.stringify(payload)), this.transmissionKey)
+                : new Uint8Array();
+            let signatureBase = Uint8Array.of(...urlBytes, ...this.encryptedTransmissionKey, ...encryptedPayloadBytes);
+            let signature = await platform.privateSign(signatureBase, privateKey);
+            let response;
+            try {
+                let headers = {
+                    Authorization: `Signature ${platform.bytesToBase64(signature)}`,
+                    TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
+                    PublicKeyId: this.publicKeyId,
+                };
+                response = payload
+                    ? await platform.post(url, encryptedPayloadBytes, headers)
+                    : await platform.get(url, headers);
+            } catch (e) {
+                console.log("ERR:" + e);
+            }
+            let decrypted;
+            try {
+                decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
+                let json = JSON.parse(platform.bytesToString(decrypted));
+                return json as T;
+            } catch (e) {
+                let error = platform.bytesToString(response.data);
+                let errorObj = JSON.parse(error);
+                if ((errorObj.error === "key") && (this.publicKeyId <= 6)) {
+                    this.generateTransmissionKey(this.publicKeyId + 1);
+                }
+                else {
+                    throw(`Unable to decrypt response: ${error}`);
+                }
+            }
         }
-        let decrypted;
-        try {
-            decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
-        } catch (e) {
-            let error = platform.bytesToString(response.data);
-            throw(`Unable to decrypt response: ${error}`);
-        }
-        let json = JSON.parse(platform.bytesToString(decrypted));
-        return json as T;
     }
 
     private generateTransmissionKey(keyNumber: number) {
