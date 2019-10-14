@@ -93,12 +93,21 @@ async function getVendorEnterprise() {
     let vendorContext = new VendorContext({
         vendorId: "sa",
         privateKey: privateKey,
-        host: "qa.keepersecurity.com"
+        host: "local.keepersecurity.com"
     });
 
     try {
-        let ent = await vendorContext.getEnterprise(1818);
-        console.log(ent);
+        // let ent = await vendorContext.getEnterprise(1818);
+        let ent = await vendorContext.postLicenseAdjustment(1818, {
+            seats: 0,
+            products: [
+                {
+                    product_id: "business",
+                    seats: -15
+                }
+            ]
+        });
+        console.log(JSON.stringify(ent));
     } catch (e) {
         console.log("Error " + e);
     }

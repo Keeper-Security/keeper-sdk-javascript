@@ -1,5 +1,5 @@
 import {KeeperEndpoint} from "./endpoint";
-import {Enterprise, EnterpriseBase} from "./vendorModel";
+import {Enterprise, EnterpriseBase, LicenseAdjustment} from "./vendorModel";
 import {VendorConfiguration} from "./configuration";
 
 export class VendorContext {
@@ -15,5 +15,9 @@ export class VendorContext {
 
     async postEnterprise(enterprise: EnterpriseBase): Promise<Enterprise> {
         return this.endpoint.executeVendorRequest<Enterprise>(`${this.configuration.vendorId}/enterprise/`, this.configuration.privateKey, enterprise);
+    }
+
+    async postLicenseAdjustment(enterpriseID: number, adjustment: LicenseAdjustment): Promise<Enterprise> {
+        return this.endpoint.executeVendorRequest<Enterprise>(`${this.configuration.vendorId}/license/${enterpriseID}`, this.configuration.privateKey, adjustment);
     }
 }

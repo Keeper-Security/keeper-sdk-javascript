@@ -29,3 +29,8 @@ export interface Customer {
     users: number;
 }
 
+export interface LicenseAdjustment {
+    seats?: number;
+    products: Product[];
+}
+
