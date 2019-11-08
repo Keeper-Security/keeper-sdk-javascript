@@ -1,24 +1,26 @@
 import {ActionType} from 'typesafe-actions';
-import {Dispatch} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
 import * as actions from "../actions";
 
 import {RootState} from "../reducers";
 
-import App, {AppProps} from "./App";
+import App, {AppStateProps} from "./App";
 
 type Action = ActionType<typeof actions>;
 
 interface OwnProps {
 }
 
-function mapStateToProps(state: RootState): AppProps {
+function mapStateToProps(state: RootState): AppStateProps {
     return {
-        loggedIn: state.login.loggedIn,
+        loggedInUser: state.login.loggedIn ? state.login.user : undefined,
     };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>, props: OwnProps) => ({});
+const mapDispatchToProps = (dispatch: Dispatch<Action>, props: OwnProps) => bindActionCreators({
+    logout: () => actions.logoutAction(),
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

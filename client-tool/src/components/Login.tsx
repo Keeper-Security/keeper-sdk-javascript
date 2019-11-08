@@ -8,13 +8,19 @@ import Button from "@material-ui/core/Button";
 import {withStyles} from "@material-ui/styles";
 
 
-export interface LoginProps {
+type ExtraProps = {
     classes: any;
-    performLogin: (user: string, password: string) => any;
+    updateUser: (user: string) => any;
+    performLogin: (password: string) => any;
 }
 
-interface LoginState {
+export type LoginStateProps = {
+    user: string
 }
+
+type LoginProps = ExtraProps & LoginStateProps;
+
+type LoginState = {}
 
 const styles = {
     container: {
@@ -31,16 +37,15 @@ const styles = {
 
 class Login extends React.Component<LoginProps, LoginState> {
 
-    constructor(props: Readonly<LoginProps>) {
-        super(props);
-        this.submit = this.submit.bind(this)
-    }
-
     public render() {
         const {classes} = this.props;
         return (
             <Container className={classes.container} maxWidth="sm">
-                <form className={classes.form} onSubmit={this.submit}>
+                <form className={classes.form}
+                      onSubmit={(e: any) => {
+                          e.preventDefault();
+                          this.props.performLogin(e.target.password.value);
+                      }}>
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
@@ -54,6 +59,8 @@ class Login extends React.Component<LoginProps, LoginState> {
                         name="email"
                         autoComplete="email"
                         autoFocus={true}
+                        value={this.props.user}
+                        onChange={e => this.props.updateUser(e.target.value)}
                     />
                     <TextField
                         variant="outlined"
@@ -82,11 +89,6 @@ class Login extends React.Component<LoginProps, LoginState> {
                 </form>
             </Container>
         );
-    }
-
-    private submit(e: any) {
-        e.preventDefault();
-        this.props.performLogin(e.target.email.value, e.target.password.value);
     }
 }
 

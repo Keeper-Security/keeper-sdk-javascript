@@ -11,10 +11,14 @@ import {blueGrey} from "@material-ui/core/colors";
 import Login from "./Login.connect";
 import {withStyles} from "@material-ui/styles";
 
-export interface AppProps {
+export type AppStateProps = {loggedInUser?: string}
+
+type ExtraProps = {
     classes?: any;
-    loggedIn: boolean;
+    logout: () => any;
 }
+
+type AppProps = AppStateProps & ExtraProps;
 
 export const appTheme = createMuiTheme({
     palette: {
@@ -32,9 +36,20 @@ const styles = {
     title: {
         flexGrow: 1,
     },
+    user: {
+        display: "flex",
+        alignItems: "center"
+    }
 };
 
 class App extends React.Component<AppProps, {}> {
+
+
+    constructor(props: Readonly<AppProps>) {
+        super(props);
+        this.logout = this.logout.bind(this);
+    }
+
     render() {
         const {classes} = this.props;
         return (
@@ -48,19 +63,27 @@ class App extends React.Component<AppProps, {}> {
                             <Typography variant="h6" className={classes.title}>
                                 Client Tool
                             </Typography>
-                            <Button color="inherit">Login</Button>
+                            {
+                                this.props.loggedInUser &&
+                                <div className={classes.user}>
+                                    <Typography>{this.props.loggedInUser}</Typography>
+                                    <Button color="inherit" onClick={_ => this.props.logout()}>Sign out</Button>
+                                </div>
+                            }
                         </Toolbar>
                     </AppBar>
-                    <div className="main">
-                        {
-                            this.props.loggedIn
-                                ? <div>Logged In</div>
-                                : <Login/>
-                        }
-                    </div>
+                    {
+                        this.props.loggedInUser
+                            ? <div>Logged In</div>
+                            : <Login/>
+                    }
                 </div>
             </ThemeProvider>
         );
+    }
+
+    private logout() {
+
     }
 }
 
