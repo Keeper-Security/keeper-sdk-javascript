@@ -5,6 +5,8 @@ import {nodePlatform} from "../src/node/platform";
 import * as readline from "readline";
 import {KeeperEnvironment} from "../src/keeperSettings";
 import {VendorContext} from "../src/vendorContext";
+import {Company} from "../src/company";
+import {EnterpriseDataInclude} from "../src/commands";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -55,6 +57,44 @@ async function printVault() {
         //     }]
         // });
         // await vault.syncDown();
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+async function printCompany() {
+    try {
+        let auth = new AuthContext({
+            username: "saldoukhov@gmail.com",
+            password: "111111",
+            host: KeeperEnvironment.DEV
+        });
+        await auth.login();
+        console.log("login successful");
+        let company = new Company(auth);
+        let allIncludes: EnterpriseDataInclude[] = [
+            "nodes",
+            "users",
+            "roles",
+            "role_enforcements",
+            "role_privileges",
+            "role_users",
+            "managed_nodes",
+            "licenses",
+            "team_users",
+            "teams",
+            "role_keys",
+            "role_keys2",
+            "queued_teams",
+            "queued_team_users",
+            "bridges",
+            "scims",
+            "email_provision",
+            "sso_services",
+            "user_privileges"
+        ];
+        await company.load(allIncludes);
+        console.log(JSON.stringify(company.data.enterprise_name));
     } catch (e) {
         console.log(e);
     }
@@ -114,7 +154,8 @@ async function getVendorEnterprise() {
 }
 
 // printVault().finally();
-getVendorEnterprise().finally();
+printCompany().finally();
+// getVendorEnterprise().finally();
 
 
 
