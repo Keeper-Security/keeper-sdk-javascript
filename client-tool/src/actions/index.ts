@@ -1,4 +1,5 @@
 import {createAction} from "typesafe-actions";
+import {Vault} from "keeperapi";
 
 import {
     LOGIN_SET_USER,
@@ -16,4 +17,4 @@ export const logoutAction = createAction(LOGOUT)();
 
 export const loggedInAction = createAction(LOGGED_IN)();
 
-export const loadedAction = createAction(LOADED)();
+export const loadedAction = createAction(LOADED)<Vault>();

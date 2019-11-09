@@ -9,12 +9,13 @@ import {ThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import {blueGrey} from "@material-ui/core/colors";
 
 import Login from "./Login.connect";
+import Company from "./Company.connect";
 import {withStyles} from "@material-ui/styles";
 
 export type AppStateProps = {loggedInUser?: string}
 
 type ExtraProps = {
-    classes?: any;
+    classes: any;
     logout: () => any;
 }
 
@@ -74,7 +75,7 @@ class App extends React.Component<AppProps, {}> {
                     </AppBar>
                     {
                         this.props.loggedInUser
-                            ? <div>Logged In</div>
+                            ? <Company/>
                             : <Login/>
                     }
                 </div>

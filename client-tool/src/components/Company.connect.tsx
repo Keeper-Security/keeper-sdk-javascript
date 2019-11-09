@@ -1,22 +1,26 @@
 import {ActionType} from 'typesafe-actions';
-import {Dispatch} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
 import * as actions from "../actions";
 
 import {RootState} from "../reducers";
 
-import {Company} from "./Company";
+import Company, {CompanyStateProps} from "./Company";
 
 type Action = ActionType<typeof actions>;
 
 interface OwnProps {
 }
 
-const mapStateToProps = (state: RootState) => ({
-    users: state.company.users,
-});
+function mapStateToProps(state: RootState): CompanyStateProps {
+    return {
+        vault: state.company.vault,
+    };
+}
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>, props: OwnProps) => ({});
+const mapDispatchToProps = (dispatch: Dispatch<Action>, props: OwnProps) => bindActionCreators({
+}, dispatch);
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Company);
