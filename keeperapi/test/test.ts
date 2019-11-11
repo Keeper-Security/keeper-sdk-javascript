@@ -35,28 +35,17 @@ async function printVault() {
 
     try {
         let auth = new AuthContext({
-            username: "saldoukhov@keepersecurity.com",
-            password: "keeper",
-            host: KeeperEnvironment.QA
+            username: "saldoukhov@gmail.com",
+            password: "111111",
+            host: KeeperEnvironment.DEV
         }, authUI);
         await auth.login();
         console.log("login successful");
         let vault = new Vault(auth);
         await vault.syncDown();
-        // let rec = vault.records[1].data;
-        // rec.title = "changed";
-        // await vault.saveRecord(rec);
-        // await vault.addRecord({
-        //     title: "testadd",
-        //     notes: "note",
-        //     secret1: "s1",
-        //     secret2: "s2",
-        //     custom: [{
-        //         name: "custom1",
-        //         value: "val1"
-        //     }]
-        // });
-        // await vault.syncDown();
+        for (let record of vault.records) {
+            console.log(record.data.title)
+        }
     } catch (e) {
         console.log(e);
     }
@@ -94,7 +83,9 @@ async function printCompany() {
             "user_privileges"
         ];
         await company.load(allIncludes);
-        console.log(JSON.stringify(company.data.enterprise_name));
+        for (let node of company.data.nodes) {
+            console.log(node.displayName);
+        }
     } catch (e) {
         console.log(e);
     }

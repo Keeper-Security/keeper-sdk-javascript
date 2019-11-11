@@ -310,6 +310,7 @@ interface Role {
 }
 
 interface Node {
+    displayName?: string;
     rsa_enabled: boolean;
     duo_enabled: boolean;
     license_id: number;

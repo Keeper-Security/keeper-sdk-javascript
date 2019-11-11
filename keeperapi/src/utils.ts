@@ -23,3 +23,12 @@ export function generateUid(): string {
 export function encryptForStorage(data: Uint8Array, key: Uint8Array): string {
     return webSafe64(platform.bytesToBase64(platform.aesCbcEncrypt(data, key, true)));
 }
+
+export function decryptFromStorage(data: string, key: Uint8Array): Uint8Array {
+    return platform.aesCbcDecrypt(platform.base64ToBytes(normal64(data)), key, true);
+}
+
+export function decryptObjectFromStorage<T>(data: string, key: Uint8Array): T {
+    let decrypted = decryptFromStorage(data, key);
+    return JSON.parse(platform.bytesToString(decrypted));
+}

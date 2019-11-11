@@ -92,13 +92,7 @@ export const nodePlatform: Platform = class {
                 method: "get",
                 headers: headers
             }, (res) => {
-                res.on("data", data => {
-                    resolve({
-                        statusCode: res.statusCode,
-                        headers: res.headers,
-                        data: data
-                    });
-                });
+                this.fetchData(res, resolve);
             });
             get.end();
         })
@@ -116,16 +110,26 @@ export const nodePlatform: Platform = class {
                     ...headers
                 }
             }, (res) => {
-                res.on("data", data => {
-                    resolve({
-                        statusCode: res.statusCode,
-                        headers: res.headers,
-                        data: data
-                    });
-                });
+                this.fetchData(res, resolve)
             });
             post.write(request);
             post.end();
         })
+    }
+
+    private static fetchData(res, resolve) {
+        let retVal = {
+            statusCode: res.statusCode,
+            headers: res.headers,
+            data: null
+        };
+        res.on("data", data => {
+            retVal.data = retVal.data
+                ? Buffer.concat([retVal.data, data])
+                : data
+        });
+        res.on("end", () => {
+            resolve(retVal);
+        });
     }
 };
