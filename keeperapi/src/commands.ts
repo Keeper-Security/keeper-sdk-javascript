@@ -113,6 +113,8 @@ export type EnterpriseDataInclude =
     | "sso_services"
     | "user_privileges"
 
+export type KeyType = "encrypted_by_data_key" | "encrypted_by_public_key" | "no_key"
+
 export class GetEnterpriseDataCommand extends AuthorizedCommand {
     include: EnterpriseDataInclude[];
 }
@@ -290,7 +292,8 @@ interface ManagedNode {
 }
 
 interface User {
-    key_type: string;
+    displayName?: string;
+    key_type: KeyType;
     user_id?: number;
     lock: number;
     enterprise_user_id: number;
@@ -302,6 +305,7 @@ interface User {
 }
 
 interface Role {
+    displayName?: string;
     visible_below: boolean;
     new_user_inherit: boolean;
     role_id: number;
@@ -350,7 +354,7 @@ interface RoleUser {
 }
 
 interface RoleKey {
-    key_type: string;
+    key_type: KeyType;
     role_id: number;
     encrypted_key: string;
 }

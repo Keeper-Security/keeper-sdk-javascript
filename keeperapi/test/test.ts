@@ -86,6 +86,12 @@ async function printCompany() {
         for (let node of company.data.nodes) {
             console.log(node.displayName);
         }
+        for (let role of company.data.roles) {
+            console.log(role.displayName);
+        }
+        for (let user of company.data.users) {
+            console.log(user.displayName);
+        }
     } catch (e) {
         console.log(e);
     }

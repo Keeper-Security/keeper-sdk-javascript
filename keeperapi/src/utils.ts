@@ -29,6 +29,12 @@ export function decryptFromStorage(data: string, key: Uint8Array): Uint8Array {
 }
 
 export function decryptObjectFromStorage<T>(data: string, key: Uint8Array): T {
-    let decrypted = decryptFromStorage(data, key);
-    return JSON.parse(platform.bytesToString(decrypted));
+    try {
+        let decrypted = decryptFromStorage(data, key);
+        return JSON.parse(platform.bytesToString(decrypted));
+    }
+    catch (e) {
+        console.log(`Unable to decrypt ${data}`);
+        return {} as T
+    }
 }
