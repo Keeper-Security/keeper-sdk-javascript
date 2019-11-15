@@ -1,4 +1,4 @@
-# print-vault-browser
+# print-vault-node
 
 ### INSTRUCTIONS
 - `npm install`
