@@ -1,9 +1,9 @@
 import {Platform} from "../platform";
-import {keeperKeys} from "../keeperSettings";
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
 import {AES, WordArray, pad, enc, mode} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
+import {keeperKeys} from "../endpoint";
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;

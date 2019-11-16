@@ -1,9 +1,9 @@
 import {Platform} from "../platform";
 import * as crypto from "crypto";
 import {RSA_PKCS1_PADDING} from "constants";
-import {keeperKeys} from "../keeperSettings";
 import * as https from "https";
 import {KeeperHttpResponse} from "../commands";
+import {keeperKeys} from "../endpoint";
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;

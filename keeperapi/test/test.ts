@@ -1,12 +1,12 @@
-import {AuthContext, AuthUI} from "../src/authContext";
+import {Auth, AuthUI} from "../src/auth";
 import {Vault} from "../src/vault";
 import {connectPlatform} from "../src/platform";
 import {nodePlatform} from "../src/node/platform";
 import * as readline from "readline";
-import {KeeperEnvironment} from "../src/keeperSettings";
 import {VendorContext} from "../src/vendorContext";
 import {Company} from "../src/company";
 import {EnterpriseDataInclude} from "../src/commands";
+import {KeeperEnvironment} from "../src/endpoint";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -34,12 +34,10 @@ async function printVault() {
     };
 
     try {
-        let auth = new AuthContext({
-            username: "saldoukhov@gmail.com",
-            password: "111111",
+        let auth = new Auth({
             host: KeeperEnvironment.DEV
         }, authUI);
-        await auth.login();
+        await auth.login("saldoukhov@gmail.com", "111111");
         console.log("login successful");
         let vault = new Vault(auth);
         await vault.syncDown();
@@ -53,12 +51,10 @@ async function printVault() {
 
 async function printCompany() {
     try {
-        let auth = new AuthContext({
-            username: "saldoukhov@gmail.com",
-            password: "111111",
+        let auth = new Auth({
             host: KeeperEnvironment.DEV
         });
-        await auth.login();
+        await auth.login("saldoukhov@gmail.com", "111111");
         console.log("login successful");
         let company = new Company(auth);
         let allIncludes: EnterpriseDataInclude[] = [
@@ -150,8 +146,8 @@ async function getVendorEnterprise() {
     }
 }
 
-// printVault().finally();
-printCompany().finally();
+// printCompany().finally();
+printVault().finally();
 // getVendorEnterprise().finally();
 
 

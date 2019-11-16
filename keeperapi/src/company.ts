@@ -1,4 +1,4 @@
-import {AuthContext} from "./authContext";
+import {Auth} from "./auth";
 import {EnterpriseDataInclude, GetEnterpriseDataCommand, GetEnterpriseDataResponse, KeeperResponse} from "./commands";
 import {decryptFromStorage, decryptObjectFromStorage, normal64} from "./utils";
 
@@ -6,14 +6,14 @@ export class Company {
 
     private _data: GetEnterpriseDataResponse;
 
-    constructor(private authContext: AuthContext) {
+    constructor(private auth: Auth) {
     }
 
     async load(include: EnterpriseDataInclude[]) {
-        let getEnterpriseDataCommand = this.authContext.createCommand(GetEnterpriseDataCommand);
+        let getEnterpriseDataCommand = this.auth.createCommand(GetEnterpriseDataCommand);
         getEnterpriseDataCommand.include = include;
-        this._data = await this.authContext.endpoint.executeV2Command<GetEnterpriseDataResponse>(getEnterpriseDataCommand);
-        let treeKey = decryptFromStorage(this._data.tree_key, this.authContext.dataKey);
+        this._data = await this.auth.endpoint.executeV2Command<GetEnterpriseDataResponse>(getEnterpriseDataCommand);
+        let treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
 
         for (let node of this._data.nodes) {
             node.displayName = decryptObjectFromStorage<EncryptedData>(node.encrypted_data, treeKey).displayname;

@@ -1,28 +1,28 @@
-import {AuthContext} from "./authContext";
+import {Auth} from "./auth";
 import {SyncDownCommand, RecordAddCommand, KeeperResponse, SyncResponse} from "./commands";
 import {platform} from "./platform";
-import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid, normal64} from "./utils";
+import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid} from "./utils";
 
 export class Vault {
 
     private _records: KeeperRecord[] = [];
     private revision: number = 0;
 
-    constructor(private authContext: AuthContext) {
+    constructor(private auth: Auth) {
     }
 
     async syncDown() {
-        let syncDownCommand = this.authContext.createCommand(SyncDownCommand);
+        let syncDownCommand = this.auth.createCommand(SyncDownCommand);
         syncDownCommand.client_time = new Date().getTime();
         syncDownCommand.revision = this.revision;
-        let syncDownResponse = await this.authContext.endpoint.executeV2Command<SyncResponse>(syncDownCommand);
+        let syncDownResponse = await this.auth.endpoint.executeV2Command<SyncResponse>(syncDownCommand);
         this.revision = syncDownResponse.revision;
         if (syncDownResponse.full_sync) {
             this._records = [];
         }
         for (let rec of syncDownResponse.records) {
             let meta = syncDownResponse.record_meta_data.find(x => x.record_uid === rec.record_uid);
-            let recordKey = decryptFromStorage(meta.record_key, this.authContext.dataKey);
+            let recordKey = decryptFromStorage(meta.record_key, this.auth.dataKey);
             let recordData = decryptFromStorage(rec.data, recordKey);
             let record: KeeperRecord = {
                 uid: meta.record_uid,
@@ -41,20 +41,20 @@ export class Vault {
     }
 
     async addRecord(recordData: KeeperRecordData) {
-        let recordAddCommand = this.authContext.createCommand(RecordAddCommand);
+        let recordAddCommand = this.auth.createCommand(RecordAddCommand);
         recordAddCommand.record_uid = generateUid();
         let recordKey = generateEncryptionKey();
-        recordAddCommand.record_key = encryptForStorage(recordKey, this.authContext.dataKey);
+        recordAddCommand.record_key = encryptForStorage(recordKey, this.auth.dataKey);
         recordAddCommand.record_type = "password";
         recordAddCommand.data = encryptForStorage(platform.stringToBytes(JSON.stringify(recordData)), recordKey);
         recordAddCommand.how_long_ago = 0;
         recordAddCommand.folder_type = "user_folder";
-        let recordAddResponse = await this.authContext.endpoint.executeV2Command<KeeperResponse>(recordAddCommand);
+        let recordAddResponse = await this.auth.endpoint.executeV2Command<KeeperResponse>(recordAddCommand);
         console.log(recordAddResponse);
     }
 
     async updateRecords(recordsData: KeeperRecordData[]) {
-        let recordUpdateCommand = this.authContext.createCommand(RecordAddCommand);
+        let recordUpdateCommand = this.auth.createCommand(RecordAddCommand);
     }
 
     get records(): KeeperRecord[] {

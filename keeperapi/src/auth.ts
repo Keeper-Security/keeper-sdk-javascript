@@ -9,23 +9,24 @@ export interface AuthUI {
     displayDialog(): Promise<boolean>;
 }
 
-export class AuthContext {
+export class Auth {
     endpoint: KeeperEndpoint;
     private _sessionToken: string;
     dataKey: Uint8Array;
+    private username: string;
 
     constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
         this.endpoint = new KeeperEndpoint(this.options.host);
     }
 
-    async login() {
-        let preLoginResponse = await this.endpoint.getPreLogin(this.options.username);
+    async login(username: string, password: string) {
+        let preLoginResponse = await this.endpoint.getPreLogin(username);
         let salt = preLoginResponse.salt[0];
-        let authHashKey = await platform.deriveKey(this.options.password, salt.salt, salt.iterations);
+        let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
         let authHash = await platform.calcAutoResponse(authHashKey);
         let loginCommand: LoginCommand = {
             command: "login",
-            username: this.options.username,
+            username: username,
             version: 2,
             auth_response: webSafe64(authHash),
             include: ["keys"], //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
@@ -48,13 +49,14 @@ export class AuthContext {
             }
         }
         this._sessionToken = loginResponse.session_token;
-        this.dataKey = await decryptEncryptionParams(this.options.password, loginResponse.keys.encryption_params);
+        this.username = username;
+        this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
     }
 
     createCommand<T extends AuthorizedCommand>(commandType: { new(): T }): T {
         let command = new commandType();
         command.command = command.constructor.name.split(/(?=[A-Z])/).slice(0, -1).join('_').toLowerCase();
-        command.username = this.options.username;
+        command.username = this.username;
         command.client_version = "c14.0.0";
         command.device_id = "JS Keeper API";
         command.session_token = this._sessionToken;

@@ -1,8 +1,6 @@
-import {KeeperEnvironment} from "./keeperSettings";
+import {KeeperEnvironment} from "./endpoint";
 
 export interface ClientConfiguration {
-    username: string;
-    password: string;
     host: KeeperEnvironment | string;
 }
 
