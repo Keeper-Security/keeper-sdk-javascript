@@ -1,7 +1,7 @@
 import {AuthContext} from "./authContext";
 import {SyncDownCommand, RecordAddCommand, KeeperResponse, SyncResponse} from "./commands";
 import {platform} from "./platform";
-import {encryptForStorage, generateEncryptionKey, generateUid, normal64} from "./utils";
+import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid, normal64} from "./utils";
 
 export class Vault {
 
@@ -22,10 +22,8 @@ export class Vault {
         }
         for (let rec of syncDownResponse.records) {
             let meta = syncDownResponse.record_meta_data.find(x => x.record_uid === rec.record_uid);
-            let encRecKey = platform.base64ToBytes(normal64(meta.record_key));
-            let recordKey = await platform.aesCbcDecrypt(encRecKey, this.authContext.dataKey, true);
-            let encRecData = platform.base64ToBytes(normal64(rec.data));
-            let recordData = await platform.aesCbcDecrypt(encRecData, recordKey, true);
+            let recordKey = decryptFromStorage(meta.record_key, this.authContext.dataKey);
+            let recordData = decryptFromStorage(rec.data, recordKey);
             let record: KeeperRecord = {
                 uid: meta.record_uid,
                 owner: meta.owner,

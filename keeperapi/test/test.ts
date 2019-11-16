@@ -5,6 +5,8 @@ import {nodePlatform} from "../src/node/platform";
 import * as readline from "readline";
 import {KeeperEnvironment} from "../src/keeperSettings";
 import {VendorContext} from "../src/vendorContext";
+import {Company} from "../src/company";
+import {EnterpriseDataInclude} from "../src/commands";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -33,28 +35,63 @@ async function printVault() {
 
     try {
         let auth = new AuthContext({
-            username: "saldoukhov@keepersecurity.com",
-            password: "keeper",
-            host: KeeperEnvironment.QA
+            username: "saldoukhov@gmail.com",
+            password: "111111",
+            host: KeeperEnvironment.DEV
         }, authUI);
         await auth.login();
         console.log("login successful");
         let vault = new Vault(auth);
         await vault.syncDown();
-        // let rec = vault.records[1].data;
-        // rec.title = "changed";
-        // await vault.saveRecord(rec);
-        // await vault.addRecord({
-        //     title: "testadd",
-        //     notes: "note",
-        //     secret1: "s1",
-        //     secret2: "s2",
-        //     custom: [{
-        //         name: "custom1",
-        //         value: "val1"
-        //     }]
-        // });
-        // await vault.syncDown();
+        for (let record of vault.records) {
+            console.log(record.data.title)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+async function printCompany() {
+    try {
+        let auth = new AuthContext({
+            username: "saldoukhov@gmail.com",
+            password: "111111",
+            host: KeeperEnvironment.DEV
+        });
+        await auth.login();
+        console.log("login successful");
+        let company = new Company(auth);
+        let allIncludes: EnterpriseDataInclude[] = [
+            "nodes",
+            "users",
+            "roles",
+            "role_enforcements",
+            "role_privileges",
+            "role_users",
+            "managed_nodes",
+            "licenses",
+            "team_users",
+            "teams",
+            "role_keys",
+            "role_keys2",
+            "queued_teams",
+            "queued_team_users",
+            "bridges",
+            "scims",
+            "email_provision",
+            "sso_services",
+            "user_privileges"
+        ];
+        await company.load(allIncludes);
+        for (let node of company.data.nodes) {
+            console.log(node.displayName);
+        }
+        for (let role of company.data.roles) {
+            console.log(role.displayName);
+        }
+        for (let user of company.data.users) {
+            console.log(user.displayName);
+        }
     } catch (e) {
         console.log(e);
     }
@@ -114,7 +151,8 @@ async function getVendorEnterprise() {
 }
 
 // printVault().finally();
-getVendorEnterprise().finally();
+printCompany().finally();
+// getVendorEnterprise().finally();
 
 
 
