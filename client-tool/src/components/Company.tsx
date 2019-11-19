@@ -1,19 +1,22 @@
 import * as React from "react";
-import {Vault} from "keeperapi";
+import {Company as Enterprise, Node} from "keeperapi";
 import {withStyles} from "@material-ui/styles";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Container from '@material-ui/core/Container';
+import List from '@material-ui/core/List';
+import ListItem, {ListItemProps} from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import GavelIcon from '@material-ui/icons/Gavel';
 import Paper from '@material-ui/core/Paper';
 
 type ExtraProps = {
     classes: any;
+    convertNode: (node: Node) => any;
 }
 
 export type CompanyStateProps = {
-    vault?: Vault;
+    company?: Enterprise;
 }
 
 type CompanyProps = ExtraProps & CompanyStateProps;
@@ -22,8 +25,9 @@ type CompanyState = {}
 
 const styles = {
     root: {
-        marginTop: "2rem"
-    }
+        marginTop: "2rem",
+    },
+    nodes: {}
 };
 
 class Company extends React.Component<CompanyProps, CompanyState> {
@@ -33,39 +37,49 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         return (
             <div>
                 {
-                    this.props.vault &&
-                    Company.renderVault(classes, this.props.vault)
+                    this.props.company &&
+                    this.renderCompany(classes, this.props.company)
                 }
             </div>
         )
     }
 
-    private static renderVault(classes: any, vault: Vault) {
+    private renderNode(company: Enterprise, node: Node) {
+        let userCount = company.data.users.reduce((sum, user) => {
+            return user.node_id === node.node_id ? ++sum : sum
+        }, 0);
+        let roleCount = company.data.roles.reduce((sum, role) => {
+            return role.node_id === node.node_id ? ++sum : sum
+        }, 0);
+        let teamCount = company.data.teams.reduce((sum, team) => {
+            return team.node_id === node.node_id ? ++sum : sum
+        }, 0);
         return (
-            <Paper className={classes.root}>
-                <Table className={classes.table} size="small" aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell align="right">Login</TableCell>
-                            <TableCell align="right">Password</TableCell>
-                            <TableCell align="right">URL</TableCell>
-                            <TableCell align="right">Notes</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {vault.records.map(row => (
-                            <TableRow key={row.uid}>
-                                <TableCell component="th" scope="row">{row.data.title}</TableCell>
-                                <TableCell align="right">{row.data.secret1}</TableCell>
-                                <TableCell align="right">{row.data.secret2}</TableCell>
-                                <TableCell align="right">{row.data.link}</TableCell>
-                                <TableCell align="right">{row.data.notes}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Paper>
+            <ListItem key={node.node_id}>
+                <ListItemText
+                    primary={node.displayName}
+                    secondary={`Users: ${userCount} Roles: ${roleCount} Teams: ${teamCount}`}
+                />
+                <ListItemSecondaryAction>
+                    <IconButton edge="end" onClick={_ => this.convertNode(node)}>
+                        <GavelIcon/>
+                    </IconButton>
+                </ListItemSecondaryAction>
+            </ListItem>
+        )
+    }
+
+    private convertNode(node: Node) {
+        this.props.convertNode(node);
+    }
+
+    private renderCompany(classes: any, company: Enterprise) {
+        return (
+            <Container className={classes.container} maxWidth="md">
+                <Paper className={classes.root}>
+                    <List>{company.data.nodes.map(x => this.renderNode(company, x))}</List>
+                </Paper>
+            </Container>
         );
     }
 }

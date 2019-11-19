@@ -1,4 +1,4 @@
-import {Epic} from "redux-observable";
+import {ActionsObservable, StateObservable} from "redux-observable";
 import {filter, map, mergeMap, tap} from 'rxjs/operators';
 
 import {ActionType, isActionOf} from 'typesafe-actions';
@@ -9,13 +9,23 @@ import {Keeper} from "../service/Keeper";
 
 type Action = ActionType<typeof actions>;
 
-const companyEpic: Epic<Action, Action, RootState> = (action$, store) =>
-    action$.pipe(
+function companyLoggedInEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
+    return action$.pipe(
         filter(isActionOf(actions.loggedInAction)),
-        mergeMap(_ => Keeper.fetchVault()),
-        map(vault => actions.loadedAction(vault))
+        mergeMap(_ => Keeper.fetchCompany()),
+        map(company => actions.loadedAction(company))
     );
+}
+
+function nodeConvertEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
+    return action$.pipe(
+        filter(isActionOf(actions.convertNodeAction)),
+        mergeMap(x => Keeper.convertNode(x.payload.node)),
+        map(company => actions.nodeConvertedAction())
+    );
+}
 
 export default [
-    companyEpic,
+    companyLoggedInEpic,
+    nodeConvertEpic
 ];

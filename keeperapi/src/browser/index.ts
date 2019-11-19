@@ -3,6 +3,7 @@ export * from "../auth";
 export * from "../vendorContext";
 export * from "../vendorModel";
 export * from "../vault";
+export * from "../company";
 export * from "../configuration";
 export * from "../commands";
 export * from "../APIRequest";

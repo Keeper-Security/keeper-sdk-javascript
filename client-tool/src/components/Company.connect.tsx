@@ -1,3 +1,4 @@
+import {Node} from "keeperapi";
 import {ActionType} from 'typesafe-actions';
 import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
@@ -15,12 +16,14 @@ interface OwnProps {
 
 function mapStateToProps(state: RootState): CompanyStateProps {
     return {
-        vault: state.company.vault,
+        company: state.company.company,
     };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>, props: OwnProps) => bindActionCreators({
-}, dispatch);
-
+function mapDispatchToProps(dispatch: Dispatch<Action>, props: OwnProps) {
+    return bindActionCreators({
+        convertNode: (node: Node) => actions.convertNodeAction({node}),
+    }, dispatch);
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Company);

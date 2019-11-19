@@ -1,13 +1,13 @@
 import {ActionType, getType} from 'typesafe-actions';
 
 import * as actions from "../actions";
-import {Vault} from "keeperapi";
+import {Company} from "keeperapi";
 
 type Action = ActionType<typeof actions>;
 
 export interface CompanyState {
     readonly loading: boolean;
-    readonly vault?: Vault;
+    readonly company?: Company;
 }
 
 const initialState = {
@@ -20,7 +20,7 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
 
         case getType(actions.loadedAction):
             return {
-                ...state, vault: action.payload
+                ...state, company: action.payload
             };
 
         default:

@@ -276,13 +276,13 @@ export interface GetEnterpriseDataResponse extends KeeperResponse {
     scims: SCIM[];
 }
 
-interface UserPrivileges {
+export interface UserPrivileges {
     enterprise_user_id: number;
     managed_nodes: ManagedNode[];
     encrypted_data: string;
 }
 
-interface ManagedNode {
+export interface ManagedNode {
     node: number;
     privileges: string[];
     cascade_management: boolean;
@@ -291,7 +291,7 @@ interface ManagedNode {
     managed_node_id: number;
 }
 
-interface User {
+export interface User {
     displayName?: string;
     key_type: KeyType;
     user_id?: number;
@@ -304,7 +304,7 @@ interface User {
     account_share_expiration?: number;
 }
 
-interface Role {
+export interface Role {
     displayName?: string;
     visible_below: boolean;
     new_user_inherit: boolean;
@@ -313,7 +313,7 @@ interface Role {
     encrypted_data: string;
 }
 
-interface Node {
+export interface Node {
     displayName?: string;
     rsa_enabled: boolean;
     duo_enabled: boolean;
@@ -325,18 +325,18 @@ interface Node {
     scim_id?: number;
 }
 
-interface RolePrivilege {
+export interface RolePrivilege {
     role_id: number;
     managed_node_id: number;
     privilege: string;
 }
 
-interface RoleEnforcement {
+export interface RoleEnforcement {
     enforcements: Enforcements;
     role_id: number;
 }
 
-interface Enforcements {
+export interface Enforcements {
     restrict_two_factor_channel_dna?: boolean;
     master_password_minimum_lower?: number;
     master_password_minimum_upper?: number;
@@ -348,18 +348,18 @@ interface Enforcements {
     master_password_minimum_digits?: number;
 }
 
-interface RoleUser {
+export interface RoleUser {
     role_id: number;
     enterprise_user_id: number;
 }
 
-interface RoleKey {
+export interface RoleKey {
     key_type: KeyType;
     role_id: number;
     encrypted_key: string;
 }
 
-interface EnterpriseLicense {
+export interface EnterpriseLicense {
     file_plan: number;
     storage_expiration_date: string;
     product_type_id: number;
@@ -378,7 +378,7 @@ interface EnterpriseLicense {
 }
 
 
-interface AddOn {
+export interface AddOn {
     chat_isTrial?: boolean;
     chat_enabled?: boolean;
     chat_expiration?: number;
@@ -393,13 +393,13 @@ interface AddOn {
     onboarding_and_certificate_enabled?: boolean;
 }
 
-interface TeamUser {
+export interface TeamUser {
     user_type: number;
     enterprise_user_id: number;
     team_uid: string;
 }
 
-interface CompanyTeam {
+export interface CompanyTeam {
     restrict_sharing: boolean;
     restrict_edit: boolean;
     name: string;
@@ -410,19 +410,19 @@ interface CompanyTeam {
     encrypted_data?: string;
 }
 
-interface SCIM {
+export interface SCIM {
     scim_id: number;
     last_synced: number;
     node_id: number;
     status: string;
 }
 
-interface QueuedTeamUser {
+export interface QueuedTeamUser {
     team_uid: string;
     users: number[];
 }
 
-interface SsoService {
+export interface SsoService {
     invite_new_users: boolean;
     sso_service_provider_id: number;
     name: string;
@@ -431,19 +431,7 @@ interface SsoService {
     node_id: number;
 }
 
-interface RoleKeys2 {
+export interface RoleKeys2 {
     role_id: number;
     role_key: string;
-}
-
-interface Userprivileges {
-    enterprise_user_id: number;
-    managed_nodes: Managednode[];
-    encrypted_data: string;
-}
-
-interface Managednode {
-    node: number;
-    privileges: string[];
-    cascade_management: boolean;
 }

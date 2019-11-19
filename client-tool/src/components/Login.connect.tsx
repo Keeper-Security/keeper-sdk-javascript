@@ -14,12 +14,16 @@ interface OwnProps {
 }
 
 function mapStateToProps(state: RootState): LoginStateProps {
-    return {user: state.login.user || ""};
+    return {
+        user: state.login.user || ""
+    };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>, props: OwnProps) => bindActionCreators({
-    updateUser: (user: string) => actions.setUserAction({user}),
-    performLogin: (password: string) => actions.loginAction({password}),
-}, dispatch);
+function mapDispatchToProps(dispatch: Dispatch<Action>, props: OwnProps) {
+    return bindActionCreators({
+        updateUser: (user: string) => actions.setUserAction({user}),
+        performLogin: (password: string) => actions.loginAction({password}),
+    }, dispatch);
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
