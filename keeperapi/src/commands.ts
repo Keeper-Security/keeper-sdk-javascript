@@ -119,6 +119,16 @@ export class GetEnterpriseDataCommand extends AuthorizedCommand {
     include: EnterpriseDataInclude[];
 }
 
+export class EnterpriseUserLockCommand extends AuthorizedCommand {
+    enterprise_user_id: number;
+    lock: "locked" | "disabled" | "unlocked";
+}
+
+export class EnterpriseNodeToManagedCompanyCommand extends AuthorizedCommand {
+    nodes: Pick<Node, "encrypted_data" | "node_id" | "displayName">[];
+    roles: Pick<Role, "encrypted_data" | "role_id" | "displayName">[];
+}
+
 // *************************
 // Responses
 // *************************
@@ -314,7 +324,6 @@ export interface Role {
 }
 
 export interface Node {
-    displayName?: string;
     rsa_enabled: boolean;
     duo_enabled: boolean;
     license_id: number;
@@ -323,6 +332,12 @@ export interface Node {
     parent_id?: number;
     sso_service_provider_id?: number;
     scim_id?: number;
+
+    displayName?: string;
+    nodes?: Node[];
+    roles?: Role[];
+    teams?: Team[];
+    users?: User[];
 }
 
 export interface RolePrivilege {

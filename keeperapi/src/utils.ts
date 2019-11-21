@@ -28,6 +28,12 @@ export function decryptFromStorage(data: string, key: Uint8Array): Uint8Array {
     return platform.aesCbcDecrypt(platform.base64ToBytes(normal64(data)), key, true);
 }
 
+export function encryptObjectForStorage<T>(obj: T, key: Uint8Array): string {
+    let s = JSON.stringify(obj);
+    let bytes = platform.stringToBytes(s);
+    return encryptForStorage(bytes, key);
+}
+
 export function decryptObjectFromStorage<T>(data: string, key: Uint8Array): T {
     try {
         let decrypted = decryptFromStorage(data, key);
@@ -38,3 +44,4 @@ export function decryptObjectFromStorage<T>(data: string, key: Uint8Array): T {
         return {} as T
     }
 }
+

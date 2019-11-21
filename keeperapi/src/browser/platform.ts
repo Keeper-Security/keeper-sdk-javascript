@@ -94,7 +94,7 @@ export const browserPlatform: Platform = class {
                 ? pad.Pkcs7
                 : pad.NoPadding
         });
-        return Uint8Array.of(...iv, ...wordArrayToBytes(encrypted));
+        return Uint8Array.of(...iv, ...this.base64ToBytes(encrypted.toString()));
     }
 
     static aesCbcDecrypt(data: Uint8Array, key: Uint8Array, usePadding: boolean): Uint8Array {
@@ -192,9 +192,4 @@ function bytesToHex(data: Uint8Array): string {
 function bytesToWordArray(data: Uint8Array): any {
     let dataHex = bytesToHex(data);
     return enc.Hex.parse(dataHex);
-}
-
-function wordArrayToBytes(data: WordArray): Uint8Array {
-    let hex = enc.Hex.stringify(data);
-    return hexToBytes(hex);
 }

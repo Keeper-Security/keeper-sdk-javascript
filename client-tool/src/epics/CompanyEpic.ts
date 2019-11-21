@@ -20,7 +20,7 @@ function companyLoggedInEpic(action$: ActionsObservable<Action>, store: StateObs
 function nodeConvertEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
     return action$.pipe(
         filter(isActionOf(actions.convertNodeAction)),
-        mergeMap(x => Keeper.convertNode(x.payload.node)),
+        mergeMap(x => Keeper.convertNode(x.payload.node, store.value.company.company!)),
         map(company => actions.nodeConvertedAction())
     );
 }
