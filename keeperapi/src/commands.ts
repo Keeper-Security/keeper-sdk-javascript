@@ -125,8 +125,10 @@ export class EnterpriseUserLockCommand extends AuthorizedCommand {
 }
 
 export class EnterpriseNodeToManagedCompanyCommand extends AuthorizedCommand {
+    managed_company_id: number;
     nodes: Pick<Node, "encrypted_data" | "node_id" | "displayName">[];
     roles: Pick<Role, "encrypted_data" | "role_id" | "displayName">[];
+    users: Pick<User, "encrypted_data" | "enterprise_user_id" | "displayName">[];
 }
 
 // *************************

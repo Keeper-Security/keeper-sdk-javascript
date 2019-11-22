@@ -60,10 +60,12 @@ export class Company {
         return this._data;
     }
 
-    encryptForStorage(data: EncryptedData): string {
-        return encryptObjectForStorage<EncryptedData>(data, this.treeKey);
+    encryptDisplayName(displayName: string): string {
+        return encryptObjectForStorage<EncryptedData>({
+            displayname: displayName
+        }, this.treeKey);
     }
 
 }
 
-type EncryptedData = { displayname: string }
+type EncryptedData = {displayname: string}
