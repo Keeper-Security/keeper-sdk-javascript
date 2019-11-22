@@ -1,7 +1,7 @@
 import {ClientConfiguration} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
-import {AuthorizedCommand, LoginCommand, LoginResponse} from "./commands";
+import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse} from "./commands";
 import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
 
 export interface AuthUI {
@@ -10,7 +10,7 @@ export interface AuthUI {
 }
 
 export class Auth {
-    endpoint: KeeperEndpoint;
+    private endpoint: KeeperEndpoint;
     private _sessionToken: string;
     dataKey: Uint8Array;
     private username: string;
@@ -53,14 +53,15 @@ export class Auth {
         this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
     }
 
-    createCommand<T extends AuthorizedCommand>(commandType: { new(): T }): T {
-        let command = new commandType();
+    async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
         command.command = command.constructor.name.split(/(?=[A-Z])/).slice(0, -1).join('_').toLowerCase();
         command.username = this.username;
         command.client_version = "c14.0.0";
-        command.device_id = "JS Keeper API";
-        command.session_token = this._sessionToken;
-        return command;
+        if (command instanceof AuthorizedCommand) {
+            command.device_id = "JS Keeper API";
+            command.session_token = this._sessionToken;
+        }
+        return this.endpoint.executeV2Command(command);
     }
 
     get sessionToken(): string {

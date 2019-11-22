@@ -12,10 +12,12 @@ export class Vault {
     }
 
     async syncDown() {
-        let syncDownCommand = this.auth.createCommand(SyncDownCommand);
+        let syncDownCommand = new SyncDownCommand();
+        // let syncDownCommand = this.auth.createCommand(SyncDownCommand);
         syncDownCommand.client_time = new Date().getTime();
         syncDownCommand.revision = this.revision;
-        let syncDownResponse = await this.auth.endpoint.executeV2Command<SyncResponse>(syncDownCommand);
+        let syncDownResponse = await this.auth.executeCommand(syncDownCommand);
+            // let syncDownResponse = await this.auth.endpoint.executeV2Command<SyncResponse>(syncDownCommand);
         this.revision = syncDownResponse.revision;
         if (syncDownResponse.full_sync) {
             this._records = [];
@@ -41,7 +43,7 @@ export class Vault {
     }
 
     async addRecord(recordData: KeeperRecordData) {
-        let recordAddCommand = this.auth.createCommand(RecordAddCommand);
+        let recordAddCommand = new RecordAddCommand();
         recordAddCommand.record_uid = generateUid();
         let recordKey = generateEncryptionKey();
         recordAddCommand.record_key = encryptForStorage(recordKey, this.auth.dataKey);
@@ -49,12 +51,11 @@ export class Vault {
         recordAddCommand.data = encryptForStorage(platform.stringToBytes(JSON.stringify(recordData)), recordKey);
         recordAddCommand.how_long_ago = 0;
         recordAddCommand.folder_type = "user_folder";
-        let recordAddResponse = await this.auth.endpoint.executeV2Command<KeeperResponse>(recordAddCommand);
+        let recordAddResponse = await this.auth.executeCommand(recordAddCommand);
         console.log(recordAddResponse);
     }
 
     async updateRecords(recordsData: KeeperRecordData[]) {
-        let recordUpdateCommand = this.auth.createCommand(RecordAddCommand);
     }
 
     get records(): KeeperRecord[] {

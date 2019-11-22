@@ -55,7 +55,7 @@ export class Keeper {
         console.log(nodes);
         console.log(roles);
 
-        let command = this.auth.createCommand(EnterpriseNodeToManagedCompanyCommand);
+        let command = new EnterpriseNodeToManagedCompanyCommand();
         command.managed_company_id = 2395;
         command.nodes = nodes.map(x => {
             return {
@@ -82,7 +82,7 @@ export class Keeper {
                 enterprise_user_id: x.enterprise_user_id
             }
         });
-        let resp = await this.auth.endpoint.executeV2Command<KeeperResponse>(command);
+        let resp = await this.auth.executeCommand(command);
         console.log(resp);
         return "done";
     }

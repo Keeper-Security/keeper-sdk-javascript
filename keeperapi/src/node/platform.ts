@@ -90,7 +90,10 @@ export const nodePlatform: Platform = class {
         return new Promise<KeeperHttpResponse>((resolve) => {
             let get = https.request(url, {
                 method: "get",
-                headers: headers
+                headers: {
+                    ...{"User-Agent": `Node/${process.version}`},
+                    ...headers
+                }
             }, (res) => {
                 this.fetchData(res, resolve);
             });
@@ -105,7 +108,8 @@ export const nodePlatform: Platform = class {
                 headers: {
                     ...{
                         "Content-Type": "application/octet-stream",
-                        "Content-Length": request.length
+                        "Content-Length": request.length,
+                        "User-Agent": `Node/${process.version}`
                     },
                     ...headers
                 }
