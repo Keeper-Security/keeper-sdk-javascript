@@ -10,9 +10,9 @@ export class Company {
     }
 
     async load(include: EnterpriseDataInclude[]) {
-        let getEnterpriseDataCommand = this.auth.createCommand(GetEnterpriseDataCommand);
+        let getEnterpriseDataCommand = new GetEnterpriseDataCommand();
         getEnterpriseDataCommand.include = include;
-        this._data = await this.auth.endpoint.executeV2Command<GetEnterpriseDataResponse>(getEnterpriseDataCommand);
+        this._data = await this.auth.executeCommand(getEnterpriseDataCommand);
         let treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
 
         for (let node of this._data.nodes) {

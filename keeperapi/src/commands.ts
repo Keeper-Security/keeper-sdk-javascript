@@ -1,7 +1,8 @@
-export class KeeperCommand {
+export class KeeperCommand<Response extends KeeperResponse = KeeperResponse> {
     command: string;
     username: string;
     client_version: string;
+    response?: Response
 }
 
 export type AccountDataInclude =
@@ -17,18 +18,18 @@ export type AccountDataInclude =
     | "security_keys"
     | "personal_license"
 
-export class LoginCommand extends KeeperCommand {
+export class LoginCommand extends KeeperCommand<LoginResponse> {
     version: number;
     auth_response: string;
     include: AccountDataInclude[];
 }
 
-export class AuthorizedCommand extends KeeperCommand {
+export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse> extends KeeperCommand<Response> {
     session_token: string;
     device_id: string
 }
 
-export class AccountSummaryCommand extends AuthorizedCommand {
+export class AccountSummaryCommand extends AuthorizedCommand<KeeperResponse> {
     include: AccountDataInclude[]
 }
 
@@ -50,7 +51,7 @@ type SyncDataInclude =
     | "reused_passwords"
     | "explicit"
 
-export class SyncDownCommand extends AuthorizedCommand {
+export class SyncDownCommand extends AuthorizedCommand<SyncResponse> {
     revision: number;
     include: SyncDataInclude[];
     client_time: number
@@ -115,7 +116,7 @@ export type EnterpriseDataInclude =
 
 export type KeyType = "encrypted_by_data_key" | "encrypted_by_public_key" | "no_key"
 
-export class GetEnterpriseDataCommand extends AuthorizedCommand {
+export class GetEnterpriseDataCommand extends AuthorizedCommand<GetEnterpriseDataResponse> {
     include: EnterpriseDataInclude[];
 }
 
