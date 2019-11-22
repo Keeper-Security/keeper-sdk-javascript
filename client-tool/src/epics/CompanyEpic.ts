@@ -25,7 +25,17 @@ function nodeConvertEpic(action$: ActionsObservable<Action>, store: StateObserva
     );
 }
 
+function addTestNodeEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
+    return action$.pipe(
+        filter(isActionOf(actions.addTestNodeAction)),
+        mergeMap(x => Keeper.addTestNodeNode(store.value.company.company!)),
+        map(company => actions.epicSuccessAction())
+    );
+}
+
+
 export default [
     companyLoggedInEpic,
-    nodeConvertEpic
+    nodeConvertEpic,
+    addTestNodeEpic
 ];

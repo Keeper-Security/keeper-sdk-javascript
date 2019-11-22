@@ -86,6 +86,10 @@ export class Keeper {
         console.log(resp);
         return "done";
     }
+
+    static async addTestNodeNode(company: Company) {
+        console.log("TEST")
+    }
 }
 
 

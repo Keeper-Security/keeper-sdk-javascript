@@ -7,12 +7,14 @@ import ListItem, {ListItemProps} from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
+import Fab from '@material-ui/core/Fab';
 import GavelIcon from '@material-ui/icons/Gavel';
 import Paper from '@material-ui/core/Paper';
 
 type ExtraProps = {
     classes: any;
     convertNode: (node: Node) => any;
+    addTestNode: () => any;
 }
 
 export type CompanyStateProps = {
@@ -27,7 +29,10 @@ const styles = {
     root: {
         marginTop: "2rem",
     },
-    nodes: {}
+    nodes: {},
+    fab: {
+        margin: "1rem"
+    }
 };
 
 class Company extends React.Component<CompanyProps, CompanyState> {
@@ -69,18 +74,25 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         )
     }
 
-    private convertNode(node: Node) {
-        this.props.convertNode(node);
-    }
-
     private renderCompany(classes: any, company: Enterprise) {
         return (
             <Container className={classes.container} maxWidth="md">
                 <Paper className={classes.root}>
                     <List>{company.data.nodes.map(x => this.renderNode(company, x))}</List>
+                    <Fab variant="extended" className={classes.fab} onClick={_ => this.addTestNode()}>
+                        Add Test Node
+                    </Fab>
                 </Paper>
             </Container>
         );
+    }
+
+    private convertNode(node: Node) {
+        this.props.convertNode(node);
+    }
+
+    private addTestNode() {
+        this.props.addTestNode();
     }
 }
 

@@ -23,6 +23,7 @@ function mapStateToProps(state: RootState): CompanyStateProps {
 function mapDispatchToProps(dispatch: Dispatch<Action>, props: OwnProps) {
     return bindActionCreators({
         convertNode: (node: Node) => actions.convertNodeAction({node}),
+        addTestNode: () => actions.addTestNodeAction()
     }, dispatch);
 }
 
