@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Company as Enterprise, Node} from "keeperapi";
+import {Company as Enterprise, Node, ManagedCompany} from "keeperapi";
 import {withStyles} from "@material-ui/styles";
 import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
@@ -10,11 +10,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Fab from '@material-ui/core/Fab';
 import GavelIcon from '@material-ui/icons/Gavel';
 import Paper from '@material-ui/core/Paper';
+import TextField from "@material-ui/core/TextField";
 
 type ExtraProps = {
     classes: any;
     convertNode: (node: Node) => any;
-    addTestNode: () => any;
+    addTestNode: (nodeName: string) => any;
 }
 
 export type CompanyStateProps = {
@@ -30,8 +31,15 @@ const styles = {
         marginTop: "2rem",
     },
     nodes: {},
+    testNodeForm: {
+        display: "flex",
+        alignItems: "center"
+    },
     fab: {
-        margin: "1rem"
+        // margin: "1rem"
+    },
+    nodeName: {
+        margin: "1rem",
     }
 };
 
@@ -74,14 +82,48 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         )
     }
 
+    private static renderManagedCompany(company: ManagedCompany) {
+        return (
+            <ListItem key={company.mc_enterprise_id}>
+                <ListItemText
+                    primary={company.mc_enterprise_name}
+                    secondary={`Users: ${company.number_of_users} Seats: ${company.number_of_seats} Product: ${company.product_id}`}
+                />
+            </ListItem>
+        )
+    }
+
     private renderCompany(classes: any, company: Enterprise) {
+        let firstLevelNodes = company.data.nodes[0].nodes || [];
+        let managedCompanies = company.data.managed_companies || [];
         return (
             <Container className={classes.container} maxWidth="md">
                 <Paper className={classes.root}>
-                    <List>{company.data.nodes.map(x => this.renderNode(company, x))}</List>
-                    <Fab variant="extended" className={classes.fab} onClick={_ => this.addTestNode()}>
-                        Add Test Node
-                    </Fab>
+                    <List>{firstLevelNodes.map(x => this.renderNode(company, x))}</List>
+                    <form
+                        className={classes.testNodeForm}
+                        onSubmit={(e: any) => {
+                            e.preventDefault();
+                            this.addTestNode(e.target.node_name.value)
+                        }}>
+                        <TextField
+                            className={classes.nodeName}
+                            variant="outlined"
+                            required={true}
+                            id="node_name"
+                            label="Node Name"
+                        />
+                        <Fab
+                            variant="extended"
+                            type="submit"
+                            className={classes.fab}
+                        >
+                            Add Test Node
+                        </Fab>
+                    </form>
+                </Paper>
+                <Paper className={classes.root}>
+                    <List>{managedCompanies.map(x => Company.renderManagedCompany(x))}</List>
                 </Paper>
             </Container>
         );
@@ -91,8 +133,8 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         this.props.convertNode(node);
     }
 
-    private addTestNode() {
-        this.props.addTestNode();
+    private addTestNode(nodeName: string) {
+        this.props.addTestNode(nodeName);
     }
 }
 

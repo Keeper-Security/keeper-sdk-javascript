@@ -11,7 +11,7 @@ type Action = ActionType<typeof actions>;
 
 function companyLoggedInEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
     return action$.pipe(
-        filter(isActionOf(actions.loggedInAction)),
+        filter(isActionOf([actions.loggedInAction, actions.epicSuccessAction])),
         mergeMap(_ => Keeper.fetchCompany()),
         map(company => actions.loadedAction(company))
     );
@@ -28,7 +28,7 @@ function nodeConvertEpic(action$: ActionsObservable<Action>, store: StateObserva
 function addTestNodeEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
     return action$.pipe(
         filter(isActionOf(actions.addTestNodeAction)),
-        mergeMap(x => Keeper.addTestNodeNode(store.value.company.company!)),
+        mergeMap(x => Keeper.addTestNodeNode(x.payload.nodeName, store.value.company.company!)),
         map(company => actions.epicSuccessAction())
     );
 }

@@ -27,6 +27,6 @@ export const loadedAction = createAction(LOADED)<Company>();
 
 export const convertNodeAction = createAction(CONVERT_NODE)<{ node: Node }>();
 
-export const addTestNodeAction = createAction(ADD_TEST_NODE)();
+export const addTestNodeAction = createAction(ADD_TEST_NODE)<{ nodeName: string }>();
 
 export const nodeConvertedAction = createAction(NODE_CONVERTED)();

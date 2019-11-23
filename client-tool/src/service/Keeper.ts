@@ -1,4 +1,16 @@
-import {Auth, KeeperEnvironment, Vault, Company, Node, Role, User, EnterpriseNodeToManagedCompanyCommand, KeeperResponse} from "keeperapi";
+import {
+    Auth,
+    Vault,
+    Company,
+    Node,
+    Role,
+    User,
+    EnterpriseNodeToManagedCompanyCommand,
+    encryptForStorage,
+    encryptObjectForStorage,
+    EncryptedData,
+    generateEncryptionKey,
+} from "keeperapi";
 
 export function flatMap<T, U>(array: T[], callbackfn: (value: T, index: number, array: T[]) => U[]): U[] {
     return Array.prototype.concat(...array.map(callbackfn));
@@ -35,20 +47,17 @@ export class Keeper {
 
     static async fetchCompany(): Promise<Company> {
         let company = new Company(this.auth);
-        await company.load(["nodes", "users", "roles", "teams"]);
+        await company.load(["nodes", "users", "roles", "teams", "managed_companies"]);
         return company;
     }
 
+    static encryptDisplayName(displayName: string, key: Uint8Array): string {
+        return encryptObjectForStorage<EncryptedData>({
+            displayname: displayName
+        }, key);
+    }
+
     static async convertNode(node: Node, company: Company): Promise<string> {
-
-        let targetAuth = new Auth({
-            host: "local.keepersecurity.com"
-        });
-        await targetAuth.login("admin+mc@yozik.us", "111111");
-        let targetCompany = new Company(targetAuth);
-        await targetCompany.load(["nodes", "users", "roles", "teams"]);
-        console.log(targetCompany);
-
         let nodes = getNodes(node);
         let roles = getNodeRoles(node);
         let users = getNodeUsers(node);
@@ -56,18 +65,25 @@ export class Keeper {
         console.log(roles);
 
         let command = new EnterpriseNodeToManagedCompanyCommand();
-        command.managed_company_id = 2395;
+
+        let treeKey = generateEncryptionKey();
+
+        command.encrypted_tree_key = company.encryptForStorage(treeKey);
+        command.root_role_data = company.encryptDisplayName("Keeper Administrator");
+        command.product_id = "business"; // TODO select plan
+        command.node_id = company.data.nodes[0].node_id; // TODO select node
+
         command.nodes = nodes.map(x => {
             return {
                 displayName: x.displayName,
-                encrypted_data: targetCompany.encryptDisplayName(x.displayName || "?"),
+                encrypted_data: this.encryptDisplayName(x.displayName || "?", treeKey),
                 node_id: x.node_id
             }
         });
         command.roles = roles.map(x => {
             return {
                 displayName: x.displayName,
-                encrypted_data: targetCompany.encryptDisplayName(x.displayName || "?"),
+                encrypted_data: this.encryptDisplayName(x.displayName || "?", treeKey),
                 role_id: x.role_id
             }
         });
@@ -75,7 +91,7 @@ export class Keeper {
             let displayName = x.displayName || "?";
             let encryptedData = x.key_type === "no_key"
                 ? displayName
-                : targetCompany.encryptDisplayName(displayName);
+                : this.encryptDisplayName(displayName, treeKey);
             return {
                 displayName: x.displayName,
                 encrypted_data: encryptedData,
@@ -87,8 +103,16 @@ export class Keeper {
         return "done";
     }
 
-    static async addTestNodeNode(company: Company) {
-        console.log("TEST")
+    static async addTestNodeNode(nodeName: string, company: Company) {
+        let nodeId = await company.addNode(company.data.nodes[0].node_id, nodeName);
+        let subNode1 = await company.addNode(nodeId, nodeName + "_1");
+        let subNode2 = await company.addNode(nodeId, nodeName + "_2");
+        await company.addRole(nodeId, "Role " + nodeName);
+        await company.addRole(subNode1, "Role " + nodeName + "_1");
+        await company.addRole(subNode2, "Role " + nodeName + "_2");
+        await company.addUser(nodeId, "admin+cnv1@yozik.us", "User 1");
+        await company.addUser(subNode1, "admin+cnv2@yozik.us", "User 2");
+        await company.addUser(subNode2, "admin+cnv3@yozik.us", "User 3");
     }
 }
 

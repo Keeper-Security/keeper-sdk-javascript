@@ -101,6 +101,7 @@ export type EnterpriseDataInclude =
     | "role_privileges"
     | "role_users"
     | "managed_nodes"
+    | "managed_companies"
     | "licenses"
     | "team_users"
     | "teams"
@@ -126,10 +127,73 @@ export class EnterpriseUserLockCommand extends AuthorizedCommand {
 }
 
 export class EnterpriseNodeToManagedCompanyCommand extends AuthorizedCommand {
-    managed_company_id: number;
+    encrypted_tree_key: string;
+    root_role_data: string;
+    product_id: string;
+    node_id: number;
     nodes: Pick<Node, "encrypted_data" | "node_id" | "displayName">[];
     roles: Pick<Role, "encrypted_data" | "role_id" | "displayName">[];
     users: Pick<User, "encrypted_data" | "enterprise_user_id" | "displayName">[];
+}
+
+export class EnterpriseAllocateIdsCommand extends AuthorizedCommand<EnterpriseAllocateIdsResponse> {
+    number_requested: number = 1;
+}
+
+export interface EnterpriseAllocateIdsResponse extends KeeperResponse {
+    base_id: number;
+    number_allocated: number;
+}
+
+export class NodeAddCommand extends AuthorizedCommand {
+
+    constructor(nodeId: number, parentId: number, encryptedData: string) {
+        super();
+        this.node_id = nodeId;
+        this.parent_id = parentId;
+        this.encrypted_data = encryptedData;
+    }
+
+    private node_id: number;
+    private parent_id: number;
+    private encrypted_data: string;
+}
+
+export class RoleAddCommand extends AuthorizedCommand {
+
+    constructor(roleId: number, nodeId: number, encryptedData: string) {
+        super();
+        this.role_id = roleId;
+        this.node_id = nodeId;
+        this.encrypted_data = encryptedData;
+    }
+
+    private role_id: number;
+    private node_id: number;
+    private encrypted_data: string;
+
+    visible_below: boolean;
+    new_user_inherit: boolean;
+}
+
+export class EnterpriseUserAddCommand extends AuthorizedCommand<EnterpriseUserAddResponse> {
+
+    constructor(enterprise_user_id: number, email: string, nodeId: number, encryptedData: string) {
+        super();
+        this.enterprise_user_id = enterprise_user_id;
+        this.enterprise_user_username = email;
+        this.node_id = nodeId;
+        this.encrypted_data = encryptedData;
+    }
+
+    private enterprise_user_id: number;
+    private node_id: number;
+    private encrypted_data: string;
+    private enterprise_user_username: string;
+}
+
+export interface EnterpriseUserAddResponse extends KeeperResponse {
+    verification_code: string;
 }
 
 // *************************
@@ -287,6 +351,7 @@ export interface GetEnterpriseDataResponse extends KeeperResponse {
     sso_services: SsoService[];
     queued_team_users: QueuedTeamUser[];
     scims: SCIM[];
+    managed_companies?: ManagedCompany[];
 }
 
 export interface UserPrivileges {
@@ -341,6 +406,17 @@ export interface Node {
     roles?: Role[];
     teams?: Team[];
     users?: User[];
+}
+
+export interface ManagedCompany {
+    mc_enterprise_name: string;
+    mc_enterprise_id: number;
+    msp_node_id: number;
+    tree_key: string;
+    product_id: string;
+    number_of_users: number;
+    number_of_seats: number;
+    paused: boolean;
 }
 
 export interface RolePrivilege {

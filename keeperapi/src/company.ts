@@ -1,5 +1,14 @@
 import {Auth} from "./auth";
-import {EnterpriseDataInclude, GetEnterpriseDataCommand, GetEnterpriseDataResponse, KeeperResponse} from "./commands";
+import {
+    EnterpriseAllocateIdsCommand,
+    EnterpriseDataInclude,
+    GetEnterpriseDataCommand,
+    GetEnterpriseDataResponse,
+    KeeperResponse,
+    NodeAddCommand,
+    Node,
+    RoleAddCommand, EnterpriseUserAddCommand
+} from "./commands";
 import {decryptFromStorage, decryptObjectFromStorage, encryptForStorage, encryptObjectForStorage, normal64} from "./utils";
 import {platform} from "./platform";
 
@@ -16,6 +25,13 @@ export class Company {
         getEnterpriseDataCommand.include = include;
         this._data = await this.auth.executeCommand(getEnterpriseDataCommand);
         this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+
+        if (!this._data.roles)
+            this._data.roles = [];
+        if (!this._data.teams)
+            this._data.teams = [];
+        if (!this._data.users)
+            this._data.users = [];
 
         for (let node of this._data.nodes) {
             node.displayName = decryptObjectFromStorage<EncryptedData>(node.encrypted_data, this.treeKey).displayname;
@@ -66,6 +82,38 @@ export class Company {
         }, this.treeKey);
     }
 
+    encryptForStorage(data: Uint8Array): string {
+        return encryptForStorage(data, this.treeKey);
+    }
+
+    async allocateIDs(count: number): Promise<number> {
+        let allocateCommand = new EnterpriseAllocateIdsCommand();
+        allocateCommand.number_requested = count;
+        let response = await this.auth.executeCommand(allocateCommand);
+        return response.base_id;
+    }
+
+    async addNode(parentNodeId: number, nodeName: string): Promise<number> {
+        let nodeId = await this.allocateIDs(1);
+        let nodeAddCommand = new NodeAddCommand(nodeId, parentNodeId, this.encryptDisplayName(nodeName));
+        let response = await this.auth.executeCommand(nodeAddCommand);
+        return nodeId;
+    }
+
+    async addRole(nodeId: number, roleName: string): Promise<number> {
+        let roleId = await this.allocateIDs(1);
+        let roleAddCommand = new RoleAddCommand(roleId, nodeId, this.encryptDisplayName(roleName));
+        let response = await this.auth.executeCommand(roleAddCommand);
+        return roleId;
+    }
+
+    async addUser(nodeId: number, email: string, userName: string): Promise<{userId: number; verification_code: string}> {
+        let userId = await this.allocateIDs(1);
+        let userAddCommand = new EnterpriseUserAddCommand(userId, email, nodeId, this.encryptDisplayName(userName));
+        let response = await this.auth.executeCommand(userAddCommand);
+        let verification_code = response.verification_code;
+        return {userId, verification_code};
+    }
 }
 
-type EncryptedData = {displayname: string}
+export type EncryptedData = {displayname: string}
