@@ -17,6 +17,7 @@ interface OwnProps {
 function mapStateToProps(state: RootState): CompanyStateProps {
     return {
         company: state.company.company,
+        lastError: state.company.lastError
     };
 }
 

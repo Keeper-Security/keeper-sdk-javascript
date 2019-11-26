@@ -7,8 +7,7 @@ import {
     NodeAddCommand,
     RoleAddCommand, EnterpriseUserAddCommand
 } from "./commands";
-import {decryptFromStorage, decryptObjectFromStorage, encryptForStorage, encryptObjectForStorage, encryptKey} from "./utils";
-import {platform} from "./platform";
+import {decryptFromStorage, decryptObjectFromStorage, encryptForStorage, encryptObjectForStorage, encryptKey, decryptKey} from "./utils";
 
 export class Company {
 
@@ -86,6 +85,10 @@ export class Company {
 
     async encryptKey(key: Uint8Array): Promise<string> {
         return encryptKey(key, this.treeKey);
+    }
+
+    async decryptKey(encryptedKey: string): Promise<Uint8Array> {
+        return decryptKey(encryptedKey, this.treeKey);
     }
 
     async allocateIDs(count: number): Promise<number> {

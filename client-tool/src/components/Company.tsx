@@ -22,6 +22,7 @@ type ExtraProps = {
 
 export type CompanyStateProps = {
     company?: Enterprise;
+    lastError?: string;
 }
 
 type CompanyProps = ExtraProps & CompanyStateProps;
@@ -57,6 +58,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
                     this.props.company &&
                     this.renderCompany(this.props.company)
                 }
+                <div>{this.props.lastError}</div>
             </div>
         )
     }
@@ -91,7 +93,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
             <ListItem key={company.mc_enterprise_id}>
                 <ListItemText
                     primary={company.mc_enterprise_name}
-                    secondary={`Users: ${company.number_of_users} Seats: ${company.number_of_seats} Product: ${company.product_id}`}
+                    secondary={`Id: ${company.mc_enterprise_id} Users: ${company.number_of_users} Seats: ${company.number_of_seats} Product: ${company.product_id}`}
                 />
                 <ListItemSecondaryAction>
                     <IconButton edge="end" onClick={_ => this.loadCompany(company)}>

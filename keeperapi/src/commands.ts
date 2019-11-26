@@ -2,7 +2,7 @@ export class KeeperCommand<Response extends KeeperResponse = KeeperResponse> {
     command: string;
     username: string;
     client_version: string;
-    response?: Response
+    response: Response
 }
 
 export type AccountDataInclude =
@@ -128,10 +128,7 @@ export class EnterpriseUserLockCommand extends AuthorizedCommand {
 }
 
 export class EnterpriseNodeToManagedCompanyCommand extends AuthorizedCommand {
-    encrypted_tree_key: string;
-    root_role_data: string;
-    product_id: string;
-    node_id: number;
+    managed_company_id: number;
     nodes: Pick<Node, "encrypted_data" | "node_id" | "displayName">[];
     roles: Pick<Role, "encrypted_data" | "role_id" | "displayName">[];
     users: Pick<User, "encrypted_data" | "enterprise_user_id" | "displayName">[];
@@ -393,7 +390,7 @@ export interface User {
     node_id: number;
     encrypted_data: string;
     username: string;
-    status: string;
+    status: "active" | "invited";
     account_share_expiration?: number;
 }
 

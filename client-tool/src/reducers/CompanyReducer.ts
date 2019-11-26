@@ -8,6 +8,7 @@ type Action = ActionType<typeof actions>;
 export interface CompanyState {
     readonly loading: boolean;
     readonly company?: Company;
+    readonly lastError?: string;
 }
 
 const initialState = {
@@ -21,6 +22,12 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
         case getType(actions.loadedAction):
             return {
                 ...state, company: action.payload
+            };
+
+        case getType(actions.nodeConversionErrorAction):
+
+            return {
+                ...state, lastError: action.payload.error
             };
 
         default:

@@ -7,7 +7,6 @@ import {
     User,
     EnterpriseNodeToManagedCompanyCommand,
     EnterpriseRegistrationByMspCommand,
-    encryptForStorage,
     encryptObjectForStorage,
     EncryptedData,
     generateEncryptionKey,
@@ -64,17 +63,19 @@ export class Keeper {
         let nodes = getNodes(node);
         let roles = getNodeRoles(node);
         let users = getNodeUsers(node);
-        console.log(nodes);
-        console.log(roles);
+
+        let pendingUsers = users.filter(x => x.status === "invited");
+        if (pendingUsers.length > 0)
+            throw `Pending users must be removed: ${pendingUsers.map(x => x.username).join()}`;
+
+        // let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
+        let managedCompany = company.data.managed_companies![0];
+        let companyId = managedCompany.mc_enterprise_id;
+        let treeKey = await company.decryptKey(managedCompany.tree_key);
 
         let command = new EnterpriseNodeToManagedCompanyCommand();
 
-        let treeKey = generateEncryptionKey();
-
-        command.encrypted_tree_key = company.encryptForStorage(treeKey);
-        command.root_role_data = company.encryptDisplayName("Keeper Administrator");
-        command.product_id = "business"; // TODO select plan
-        command.node_id = company.data.nodes[0].node_id; // TODO select node
+        command.managed_company_id = companyId;
 
         command.nodes = nodes.map(x => {
             return {
@@ -118,7 +119,7 @@ export class Keeper {
         await company.addUser(subNode2, "admin+cnv3@yozik.us", "User 3");
     }
 
-    static async addManagedCompany(companyName: string, company: Company) {
+    static async addManagedCompany(companyName: string, company: Company): Promise<{companyId: number; treeKey: Uint8Array}> {
 
         let command = new EnterpriseRegistrationByMspCommand();
 
@@ -133,7 +134,10 @@ export class Keeper {
         command.seats = 0;
 
         let resp = await this.auth.executeCommand(command);
-        console.log(resp);
+        return {
+            companyId: resp.enterprise_id,
+            treeKey: treeKey
+        };
     }
 
     static async loadManagedCompany(managedCompanyId: number, company: Company) {
