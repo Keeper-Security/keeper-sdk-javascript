@@ -23,7 +23,9 @@ function mapStateToProps(state: RootState): CompanyStateProps {
 function mapDispatchToProps(dispatch: Dispatch<Action>, props: OwnProps) {
     return bindActionCreators({
         convertNode: (node: Node) => actions.convertNodeAction({node}),
-        addTestNode: (nodeName: string) => actions.addTestNodeAction({nodeName})
+        addTestNode: (nodeName: string) => actions.addTestNodeAction({nodeName}),
+        addManagedCompany: (companyName: string) => actions.addManagedCompanyAction({companyName}),
+        loadCompany: (companyId: number) => actions.loadManagedCompanyAction({companyId})
     }, dispatch);
 }
 

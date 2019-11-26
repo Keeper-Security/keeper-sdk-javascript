@@ -22,6 +22,7 @@ export class LoginCommand extends KeeperCommand<LoginResponse> {
     version: number;
     auth_response: string;
     include: AccountDataInclude[];
+    enterprise_id?: number; // for logging into managed company
 }
 
 export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse> extends KeeperCommand<Response> {
@@ -194,6 +195,20 @@ export class EnterpriseUserAddCommand extends AuthorizedCommand<EnterpriseUserAd
 
 export interface EnterpriseUserAddResponse extends KeeperResponse {
     verification_code: string;
+}
+
+export class EnterpriseRegistrationByMspCommand extends AuthorizedCommand<EnterpriseRegistrationByMspResponse> {
+    root_node: string;
+    role_data: string;
+    product_id: string;
+    enterprise_name: string;
+    node_id: number;
+    seats: number;
+    encrypted_tree_key: string;
+}
+
+export interface EnterpriseRegistrationByMspResponse extends KeeperResponse {
+    enterprise_id: number;
 }
 
 // *************************

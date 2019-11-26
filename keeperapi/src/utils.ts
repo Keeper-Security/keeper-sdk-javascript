@@ -20,6 +20,15 @@ export function generateUid(): string {
     return webSafe64(platform.bytesToBase64(platform.getRandomBytes(16)));
 }
 
+export async function encryptKey(key: Uint8Array, withKey: Uint8Array): Promise<string> {
+    let encryptedKey = await platform.aesGcmEncrypt(key, withKey);
+    return webSafe64(platform.bytesToBase64(encryptedKey));
+}
+
+export async function decryptKey(encryptedKey: string, withKey: Uint8Array): Promise<Uint8Array> {
+    return platform.aesGcmDecrypt(platform.base64ToBytes(normal64(encryptedKey)), withKey);
+}
+
 export function encryptForStorage(data: Uint8Array, key: Uint8Array): string {
     return webSafe64(platform.bytesToBase64(platform.aesCbcEncrypt(data, key, true)));
 }

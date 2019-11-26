@@ -13,7 +13,8 @@ export class Auth {
     private endpoint: KeeperEndpoint;
     private _sessionToken: string;
     dataKey: Uint8Array;
-    private username: string;
+    private _username: string;
+    private managedCompanyId?: number;
 
     constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
         this.endpoint = new KeeperEndpoint(this.options.host);
@@ -32,6 +33,9 @@ export class Auth {
             include: ["keys"], //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
             client_version: "c14.0.0"
         };
+        if (this.managedCompanyId) {
+            loginCommand.enterprise_id = this.managedCompanyId
+        }
         let loginResponse: LoginResponse;
         while (true) {
             loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
@@ -49,13 +53,18 @@ export class Auth {
             }
         }
         this._sessionToken = loginResponse.session_token;
-        this.username = username;
+        this._username = username;
         this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
+    }
+
+    async managedCompanyLogin(username: string, password: string, companyId: number) {
+        this.managedCompanyId = companyId;
+        await this.login(username, password);
     }
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
         command.command = command.constructor.name.split(/(?=[A-Z])/).slice(0, -1).join('_').toLowerCase();
-        command.username = this.username;
+        command.username = this._username;
         command.client_version = "c14.0.0";
         if (command instanceof AuthorizedCommand) {
             command.device_id = "JS Keeper API";
@@ -66,6 +75,10 @@ export class Auth {
 
     get sessionToken(): string {
         return this._sessionToken;
+    }
+
+    get username(): string {
+        return this._username;
     }
 }
 

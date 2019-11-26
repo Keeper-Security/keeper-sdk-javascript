@@ -4,12 +4,10 @@ import {
     EnterpriseDataInclude,
     GetEnterpriseDataCommand,
     GetEnterpriseDataResponse,
-    KeeperResponse,
     NodeAddCommand,
-    Node,
     RoleAddCommand, EnterpriseUserAddCommand
 } from "./commands";
-import {decryptFromStorage, decryptObjectFromStorage, encryptForStorage, encryptObjectForStorage, normal64} from "./utils";
+import {decryptFromStorage, decryptObjectFromStorage, encryptForStorage, encryptObjectForStorage, encryptKey} from "./utils";
 import {platform} from "./platform";
 
 export class Company {
@@ -84,6 +82,10 @@ export class Company {
 
     encryptForStorage(data: Uint8Array): string {
         return encryptForStorage(data, this.treeKey);
+    }
+
+    async encryptKey(key: Uint8Array): Promise<string> {
+        return encryptKey(key, this.treeKey);
     }
 
     async allocateIDs(count: number): Promise<number> {

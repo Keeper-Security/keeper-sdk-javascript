@@ -6,6 +6,7 @@ import {
     Role,
     User,
     EnterpriseNodeToManagedCompanyCommand,
+    EnterpriseRegistrationByMspCommand,
     encryptForStorage,
     encryptObjectForStorage,
     EncryptedData,
@@ -31,12 +32,14 @@ function getNodeUsers(node: Node): User[] {
 export class Keeper {
 
     static auth: Auth;
+    private static authPassword: string;
 
     static async login(user: string, password: string) {
         this.auth = new Auth({
             host: "local.keepersecurity.com"
         });
         await this.auth.login(user, password);
+        this.authPassword = password;
     }
 
     static async fetchVault(): Promise<Vault> {
@@ -113,6 +116,35 @@ export class Keeper {
         await company.addUser(nodeId, "admin+cnv1@yozik.us", "User 1");
         await company.addUser(subNode1, "admin+cnv2@yozik.us", "User 2");
         await company.addUser(subNode2, "admin+cnv3@yozik.us", "User 3");
+    }
+
+    static async addManagedCompany(companyName: string, company: Company) {
+
+        let command = new EnterpriseRegistrationByMspCommand();
+
+        let treeKey = generateEncryptionKey();
+
+        command.encrypted_tree_key = await company.encryptKey(treeKey);
+        command.enterprise_name = companyName;
+        command.root_node = this.encryptDisplayName("root", treeKey);
+        command.role_data = this.encryptDisplayName("Keeper Administrator", treeKey);
+        command.product_id = "business"; // TODO select plan
+        command.node_id = company.data.nodes[0].node_id; // TODO select node
+        command.seats = 0;
+
+        let resp = await this.auth.executeCommand(command);
+        console.log(resp);
+    }
+
+    static async loadManagedCompany(managedCompanyId: number, company: Company) {
+        let auth = new Auth({
+            host: "local.keepersecurity.com"
+        });
+        await auth.managedCompanyLogin(this.auth.username, this.authPassword, managedCompanyId);
+        let mc = new Company(auth);
+        debugger
+        await mc.load(["nodes", "users", "roles", "teams"]);
+        console.log(mc);
     }
 }
 
