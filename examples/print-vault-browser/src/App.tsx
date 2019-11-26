@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
-import {AuthContext, AuthUI, KeeperEnvironment, Vault} from "keeperapi";
+import {Auth, AuthUI, KeeperEnvironment, Vault} from "keeperapi";
 
 interface AppState {
     status: string[];
@@ -47,15 +47,13 @@ class App extends Component<{}, AppState> implements AuthUI {
     async submit(e: any) {
         e.preventDefault();
         try {
-            let auth = new AuthContext({
-                username: this.userName.current["value"],
-                password: this.password.current["value"],
+            let auth = new Auth({
                 host: KeeperEnvironment.DEV
             }, this);
             let newState = {...this.state};
             newState.status.push("Logging In...");
             this.setState(newState);
-            await auth.login();
+            await auth.login(this.userName.current["value"], this.password.current["value"]);
             newState = {...this.state};
             newState.status.push("Logged In, querying records...");
             newState.loggedIn = true;

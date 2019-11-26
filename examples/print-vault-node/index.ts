@@ -1,4 +1,4 @@
-import {AuthContext, AuthUI, KeeperEnvironment, Vault} from "keeperapi";
+import {Auth, AuthUI, KeeperEnvironment, Vault} from "keeperapi";
 import * as readline from "readline";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -23,12 +23,10 @@ let authUI: AuthUI = {
 
 async function printVault(username: string, password: string) {
     try {
-        let auth = new AuthContext({
-            username: username,
-            password: password,
+        let auth = new Auth({
             host: KeeperEnvironment.DEV
         }, authUI);
-        await auth.login();
+        await auth.login(username, password);
         console.log("login successful");
         let vault = new Vault(auth);
         await vault.syncDown();

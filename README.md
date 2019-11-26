@@ -10,12 +10,10 @@ yarn install keeperapi
 
 ```typescript
     try {
-        let auth = new AuthContext({
-            username: username,
-            password: password,
+        let auth = new Auth({
             host: KeeperEnvironment.DEV
         });
-        await auth.login();
+        await auth.login(username, password);
         console.log("login successful");
         let vault = new Vault(auth);
         await vault.syncDown();

@@ -1,16 +1,14 @@
-import {AuthContext, KeeperEnvironment, Vault} from "keeperapi";
+import {Auth, KeeperEnvironment, Vault} from "keeperapi";
 
 export class Keeper {
 
-    static auth: AuthContext;
+    static auth: Auth;
 
     static async login(user: string, password: string) {
-        this.auth = new AuthContext({
-            username: user,
-            password: password,
+        this.auth = new Auth({
             host: KeeperEnvironment.DEV
         });
-        await this.auth.login();
+        await this.auth.login(user, password);
     }
 
     static async fetchVault(): Promise<Vault> {
