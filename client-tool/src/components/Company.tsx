@@ -12,20 +12,28 @@ import GavelIcon from '@material-ui/icons/Gavel';
 import Paper from '@material-ui/core/Paper';
 import TextField from "@material-ui/core/TextField";
 
-type ExtraProps = {
-    classes: any;
-    convertNode: (node: Node) => any;
+export type CompanyDispatchProps = {
     addTestNode: (nodeName: string) => any;
     addManagedCompany: (companyName: string) => any;
     loadCompany: (companyId: number) => any;
+    convertNode: (node: Node) => any;
+}
+
+export type NodeProps = {
+    node: Node;
+    userCount: number;
+    roleCount: number;
+    teamCount: number;
+    errorMessage? : string;
 }
 
 export type CompanyStateProps = {
     company?: Enterprise;
-    lastError?: string;
+    classes?: any;
+    nodes: NodeProps[];
 }
 
-type CompanyProps = ExtraProps & CompanyStateProps;
+type CompanyProps = CompanyDispatchProps & CompanyStateProps;
 
 type CompanyState = {}
 
@@ -43,6 +51,9 @@ const styles = {
     },
     nameInput: {
         margin: "1rem",
+    },
+    errorMessage: {
+        color: "red"
     }
 };
 
@@ -56,31 +67,26 @@ class Company extends React.Component<CompanyProps, CompanyState> {
             <div>
                 {
                     this.props.company &&
-                    this.renderCompany(this.props.company)
+                    this.renderCompany()
                 }
-                <div>{this.props.lastError}</div>
             </div>
         )
     }
 
-    private renderNode(company: Enterprise, node: Node) {
-        let userCount = company.data.users.reduce((sum, user) => {
-            return user.node_id === node.node_id ? ++sum : sum
-        }, 0);
-        let roleCount = company.data.roles.reduce((sum, role) => {
-            return role.node_id === node.node_id ? ++sum : sum
-        }, 0);
-        let teamCount = company.data.teams.reduce((sum, team) => {
-            return team.node_id === node.node_id ? ++sum : sum
-        }, 0);
+    private renderNode(props: NodeProps) {
+        let secondary = props.errorMessage
+            ? <div className={this.classes.errorMessage}>{props.errorMessage}</div>
+            : <div>{`Users: ${props.userCount} Roles: ${props.roleCount} Teams: ${props.teamCount}`}</div>;
         return (
-            <ListItem key={node.node_id}>
+            <ListItem key={props.node.node_id}>
                 <ListItemText
-                    primary={node.displayName}
-                    secondary={`Users: ${userCount} Roles: ${roleCount} Teams: ${teamCount}`}
-                />
+                    primary={props.node.displayName}
+                    secondary={secondary}
+                >
+                    <div>{props.errorMessage}</div>
+                </ListItemText>
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={_ => this.convertNode(node)}>
+                    <IconButton edge="end" onClick={_ => this.convertNode(props.node)}>
                         <GavelIcon/>
                     </IconButton>
                 </ListItemSecondaryAction>
@@ -104,13 +110,13 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         )
     }
 
-    private renderCompany(company: Enterprise) {
-        let firstLevelNodes = company.data.nodes[0].nodes || [];
-        let managedCompanies = company.data.managed_companies || [];
+    private renderCompany() {
+        let firstLevelNodes = this.props.nodes;
+        let managedCompanies = this.props.company!.data.managed_companies || [];
         return (
             <Container className={this.classes.container} maxWidth="md">
                 <Paper className={this.classes.root}>
-                    <List>{firstLevelNodes.map(x => this.renderNode(company, x))}</List>
+                    <List>{firstLevelNodes.map(x => this.renderNode(x))}</List>
                     {this.renderAddNodeForm()}
                 </Paper>
                 <Paper className={this.classes.root}>

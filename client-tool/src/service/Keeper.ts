@@ -114,9 +114,9 @@ export class Keeper {
         await company.addRole(nodeId, "Role " + nodeName);
         await company.addRole(subNode1, "Role " + nodeName + "_1");
         await company.addRole(subNode2, "Role " + nodeName + "_2");
-        await company.addUser(nodeId, "admin+cnv1@yozik.us", "User 1");
-        await company.addUser(subNode1, "admin+cnv2@yozik.us", "User 2");
-        await company.addUser(subNode2, "admin+cnv3@yozik.us", "User 3");
+        await company.addUser(nodeId, `admin+${nodeName.toLowerCase()}u1@yozik.us`, "User 1");
+        await company.addUser(subNode1, `admin+${nodeName.toLowerCase()}u2@yozik.us`, "User 2");
+        await company.addUser(subNode2, `admin+${nodeName.toLowerCase()}u3@yozik.us`, "User 3");
     }
 
     static async addManagedCompany(companyName: string, company: Company): Promise<{companyId: number; treeKey: Uint8Array}> {

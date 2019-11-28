@@ -1,14 +1,17 @@
 import {ActionType, getType} from 'typesafe-actions';
 
 import * as actions from "../actions";
-import {Company} from "keeperapi";
+import {Company, Node} from "keeperapi";
 
 type Action = ActionType<typeof actions>;
 
 export interface CompanyState {
     readonly loading: boolean;
     readonly company?: Company;
-    readonly lastError?: string;
+    readonly lastError?: {
+        node: Node,
+        message: string
+    };
 }
 
 const initialState = {
@@ -27,7 +30,10 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
         case getType(actions.nodeConversionErrorAction):
 
             return {
-                ...state, lastError: action.payload.error
+                ...state, lastError: {
+                    node: action.payload.node,
+                    message: action.payload.error
+                }
             };
 
         default:
