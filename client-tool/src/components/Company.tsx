@@ -12,6 +12,7 @@ import GavelIcon from '@material-ui/icons/Gavel';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Paper from '@material-ui/core/Paper';
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export type CompanyDispatchProps = {
     addTestNode: (nodeName: string) => any;
@@ -33,6 +34,7 @@ export type CompanyStateProps = {
     company?: Enterprise;
     classes?: any;
     nodes: NodeProps[];
+    inProgress: boolean;
 }
 
 type CompanyProps = CompanyDispatchProps & CompanyStateProps;
@@ -59,7 +61,8 @@ const styles = {
     },
     refreshContainer: {
         display: "flex",
-        justifyContent: "flex-end",
+        justifyContent: "space-between",
+        alignItems: "center",
         marginTop: "1rem"
     }
 };
@@ -123,6 +126,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         return (
             <Container className={this.classes.container} maxWidth="md">
                 <div className={this.classes.refreshContainer}>
+                    <CircularProgress style={ this.props.inProgress ? {} : { visibility: "hidden" }}/>
                     <Fab onClick={_ => this.props.refresh()}>
                         <RefreshIcon/>
                     </Fab>

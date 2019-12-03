@@ -9,6 +9,8 @@ import {
     LOGOUT,
     LOGGED_IN,
     LOADED,
+    REFRESH,
+    PROGRESS,
     CONVERT_NODE,
     NODE_CONVERTED,
     NODE_CONVERSION_ERROR,
@@ -30,6 +32,10 @@ export const logoutAction = createAction(LOGOUT)();
 export const loggedInAction = createAction(LOGGED_IN)();
 
 export const loadedAction = createAction(LOADED)<Company>();
+
+export const refreshAction = createAction(REFRESH)();
+
+export const progressAction = createAction(PROGRESS)<boolean>();
 
 export const convertNodeAction = createAction(CONVERT_NODE)<{ node: Node }>();
 

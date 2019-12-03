@@ -22,6 +22,7 @@ function mapStateToProps(state: RootState): CompanyStateProps {
 
     return {
         company: state.company.company,
+        inProgress: state.company.inProgress,
         nodes: nodes.map(x => {
             return {
                 node: x,
@@ -42,7 +43,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, props: OwnProps): Compan
         addTestNode: (nodeName: string) => actions.addTestNodeAction({nodeName}),
         addManagedCompany: (companyName: string) => actions.addManagedCompanyAction({companyName}),
         loadCompany: (companyId: number) => actions.loadManagedCompanyAction({companyId}),
-        refresh: () => actions.epicSuccessAction()
+        refresh: () => actions.refreshAction()
     }, dispatch);
 }
 

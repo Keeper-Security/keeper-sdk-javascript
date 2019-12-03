@@ -1,18 +1,18 @@
 import {ActionsObservable, StateObservable} from "redux-observable";
-import {catchError, filter, map, mergeMap, tap} from 'rxjs/operators';
+import {catchError, delay, filter, map, mergeMap, repeat, takeUntil, tap} from 'rxjs/operators';
 
 import {ActionType, isActionOf} from 'typesafe-actions';
 
 import * as actions from "../actions";
 import {RootState} from "../reducers";
 import {Keeper} from "../service/Keeper";
-import {of, from} from "rxjs";
+import {of, from, merge} from "rxjs";
 
 type Action = ActionType<typeof actions>;
 
 function companyLoggedInEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
     return action$.pipe(
-        filter(isActionOf([actions.loggedInAction, actions.epicSuccessAction, actions.nodeConvertedAction])),
+        filter(isActionOf([actions.loggedInAction, actions.epicSuccessAction, actions.refreshAction, actions.nodeConvertedAction])),
         mergeMap(_ => from(Keeper.fetchCompany()).pipe(
             map(company => actions.loadedAction(company)),
             catchError(error => of(actions.epicFailureAction(error)))
@@ -25,7 +25,7 @@ function nodeConvertEpic(action$: ActionsObservable<Action>, store: StateObserva
         filter(isActionOf(actions.convertNodeAction)),
         mergeMap(x => from(Keeper.convertNode(x.payload.node, store.value.company.company!)).pipe(
             map(_ => actions.nodeConvertedAction()),
-            catchError(error => of(actions.nodeConversionErrorAction({ node: x.payload.node, error })))
+            catchError(error => of(actions.nodeConversionErrorAction({node: x.payload.node, error})))
         ))
     );
 }
@@ -60,10 +60,28 @@ function loadManagedCompanyEpic(action$: ActionsObservable<Action>, store: State
     );
 }
 
+function progressOnEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
+    let ofs = action$.pipe(
+        filter(isActionOf([actions.loadedAction, actions.epicSuccessAction, actions.epicFailureAction])),
+        map(_ => false)
+    );
+    let ons = action$.pipe(
+        filter(isActionOf([actions.refreshAction, actions.addTestNodeAction])),
+        map(_ => true),
+        delay(1000),
+        takeUntil(ofs),
+        repeat()
+    );
+    return merge(ons, ofs).pipe(
+        map(value => actions.progressAction(value)),
+    );
+}
+
 export default [
     companyLoggedInEpic,
     nodeConvertEpic,
     addTestNodeEpic,
     addManagedCompanyEpic,
-    loadManagedCompanyEpic
+    loadManagedCompanyEpic,
+    progressOnEpic
 ];

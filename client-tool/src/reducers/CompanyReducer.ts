@@ -2,11 +2,12 @@ import {ActionType, getType} from 'typesafe-actions';
 
 import * as actions from "../actions";
 import {Company, Node} from "keeperapi";
+import {progressAction} from "../actions";
 
 type Action = ActionType<typeof actions>;
 
 export interface CompanyState {
-    readonly loading: boolean;
+    readonly inProgress: boolean;
     readonly company?: Company;
     readonly lastError?: {
         node: Node,
@@ -15,7 +16,7 @@ export interface CompanyState {
 }
 
 const initialState = {
-    loading: false,
+    inProgress: false,
 };
 
 export const companyReducer = (state: CompanyState = initialState, action: Action): CompanyState => {
@@ -24,12 +25,14 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
 
         case getType(actions.loadedAction):
             return {
-                ...state, company: action.payload
+                ...state,
+                company: action.payload
             };
 
         case getType(actions.epicSuccessAction):
             return {
-                ...state, lastError: undefined
+                ...state,
+                lastError: undefined
             };
 
         case getType(actions.epicFailureAction):
@@ -37,12 +40,18 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
             return {...state};
 
         case getType(actions.nodeConversionErrorAction):
-
             return {
-                ...state, lastError: {
+                ...state,
+                lastError: {
                     node: action.payload.node,
                     message: action.payload.error
                 }
+            };
+
+        case getType(actions.progressAction):
+            return {
+                ...state,
+                inProgress: action.payload
             };
 
         default:
