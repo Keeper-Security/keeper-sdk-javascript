@@ -13,6 +13,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import Paper from '@material-ui/core/Paper';
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from "@material-ui/core/Typography";
 
 export type CompanyDispatchProps = {
     addTestNode: (nodeName: string) => any;
@@ -64,6 +65,10 @@ const styles = {
         justifyContent: "space-between",
         alignItems: "center",
         marginTop: "1rem"
+    },
+    caption: {
+        marginLeft: "1rem",
+        paddingTop: "1rem"
     }
 };
 
@@ -111,11 +116,11 @@ class Company extends React.Component<CompanyProps, CompanyState> {
                     primary={company.mc_enterprise_name}
                     secondary={`Id: ${company.mc_enterprise_id} Users: ${company.number_of_users} Seats: ${company.number_of_seats} Product: ${company.product_id}`}
                 />
-                <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={_ => this.loadCompany(company)}>
-                        <GavelIcon/>
-                    </IconButton>
-                </ListItemSecondaryAction>
+                {/*<ListItemSecondaryAction>*/}
+                {/*    <IconButton edge="end" onClick={_ => this.loadCompany(company)}>*/}
+                {/*        <GavelIcon/>*/}
+                {/*    </IconButton>*/}
+                {/*</ListItemSecondaryAction>*/}
             </ListItem>
         )
     }
@@ -132,10 +137,16 @@ class Company extends React.Component<CompanyProps, CompanyState> {
                     </Fab>
                 </div>
                 <Paper className={this.classes.root}>
+                    <Typography className={this.classes.caption} variant="h5">
+                        Nodes
+                    </Typography>
                     <List>{firstLevelNodes.map(x => this.renderNode(x))}</List>
-                    {this.renderAddNodeForm()}
+                    {/*{this.renderAddNodeForm()}*/}
                 </Paper>
                 <Paper className={this.classes.root}>
+                    <Typography className={this.classes.caption} variant="h5">
+                        Companies
+                    </Typography>
                     <List>{managedCompanies.map(x => this.renderManagedCompany(x))}</List>
                     {/*{this.renderAddCompanyForm()}*/}
                 </Paper>

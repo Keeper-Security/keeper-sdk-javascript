@@ -62,11 +62,11 @@ function loadManagedCompanyEpic(action$: ActionsObservable<Action>, store: State
 
 function progressOnEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
     let ofs = action$.pipe(
-        filter(isActionOf([actions.loadedAction, actions.epicSuccessAction, actions.epicFailureAction])),
+        filter(isActionOf([actions.loadedAction, actions.epicSuccessAction, actions.epicFailureAction, actions.nodeConvertedAction, actions.nodeConversionErrorAction])),
         map(_ => false)
     );
     let ons = action$.pipe(
-        filter(isActionOf([actions.refreshAction, actions.addTestNodeAction])),
+        filter(isActionOf([actions.refreshAction, actions.addTestNodeAction, actions.convertNodeAction])),
         map(_ => true),
         delay(1000),
         takeUntil(ofs),

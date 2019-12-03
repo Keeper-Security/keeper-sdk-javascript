@@ -29,12 +29,6 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
                 company: action.payload
             };
 
-        case getType(actions.epicSuccessAction):
-            return {
-                ...state,
-                lastError: undefined
-            };
-
         case getType(actions.epicFailureAction):
             console.log(action.payload.error || action.payload || "unknown error");
             return {...state};
@@ -49,9 +43,11 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
             };
 
         case getType(actions.progressAction):
+            let error = action.payload ? null : state.lastError;
             return {
                 ...state,
-                inProgress: action.payload
+                inProgress: action.payload,
+                lastError: error
             };
 
         default:

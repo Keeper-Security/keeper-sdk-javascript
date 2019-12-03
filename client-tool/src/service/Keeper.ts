@@ -74,7 +74,7 @@ export class Keeper {
             throw `Pending users must be removed: ${pendingUsers.map(x => x.username).join()}`;
 
         let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
-        // let managedCompany = company.data.managed_companies![0];
+        // let managedCompany = company.data.managed_companies![company.data.managed_companies!.length - 1];
         // let companyId = managedCompany.mc_enterprise_id;
         // let treeKey = await company.decryptKey(managedCompany.tree_key);
 
