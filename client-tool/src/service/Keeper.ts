@@ -5,6 +5,7 @@ import {
     Node,
     Role,
     User,
+    Team,
     EnterpriseNodeToManagedCompanyCommand,
     EnterpriseRegistrationByMspCommand,
     encryptObjectForStorage,
@@ -16,16 +17,20 @@ export function flatMap<T, U>(array: T[], callbackfn: (value: T, index: number, 
     return Array.prototype.concat(...array.map(callbackfn));
 }
 
-function getNodes(node: Node): Node[] {
+export function getNodes(node: Node): Node[] {
     return [node, ...node.nodes ? flatMap(node.nodes!, getNodes) : []];
 }
 
-function getNodeRoles(node: Node): Role[] {
+export function getNodeRoles(node: Node): Role[] {
     return [...(node.roles || []), ...node.nodes ? flatMap(node.nodes!, getNodeRoles) : []];
 }
 
-function getNodeUsers(node: Node): User[] {
+export function getNodeUsers(node: Node): User[] {
     return [...(node.users || []), ...node.nodes ? flatMap(node.nodes!, getNodeUsers) : []];
+}
+
+export function getNodeTeams(node: Node): Team[] {
+    return [...(node.teams || []), ...node.teams ? flatMap(node.nodes!, getNodeTeams) : []];
 }
 
 export class Keeper {
@@ -68,10 +73,10 @@ export class Keeper {
         if (pendingUsers.length > 0)
             throw `Pending users must be removed: ${pendingUsers.map(x => x.username).join()}`;
 
-        // let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
-        let managedCompany = company.data.managed_companies![0];
-        let companyId = managedCompany.mc_enterprise_id;
-        let treeKey = await company.decryptKey(managedCompany.tree_key);
+        let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
+        // let managedCompany = company.data.managed_companies![0];
+        // let companyId = managedCompany.mc_enterprise_id;
+        // let treeKey = await company.decryptKey(managedCompany.tree_key);
 
         let command = new EnterpriseNodeToManagedCompanyCommand();
 
@@ -146,7 +151,6 @@ export class Keeper {
         });
         await auth.managedCompanyLogin(this.auth.username, this.authPassword, managedCompanyId);
         let mc = new Company(auth);
-        debugger
         await mc.load(["nodes", "users", "roles", "teams"]);
         console.log(mc);
     }

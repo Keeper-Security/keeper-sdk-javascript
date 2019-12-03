@@ -2,7 +2,7 @@ export class KeeperCommand<Response extends KeeperResponse = KeeperResponse> {
     command: string;
     username: string;
     client_version: string;
-    response: Response
+    response?: Response
 }
 
 export type AccountDataInclude =
@@ -364,6 +364,7 @@ export interface GetEnterpriseDataResponse extends KeeperResponse {
     queued_team_users: QueuedTeamUser[];
     scims: SCIM[];
     managed_companies?: ManagedCompany[];
+    msp_key?: MSPKey;
 }
 
 export interface UserPrivileges {
@@ -540,4 +541,9 @@ export interface SsoService {
 export interface RoleKeys2 {
     role_id: number;
     role_key: string;
+}
+
+export interface MSPKey {
+    encrypted_msp_tree_key: string;
+    encrypted_msp_tree_key_type: KeyType;
 }

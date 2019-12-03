@@ -27,6 +27,15 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
                 ...state, company: action.payload
             };
 
+        case getType(actions.epicSuccessAction):
+            return {
+                ...state, lastError: undefined
+            };
+
+        case getType(actions.epicFailureAction):
+            console.log(action.payload.error || action.payload || "unknown error");
+            return {...state};
+
         case getType(actions.nodeConversionErrorAction):
 
             return {

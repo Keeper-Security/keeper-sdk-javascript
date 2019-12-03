@@ -9,6 +9,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import Fab from '@material-ui/core/Fab';
 import GavelIcon from '@material-ui/icons/Gavel';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import Paper from '@material-ui/core/Paper';
 import TextField from "@material-ui/core/TextField";
 
@@ -17,6 +18,7 @@ export type CompanyDispatchProps = {
     addManagedCompany: (companyName: string) => any;
     loadCompany: (companyId: number) => any;
     convertNode: (node: Node) => any;
+    refresh: () => any;
 }
 
 export type NodeProps = {
@@ -24,7 +26,7 @@ export type NodeProps = {
     userCount: number;
     roleCount: number;
     teamCount: number;
-    errorMessage? : string;
+    errorMessage?: string;
 }
 
 export type CompanyStateProps = {
@@ -54,6 +56,11 @@ const styles = {
     },
     errorMessage: {
         color: "red"
+    },
+    refreshContainer: {
+        display: "flex",
+        justifyContent: "flex-end",
+        marginTop: "1rem"
     }
 };
 
@@ -75,8 +82,8 @@ class Company extends React.Component<CompanyProps, CompanyState> {
 
     private renderNode(props: NodeProps) {
         let secondary = props.errorMessage
-            ? <div className={this.classes.errorMessage}>{props.errorMessage}</div>
-            : <div>{`Users: ${props.userCount} Roles: ${props.roleCount} Teams: ${props.teamCount}`}</div>;
+            ? <span className={this.classes.errorMessage}>{props.errorMessage}</span>
+            : <span>{`Users: ${props.userCount} Roles: ${props.roleCount} Teams: ${props.teamCount}`}</span>;
         return (
             <ListItem key={props.node.node_id}>
                 <ListItemText
@@ -115,13 +122,18 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         let managedCompanies = this.props.company!.data.managed_companies || [];
         return (
             <Container className={this.classes.container} maxWidth="md">
+                <div className={this.classes.refreshContainer}>
+                    <Fab onClick={_ => this.props.refresh()}>
+                        <RefreshIcon/>
+                    </Fab>
+                </div>
                 <Paper className={this.classes.root}>
                     <List>{firstLevelNodes.map(x => this.renderNode(x))}</List>
                     {this.renderAddNodeForm()}
                 </Paper>
                 <Paper className={this.classes.root}>
                     <List>{managedCompanies.map(x => this.renderManagedCompany(x))}</List>
-                    {this.renderAddCompanyForm()}
+                    {/*{this.renderAddCompanyForm()}*/}
                 </Paper>
             </Container>
         );

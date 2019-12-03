@@ -20,8 +20,15 @@ export class Company {
     async load(include: EnterpriseDataInclude[]) {
         let getEnterpriseDataCommand = new GetEnterpriseDataCommand();
         getEnterpriseDataCommand.include = include;
+
         this._data = await this.auth.executeCommand(getEnterpriseDataCommand);
-        this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+
+        if (this._data.msp_key) {
+            let key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+            this.treeKey = await decryptKey(this._data.tree_key, key4TreeKey);
+        } else {
+            this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+        }
 
         if (!this._data.roles)
             this._data.roles = [];

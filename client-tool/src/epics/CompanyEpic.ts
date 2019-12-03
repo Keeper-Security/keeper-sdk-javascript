@@ -12,7 +12,7 @@ type Action = ActionType<typeof actions>;
 
 function companyLoggedInEpic(action$: ActionsObservable<Action>, store: StateObservable<RootState>) {
     return action$.pipe(
-        filter(isActionOf([actions.loggedInAction, actions.epicSuccessAction])),
+        filter(isActionOf([actions.loggedInAction, actions.epicSuccessAction, actions.nodeConvertedAction])),
         mergeMap(_ => from(Keeper.fetchCompany()).pipe(
             map(company => actions.loadedAction(company)),
             catchError(error => of(actions.epicFailureAction(error)))
