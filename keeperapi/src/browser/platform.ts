@@ -1,9 +1,12 @@
 import {Platform} from "../platform";
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
-import {AES, WordArray, pad, enc, mode} from "crypto-js";
+import {AES, pad, enc, mode} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
+import {normal64} from "../utils";
+
+const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
@@ -34,6 +37,38 @@ export const browserPlatform: Platform = class {
         return new TextEncoder().encode(data);
     }
 
+    static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
+
+        let keyPair = await crypto.subtle.generateKey({
+            name: rsaAlgorithmName,
+            modulusLength: 2048,
+            publicExponent: new Uint8Array([0x01, 0x00, 0x01]), // 65537
+            hash: {name: 'SHA-256'},
+        }, true, ["sign", "verify"]);
+
+        let jwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+        let rsaKey = new RSAKey();
+        rsaKey.setPrivateEx(
+            base64ToHex(normal64(jwk.n)),
+            base64ToHex(normal64(jwk.e)),
+            base64ToHex(normal64(jwk.d)),
+            base64ToHex(normal64(jwk.p)),
+            base64ToHex(normal64(jwk.q)),
+            base64ToHex(normal64(jwk.dp)),
+            base64ToHex(normal64(jwk.dq)),
+            base64ToHex(normal64(jwk.qi))
+        );
+
+        let public_key  = rsaKey.toASN1HexString(false);
+        let private_key = rsaKey.toASN1HexString(true);
+
+        return {
+            privateKey: hexToBytes(private_key),
+            publicKey: hexToBytes(public_key),
+        };
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKeyHex = base64ToHex(key);
         const pos = _asnhex_getPosArrayOfChildren_AtObj(publicKeyHex, 0);
@@ -54,11 +89,7 @@ export const browserPlatform: Platform = class {
             "RSA-PSS",
             true,
             ["sign"]);
-        let signature = await crypto.subtle.sign(
-            "RSASSA-PKCS1-v1_5",
-            _key,
-            data
-        );
+        let signature = await crypto.subtle.sign(rsaAlgorithmName, _key, data);
         return new Uint8Array(signature);
     }
 
@@ -88,12 +119,12 @@ export const browserPlatform: Platform = class {
         let encrypted = AES.encrypt(
             bytesToWordArray(data),
             bytesToWordArray(key), {
-            iv: bytesToWordArray(iv),
-            mode: mode.CBC,
-            padding: usePadding
-                ? pad.Pkcs7
-                : pad.NoPadding
-        });
+                iv: bytesToWordArray(iv),
+                mode: mode.CBC,
+                padding: usePadding
+                    ? pad.Pkcs7
+                    : pad.NoPadding
+            });
         return Uint8Array.of(...iv, ...this.base64ToBytes(encrypted.toString()));
     }
 
@@ -143,7 +174,7 @@ export const browserPlatform: Platform = class {
     }
 
     static async post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse> {
-        let _headers: string[][]  = headers ? Object.entries(headers) : [];
+        let _headers: string[][] = headers ? Object.entries(headers) : [];
         let resp = await fetch(url, {
             method: "POST",
             headers: [

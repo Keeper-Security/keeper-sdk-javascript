@@ -2,7 +2,7 @@ export class KeeperCommand<Response extends KeeperResponse = KeeperResponse> {
     command: string;
     username: string;
     client_version: string;
-    response?: Response
+    response: Response
 }
 
 export type AccountDataInclude =
@@ -172,6 +172,38 @@ export class RoleAddCommand extends AuthorizedCommand {
 
     visible_below: boolean;
     new_user_inherit: boolean;
+}
+
+export class TeamAddCommand extends AuthorizedCommand {
+
+    constructor(team_uid: string,
+                team_name: string,
+                node_id: number,
+                public_key: string,
+                private_key: string,
+                team_key: string,
+                encrypted_team_key: string) {
+        super();
+        this.team_uid = team_uid;
+        this.team_name = team_name;
+        this.node_id = node_id;
+        this.public_key = public_key;
+        this.private_key = private_key;
+        this.team_key = team_key;
+        this.encrypted_team_key = encrypted_team_key;
+    }
+
+    team_uid: string;
+    team_name: string;
+    node_id: number;
+    public_key: string;
+    private_key: string;
+    team_key: string;
+    encrypted_team_key: string;
+    restrict_edit: boolean = false;
+    restrict_share: boolean = false;
+    restrict_view: boolean = false;
+    manage_only: boolean = true;
 }
 
 export class EnterpriseUserAddCommand extends AuthorizedCommand<EnterpriseUserAddResponse> {

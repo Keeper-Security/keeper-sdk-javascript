@@ -5,9 +5,22 @@ import {
     GetEnterpriseDataCommand,
     GetEnterpriseDataResponse,
     NodeAddCommand,
-    RoleAddCommand, EnterpriseUserAddCommand
+    RoleAddCommand,
+    TeamAddCommand,
+    EnterpriseUserAddCommand
 } from "./commands";
-import {decryptFromStorage, decryptObjectFromStorage, encryptForStorage, encryptObjectForStorage, encryptKey, decryptKey} from "./utils";
+import {
+    decryptFromStorage,
+    decryptObjectFromStorage,
+    encryptForStorage,
+    encryptObjectForStorage,
+    encryptKey,
+    decryptKey,
+    generateUid,
+    generateEncryptionKey,
+    webSafe64FromBytes
+} from "./utils";
+import {platform} from "./platform";
 
 export class Company {
 
@@ -117,6 +130,18 @@ export class Company {
         let roleAddCommand = new RoleAddCommand(roleId, nodeId, this.encryptDisplayName(roleName));
         let response = await this.auth.executeCommand(roleAddCommand);
         return roleId;
+    }
+
+    async addTeam(nodeId: number, teamName: string) {
+        let teamUid = generateUid();
+        let teamKeyBytes = generateEncryptionKey();
+        let { privateKey, publicKey } = await platform.generateRSAKeyPair();
+        let publicKey64 = webSafe64FromBytes(publicKey);
+        let encryptedPrivateKey = encryptForStorage(privateKey, teamKeyBytes);
+        let teamKey = encryptForStorage(teamKeyBytes, this.auth.dataKey);
+        let encryptedTeamKey = await this.encryptKey(teamKeyBytes);
+        let teamAddCommand = new TeamAddCommand(teamUid, teamName, nodeId, publicKey64, encryptedPrivateKey, teamKey, encryptedTeamKey);
+        let response = await this.auth.executeCommand(teamAddCommand);
     }
 
     async addUser(nodeId: number, email: string, userName: string): Promise<{userId: number; verification_code: string}> {

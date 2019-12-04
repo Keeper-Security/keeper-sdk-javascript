@@ -13,6 +13,8 @@ export interface Platform {
 
     stringToBytes(data: string): Uint8Array;
 
+    generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
+
     publicEncrypt(data: Uint8Array, key: string): Uint8Array;
 
     privateSign(data: Uint8Array, key: string): Promise<Uint8Array>;

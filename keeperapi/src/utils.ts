@@ -1,11 +1,19 @@
 import {platform} from "./platform";
 
-export function webSafe64(source: string) {
+export function webSafe64(source: string): string {
     return source.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export function normal64(source: string) {
+export function webSafe64FromBytes(source: Uint8Array): string {
+    return webSafe64(platform.bytesToBase64(source));
+}
+
+export function normal64(source: string): string {
     return source.replace(/-/g, '+').replace(/_/g, '/') + '=='.substring(0, (3 * source.length) % 4);
+}
+
+export function normal64Bytes(source: string): Uint8Array {
+    return platform.base64ToBytes(normal64(source));
 }
 
 export function isTwoFactorResultCode(resultCode: string): boolean {
@@ -17,24 +25,24 @@ export function generateEncryptionKey(): Uint8Array {
 }
 
 export function generateUid(): string {
-    return webSafe64(platform.bytesToBase64(platform.getRandomBytes(16)));
+    return webSafe64FromBytes(platform.getRandomBytes(16));
 }
 
 export async function encryptKey(key: Uint8Array, withKey: Uint8Array): Promise<string> {
     let encryptedKey = await platform.aesGcmEncrypt(key, withKey);
-    return webSafe64(platform.bytesToBase64(encryptedKey));
+    return webSafe64FromBytes(encryptedKey);
 }
 
 export async function decryptKey(encryptedKey: string, withKey: Uint8Array): Promise<Uint8Array> {
-    return platform.aesGcmDecrypt(platform.base64ToBytes(normal64(encryptedKey)), withKey);
+    return platform.aesGcmDecrypt(normal64Bytes(encryptedKey), withKey);
 }
 
 export function encryptForStorage(data: Uint8Array, key: Uint8Array): string {
-    return webSafe64(platform.bytesToBase64(platform.aesCbcEncrypt(data, key, true)));
+    return webSafe64FromBytes(platform.aesCbcEncrypt(data, key, true));
 }
 
 export function decryptFromStorage(data: string, key: Uint8Array): Uint8Array {
-    return platform.aesCbcDecrypt(platform.base64ToBytes(normal64(data)), key, true);
+    return platform.aesCbcDecrypt(normal64Bytes(data), key, true);
 }
 
 export function encryptObjectForStorage<T>(obj: T, key: Uint8Array): string {

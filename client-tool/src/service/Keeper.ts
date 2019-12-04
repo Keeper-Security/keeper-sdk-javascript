@@ -116,9 +116,15 @@ export class Keeper {
         let nodeId = await company.addNode(company.data.nodes[0].node_id, nodeName);
         let subNode1 = await company.addNode(nodeId, nodeName + "_1");
         let subNode2 = await company.addNode(nodeId, nodeName + "_2");
+
         await company.addRole(nodeId, "Role " + nodeName);
         await company.addRole(subNode1, "Role " + nodeName + "_1");
         await company.addRole(subNode2, "Role " + nodeName + "_2");
+
+        await company.addTeam(nodeId, "Team " + nodeName);
+        await company.addTeam(subNode1, "Team " + nodeName + "_1");
+        await company.addTeam(subNode2, "Team " + nodeName + "_2");
+
         await company.addUser(nodeId, `admin+${nodeName.toLowerCase()}u1@yozik.us`, "User 1");
         await company.addUser(subNode1, `admin+${nodeName.toLowerCase()}u2@yozik.us`, "User 2");
         await company.addUser(subNode2, `admin+${nodeName.toLowerCase()}u3@yozik.us`, "User 3");

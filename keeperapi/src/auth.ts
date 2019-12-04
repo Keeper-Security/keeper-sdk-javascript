@@ -6,6 +6,7 @@ import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
 
 export interface AuthUI {
     getTwoFactorCode(): Promise<string>;
+
     displayDialog(): Promise<boolean>;
 }
 
@@ -25,17 +26,18 @@ export class Auth {
         let salt = preLoginResponse.salt[0];
         let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
         let authHash = await platform.calcAutoResponse(authHashKey);
-        let loginCommand: LoginCommand = {
-            command: "login",
-            username: username,
-            version: 2,
-            auth_response: webSafe64(authHash),
-            include: ["keys"], //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
-            client_version: "c14.0.0"
-        };
+
+        let loginCommand = new LoginCommand();
+        loginCommand.command = "login";
+        loginCommand.username = username;
+        loginCommand.version = 2;
+        loginCommand.auth_response = webSafe64(authHash);
+        loginCommand.include = ["keys"]; //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
+        loginCommand.client_version = "c14.0.0";
         if (this.managedCompanyId) {
             loginCommand.enterprise_id = this.managedCompanyId
         }
+
         let loginResponse: LoginResponse;
         while (true) {
             loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);

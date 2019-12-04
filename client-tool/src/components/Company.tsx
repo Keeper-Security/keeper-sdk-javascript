@@ -141,7 +141,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
                         Nodes
                     </Typography>
                     <List>{firstLevelNodes.map(x => this.renderNode(x))}</List>
-                    {/*{this.renderAddNodeForm()}*/}
+                    {this.renderAddNodeForm()}
                 </Paper>
                 <Paper className={this.classes.root}>
                     <Typography className={this.classes.caption} variant="h5">

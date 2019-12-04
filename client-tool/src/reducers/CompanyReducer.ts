@@ -43,7 +43,7 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
             };
 
         case getType(actions.progressAction):
-            let error = action.payload ? null : state.lastError;
+            let error = action.payload ? undefined : state.lastError;
             return {
                 ...state,
                 inProgress: action.payload,

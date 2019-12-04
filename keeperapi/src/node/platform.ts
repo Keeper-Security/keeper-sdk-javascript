@@ -28,6 +28,11 @@ export const nodePlatform: Platform = class {
         return Buffer.from(data);
     }
 
+    static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
+        // TODO implement node key generation
+        throw "Not Implemented";
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         return crypto.publicEncrypt({
             key: key,
