@@ -449,7 +449,7 @@ export interface Node {
     displayName?: string;
     nodes?: Node[];
     roles?: Role[];
-    teams?: Team[];
+    teams?: CompanyTeam[];
     users?: User[];
 }
 

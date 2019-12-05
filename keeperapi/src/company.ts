@@ -70,6 +70,14 @@ export class Company {
             node.roles.push(role);
         }
 
+        for (let team of this._data.teams) {
+            let node = this._data.nodes.find(x => x.node_id == team.node_id);
+            if (!node.teams) {
+                node.teams = []
+            }
+            node.teams.push(team);
+        }
+
         for (let user of this._data.users) {
             switch (user.key_type) {
                 case "encrypted_by_data_key":

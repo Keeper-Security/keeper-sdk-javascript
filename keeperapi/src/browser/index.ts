@@ -7,6 +7,7 @@ export * from "../company";
 export * from "../configuration";
 export * from "../commands";
 export * from "../utils";
+export * from "../platform";
 export * from "../APIRequest";
 import {connectPlatform} from "../platform";
 import {browserPlatform} from "./platform";

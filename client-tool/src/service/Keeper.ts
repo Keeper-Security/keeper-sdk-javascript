@@ -5,12 +5,16 @@ import {
     Node,
     Role,
     User,
-    Team,
+    CompanyTeam,
     EnterpriseNodeToManagedCompanyCommand,
     EnterpriseRegistrationByMspCommand,
-    encryptObjectForStorage,
     EncryptedData,
+    encryptObjectForStorage,
+    encryptKey,
     generateEncryptionKey,
+    webSafe64FromBytes,
+    encryptForStorage,
+    platform
 } from "keeperapi";
 
 export function flatMap<T, U>(array: T[], callbackfn: (value: T, index: number, array: T[]) => U[]): U[] {
@@ -29,8 +33,8 @@ export function getNodeUsers(node: Node): User[] {
     return [...(node.users || []), ...node.nodes ? flatMap(node.nodes!, getNodeUsers) : []];
 }
 
-export function getNodeTeams(node: Node): Team[] {
-    return [...(node.teams || []), ...node.teams ? flatMap(node.nodes!, getNodeTeams) : []];
+export function getNodeTeams(node: Node): CompanyTeam[] {
+    return [...(node.teams || []), ...node.nodes ? flatMap(node.nodes!, getNodeTeams) : []];
 }
 
 export class Keeper {
