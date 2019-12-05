@@ -90,7 +90,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
 
     private renderNode(props: NodeProps) {
         let secondary = props.errorMessage
-            ? <span className={this.classes.errorMessage}>{props.errorMessage}</span>
+            ? <span className={this.classes.errorMessage} dangerouslySetInnerHTML={{__html: props.errorMessage}}/>
             : <span>{`Users: ${props.userCount} Roles: ${props.roleCount} Teams: ${props.teamCount}`}</span>;
         return (
             <ListItem key={props.node.node_id}>
@@ -131,7 +131,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
         return (
             <Container className={this.classes.container} maxWidth="md">
                 <div className={this.classes.refreshContainer}>
-                    <CircularProgress style={ this.props.inProgress ? {} : { visibility: "hidden" }}/>
+                    <CircularProgress style={this.props.inProgress ? {} : {visibility: "hidden"}}/>
                     <Fab onClick={_ => this.props.refresh()}>
                         <RefreshIcon/>
                     </Fab>

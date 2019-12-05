@@ -62,7 +62,9 @@ export class Company {
         }
 
         for (let role of this._data.roles) {
-            role.displayName = decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
+            role.displayName = role.role_type === "pool_manager"
+                ? "License Purchaser"
+                : decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
             let node = this._data.nodes.find(x => x.node_id == role.node_id);
             if (!node.roles) {
                 node.roles = []
@@ -92,6 +94,22 @@ export class Company {
             let node = this._data.nodes.find(x => x.node_id == user.node_id);
             if (!node.users) {
                 node.users = []
+            }
+            for (let user_role of this._data.role_users) {
+                if (user_role.enterprise_user_id == user.enterprise_user_id) {
+                    if (!user.roles) {
+                        user.roles = []
+                    }
+                    user.roles.push(this._data.roles.find(x => x.role_id === user_role.role_id))
+                }
+            }
+            for (let user_team of this._data.team_users) {
+                if (user_team.enterprise_user_id == user.enterprise_user_id) {
+                    if (!user.teams) {
+                        user.teams = []
+                    }
+                    user.teams.push(this._data.teams.find(x => x.team_uid === user_team.team_uid))
+                }
             }
             node.users.push(user);
         }
@@ -143,7 +161,7 @@ export class Company {
     async addTeam(nodeId: number, teamName: string) {
         let teamUid = generateUid();
         let teamKeyBytes = generateEncryptionKey();
-        let { privateKey, publicKey } = await platform.generateRSAKeyPair();
+        let {privateKey, publicKey} = await platform.generateRSAKeyPair();
         let publicKey64 = webSafe64FromBytes(publicKey);
         let encryptedPrivateKey = encryptForStorage(privateKey, teamKeyBytes);
         let teamKey = encryptForStorage(teamKeyBytes, this.auth.dataKey);

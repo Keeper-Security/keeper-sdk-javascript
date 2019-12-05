@@ -1,40 +1,37 @@
 import {
     Auth,
-    Vault,
     Company,
+    CompanyTeam,
+    EncryptedData,
+    encryptObjectForStorage,
+    EnterpriseNodeToManagedCompanyCommand,
+    EnterpriseRegistrationByMspCommand,
+    generateEncryptionKey,
+    KeeperEnvironment,
     Node,
     Role,
     User,
-    CompanyTeam,
-    EnterpriseNodeToManagedCompanyCommand,
-    EnterpriseRegistrationByMspCommand,
-    EncryptedData,
-    encryptObjectForStorage,
-    encryptKey,
-    generateEncryptionKey,
-    webSafe64FromBytes,
-    encryptForStorage,
-    platform
+    Vault
 } from "keeperapi";
 
-export function flatMap<T, U>(array: T[], callbackfn: (value: T, index: number, array: T[]) => U[]): U[] {
-    return Array.prototype.concat(...array.map(callbackfn));
+export function flatMap<T, U>(array: T[] | undefined, callbackfn: (value: T, index: number, array: T[]) => U[]): U[] {
+    return array ? Array.prototype.concat(...array.map(callbackfn)) : [];
 }
 
 export function getNodes(node: Node): Node[] {
-    return [node, ...node.nodes ? flatMap(node.nodes!, getNodes) : []];
+    return [node, ...flatMap(node.nodes, getNodes)];
 }
 
 export function getNodeRoles(node: Node): Role[] {
-    return [...(node.roles || []), ...node.nodes ? flatMap(node.nodes!, getNodeRoles) : []];
+    return [...(node.roles || []), ...flatMap(node.nodes, getNodeRoles)];
 }
 
 export function getNodeUsers(node: Node): User[] {
-    return [...(node.users || []), ...node.nodes ? flatMap(node.nodes!, getNodeUsers) : []];
+    return [...(node.users || []), ...flatMap(node.nodes, getNodeUsers)];
 }
 
 export function getNodeTeams(node: Node): CompanyTeam[] {
-    return [...(node.teams || []), ...node.nodes ? flatMap(node.nodes!, getNodeTeams) : []];
+    return [...(node.teams || []), ...flatMap(node.nodes, getNodeTeams)];
 }
 
 export class Keeper {
@@ -44,6 +41,7 @@ export class Keeper {
 
     static async login(user: string, password: string) {
         this.auth = new Auth({
+            // host: KeeperEnvironment.DEV
             host: "local.keepersecurity.com"
         });
         await this.auth.login(user, password);
@@ -58,7 +56,7 @@ export class Keeper {
 
     static async fetchCompany(): Promise<Company> {
         let company = new Company(this.auth);
-        await company.load(["nodes", "users", "roles", "teams", "managed_companies"]);
+        await company.load(["nodes", "users", "roles", "teams", "role_users", "team_users", "managed_companies"]);
         return company;
     }
 
@@ -71,11 +69,37 @@ export class Keeper {
     static async convertNode(node: Node, company: Company): Promise<string> {
         let nodes = getNodes(node);
         let roles = getNodeRoles(node);
+        let teams = getNodeTeams(node);
         let users = getNodeUsers(node);
+
+        let allRoles = getNodeRoles(company.data.nodes[0]);
+        let outsideRoles = allRoles.filter(x => !roles.includes(x));
+        let allTeams = getNodeTeams(company.data.nodes[0]);
+        let outsideTeams = allTeams.filter(x => !teams.includes(x));
+
+        let errors = [];
 
         let pendingUsers = users.filter(x => x.status === "invited");
         if (pendingUsers.length > 0)
-            throw `Pending users must be removed: ${pendingUsers.map(x => x.username).join()}`;
+            errors.push(`Pending users must be removed: ${pendingUsers.map(x => x.username).join()}`);
+
+        for (let user of users) {
+            if (user.roles) {
+                let outRoles = user.roles!.filter(x => outsideRoles.includes(x));
+                if (outRoles.length > 0) {
+                    errors.push(`User ${user.username} belongs to the following outside roles: ${outRoles.map(x => x.displayName).join()}`);
+                }
+            }
+            if (user.teams) {
+                let outTeams = user.teams!.filter(x => outsideTeams.includes(x));
+                if (outTeams.length > 0) {
+                    errors.push(`User ${user.username} belongs to the following outside teams: ${outTeams.map(x => x.name).join()}`);
+                }
+            }
+        }
+
+        if (errors.length > 0)
+            throw errors.join("<br/>");
 
         let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
         // let managedCompany = company.data.managed_companies![company.data.managed_companies!.length - 1];

@@ -425,6 +425,8 @@ export interface User {
     username: string;
     status: "active" | "invited";
     account_share_expiration?: number;
+    roles?: Role[];
+    teams?: CompanyTeam[];
 }
 
 export interface Role {
@@ -434,6 +436,7 @@ export interface Role {
     role_id: number;
     node_id: number;
     encrypted_data: string;
+    role_type: "pool_manager" | undefined
 }
 
 export interface Node {
