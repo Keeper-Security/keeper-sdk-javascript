@@ -394,7 +394,8 @@ export interface GetEnterpriseDataResponse extends KeeperResponse {
     role_keys2: RoleKeys2[];
     sso_services: SsoService[];
     queued_team_users: QueuedTeamUser[];
-    scims: SCIM[];
+    bridges: Bridge[];
+    scims?: SCIM[];
     managed_companies?: ManagedCompany[];
     msp_key?: MSPKey;
 }
@@ -550,6 +551,12 @@ export interface CompanyTeam {
     team_uid: string;
     node_id: number;
     encrypted_data?: string;
+}
+
+export interface Bridge {
+    bridge_id: number;
+    node_id: number;
+    status: string;
 }
 
 export interface SCIM {

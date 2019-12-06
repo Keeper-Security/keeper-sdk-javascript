@@ -56,7 +56,9 @@ export class Keeper {
 
     static async fetchCompany(): Promise<Company> {
         let company = new Company(this.auth);
-        await company.load(["nodes", "users", "roles", "teams", "role_users", "team_users", "managed_companies"]);
+        await company.load(["nodes", "users", "roles", "teams", "role_users", "team_users",
+            "managed_nodes", "managed_companies", "bridges", "scims", "email_provision", "sso_services"
+        ]);
         return company;
     }
 
@@ -72,12 +74,21 @@ export class Keeper {
         let teams = getNodeTeams(node);
         let users = getNodeUsers(node);
 
+        // perform validations
+        let allNodes = getNodes(company.data.nodes[0]);
+        let outsideNodes = allNodes.filter(x => !nodes.includes(x));
         let allRoles = getNodeRoles(company.data.nodes[0]);
         let outsideRoles = allRoles.filter(x => !roles.includes(x));
         let allTeams = getNodeTeams(company.data.nodes[0]);
         let outsideTeams = allTeams.filter(x => !teams.includes(x));
+        let allUsers = getNodeUsers(company.data.nodes[0]);
+        let outsideUsers = allUsers.filter(x => !users.includes(x));
 
         let errors = [];
+
+        // for (let node of nodes) {
+        //     if (company.data.)
+        // }
 
         let pendingUsers = users.filter(x => x.status === "invited");
         if (pendingUsers.length > 0)
@@ -98,8 +109,41 @@ export class Keeper {
             }
         }
 
+        function userIsInRole(user: User, role: Role) {
+            return user.roles && user.roles.includes(role);
+        }
+
+        function nodeIsManagedBy(node: Node, role: Role) {
+            return company.data.managed_nodes.find(x => x.managed_node_id === node.node_id && x.role_id === role.role_id);
+        }
+
+        for (let role of roles) {
+            let outUsers = outsideUsers.filter(x => userIsInRole(x, role));
+            if (outUsers.length > 0) {
+                errors.push(`Role ${role.displayName} contains the following outside users: ${outUsers.map(x => x.username).join()}`);
+            }
+
+            let outNodes = outsideNodes.filter(x => nodeIsManagedBy(x, role));
+            if (outUsers.length > 0) {
+                errors.push(`Role ${role.displayName} manages the following outside nodes: ${outNodes.map(x => x.displayName).join()}`);
+            }
+        }
+
+        function userIsInTeam(user: User, team: CompanyTeam) {
+            return user.teams && user.teams.includes(team);
+        }
+
+        for (let team of teams) {
+            let outUsers = outsideUsers.filter(x => userIsInTeam(x, team));
+            if (outUsers.length > 0) {
+                errors.push(`Team ${team.name} contains the following outside users: ${outUsers.map(x => x.username).join()}`);
+            }
+        }
+
         if (errors.length > 0)
             throw errors.join("<br/>");
+
+        throw "not yet!";
 
         let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
         // let managedCompany = company.data.managed_companies![company.data.managed_companies!.length - 1];
