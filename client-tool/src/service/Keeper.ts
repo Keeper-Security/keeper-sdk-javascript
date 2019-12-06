@@ -86,9 +86,20 @@ export class Keeper {
 
         let errors = [];
 
-        // for (let node of nodes) {
-        //     if (company.data.)
-        // }
+        for (let node of nodes) {
+            if (company.data.bridges && company.data.bridges.find(x => x.node_id === node.node_id)) {
+                errors.push("Remove bridge provisioning before conversion");
+            }
+            if (company.data.scims && company.data.scims.find(x => x.node_id === node.node_id)) {
+                errors.push("Remove SCIM provisioning before conversion");
+            }
+            if (company.data.email_provision && company.data.email_provision.find(x => x.node_id === node.node_id)) {
+                errors.push("Remove email provisioning before conversion");
+            }
+            if (company.data.managed_companies && company.data.managed_companies.find(x => x.msp_node_id === node.node_id)) {
+                errors.push("Remove managed companies before conversion");
+            }
+        }
 
         let pendingUsers = users.filter(x => x.status === "invited");
         if (pendingUsers.length > 0)
@@ -142,8 +153,6 @@ export class Keeper {
 
         if (errors.length > 0)
             throw errors.join("<br/>");
-
-        throw "not yet!";
 
         let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
         // let managedCompany = company.data.managed_companies![company.data.managed_companies!.length - 1];

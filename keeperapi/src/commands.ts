@@ -396,6 +396,7 @@ export interface GetEnterpriseDataResponse extends KeeperResponse {
     queued_team_users: QueuedTeamUser[];
     bridges: Bridge[];
     scims?: SCIM[];
+    email_provision?: EmailProvision[];
     managed_companies?: ManagedCompany[];
     msp_key?: MSPKey;
 }
@@ -561,9 +562,16 @@ export interface Bridge {
 
 export interface SCIM {
     scim_id: number;
-    last_synced: number;
     node_id: number;
     status: string;
+    last_synced: number;
+}
+
+export interface EmailProvision {
+    id: number;
+    node_id: number;
+    domain: string;
+    method: string;
 }
 
 export interface QueuedTeamUser {
