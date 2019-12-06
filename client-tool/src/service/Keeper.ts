@@ -1,5 +1,6 @@
 import {
     Auth,
+    AuthUI,
     Company,
     CompanyTeam,
     EncryptedData,
@@ -13,6 +14,8 @@ import {
     User,
     Vault
 } from "keeperapi";
+import {Subject} from "rxjs";
+import {take} from "rxjs/operators";
 
 export function flatMap<T, U>(array: T[] | undefined, callbackfn: (value: T, index: number, array: T[]) => U[]): U[] {
     return array ? Array.prototype.concat(...array.map(callbackfn)) : [];
@@ -34,16 +37,53 @@ export function getNodeTeams(node: Node): CompanyTeam[] {
     return [...(node.teams || []), ...flatMap(node.nodes, getNodeTeams)];
 }
 
+class AuthUIConnect implements AuthUI {
+
+    secondFactor: Subject<string> = new Subject<string>();
+
+    authComponent?: AuthUIComponent;
+
+    async displayDialog(): Promise<boolean> {
+        return true;
+    }
+
+    getTwoFactorCode(errorMessage?: string): Promise<string> {
+        if (this.authComponent) {
+            this.authComponent.prompt2FA(errorMessage);
+            return this.secondFactor.pipe(take(1)).toPromise();
+        }
+        else
+            throw "UI callback for 2fa is not registered";
+    }
+}
+
+export interface AuthUIComponent {
+    prompt2FA(errorMessage?: string): void
+}
+
 export class Keeper {
 
     static auth: Auth;
     private static authPassword: string;
+    private static authUIConnect: AuthUIConnect = new AuthUIConnect();
+
+    static registerAuthComponent(authComponent: AuthUIComponent) {
+        this.authUIConnect.authComponent = authComponent;
+    }
+
+    static unRegisterAuthComponent() {
+        this.authUIConnect.authComponent = undefined;
+    }
+
+    static submitSecondFactor(code: string) {
+        this.authUIConnect.secondFactor.next(code);
+    }
 
     static async login(user: string, password: string) {
         this.auth = new Auth({
             // host: KeeperEnvironment.DEV
-            host: "local.keepersecurity.com"
-        });
+            host: "local.keepersecurity.com",
+        }, this.authUIConnect);
         await this.auth.login(user, password);
         this.authPassword = password;
     }

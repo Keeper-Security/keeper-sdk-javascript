@@ -1,11 +1,11 @@
 import {ClientConfiguration} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
-import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse} from "./commands";
+import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
 
 export interface AuthUI {
-    getTwoFactorCode(): Promise<string>;
+    getTwoFactorCode(errorMessage?: string): Promise<string>;
 
     displayDialog(): Promise<boolean>;
 }
@@ -46,7 +46,10 @@ export class Auth {
             if (isTwoFactorResultCode(loginResponse.result_code)) {
                 if (!this.authUI)
                     break;
-                let token = await this.authUI.getTwoFactorCode();
+                let errorMessage = loginResponse.result_code === LoginResponseResultCode.InvalidTOTP
+                    ? loginResponse.message
+                    : undefined;
+                let token = await this.authUI.getTwoFactorCode(errorMessage);
                 if (!token)
                     break;
                 loginCommand["2fa_token"] = token;

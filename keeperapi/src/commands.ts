@@ -315,12 +315,35 @@ export interface Settings {
     master_password_last_modified: number;
 }
 
+export enum LoginResponseResultCode {
+    Success = "auth_success",
+    AuthExpired = "auth_expired", // session token exists but valid only to change the master password
+    AuthExpiredTransfer = "auth_expired_transfer", // session token exists but valid only to accept account transfer
+    AuthFailed = "auth_failed",
+    RegionRedirect = "region_redirect", // region_host contains the data center to redirect to
+    NeedTOTP = "need_totp",
+    InvalidTOTP = "invalid_totp",
+    InvalidDeviceToken = "invalid_device_token",
+    InvalidBackupCode = "invalid_backup_code",
+    FailedSending = "failed_sending",  // Keeper server failed to send the 2fa
+    NotEnrolled = "not_enrolled",      // not enrolled in the set two factor channel
+    Throttled = "throttled",   // too many requests per minute
+    AccountLocked = "account_locked",
+    NotAuthorized = "not_authorized", // trying to perform admin operations as a regular user
+    VersionIncompatible = "version_incompatible", // client version is incompatible with the command
+    IPAddressNotAllowed = "ip_address_not_allowed",
+    RestrictedClientType = "restricted_client_type" 
+    // there are a few more obscure ones, see https://keeper.atlassian.net/wiki/spaces/KA/pages/8028335/login
+}
+
 export interface LoginResponse extends KeeperResponse {
     session_token: string
     client_key: string;
     settings: Settings;
     is_enterprise_admin: boolean;
     license: License;
+    result_code: LoginResponseResultCode;
+    region_host?: string;
     keys: Keys;
     sync_log: SyncLog[];
 }

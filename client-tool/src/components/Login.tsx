@@ -6,19 +6,23 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import {withStyles} from "@material-ui/styles";
+import {AuthUIComponent, Keeper} from "../service/Keeper";
 
-
-type ExtraProps = {
-    classes: any;
+export type LoginDispatchProps = {
     updateUser: (user: string) => any;
     performLogin: (password: string) => any;
+    prompt2FA: (errorMessage?: string) => any;
+    submit2FA: (code: string) => any;
 }
 
 export type LoginStateProps = {
-    user: string
+    classes?: any;
+    user: string,
+    secondFactor: boolean,
+    secondFactorError?: string
 }
 
-type LoginProps = ExtraProps & LoginStateProps;
+type LoginProps = LoginDispatchProps & LoginStateProps;
 
 type LoginState = {}
 
@@ -35,7 +39,15 @@ const styles = {
     },
 };
 
-class Login extends React.Component<LoginProps, LoginState> {
+class Login extends React.Component<LoginProps, LoginState> implements AuthUIComponent {
+
+    componentDidMount(): void {
+        Keeper.registerAuthComponent(this);
+    }
+
+    componentWillUnmount(): void {
+        Keeper.unRegisterAuthComponent();
+    }
 
     public render() {
         const {classes} = this.props;
@@ -44,7 +56,11 @@ class Login extends React.Component<LoginProps, LoginState> {
                 <form className={classes.form}
                       onSubmit={(e: any) => {
                           e.preventDefault();
-                          this.props.performLogin(e.target.password.value);
+                          if (this.props.secondFactor) {
+                              this.props.submit2FA(e.target.secondFactor.value)
+                          } else {
+                              this.props.performLogin(e.target.password.value);
+                          }
                       }}>
                     <Typography component="h1" variant="h5">
                         Sign in
@@ -73,6 +89,21 @@ class Login extends React.Component<LoginProps, LoginState> {
                         id="password"
                         autoComplete="current-password"
                     />
+                    {
+                        this.props.secondFactor &&
+                        <TextField
+                            error={!!this.props.secondFactorError}
+                            helperText={this.props.secondFactorError}
+                            variant="outlined"
+                            margin="normal"
+                            required={true}
+                            fullWidth={true}
+                            id="secondFactor"
+                            label="Verification Code"
+                            name="secondFactor"
+                            autoFocus={true}
+                        />
+                    }
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary"/>}
                         label="Remember me"
@@ -89,6 +120,10 @@ class Login extends React.Component<LoginProps, LoginState> {
                 </form>
             </Container>
         );
+    }
+
+    prompt2FA(errorMessage?: string): void {
+        this.props.prompt2FA(errorMessage);
     }
 }
 

@@ -6,6 +6,8 @@ import {
     EPIC_FAILURE,
     LOGIN_SET_USER,
     LOGIN,
+    SECOND_FACTOR_PROMPT,
+    SECOND_FACTOR_SUBMIT,
     LOGOUT,
     LOGGED_IN,
     LOADED,
@@ -26,6 +28,10 @@ export const epicFailureAction = createAction(EPIC_FAILURE)<any>();
 export const setUserAction = createAction(LOGIN_SET_USER)<{ user: string }>();
 
 export const loginAction = createAction(LOGIN)<{ password: string }>();
+
+export const secondFactorPromptAction = createAction(SECOND_FACTOR_PROMPT)<string | undefined>();
+
+export const secondFactorSubmitAction = createAction(SECOND_FACTOR_SUBMIT)<string>();
 
 export const logoutAction = createAction(LOGOUT)();
 
