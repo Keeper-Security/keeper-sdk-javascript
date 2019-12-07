@@ -75,10 +75,7 @@ export class KeeperEndpoint {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey);
             return classRef.decode(decrypted);
         } catch {
-            let errorMsg = platform.bytesToString(response.data);
-            let error = new Error(errorMsg);
-            error["response"] = errorMsg;
-            throw(error);
+            throw(new Error(platform.bytesToString(response.data)));
         }
     }
 
@@ -94,7 +91,7 @@ export class KeeperEndpoint {
         }
         let json = JSON.parse(platform.bytesToString(decrypted));
         if (json.result !== "success" && !isTwoFactorResultCode(json.result_code)) {
-            throw(json.result_code);
+            throw(json);
         }
         return json as T;
     }

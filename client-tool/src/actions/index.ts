@@ -1,5 +1,5 @@
 import {createAction} from "typesafe-actions";
-import {Company, Node} from "keeperapi";
+import {Company, Node, LoginError} from "keeperapi";
 
 import {
     EPIC_SUCCESS,
@@ -10,6 +10,7 @@ import {
     SECOND_FACTOR_SUBMIT,
     LOGOUT,
     LOGGED_IN,
+    LOGIN_FAILURE,
     LOADED,
     REFRESH,
     PROGRESS,
@@ -36,6 +37,8 @@ export const secondFactorSubmitAction = createAction(SECOND_FACTOR_SUBMIT)<strin
 export const logoutAction = createAction(LOGOUT)();
 
 export const loggedInAction = createAction(LOGGED_IN)();
+
+export const loginFailureAction = createAction(LOGIN_FAILURE)<LoginError>();
 
 export const loadedAction = createAction(LOADED)<Company>();
 

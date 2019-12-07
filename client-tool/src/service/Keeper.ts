@@ -81,8 +81,8 @@ export class Keeper {
 
     static async login(user: string, password: string) {
         this.auth = new Auth({
-            // host: KeeperEnvironment.DEV
-            host: "local.keepersecurity.com",
+            host: KeeperEnvironment.DEV
+            // host: "local.keepersecurity.com",
         }, this.authUIConnect);
         await this.auth.login(user, password);
         this.authPassword = password;

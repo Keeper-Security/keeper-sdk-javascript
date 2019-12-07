@@ -6,6 +6,7 @@ export const SECOND_FACTOR_PROMPT   = "@@login/2FA_PROMPT";
 export const SECOND_FACTOR_SUBMIT   = "@@login/2FA_SUBMIT";
 export const LOGOUT   = "@@login/LOGOUT";
 export const LOGGED_IN   = "@@login/LOGGED_IN";
+export const LOGIN_FAILURE   = "@@login/LOGIN_FAILURE";
 export const LOADED   = "@@company/LOADED";
 export const REFRESH   = "@@company/REFRESH";
 export const PROGRESS   = "@@company/PROGRESS";

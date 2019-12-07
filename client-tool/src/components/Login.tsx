@@ -19,6 +19,8 @@ export type LoginStateProps = {
     classes?: any;
     user: string,
     secondFactor: boolean,
+    userError?: string,
+    passwordError?: string,
     secondFactorError?: string
 }
 
@@ -66,6 +68,8 @@ class Login extends React.Component<LoginProps, LoginState> implements AuthUICom
                         Sign in
                     </Typography>
                     <TextField
+                        error={!!this.props.userError}
+                        helperText={this.props.userError}
                         variant="outlined"
                         margin="normal"
                         required={true}
@@ -79,6 +83,8 @@ class Login extends React.Component<LoginProps, LoginState> implements AuthUICom
                         onChange={e => this.props.updateUser(e.target.value)}
                     />
                     <TextField
+                        error={!!this.props.passwordError}
+                        helperText={this.props.passwordError}
                         variant="outlined"
                         margin="normal"
                         required={true}

@@ -7,9 +7,11 @@ type Action = ActionType<typeof actions>;
 
 export interface LoginState {
     readonly user?: string;
-    readonly showSecondFactor: boolean;
-    readonly secondFactorError?: string;
     readonly loggedIn: boolean;
+    readonly showSecondFactor: boolean;
+    readonly userError?: string;
+    readonly passwordError?: string;
+    readonly secondFactorError?: string;
 }
 
 const initialState = {
@@ -23,7 +25,16 @@ export const loginReducer = (state: LoginState = initialState, action: Action): 
 
         case getType(actions.setUserAction):
             return {
-                ...state, user: action.payload.user
+                user: action.payload.user,
+                loggedIn: false,
+                showSecondFactor: false
+            };
+
+        case getType(actions.loginAction):
+            return {
+                ...state,
+                userError: undefined,
+                passwordError: undefined
             };
 
         case getType(actions.logoutAction):
@@ -36,6 +47,30 @@ export const loginReducer = (state: LoginState = initialState, action: Action): 
                 ...state, loggedIn: true
             };
 
+        case getType(actions.loginFailureAction):
+            let error = {};
+            switch (action.payload.error) {
+                case "user_does_not_exist":
+                    error = {
+                        userError: action.payload.message
+                    };
+                    break;
+                case "auth_failed":
+                    error = {
+                        passwordError: "Invalid email or password combination, please re-enter."
+                    };
+                    break;
+                default:
+                    error = {
+                        passwordError: action.payload.message || action.payload.error
+                    };
+                    break;
+            }
+            return {
+                ...state,
+                ...error
+            };
+
         case getType(actions.secondFactorPromptAction):
             return {
                 ...state,
@@ -46,7 +81,7 @@ export const loginReducer = (state: LoginState = initialState, action: Action): 
         case getType(actions.secondFactorSubmitAction):
             Keeper.submitSecondFactor(action.payload);
             return {
-                ...state, showSecondFactor: false
+                ...state, secondFactorError: undefined
             };
 
         default:

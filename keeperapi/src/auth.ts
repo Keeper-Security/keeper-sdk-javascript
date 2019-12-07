@@ -6,8 +6,32 @@ import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
 
 export interface AuthUI {
     getTwoFactorCode(errorMessage?: string): Promise<string>;
-
     displayDialog(): Promise<boolean>;
+}
+
+export type LoginError = {
+    error: string;
+    message: string;
+}
+
+function unifyLoginError(e: any): LoginError {
+    if (e instanceof Error) {
+        try {
+            return JSON.parse(e.message);
+        }
+        catch (jsonError) {
+            return {
+                error: "unknown",
+                message: e.message
+            }
+        }
+    }
+    else {
+        return {
+            error: e.result_code,
+            message: e.result_code
+        }
+    }
 }
 
 export class Auth {
@@ -22,44 +46,49 @@ export class Auth {
     }
 
     async login(username: string, password: string) {
-        let preLoginResponse = await this.endpoint.getPreLogin(username);
-        let salt = preLoginResponse.salt[0];
-        let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
-        let authHash = await platform.calcAutoResponse(authHashKey);
+        try {
+            let preLoginResponse = await this.endpoint.getPreLogin(username);
+            let salt = preLoginResponse.salt[0];
+            let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
+            let authHash = await platform.calcAutoResponse(authHashKey);
 
-        let loginCommand = new LoginCommand();
-        loginCommand.command = "login";
-        loginCommand.username = username;
-        loginCommand.version = 2;
-        loginCommand.auth_response = webSafe64(authHash);
-        loginCommand.include = ["keys"]; //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
-        loginCommand.client_version = "c14.0.0";
-        if (this.managedCompanyId) {
-            loginCommand.enterprise_id = this.managedCompanyId
-        }
-
-        let loginResponse: LoginResponse;
-        while (true) {
-            loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
-            if (loginResponse.result_code === "auth_success")
-                break;
-            if (isTwoFactorResultCode(loginResponse.result_code)) {
-                if (!this.authUI)
-                    break;
-                let errorMessage = loginResponse.result_code === LoginResponseResultCode.InvalidTOTP
-                    ? loginResponse.message
-                    : undefined;
-                let token = await this.authUI.getTwoFactorCode(errorMessage);
-                if (!token)
-                    break;
-                loginCommand["2fa_token"] = token;
-                loginCommand["2fa_type"] = "one_time";
-                loginCommand["device_token_expire_days"] = 9999;
+            let loginCommand = new LoginCommand();
+            loginCommand.command = "login";
+            loginCommand.username = username;
+            loginCommand.version = 2;
+            loginCommand.auth_response = webSafe64(authHash);
+            loginCommand.include = ["keys"]; //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
+            loginCommand.client_version = "c14.0.0";
+            if (this.managedCompanyId) {
+                loginCommand.enterprise_id = this.managedCompanyId
             }
+
+            let loginResponse: LoginResponse;
+            while (true) {
+                loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
+                if (loginResponse.result_code === "auth_success")
+                    break;
+                if (isTwoFactorResultCode(loginResponse.result_code)) {
+                    if (!this.authUI)
+                        break;
+                    let errorMessage = loginResponse.result_code === LoginResponseResultCode.InvalidTOTP
+                        ? loginResponse.message
+                        : undefined;
+                    let token = await this.authUI.getTwoFactorCode(errorMessage);
+                    if (!token)
+                        break;
+                    loginCommand["2fa_token"] = token;
+                    loginCommand["2fa_type"] = "one_time";
+                    loginCommand["device_token_expire_days"] = 9999;
+                }
+            }
+            this._sessionToken = loginResponse.session_token;
+            this._username = username;
+            this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
         }
-        this._sessionToken = loginResponse.session_token;
-        this._username = username;
-        this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
+        catch (e) {
+            throw unifyLoginError(e);
+        }
     }
 
     async managedCompanyLogin(username: string, password: string, companyId: number) {

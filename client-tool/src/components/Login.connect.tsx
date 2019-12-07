@@ -16,6 +16,8 @@ interface OwnProps {
 function mapStateToProps(state: RootState): LoginStateProps {
     return {
         user: state.login.user || "",
+        userError: state.login.userError,
+        passwordError: state.login.passwordError,
         secondFactor: state.login.showSecondFactor,
         secondFactorError: state.login.secondFactorError
     };

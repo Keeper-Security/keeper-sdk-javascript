@@ -332,7 +332,7 @@ export enum LoginResponseResultCode {
     NotAuthorized = "not_authorized", // trying to perform admin operations as a regular user
     VersionIncompatible = "version_incompatible", // client version is incompatible with the command
     IPAddressNotAllowed = "ip_address_not_allowed",
-    RestrictedClientType = "restricted_client_type" 
+    RestrictedClientType = "restricted_client_type"
     // there are a few more obscure ones, see https://keeper.atlassian.net/wiki/spaces/KA/pages/8028335/login
 }
 
