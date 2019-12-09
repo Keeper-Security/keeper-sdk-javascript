@@ -110,10 +110,10 @@ class Login extends React.Component<LoginProps, LoginState> implements AuthUICom
                             autoFocus={true}
                         />
                     }
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary"/>}
-                        label="Remember me"
-                    />
+                    {/*<FormControlLabel*/}
+                    {/*    control={<Checkbox value="remember" color="primary"/>}*/}
+                    {/*    label="Remember me"*/}
+                    {/*/>*/}
                     <Button
                         type="submit"
                         fullWidth={true}

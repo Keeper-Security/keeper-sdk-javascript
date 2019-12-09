@@ -26,7 +26,8 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
         case getType(actions.loadedAction):
             return {
                 ...state,
-                company: action.payload
+                company: action.payload,
+                lastError: undefined
             };
 
         case getType(actions.epicFailureAction):
@@ -38,7 +39,7 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
                 ...state,
                 lastError: {
                     node: action.payload.node,
-                    message: action.payload.error
+                    message: action.payload.error.message || action.payload.error
                 }
             };
 

@@ -39,7 +39,9 @@ export const loginReducer = (state: LoginState = initialState, action: Action): 
 
         case getType(actions.logoutAction):
             return {
-                ...state, loggedIn: false
+                ...state,
+                loggedIn: false,
+                showSecondFactor: false
             };
 
         case getType(actions.loggedInAction):

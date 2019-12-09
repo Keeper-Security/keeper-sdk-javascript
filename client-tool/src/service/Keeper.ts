@@ -51,8 +51,7 @@ class AuthUIConnect implements AuthUI {
         if (this.authComponent) {
             this.authComponent.prompt2FA(errorMessage);
             return this.secondFactor.pipe(take(1)).toPromise();
-        }
-        else
+        } else
             throw "UI callback for 2fa is not registered";
     }
 }
@@ -81,8 +80,8 @@ export class Keeper {
 
     static async login(user: string, password: string) {
         this.auth = new Auth({
-            host: KeeperEnvironment.DEV
-            // host: "local.keepersecurity.com",
+            // host: KeeperEnvironment.DEV
+            host: "local.keepersecurity.com",
         }, this.authUIConnect);
         await this.auth.login(user, password);
         this.authPassword = password;
@@ -108,7 +107,7 @@ export class Keeper {
         }, key);
     }
 
-    static async convertNode(node: Node, company: Company): Promise<string> {
+    static async convertNode(node: Node, company: Company) {
         let nodes = getNodes(node);
         let roles = getNodeRoles(node);
         let teams = getNodeTeams(node);
@@ -194,10 +193,18 @@ export class Keeper {
         if (errors.length > 0)
             throw errors.join("<br/>");
 
-        let {companyId, treeKey} = await this.addManagedCompany(node.displayName!, company);
-        // let managedCompany = company.data.managed_companies![company.data.managed_companies!.length - 1];
-        // let companyId = managedCompany.mc_enterprise_id;
-        // let treeKey = await company.decryptKey(managedCompany.tree_key);
+        let companyId: number;
+        let treeKey: Uint8Array;
+        let managedCompany = company.data.managed_companies && company.data.managed_companies.find(x => x.mc_enterprise_name === node.displayName);
+        if (managedCompany) {
+            companyId = managedCompany.mc_enterprise_id;
+            treeKey = await company.decryptKey(managedCompany.tree_key);
+        }
+        else {
+            let addMCResponse = await this.addManagedCompany(node.displayName!, company);
+            companyId = addMCResponse.companyId;
+            treeKey = addMCResponse.treeKey;
+        }
 
         let command = new EnterpriseNodeToManagedCompanyCommand();
 
@@ -229,8 +236,6 @@ export class Keeper {
             }
         });
         let resp = await this.auth.executeCommand(command);
-        console.log(resp);
-        return "done";
     }
 
     static async addTestNodeNode(nodeName: string, company: Company) {

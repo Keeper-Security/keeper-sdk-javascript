@@ -40,6 +40,8 @@ export class KeeperEndpoint {
                 return await this.executeRest(DeviceResponse, this.getUrl("authentication/get_device_token"), requestBytes);
             }
             catch (e) {
+                if (!e.response)
+                    throw(e);
                 let errorObj = JSON.parse(e.response);
                 if ((errorObj.error === "key") && (this.publicKeyId <= 6)) {
                     this.generateTransmissionKey(this.publicKeyId + 1);
@@ -66,7 +68,7 @@ export class KeeperEndpoint {
             },
             loginType: Authentication.LoginType.NORMAL
         });
-        return await this.executeRest(PreLoginResponse, this.getUrl("authentication/pre_login"), requestBytes);
+        return this.executeRest(PreLoginResponse, this.getUrl("authentication/pre_login"), requestBytes);
     }
 
     private async executeRest<T>(classRef: Decodable<T>, url: string, request: Uint8Array): Promise<T> {
