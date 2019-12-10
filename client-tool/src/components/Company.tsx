@@ -132,7 +132,9 @@ class Company extends React.Component<CompanyProps, CompanyState> {
             <Container className={this.classes.container} maxWidth="md">
                 <div className={this.classes.refreshContainer}>
                     <CircularProgress style={this.props.inProgress ? {} : {visibility: "hidden"}}/>
-                    <Fab onClick={_ => this.props.refresh()}>
+                    <Fab
+                        color="secondary"
+                        onClick={_ => this.props.refresh()}>
                         <RefreshIcon/>
                     </Fab>
                 </div>
@@ -141,7 +143,7 @@ class Company extends React.Component<CompanyProps, CompanyState> {
                         Nodes
                     </Typography>
                     <List>{firstLevelNodes.map(x => this.renderNode(x))}</List>
-                    {this.renderAddNodeForm()}
+                    {/*{this.renderAddNodeForm()}*/}
                 </Paper>
                 <Paper className={this.classes.root}>
                     <Typography className={this.classes.caption} variant="h5">

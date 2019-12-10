@@ -174,7 +174,7 @@ export class Keeper {
             }
 
             let outNodes = outsideNodes.filter(x => nodeIsManagedBy(x, role));
-            if (outUsers.length > 0) {
+            if (outNodes.length > 0) {
                 errors.push(`Role ${role.displayName} manages the following outside nodes: ${outNodes.map(x => x.displayName).join()}`);
             }
 

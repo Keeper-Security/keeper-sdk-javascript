@@ -125,7 +125,7 @@ class Login extends React.Component<LoginProps, LoginState> implements AuthUICom
                         type="submit"
                         fullWidth={true}
                         variant="contained"
-                        color="primary"
+                        color="secondary"
                         className={classes.submit}
                     >
                         Sign In

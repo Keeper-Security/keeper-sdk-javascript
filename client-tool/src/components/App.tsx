@@ -1,10 +1,9 @@
 import * as React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
 import Toolbar from "@material-ui/core/Toolbar";
-import MenuIcon from '@material-ui/icons/Menu';
 import Button from "@material-ui/core/Button";
+import SvgIcon from '@material-ui/core/SvgIcon';
 import {ThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import {blueGrey} from "@material-ui/core/colors";
 
@@ -21,11 +20,16 @@ type ExtraProps = {
 
 type AppProps = AppStateProps & ExtraProps;
 
-export const appTheme = createMuiTheme({
-    palette: {
-        primary: blueGrey
-    }
-});
+const palette = {
+    primary: {main: '#263238', contrastText: '#ffffff'},
+    secondary: {main: '#f9bc0a', contrastText: '#000000'},
+};
+
+// const palette = {
+//     primary: blueGrey
+// };
+
+const appTheme = createMuiTheme({palette});
 
 const styles = {
     root: {
@@ -36,6 +40,7 @@ const styles = {
     },
     title: {
         flexGrow: 1,
+        marginLeft: "2rem"
     },
     user: {
         display: "flex",
@@ -45,12 +50,6 @@ const styles = {
 
 class App extends React.Component<AppProps, {}> {
 
-
-    constructor(props: Readonly<AppProps>) {
-        super(props);
-        this.logout = this.logout.bind(this);
-    }
-
     render() {
         const {classes} = this.props;
         return (
@@ -58,6 +57,7 @@ class App extends React.Component<AppProps, {}> {
                 <div className="app">
                     <AppBar position="static">
                         <Toolbar>
+                            <img src="https://www.keepersecurity.com/assets/branding/keeper-logo-light.svg"/>
                             {/*<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">*/}
                             {/*    <MenuIcon/>*/}
                             {/*</IconButton>*/}
@@ -68,7 +68,11 @@ class App extends React.Component<AppProps, {}> {
                                 this.props.loggedInUser &&
                                 <div className={classes.user}>
                                     <Typography>{this.props.loggedInUser}</Typography>
-                                    <Button color="inherit" onClick={_ => this.props.logout()}>Sign out</Button>
+                                    <Button
+                                        color="secondary"
+                                        onClick={_ => this.props.logout()}>
+                                        Sign out
+                                    </Button>
                                 </div>
                             }
                         </Toolbar>
@@ -81,10 +85,6 @@ class App extends React.Component<AppProps, {}> {
                 </div>
             </ThemeProvider>
         );
-    }
-
-    private logout() {
-
     }
 }
 
