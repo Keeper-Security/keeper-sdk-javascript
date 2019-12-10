@@ -19,7 +19,8 @@ function mapStateToProps(state: RootState): LoginStateProps {
         userError: state.login.userError,
         passwordError: state.login.passwordError,
         secondFactor: state.login.showSecondFactor,
-        secondFactorError: state.login.secondFactorError
+        secondFactorError: state.login.secondFactorError,
+        inProgress: state.app.inProgress
     };
 }
 

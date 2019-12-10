@@ -2,12 +2,10 @@ import {ActionType, getType} from 'typesafe-actions';
 
 import * as actions from "../actions";
 import {Company, Node} from "keeperapi";
-import {progressAction} from "../actions";
 
 type Action = ActionType<typeof actions>;
 
 export interface CompanyState {
-    readonly inProgress: boolean;
     readonly company?: Company;
     readonly lastError?: {
         node: Node,
@@ -16,7 +14,6 @@ export interface CompanyState {
 }
 
 const initialState = {
-    inProgress: false,
 };
 
 export const companyReducer = (state: CompanyState = initialState, action: Action): CompanyState => {
@@ -47,7 +44,6 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
             let error = action.payload ? undefined : state.lastError;
             return {
                 ...state,
-                inProgress: action.payload,
                 lastError: error
             };
 

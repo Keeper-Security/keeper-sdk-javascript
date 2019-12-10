@@ -1,5 +1,6 @@
 export const EPIC_SUCCESS   = "@@common/EPIC_SUCCESS";
 export const EPIC_FAILURE   = "@@common/EPIC_FAILURE";
+export const PROGRESS   = "@@common/PROGRESS";
 export const LOGIN_SET_USER   = "@@login/SET_USER";
 export const LOGIN   = "@@login/LOGIN";
 export const SECOND_FACTOR_PROMPT   = "@@login/2FA_PROMPT";
@@ -9,7 +10,6 @@ export const LOGGED_IN   = "@@login/LOGGED_IN";
 export const LOGIN_FAILURE   = "@@login/LOGIN_FAILURE";
 export const LOADED   = "@@company/LOADED";
 export const REFRESH   = "@@company/REFRESH";
-export const PROGRESS   = "@@company/PROGRESS";
 export const CONVERT_NODE   = "@@company/CONVERT_NODE";
 export const NODE_CONVERTED   = "@@company/NODE_CONVERTED";
 export const NODE_CONVERSION_ERROR   = "@@company/NODE_CONVERSION_ERROR";

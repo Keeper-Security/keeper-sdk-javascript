@@ -7,6 +7,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import {withStyles} from "@material-ui/styles";
 import {AuthUIComponent, Keeper} from "../service/Keeper";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export type LoginDispatchProps = {
     updateUser: (user: string) => any;
@@ -22,6 +23,7 @@ export type LoginStateProps = {
     userError?: string,
     passwordError?: string,
     secondFactorError?: string
+    inProgress: boolean;
 }
 
 type LoginProps = LoginDispatchProps & LoginStateProps;
@@ -39,6 +41,11 @@ const styles = {
     submit: {
         // margin: appTheme.spacing(3, 0, 2),
     },
+    progressContainer: {
+        display: "flex",
+        justifyContent: "center",
+        marginTop: "2rem"
+    }
 };
 
 class Login extends React.Component<LoginProps, LoginState> implements AuthUIComponent {
@@ -124,6 +131,9 @@ class Login extends React.Component<LoginProps, LoginState> implements AuthUICom
                         Sign In
                     </Button>
                 </form>
+                <div className={classes.progressContainer}>
+                    <CircularProgress style={this.props.inProgress ? {} : {visibility: "hidden"}}/>
+                </div>
             </Container>
         );
     }

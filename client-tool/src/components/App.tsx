@@ -58,11 +58,11 @@ class App extends React.Component<AppProps, {}> {
                 <div className="app">
                     <AppBar position="static">
                         <Toolbar>
-                            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                                <MenuIcon/>
-                            </IconButton>
+                            {/*<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">*/}
+                            {/*    <MenuIcon/>*/}
+                            {/*</IconButton>*/}
                             <Typography variant="h6" className={classes.title}>
-                                Client Tool
+                                Node To Managed Company Conversion
                             </Typography>
                             {
                                 this.props.loggedInUser &&

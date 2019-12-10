@@ -1,16 +1,19 @@
-import { combineReducers } from "redux";
+import {combineReducers} from "redux";
 
-import { companyReducer, CompanyState } from "./CompanyReducer";
-import { loginReducer, LoginState } from "./LoginReducer";
+import {companyReducer, CompanyState} from "./CompanyReducer";
+import {loginReducer, LoginState} from "./LoginReducer";
+import {appReducer, AppState} from "./AppReducer";
 
 export type RootState = {
-  login: LoginState;
-  company: CompanyState;
+    app: AppState;
+    login: LoginState;
+    company: CompanyState;
 };
 
 const reducers = combineReducers({
-  login: loginReducer,
-  company: companyReducer,
+    app: appReducer,
+    login: loginReducer,
+    company: companyReducer,
 });
 
 export default reducers;

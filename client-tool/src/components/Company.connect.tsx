@@ -22,7 +22,7 @@ function mapStateToProps(state: RootState): CompanyStateProps {
 
     return {
         company: state.company.company,
-        inProgress: state.company.inProgress,
+        inProgress: state.app.inProgress,
         nodes: nodes.map(x => {
             return {
                 node: x,
