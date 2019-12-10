@@ -103,7 +103,7 @@ export class Company {
                     user.roles.push(this._data.roles.find(x => x.role_id === user_role.role_id))
                 }
             }
-            for (let user_team of this._data.team_users) {
+            for (let user_team of this._data.team_users || []) {
                 if (user_team.enterprise_user_id == user.enterprise_user_id) {
                     if (!user.teams) {
                         user.teams = []

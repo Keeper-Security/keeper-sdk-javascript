@@ -177,6 +177,11 @@ export class Keeper {
             if (outUsers.length > 0) {
                 errors.push(`Role ${role.displayName} manages the following outside nodes: ${outNodes.map(x => x.displayName).join()}`);
             }
+
+            if (company.data.managed_nodes.find(x => x.role_id === role.role_id) &&
+                company.data.role_users.find(x => x.role_id === role.role_id)) {
+                errors.push(`Role ${role.displayName} must not contain any users because it is an admin role`);
+            }
         }
 
         function userIsInTeam(user: User, team: CompanyTeam) {
