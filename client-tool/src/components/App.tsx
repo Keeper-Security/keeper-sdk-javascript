@@ -11,7 +11,10 @@ import Login from "./Login.connect";
 import Company from "./Company.connect";
 import {withStyles} from "@material-ui/styles";
 
-export type AppStateProps = {loggedInUser?: string}
+export type AppStateProps = {
+    loggedInUser?: string
+    loaded: boolean
+}
 
 type ExtraProps = {
     classes: any;
@@ -78,7 +81,7 @@ class App extends React.Component<AppProps, {}> {
                         </Toolbar>
                     </AppBar>
                     {
-                        this.props.loggedInUser
+                        this.props.loaded
                             ? <Company/>
                             : <Login/>
                     }

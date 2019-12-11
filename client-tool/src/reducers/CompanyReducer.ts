@@ -20,6 +20,12 @@ export const companyReducer = (state: CompanyState = initialState, action: Actio
 
     switch (action.type) {
 
+        case getType(actions.logoutAction):
+            return {
+                ...state,
+                company: undefined
+            };
+
         case getType(actions.loadedAction):
             return {
                 ...state,

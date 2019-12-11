@@ -16,6 +16,7 @@ interface OwnProps {
 function mapStateToProps(state: RootState): AppStateProps {
     return {
         loggedInUser: state.login.loggedIn ? state.login.user : undefined,
+        loaded: !!state.company.company
     };
 }
 
