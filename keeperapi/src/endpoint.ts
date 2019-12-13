@@ -40,9 +40,9 @@ export class KeeperEndpoint {
                 return await this.executeRest(DeviceResponse, this.getUrl("authentication/get_device_token"), requestBytes);
             }
             catch (e) {
-                if (!e.response)
+                if (!(e instanceof Error))
                     throw(e);
-                let errorObj = JSON.parse(e.response);
+                let errorObj = JSON.parse(e.message);
                 if ((errorObj.error === "key") && (this.publicKeyId <= 6)) {
                     this.generateTransmissionKey(this.publicKeyId + 1);
                 }
