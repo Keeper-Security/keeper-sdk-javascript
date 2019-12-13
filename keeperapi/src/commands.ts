@@ -240,6 +240,10 @@ export interface EnterpriseRegistrationByMspResponse extends KeeperResponse {
     enterprise_id: number;
 }
 
+export class AcceptEnterpriseInviteCommand extends AuthorizedCommand {
+    verification_code: string;
+}
+
 // *************************
 // Responses
 // *************************
