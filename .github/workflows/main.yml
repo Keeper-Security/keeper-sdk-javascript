@@ -1,0 +1,35 @@
+name: Audit
+
+on: [push]
+
+jobs:
+  audit:
+    name: Audit Project
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Installation
+        run: |
+          npm i -g yarn
+          yarn
+        working-directory: ./keeperapi
+
+      - name: Check Types
+        run: npm run types:ci
+        working-directory: ./keeperapi
+
+      - name: Run Tests
+        run: npm run test:ci
+        working-directory: ./keeperapi

@@ -1,36 +1,50 @@
 {
   "name": "keeperapi",
   "version": "0.1.0",
-  "browser": "dist/index.es.js",
-  "main": "dist/index.cjs.js",
-  "browsertest": "dist/test.cjs.js",
-  "types": "dist/node/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "api-build": "rollup -c",
     "api-watch": "rollup -cw",
     "update-proto-es6": "pbjs -t static-module -w es6 -o src/APIRequest.js ../../keeperapp-protobuf/APIRequest.proto && pbts -o src/APIRequest.d.ts src/APIRequest.js",
     "update-proto-cjs": "pbjs -t json-module -w commonjs -o src/APIRequest.js ../../keeperapp-protobuf/APIRequest.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/APIRequest.proto | pbts -o src/APIRequest.d.ts -",
     "link-local": "yarn link",
-    "test": "ts-node test/test.ts",
-    "jsttst": "jest"
+    "test": "jest --watch",
+    "test:ci": "CI=true jest",
+    "test:interactive": "ts-node test/test.ts",
+    "types": "tsc --watch",
+    "types:ci": "tsc"
   },
-  "license": "ISC",
   "dependencies": {
-    "protobufjs": "^6.8.8",
-    "crypto-js": "^3.1.9-1"
+    "crypto-js": "^3.1.9-1",
+    "protobufjs": "^6.8.8"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-typescript": "^7.7.4",
     "@types/crypto-js": "^3.1.43",
-    "@types/jest": "^24.0.15",
-    "jest": "^24.8.0",
+    "@types/jest": "^24.0.23",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0",
     "rollup": "^1.16.1",
-    "rollup-plugin-typescript2": "^0.21.2",
     "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.21.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"
-  }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/test/"
+    ]
+  },
+  "license": "ISC",
+  "main": "dist/index.cjs.js",
+  "browser": "dist/index.es.js",
+  "browsertest": "dist/test.cjs.js",
+  "types": "dist/node/index.d.ts",
+  "files": [
+    "dist"
+  ]
 }
