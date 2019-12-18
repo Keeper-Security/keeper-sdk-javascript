@@ -69,6 +69,9 @@ export class Auth {
                 if (loginResponse.result_code === "auth_success")
                     break;
                 if (isTwoFactorResultCode(loginResponse.result_code)) {
+                    if (!!loginResponse.u2f_challenge) {
+                        loginResponse.u2f_challenge = JSON.parse(loginResponse.u2f_challenge as string);
+                    }
                     if (!this.authUI)
                         break;
                     let errorMessage = loginResponse.result_code === LoginResponseResultCode.InvalidTOTP

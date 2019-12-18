@@ -350,6 +350,18 @@ export interface LoginResponse extends KeeperResponse {
     region_host?: string;
     keys: Keys;
     sync_log: SyncLog[];
+    u2f_challenge?: string | U2FChallenge;
+}
+
+export interface U2FChallenge {
+    authenticateRequests: AuthenticateRequest[]
+}
+
+export interface AuthenticateRequest {
+    challenge: string;
+    appId: string;
+    keyHandle: string;
+    version: string;
 }
 
 export interface SharedFolder {
