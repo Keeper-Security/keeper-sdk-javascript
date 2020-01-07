@@ -3,7 +3,7 @@ import {KeeperCommand} from "./commands";
 import {Writer} from "protobufjs";
 import {Authentication} from "./APIRequest";
 import {platform} from "./platform";
-import {isTwoFactorResultCode} from "./utils";
+import {isTwoFactorResultCode, normal64} from './utils'
 import IDeviceResponse = Authentication.IDeviceResponse;
 import IDeviceRequest = Authentication.IDeviceRequest;
 import DeviceRequest = Authentication.DeviceRequest;
@@ -139,10 +139,11 @@ export class KeeperEndpoint {
     }
 
     private generateTransmissionKey(keyNumber: number) {
+        debugger
         this.publicKeyId = keyNumber;
         this.transmissionKey = platform.getRandomBytes(32);
         let key = platform.keys[keyNumber - 1];
-        this.encryptedTransmissionKey = platform.publicEncrypt(this.transmissionKey, key);
+        this.encryptedTransmissionKey = platform.publicEncrypt(this.transmissionKey, normal64(key));
     }
 
     private prepareProtobufRequest<T>(classRef: Encodable<T>, message: T): Promise<Uint8Array> {
