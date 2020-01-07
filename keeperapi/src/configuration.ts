@@ -2,6 +2,7 @@ import {KeeperEnvironment} from "./endpoint";
 
 export interface ClientConfiguration {
     host: KeeperEnvironment | string;
+    clientVersion?: string;
 }
 
 export interface VendorConfiguration {

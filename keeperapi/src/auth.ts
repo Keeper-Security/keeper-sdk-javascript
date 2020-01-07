@@ -43,6 +43,7 @@ export class Auth {
 
     constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
         this.endpoint = new KeeperEndpoint(this.options.host);
+        this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
     }
 
     async login(username: string, password: string) {
@@ -58,7 +59,6 @@ export class Auth {
             loginCommand.version = 2;
             loginCommand.auth_response = webSafe64(authHash);
             loginCommand.include = ["keys"]; //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
-            loginCommand.client_version = "c14.0.0";
             if (this.managedCompanyId) {
                 loginCommand.enterprise_id = this.managedCompanyId
             }
@@ -101,7 +101,6 @@ export class Auth {
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
         command.username = this._username;
-        command.client_version = "c14.0.0";
         if (command instanceof AuthorizedCommand) {
             command.device_id = "JS Keeper API";
             command.session_token = this._sessionToken;

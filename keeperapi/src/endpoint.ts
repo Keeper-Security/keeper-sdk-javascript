@@ -19,7 +19,7 @@ export class KeeperEndpoint {
     private publicKeyId: number;
     private encryptedTransmissionKey: Uint8Array;
     private deviceToken: Uint8Array;
-    private clientVersion = "c14.0.0";
+    public clientVersion;
 
     constructor(private host: KeeperEnvironment | string) {
         this.generateTransmissionKey(1);
@@ -82,6 +82,7 @@ export class KeeperEndpoint {
     }
 
     async executeV2Command<T>(command: KeeperCommand): Promise<T> {
+        command.client_version = this.clientVersion;
         let requestBytes = await this.prepareRequest(command);
         let response = await platform.post(this.getUrl("vault/execute_v2_command"), requestBytes);
         let decrypted;
