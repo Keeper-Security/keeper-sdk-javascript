@@ -31,6 +31,12 @@ export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse>
 }
 
 export class AccountSummaryCommand extends AuthorizedCommand<KeeperResponse> {
+
+    constructor() {
+        super()
+        this.command = "AccountSummary"
+    }
+
     include: AccountDataInclude[]
 }
 
@@ -53,12 +59,24 @@ type SyncDataInclude =
     | "explicit"
 
 export class SyncDownCommand extends AuthorizedCommand<SyncResponse> {
+
+    constructor(revision: number) {
+        super()
+        this.command = "sync_down"
+    }
+
     revision: number;
     include: SyncDataInclude[];
     client_time: number
 }
 
 export class RecordAddCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "record_add"
+    }
+
     record_uid: string;
     record_key: string;
     record_type: string;
@@ -73,6 +91,12 @@ export class RecordAddCommand extends AuthorizedCommand {
 }
 
 export class RecordUpdateCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "record_update"
+    }
+
     pt: string;
     client_time: number;
     add_records: RecordUpdateRecord[];
@@ -118,15 +142,33 @@ export type EnterpriseDataInclude =
 export type KeyType = "encrypted_by_data_key" | "encrypted_by_public_key" | "no_key"
 
 export class GetEnterpriseDataCommand extends AuthorizedCommand<GetEnterpriseDataResponse> {
+
+    constructor() {
+        super()
+        this.command = "get_enterprise_data"
+    }
+
     include: EnterpriseDataInclude[];
 }
 
 export class EnterpriseUserLockCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "enterprise_user_lock"
+    }
+
     enterprise_user_id: number;
     lock: "locked" | "disabled" | "unlocked";
 }
 
 export class EnterpriseNodeToManagedCompanyCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "enterprise_node_to_managed_company"
+    }
+
     managed_company_id: number;
     nodes: Pick<Node, "encrypted_data" | "node_id" | "displayName">[];
     roles: Pick<Role, "encrypted_data" | "role_id" | "displayName">[];
@@ -134,6 +176,12 @@ export class EnterpriseNodeToManagedCompanyCommand extends AuthorizedCommand {
 }
 
 export class EnterpriseAllocateIdsCommand extends AuthorizedCommand<EnterpriseAllocateIdsResponse> {
+
+    constructor() {
+        super()
+        this.command = "enterprise_allocate_ids"
+    }
+
     number_requested: number = 1;
 }
 
@@ -146,6 +194,7 @@ export class NodeAddCommand extends AuthorizedCommand {
 
     constructor(nodeId: number, parentId: number, encryptedData: string) {
         super();
+        this.command = "node_add"
         this.node_id = nodeId;
         this.parent_id = parentId;
         this.encrypted_data = encryptedData;
@@ -160,6 +209,7 @@ export class RoleAddCommand extends AuthorizedCommand {
 
     constructor(roleId: number, nodeId: number, encryptedData: string) {
         super();
+        this.command = "role_add"
         this.role_id = roleId;
         this.node_id = nodeId;
         this.encrypted_data = encryptedData;
@@ -183,6 +233,7 @@ export class TeamAddCommand extends AuthorizedCommand {
                 team_key: string,
                 encrypted_team_key: string) {
         super();
+        this.command = "team_add"
         this.team_uid = team_uid;
         this.team_name = team_name;
         this.node_id = node_id;
@@ -209,6 +260,7 @@ export class EnterpriseUserAddCommand extends AuthorizedCommand<EnterpriseUserAd
 
     constructor(enterprise_user_id: number, email: string, nodeId: number, encryptedData: string) {
         super();
+        this.command = "enterprise_user_add"
         this.enterprise_user_id = enterprise_user_id;
         this.enterprise_user_username = email;
         this.node_id = nodeId;
@@ -226,6 +278,12 @@ export interface EnterpriseUserAddResponse extends KeeperResponse {
 }
 
 export class EnterpriseRegistrationByMspCommand extends AuthorizedCommand<EnterpriseRegistrationByMspResponse> {
+
+    constructor() {
+        super()
+        this.command = "enterprise_registration_by_msp"
+    }
+
     root_node: string;
     role_data: string;
     product_id: string;
@@ -240,6 +298,12 @@ export interface EnterpriseRegistrationByMspResponse extends KeeperResponse {
 }
 
 export class AcceptEnterpriseInviteCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "accept_enterprise_invite"
+    }
+
     verification_code: string;
 }
 

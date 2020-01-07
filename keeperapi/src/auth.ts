@@ -100,7 +100,6 @@ export class Auth {
     }
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
-        command.command = command.constructor.name.split(/(?=[A-Z])/).slice(0, -1).join('_').toLowerCase();
         command.username = this._username;
         command.client_version = "c14.0.0";
         if (command instanceof AuthorizedCommand) {
