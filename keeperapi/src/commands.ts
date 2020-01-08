@@ -126,6 +126,7 @@ export type EnterpriseDataInclude =
     | "role_privileges"
     | "role_users"
     | "managed_nodes"
+    | "managed_companies"
     | "licenses"
     | "team_users"
     | "teams"
@@ -500,6 +501,7 @@ export interface GetEnterpriseDataResponse extends KeeperResponse {
     scims?: SCIM[];
     email_provision?: EmailProvision[];
     msp_key?: MSPKey;
+    managed_companies?: ManagedCompany[];
 }
 
 export interface UserPrivileges {
@@ -564,7 +566,6 @@ export interface ManagedCompany {
     mc_enterprise_id: number;
     msp_node_id: number;
     tree_key: string;
-    tree_key_role: number;
     product_id: string;
     number_of_users: number;
     number_of_seats: number;
@@ -622,7 +623,6 @@ export interface EnterpriseLicense {
     number_of_seats: number;
     enterprise_license_id: number;
     msp_pool? : MSPProductLicense[];
-    msp_companies?: ManagedCompany[];
 }
 
 export interface MSPProductLicense {

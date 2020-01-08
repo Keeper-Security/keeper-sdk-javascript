@@ -140,7 +140,6 @@ export class KeeperEndpoint {
     }
 
     private generateTransmissionKey(keyNumber: number) {
-        debugger
         this.publicKeyId = keyNumber;
         this.transmissionKey = platform.getRandomBytes(32);
         let key = platform.keys[keyNumber - 1];
