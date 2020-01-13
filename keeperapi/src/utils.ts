@@ -51,6 +51,12 @@ export function encryptObjectForStorage<T>(obj: T, key: Uint8Array): string {
     return encryptForStorage(bytes, key);
 }
 
+export function encryptObjectForStorageAsBytes<T>(obj: T, key: Uint8Array): Uint8Array {
+    let s = JSON.stringify(obj);
+    let bytes = platform.stringToBytes(s);
+    return platform.aesCbcEncrypt(bytes, key, true)
+}
+
 export function decryptObjectFromStorage<T>(data: string, key: Uint8Array): T {
     try {
         let decrypted = decryptFromStorage(data, key);

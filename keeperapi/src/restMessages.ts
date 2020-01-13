@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {Authentication} from './APIRequest'
+import {Authentication, Enterprise} from './proto'
 
 type RestEncoder<T> = (message: T, writer?: Writer) => Writer;
 type RestDecoder<T> = (reader: Uint8Array, length?: number) => T;
@@ -41,5 +41,11 @@ export class PreLoginMessage extends RestMessage<Authentication.IPreLoginRequest
 export class SecurityReportMessage extends RestMessage<Authentication.ISecurityReportRequest, Authentication.ISecurityReportResponse> {
     constructor(data: Authentication.ISecurityReportRequest) {
         super(data, 'enterprise/get_security_report_data', Authentication.SecurityReportRequest.encode, Authentication.SecurityReportResponse.decode)
+    }
+}
+
+export class EnterpriseNodeToManagedCompanyMessage extends RestMessage<Enterprise.IEnterpriseNodeToManagedCompanyRequest, {}> {
+    constructor(data: Enterprise.IEnterpriseNodeToManagedCompanyRequest) {
+        super(data, 'enterprise/node_to_managed_company', Enterprise.EnterpriseNodeToManagedCompanyRequest.encode, null)
     }
 }

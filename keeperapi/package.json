@@ -11,8 +11,8 @@
   "scripts": {
     "api-build": "rollup -c",
     "api-watch": "rollup -cw",
-    "update-proto-es6": "pbjs -t static-module -w es6 -o src/APIRequest.js ../../keeperapp-protobuf/APIRequest.proto && pbts -o src/APIRequest.d.ts src/APIRequest.js",
-    "update-proto-cjs": "pbjs -t json-module -w commonjs -o src/APIRequest.js ../../keeperapp-protobuf/APIRequest.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/APIRequest.proto | pbts -o src/APIRequest.d.ts -",
+    "update-proto-es6": "pbjs -t static-module -w es6 -o src/proto.js ../../keeperapp-protobuf/*.proto && pbts -o src/proto.d.ts src/proto.js",
+    "update-proto-cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/*.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/*.proto | pbts -o src/proto.d.ts -",
     "link-local": "yarn link",
     "test": "ts-node test/test.ts",
     "jsttst": "jest"

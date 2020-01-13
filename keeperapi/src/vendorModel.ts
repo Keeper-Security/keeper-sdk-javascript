@@ -5,7 +5,7 @@ export interface EnterpriseBase {
     license: MSPLicense;
 }
 
-export interface Enterprise extends EnterpriseBase {
+export interface MSPEnterprise extends EnterpriseBase {
     enterprise_id: number;
     customers: Customer[];
 }

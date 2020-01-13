@@ -9,7 +9,7 @@ export * from "../commands";
 export * from "../restMessages";
 export * from "../utils";
 export * from "../platform";
-export * from "../APIRequest";
+export * from "../proto";
 import {connectPlatform} from "../platform";
 import {nodePlatform} from "./platform";
 

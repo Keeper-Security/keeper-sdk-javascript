@@ -1,5 +1,5 @@
 import {KeeperCommand} from './commands'
-import {Authentication} from './APIRequest'
+import {Authentication} from './proto'
 import {platform} from './platform'
 import {isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
 import ApiRequestPayload = Authentication.ApiRequestPayload
@@ -65,6 +65,9 @@ export class KeeperEndpoint {
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let response = await platform.post(this.getUrl(message.path), request)
+        if (response.data.length === 0 && response.statusCode === 200) {
+            return
+        }
         try {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey)
             return message.fromBytes(decrypted)
