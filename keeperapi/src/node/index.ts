@@ -6,6 +6,7 @@ export * from "../vault";
 export * from "../company";
 export * from "../configuration";
 export * from "../commands";
+export * from "../restMessages";
 export * from "../utils";
 export * from "../platform";
 export * from "../APIRequest";

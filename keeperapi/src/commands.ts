@@ -60,14 +60,16 @@ type SyncDataInclude =
 
 export class SyncDownCommand extends AuthorizedCommand<SyncResponse> {
 
+    private revision: number;
+    private client_time: number
+    include: SyncDataInclude[];
+
     constructor(revision: number) {
         super()
-        this.command = "sync_down"
+        this.command = 'sync_down'
+        this.revision = revision
+        this.client_time = new Date().getTime()
     }
-
-    revision: number;
-    include: SyncDataInclude[];
-    client_time: number
 }
 
 export class RecordAddCommand extends AuthorizedCommand {

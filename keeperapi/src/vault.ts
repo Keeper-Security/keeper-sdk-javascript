@@ -12,12 +12,8 @@ export class Vault {
     }
 
     async syncDown() {
-        let syncDownCommand = new SyncDownCommand();
-        // let syncDownCommand = this.auth.createCommand(SyncDownCommand);
-        syncDownCommand.client_time = new Date().getTime();
-        syncDownCommand.revision = this.revision;
+        let syncDownCommand = new SyncDownCommand(this.revision);
         let syncDownResponse = await this.auth.executeCommand(syncDownCommand);
-            // let syncDownResponse = await this.auth.endpoint.executeV2Command<SyncResponse>(syncDownCommand);
         this.revision = syncDownResponse.revision;
         if (syncDownResponse.full_sync) {
             this._records = [];

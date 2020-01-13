@@ -3,6 +3,7 @@ import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
+import {RestMessage} from './restMessages'
 
 export interface AuthUI {
     getTwoFactorCode(errorMessage?: string): Promise<string>;
@@ -106,6 +107,10 @@ export class Auth {
             command.session_token = this._sessionToken;
         }
         return this.endpoint.executeV2Command(command);
+    }
+
+    async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>): Promise<TOut> {
+        return this.endpoint.executeRest(message, this._sessionToken);
     }
 
     get sessionToken(): string {
