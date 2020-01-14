@@ -44,8 +44,8 @@ export class SecurityReportMessage extends RestMessage<Authentication.ISecurityR
     }
 }
 
-export class EnterpriseNodeToManagedCompanyMessage extends RestMessage<Enterprise.IEnterpriseNodeToManagedCompanyRequest, {}> {
-    constructor(data: Enterprise.IEnterpriseNodeToManagedCompanyRequest) {
-        super(data, 'enterprise/node_to_managed_company', Enterprise.EnterpriseNodeToManagedCompanyRequest.encode, null)
+export class EnterpriseNodeToManagedCompanyMessage extends RestMessage<Enterprise.INodeToManagedCompanyRequest, {}> {
+    constructor(data: Enterprise.INodeToManagedCompanyRequest) {
+        super(data, 'enterprise/node_to_managed_company', Enterprise.NodeToManagedCompanyRequest.encode, null)
     }
 }

@@ -13172,109 +13172,109 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an EnterpriseNodeToManagedCompanyRequest. */
-    interface IEnterpriseNodeToManagedCompanyRequest {
+    /** Properties of a NodeToManagedCompanyRequest. */
+    interface INodeToManagedCompanyRequest {
 
-        /** EnterpriseNodeToManagedCompanyRequest companyId */
+        /** NodeToManagedCompanyRequest companyId */
         companyId?: (number|null);
 
-        /** EnterpriseNodeToManagedCompanyRequest nodes */
+        /** NodeToManagedCompanyRequest nodes */
         nodes?: (Enterprise.IReEncryptedData[]|null);
 
-        /** EnterpriseNodeToManagedCompanyRequest roles */
+        /** NodeToManagedCompanyRequest roles */
         roles?: (Enterprise.IReEncryptedData[]|null);
 
-        /** EnterpriseNodeToManagedCompanyRequest users */
+        /** NodeToManagedCompanyRequest users */
         users?: (Enterprise.IReEncryptedData[]|null);
     }
 
-    /** Represents an EnterpriseNodeToManagedCompanyRequest. */
-    class EnterpriseNodeToManagedCompanyRequest implements IEnterpriseNodeToManagedCompanyRequest {
+    /** Represents a NodeToManagedCompanyRequest. */
+    class NodeToManagedCompanyRequest implements INodeToManagedCompanyRequest {
 
         /**
-         * Constructs a new EnterpriseNodeToManagedCompanyRequest.
+         * Constructs a new NodeToManagedCompanyRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Enterprise.IEnterpriseNodeToManagedCompanyRequest);
+        constructor(properties?: Enterprise.INodeToManagedCompanyRequest);
 
-        /** EnterpriseNodeToManagedCompanyRequest companyId. */
+        /** NodeToManagedCompanyRequest companyId. */
         public companyId: number;
 
-        /** EnterpriseNodeToManagedCompanyRequest nodes. */
+        /** NodeToManagedCompanyRequest nodes. */
         public nodes: Enterprise.IReEncryptedData[];
 
-        /** EnterpriseNodeToManagedCompanyRequest roles. */
+        /** NodeToManagedCompanyRequest roles. */
         public roles: Enterprise.IReEncryptedData[];
 
-        /** EnterpriseNodeToManagedCompanyRequest users. */
+        /** NodeToManagedCompanyRequest users. */
         public users: Enterprise.IReEncryptedData[];
 
         /**
-         * Creates a new EnterpriseNodeToManagedCompanyRequest instance using the specified properties.
+         * Creates a new NodeToManagedCompanyRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns EnterpriseNodeToManagedCompanyRequest instance
+         * @returns NodeToManagedCompanyRequest instance
          */
-        public static create(properties?: Enterprise.IEnterpriseNodeToManagedCompanyRequest): Enterprise.EnterpriseNodeToManagedCompanyRequest;
+        public static create(properties?: Enterprise.INodeToManagedCompanyRequest): Enterprise.NodeToManagedCompanyRequest;
 
         /**
-         * Encodes the specified EnterpriseNodeToManagedCompanyRequest message. Does not implicitly {@link Enterprise.EnterpriseNodeToManagedCompanyRequest.verify|verify} messages.
-         * @param message EnterpriseNodeToManagedCompanyRequest message or plain object to encode
+         * Encodes the specified NodeToManagedCompanyRequest message. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
+         * @param message NodeToManagedCompanyRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Enterprise.IEnterpriseNodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Enterprise.INodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified EnterpriseNodeToManagedCompanyRequest message, length delimited. Does not implicitly {@link Enterprise.EnterpriseNodeToManagedCompanyRequest.verify|verify} messages.
-         * @param message EnterpriseNodeToManagedCompanyRequest message or plain object to encode
+         * Encodes the specified NodeToManagedCompanyRequest message, length delimited. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
+         * @param message NodeToManagedCompanyRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Enterprise.IEnterpriseNodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Enterprise.INodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an EnterpriseNodeToManagedCompanyRequest message from the specified reader or buffer.
+         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns EnterpriseNodeToManagedCompanyRequest
+         * @returns NodeToManagedCompanyRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseNodeToManagedCompanyRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.NodeToManagedCompanyRequest;
 
         /**
-         * Decodes an EnterpriseNodeToManagedCompanyRequest message from the specified reader or buffer, length delimited.
+         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns EnterpriseNodeToManagedCompanyRequest
+         * @returns NodeToManagedCompanyRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseNodeToManagedCompanyRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.NodeToManagedCompanyRequest;
 
         /**
-         * Verifies an EnterpriseNodeToManagedCompanyRequest message.
+         * Verifies a NodeToManagedCompanyRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an EnterpriseNodeToManagedCompanyRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a NodeToManagedCompanyRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns EnterpriseNodeToManagedCompanyRequest
+         * @returns NodeToManagedCompanyRequest
          */
-        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseNodeToManagedCompanyRequest;
+        public static fromObject(object: { [k: string]: any }): Enterprise.NodeToManagedCompanyRequest;
 
         /**
-         * Creates a plain object from an EnterpriseNodeToManagedCompanyRequest message. Also converts values to other types if specified.
-         * @param message EnterpriseNodeToManagedCompanyRequest
+         * Creates a plain object from a NodeToManagedCompanyRequest message. Also converts values to other types if specified.
+         * @param message NodeToManagedCompanyRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Enterprise.EnterpriseNodeToManagedCompanyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Enterprise.NodeToManagedCompanyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this EnterpriseNodeToManagedCompanyRequest to JSON.
+         * Converts this NodeToManagedCompanyRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

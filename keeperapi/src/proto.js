@@ -34187,27 +34187,27 @@ export const Enterprise = $root.Enterprise = (() => {
         return ReEncryptedData;
     })();
 
-    Enterprise.EnterpriseNodeToManagedCompanyRequest = (function() {
+    Enterprise.NodeToManagedCompanyRequest = (function() {
 
         /**
-         * Properties of an EnterpriseNodeToManagedCompanyRequest.
+         * Properties of a NodeToManagedCompanyRequest.
          * @memberof Enterprise
-         * @interface IEnterpriseNodeToManagedCompanyRequest
-         * @property {number|null} [companyId] EnterpriseNodeToManagedCompanyRequest companyId
-         * @property {Array.<Enterprise.IReEncryptedData>|null} [nodes] EnterpriseNodeToManagedCompanyRequest nodes
-         * @property {Array.<Enterprise.IReEncryptedData>|null} [roles] EnterpriseNodeToManagedCompanyRequest roles
-         * @property {Array.<Enterprise.IReEncryptedData>|null} [users] EnterpriseNodeToManagedCompanyRequest users
+         * @interface INodeToManagedCompanyRequest
+         * @property {number|null} [companyId] NodeToManagedCompanyRequest companyId
+         * @property {Array.<Enterprise.IReEncryptedData>|null} [nodes] NodeToManagedCompanyRequest nodes
+         * @property {Array.<Enterprise.IReEncryptedData>|null} [roles] NodeToManagedCompanyRequest roles
+         * @property {Array.<Enterprise.IReEncryptedData>|null} [users] NodeToManagedCompanyRequest users
          */
 
         /**
-         * Constructs a new EnterpriseNodeToManagedCompanyRequest.
+         * Constructs a new NodeToManagedCompanyRequest.
          * @memberof Enterprise
-         * @classdesc Represents an EnterpriseNodeToManagedCompanyRequest.
-         * @implements IEnterpriseNodeToManagedCompanyRequest
+         * @classdesc Represents a NodeToManagedCompanyRequest.
+         * @implements INodeToManagedCompanyRequest
          * @constructor
-         * @param {Enterprise.IEnterpriseNodeToManagedCompanyRequest=} [properties] Properties to set
+         * @param {Enterprise.INodeToManagedCompanyRequest=} [properties] Properties to set
          */
-        function EnterpriseNodeToManagedCompanyRequest(properties) {
+        function NodeToManagedCompanyRequest(properties) {
             this.nodes = [];
             this.roles = [];
             this.users = [];
@@ -34218,59 +34218,59 @@ export const Enterprise = $root.Enterprise = (() => {
         }
 
         /**
-         * EnterpriseNodeToManagedCompanyRequest companyId.
+         * NodeToManagedCompanyRequest companyId.
          * @member {number} companyId
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @instance
          */
-        EnterpriseNodeToManagedCompanyRequest.prototype.companyId = 0;
+        NodeToManagedCompanyRequest.prototype.companyId = 0;
 
         /**
-         * EnterpriseNodeToManagedCompanyRequest nodes.
+         * NodeToManagedCompanyRequest nodes.
          * @member {Array.<Enterprise.IReEncryptedData>} nodes
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @instance
          */
-        EnterpriseNodeToManagedCompanyRequest.prototype.nodes = $util.emptyArray;
+        NodeToManagedCompanyRequest.prototype.nodes = $util.emptyArray;
 
         /**
-         * EnterpriseNodeToManagedCompanyRequest roles.
+         * NodeToManagedCompanyRequest roles.
          * @member {Array.<Enterprise.IReEncryptedData>} roles
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @instance
          */
-        EnterpriseNodeToManagedCompanyRequest.prototype.roles = $util.emptyArray;
+        NodeToManagedCompanyRequest.prototype.roles = $util.emptyArray;
 
         /**
-         * EnterpriseNodeToManagedCompanyRequest users.
+         * NodeToManagedCompanyRequest users.
          * @member {Array.<Enterprise.IReEncryptedData>} users
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @instance
          */
-        EnterpriseNodeToManagedCompanyRequest.prototype.users = $util.emptyArray;
+        NodeToManagedCompanyRequest.prototype.users = $util.emptyArray;
 
         /**
-         * Creates a new EnterpriseNodeToManagedCompanyRequest instance using the specified properties.
+         * Creates a new NodeToManagedCompanyRequest instance using the specified properties.
          * @function create
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
-         * @param {Enterprise.IEnterpriseNodeToManagedCompanyRequest=} [properties] Properties to set
-         * @returns {Enterprise.EnterpriseNodeToManagedCompanyRequest} EnterpriseNodeToManagedCompanyRequest instance
+         * @param {Enterprise.INodeToManagedCompanyRequest=} [properties] Properties to set
+         * @returns {Enterprise.NodeToManagedCompanyRequest} NodeToManagedCompanyRequest instance
          */
-        EnterpriseNodeToManagedCompanyRequest.create = function create(properties) {
-            return new EnterpriseNodeToManagedCompanyRequest(properties);
+        NodeToManagedCompanyRequest.create = function create(properties) {
+            return new NodeToManagedCompanyRequest(properties);
         };
 
         /**
-         * Encodes the specified EnterpriseNodeToManagedCompanyRequest message. Does not implicitly {@link Enterprise.EnterpriseNodeToManagedCompanyRequest.verify|verify} messages.
+         * Encodes the specified NodeToManagedCompanyRequest message. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
          * @function encode
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
-         * @param {Enterprise.IEnterpriseNodeToManagedCompanyRequest} message EnterpriseNodeToManagedCompanyRequest message or plain object to encode
+         * @param {Enterprise.INodeToManagedCompanyRequest} message NodeToManagedCompanyRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        EnterpriseNodeToManagedCompanyRequest.encode = function encode(message, writer) {
+        NodeToManagedCompanyRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.companyId != null && message.hasOwnProperty("companyId"))
@@ -34288,33 +34288,33 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         /**
-         * Encodes the specified EnterpriseNodeToManagedCompanyRequest message, length delimited. Does not implicitly {@link Enterprise.EnterpriseNodeToManagedCompanyRequest.verify|verify} messages.
+         * Encodes the specified NodeToManagedCompanyRequest message, length delimited. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
-         * @param {Enterprise.IEnterpriseNodeToManagedCompanyRequest} message EnterpriseNodeToManagedCompanyRequest message or plain object to encode
+         * @param {Enterprise.INodeToManagedCompanyRequest} message NodeToManagedCompanyRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        EnterpriseNodeToManagedCompanyRequest.encodeDelimited = function encodeDelimited(message, writer) {
+        NodeToManagedCompanyRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an EnterpriseNodeToManagedCompanyRequest message from the specified reader or buffer.
+         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {Enterprise.EnterpriseNodeToManagedCompanyRequest} EnterpriseNodeToManagedCompanyRequest
+         * @returns {Enterprise.NodeToManagedCompanyRequest} NodeToManagedCompanyRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        EnterpriseNodeToManagedCompanyRequest.decode = function decode(reader, length) {
+        NodeToManagedCompanyRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Enterprise.EnterpriseNodeToManagedCompanyRequest();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Enterprise.NodeToManagedCompanyRequest();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -34345,30 +34345,30 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         /**
-         * Decodes an EnterpriseNodeToManagedCompanyRequest message from the specified reader or buffer, length delimited.
+         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {Enterprise.EnterpriseNodeToManagedCompanyRequest} EnterpriseNodeToManagedCompanyRequest
+         * @returns {Enterprise.NodeToManagedCompanyRequest} NodeToManagedCompanyRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        EnterpriseNodeToManagedCompanyRequest.decodeDelimited = function decodeDelimited(reader) {
+        NodeToManagedCompanyRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an EnterpriseNodeToManagedCompanyRequest message.
+         * Verifies a NodeToManagedCompanyRequest message.
          * @function verify
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        EnterpriseNodeToManagedCompanyRequest.verify = function verify(message) {
+        NodeToManagedCompanyRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.companyId != null && message.hasOwnProperty("companyId"))
@@ -34405,46 +34405,46 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         /**
-         * Creates an EnterpriseNodeToManagedCompanyRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a NodeToManagedCompanyRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {Enterprise.EnterpriseNodeToManagedCompanyRequest} EnterpriseNodeToManagedCompanyRequest
+         * @returns {Enterprise.NodeToManagedCompanyRequest} NodeToManagedCompanyRequest
          */
-        EnterpriseNodeToManagedCompanyRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.Enterprise.EnterpriseNodeToManagedCompanyRequest)
+        NodeToManagedCompanyRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.Enterprise.NodeToManagedCompanyRequest)
                 return object;
-            let message = new $root.Enterprise.EnterpriseNodeToManagedCompanyRequest();
+            let message = new $root.Enterprise.NodeToManagedCompanyRequest();
             if (object.companyId != null)
                 message.companyId = object.companyId | 0;
             if (object.nodes) {
                 if (!Array.isArray(object.nodes))
-                    throw TypeError(".Enterprise.EnterpriseNodeToManagedCompanyRequest.nodes: array expected");
+                    throw TypeError(".Enterprise.NodeToManagedCompanyRequest.nodes: array expected");
                 message.nodes = [];
                 for (let i = 0; i < object.nodes.length; ++i) {
                     if (typeof object.nodes[i] !== "object")
-                        throw TypeError(".Enterprise.EnterpriseNodeToManagedCompanyRequest.nodes: object expected");
+                        throw TypeError(".Enterprise.NodeToManagedCompanyRequest.nodes: object expected");
                     message.nodes[i] = $root.Enterprise.ReEncryptedData.fromObject(object.nodes[i]);
                 }
             }
             if (object.roles) {
                 if (!Array.isArray(object.roles))
-                    throw TypeError(".Enterprise.EnterpriseNodeToManagedCompanyRequest.roles: array expected");
+                    throw TypeError(".Enterprise.NodeToManagedCompanyRequest.roles: array expected");
                 message.roles = [];
                 for (let i = 0; i < object.roles.length; ++i) {
                     if (typeof object.roles[i] !== "object")
-                        throw TypeError(".Enterprise.EnterpriseNodeToManagedCompanyRequest.roles: object expected");
+                        throw TypeError(".Enterprise.NodeToManagedCompanyRequest.roles: object expected");
                     message.roles[i] = $root.Enterprise.ReEncryptedData.fromObject(object.roles[i]);
                 }
             }
             if (object.users) {
                 if (!Array.isArray(object.users))
-                    throw TypeError(".Enterprise.EnterpriseNodeToManagedCompanyRequest.users: array expected");
+                    throw TypeError(".Enterprise.NodeToManagedCompanyRequest.users: array expected");
                 message.users = [];
                 for (let i = 0; i < object.users.length; ++i) {
                     if (typeof object.users[i] !== "object")
-                        throw TypeError(".Enterprise.EnterpriseNodeToManagedCompanyRequest.users: object expected");
+                        throw TypeError(".Enterprise.NodeToManagedCompanyRequest.users: object expected");
                     message.users[i] = $root.Enterprise.ReEncryptedData.fromObject(object.users[i]);
                 }
             }
@@ -34452,15 +34452,15 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         /**
-         * Creates a plain object from an EnterpriseNodeToManagedCompanyRequest message. Also converts values to other types if specified.
+         * Creates a plain object from a NodeToManagedCompanyRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @static
-         * @param {Enterprise.EnterpriseNodeToManagedCompanyRequest} message EnterpriseNodeToManagedCompanyRequest
+         * @param {Enterprise.NodeToManagedCompanyRequest} message NodeToManagedCompanyRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        EnterpriseNodeToManagedCompanyRequest.toObject = function toObject(message, options) {
+        NodeToManagedCompanyRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
@@ -34492,17 +34492,17 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         /**
-         * Converts this EnterpriseNodeToManagedCompanyRequest to JSON.
+         * Converts this NodeToManagedCompanyRequest to JSON.
          * @function toJSON
-         * @memberof Enterprise.EnterpriseNodeToManagedCompanyRequest
+         * @memberof Enterprise.NodeToManagedCompanyRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        EnterpriseNodeToManagedCompanyRequest.prototype.toJSON = function toJSON() {
+        NodeToManagedCompanyRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return EnterpriseNodeToManagedCompanyRequest;
+        return NodeToManagedCompanyRequest;
     })();
 
     return Enterprise;
