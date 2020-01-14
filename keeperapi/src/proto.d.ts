@@ -13083,7 +13083,7 @@ export namespace Enterprise {
         id?: (number|Long|null);
 
         /** ReEncryptedData data */
-        data?: (Uint8Array|null);
+        data?: (string|null);
     }
 
     /** Represents a ReEncryptedData. */
@@ -13099,7 +13099,7 @@ export namespace Enterprise {
         public id: (number|Long);
 
         /** ReEncryptedData data. */
-        public data: Uint8Array;
+        public data: string;
 
         /**
          * Creates a new ReEncryptedData instance using the specified properties.

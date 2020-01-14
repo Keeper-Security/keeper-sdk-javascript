@@ -33961,7 +33961,7 @@ export const Enterprise = $root.Enterprise = (() => {
          * @memberof Enterprise
          * @interface IReEncryptedData
          * @property {number|Long|null} [id] ReEncryptedData id
-         * @property {Uint8Array|null} [data] ReEncryptedData data
+         * @property {string|null} [data] ReEncryptedData data
          */
 
         /**
@@ -33989,11 +33989,11 @@ export const Enterprise = $root.Enterprise = (() => {
 
         /**
          * ReEncryptedData data.
-         * @member {Uint8Array} data
+         * @member {string} data
          * @memberof Enterprise.ReEncryptedData
          * @instance
          */
-        ReEncryptedData.prototype.data = $util.newBuffer([]);
+        ReEncryptedData.prototype.data = "";
 
         /**
          * Creates a new ReEncryptedData instance using the specified properties.
@@ -34022,7 +34022,7 @@ export const Enterprise = $root.Enterprise = (() => {
             if (message.id != null && message.hasOwnProperty("id"))
                 writer.uint32(/* id 1, wireType 0 =*/8).int64(message.id);
             if (message.data != null && message.hasOwnProperty("data"))
-                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.data);
             return writer;
         };
 
@@ -34061,7 +34061,7 @@ export const Enterprise = $root.Enterprise = (() => {
                     message.id = reader.int64();
                     break;
                 case 2:
-                    message.data = reader.bytes();
+                    message.data = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -34102,8 +34102,8 @@ export const Enterprise = $root.Enterprise = (() => {
                 if (!$util.isInteger(message.id) && !(message.id && $util.isInteger(message.id.low) && $util.isInteger(message.id.high)))
                     return "id: integer|Long expected";
             if (message.data != null && message.hasOwnProperty("data"))
-                if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
-                    return "data: buffer expected";
+                if (!$util.isString(message.data))
+                    return "data: string expected";
             return null;
         };
 
@@ -34129,10 +34129,7 @@ export const Enterprise = $root.Enterprise = (() => {
                 else if (typeof object.id === "object")
                     message.id = new $util.LongBits(object.id.low >>> 0, object.id.high >>> 0).toNumber();
             if (object.data != null)
-                if (typeof object.data === "string")
-                    $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
-                else if (object.data.length)
-                    message.data = object.data;
+                message.data = String(object.data);
             return message;
         };
 
@@ -34155,13 +34152,7 @@ export const Enterprise = $root.Enterprise = (() => {
                     object.id = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.id = options.longs === String ? "0" : 0;
-                if (options.bytes === String)
-                    object.data = "";
-                else {
-                    object.data = [];
-                    if (options.bytes !== Array)
-                        object.data = $util.newBuffer(object.data);
-                }
+                object.data = "";
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 if (typeof message.id === "number")
@@ -34169,7 +34160,7 @@ export const Enterprise = $root.Enterprise = (() => {
                 else
                     object.id = options.longs === String ? $util.Long.prototype.toString.call(message.id) : options.longs === Number ? new $util.LongBits(message.id.low >>> 0, message.id.high >>> 0).toNumber() : message.id;
             if (message.data != null && message.hasOwnProperty("data"))
-                object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+                object.data = message.data;
             return object;
         };
 
