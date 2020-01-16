@@ -2,11 +2,11 @@ import {KeeperCommand} from './commands'
 import {Authentication} from './proto'
 import {platform} from './platform'
 import {isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
+import {DeviceMessage, PreLoginMessage, RestMessage} from './restMessages'
 import ApiRequestPayload = Authentication.ApiRequestPayload
 import ApiRequest = Authentication.ApiRequest
 import IDeviceResponse = Authentication.IDeviceResponse
 import IPreLoginResponse = Authentication.IPreLoginResponse
-import {DeviceMessage, PreLoginMessage, RestMessage} from './restMessages'
 import IApiRequestPayload = Authentication.IApiRequestPayload
 
 export class KeeperEndpoint {
@@ -27,8 +27,7 @@ export class KeeperEndpoint {
     async getDeviceToken(): Promise<IDeviceResponse> {
         while (true) {
             try {
-
-                return this.executeRest(new DeviceMessage({
+                return await this.executeRest(new DeviceMessage({
                     clientVersion: this.clientVersion,
                     deviceName: 'JS Keeper API'
                 }))
