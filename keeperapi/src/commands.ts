@@ -614,7 +614,7 @@ export interface EnterpriseLicense {
     product_type_id: number;
     license_key_id: number;
     tier: number;
-    lic_status: string;
+    lic_status: 'business' | 'business_trial' | 'enterprise' | 'msp' | 'msp_trial' | 'mc_business' | 'mc_business_plus' | 'mc_enterprise' | 'mc_enterprise_plus';
     paid: boolean;
     name: string;
     seats_pending: number;
