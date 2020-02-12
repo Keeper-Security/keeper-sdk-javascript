@@ -136,7 +136,7 @@ export class KeeperEndpoint {
         this.publicKeyId = keyNumber
         this.transmissionKey = platform.getRandomBytes(32)
         let key = platform.keys[keyNumber - 1]
-        this.encryptedTransmissionKey = platform.publicEncrypt(this.transmissionKey, normal64(key))
+        this.encryptedTransmissionKey = platform.publicEncrypt(this.transmissionKey, key)
     }
 
     private async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
@@ -197,7 +197,7 @@ let _keeperKeys: KeeperKeys = {
 }
 
 for (let key in keys.der) {
-    _keeperKeys.der.push(keys.der[key])
+    _keeperKeys.der.push(normal64(keys.der[key]))
 }
 for (let key in keys.pem) {
     _keeperKeys.pem.push(keys.pem[key])

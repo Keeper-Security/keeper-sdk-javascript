@@ -28,24 +28,32 @@ export class RestMessage<TIn, TOut> {
 
 export class DeviceMessage extends RestMessage<Authentication.IDeviceRequest, Authentication.IDeviceResponse> {
     constructor(data: Authentication.IDeviceRequest) {
-        super(data, 'authentication/get_device_token', Authentication.DeviceRequest.encode, Authentication.DeviceResponse.decode)
+        super(data, 'authentication/get_device_token',
+            Authentication.DeviceRequest.encode.bind(Authentication.DeviceRequest),
+            Authentication.DeviceResponse.decode.bind(Authentication.DeviceResponse))
     }
 }
 
 export class PreLoginMessage extends RestMessage<Authentication.IPreLoginRequest, Authentication.IPreLoginResponse> {
     constructor(data: Authentication.IPreLoginRequest) {
-        super(data, 'authentication/pre_login', Authentication.PreLoginRequest.encode, Authentication.PreLoginResponse.decode)
+        super(data, 'authentication/pre_login',
+            Authentication.PreLoginRequest.encode.bind(Authentication.PreLoginRequest),
+            Authentication.PreLoginResponse.decode.bind(Authentication.PreLoginResponse))
     }
 }
 
 export class SecurityReportMessage extends RestMessage<Authentication.ISecurityReportRequest, Authentication.ISecurityReportResponse> {
     constructor(data: Authentication.ISecurityReportRequest) {
-        super(data, 'enterprise/get_security_report_data', Authentication.SecurityReportRequest.encode, Authentication.SecurityReportResponse.decode)
+        super(data, 'enterprise/get_security_report_data',
+            Authentication.SecurityReportRequest.encode.bind(Authentication.SecurityReportRequest),
+            Authentication.SecurityReportResponse.decode.bind(Authentication.SecurityReportResponse))
     }
 }
 
 export class EnterpriseNodeToManagedCompanyMessage extends RestMessage<Enterprise.INodeToManagedCompanyRequest, {}> {
     constructor(data: Enterprise.INodeToManagedCompanyRequest) {
-        super(data, 'enterprise/node_to_managed_company', Enterprise.NodeToManagedCompanyRequest.encode, null)
+        super(data, 'enterprise/node_to_managed_company',
+            Enterprise.NodeToManagedCompanyRequest.encode.bind(Enterprise.NodeToManagedCompanyRequest),
+            null)
     }
 }
