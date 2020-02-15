@@ -7,9 +7,6 @@ export interface RestMessage<TIn, TOut> {
     fromBytes(data: Uint8Array): TOut
 }
 
-type RestEncoder<T> = (message: T, writer?: Writer) => Writer;
-type RestDecoder<T> = (reader: Uint8Array, length?: number) => T;
-
 type encoderClass<T> = {
     encode: (message: T, writer?: Writer) => Writer;
 }
@@ -42,5 +39,15 @@ export const securityReportMessage = (data: Authentication.ISecurityReportReques
 export const enterpriseNodeToManagedCompanyMessage = (data: Enterprise.INodeToManagedCompanyRequest): RestMessage<Enterprise.INodeToManagedCompanyRequest, {}> =>
     createMessage(data, 'enterprise/get_security_report_data', Enterprise.NodeToManagedCompanyRequest, null)
 
-export const recordTypesGetMessage = (data: Authentication.ISecurityReportRequest): RestMessage<Authentication.ISecurityReportRequest, Authentication.ISecurityReportResponse> =>
-    createMessage(data, 'enterprise/get_security_report_data', Authentication.SecurityReportRequest, Authentication.SecurityReportResponse)
+export const recordTypesGetMessage = (data: Authentication.IRecordTypesRequest): RestMessage<Authentication.IRecordTypesRequest, Authentication.IRecordTypesResponse> =>
+    createMessage(data, 'vault/get_record_types', Authentication.RecordTypesRequest, Authentication.RecordTypesResponse)
+
+export const recordTypeAddMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
+    createMessage(data, 'vault/record_type_add', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
+
+export const recordTypeUpdateMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
+    createMessage(data, 'vault/record_type_update', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
+
+export const recordTypeDeleteMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
+    createMessage(data, 'vault/record_type_delete', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
+
