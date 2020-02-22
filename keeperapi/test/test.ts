@@ -5,11 +5,10 @@ import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
 import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
-import {EnterpriseDataInclude} from '../src/commands'
+import {EnterpriseDataInclude, GetEnterpriseDataCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {recordTypeAddMessage, recordTypeDeleteMessage, recordTypesGetMessage, recordTypeUpdateMessage} from '../src/restMessages'
+import {recordTypesGetMessage} from '../src/restMessages'
 import {Authentication} from '../src/proto'
-import RecordTypeScope = Authentication.RecordTypeScope
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -52,6 +51,48 @@ async function printVault() {
     }
 }
 
+async function printMSPVault() {
+
+    let authUI: AuthUI = {
+        displayDialog(): Promise<boolean> {
+            return null
+        },
+        getTwoFactorCode(): Promise<string> {
+            return new Promise<string>((resolve, reject) => {
+                const rl = readline.createInterface({
+                    input: process.stdin,
+                    output: process.stdout
+                })
+                rl.question('Enter Code: ', code => {
+                    resolve(code)
+                    rl.close()
+                })
+            })
+        }
+    }
+
+    try {
+        let auth = new Auth({
+            host: "local.keepersecurity.com"
+        }, authUI)
+        // await auth.login('admin+msp@yozik.us', '111111')
+        // await auth.managedCompanyLogin('admin+msp@yozik.us', '111111', 2858)
+        await auth.managedCompanyLogin('admin+mspn1@yozik.us', '111111', 2858)
+        // await auth.managedCompanyLogin('admin+msp@yozik.us', '111111', 2906)
+        console.log('login successful')
+        let cmd = new GetEnterpriseDataCommand()
+        let entData = await auth.executeCommand(cmd)
+        console.log(entData)
+        // let vault = new Vault(auth)
+        // await vault.syncDown()
+        // for (let record of vault.records) {
+        //     console.log(record.data.title)
+        // }
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 async function printRecordTypes() {
 
     let authUI: AuthUI = {
@@ -74,32 +115,40 @@ async function printRecordTypes() {
 
     try {
         let auth = new Auth({
-            host: 'local.keepersecurity.com'
+            host: KeeperEnvironment.DEV
         }, authUI)
         await auth.login('saldoukhov@gmail.com', '111111')
 
-        let recTypesResp = await auth.executeRest(recordTypesGetMessage({standard: true, enterprise: true}))
-        let recTypes = recTypesResp.recordTypes.filter(x => x.scope === RecordTypeScope.RT_ENTERPRISE).map(x => JSON.stringify(JSON.parse(x.content)))
+
+        // let accountSummary = new AccountSummaryCommand()
+        // accountSummary.include = ['settings']
+        // let resp = await auth.executeCommand(accountSummary)
+        // console.log(resp)
+
+
+        let recTypesResp = await auth.executeRest(recordTypesGetMessage({standard: false, enterprise: true}))
+        console.log(recTypesResp)
+        let recTypes = recTypesResp.recordTypes.map(x => JSON.stringify(JSON.parse(x.content)))
         console.log(recTypes)
 
-        let recTypeAddResp = await auth.executeRest(recordTypeAddMessage({
-            content: '{"$id":"file2","categories":["file"],"description":"File template","fields":[{"$ref":"file"}]}',
-            scope: RecordTypeScope.RT_ENTERPRISE
-        }))
-        console.log(recTypeAddResp)
-
-        let recTypeUpdateResp = await auth.executeRest(recordTypeUpdateMessage({
-            recordTypeId: recTypeAddResp.recordTypeId,
-            content: '{"$id":"file3","categories":["file"],"description":"File template","fields":[{"$ref":"file"}]}',
-            scope: RecordTypeScope.RT_ENTERPRISE
-        }))
-        console.log(recTypeUpdateResp)
-
-        let recTypeDeleteResp = await auth.executeRest(recordTypeDeleteMessage({
-            recordTypeId: recTypeAddResp.recordTypeId,
-            scope: RecordTypeScope.RT_ENTERPRISE
-        }))
-        console.log(recTypeDeleteResp)
+        // let recTypeAddResp = await auth.executeRest(recordTypeAddMessage({
+        //     content: '{"$id":"file3","categories":["file"],"description":"File template","fields":[{"$ref":"file"}]}',
+        //     scope: RecordTypeScope.RT_ENTERPRISE
+        // }))
+        // console.log(recTypeAddResp)
+        //
+        // let recTypeUpdateResp = await auth.executeRest(recordTypeUpdateMessage({
+        //     recordTypeId: recTypeAddResp.recordTypeId,
+        //     content: '{"$id":"file3","categories":["file"],"description":"File template","fields":[{"$ref":"file"}]}',
+        //     scope: RecordTypeScope.RT_ENTERPRISE
+        // }))
+        // console.log(recTypeUpdateResp)
+        //
+        // let recTypeDeleteResp = await auth.executeRest(recordTypeDeleteMessage({
+        //     recordTypeId: recTypeAddResp.recordTypeId,
+        //     scope: RecordTypeScope.RT_ENTERPRISE
+        // }))
+        // console.log(recTypeDeleteResp)
     } catch (e) {
         console.log(e)
     }
@@ -204,6 +253,7 @@ async function getVendorEnterprise() {
 
 // printCompany().finally();
 // printVault().finally();
+// printMSPVault().finally();
 // getVendorEnterprise().finally();
 printRecordTypes().finally()
 

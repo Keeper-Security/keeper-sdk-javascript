@@ -34,7 +34,7 @@ export class AccountSummaryCommand extends AuthorizedCommand<KeeperResponse> {
 
     constructor() {
         super()
-        this.command = "AccountSummary"
+        this.command = "account_summary"
     }
 
     include: AccountDataInclude[]
