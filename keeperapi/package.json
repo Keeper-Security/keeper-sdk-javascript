@@ -19,16 +19,17 @@
   },
   "license": "ISC",
   "dependencies": {
-    "protobufjs": "^6.8.8",
-    "crypto-js": "^3.1.9-1"
+    "crypto-js": "^3.1.9-1",
+    "form-data": "^3.0.0",
+    "protobufjs": "^6.8.8"
   },
   "devDependencies": {
     "@types/crypto-js": "^3.1.43",
     "@types/jest": "^24.0.15",
     "jest": "^24.8.0",
     "rollup": "^1.16.1",
-    "rollup-plugin-typescript2": "^0.21.2",
     "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.21.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"

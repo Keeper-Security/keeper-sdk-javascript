@@ -34,6 +34,8 @@ export interface Platform {
     get(url: string, headers: any): Promise<KeeperHttpResponse>;
 
     post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse>;
+
+    fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any>
 }
 
 export function connectPlatform(p: Platform) {

@@ -22,8 +22,10 @@ export class Vault {
             let meta = syncDownResponse.record_meta_data.find(x => x.record_uid === rec.record_uid);
             let recordKey = decryptFromStorage(meta.record_key, this.auth.dataKey);
             let recordData = decryptFromStorage(rec.data, recordKey);
+            let recordExtra = decryptFromStorage(rec.extra, recordKey);
             let record: KeeperRecord = {
                 uid: meta.record_uid,
+                key: recordKey,
                 owner: meta.owner,
                 can_edit: meta.can_edit,
                 can_share: meta.can_share,
@@ -31,7 +33,8 @@ export class Vault {
                 client_modified_time: new Date(rec.client_modified_time),
                 version: rec.version,
                 revision: rec.revision,
-                data: JSON.parse(platform.bytesToString(recordData))
+                data: JSON.parse(platform.bytesToString(recordData)),
+                extra: JSON.parse(platform.bytesToString(recordExtra))
             };
             this._records.push(record);
         }
@@ -61,6 +64,7 @@ export class Vault {
 
 export class KeeperRecord {
     uid: string;
+    key: Uint8Array;
     owner: boolean;
     can_share: boolean;
     can_edit: boolean;
@@ -69,6 +73,7 @@ export class KeeperRecord {
     version: number;
     revision: number;
     data: KeeperRecordData;
+    extra: KeeperRecordExtra;
 }
 
 export interface KeeperRecordData {
@@ -78,4 +83,39 @@ export interface KeeperRecordData {
     link?: string;
     notes?: string;
     custom?: { name?: string, value?: string }[];
+}
+
+export interface KeeperRecordExtra {
+    fields: ExtraField[]
+    files: ExtraFile[]
+}
+
+export interface ExtraField {
+    id: string
+    field_type: 'totp'
+    field_title: string
+    type: number
+    data: string
+}
+
+export interface ExtraFile {
+    id: string
+    name: string
+    lastModified: number
+    size: number
+    type: 'image/png'
+    title: string
+    key: string
+    thumbs: FileThumb[]
+}
+
+export interface FileThumb {
+    id: string
+    size: number
+    type: 'image/png'
+    dataURL: string
+    realSize: {
+        height: number,
+        width: number
+    }
 }

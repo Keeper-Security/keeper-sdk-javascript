@@ -1,39 +1,38 @@
 import {Auth, AuthUI} from '../src/auth'
 import {Vault} from '../src/vault'
-import {connectPlatform} from '../src/platform'
+import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
 import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
-import {EnterpriseDataInclude, GetEnterpriseDataCommand} from '../src/commands'
+import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand, RequestUploadCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
-import {Authentication} from '../src/proto'
+import {decryptFromStorage, decryptKey, normal64Bytes} from '../src/utils'
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
+const authUI: AuthUI = {
+    displayDialog(): Promise<boolean> {
+        return null
+    },
+    getTwoFactorCode(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            })
+            rl.question('Enter Code: ', code => {
+                resolve(code)
+                rl.close()
+            })
+        })
+    }
+}
 
 async function printVault() {
-
-    let authUI: AuthUI = {
-        displayDialog(): Promise<boolean> {
-            return null
-        },
-        getTwoFactorCode(): Promise<string> {
-            return new Promise<string>((resolve, reject) => {
-                const rl = readline.createInterface({
-                    input: process.stdin,
-                    output: process.stdout
-                })
-                rl.question('Enter Code: ', code => {
-                    resolve(code)
-                    rl.close()
-                })
-            })
-        }
-    }
 
     try {
         let auth = new Auth({
@@ -44,32 +43,72 @@ async function printVault() {
         let vault = new Vault(auth)
         await vault.syncDown()
         for (let record of vault.records) {
-            console.log(record.data.title)
+            console.log(record.data)
         }
     } catch (e) {
         console.log(e)
     }
 }
 
-async function printMSPVault() {
+async function testAttachmentsDownload() {
 
-    let authUI: AuthUI = {
-        displayDialog(): Promise<boolean> {
-            return null
-        },
-        getTwoFactorCode(): Promise<string> {
-            return new Promise<string>((resolve, reject) => {
-                const rl = readline.createInterface({
-                    input: process.stdin,
-                    output: process.stdout
-                })
-                rl.question('Enter Code: ', code => {
-                    resolve(code)
-                    rl.close()
-                })
-            })
-        }
+    try {
+        let auth = new Auth({
+            host: KeeperEnvironment.DEV
+        }, authUI)
+        await auth.login('admin@yozik.us', '111111')
+        console.log('login successful')
+        let vault = new Vault(auth)
+        await vault.syncDown()
+        const rec = vault.records[0]
+        const file = rec.extra.files[0]
+        const fileKey = normal64Bytes(file.key)
+        const downloadCommand = new RequestDownloadCommand()
+        downloadCommand.record_uid = rec.uid
+        downloadCommand.file_ids = [rec.extra.files[0].id]
+        const resp = await auth.executeCommand(downloadCommand)
+        const fileResponse = await platform.get(resp.downloads[0].url, {})
+        const decryptedFile = platform.aesCbcDecrypt(fileResponse.data, fileKey, false)
+        const fs = require('fs')
+        fs.writeFileSync(file.name, decryptedFile)
+        console.log(decryptedFile)
+    } catch (e) {
+        console.log(e)
     }
+}
+
+// const encryptToBlob = (data: Uint8Array, key:Uint8Array, mimeType?: string) => {
+//     var bytes = KeeperAES256.encryptToBytes(cleartext, key, false)!
+//     return new Blob([bytes], { type: 'application/octet-binary' })
+// }
+
+async function testAttachmentsUpload() {
+    try {
+        let auth = new Auth({
+            host: KeeperEnvironment.DEV
+        }, authUI)
+        await auth.login('admin@yozik.us', '111111')
+        console.log('login successful')
+        let vault = new Vault(auth)
+        await vault.syncDown()
+        const rec = vault.records[0]
+        const uploadCommand = new RequestUploadCommand()
+        uploadCommand.file_count = 1
+        uploadCommand.thumbnail_count = 0
+        const resp = await auth.executeCommand(uploadCommand)
+        const uploadInfo = resp.file_uploads[0]
+        console.log(uploadInfo)
+
+        const fs = require('fs')
+        const file = fs.readFileSync('12@3x.png')
+        const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, file)
+        console.log(res)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function printMSPVault() {
 
     try {
         let auth = new Auth({
@@ -95,29 +134,13 @@ async function printMSPVault() {
 
 async function printRecordTypes() {
 
-    let authUI: AuthUI = {
-        displayDialog(): Promise<boolean> {
-            return null
-        },
-        getTwoFactorCode(): Promise<string> {
-            return new Promise<string>((resolve, reject) => {
-                const rl = readline.createInterface({
-                    input: process.stdin,
-                    output: process.stdout
-                })
-                rl.question('Enter Code: ', code => {
-                    resolve(code)
-                    rl.close()
-                })
-            })
-        }
-    }
-
     try {
         let auth = new Auth({
             host: KeeperEnvironment.DEV
         }, authUI)
         await auth.login('saldoukhov@gmail.com', '111111')
+        console.log("Logged in...")
+        // await auth.login('saldoukhov@keepersecurity.eu', 'keeper')
 
 
         // let accountSummary = new AccountSummaryCommand()
@@ -126,7 +149,7 @@ async function printRecordTypes() {
         // console.log(resp)
 
 
-        let recTypesResp = await auth.executeRest(recordTypesGetMessage({standard: false, enterprise: true}))
+        let recTypesResp = await auth.executeRest(recordTypesGetMessage({standard: true, enterprise: true}))
         console.log(recTypesResp)
         let recTypes = recTypesResp.recordTypes.map(x => JSON.stringify(JSON.parse(x.content)))
         console.log(recTypes)
@@ -253,9 +276,11 @@ async function getVendorEnterprise() {
 
 // printCompany().finally();
 // printVault().finally();
+// testAttachmentsDownload().finally();
+testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
-printRecordTypes().finally()
+// printRecordTypes().finally()
 
 
 

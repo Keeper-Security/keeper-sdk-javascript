@@ -120,6 +120,57 @@ export interface RecordUpdateRecord {
     team_uid: string;
 }
 
+export class RequestDownloadCommand extends AuthorizedCommand<RequestDownloadResponse> {
+    constructor() {
+        super()
+        this.command = 'request_download'
+    }
+
+    record_uid: string
+    file_ids: string[]
+    shared_folder_uid: string
+    team_uid: string
+}
+
+export interface RequestDownloadResponse extends KeeperResponse {
+    downloads: {
+        success_status_code: number
+        url: string
+    }[]
+}
+
+export class RequestUploadCommand extends AuthorizedCommand<RequestUploadResponse> {
+    constructor() {
+        super()
+        this.command = 'request_upload'
+    }
+
+    file_count: number
+    thumbnail_count: number
+}
+
+export interface RequestUploadResponse extends KeeperResponse {
+    file_uploads: FileUpload[]
+    thumbnail_uploads: FileUpload[]
+}
+
+export interface FileUpload {
+    file_parameter: 'file'
+    file_id: string
+    success_status_code: number
+    parameters: {
+        signature: string
+        success_action_status: number
+        AWSAccessKeyId: string
+        acl: 'private'
+        'x-amz-security-token': string
+        key: string
+        policy: string
+    }
+    max_size: number
+    url: string
+}
+
 export type EnterpriseDataInclude =
     | "nodes"
     | "users"
@@ -457,6 +508,7 @@ export interface Record {
     shared: boolean;
     data: string;
     client_modified_time: number;
+    extra: string;
     version: number;
     revision: number;
 }

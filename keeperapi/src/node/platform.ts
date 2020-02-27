@@ -4,6 +4,7 @@ import {RSA_PKCS1_PADDING} from "constants";
 import * as https from "https";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
+import * as FormData from "form-data"
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;
@@ -123,6 +124,28 @@ export const nodePlatform: Platform = class {
             });
             post.write(request);
             post.end();
+        })
+    }
+
+    static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
+        return new Promise<any>((resolve) => {
+            const form = new FormData()
+            for (const key in uploadParameters) {
+                form.append(key, uploadParameters[key]);
+            }
+            form.append('file', data)
+            let post = https.request(url, {
+                method: "post",
+                headers: form.getHeaders()
+            });
+            form.pipe(post)
+            post.on('response', function (res: any) {
+                resolve({
+                    headers: res.headers,
+                    statusCode: res.statusCode,
+                    statusMessage: res.statusMessage
+                })
+            })
         })
     }
 
