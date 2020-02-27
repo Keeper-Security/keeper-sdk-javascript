@@ -1,5 +1,5 @@
 import {Auth, AuthUI} from '../src/auth'
-import {Vault} from '../src/vault'
+import {ExtraFile, Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
@@ -8,7 +8,7 @@ import {Company} from '../src/company'
 import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand, RequestUploadCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
-import {decryptFromStorage, decryptKey, normal64Bytes} from '../src/utils'
+import {decryptFromStorage, decryptKey, generateEncryptionKey, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -60,18 +60,24 @@ async function testAttachmentsDownload() {
         console.log('login successful')
         let vault = new Vault(auth)
         await vault.syncDown()
-        const rec = vault.records[0]
-        const file = rec.extra.files[0]
-        const fileKey = normal64Bytes(file.key)
-        const downloadCommand = new RequestDownloadCommand()
-        downloadCommand.record_uid = rec.uid
-        downloadCommand.file_ids = [rec.extra.files[0].id]
-        const resp = await auth.executeCommand(downloadCommand)
-        const fileResponse = await platform.get(resp.downloads[0].url, {})
-        const decryptedFile = platform.aesCbcDecrypt(fileResponse.data, fileKey, false)
-        const fs = require('fs')
-        fs.writeFileSync(file.name, decryptedFile)
-        console.log(decryptedFile)
+        let rec = vault.records[0]
+        let file = rec.extra.files[0]
+        console.log(rec)
+
+        rec = vault.records[1]
+        file = rec.extra.files[0]
+        console.log(rec)
+
+        // const downloadCommand = new RequestDownloadCommand()
+        // downloadCommand.record_uid = rec.uid
+        // downloadCommand.file_ids = [rec.extra.files[0].id]
+        // const resp = await auth.executeCommand(downloadCommand)
+
+        // const fileResponse = await platform.get(resp.downloads[0].url, {})
+        // const decryptedFile = platform.aesCbcDecrypt(fileResponse.data, normal64Bytes(file.key), false)
+        // const fs = require('fs')
+        // fs.writeFileSync(file.name, decryptedFile)
+        // console.log(decryptedFile)
     } catch (e) {
         console.log(e)
     }
@@ -91,18 +97,17 @@ async function testAttachmentsUpload() {
         console.log('login successful')
         let vault = new Vault(auth)
         await vault.syncDown()
-        const rec = vault.records[0]
-        const uploadCommand = new RequestUploadCommand()
-        uploadCommand.file_count = 1
-        uploadCommand.thumbnail_count = 0
-        const resp = await auth.executeCommand(uploadCommand)
-        const uploadInfo = resp.file_uploads[0]
-        console.log(uploadInfo)
 
+        const fileName = 'course_completion_certificate.pdf'
         const fs = require('fs')
-        const file = fs.readFileSync('12@3x.png')
-        const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, file)
-        console.log(res)
+        const file = fs.readFileSync(fileName)
+
+        const fileData = await vault.uploadFile(fileName, file)
+
+        await vault.addRecord({
+            title: 'my file',
+            secret1: 'abcd'
+        }, [fileData])
     } catch (e) {
         console.log(e)
     }

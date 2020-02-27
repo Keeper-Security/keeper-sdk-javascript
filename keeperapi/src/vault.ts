@@ -1,7 +1,7 @@
-import {Auth} from "./auth";
-import {SyncDownCommand, RecordAddCommand, KeeperResponse, SyncResponse} from "./commands";
-import {platform} from "./platform";
-import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid} from "./utils";
+import {Auth} from './auth'
+import {RecordAddCommand, RequestUploadCommand, SyncDownCommand} from './commands'
+import {platform} from './platform'
+import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid, webSafe64FromBytes} from './utils'
 
 export class Vault {
 
@@ -41,7 +41,7 @@ export class Vault {
         console.log(`${syncDownResponse.records.length} records downloaded. ${this._records.length} are in the vault`);
     }
 
-    async addRecord(recordData: KeeperRecordData) {
+    async addRecord(recordData: KeeperRecordData, files?: [ExtraFile]) {
         let recordAddCommand = new RecordAddCommand();
         recordAddCommand.record_uid = generateUid();
         let recordKey = generateEncryptionKey();
@@ -50,11 +50,43 @@ export class Vault {
         recordAddCommand.data = encryptForStorage(platform.stringToBytes(JSON.stringify(recordData)), recordKey);
         recordAddCommand.how_long_ago = 0;
         recordAddCommand.folder_type = "user_folder";
+
+        if (files) {
+            let extra: KeeperRecordExtra = {
+                fields: [],
+                files: files
+            }
+            recordAddCommand.extra = encryptForStorage(platform.stringToBytes(JSON.stringify(extra)), recordKey)
+            recordAddCommand.file_ids = files.map(x => x.id)
+        }
+
         let recordAddResponse = await this.auth.executeCommand(recordAddCommand);
-        console.log(recordAddResponse);
     }
 
     async updateRecords(recordsData: KeeperRecordData[]) {
+    }
+
+    async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<ExtraFile> {
+        const uploadCommand = new RequestUploadCommand()
+        uploadCommand.file_count = 1
+        uploadCommand.thumbnail_count = thumbnailData ? 1 : 0
+        const resp = await this.auth.executeCommand(uploadCommand)
+        const uploadInfo = resp.file_uploads[0]
+        const fileKey = generateEncryptionKey()
+        const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, false)
+        const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
+        if (res.statusCode !== uploadInfo.success_status_code) {
+            throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
+        }
+        return {
+            id: uploadInfo.file_id,
+            name: fileName,
+            title: fileName,
+            key: webSafe64FromBytes(fileKey),
+            lastModified: new Date().getTime(),
+            size: encryptedFile.length,
+            type: '',
+        };
     }
 
     get records(): KeeperRecord[] {
@@ -103,10 +135,10 @@ export interface ExtraFile {
     name: string
     lastModified: number
     size: number
-    type: 'image/png'
+    type: string
     title: string
     key: string
-    thumbs: FileThumb[]
+    thumbs?: FileThumb[]
 }
 
 export interface FileThumb {
