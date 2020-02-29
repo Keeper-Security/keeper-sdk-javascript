@@ -43,6 +43,7 @@ export class AccountSummaryCommand extends AuthorizedCommand<KeeperResponse> {
 // Currently the * items are included by default. If the item explicit is included, then only the items listed will be included.
 type SyncDataInclude =
     | "record"               //*
+    | "typed_record"
     | "shared_folder"       //*
     | "sfheaders"           //*
     | "sfusers"

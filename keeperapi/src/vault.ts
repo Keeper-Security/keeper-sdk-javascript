@@ -2,6 +2,9 @@ import {Auth} from './auth'
 import {RecordAddCommand, RequestUploadCommand, SyncDownCommand} from './commands'
 import {platform} from './platform'
 import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid, webSafe64FromBytes} from './utils'
+import {recordsAddMessage} from './restMessages'
+import {Folder} from './proto'
+import FolderType = Folder.FolderType
 
 export class Vault {
 
@@ -13,7 +16,26 @@ export class Vault {
 
     async syncDown() {
         let syncDownCommand = new SyncDownCommand(this.revision);
+        syncDownCommand.include = ['record', 'shared_folder', 'sfheaders', 'sfrecords', 'folders'];
+    // | "record"               //*
+    //     | "typed_record"
+    //     | "shared_folder"       //*
+    //     | "sfheaders"           //*
+    //     | "sfusers"
+    //     | "sfrecords"
+    //     | "folders"
+    //     | "teams"                //*
+    //     | "sharing_changes"     //*
+    //     | "non_shared_data"     //*
+    //     | "pending_shares"      //*
+    //     | "profile"
+    //     | "pending_team_users"
+    //     | "user_auth"
+    //     | "reused_passwords"
+    //     | "explicit"
+
         let syncDownResponse = await this.auth.executeCommand(syncDownCommand);
+        console.log(syncDownResponse)
         this.revision = syncDownResponse.revision;
         if (syncDownResponse.full_sync) {
             this._records = [];
@@ -22,7 +44,6 @@ export class Vault {
             let meta = syncDownResponse.record_meta_data.find(x => x.record_uid === rec.record_uid);
             let recordKey = decryptFromStorage(meta.record_key, this.auth.dataKey);
             let recordData = decryptFromStorage(rec.data, recordKey);
-            let recordExtra = decryptFromStorage(rec.extra, recordKey);
             let record: KeeperRecord = {
                 uid: meta.record_uid,
                 key: recordKey,
@@ -33,9 +54,11 @@ export class Vault {
                 client_modified_time: new Date(rec.client_modified_time),
                 version: rec.version,
                 revision: rec.revision,
-                data: JSON.parse(platform.bytesToString(recordData)),
-                extra: JSON.parse(platform.bytesToString(recordExtra))
+                data: JSON.parse(platform.bytesToString(recordData))
             };
+            if (rec.version == 2) {
+                record.extra = JSON.parse(platform.bytesToString(decryptFromStorage(rec.extra, recordKey)));
+            }
             this._records.push(record);
         }
         console.log(`${syncDownResponse.records.length} records downloaded. ${this._records.length} are in the vault`);
@@ -61,6 +84,35 @@ export class Vault {
         }
 
         let recordAddResponse = await this.auth.executeCommand(recordAddCommand);
+    }
+
+    async addRecordNew(recordData: any, files?: [ExtraFile]) {
+        const recordKey = generateEncryptionKey()
+
+        const encryptedKey = platform.aesCbcEncrypt(recordKey, this.auth.dataKey, true)
+        const encryptedData = platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(recordData)), recordKey, true)
+
+        // const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
+        // const encryptedData = await platform.aesGcmEncrypt(platform.stringToBytes(JSON.stringify(recordData)), recordKey)
+
+        if (files) {
+
+        }
+        const rq = recordsAddMessage({
+            clientTime: new Date().getTime(),
+            records: [
+                {
+                    recordUid: platform.getRandomBytes(16),
+                    recordKey: encryptedKey,
+                    data: encryptedData,
+                    clientModifiedTime: new Date().getTime(),
+                    folderType: FolderType.user_folder,
+                    // fileIds:
+                }
+            ]
+        })
+        let recordAddResponse = await this.auth.executeRest(rq)
+        console.log(recordAddResponse)
     }
 
     async updateRecords(recordsData: KeeperRecordData[]) {
@@ -105,7 +157,7 @@ export class KeeperRecord {
     version: number;
     revision: number;
     data: KeeperRecordData;
-    extra: KeeperRecordExtra;
+    extra?: KeeperRecordExtra;
 }
 
 export interface KeeperRecordData {

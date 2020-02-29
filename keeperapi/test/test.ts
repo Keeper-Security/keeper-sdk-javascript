@@ -1,14 +1,13 @@
 import {Auth, AuthUI} from '../src/auth'
-import {ExtraFile, Vault} from '../src/vault'
-import {connectPlatform, platform} from '../src/platform'
+import {Vault} from '../src/vault'
+import {connectPlatform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
 import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
-import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand, RequestUploadCommand} from '../src/commands'
+import {EnterpriseDataInclude, GetEnterpriseDataCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
-import {decryptFromStorage, decryptKey, generateEncryptionKey, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -36,9 +35,10 @@ async function printVault() {
 
     try {
         let auth = new Auth({
-            host: KeeperEnvironment.DEV
+            host: 'local.keepersecurity.com'
+            // host: KeeperEnvironment.DEV
         }, authUI)
-        await auth.login('saldoukhov@gmail.com', '111111')
+        await auth.login('admin@yozik.us', '111111')
         console.log('login successful')
         let vault = new Vault(auth)
         await vault.syncDown()
@@ -91,23 +91,27 @@ async function testAttachmentsDownload() {
 async function testAttachmentsUpload() {
     try {
         let auth = new Auth({
-            host: KeeperEnvironment.DEV
+            host: 'local.keepersecurity.com'
         }, authUI)
         await auth.login('admin@yozik.us', '111111')
         console.log('login successful')
         let vault = new Vault(auth)
         await vault.syncDown()
 
-        const fileName = 'course_completion_certificate.pdf'
-        const fs = require('fs')
-        const file = fs.readFileSync(fileName)
+        // const fileName = 'course_completion_certificate.pdf'
+        // const fs = require('fs')
+        // const file = fs.readFileSync(fileName)
+        //
+        // const fileData = await vault.uploadFile(fileName, file)
 
-        const fileData = await vault.uploadFile(fileName, file)
-
-        await vault.addRecord({
-            title: 'my file',
+        // await vault.addRecord({
+        //     title: 'my file',
+        //     secret1: 'abcd'
+        // }, [fileData])
+        await vault.addRecordNew({
+            title: 'new record',
             secret1: 'abcd'
-        }, [fileData])
+        })
     } catch (e) {
         console.log(e)
     }
@@ -280,9 +284,9 @@ async function getVendorEnterprise() {
 }
 
 // printCompany().finally();
-// printVault().finally();
+printVault().finally();
 // testAttachmentsDownload().finally();
-testAttachmentsUpload().finally();
+// testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
 // printRecordTypes().finally()

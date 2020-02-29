@@ -51,3 +51,14 @@ export const recordTypeUpdateMessage = (data: Authentication.IRecordType): RestM
 export const recordTypeDeleteMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
     createMessage(data, 'vault/record_type_delete', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
 
+export const recordsAddMessage = (data: Authentication.IRecordsUpdateRequest): RestMessage<Authentication.IRecordsUpdateRequest, Authentication.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_add', Authentication.RecordsUpdateRequest, Authentication.RecordsModifyResponse)
+
+export const recordsUpdateMessage = (data: Authentication.IRecordsUpdateRequest): RestMessage<Authentication.IRecordsUpdateRequest, Authentication.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_update', Authentication.RecordsUpdateRequest, Authentication.RecordsModifyResponse)
+
+export const recordsRemoveMessage = (data: Authentication.IRecordsRemoveRequest): RestMessage<Authentication.IRecordsRemoveRequest, Authentication.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_remove', Authentication.RecordsRemoveRequest, Authentication.RecordsModifyResponse)
+
+export const recordsDeleteMessage = (data: Authentication.IRecordsRemoveRequest): RestMessage<Authentication.IRecordsRemoveRequest, Authentication.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_delete', Authentication.RecordsRemoveRequest, Authentication.RecordsModifyResponse)
