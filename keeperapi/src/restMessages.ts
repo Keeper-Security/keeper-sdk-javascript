@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {Authentication, Enterprise} from './proto'
+import {Authentication, Enterprise, Records} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -39,26 +39,30 @@ export const securityReportMessage = (data: Authentication.ISecurityReportReques
 export const enterpriseNodeToManagedCompanyMessage = (data: Enterprise.INodeToManagedCompanyRequest): RestMessage<Enterprise.INodeToManagedCompanyRequest, {}> =>
     createMessage(data, 'enterprise/get_security_report_data', Enterprise.NodeToManagedCompanyRequest, null)
 
-export const recordTypesGetMessage = (data: Authentication.IRecordTypesRequest): RestMessage<Authentication.IRecordTypesRequest, Authentication.IRecordTypesResponse> =>
-    createMessage(data, 'vault/get_record_types', Authentication.RecordTypesRequest, Authentication.RecordTypesResponse)
+export const recordTypesGetMessage = (data: Records.IRecordTypesRequest): RestMessage<Records.IRecordTypesRequest, Records.IRecordTypesResponse> =>
+    createMessage(data, 'vault/get_record_types', Records.RecordTypesRequest, Records.RecordTypesResponse)
 
-export const recordTypeAddMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
-    createMessage(data, 'vault/record_type_add', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
+export const recordTypeAddMessage = (data: Records.IRecordType): RestMessage<Records.IRecordType, Records.IRecordTypeModifyResponse> =>
+    createMessage(data, 'vault/record_type_add', Records.RecordType, Records.RecordTypeModifyResponse)
 
-export const recordTypeUpdateMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
-    createMessage(data, 'vault/record_type_update', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
+export const recordTypeUpdateMessage = (data: Records.IRecordType): RestMessage<Records.IRecordType, Records.IRecordTypeModifyResponse> =>
+    createMessage(data, 'vault/record_type_update', Records.RecordType, Records.RecordTypeModifyResponse)
 
-export const recordTypeDeleteMessage = (data: Authentication.IRecordType): RestMessage<Authentication.IRecordType, Authentication.IRecordTypeModifyResponse> =>
-    createMessage(data, 'vault/record_type_delete', Authentication.RecordType, Authentication.RecordTypeModifyResponse)
+export const recordTypeDeleteMessage = (data: Records.IRecordType): RestMessage<Records.IRecordType, Records.IRecordTypeModifyResponse> =>
+    createMessage(data, 'vault/record_type_delete', Records.RecordType, Records.RecordTypeModifyResponse)
 
-export const recordsAddMessage = (data: Authentication.IRecordsUpdateRequest): RestMessage<Authentication.IRecordsUpdateRequest, Authentication.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_add', Authentication.RecordsUpdateRequest, Authentication.RecordsModifyResponse)
+export const recordsAddMessage = (data: Records.IRecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_add', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
-export const recordsUpdateMessage = (data: Authentication.IRecordsUpdateRequest): RestMessage<Authentication.IRecordsUpdateRequest, Authentication.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_update', Authentication.RecordsUpdateRequest, Authentication.RecordsModifyResponse)
+export const recordsUpdateMessage = (data: Records.IRecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
-export const recordsRemoveMessage = (data: Authentication.IRecordsRemoveRequest): RestMessage<Authentication.IRecordsRemoveRequest, Authentication.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_remove', Authentication.RecordsRemoveRequest, Authentication.RecordsModifyResponse)
+export const recordsRemoveMessage = (data: Records.IRecordsRemoveRequest): RestMessage<Records.IRecordsRemoveRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_remove', Records.RecordsRemoveRequest, Records.RecordsModifyResponse)
 
-export const recordsDeleteMessage = (data: Authentication.IRecordsRemoveRequest): RestMessage<Authentication.IRecordsRemoveRequest, Authentication.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_delete', Authentication.RecordsRemoveRequest, Authentication.RecordsModifyResponse)
+export const recordsDeleteMessage = (data: Records.IRecordsRemoveRequest): RestMessage<Records.IRecordsRemoveRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_delete', Records.RecordsRemoveRequest, Records.RecordsModifyResponse)
+
+export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Records.IFilesAddRequest, Records.IFilesAddResponse> =>
+    createMessage(data, 'vault/file_add', Records.FilesAddRequest, Records.FilesAddResponse)
+

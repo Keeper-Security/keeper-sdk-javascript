@@ -506,6 +506,7 @@ export interface Team {
 
 export interface Record {
     record_uid: string;
+    udata?: { file_ids: string[] };
     shared: boolean;
     data: string;
     client_modified_time: number;

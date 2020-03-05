@@ -1,13 +1,14 @@
 import {Auth, AuthUI} from '../src/auth'
 import {Vault} from '../src/vault'
-import {connectPlatform} from '../src/platform'
+import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
 import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
-import {EnterpriseDataInclude, GetEnterpriseDataCommand} from '../src/commands'
+import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
+import {normal64Bytes} from '../src/utils'
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -35,8 +36,8 @@ async function printVault() {
 
     try {
         let auth = new Auth({
-            host: 'local.keepersecurity.com'
-            // host: KeeperEnvironment.DEV
+            // host: 'local.keepersecurity.com'
+            host: KeeperEnvironment.DEV
         }, authUI)
         await auth.login('admin@yozik.us', '111111')
         console.log('login successful')
@@ -54,30 +55,27 @@ async function testAttachmentsDownload() {
 
     try {
         let auth = new Auth({
+            // host: 'local.keepersecurity.com'
             host: KeeperEnvironment.DEV
         }, authUI)
-        await auth.login('admin@yozik.us', '111111')
+        await auth.login('saldoukhov@gmail.com', '111111')
         console.log('login successful')
         let vault = new Vault(auth)
         await vault.syncDown()
         let rec = vault.records[0]
         let file = rec.extra.files[0]
-        console.log(rec)
+        console.log(file)
 
-        rec = vault.records[1]
-        file = rec.extra.files[0]
-        console.log(rec)
+        const downloadCommand = new RequestDownloadCommand()
+        downloadCommand.record_uid = rec.uid
+        downloadCommand.file_ids = [rec.extra.files[0].id]
+        const resp = await auth.executeCommand(downloadCommand)
 
-        // const downloadCommand = new RequestDownloadCommand()
-        // downloadCommand.record_uid = rec.uid
-        // downloadCommand.file_ids = [rec.extra.files[0].id]
-        // const resp = await auth.executeCommand(downloadCommand)
-
-        // const fileResponse = await platform.get(resp.downloads[0].url, {})
-        // const decryptedFile = platform.aesCbcDecrypt(fileResponse.data, normal64Bytes(file.key), false)
-        // const fs = require('fs')
-        // fs.writeFileSync(file.name, decryptedFile)
-        // console.log(decryptedFile)
+        const fileResponse = await platform.get(resp.downloads[0].url, {})
+        const decryptedFile = platform.aesCbcDecrypt(fileResponse.data, normal64Bytes(file.key), false)
+        const fs = require('fs')
+        fs.writeFileSync(file.name, decryptedFile)
+        console.log(decryptedFile)
     } catch (e) {
         console.log(e)
     }
@@ -96,22 +94,22 @@ async function testAttachmentsUpload() {
         await auth.login('admin@yozik.us', '111111')
         console.log('login successful')
         let vault = new Vault(auth)
-        await vault.syncDown()
+        // await vault.syncDown()
 
-        // const fileName = 'course_completion_certificate.pdf'
-        // const fs = require('fs')
-        // const file = fs.readFileSync(fileName)
-        //
-        // const fileData = await vault.uploadFile(fileName, file)
+        const fileName = '10@3x.png'
+        const fs = require('fs')
+        const file = fs.readFileSync(fileName)
+
+        const fileData = await vault.uploadFileNew(fileName, file)
 
         // await vault.addRecord({
         //     title: 'my file',
         //     secret1: 'abcd'
         // }, [fileData])
-        await vault.addRecordNew({
-            title: 'new record',
-            secret1: 'abcd'
-        })
+        // await vault.addRecordNew({
+        //     title: 'new record',
+        //     secret1: 'abcd'
+        // })
     } catch (e) {
         console.log(e)
     }
@@ -284,12 +282,12 @@ async function getVendorEnterprise() {
 }
 
 // printCompany().finally();
-printVault().finally();
+// printVault().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
-// printRecordTypes().finally()
+printRecordTypes().finally()
 
 
 
