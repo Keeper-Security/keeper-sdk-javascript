@@ -524,12 +524,18 @@ export interface RecordMetaData {
     record_key_type: number;
 }
 
+export interface NonSharedData {
+    record_uid: string;
+    data: string;
+}
+
 export interface SyncResponse extends KeeperResponse {
     full_sync: boolean;
     teams: Team[];
     shared_folders: SharedFolder[];
     records: Record[];
     record_meta_data: RecordMetaData[];
+    non_shared_data: NonSharedData[];
     result_code: string;
     revision: number;
 }

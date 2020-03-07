@@ -1,14 +1,26 @@
 import {Auth} from './auth'
 import {RecordAddCommand, RequestUploadCommand, SyncDownCommand} from './commands'
 import {platform} from './platform'
-import {decryptFromStorage, encryptForStorage, generateEncryptionKey, generateUid, webSafe64FromBytes} from './utils'
-import {fileAddMessage, recordsAddMessage} from './restMessages'
-import {Authentication, Records} from './proto'
+import {
+    decryptFromStorage,
+    decryptFromStorageGcm,
+    decryptKey,
+    encryptForStorage,
+    encryptObjectForStorageGCM,
+    generateEncryptionKey,
+    generateUid,
+    normal64Bytes,
+    webSafe64FromBytes
+} from './utils'
+import {fileAddMessage, recordsAddMessage, recordsDeleteMessage, recordsUpdateMessage} from './restMessages'
+import {Records} from './proto'
 import RecordFolderType = Records.RecordFolderType
 
 export class Vault {
 
     private _records: KeeperRecord[] = []
+    private meta: {}
+    private nonShared: {}
     private revision: number = 0
 
     constructor(private auth: Auth) {
@@ -17,37 +29,44 @@ export class Vault {
     async syncDown() {
         let syncDownCommand = new SyncDownCommand(this.revision)
         syncDownCommand.include = ['record',
-            //'typed_record',
-            'shared_folder', 'sfheaders', 'sfrecords', 'folders']
-        // | "record"               //*
-        //     | "typed_record"
-        //     | "shared_folder"       //*
-        //     | "sfheaders"           //*
-        //     | "sfusers"
-        //     | "sfrecords"
-        //     | "folders"
-        //     | "teams"                //*
-        //     | "sharing_changes"     //*
-        //     | "non_shared_data"     //*
-        //     | "pending_shares"      //*
-        //     | "profile"
-        //     | "pending_team_users"
-        //     | "user_auth"
-        //     | "reused_passwords"
-        //     | "explicit"
+            'typed_record',
+            'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
 
         let syncDownResponse = await this.auth.executeCommand(syncDownCommand)
+        console.log(syncDownResponse)
         this.revision = syncDownResponse.revision
         if (syncDownResponse.full_sync) {
             this._records = []
+            this.meta = {}
+            this.nonShared = {}
+        }
+        if (syncDownResponse.record_meta_data) {
+            for (let meta of syncDownResponse.record_meta_data) {
+                const key = meta.record_key_type === 3
+                    ? await decryptKey(meta.record_key, this.auth.dataKey)
+                    : decryptFromStorage(meta.record_key, this.auth.dataKey)
+                this.meta[meta.record_uid] = {
+                    key: key,
+                    ...meta
+                }
+            }
+        }
+        if (syncDownResponse.non_shared_data) {
+            for (let non_shared_data of syncDownResponse.non_shared_data) {
+                const meta = this.meta[non_shared_data.record_uid]
+                const nonSharedData = meta.record_key_type === 3
+                    ? await decryptFromStorageGcm(non_shared_data.data, this.auth.dataKey)
+                    : decryptFromStorage(non_shared_data.data, this.auth.dataKey)
+                this.nonShared[non_shared_data.record_uid] = JSON.parse(platform.bytesToString(nonSharedData))
+            }
         }
         for (let rec of syncDownResponse.records) {
-            let meta = syncDownResponse.record_meta_data.find(x => x.record_uid === rec.record_uid)
-            let recordKey = decryptFromStorage(meta.record_key, this.auth.dataKey)
-            let recordData = decryptFromStorage(rec.data, recordKey)
+            const meta = this.meta[rec.record_uid]
+            const recordData = meta.record_key_type === 3
+                ? await decryptFromStorageGcm(rec.data, meta.key)
+                : decryptFromStorage(rec.data, meta.key)
             let record: KeeperRecord = {
                 uid: meta.record_uid,
-                key: recordKey,
                 owner: meta.owner,
                 can_edit: meta.can_edit,
                 can_share: meta.can_share,
@@ -58,9 +77,18 @@ export class Vault {
                 data: JSON.parse(platform.bytesToString(recordData))
             }
             if (rec.version == 2) {
-                record.extra = JSON.parse(platform.bytesToString(decryptFromStorage(rec.extra, recordKey)))
+                record.extra = JSON.parse(platform.bytesToString(decryptFromStorage(rec.extra, meta.key)))
             }
-            this._records.push(record)
+            const nonShared = this.nonShared[rec.record_uid]
+            if (nonShared) {
+                record.non_shared_data = nonShared
+            }
+            const idx = this._records.findIndex(x => x.uid === record.uid)
+            if (idx < 0) {
+                this._records.push(record)
+            } else {
+                this._records[idx] = record
+            }
         }
         console.log(`${syncDownResponse.records.length} records downloaded. ${this._records.length} are in the vault`)
     }
@@ -90,11 +118,8 @@ export class Vault {
     async addRecordNew(recordData: any, files?: [ExtraFile]) {
         const recordKey = generateEncryptionKey()
 
-        const encryptedKey = platform.aesCbcEncrypt(recordKey, this.auth.dataKey, true)
-        const encryptedData = platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(recordData)), recordKey, true)
-
-        // const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
-        // const encryptedData = await platform.aesGcmEncrypt(platform.stringToBytes(JSON.stringify(recordData)), recordKey)
+        const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
+        const encryptedData = await encryptObjectForStorageGCM(recordData, recordKey)
 
         if (files) {
 
@@ -107,7 +132,7 @@ export class Vault {
                     recordKey: encryptedKey,
                     data: encryptedData,
                     clientModifiedTime: new Date().getTime(),
-                    folderType: RecordFolderType.user_folder,
+                    folderType: RecordFolderType.default_folder,
                     // fileIds:
                 }
             ]
@@ -116,8 +141,38 @@ export class Vault {
         console.log(recordAddResponse)
     }
 
-    async updateRecords(recordsData: KeeperRecordData[]) {
+    async updateRecord(record: KeeperRecord): Promise<Records.IRecordsModifyResponse> {
+        const meta = this.meta[record.uid]
+        const encryptedData = await encryptObjectForStorageGCM(record.data, meta.key)
+
+        const nonSharedData = record.non_shared_data == null
+            ? Uint8Array.of(0)
+            : record.non_shared_data
+                ? await encryptObjectForStorageGCM(record.non_shared_data, this.auth.dataKey, false)
+                : undefined
+
+        const updateMsg = recordsUpdateMessage({
+            clientTime: new Date().getTime(),
+            records: [
+                {
+                    recordUid: normal64Bytes(record.uid),
+                    data: encryptedData,
+                    nonSharedData: nonSharedData,
+                    clientModifiedTime: new Date().getTime(),
+                    revision: record.revision
+                }
+            ]
+        })
+        return this.auth.executeRest(updateMsg)
     }
+
+    async deleteRecords(records: KeeperRecord[]): Promise<Records.IRecordsModifyResponse> {
+        const deleteMsg = recordsDeleteMessage({
+            records: records.map(x => normal64Bytes(x.uid))
+        })
+        return this.auth.executeRest(deleteMsg)
+    }
+
 
     async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<ExtraFile> {
         const uploadCommand = new RequestUploadCommand()
@@ -221,7 +276,6 @@ export class Vault {
 
 export class KeeperRecord {
     uid: string
-    key: Uint8Array
     owner: boolean
     can_share: boolean
     can_edit: boolean
@@ -230,6 +284,7 @@ export class KeeperRecord {
     version: number
     revision: number
     data: KeeperRecordData
+    non_shared_data?: any
     extra?: KeeperRecordExtra
 }
 

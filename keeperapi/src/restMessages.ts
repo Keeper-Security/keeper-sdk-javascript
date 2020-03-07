@@ -51,8 +51,8 @@ export const recordTypeUpdateMessage = (data: Records.IRecordType): RestMessage<
 export const recordTypeDeleteMessage = (data: Records.IRecordType): RestMessage<Records.IRecordType, Records.IRecordTypeModifyResponse> =>
     createMessage(data, 'vault/record_type_delete', Records.RecordType, Records.RecordTypeModifyResponse)
 
-export const recordsAddMessage = (data: Records.IRecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_add', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
+export const recordsAddMessage = (data: Records.IRecordsAddRequest): RestMessage<Records.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_add', Records.RecordsAddRequest, Records.RecordsModifyResponse)
 
 export const recordsUpdateMessage = (data: Records.IRecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records_update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)

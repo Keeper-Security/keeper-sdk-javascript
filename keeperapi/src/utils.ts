@@ -45,6 +45,10 @@ export function decryptFromStorage(data: string, key: Uint8Array): Uint8Array {
     return platform.aesCbcDecrypt(normal64Bytes(data), key, true);
 }
 
+export async function decryptFromStorageGcm(data: string, key: Uint8Array): Promise<Uint8Array> {
+    return platform.aesGcmDecrypt(normal64Bytes(data), key);
+}
+
 export function encryptObjectForStorage<T>(obj: T, key: Uint8Array): string {
     let s = JSON.stringify(obj);
     let bytes = platform.stringToBytes(s);
@@ -67,4 +71,14 @@ export function decryptObjectFromStorage<T>(data: string, key: Uint8Array): T {
         return {} as T
     }
 }
+
+export async function encryptObjectForStorageGCM<T>(obj: T, key: Uint8Array, usePadding: boolean = true): Promise<Uint8Array> {
+    let bytes = platform.stringToBytes(JSON.stringify(obj));
+    if (usePadding) {
+        const paddedSize = Math.ceil(Math.max(384, bytes.length) / 16) * 16
+        bytes = Uint8Array.of(...bytes, ...Array(paddedSize - bytes.length).fill(0x20))
+    }
+    return platform.aesGcmEncrypt(bytes, key)
+}
+
 

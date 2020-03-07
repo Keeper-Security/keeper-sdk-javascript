@@ -7,7 +7,7 @@ import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
 import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {recordTypesGetMessage} from '../src/restMessages'
+import {recordsDeleteMessage, recordTypesGetMessage} from '../src/restMessages'
 import {normal64Bytes} from '../src/utils'
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -32,20 +32,63 @@ const authUI: AuthUI = {
     }
 }
 
-async function printVault() {
+async function login(): Promise<Auth> {
+    let auth = new Auth({
+        host: 'local.keepersecurity.com'
+        // host: KeeperEnvironment.DEV
+    }, authUI)
+    await auth.login('admin@yozik.us', '111111')
+    console.log('login successful')
+    return auth;
+}
 
+async function printVault() {
     try {
-        let auth = new Auth({
-            // host: 'local.keepersecurity.com'
-            host: KeeperEnvironment.DEV
-        }, authUI)
-        await auth.login('admin@yozik.us', '111111')
-        console.log('login successful')
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.syncDown()
+        for (let record of vault.records) {
+            console.log(record.data)
+            console.log(record.non_shared_data)
+        }
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function testRecordUpdate() {
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.syncDown()
+        let rec = vault.records[0]
+        console.log(rec)
+        rec.data.secret1 = rec.data.secret1 + '+'
+        rec.non_shared_data = null
+        // delete rec.non_shared_data
+        // rec.non_shared_data = {
+        //     a: 1,
+        //     b: 2
+        // }
+        await vault.updateRecord(rec)
+        await vault.syncDown()
+        rec = vault.records[0]
+        console.log(rec)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function cleanVault() {
+    try {
+        let auth = await login()
         let vault = new Vault(auth)
         await vault.syncDown()
         for (let record of vault.records) {
             console.log(record.data)
         }
+        const deleteResponse = await vault.deleteRecords(vault.records)
+        console.log(deleteResponse)
     } catch (e) {
         console.log(e)
     }
@@ -88,28 +131,24 @@ async function testAttachmentsDownload() {
 
 async function testAttachmentsUpload() {
     try {
-        let auth = new Auth({
-            host: 'local.keepersecurity.com'
-        }, authUI)
-        await auth.login('admin@yozik.us', '111111')
-        console.log('login successful')
+        let auth = await login()
         let vault = new Vault(auth)
         // await vault.syncDown()
 
-        const fileName = '10@3x.png'
-        const fs = require('fs')
-        const file = fs.readFileSync(fileName)
-
-        const fileData = await vault.uploadFileNew(fileName, file)
+        // const fileName = '10@3x.png'
+        // const fs = require('fs')
+        // const file = fs.readFileSync(fileName)
+        //
+        // const fileData = await vault.uploadFileNew(fileName, file)
 
         // await vault.addRecord({
         //     title: 'my file',
         //     secret1: 'abcd'
         // }, [fileData])
-        // await vault.addRecordNew({
-        //     title: 'new record',
-        //     secret1: 'abcd'
-        // })
+        await vault.addRecordNew({
+            title: 'new record',
+            secret1: 'abcd'
+        })
     } catch (e) {
         console.log(e)
     }
@@ -283,11 +322,13 @@ async function getVendorEnterprise() {
 
 // printCompany().finally();
 // printVault().finally();
+testRecordUpdate().finally();
+// cleanVault().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
-printRecordTypes().finally()
+// printRecordTypes().finally()
 
 
 
