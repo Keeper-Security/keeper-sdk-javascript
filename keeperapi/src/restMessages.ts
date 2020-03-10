@@ -37,7 +37,7 @@ export const securityReportMessage = (data: Authentication.ISecurityReportReques
     createMessage(data, 'enterprise/get_security_report_data', Authentication.SecurityReportRequest, Authentication.SecurityReportResponse)
 
 export const enterpriseNodeToManagedCompanyMessage = (data: Enterprise.INodeToManagedCompanyRequest): RestMessage<Enterprise.INodeToManagedCompanyRequest, {}> =>
-    createMessage(data, 'enterprise/get_security_report_data', Enterprise.NodeToManagedCompanyRequest, null)
+    createMessage(data, 'enterprise/node_to_managed_company', Enterprise.NodeToManagedCompanyRequest, null)
 
 export const recordTypesGetMessage = (data: Records.IRecordTypesRequest): RestMessage<Records.IRecordTypesRequest, Records.IRecordTypesResponse> =>
     createMessage(data, 'vault/get_record_types', Records.RecordTypesRequest, Records.RecordTypesResponse)

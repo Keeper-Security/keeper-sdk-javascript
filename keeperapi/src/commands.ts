@@ -536,6 +536,7 @@ export interface SyncResponse extends KeeperResponse {
     records: Record[];
     record_meta_data: RecordMetaData[];
     non_shared_data: NonSharedData[];
+    removed_records: string[];
     result_code: string;
     revision: number;
 }
@@ -690,6 +691,7 @@ export interface EnterpriseLicense {
 export interface MSPProductLicense {
     product_id: "business" | "businessPlus" | "enterprise" | "enterprisePlus";
     seats: number;
+    availableSeats: number;
 }
 
 export interface AddOn {

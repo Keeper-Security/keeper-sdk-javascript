@@ -191,7 +191,13 @@ export const browserPlatform: Platform = class {
             data: new Uint8Array(body)
         }
     }
+
+    static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
+        return null
+    }
+
 };
+
 
 function base64ToHex(data: string): string {
     let raw = atob(data);

@@ -26,45 +26,53 @@ export class Vault {
     constructor(private auth: Auth) {
     }
 
-    async syncDown() {
+    async syncDown(logResponse: boolean = false) {
+        console.log(`syncing revision ${this.revision}`)
         let syncDownCommand = new SyncDownCommand(this.revision)
         syncDownCommand.include = ['record',
             'typed_record',
             'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
 
         let syncDownResponse = await this.auth.executeCommand(syncDownCommand)
-        console.log(syncDownResponse)
+        if (logResponse)
+            console.log(syncDownResponse)
         this.revision = syncDownResponse.revision
         if (syncDownResponse.full_sync) {
             this._records = []
             this.meta = {}
             this.nonShared = {}
         }
-        if (syncDownResponse.record_meta_data) {
-            for (let meta of syncDownResponse.record_meta_data) {
-                const key = meta.record_key_type === 3
-                    ? await decryptKey(meta.record_key, this.auth.dataKey)
-                    : decryptFromStorage(meta.record_key, this.auth.dataKey)
-                this.meta[meta.record_uid] = {
-                    key: key,
-                    ...meta
-                }
+        for (let meta of syncDownResponse.record_meta_data || []) {
+            const key = meta.record_key_type === 3
+                ? await decryptKey(meta.record_key, this.auth.dataKey)
+                : decryptFromStorage(meta.record_key, this.auth.dataKey)
+            this.meta[meta.record_uid] = {
+                key: key,
+                ...meta
             }
         }
-        if (syncDownResponse.non_shared_data) {
-            for (let non_shared_data of syncDownResponse.non_shared_data) {
-                const meta = this.meta[non_shared_data.record_uid]
-                const nonSharedData = meta.record_key_type === 3
-                    ? await decryptFromStorageGcm(non_shared_data.data, this.auth.dataKey)
-                    : decryptFromStorage(non_shared_data.data, this.auth.dataKey)
-                this.nonShared[non_shared_data.record_uid] = JSON.parse(platform.bytesToString(nonSharedData))
-            }
+        for (let non_shared_data of syncDownResponse.non_shared_data || []) {
+            const meta = this.meta[non_shared_data.record_uid]
+            const nonSharedData = meta.record_key_type === 3
+                ? await decryptFromStorageGcm(non_shared_data.data, this.auth.dataKey)
+                : decryptFromStorage(non_shared_data.data, this.auth.dataKey)
+            this.nonShared[non_shared_data.record_uid] = JSON.parse(platform.bytesToString(nonSharedData))
         }
-        for (let rec of syncDownResponse.records) {
+        let added = 0
+        let updated = 0
+        let removed = 0
+        for (let rec of syncDownResponse.records || []) {
             const meta = this.meta[rec.record_uid]
-            const recordData = meta.record_key_type === 3
-                ? await decryptFromStorageGcm(rec.data, meta.key)
-                : decryptFromStorage(rec.data, meta.key)
+            let recordData
+            try {
+                const dataBytes = rec.version === 3
+                    ? await decryptFromStorageGcm(rec.data, meta.key)
+                    : decryptFromStorage(rec.data, meta.key)
+                recordData = JSON.parse(platform.bytesToString(dataBytes))
+            } catch (e) {
+                console.log(e)
+                recordData = {}
+            }
             let record: KeeperRecord = {
                 uid: meta.record_uid,
                 owner: meta.owner,
@@ -74,9 +82,9 @@ export class Vault {
                 client_modified_time: new Date(rec.client_modified_time),
                 version: rec.version,
                 revision: rec.revision,
-                data: JSON.parse(platform.bytesToString(recordData))
+                data: recordData
             }
-            if (rec.version == 2) {
+            if (rec.extra) {
                 record.extra = JSON.parse(platform.bytesToString(decryptFromStorage(rec.extra, meta.key)))
             }
             const nonShared = this.nonShared[rec.record_uid]
@@ -86,11 +94,26 @@ export class Vault {
             const idx = this._records.findIndex(x => x.uid === record.uid)
             if (idx < 0) {
                 this._records.push(record)
+                added++
             } else {
                 this._records[idx] = record
+                updated++
             }
         }
-        console.log(`${syncDownResponse.records.length} records downloaded. ${this._records.length} are in the vault`)
+        for (let uid of syncDownResponse.removed_records || []) {
+            const idx = this._records.findIndex(x => x.uid === uid)
+            if (idx >= 0) {
+                this._records.splice(idx, 1)
+                removed++
+            }
+        }
+        if (added > 0)
+            console.log(`\n${added} records added.`)
+        if (updated > 0)
+            console.log(`\n${updated} records updated.`)
+        if (removed > 0)
+            console.log(`\n${removed} records removed.`)
+        console.log(`${this._records.length} records are in the vault.`)
     }
 
     async addRecord(recordData: KeeperRecordData, files?: [ExtraFile]) {

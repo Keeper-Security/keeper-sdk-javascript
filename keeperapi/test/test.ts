@@ -7,8 +7,10 @@ import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
 import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {recordsDeleteMessage, recordTypesGetMessage} from '../src/restMessages'
+import {recordTypesGetMessage} from '../src/restMessages'
 import {normal64Bytes} from '../src/utils'
+import {Records} from '../src/proto'
+import RecordModifyResult = Records.RecordModifyResult
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -64,16 +66,57 @@ async function testRecordUpdate() {
         let rec = vault.records[0]
         console.log(rec)
         rec.data.secret1 = rec.data.secret1 + '+'
-        rec.non_shared_data = null
+        // rec.non_shared_data = null
         // delete rec.non_shared_data
         // rec.non_shared_data = {
         //     a: 1,
         //     b: 2
         // }
-        await vault.updateRecord(rec)
+        let resp = await vault.updateRecord(rec)
+        if (resp.records[0].status !== RecordModifyResult.RS_SUCCESS) {
+            console.log(resp.records[0])
+            return
+        }
         await vault.syncDown()
         rec = vault.records[0]
         console.log(rec)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function testRecordUpdateForLegacy() {
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.syncDown(true)
+        // console.log(vault.records[0])
+
+        console.log('deleting records...')
+        await vault.deleteRecords(vault.records)
+
+        console.log('adding record...')
+        await vault.addRecord({
+            title: 'new record',
+            secret1: 'abcd'
+        })
+
+        await vault.syncDown(true)
+
+        let rec = vault.records[0]
+        // console.log(rec)
+        rec.data.secret1 = rec.data.secret1 + '+'
+
+        console.log('updating...')
+        let resp = await vault.updateRecord(rec)
+        if (resp.records[0].status !== RecordModifyResult.RS_SUCCESS) {
+            console.log(resp.records[0])
+            return
+        }
+
+        await vault.syncDown(true)
+        rec = vault.records[0]
+        // console.log(rec)
     } catch (e) {
         console.log(e)
     }
@@ -322,13 +365,14 @@ async function getVendorEnterprise() {
 
 // printCompany().finally();
 // printVault().finally();
-testRecordUpdate().finally();
+// testRecordUpdate().finally();
 // cleanVault().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
 // printRecordTypes().finally()
+testRecordUpdateForLegacy().finally();
 
 
 
