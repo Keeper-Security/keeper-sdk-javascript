@@ -34,6 +34,17 @@ const authUI: AuthUI = {
     }
 }
 
+const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    rl.question(message, response => {
+        resolve(response)
+        rl.close()
+    });
+})
+
 async function login(): Promise<Auth> {
     let auth = new Auth({
         host: 'local.keepersecurity.com'
@@ -88,9 +99,13 @@ async function testRecordUpdate() {
 async function testRecordUpdateForLegacy() {
     try {
         let auth = await login()
+
+        let legacyVault = new Vault(auth)
+        legacyVault.noTypedRecords = true
         let vault = new Vault(auth)
         await vault.syncDown(true)
-        // console.log(vault.records[0])
+        console.log(vault.records[0])
+        await prompt('Press any key...')
 
         console.log('deleting records...')
         await vault.deleteRecords(vault.records)
@@ -101,7 +116,10 @@ async function testRecordUpdateForLegacy() {
             secret1: 'abcd'
         })
 
-        await vault.syncDown(true)
+        await vault.syncDown()
+        await legacyVault.syncDown()
+
+        await prompt('Press any key...')
 
         let rec = vault.records[0]
         // console.log(rec)
@@ -114,9 +132,15 @@ async function testRecordUpdateForLegacy() {
             return
         }
 
-        await vault.syncDown(true)
-        rec = vault.records[0]
-        // console.log(rec)
+        await legacyVault.syncDown(true)
+        if (legacyVault.records.length > 0) {
+            rec = vault.records[0]
+            console.log(rec)
+        }
+        else
+        {
+            console.log('legacy vault is empty')
+        }
     } catch (e) {
         console.log(e)
     }
@@ -178,11 +202,11 @@ async function testAttachmentsUpload() {
         let vault = new Vault(auth)
         // await vault.syncDown()
 
-        // const fileName = '10@3x.png'
-        // const fs = require('fs')
-        // const file = fs.readFileSync(fileName)
-        //
-        // const fileData = await vault.uploadFileNew(fileName, file)
+        const fileName = '10@3x.png'
+        const fs = require('fs')
+        const file = fs.readFileSync(fileName)
+
+        const fileData = await vault.uploadFileNew(fileName, file)
 
         // await vault.addRecord({
         //     title: 'my file',
@@ -368,11 +392,11 @@ async function getVendorEnterprise() {
 // testRecordUpdate().finally();
 // cleanVault().finally();
 // testAttachmentsDownload().finally();
-// testAttachmentsUpload().finally();
+testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
 // printRecordTypes().finally()
-testRecordUpdateForLegacy().finally();
+// testRecordUpdateForLegacy().finally();
 
 
 

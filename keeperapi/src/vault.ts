@@ -17,11 +17,11 @@ import {Records} from './proto'
 import RecordFolderType = Records.RecordFolderType
 
 export class Vault {
-
     private _records: KeeperRecord[] = []
     private meta: {}
     private nonShared: {}
     private revision: number = 0
+    noTypedRecords: boolean = false
 
     constructor(private auth: Auth) {
     }
@@ -29,10 +29,10 @@ export class Vault {
     async syncDown(logResponse: boolean = false) {
         console.log(`syncing revision ${this.revision}`)
         let syncDownCommand = new SyncDownCommand(this.revision)
-        syncDownCommand.include = ['record',
-            'typed_record',
-            'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
-
+        syncDownCommand.include = ['record', 'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
+        if (!this.noTypedRecords) {
+            syncDownCommand.include.push('typed_record')
+        }
         let syncDownResponse = await this.auth.executeCommand(syncDownCommand)
         if (logResponse)
             console.log(syncDownResponse)
@@ -108,11 +108,11 @@ export class Vault {
             }
         }
         if (added > 0)
-            console.log(`\n${added} records added.`)
+            console.log(`${added} records added.`)
         if (updated > 0)
-            console.log(`\n${updated} records updated.`)
+            console.log(`${updated} records updated.`)
         if (removed > 0)
-            console.log(`\n${removed} records removed.`)
+            console.log(`${removed} records removed.`)
         console.log(`${this._records.length} records are in the vault.`)
     }
 
