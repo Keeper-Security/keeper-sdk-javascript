@@ -12,7 +12,13 @@ import {
     normal64Bytes,
     webSafe64FromBytes
 } from './utils'
-import {fileAddMessage, recordsAddMessage, recordsDeleteMessage, recordsUpdateMessage} from './restMessages'
+import {
+    fileAddMessage,
+    fileDownloadMessage,
+    recordsAddMessage,
+    recordsDeleteMessage,
+    recordsUpdateMessage
+} from './restMessages'
 import {Records} from './proto'
 import RecordFolderType = Records.RecordFolderType
 
@@ -43,20 +49,31 @@ export class Vault {
             this.nonShared = {}
         }
         for (let meta of syncDownResponse.record_meta_data || []) {
-            const key = meta.record_key_type === 3
-                ? await decryptKey(meta.record_key, this.auth.dataKey)
-                : decryptFromStorage(meta.record_key, this.auth.dataKey)
+            let key
+            try {
+                key = meta.record_key_type === 3
+                    ? await decryptKey(meta.record_key, this.auth.dataKey)
+                    : decryptFromStorage(meta.record_key, this.auth.dataKey)
+            }
+            catch (e) {
+                console.log(e);
+            }
             this.meta[meta.record_uid] = {
                 key: key,
                 ...meta
             }
         }
         for (let non_shared_data of syncDownResponse.non_shared_data || []) {
-            const meta = this.meta[non_shared_data.record_uid]
-            const nonSharedData = meta.record_key_type === 3
-                ? await decryptFromStorageGcm(non_shared_data.data, this.auth.dataKey)
-                : decryptFromStorage(non_shared_data.data, this.auth.dataKey)
-            this.nonShared[non_shared_data.record_uid] = JSON.parse(platform.bytesToString(nonSharedData))
+            try {
+                const meta = this.meta[non_shared_data.record_uid]
+                const nonSharedData = meta.record_key_type === 3
+                    ? await decryptFromStorageGcm(non_shared_data.data, this.auth.dataKey)
+                    : decryptFromStorage(non_shared_data.data, this.auth.dataKey)
+                this.nonShared[non_shared_data.record_uid] = JSON.parse(platform.bytesToString(nonSharedData))
+            }
+            catch (e) {
+                console.log(e)
+            }
         }
         let added = 0
         let updated = 0
@@ -65,9 +82,9 @@ export class Vault {
             const meta = this.meta[rec.record_uid]
             let recordData
             try {
-                const dataBytes = rec.version === 3
-                    ? await decryptFromStorageGcm(rec.data, meta.key)
-                    : decryptFromStorage(rec.data, meta.key)
+                const dataBytes = rec.version < 3
+                    ? decryptFromStorage(rec.data, meta.key)
+                    : await decryptFromStorageGcm(rec.data, meta.key)
                 recordData = JSON.parse(platform.bytesToString(dataBytes))
             } catch (e) {
                 console.log(e)
@@ -86,6 +103,9 @@ export class Vault {
             }
             if (rec.extra) {
                 record.extra = JSON.parse(platform.bytesToString(decryptFromStorage(rec.extra, meta.key)))
+            }
+            if (rec.udata) {
+                record.udata = rec.udata;
             }
             const nonShared = this.nonShared[rec.record_uid]
             if (nonShared) {
@@ -164,6 +184,55 @@ export class Vault {
         console.log(recordAddResponse)
     }
 
+    async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<string> {
+
+        const fileMetaData = {
+            name: fileName
+        }
+
+        const recordKey = generateEncryptionKey()
+
+        const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
+        const encryptedData = await encryptObjectForStorageGCM(fileMetaData, recordKey)
+
+        const rq = fileAddMessage({
+            clientTime: new Date().getTime(),
+            files: [
+                {
+                    recordUid: platform.getRandomBytes(16),
+                    recordKey: encryptedKey,
+                    data: encryptedData
+                }
+            ]
+        })
+
+        let fileAddResponse = await this.auth.executeRest(rq)
+        let file = fileAddResponse.files[0];
+
+        const encryptedFile = await platform.aesGcmEncrypt(fileData, recordKey)
+        const res = await platform.fileUpload(file.url, JSON.parse(file.parameters), encryptedFile)
+        if (res.statusCode !== file.successStatusCode) {
+            throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
+        }
+
+        return webSafe64FromBytes(file.recordUid)
+    }
+
+    async downloadFile(recordUid: string): Promise<Uint8Array> {
+        const rq = fileDownloadMessage({
+            records: [
+                normal64Bytes(recordUid)
+            ]
+        })
+        let resp = await this.auth.executeRest(rq)
+        let file = resp.files[0]
+
+        const fileResponse = await platform.get(file.url, {})
+        const decryptedFile = await platform.aesGcmDecrypt(fileResponse.data, this.meta[recordUid].key)
+
+        return decryptedFile;
+    }
+
     async updateRecord(record: KeeperRecord): Promise<Records.IRecordsModifyResponse> {
         const meta = this.meta[record.uid]
         const encryptedData = await encryptObjectForStorageGCM(record.data, meta.key)
@@ -196,15 +265,16 @@ export class Vault {
         return this.auth.executeRest(deleteMsg)
     }
 
-
-    async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<ExtraFile> {
+    async uploadFileOld(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<ExtraFile> {
         const uploadCommand = new RequestUploadCommand()
         uploadCommand.file_count = 1
         uploadCommand.thumbnail_count = thumbnailData ? 1 : 0
         const resp = await this.auth.executeCommand(uploadCommand)
         const uploadInfo = resp.file_uploads[0]
+        console.log(uploadInfo)
         const fileKey = generateEncryptionKey()
-        const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, false)
+        const encryptedFile = await platform.aesGcmEncrypt(fileData, fileKey)
+        // const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, false)
         const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
         if (res.statusCode !== uploadInfo.success_status_code) {
             throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
@@ -218,78 +288,6 @@ export class Vault {
             size: encryptedFile.length,
             type: '',
         }
-    }
-
-    async uploadFileNew(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<any> {
-
-        // export interface ExtraFile {
-        //     id: string
-        //     name: string
-        //     lastModified: number
-        //     size: number
-        //     type: string
-        //     title: string
-        //     key: string
-        //     thumbs?: FileThumb[]
-        // }
-
-        const fileMetaData = {
-            name: fileName
-        }
-
-        const recordKey = generateEncryptionKey()
-
-        const encryptedKey = platform.aesCbcEncrypt(recordKey, this.auth.dataKey, true)
-        const encryptedData = platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(fileMetaData)), recordKey, true)
-
-        // const rq = recordsAddMessage({
-        //     clientTime: new Date().getTime(),
-        //     records: [
-        //         {
-        //             recordUid: platform.getRandomBytes(16),
-        //             recordKey: encryptedKey,
-        //             data: encryptedData,
-        //             clientModifiedTime: new Date().getTime(),
-        //             folderType: RecordFolderType.user_folder,
-        //             // fileIds:
-        //         }
-        //     ]
-        // })
-
-        const rq = fileAddMessage({
-            clientTime: new Date().getTime(),
-            files: [
-                {
-                    recordUid: platform.getRandomBytes(16),
-                    recordKey: encryptedKey,
-                    data: encryptedData
-                }
-            ]
-        })
-
-        let fileAddResponse = await this.auth.executeRest(rq)
-        console.log(fileAddResponse)
-
-        // const uploadCommand = new RequestUploadCommand()
-        // uploadCommand.file_count = 1
-        // uploadCommand.thumbnail_count = thumbnailData ? 1 : 0
-        // const resp = await this.auth.executeCommand(uploadCommand)
-        // const uploadInfo = resp.file_uploads[0]
-        // const fileKey = generateEncryptionKey()
-        // const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, false)
-        // const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
-        // if (res.statusCode !== uploadInfo.success_status_code) {
-        //     throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
-        // }
-        // return {
-        //     id: uploadInfo.file_id,
-        //     name: fileName,
-        //     title: fileName,
-        //     key: webSafe64FromBytes(fileKey),
-        //     lastModified: new Date().getTime(),
-        //     size: encryptedFile.length,
-        //     type: '',
-        // };
     }
 
     get records(): KeeperRecord[] {
@@ -309,6 +307,7 @@ export class KeeperRecord {
     data: KeeperRecordData
     non_shared_data?: any
     extra?: KeeperRecordExtra
+    udata?: any;
 }
 
 export interface KeeperRecordData {

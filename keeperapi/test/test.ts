@@ -59,9 +59,10 @@ async function printVault() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        await vault.syncDown()
+        await vault.syncDown(true)
         for (let record of vault.records) {
             console.log(record.data)
+            console.log(record.udata)
             console.log(record.non_shared_data)
         }
     } catch (e) {
@@ -151,6 +152,10 @@ async function cleanVault() {
         let auth = await login()
         let vault = new Vault(auth)
         await vault.syncDown()
+        if (vault.records.length === 0) {
+            console.log('Nothing to delete')
+            return
+        }
         for (let record of vault.records) {
             console.log(record.data)
         }
@@ -202,20 +207,21 @@ async function testAttachmentsUpload() {
         let vault = new Vault(auth)
         // await vault.syncDown()
 
-        const fileName = '10@3x.png'
+        const fileName = 'rollup.config.js'
         const fs = require('fs')
         const file = fs.readFileSync(fileName)
 
-        const fileData = await vault.uploadFileNew(fileName, file)
+        // const fileData = await vault.uploadFile(fileName, file)
+        const fileData = await vault.uploadFile(fileName, file)
 
         // await vault.addRecord({
         //     title: 'my file',
         //     secret1: 'abcd'
         // }, [fileData])
-        await vault.addRecordNew({
-            title: 'new record',
-            secret1: 'abcd'
-        })
+        // await vault.addRecordNew({
+        //     title: 'new record',
+        //     secret1: 'abcd'
+        // })
     } catch (e) {
         console.log(e)
     }
@@ -387,16 +393,41 @@ async function getVendorEnterprise() {
     }
 }
 
+async function testAttachmentsE2E() {
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+
+        const fileName = 'rollup.config.js'
+        const fs = require('fs')
+        const file = fs.readFileSync(fileName)
+
+        const recordUid = await vault.uploadFile(fileName, file)
+        console.log(recordUid)
+
+        await vault.syncDown()
+        const rec = vault.records.find(x =>  x.uid === recordUid)
+        console.log(rec)
+
+        const file1 = await vault.downloadFile(rec.uid);
+        fs.writeFileSync('test.js', file1)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 // printCompany().finally();
 // printVault().finally();
 // testRecordUpdate().finally();
-// cleanVault().finally();
+cleanVault().finally();
+// testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
-testAttachmentsUpload().finally();
+// testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
 // printRecordTypes().finally()
 // testRecordUpdateForLegacy().finally();
+
 
 
 
