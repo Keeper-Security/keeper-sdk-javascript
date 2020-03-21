@@ -207,12 +207,12 @@ async function testAttachmentsUpload() {
         let vault = new Vault(auth)
         // await vault.syncDown()
 
-        const fileName = 'rollup.config.js'
+        const fileName = 'corona.jpg'
         const fs = require('fs')
         const file = fs.readFileSync(fileName)
 
+        const fileData = await vault.uploadFileOld(fileName, file)
         // const fileData = await vault.uploadFile(fileName, file)
-        const fileData = await vault.uploadFile(fileName, file)
 
         // await vault.addRecord({
         //     title: 'my file',
@@ -398,19 +398,24 @@ async function testAttachmentsE2E() {
         let auth = await login()
         let vault = new Vault(auth)
 
-        const fileName = 'rollup.config.js'
+        const fileName = 'corona.jpg'
+        const thumbName = 'corona_tn.jpg'
         const fs = require('fs')
         const file = fs.readFileSync(fileName)
+        const thumb = fs.readFileSync(thumbName)
 
-        const recordUid = await vault.uploadFile(fileName, file)
+        const recordUid = await vault.uploadFile(fileName, file, thumb)
         console.log(recordUid)
 
         await vault.syncDown()
         const rec = vault.records.find(x =>  x.uid === recordUid)
         console.log(rec)
 
-        const file1 = await vault.downloadFile(rec.uid);
-        fs.writeFileSync('test.js', file1)
+        const file1 = await vault.downloadFile(recordUid, false);
+        fs.writeFileSync('picture.jpg', file1)
+
+        // const file2 = await vault.downloadFile(recordUid, true);
+        // fs.writeFileSync('picture_tn.jpg', file2)
     } catch (e) {
         console.log(e)
     }
@@ -419,15 +424,12 @@ async function testAttachmentsE2E() {
 // printCompany().finally();
 // printVault().finally();
 // testRecordUpdate().finally();
-cleanVault().finally();
-// testAttachmentsE2E().finally();
+// cleanVault().finally();
+testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
 // printMSPVault().finally();
 // getVendorEnterprise().finally();
 // printRecordTypes().finally()
 // testRecordUpdateForLegacy().finally();
-
-
-
 

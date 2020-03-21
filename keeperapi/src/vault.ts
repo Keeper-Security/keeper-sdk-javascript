@@ -20,7 +20,7 @@ import {
     recordsUpdateMessage
 } from './restMessages'
 import {Records} from './proto'
-import RecordFolderType = Records.RecordFolderType
+import RecordFolderType = Records.RecordFolderType;
 
 export class Vault {
     private _records: KeeperRecord[] = []
@@ -187,7 +187,8 @@ export class Vault {
     async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<string> {
 
         const fileMetaData = {
-            name: fileName
+            name: fileName,
+            hasThumbnail: !!thumbnailData
         }
 
         const recordKey = generateEncryptionKey()
@@ -201,36 +202,46 @@ export class Vault {
                 {
                     recordUid: platform.getRandomBytes(16),
                     recordKey: encryptedKey,
-                    data: encryptedData
+                    data: encryptedData,
+                    hasThumbnail: !!thumbnailData
                 }
             ]
         })
 
         let fileAddResponse = await this.auth.executeRest(rq)
-        let file = fileAddResponse.files[0];
+        let file = fileAddResponse.files[0]
+        console.log(file)
 
-        const encryptedFile = await platform.aesGcmEncrypt(fileData, recordKey)
-        const res = await platform.fileUpload(file.url, JSON.parse(file.parameters), encryptedFile)
-        if (res.statusCode !== file.successStatusCode) {
-            throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
+        await this.encryptAndUpload(file.url, file.parameters, file. successStatusCode, fileData, recordKey)
+        if (thumbnailData) {
+            await this.encryptAndUpload(file.url, file.thumbnailParameters, file.successStatusCode, thumbnailData, recordKey)
         }
 
         return webSafe64FromBytes(file.recordUid)
     }
 
-    async downloadFile(recordUid: string): Promise<Uint8Array> {
+    async encryptAndUpload(url: string, parameters: string, successStatusCode: number, fileData: Uint8Array, key: Uint8Array) {
+        const encryptedFile = await platform.aesGcmEncrypt(fileData, key)
+        const res = await platform.fileUpload(url, JSON.parse(parameters), encryptedFile)
+        if (res.statusCode !== successStatusCode) {
+            throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
+        }
+    }
+
+    async downloadFile(recordUid: string, thumbNail: boolean): Promise<Uint8Array> {
         const rq = fileDownloadMessage({
             records: [
                 normal64Bytes(recordUid)
-            ]
+            ],
+            thumbnails: thumbNail
         })
         let resp = await this.auth.executeRest(rq)
         let file = resp.files[0]
+        console.log(file)
 
         const fileResponse = await platform.get(file.url, {})
-        const decryptedFile = await platform.aesGcmDecrypt(fileResponse.data, this.meta[recordUid].key)
-
-        return decryptedFile;
+        console.log(fileResponse)
+        return platform.aesGcmDecrypt(fileResponse.data, this.meta[recordUid].key);
     }
 
     async updateRecord(record: KeeperRecord): Promise<Records.IRecordsModifyResponse> {
@@ -275,10 +286,10 @@ export class Vault {
         const fileKey = generateEncryptionKey()
         const encryptedFile = await platform.aesGcmEncrypt(fileData, fileKey)
         // const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, false)
-        const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
-        if (res.statusCode !== uploadInfo.success_status_code) {
-            throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
-        }
+        // const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
+        // if (res.statusCode !== uploadInfo.success_status_code) {
+        //     throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
+        // }
         return {
             id: uploadInfo.file_id,
             name: fileName,
@@ -346,5 +357,5 @@ export interface ExtraFile {
 export interface FileThumb {
     id: string
     size: number
-    type: 'image/png'
+    type: 'image/jpg'
 }
