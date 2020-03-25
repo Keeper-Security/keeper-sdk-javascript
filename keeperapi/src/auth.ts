@@ -2,7 +2,7 @@ import {ClientConfiguration} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
-import {isTwoFactorResultCode, normal64, webSafe64} from "./utils";
+import {isTwoFactorResultCode, normal64, webSafe64, decryptFromStorage} from "./utils";
 import {RestMessage} from './restMessages'
 
 export interface AuthUI {
@@ -39,6 +39,7 @@ export class Auth {
     private endpoint: KeeperEndpoint;
     private _sessionToken: string;
     dataKey: Uint8Array;
+    privateKey: Uint8Array;
     private _username: string;
     private managedCompanyId?: number;
 
@@ -89,6 +90,7 @@ export class Auth {
             this._sessionToken = loginResponse.session_token;
             this._username = username;
             this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
+            this.privateKey = decryptFromStorage(loginResponse.keys.encrypted_private_key, this.dataKey);
         }
         catch (e) {
             throw unifyLoginError(e);

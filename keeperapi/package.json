@@ -26,12 +26,13 @@
   "devDependencies": {
     "@types/crypto-js": "^3.1.43",
     "@types/jest": "^24.0.15",
+    "@types/node": "^12.12.31",
     "jest": "^24.8.0",
     "rollup": "^1.16.1",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.21.2",
     "ts-jest": "^24.0.2",
-    "ts-node": "^8.3.0",
+    "ts-node": "^8.8.1",
     "typescript": "^3.5.2"
   }
 }

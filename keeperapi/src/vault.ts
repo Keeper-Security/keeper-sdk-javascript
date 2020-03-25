@@ -230,10 +230,10 @@ export class Vault {
 
     async downloadFile(recordUid: string, thumbNail: boolean): Promise<Uint8Array> {
         const rq = fileDownloadMessage({
-            records: [
+            recordUids: [
                 normal64Bytes(recordUid)
             ],
-            thumbnails: thumbNail
+            forThumbnails: thumbNail
         })
         let resp = await this.auth.executeRest(rq)
         let file = resp.files[0]

@@ -78,8 +78,16 @@ export const browserPlatform: Platform = class {
         rsa.setPublic(hN, hE);
         const hexBytes = bytesToHex(data);
         const encryptedBinary = rsa.encryptBinary(hexBytes);
-        const bytes = hexToBytes(encryptedBinary);
-        return bytes;
+        return hexToBytes(encryptedBinary);
+    }
+
+    static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
+        let pkh = bytesToHex(key);
+        const rsa = new RSAKey();
+        rsa.setPrivateKeyFromASN1HexString(pkh);
+        const hexBytes = bytesToHex(data);
+        const decryptedBinary = rsa.decryptBinary(hexBytes);
+        return hexToBytes(decryptedBinary);
     }
 
     // TODO Not tested

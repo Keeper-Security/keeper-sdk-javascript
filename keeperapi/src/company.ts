@@ -18,7 +18,7 @@ import {
     decryptKey,
     generateUid,
     generateEncryptionKey,
-    webSafe64FromBytes
+    webSafe64FromBytes, normal64Bytes
 } from "./utils";
 import {platform} from "./platform";
 
@@ -40,7 +40,12 @@ export class Company {
             let key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
             this.treeKey = await decryptKey(this._data.tree_key, key4TreeKey);
         } else {
-            this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+            if (this._data.key_type_id === 1) {
+                this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+            }
+            else {
+                this.treeKey = platform.privateDecrypt(normal64Bytes(this._data.tree_key), this.auth.privateKey)
+            }
         }
 
         if (!this._data.roles)

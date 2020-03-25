@@ -5,6 +5,7 @@ import * as https from "https";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
 import * as FormData from "form-data"
+import {KeyFormat} from "crypto";
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;
@@ -39,6 +40,18 @@ export const nodePlatform: Platform = class {
             key: key,
             padding: RSA_PKCS1_PADDING
         }, data);
+    }
+
+    static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
+        // TODO implement private decrypt
+        throw "Not Implemented";
+        // let privateKey = crypto.createPrivateKey({
+        //     key: Buffer.from(key),
+        //     type: 'pkcs8',
+        //     format: 'der'
+        // });
+        // let decrypted = crypto.privateDecrypt(privateKey, data);
+        // return decrypted;
     }
 
     static privateSign(data: Uint8Array, key: string): Promise<Uint8Array> {

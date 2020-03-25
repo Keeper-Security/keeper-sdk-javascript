@@ -19,6 +19,11 @@ export function BigInteger(a?,b?,c?) {
         else this.fromString(a,b);
 }
 
+// convert a (hex) string to a bignum object
+export function parseBigInt(str,r) {
+    return new BigInteger(str,r);
+}
+
 // return new, unset BigInteger
 function nbi() { return new BigInteger(); }
 

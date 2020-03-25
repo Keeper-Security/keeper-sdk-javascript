@@ -1,6 +1,7 @@
 .idea
 .rpt2_cache
 .DS_Store
+*.jpg
 node_modules
 dist
 yarn-error.log

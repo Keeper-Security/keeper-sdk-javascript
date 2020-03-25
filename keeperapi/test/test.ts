@@ -50,7 +50,7 @@ async function login(): Promise<Auth> {
         host: 'local.keepersecurity.com'
         // host: KeeperEnvironment.DEV
     }, authUI)
-    await auth.login('admin@yozik.us', '111111')
+    await auth.login('admin+mspa1@yozik.us', '111111')
     console.log('login successful')
     return auth;
 }
@@ -298,11 +298,7 @@ async function printRecordTypes() {
 
 async function printCompany() {
     try {
-        let auth = new Auth({
-            host: KeeperEnvironment.DEV
-        })
-        await auth.login('saldoukhov@gmail.com', '111111')
-        console.log('login successful')
+        let auth = await login()
         let company = new Company(auth)
         let allIncludes: EnterpriseDataInclude[] = [
             'nodes',
@@ -421,11 +417,11 @@ async function testAttachmentsE2E() {
     }
 }
 
-// printCompany().finally();
+printCompany().finally();
 // printVault().finally();
 // testRecordUpdate().finally();
 // cleanVault().finally();
-testAttachmentsE2E().finally();
+// testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
 // printMSPVault().finally();
