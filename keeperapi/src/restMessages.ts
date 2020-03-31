@@ -57,12 +57,6 @@ export const recordsAddMessage = (data: Records.IRecordsAddRequest): RestMessage
 export const recordsUpdateMessage = (data: Records.IRecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records_update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
-export const recordsRemoveMessage = (data: Records.IRecordsRemoveRequest): RestMessage<Records.IRecordsRemoveRequest, Records.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_remove', Records.RecordsRemoveRequest, Records.RecordsModifyResponse)
-
-export const recordsDeleteMessage = (data: Records.IRecordsRemoveRequest): RestMessage<Records.IRecordsRemoveRequest, Records.IRecordsModifyResponse> =>
-    createMessage(data, 'vault/records_delete', Records.RecordsRemoveRequest, Records.RecordsModifyResponse)
-
 export const fileDownloadMessage = (data: Records.IFilesGetRequest): RestMessage<Records.IFilesGetRequest, Records.IFilesGetResponse> =>
     createMessage(data, 'vault/files_download', Records.FilesGetRequest, Records.FilesGetResponse)
 

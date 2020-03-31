@@ -47,10 +47,10 @@ const prompt = async (message: string): Promise<string> => new Promise<string>((
 
 async function login(): Promise<Auth> {
     let auth = new Auth({
-        host: 'local.keepersecurity.com'
-        // host: KeeperEnvironment.DEV
+        // host: 'local.keepersecurity.com'
+        host: KeeperEnvironment.DEV
     }, authUI)
-    await auth.login('admin+mspa1@yozik.us', '111111')
+    await auth.login('admin@yozik.us', '111111')
     console.log('login successful')
     return auth;
 }
@@ -59,6 +59,7 @@ async function printVault() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
+        // vault.noTypedRecords = true;
         await vault.syncDown(true)
         for (let record of vault.records) {
             console.log(record.data)
@@ -410,17 +411,33 @@ async function testAttachmentsE2E() {
         const file1 = await vault.downloadFile(recordUid, false);
         fs.writeFileSync('picture.jpg', file1)
 
-        // const file2 = await vault.downloadFile(recordUid, true);
-        // fs.writeFileSync('picture_tn.jpg', file2)
+        const file2 = await vault.downloadFile(recordUid, true);
+        fs.writeFileSync('picture_tn.jpg', file2)
     } catch (e) {
         console.log(e)
     }
 }
 
-printCompany().finally();
+async function testRecordAdd() {
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.syncDown()
+        await vault.addRecordNew({
+            title: 'new record',
+            secret1: 'abcd'
+        })
+        await vault.syncDown(true)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+// printCompany().finally();
 // printVault().finally();
 // testRecordUpdate().finally();
 // cleanVault().finally();
+testRecordAdd().finally();
 // testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();

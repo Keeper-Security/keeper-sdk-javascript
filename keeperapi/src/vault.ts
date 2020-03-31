@@ -175,8 +175,7 @@ export class Vault {
                     recordKey: encryptedKey,
                     data: encryptedData,
                     clientModifiedTime: new Date().getTime(),
-                    folderType: RecordFolderType.default_folder,
-                    // fileIds:
+                    // folderType: RecordFolderType.default_folder,
                 }
             ]
         })
@@ -195,6 +194,10 @@ export class Vault {
 
         const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
         const encryptedData = await encryptObjectForStorageGCM(fileMetaData, recordKey)
+        const encryptedFile = await platform.aesGcmEncrypt(fileData, recordKey)
+        const encryptedThumbnail = thumbnailData
+            ? await platform.aesGcmEncrypt(thumbnailData, recordKey)
+            : undefined
 
         const rq = fileAddMessage({
             clientTime: new Date().getTime(),
@@ -203,7 +206,8 @@ export class Vault {
                     recordUid: platform.getRandomBytes(16),
                     recordKey: encryptedKey,
                     data: encryptedData,
-                    hasThumbnail: !!thumbnailData
+                    fileSize: encryptedFile.length,
+                    thumbSize: encryptedThumbnail ? encryptedThumbnail.length : undefined
                 }
             ]
         })
@@ -212,17 +216,16 @@ export class Vault {
         let file = fileAddResponse.files[0]
         console.log(file)
 
-        await this.encryptAndUpload(file.url, file.parameters, file. successStatusCode, fileData, recordKey)
-        if (thumbnailData) {
-            await this.encryptAndUpload(file.url, file.thumbnailParameters, file.successStatusCode, thumbnailData, recordKey)
+        await this.uploadFileData(file.url, file.parameters, file. successStatusCode, encryptedFile)
+        if (encryptedThumbnail) {
+            await this.uploadFileData(file.url, file.thumbnailParameters, file.successStatusCode, encryptedThumbnail)
         }
 
         return webSafe64FromBytes(file.recordUid)
     }
 
-    async encryptAndUpload(url: string, parameters: string, successStatusCode: number, fileData: Uint8Array, key: Uint8Array) {
-        const encryptedFile = await platform.aesGcmEncrypt(fileData, key)
-        const res = await platform.fileUpload(url, JSON.parse(parameters), encryptedFile)
+    async uploadFileData(url: string, parameters: string, successStatusCode: number, encryptedData: Uint8Array) {
+        const res = await platform.fileUpload(url, JSON.parse(parameters), encryptedData)
         if (res.statusCode !== successStatusCode) {
             throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
         }
