@@ -1,5 +1,13 @@
 import {Auth} from './auth'
-import {RecordAddCommand, RequestUploadCommand, SyncDownCommand} from './commands'
+import {
+    DeleteCommand,
+    KeeperResponse,
+    PreDeleteCommand,
+    PreDeleteResponse,
+    RecordAddCommand,
+    RequestUploadCommand,
+    SyncDownCommand
+} from './commands'
 import {platform} from './platform'
 import {
     decryptFromStorage,
@@ -16,7 +24,6 @@ import {
     fileAddMessage,
     fileDownloadMessage,
     recordsAddMessage,
-    recordsDeleteMessage,
     recordsUpdateMessage
 } from './restMessages'
 import {Records} from './proto'
@@ -272,11 +279,20 @@ export class Vault {
         return this.auth.executeRest(updateMsg)
     }
 
-    async deleteRecords(records: KeeperRecord[]): Promise<Records.IRecordsModifyResponse> {
-        const deleteMsg = recordsDeleteMessage({
-            records: records.map(x => normal64Bytes(x.uid))
+    async deleteRecords(records: KeeperRecord[]): Promise<KeeperResponse> {
+        const preDeleteCommand = new PreDeleteCommand();
+        preDeleteCommand.objects = records.map(x => {
+            return {
+                object_uid: x.uid,
+                object_type: 'record',
+                from_type: 'user_folder',
+                delete_resolution: 'unlink'
+            }
         })
-        return this.auth.executeRest(deleteMsg)
+        const preDeleteResult = await this.auth.executeCommand(preDeleteCommand);
+        const deleteCommand = new DeleteCommand();
+        deleteCommand.pre_delete_token = preDeleteResult.pre_delete_response.pre_delete_token;
+        return this.auth.executeCommand(deleteCommand);
     }
 
     async uploadFileOld(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<ExtraFile> {

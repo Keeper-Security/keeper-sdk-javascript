@@ -47,10 +47,11 @@ const prompt = async (message: string): Promise<string> => new Promise<string>((
 
 async function login(): Promise<Auth> {
     let auth = new Auth({
-        // host: 'local.keepersecurity.com'
-        host: KeeperEnvironment.DEV
+        host: 'local.keepersecurity.com'
+        // host: KeeperEnvironment.DEV
     }, authUI)
     await auth.login('admin@yozik.us', '111111')
+    // await auth.login('saldoukhov@gmail.com', '111111')
     console.log('login successful')
     return auth;
 }
@@ -110,7 +111,7 @@ async function testRecordUpdateForLegacy() {
         await prompt('Press any key...')
 
         console.log('deleting records...')
-        await vault.deleteRecords(vault.records)
+        // await vault.deleteRecords(vault.records)
 
         console.log('adding record...')
         await vault.addRecord({
@@ -436,8 +437,8 @@ async function testRecordAdd() {
 // printCompany().finally();
 // printVault().finally();
 // testRecordUpdate().finally();
-// cleanVault().finally();
-testRecordAdd().finally();
+cleanVault().finally();
+// testRecordAdd().finally();
 // testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();

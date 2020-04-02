@@ -100,7 +100,7 @@ export class Company {
             if (!node.users) {
                 node.users = []
             }
-            for (let user_role of this._data.role_users) {
+            for (let user_role of this._data.role_users || []) {
                 if (user_role.enterprise_user_id == user.enterprise_user_id) {
                     if (!user.roles) {
                         user.roles = []

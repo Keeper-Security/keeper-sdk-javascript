@@ -172,6 +172,37 @@ export interface FileUpload {
     url: string
 }
 
+export class PreDeleteCommand extends AuthorizedCommand<PreDeleteResponse> {
+    constructor() {
+        super()
+        this.command = 'pre_delete'
+    }
+    objects: {
+        object_uid: string,
+        object_type: 'record' | 'user_folder' | 'shared_folder_folder',
+        from_uid?: string,
+        from_type: 'user_folder' | 'shared_folder_folder',
+        delete_resolution: 'unlink'
+    }[]
+}
+
+export interface PreDeleteResponse extends KeeperResponse {
+    pre_delete_response: {
+        pre_delete_token: string,
+        would_delete: {
+            deletion_summary: string[]
+        }
+    }
+}
+
+export class DeleteCommand extends AuthorizedCommand<KeeperResponse> {
+    constructor() {
+        super()
+        this.command = 'delete'
+    }
+    pre_delete_token: string
+}
+
 export type EnterpriseDataInclude =
     | "nodes"
     | "users"
