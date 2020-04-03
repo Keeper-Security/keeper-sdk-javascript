@@ -16,7 +16,7 @@ import {
     encryptForStorage,
     encryptObjectForStorageGCM,
     generateEncryptionKey,
-    generateUid,
+    generateUid, normal64,
     normal64Bytes, shareKey,
     webSafe64FromBytes
 } from './utils'
@@ -28,6 +28,7 @@ import {
 } from './restMessages'
 import {Records} from './proto'
 import RecordFolderType = Records.RecordFolderType;
+import {keeperKeys} from './endpoint';
 
 export class Vault {
     private _records: KeeperRecord[] = []
@@ -59,9 +60,20 @@ export class Vault {
         for (let meta of syncDownResponse.record_meta_data || []) {
             let key
             try {
-                key = meta.record_key_type === 3
-                    ? await decryptKey(meta.record_key, this.auth.dataKey)
-                    : decryptFromStorage(meta.record_key, this.auth.dataKey)
+                switch (meta.record_key_type) {
+                    case 1:
+                        key = decryptFromStorage(meta.record_key, this.auth.dataKey)
+                        break;
+                    case 2:
+                        key = platform.privateDecrypt(normal64Bytes(meta.record_key), this.auth.privateKey)
+                        break;
+                    case 3:
+                        key = await decryptKey(meta.record_key, this.auth.dataKey)
+                        break;
+                    default:
+                        console.log(`Unknown key type: ${meta.record_key_type}`);
+                        break;
+                }
             }
             catch (e) {
                 console.log(e);
@@ -312,16 +324,20 @@ export class Vault {
         const publicKeysCommand = new PublicKeysCommand()
         publicKeysCommand.key_owners = [to_user]
         const publicKeys = await this.auth.executeCommand(publicKeysCommand)
-        const userPublicKey = publicKeys.public_keys[0].public_key
+        const userPublicKey = normal64(publicKeys.public_keys[0].public_key)
+        // const userPublicKey = publicKeys.public_keys[0].public_key
+        // const userPublicKey = keeperKeys.der[0]
 
         const shareCommand = new RecordShareUpdateCommand()
-        let shareObjects: ShareObject[]
+        let shareObjects: ShareObject[] = []
         for (const rec of records) {
             const recordKey = shareKey(this.meta[rec.uid].key, userPublicKey)
             const so: ShareObject = {
                 record_uid: rec.uid,
                 record_key: recordKey,
-                to_username: to_user
+                to_username: to_user,
+                shareable: false,
+                editable: false
             }
             shareObjects.push(so)
         }

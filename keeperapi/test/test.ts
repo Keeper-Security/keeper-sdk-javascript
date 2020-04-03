@@ -11,6 +11,8 @@ import {recordTypesGetMessage} from '../src/restMessages'
 import {normal64Bytes} from '../src/utils'
 import {Records} from '../src/proto'
 import RecordModifyResult = Records.RecordModifyResult
+import {generateKeyPairSync, PrivateKeyInput} from 'crypto';
+import * as crypto from "crypto";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -438,8 +440,8 @@ async function testRecordShare() {
 
 async function login(): Promise<Auth> {
     let auth = new Auth({
-        // host: 'local.keepersecurity.com'
-        host: KeeperEnvironment.DEV
+        host: 'local.keepersecurity.com'
+        // host: KeeperEnvironment.DEV
         // host: KeeperEnvironment.QA
     }, authUI)
     await auth.login(currentUser, '111111')
@@ -447,14 +449,14 @@ async function login(): Promise<Auth> {
     return auth;
 }
 
-const currentUser = 'saldoukhov@gmail.com'
-// const currentUser = 'admin@yozik.us'
+// const currentUser = 'saldoukhov@gmail.com'
+const currentUser = 'admin@yozik.us'
 
 // printCompany().finally();
 // printVault().finally();
+testRecordShare().finally();
 // testRecordUpdate().finally();
-cleanVault().finally();
-// testRecordShare().finally();
+// cleanVault().finally();
 // testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
