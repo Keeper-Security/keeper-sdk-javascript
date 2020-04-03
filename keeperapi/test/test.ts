@@ -45,17 +45,6 @@ const prompt = async (message: string): Promise<string> => new Promise<string>((
     });
 })
 
-async function login(): Promise<Auth> {
-    let auth = new Auth({
-        host: 'local.keepersecurity.com'
-        // host: KeeperEnvironment.DEV
-    }, authUI)
-    await auth.login('admin@yozik.us', '111111')
-    // await auth.login('saldoukhov@gmail.com', '111111')
-    console.log('login successful')
-    return auth;
-}
-
 async function printVault() {
     try {
         let auth = await login()
@@ -154,15 +143,22 @@ async function cleanVault() {
         let auth = await login()
         let vault = new Vault(auth)
         await vault.syncDown()
-        if (vault.records.length === 0) {
-            console.log('Nothing to delete')
-            return
+        if (vault.records.length !== 0) {
+            console.log(`Deleting ${vault.records.length} records`)
+            const deleteResponse = await vault.deleteRecords(vault.records)
+            console.log(deleteResponse)
         }
-        for (let record of vault.records) {
-            console.log(record.data)
+        else {
+            console.log('No records to delete')
         }
-        const deleteResponse = await vault.deleteRecords(vault.records)
-        console.log(deleteResponse)
+        if (vault.sharedFolders.length !== 0) {
+            console.log(`Deleting ${vault.sharedFolders.length} shared folders`)
+            const deleteResponse = await vault.deleteSharedFolders(vault.sharedFolders)
+            console.log(deleteResponse)
+        }
+        else {
+            console.log('No shared folders to delete')
+        }
     } catch (e) {
         console.log(e)
     }
@@ -216,10 +212,10 @@ async function testAttachmentsUpload() {
         const fileData = await vault.uploadFileOld(fileName, file)
         // const fileData = await vault.uploadFile(fileName, file)
 
-        // await vault.addRecord({
-        //     title: 'my file',
-        //     secret1: 'abcd'
-        // }, [fileData])
+        await vault.addRecord({
+            title: 'my file',
+            secret1: 'abcd'
+        }, [fileData])
         // await vault.addRecordNew({
         //     title: 'new record',
         //     secret1: 'abcd'
@@ -419,26 +415,46 @@ async function testAttachmentsE2E() {
     }
 }
 
-async function testRecordAdd() {
+async function testRecordShare() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        await vault.syncDown()
-        await vault.addRecordNew({
-            title: 'new record',
-            secret1: 'abcd'
-        })
         await vault.syncDown(true)
+        // await vault.addRecord({
+        //     title: 'new record',
+        //     secret1: 'abcd'
+        // })
+        // await vault.syncDown(true)
+
+        await vault.shareRecords(vault.records, 'saldoukhov@gmail.com')
+
+        // let auth1 = await login("saldoukhov@gmail.com")
+        // let vault1 = new Vault(auth1)
+        // await vault1.syncDown(true)
     } catch (e) {
         console.log(e)
     }
 }
 
+async function login(): Promise<Auth> {
+    let auth = new Auth({
+        // host: 'local.keepersecurity.com'
+        host: KeeperEnvironment.DEV
+        // host: KeeperEnvironment.QA
+    }, authUI)
+    await auth.login(currentUser, '111111')
+    console.log('login successful')
+    return auth;
+}
+
+const currentUser = 'saldoukhov@gmail.com'
+// const currentUser = 'admin@yozik.us'
+
 // printCompany().finally();
 // printVault().finally();
 // testRecordUpdate().finally();
 cleanVault().finally();
-// testRecordAdd().finally();
+// testRecordShare().finally();
 // testAttachmentsE2E().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();

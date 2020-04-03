@@ -1,11 +1,11 @@
 import {Auth} from './auth'
 import {
-    DeleteCommand,
+    DeleteCommand, DeleteObject,
     KeeperResponse,
     PreDeleteCommand,
-    PreDeleteResponse,
-    RecordAddCommand,
-    RequestUploadCommand,
+    PreDeleteResponse, PublicKeysCommand,
+    RecordAddCommand, RecordShareUpdateCommand, RecordShareUpdateResponse,
+    RequestUploadCommand, SharedFolder, SharedFolderUpdateCommand, ShareObject,
     SyncDownCommand
 } from './commands'
 import {platform} from './platform'
@@ -17,7 +17,7 @@ import {
     encryptObjectForStorageGCM,
     generateEncryptionKey,
     generateUid,
-    normal64Bytes,
+    normal64Bytes, shareKey,
     webSafe64FromBytes
 } from './utils'
 import {
@@ -31,6 +31,7 @@ import RecordFolderType = Records.RecordFolderType;
 
 export class Vault {
     private _records: KeeperRecord[] = []
+    private _sharedFolders: SharedFolder[] = []
     private meta: {}
     private nonShared: {}
     private revision: number = 0
@@ -133,6 +134,9 @@ export class Vault {
                 this._records.splice(idx, 1)
                 removed++
             }
+        }
+        for (let sharedFolder of syncDownResponse.shared_folders || []) {
+            this._sharedFolders.push(sharedFolder)
         }
         if (added > 0)
             console.log(`${added} records added.`)
@@ -280,7 +284,7 @@ export class Vault {
     }
 
     async deleteRecords(records: KeeperRecord[]): Promise<KeeperResponse> {
-        const preDeleteCommand = new PreDeleteCommand();
+        const preDeleteCommand = new PreDeleteCommand()
         preDeleteCommand.objects = records.map(x => {
             return {
                 object_uid: x.uid,
@@ -289,10 +293,40 @@ export class Vault {
                 delete_resolution: 'unlink'
             }
         })
-        const preDeleteResult = await this.auth.executeCommand(preDeleteCommand);
-        const deleteCommand = new DeleteCommand();
-        deleteCommand.pre_delete_token = preDeleteResult.pre_delete_response.pre_delete_token;
-        return this.auth.executeCommand(deleteCommand);
+        const preDeleteResult = await this.auth.executeCommand(preDeleteCommand)
+        const deleteCommand = new DeleteCommand()
+        deleteCommand.pre_delete_token = preDeleteResult.pre_delete_response.pre_delete_token
+        return this.auth.executeCommand(deleteCommand)
+    }
+
+    async deleteSharedFolders(sharedFolders: SharedFolder[]) {
+        for (let sharedFolder of sharedFolders) {
+            const sfuCommand = new SharedFolderUpdateCommand()
+            sfuCommand.operation = 'delete'
+            sfuCommand.shared_folder_uid = sharedFolder.shared_folder_uid
+            await this.auth.executeCommand(sfuCommand)
+        }
+    }
+
+    async shareRecords(records: KeeperRecord[], to_user: string): Promise<RecordShareUpdateResponse> {
+        const publicKeysCommand = new PublicKeysCommand()
+        publicKeysCommand.key_owners = [to_user]
+        const publicKeys = await this.auth.executeCommand(publicKeysCommand)
+        const userPublicKey = publicKeys.public_keys[0].public_key
+
+        const shareCommand = new RecordShareUpdateCommand()
+        let shareObjects: ShareObject[]
+        for (const rec of records) {
+            const recordKey = shareKey(this.meta[rec.uid].key, userPublicKey)
+            const so: ShareObject = {
+                record_uid: rec.uid,
+                record_key: recordKey,
+                to_username: to_user
+            }
+            shareObjects.push(so)
+        }
+        shareCommand.add_shares = shareObjects
+        return this.auth.executeCommand(shareCommand)
     }
 
     async uploadFileOld(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<ExtraFile> {
@@ -303,12 +337,12 @@ export class Vault {
         const uploadInfo = resp.file_uploads[0]
         console.log(uploadInfo)
         const fileKey = generateEncryptionKey()
-        const encryptedFile = await platform.aesGcmEncrypt(fileData, fileKey)
-        // const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, false)
-        // const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
-        // if (res.statusCode !== uploadInfo.success_status_code) {
-        //     throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
-        // }
+        // const encryptedFile = await platform.aesGcmEncrypt(fileData, fileKey)
+        const encryptedFile = platform.aesCbcEncrypt(fileData, fileKey, true)
+        const res = await platform.fileUpload(uploadInfo.url, uploadInfo.parameters, encryptedFile)
+        if (res.statusCode !== uploadInfo.success_status_code) {
+            throw new Error(`Upload failed (${res.statusMessage}), code ${res.statusCode}`)
+        }
         return {
             id: uploadInfo.file_id,
             name: fileName,
@@ -322,6 +356,10 @@ export class Vault {
 
     get records(): KeeperRecord[] {
         return this._records
+    }
+
+    get sharedFolders(): SharedFolder[] {
+        return this._sharedFolders
     }
 }
 

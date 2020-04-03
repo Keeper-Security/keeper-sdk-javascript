@@ -33,6 +33,11 @@ export async function encryptKey(key: Uint8Array, withKey: Uint8Array): Promise<
     return webSafe64FromBytes(encryptedKey);
 }
 
+export function shareKey(key: Uint8Array, publicKey: string): string {
+    let encryptedKey = platform.publicEncrypt(key, publicKey);
+    return webSafe64FromBytes(encryptedKey);
+}
+
 export async function decryptKey(encryptedKey: string, withKey: Uint8Array): Promise<Uint8Array> {
     return platform.aesGcmDecrypt(normal64Bytes(encryptedKey), withKey);
 }

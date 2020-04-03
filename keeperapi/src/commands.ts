@@ -177,13 +177,15 @@ export class PreDeleteCommand extends AuthorizedCommand<PreDeleteResponse> {
         super()
         this.command = 'pre_delete'
     }
-    objects: {
-        object_uid: string,
-        object_type: 'record' | 'user_folder' | 'shared_folder_folder',
-        from_uid?: string,
-        from_type: 'user_folder' | 'shared_folder_folder',
-        delete_resolution: 'unlink'
-    }[]
+    objects: DeleteObject[]
+}
+
+export interface DeleteObject {
+    object_uid: string,
+    object_type: 'record' | 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    from_uid?: string,
+    from_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder',
+    delete_resolution: 'unlink'
 }
 
 export interface PreDeleteResponse extends KeeperResponse {
@@ -195,12 +197,135 @@ export interface PreDeleteResponse extends KeeperResponse {
     }
 }
 
-export class DeleteCommand extends AuthorizedCommand<KeeperResponse> {
+export class DeleteCommand extends AuthorizedCommand {
     constructor() {
         super()
         this.command = 'delete'
     }
     pre_delete_token: string
+}
+
+export class RecordShareUpdateCommand extends AuthorizedCommand<RecordShareUpdateResponse> {
+    constructor() {
+        super()
+        this.command = 'record_share_update'
+    }
+
+    pt: string
+    add_shares: ShareObject[]
+    update_shares: ShareObject[]
+    remove_shares: ShareObject[]
+}
+
+export interface ShareObject {
+    record_uid: string
+    to_username?: string
+    record_key?: string // for new shares, url safe base 64 encoded record key encrypted with the sharee's public key
+    editable?: boolean
+    shareable?: boolean
+    transfer?: boolean
+    shared_folder_uid?: string
+    team_uid?: string
+}
+
+export interface RecordShareUpdateResponse extends KeeperResponse {
+    add_statuses: ShareStatus[]
+    update_statuses: ShareStatus[]
+    remove_statuses: ShareStatus[]
+}
+
+export interface ShareStatus {
+    record_uid: string
+    status: 'success' | 'pending_accept' | 'user_not_found' | 'already_shared' | 'not_allowed_to_share' | 'access_denied' | 'not_allowed_to_set_permission'
+    message: string
+    username: string
+}
+
+export class SharedFolderUpdateCommand extends AuthorizedCommand<SharedFolderUpdateResponse> {
+    constructor() {
+        super()
+        this.command = 'shared_folder_update'
+    }
+
+    pt: string
+    operation: 'add' | 'delete' | 'update'
+    shared_folder_uid: string
+    from_team_uid: string
+    name: string // encrypted with the shared folder key
+    revision: number
+    add_users: UserObject[]
+    add_teams: TeamObject[]
+    add_records: RecordObject[]
+    update_users: UserObject[]
+    update_teams: TeamObject[]
+    update_records: RecordObject[]
+    remove_users: UserObject[]
+    remove_teams: TeamObject[]
+    remove_records: RecordObject[]
+    force_update: boolean
+    default_manage_users: boolean
+    default_manage_records: boolean
+    default_can_edit: boolean
+    default_can_share: boolean
+}
+
+export interface UserObject {
+    username: string
+    manage_users: boolean
+    manage_records: boolean
+    shared_folder_key: string
+}
+
+export interface TeamObject {
+    team_uid: string
+    manage_users: boolean
+    manage_records: boolean
+    shared_folder_key: string
+}
+
+export interface RecordObject {
+    record_uid: string
+    shared_folder_uid: string
+    team_uid: string
+    can_edit: boolean
+    can_share_boolean
+}
+
+export interface SharedFolderUpdateResponse extends KeeperResponse {
+    add_users: SharedFolderUpdateUserStatus[]
+    update_users: SharedFolderUpdateUserStatus[]
+    remove_users: SharedFolderUpdateUserStatus[]
+    add_records: SharedFolderUpdateRecordStatus[]
+    update_records: SharedFolderUpdateRecordStatus[]
+    remove_records: SharedFolderUpdateRecordStatus[]
+}
+
+export interface SharedFolderUpdateUserStatus {
+    username: string
+    status: 'success' | 'invited' | 'invalid_user' | 'non_group_member'
+}
+
+export interface SharedFolderUpdateRecordStatus {
+    username: string
+    status: 'success' | 'access_denied'
+}
+
+export class PublicKeysCommand extends AuthorizedCommand<PublicKeysResponse> {
+    constructor() {
+        super()
+        this.command = 'public_keys'
+    }
+
+    key_owners: string[]
+}
+
+export interface PublicKeysResponse extends KeeperResponse {
+    public_keys: {
+        key_owner: string
+        public_key: string
+        result_code?: 'bad_inputs_key_owners' | 'Email_not_valid' | 'Failed_to_find_user' | 'missing_public_key' | 'cross_region_sharing_error'
+        message: string
+    }[]
 }
 
 export type EnterpriseDataInclude =
