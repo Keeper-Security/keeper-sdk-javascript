@@ -1,6 +1,6 @@
 import {Auth} from './auth'
 import {
-    DeleteCommand, DeleteObject,
+    DeleteCommand, DeleteObject, FolderAddCommand,
     KeeperResponse,
     PreDeleteCommand,
     PreDeleteResponse, PublicKeysCommand,
@@ -13,7 +13,7 @@ import {
     decryptFromStorage,
     decryptFromStorageGcm,
     decryptKey,
-    encryptForStorage,
+    encryptForStorage, encryptObjectForStorage,
     encryptObjectForStorageGCM,
     generateEncryptionKey,
     generateUid, normal64,
@@ -159,7 +159,7 @@ export class Vault {
         console.log(`${this._records.length} records are in the vault.`)
     }
 
-    async addRecord(recordData: KeeperRecordData, files?: [ExtraFile]) {
+    async addRecord(recordData: KeeperRecordData, files?: [ExtraFile]): Promise<string> {
         let recordAddCommand = new RecordAddCommand()
         recordAddCommand.record_uid = generateUid()
         let recordKey = generateEncryptionKey()
@@ -178,18 +178,16 @@ export class Vault {
             recordAddCommand.file_ids = files.map(x => x.id)
         }
 
-        let recordAddResponse = await this.auth.executeCommand(recordAddCommand)
+        await this.auth.executeCommand(recordAddCommand)
+        return recordAddCommand.record_uid
     }
 
-    async addRecordNew(recordData: any, files?: [ExtraFile]) {
+    async addRecordNew(recordData: any): Promise<Records.IRecordsModifyResponse> {
         const recordKey = generateEncryptionKey()
 
         const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
         const encryptedData = await encryptObjectForStorageGCM(recordData, recordKey)
 
-        if (files) {
-
-        }
         const rq = recordsAddMessage({
             clientTime: new Date().getTime(),
             records: [
@@ -202,8 +200,7 @@ export class Vault {
                 }
             ]
         })
-        let recordAddResponse = await this.auth.executeRest(rq)
-        console.log(recordAddResponse)
+        return this.auth.executeRest(rq)
     }
 
     async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<string> {
@@ -311,6 +308,22 @@ export class Vault {
         return this.auth.executeCommand(deleteCommand)
     }
 
+    async createSharedFolder(folderName: string) {
+        let folderKey = generateEncryptionKey()
+
+        const faCommand = new FolderAddCommand()
+        faCommand.name = encryptForStorage(platform.stringToBytes(folderName), folderKey)
+        faCommand.folder_uid = generateUid()
+        faCommand.folder_type = 'shared_folder'
+        faCommand.key = encryptForStorage(folderKey, this.auth.dataKey)
+        faCommand.data = encryptObjectForStorage({ name: folderName + '1', color: '#FF0000'}, folderKey)
+        await this.auth.executeCommand(faCommand)
+
+        // {"command":"folder_add","folder_uid":"ndcDnQvDAxloKwXc714OKw","folder_type":"shared_folder","key":"aYdTIgcA1aJ4fOwFndxnN0bDBXxofrdv-x5yj_yd7XrAVUrUGmSUrR_OBVw-4zP8kkkEHmyEyWc9FApNqOHVug",
+        // "name":"rMLZOh1gq8SkBvrVOsX-0keFpL6c6FsoB3jWuwPmAH4","data":"L43CFsc5KUBAq5Nd-P4aKJE70gjDJX8JfCdgLHCLXVw","pt":"vjxMB5PAJ16lJ2t49nWj8Q",
+        // "locale":"en_US","username":"admin@yozik.us","session_token":"mDgWvJh2_BiYBssMbO7G_L__WkElIvTqC2XsZwm1lRaFF2Wi6OV1qYclfF4QNc5PthCH8CvSykWkbc_5niQ6nKO86g1dzMpRxG8Qnfhb3Pu-Ez0fago","client_version":"w14.13.0"}
+    }
+
     async deleteSharedFolders(sharedFolders: SharedFolder[]) {
         for (let sharedFolder of sharedFolders) {
             const sfuCommand = new SharedFolderUpdateCommand()
@@ -320,20 +333,18 @@ export class Vault {
         }
     }
 
-    async shareRecords(records: KeeperRecord[], to_user: string): Promise<RecordShareUpdateResponse> {
+    async shareRecords(records: string[], to_user: string): Promise<RecordShareUpdateResponse> {
         const publicKeysCommand = new PublicKeysCommand()
         publicKeysCommand.key_owners = [to_user]
         const publicKeys = await this.auth.executeCommand(publicKeysCommand)
         const userPublicKey = normal64(publicKeys.public_keys[0].public_key)
-        // const userPublicKey = publicKeys.public_keys[0].public_key
-        // const userPublicKey = keeperKeys.der[0]
 
         const shareCommand = new RecordShareUpdateCommand()
         let shareObjects: ShareObject[] = []
-        for (const rec of records) {
-            const recordKey = shareKey(this.meta[rec.uid].key, userPublicKey)
+        for (const recordUid of records) {
+            const recordKey = shareKey(this.meta[recordUid].key, userPublicKey)
             const so: ShareObject = {
-                record_uid: rec.uid,
+                record_uid: recordUid,
                 record_key: recordKey,
                 to_username: to_user,
                 shareable: false,

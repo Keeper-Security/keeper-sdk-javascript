@@ -241,6 +241,30 @@ export interface ShareStatus {
     username: string
 }
 
+export class FolderAddCommand extends AuthorizedCommand<FolderAddResponse> {
+    constructor() {
+        super()
+        this.command = 'folder_add'
+    }
+
+    folder_uid: string
+    folder_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    key: string
+    parent_uid: string
+    shared_folder_uid: string
+    name: string
+    data: string
+    manage_users: boolean
+    manage_records: boolean
+    can_edit: boolean
+    can_share: boolean
+    link: boolean
+}
+
+export interface FolderAddResponse extends KeeperResponse {
+    revision: number
+}
+
 export class SharedFolderUpdateCommand extends AuthorizedCommand<SharedFolderUpdateResponse> {
     constructor() {
         super()
