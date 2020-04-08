@@ -8,12 +8,11 @@ import {Company} from '../src/company'
 import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
-import {normal64Bytes} from '../src/utils'
+import {normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import RecordModifyResult = Records.RecordModifyResult
 import {generateKeyPairSync, PrivateKeyInput} from 'crypto';
 import * as crypto from "crypto";
-import {webSafe64FromBytes} from '..';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -145,10 +144,11 @@ async function cleanVault(user?: string) {
     try {
         let auth = await login(user)
         let vault = new Vault(auth)
-        await vault.syncDown()
-        if (vault.records.length !== 0) {
-            console.log(`Deleting ${vault.records.length} records`)
-            const deleteResponse = await vault.deleteRecords(vault.records)
+        await vault.syncDown(true)
+        let records = vault.records.filter(x => !x.sharedFolderUid)
+        if (records.length !== 0) {
+            console.log(`Deleting ${records.length} records`)
+            const deleteResponse = await vault.deleteRecords(records)
             console.log(deleteResponse)
         }
         else {
@@ -156,7 +156,7 @@ async function cleanVault(user?: string) {
         }
         if (vault.sharedFolders.length !== 0) {
             console.log(`Deleting ${vault.sharedFolders.length} shared folders`)
-            const deleteResponse = await vault.deleteSharedFolders(vault.sharedFolders)
+            const deleteResponse = await vault.deleteSharedFolders(vault.sharedFolders.map(x => x.shared_folder_uid))
             console.log(deleteResponse)
         }
         else {
@@ -418,6 +418,20 @@ async function testAttachmentsE2E() {
     }
 }
 
+async function testAddRecordNew() {
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.addRecordNew({
+            title: 'new record',
+            secret1: 'abcd',
+        })
+        await vault.syncDown(true)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 async function testRecordShare() {
     try {
         let auth = await login()
@@ -467,27 +481,37 @@ async function testRecordShare() {
     }
 }
 
-async function testRecordShareViaFolder() {
+async function testRecordShareViaRecord() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
         await vault.syncDown()
 
-        await vault.createSharedFolder('sftest')
-
         // let auth1 = await login("saldoukhov@gmail.com")
         // let vault1 = new Vault(auth1)
         // await vault1.syncDown()
+
+        const fileName = 'kitten.png'
+        // // const fileName = 'corona.jpg'
+        // // const thumbName = 'corona_tn.jpg'
+        const fs = require('fs')
+        const file = fs.readFileSync(fileName)
+        // // const thumb = fs.readFileSync(thumbName)
         //
-        // const recordAddResponse = await vault.addRecordNew({
-        //     title: 'new record 2',
-        //     secret1: 'abcd',
-        // })
+        // // const fileRecordUid = await vault.uploadFile(fileName, file, thumb)
+        const fileRecordUid = await vault.uploadFile(fileName, file)
+
+        const recordAddResponse = await vault.addRecordNew({
+            title: 'new record 2',
+            secret1: 'abcd',
+            file: fileRecordUid
+        }, null, [fileRecordUid])
         // const recordUid = webSafe64FromBytes(recordAddResponse.records[0].recordUid)
         //
         // await vault.syncDown()
         //
         // await vault.shareRecords([
+        //     fileRecordUid,
         //     recordUid
         // ], 'saldoukhov@gmail.com')
         //
@@ -497,6 +521,43 @@ async function testRecordShareViaFolder() {
         //     console.log(record.udata)
         //     console.log(record.non_shared_data)
         // }
+        //
+        // const file1 = await vault1.downloadFile(fileRecordUid, false);
+        // fs.writeFileSync('picture.jpg', file1)
+        //
+        // const file2 = await vault1.downloadFile(fileRecordUid, true);
+        // fs.writeFileSync('picture_tn.jpg', file2)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function testRecordShareViaFolder() {
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.syncDown()
+
+        let auth1 = await login("saldoukhov@gmail.com")
+        let vault1 = new Vault(auth1)
+        await vault1.syncDown()
+
+        const folderKey = await vault.createSharedFolder('sftest')
+
+        await vault.addUserToSharedFolder(folderKey,  'saldoukhov@gmail.com')
+
+        await vault.syncDown(true)
+        await vault.addRecordNew({
+            title: 'new record 2',
+            secret1: 'abcd',
+        }, folderKey)
+
+        await vault1.syncDown()
+        for (let record of vault1.records) {
+            console.log(record.data)
+            console.log(record.udata)
+            console.log(record.non_shared_data)
+        }
     } catch (e) {
         console.log(e)
     }
@@ -516,11 +577,15 @@ async function login(user?: string): Promise<Auth> {
 
 // const currentUser = 'saldoukhov@gmail.com'
 const currentUser = 'admin@yozik.us'
+// const currentUser = 'admin+msp@yozik.us'
 
 // printCompany().finally();
 // printVault().finally();
+// testProto();
+testRecordShareViaRecord().finally();
+// testRecordShareViaFolder().finally();
+// testAddRecordNew().finally();
 // testRecordShare().finally();
-testRecordShareViaFolder().finally();
 // cleanVault().finally();
 // cleanVault('saldoukhov@gmail.com').finally();
 // testRecordUpdate().finally();

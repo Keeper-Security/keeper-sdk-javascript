@@ -2,6 +2,7 @@
 .rpt2_cache
 .DS_Store
 *.jpg
+*.png
 node_modules
 dist
 yarn-error.log

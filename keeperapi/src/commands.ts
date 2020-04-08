@@ -665,11 +665,25 @@ export interface AuthenticateRequest {
 export interface SharedFolder {
     default_can_edit: boolean;
     full_sync: boolean;
+    name: string;
+    data: string;
+    key_type: number;
+    records: SharedFolderRecord[];
     default_can_share: boolean;
     default_manage_records: boolean;
     default_manage_users: boolean;
     shared_folder_uid: string;
     revision: number;
+    manage_users: boolean;
+    manage_records: boolean;
+    shared_folder_key: string;
+}
+
+export interface SharedFolderRecord {
+    record_uid: string;
+    record_key: string;
+    can_share: boolean;
+    can_edit: boolean;
 }
 
 export interface Team {
@@ -712,10 +726,19 @@ export interface NonSharedData {
 export interface SyncResponse extends KeeperResponse {
     full_sync: boolean;
     teams: Team[];
+    user_folder_shared_folders: {
+        shared_folder_uid: string,
+        revision: number
+    }[]
     shared_folders: SharedFolder[];
     records: Record[];
     record_meta_data: RecordMetaData[];
     non_shared_data: NonSharedData[];
+    shared_folder_folder_records: {
+      record_uid: string,
+      shared_folder_uid: string,
+      revision: number
+    }[]
     removed_records: string[];
     result_code: string;
     revision: number;

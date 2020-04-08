@@ -24,8 +24,12 @@ export function generateEncryptionKey(): Uint8Array {
     return platform.getRandomBytes(32);
 }
 
+export function generateUidBytes(): Uint8Array {
+    return platform.getRandomBytes(16);
+}
+
 export function generateUid(): string {
-    return webSafe64FromBytes(platform.getRandomBytes(16));
+    return webSafe64FromBytes(generateUidBytes());
 }
 
 export async function encryptKey(key: Uint8Array, withKey: Uint8Array): Promise<string> {

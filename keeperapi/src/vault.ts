@@ -1,11 +1,17 @@
 import {Auth} from './auth'
 import {
-    DeleteCommand, DeleteObject, FolderAddCommand,
+    DeleteCommand,
+    FolderAddCommand,
     KeeperResponse,
     PreDeleteCommand,
-    PreDeleteResponse, PublicKeysCommand,
-    RecordAddCommand, RecordShareUpdateCommand, RecordShareUpdateResponse,
-    RequestUploadCommand, SharedFolder, SharedFolderUpdateCommand, ShareObject,
+    PublicKeysCommand,
+    RecordAddCommand,
+    RecordShareUpdateCommand,
+    RecordShareUpdateResponse,
+    RequestUploadCommand,
+    SharedFolder,
+    SharedFolderUpdateCommand,
+    ShareObject,
     SyncDownCommand
 } from './commands'
 import {platform} from './platform'
@@ -13,11 +19,14 @@ import {
     decryptFromStorage,
     decryptFromStorageGcm,
     decryptKey,
-    encryptForStorage, encryptObjectForStorage,
+    encryptForStorage,
+    encryptObjectForStorage,
     encryptObjectForStorageGCM,
     generateEncryptionKey,
-    generateUid, normal64,
-    normal64Bytes, shareKey,
+    generateUid, generateUidBytes,
+    normal64,
+    normal64Bytes,
+    shareKey,
     webSafe64FromBytes
 } from './utils'
 import {
@@ -28,7 +37,8 @@ import {
 } from './restMessages'
 import {Records} from './proto'
 import RecordFolderType = Records.RecordFolderType;
-import {keeperKeys} from './endpoint';
+
+export type KeeperKey = { key: Uint8Array, keyUid: Uint8Array }
 
 export class Vault {
     private _records: KeeperRecord[] = []
@@ -39,6 +49,19 @@ export class Vault {
     noTypedRecords: boolean = false
 
     constructor(private auth: Auth) {
+    }
+
+    async decryptKey(encryptedKey: string, keyType: number): Promise<Uint8Array> {
+        switch (keyType) {
+            case 1:
+                return decryptFromStorage(encryptedKey, this.auth.dataKey)
+            case 2:
+                return platform.privateDecrypt(normal64Bytes(encryptedKey), this.auth.privateKey)
+            case 3:
+                return decryptKey(encryptedKey, this.auth.dataKey)
+            default:
+                throw new Error(`Unknown key type: ${keyType}`)
+        }
     }
 
     async syncDown(logResponse: boolean = false) {
@@ -60,20 +83,7 @@ export class Vault {
         for (let meta of syncDownResponse.record_meta_data || []) {
             let key
             try {
-                switch (meta.record_key_type) {
-                    case 1:
-                        key = decryptFromStorage(meta.record_key, this.auth.dataKey)
-                        break;
-                    case 2:
-                        key = platform.privateDecrypt(normal64Bytes(meta.record_key), this.auth.privateKey)
-                        break;
-                    case 3:
-                        key = await decryptKey(meta.record_key, this.auth.dataKey)
-                        break;
-                    default:
-                        console.log(`Unknown key type: ${meta.record_key_type}`);
-                        break;
-                }
+                key = await this.decryptKey(meta.record_key, meta.record_key_type);
             }
             catch (e) {
                 console.log(e);
@@ -95,6 +105,35 @@ export class Vault {
                 console.log(e)
             }
         }
+
+        for (let sharedFolder of syncDownResponse.shared_folders || []) {
+            this._sharedFolders.push(sharedFolder)
+            if (sharedFolder.records) {
+                let key
+                try {
+                    key = await this.decryptKey(sharedFolder.shared_folder_key, sharedFolder.key_type);
+                    for (let record of sharedFolder.records) {
+                        let recordKey
+                        try {
+                            recordKey = record.record_key.length === 80
+                                ? await decryptKey(record.record_key, key)    // GCM
+                                : decryptFromStorage(record.record_key, key)  // CBC
+                        }
+                        catch (e) {
+                            console.log(e);
+                        }
+                        this.meta[record.record_uid] = {
+                            key: recordKey,
+                            sharedFolderUid: sharedFolder.shared_folder_uid
+                        }
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            }
+        }
+
         let added = 0
         let updated = 0
         let removed = 0
@@ -111,7 +150,7 @@ export class Vault {
                 recordData = {}
             }
             let record: KeeperRecord = {
-                uid: meta.record_uid,
+                uid: rec.record_uid,
                 owner: meta.owner,
                 can_edit: meta.can_edit,
                 can_share: meta.can_share,
@@ -126,6 +165,9 @@ export class Vault {
             }
             if (rec.udata) {
                 record.udata = rec.udata;
+            }
+            if (meta.sharedFolderUid) {
+                record.sharedFolderUid = meta.sharedFolderUid;
             }
             const nonShared = this.nonShared[rec.record_uid]
             if (nonShared) {
@@ -146,9 +188,6 @@ export class Vault {
                 this._records.splice(idx, 1)
                 removed++
             }
-        }
-        for (let sharedFolder of syncDownResponse.shared_folders || []) {
-            this._sharedFolders.push(sharedFolder)
         }
         if (added > 0)
             console.log(`${added} records added.`)
@@ -182,25 +221,39 @@ export class Vault {
         return recordAddCommand.record_uid
     }
 
-    async addRecordNew(recordData: any): Promise<Records.IRecordsModifyResponse> {
+    async addRecordNew(recordData: any, sharedFolderKey?: KeeperKey, linkedRecords?: string[]): Promise<Records.IRecordsModifyResponse> {
         const recordKey = generateEncryptionKey()
 
         const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
         const encryptedData = await encryptObjectForStorageGCM(recordData, recordKey)
 
-        const rq = recordsAddMessage({
+        let recordAdd: Records.IRecordAdd = {
+            recordUid: platform.getRandomBytes(16),
+            recordKey: encryptedKey,
+            data: encryptedData,
+            clientModifiedTime: new Date().getTime()
+        }
+        if (sharedFolderKey) {
+            recordAdd.folderType = RecordFolderType.shared_folder
+            recordAdd.folderUid = sharedFolderKey.keyUid
+            recordAdd.folderKey = await platform.aesGcmEncrypt(recordKey, sharedFolderKey.key)
+        }
+        if (linkedRecords) {
+            let links: Records.IRecordLink[] = []
+            for (const linkedRecord of linkedRecords) {
+                const linkedRecordKey = await platform.aesGcmEncrypt(this.meta[linkedRecord].key, recordKey)
+                links.push({
+                    recordUid: normal64Bytes(linkedRecord),
+                    recordKey: linkedRecordKey
+                })
+            }
+            recordAdd.recordLinks = links
+        }
+
+        return this.auth.executeRest(recordsAddMessage({
             clientTime: new Date().getTime(),
-            records: [
-                {
-                    recordUid: platform.getRandomBytes(16),
-                    recordKey: encryptedKey,
-                    data: encryptedData,
-                    clientModifiedTime: new Date().getTime(),
-                    // folderType: RecordFolderType.default_folder,
-                }
-            ]
-        })
-        return this.auth.executeRest(rq)
+            records: [recordAdd]
+        }))
     }
 
     async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<string> {
@@ -232,8 +285,8 @@ export class Vault {
             ]
         })
 
-        let fileAddResponse = await this.auth.executeRest(rq)
-        let file = fileAddResponse.files[0]
+        const fileAddResponse = await this.auth.executeRest(rq)
+        const file = fileAddResponse.files[0]
         console.log(file)
 
         await this.uploadFileData(file.url, file.parameters, file. successStatusCode, encryptedFile)
@@ -241,7 +294,12 @@ export class Vault {
             await this.uploadFileData(file.url, file.thumbnailParameters, file.successStatusCode, encryptedThumbnail)
         }
 
-        return webSafe64FromBytes(file.recordUid)
+        const fileUid = webSafe64FromBytes(file.recordUid)
+        this.meta[fileUid] = {
+            key: recordKey
+        }
+
+        return fileUid
     }
 
     async uploadFileData(url: string, parameters: string, successStatusCode: number, encryptedData: Uint8Array) {
@@ -308,36 +366,66 @@ export class Vault {
         return this.auth.executeCommand(deleteCommand)
     }
 
-    async createSharedFolder(folderName: string) {
+    async createSharedFolder(folderName: string): Promise<KeeperKey> {
         let folderKey = generateEncryptionKey()
+        let folderUid = generateUidBytes()
 
         const faCommand = new FolderAddCommand()
         faCommand.name = encryptForStorage(platform.stringToBytes(folderName), folderKey)
-        faCommand.folder_uid = generateUid()
+        faCommand.folder_uid = webSafe64FromBytes(folderUid)
         faCommand.folder_type = 'shared_folder'
         faCommand.key = encryptForStorage(folderKey, this.auth.dataKey)
         faCommand.data = encryptObjectForStorage({ name: folderName + '1', color: '#FF0000'}, folderKey)
-        await this.auth.executeCommand(faCommand)
-
+        const addFolderResponse = await this.auth.executeCommand(faCommand)
+        this.revision = addFolderResponse.revision
+        return {
+            key: folderKey,
+            keyUid: folderUid
+        }
         // {"command":"folder_add","folder_uid":"ndcDnQvDAxloKwXc714OKw","folder_type":"shared_folder","key":"aYdTIgcA1aJ4fOwFndxnN0bDBXxofrdv-x5yj_yd7XrAVUrUGmSUrR_OBVw-4zP8kkkEHmyEyWc9FApNqOHVug",
         // "name":"rMLZOh1gq8SkBvrVOsX-0keFpL6c6FsoB3jWuwPmAH4","data":"L43CFsc5KUBAq5Nd-P4aKJE70gjDJX8JfCdgLHCLXVw","pt":"vjxMB5PAJ16lJ2t49nWj8Q",
         // "locale":"en_US","username":"admin@yozik.us","session_token":"mDgWvJh2_BiYBssMbO7G_L__WkElIvTqC2XsZwm1lRaFF2Wi6OV1qYclfF4QNc5PthCH8CvSykWkbc_5niQ6nKO86g1dzMpRxG8Qnfhb3Pu-Ez0fago","client_version":"w14.13.0"}
     }
 
-    async deleteSharedFolders(sharedFolders: SharedFolder[]) {
-        for (let sharedFolder of sharedFolders) {
+    async addUserToSharedFolder(sharedFolderKey: KeeperKey, user: string) {
+        const userPublicKey = await this.fetchUserPublicKey(user)
+
+        const sfuCommand = new SharedFolderUpdateCommand()
+        sfuCommand.operation = 'update'
+        sfuCommand.name = encryptForStorage(platform.stringToBytes('sftest2'), sharedFolderKey.key)
+        sfuCommand.shared_folder_uid = webSafe64FromBytes(sharedFolderKey.keyUid)
+        sfuCommand.revision = this.revision
+        sfuCommand.add_users = [{
+            username: user,
+            manage_records: false,
+            manage_users: false,
+            shared_folder_key: shareKey(sharedFolderKey.key, userPublicKey)
+        }]
+        await this.auth.executeCommand(sfuCommand)
+    }
+
+    async deleteSharedFolders(sharedFolderUids: string[]) {
+        for (let sharedFolderUid of sharedFolderUids) {
             const sfuCommand = new SharedFolderUpdateCommand()
             sfuCommand.operation = 'delete'
-            sfuCommand.shared_folder_uid = sharedFolder.shared_folder_uid
+            sfuCommand.shared_folder_uid = sharedFolderUid
             await this.auth.executeCommand(sfuCommand)
         }
+
+        // only can leave shared folders if not the owner
+        // {"command":"shared_folder_update","pt":"-n4s_eSHBZzOMRZQtX0gDg","operation":"update","shared_folder_uid":"PFe3TzKS6wq3YtXivxR6oA","revision":944012,
+        // "remove_users":[{"username":"saldoukhov@gmail.com"}],"locale":"en_US","username":"saldoukhov@gmail.com","session_token":"6X8lJLgDecS2IKTwErliMX0UKYkhznDWS59asu4kVeN3GMidq--T1kyBJ1YSJ9hxm67qsMkXeG5egEGaAQ_YjVc6CrhyFJovS4mOIZ3APLVdiylEroLQbsttCgkF","client_version":"w14.13.0"}
+    }
+
+    async fetchUserPublicKey(user: string): Promise<string> {
+        const publicKeysCommand = new PublicKeysCommand()
+        publicKeysCommand.key_owners = [user]
+        const publicKeys = await this.auth.executeCommand(publicKeysCommand)
+        return normal64(publicKeys.public_keys[0].public_key)
     }
 
     async shareRecords(records: string[], to_user: string): Promise<RecordShareUpdateResponse> {
-        const publicKeysCommand = new PublicKeysCommand()
-        publicKeysCommand.key_owners = [to_user]
-        const publicKeys = await this.auth.executeCommand(publicKeysCommand)
-        const userPublicKey = normal64(publicKeys.public_keys[0].public_key)
+        const userPublicKey = await this.fetchUserPublicKey(to_user)
 
         const shareCommand = new RecordShareUpdateCommand()
         let shareObjects: ShareObject[] = []
@@ -403,6 +491,7 @@ export class KeeperRecord {
     non_shared_data?: any
     extra?: KeeperRecordExtra
     udata?: any;
+    sharedFolderUid?: string
 }
 
 export interface KeeperRecordData {
