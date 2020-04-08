@@ -205,6 +205,40 @@ export class DeleteCommand extends AuthorizedCommand {
     pre_delete_token: string
 }
 
+export class GetDeletedRecordsCommand extends AuthorizedCommand<GetDeletedRecordsResponse> {
+
+    private client_time: number;
+
+    constructor() {
+        super()
+        this.command = 'get_deleted_records'
+        this.client_time = new Date().getTime()
+    }
+}
+
+export interface DeletedRecord {
+    record_uid: string
+    revision: number
+    client_modified_time: number
+    data: string
+    record_key: string
+    record_key_type: number
+    date_deleted: number
+    breach_watch_data?: string
+}
+
+export interface GetDeletedRecordsResponse extends KeeperResponse {
+    records: DeletedRecord[]
+}
+
+export class PurgeDeletedRecordsCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = 'purge_deleted_records'
+    }
+}
+
 export class RecordShareUpdateCommand extends AuthorizedCommand<RecordShareUpdateResponse> {
     constructor() {
         super()
@@ -698,15 +732,15 @@ export interface Team {
     restrict_share: boolean;
 }
 
-export interface Record {
+export interface RecordData {
     record_uid: string;
-    udata?: { file_ids: string[] };
-    shared: boolean;
-    data: string;
-    client_modified_time: number;
-    extra: string;
     version: number;
-    revision: number;
+    revision?: number;
+    client_modified_time?: number;
+    data?: string;
+    extra?: string;
+    udata?: { file_ids: string[] };
+    shared?: boolean;
 }
 
 export interface RecordMetaData {
@@ -731,7 +765,7 @@ export interface SyncResponse extends KeeperResponse {
         revision: number
     }[]
     shared_folders: SharedFolder[];
-    records: Record[];
+    records: RecordData[];
     record_meta_data: RecordMetaData[];
     non_shared_data: NonSharedData[];
     shared_folder_folder_records: {
