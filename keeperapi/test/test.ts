@@ -493,23 +493,29 @@ async function testRecordShareViaRecord() {
         let vault = new Vault(auth)
         // await vault.syncDown()
 
-        const fileName = 'kitten.png'
+        const fileName1 = 'kitten.png'
+        const fileName2 = 'kitten.jpg'
         // // const fileName = 'corona.jpg'
         // // const thumbName = 'corona_tn.jpg'
         const fs = require('fs')
-        const file = fs.readFileSync(fileName)
+        const file1 = fs.readFileSync(fileName1)
+        const file2 = fs.readFileSync(fileName2)
         // // const thumb = fs.readFileSync(thumbName)
         //
         // // const fileRecordUid = await vault.uploadFile(fileName, file, thumb)
-        const fileRecordUid = await vault.uploadFile(fileName, file)
+        console.log("Adding file records...")
+        const fileRecordUid1 = await vault.uploadFile(fileName1, file1)
+        const fileRecordUid2 = await vault.uploadFile(fileName2, file2)
 
+        console.log("Adding record linked to file...")
         const recordAddResponse = await vault.addRecordNew({
             title: 'new record 2',
             secret1: 'abcd',
-            file: fileRecordUid
-        }, null, [fileRecordUid])
+            files: [fileRecordUid1, fileRecordUid1]
+        }, null, [fileRecordUid1, fileRecordUid2])
         const recordUid = webSafe64FromBytes(recordAddResponse.records[0].recordUid)
 
+        console.log("Sharing record with links...")
         await vault.shareRecords([
             recordUid
         ], 'saldoukhov@gmail.com')
@@ -539,26 +545,29 @@ async function testRecordShareViaFolder() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        await vault.syncDown()
+        // await vault.syncDown()
 
-        const folderKey = await vault.createSharedFolder('sftest')
+        console.log('Creating shared folder...')
+        const folderUid = await vault.createSharedFolder('sftest')
 
-        await vault.addUserToSharedFolder(folderKey,  'saldoukhov@gmail.com')
+        console.log('Adding user to shared folder...')
+        await vault.addUserToSharedFolder(folderUid,  'saldoukhov@gmail.com')
 
-        await vault.syncDown(true)
+        // await vault.syncDown(true)
+        console.log('Adding record to shared folder...')
         await vault.addRecordNew({
             title: 'new record 3',
             secret1: 'abcd',
-        }, folderKey)
+        }, folderUid)
 
-        let auth1 = await login("saldoukhov@gmail.com")
-        let vault1 = new Vault(auth1)
-        await vault1.syncDown(true)
-        for (let record of vault1.records) {
-            console.log(record.data)
-            console.log(record.recordData.udata)
-            console.log(record.nonSharedData)
-        }
+        // let auth1 = await login("saldoukhov@gmail.com")
+        // let vault1 = new Vault(auth1)
+        // await vault1.syncDown(true)
+        // for (let record of vault1.records) {
+        //     console.log(record.data)
+        //     console.log(record.recordData.udata)
+        //     console.log(record.nonSharedData)
+        // }
     } catch (e) {
         console.log(e)
     }
@@ -576,18 +585,17 @@ async function login(user?: string): Promise<Auth> {
     return auth;
 }
 
-// const currentUser = 'saldoukhov@gmail.com'
 const currentUser = 'admin@yozik.us'
+// const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 
 // printCompany().finally();
-// printVault().finally();
-// testProto();
+printVault().finally();
 // testRecordShareViaRecord().finally();
 // testRecordShareViaFolder().finally();
 // testAddRecordNew().finally();
 // testRecordShare().finally();
-cleanVault().finally();
+// cleanVault().finally();
 // cleanVault('saldoukhov@gmail.com').finally();
 // testRecordUpdate().finally();
 // testAttachmentsE2E().finally();

@@ -174,7 +174,7 @@ export class Vault {
             console.log(`${updated} records updated.`)
         if (removed > 0)
             console.log(`${removed} records removed.`)
-        console.log(`${this._records.length} records are in the vault.`)
+        console.log(`${Object.keys(this._records).length} records are in the vault.`)
     }
 
     async addRecord(recordData: KeeperRecordData, files?: [ExtraFile]): Promise<string> {
@@ -375,6 +375,11 @@ export class Vault {
         faCommand.data = encryptObjectForStorage({ name: folderName + '1', color: '#FF0000'}, folderKey)
         const addFolderResponse = await this.auth.executeCommand(faCommand)
         this.revision = addFolderResponse.revision
+
+        this._sharedFolders[folderUid] = {
+            key: folderKey
+        }
+
         return folderUid
     }
 
