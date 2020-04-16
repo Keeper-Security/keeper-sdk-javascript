@@ -6,7 +6,9 @@ import {
     PreDeleteCommand,
     PublicKeysCommand,
     PurgeDeletedRecordsCommand,
-    RecordAddCommand, RecordData, RecordMetaData,
+    RecordAddCommand,
+    RecordData,
+    RecordMetaData,
     RecordShareUpdateCommand,
     RecordShareUpdateResponse,
     RequestUploadCommand,
@@ -33,6 +35,7 @@ import {
 import {fileAddMessage, fileDownloadMessage, recordsAddMessage, recordsUpdateMessage} from './restMessages'
 import {Records} from './proto'
 import RecordFolderType = Records.RecordFolderType;
+import FileAddResult = Records.FileAddResult;
 
 async function decryptRecord(record: VaultRecord) {
     try {
@@ -81,6 +84,26 @@ export class Vault {
         }
     }
 
+    get records(): VaultRecord[] {
+        return Object.values(this._records)
+    }
+
+    get sharedFolders(): VaultSharedFolder[] {
+        return Object.values(this._sharedFolders)
+    }
+
+    get recordUids(): string[] {
+        return Object.keys(this._records)
+    }
+
+    get sharedFolderUids(): string[] {
+        return Object.keys(this._sharedFolders)
+    }
+
+    recordByUid(record_uid: string): VaultRecord {
+        return this._records[record_uid]
+    }
+
     async syncDown(logResponse: boolean = false) {
         console.log(`syncing revision ${this.revision}`)
         let syncDownCommand = new SyncDownCommand(this.revision)
@@ -120,7 +143,6 @@ export class Vault {
             }
             await decryptRecord(record)
         }
-
         for (let sharedFolder of syncDownResponse.shared_folders || []) {
             let vaultFolder: VaultSharedFolder = {
                 sharedFolder: sharedFolder
@@ -168,6 +190,12 @@ export class Vault {
                 console.log(e)
             }
         }
+
+        for (let record of this.records.filter(x => !!x.recordData.owner_uid)) {
+            record.key = await decryptKey(record.recordData.link_key, this._records[record.recordData.owner_uid].key)
+            await decryptRecord(record)
+        }
+
         if (added > 0)
             console.log(`${added} records added.`)
         if (updated > 0)
@@ -277,6 +305,8 @@ export class Vault {
 
         const fileAddResponse = await this.auth.executeRest(rq)
         const file = fileAddResponse.files[0]
+        if (file.status !== FileAddResult.FA_SUCCESS)
+            throw new Error(`Error adding a file record for ${fileName}`)
 
         await this.uploadFileData(file.url, file.parameters, file. successStatusCode, encryptedFile)
         if (encryptedThumbnail) {
@@ -464,26 +494,6 @@ export class Vault {
             size: encryptedFile.length,
             type: '',
         }
-    }
-
-    get records(): VaultRecord[] {
-        return Object.values(this._records)
-    }
-
-    get sharedFolders(): VaultSharedFolder[] {
-        return Object.values(this._sharedFolders)
-    }
-
-    get recordUids(): string[] {
-        return Object.keys(this._records)
-    }
-
-    get sharedFolderUids(): string[] {
-        return Object.keys(this._sharedFolders)
-    }
-
-    recordByUid(record_uid: string): VaultRecord {
-        return this._records[record_uid]
     }
 }
 

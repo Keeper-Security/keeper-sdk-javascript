@@ -3,9 +3,15 @@ import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
+import * as fs from 'fs'
 import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
-import {EnterpriseDataInclude, GetEnterpriseDataCommand, RequestDownloadCommand} from '../src/commands'
+import {
+    AccountSummaryCommand,
+    EnterpriseDataInclude,
+    GetEnterpriseDataCommand,
+    RequestDownloadCommand
+} from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
 import {normal64Bytes, webSafe64FromBytes} from '../src/utils'
@@ -56,6 +62,18 @@ async function printVault() {
             console.log(record.recordData.udata)
             console.log(record.nonSharedData)
         }
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function testCommand() {
+    try {
+        let auth = await login()
+        let cmd = new AccountSummaryCommand();
+        cmd.include = ["license", "settings", "group", "sync_log", "keys", "enforcements", "client_key", "images", "is_enterprise_admin", "security_keys", "personal_license"];
+        let resp = await auth.executeCommand(cmd);
+        console.log(resp);
     } catch (e) {
         console.log(e)
     }
@@ -195,7 +213,6 @@ async function testAttachmentsDownload() {
 
         const fileResponse = await platform.get(resp.downloads[0].url, {})
         const decryptedFile = platform.aesCbcDecrypt(fileResponse.data, normal64Bytes(file.key), false)
-        const fs = require('fs')
         fs.writeFileSync(file.name, decryptedFile)
         console.log(decryptedFile)
     } catch (e) {
@@ -215,7 +232,6 @@ async function testAttachmentsUpload() {
         // await vault.syncDown()
 
         const fileName = 'corona.jpg'
-        const fs = require('fs')
         const file = fs.readFileSync(fileName)
 
         const fileData = await vault.uploadFileOld(fileName, file)
@@ -403,7 +419,6 @@ async function testAttachmentsE2E() {
 
         const fileName = 'corona.jpg'
         const thumbName = 'corona_tn.jpg'
-        const fs = require('fs')
         const file = fs.readFileSync(fileName)
         const thumb = fs.readFileSync(thumbName)
 
@@ -438,80 +453,52 @@ async function testAddRecordNew() {
     }
 }
 
-async function testRecordShare() {
-    try {
-        let auth = await login()
-        let vault = new Vault(auth)
-        await vault.syncDown()
+async function uploadFiles(vault: Vault) {
+    const fileName1 = 'corona.jpg'
+    const thumbName1 = 'corona_tn.jpg'
+    const fileName2 = 'kitten.jpg'
+    const file1 = fs.readFileSync(fileName1)
+    const thumb1 = fs.readFileSync(thumbName1)
+    const file2 = fs.readFileSync(fileName2)
 
-        let auth1 = await login("saldoukhov@gmail.com")
-        let vault1 = new Vault(auth1)
-        await vault1.syncDown()
+    console.log("Adding file records...")
+    const fileRecordUid1 = await vault.uploadFile(fileName1, file1, thumb1)
+    const fileRecordUid2 = await vault.uploadFile(fileName2, file2)
+    return {fileRecordUid1, fileRecordUid2};
+}
 
-        const fileName = 'corona.jpg'
-        const thumbName = 'corona_tn.jpg'
-        const fs = require('fs')
-        const file = fs.readFileSync(fileName)
-        const thumb = fs.readFileSync(thumbName)
+async function downloadSharedFiles(fileRecordUid1: string, fileRecordUid2: string) {
+    let auth1 = await login("saldoukhov@gmail.com")
+    let vault1 = new Vault(auth1)
+    await vault1.syncDown(true)
 
-        const fileRecordUid = await vault.uploadFile(fileName, file, thumb)
-
-        const recordAddResponse = await vault.addRecordNew({
-            title: 'new record 2',
-            secret1: 'abcd',
-            file: fileRecordUid
-        })
-        const recordUid = webSafe64FromBytes(recordAddResponse.records[0].recordUid)
-
-        await vault.syncDown()
-
-        await vault.shareRecords([
-            fileRecordUid,
-            recordUid
-        ], 'saldoukhov@gmail.com')
-
-        await vault1.syncDown()
-        for (let record of vault1.records) {
-            console.log(record.data)
-            console.log(record.recordData.udata)
-            console.log(record.nonSharedData)
-        }
-
-        const file1 = await vault1.downloadFile(fileRecordUid, false);
-        fs.writeFileSync('picture.jpg', file1)
-
-        const file2 = await vault1.downloadFile(fileRecordUid, true);
-        fs.writeFileSync('picture_tn.jpg', file2)
-    } catch (e) {
-        console.log(e)
+    for (let record of vault1.records) {
+        console.log(record.data)
+        console.log(record.recordData.udata)
+        console.log(record.nonSharedData)
     }
+
+    const file1_p = await vault1.downloadFile(fileRecordUid1, false);
+    fs.writeFileSync('picture1.jpg', file1_p)
+
+    const file1_tn = await vault1.downloadFile(fileRecordUid1, true);
+    fs.writeFileSync('picture1_tn.jpg', file1_tn)
+
+    const file2_p = await vault1.downloadFile(fileRecordUid2, false);
+    fs.writeFileSync('picture2.jpg', file2_p)
 }
 
 async function testRecordShareViaRecord() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        // await vault.syncDown()
-
-        const fileName1 = 'kitten.png'
-        const fileName2 = 'kitten.jpg'
-        // // const fileName = 'corona.jpg'
-        // // const thumbName = 'corona_tn.jpg'
-        const fs = require('fs')
-        const file1 = fs.readFileSync(fileName1)
-        const file2 = fs.readFileSync(fileName2)
-        // // const thumb = fs.readFileSync(thumbName)
-        //
-        // // const fileRecordUid = await vault.uploadFile(fileName, file, thumb)
-        console.log("Adding file records...")
-        const fileRecordUid1 = await vault.uploadFile(fileName1, file1)
-        const fileRecordUid2 = await vault.uploadFile(fileName2, file2)
+        const {fileRecordUid1, fileRecordUid2} = await uploadFiles(vault);
 
         console.log("Adding record linked to file...")
         const recordAddResponse = await vault.addRecordNew({
             title: 'new record 2',
             secret1: 'abcd',
-            files: [fileRecordUid1, fileRecordUid1]
+            files: [fileRecordUid1, fileRecordUid2]
         }, null, [fileRecordUid1, fileRecordUid2])
         const recordUid = webSafe64FromBytes(recordAddResponse.records[0].recordUid)
 
@@ -520,22 +507,7 @@ async function testRecordShareViaRecord() {
             recordUid
         ], 'saldoukhov@gmail.com')
 
-        let auth1 = await login("saldoukhov@gmail.com")
-        let vault1 = new Vault(auth1)
-        await vault1.syncDown(true)
-
-        // await vault1.syncDown()
-        // for (let record of vault1.records) {
-        //     console.log(record.data)
-        //     console.log(record.udata)
-        //     console.log(record.non_shared_data)
-        // }
-        //
-        // const file1 = await vault1.downloadFile(fileRecordUid, false);
-        // fs.writeFileSync('picture.jpg', file1)
-        //
-        // const file2 = await vault1.downloadFile(fileRecordUid, true);
-        // fs.writeFileSync('picture_tn.jpg', file2)
+        await downloadSharedFiles(fileRecordUid1, fileRecordUid2)
     } catch (e) {
         console.log(e)
     }
@@ -545,7 +517,7 @@ async function testRecordShareViaFolder() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        // await vault.syncDown()
+        const {fileRecordUid1, fileRecordUid2} = await uploadFiles(vault);
 
         console.log('Creating shared folder...')
         const folderUid = await vault.createSharedFolder('sftest')
@@ -558,16 +530,9 @@ async function testRecordShareViaFolder() {
         await vault.addRecordNew({
             title: 'new record 3',
             secret1: 'abcd',
-        }, folderUid)
+        }, folderUid, [fileRecordUid1, fileRecordUid2])
 
-        // let auth1 = await login("saldoukhov@gmail.com")
-        // let vault1 = new Vault(auth1)
-        // await vault1.syncDown(true)
-        // for (let record of vault1.records) {
-        //     console.log(record.data)
-        //     console.log(record.recordData.udata)
-        //     console.log(record.nonSharedData)
-        // }
+        await downloadSharedFiles(fileRecordUid1, fileRecordUid2)
     } catch (e) {
         console.log(e)
     }
@@ -590,11 +555,11 @@ const currentUser = 'admin@yozik.us'
 // const currentUser = 'admin+msp@yozik.us'
 
 // printCompany().finally();
-printVault().finally();
+// printVault().finally();
+// testCommand().finally();
 // testRecordShareViaRecord().finally();
-// testRecordShareViaFolder().finally();
+testRecordShareViaFolder().finally();
 // testAddRecordNew().finally();
-// testRecordShare().finally();
 // cleanVault().finally();
 // cleanVault('saldoukhov@gmail.com').finally();
 // testRecordUpdate().finally();

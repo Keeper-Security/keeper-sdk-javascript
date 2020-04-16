@@ -741,6 +741,8 @@ export interface RecordData {
     extra?: string;
     udata?: { file_ids: string[] };
     shared?: boolean;
+    owner_uid?: string;
+    link_key?: string;
 }
 
 export interface RecordMetaData {
