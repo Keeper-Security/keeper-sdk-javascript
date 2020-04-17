@@ -9,13 +9,15 @@
     "dist"
   ],
   "scripts": {
-    "api-build": "rollup -c",
-    "api-watch": "rollup -cw",
-    "update-proto-es6": "pbjs -t static-module -w es6 -o src/proto.js ../../keeperapp-protobuf/*.proto && pbts -o src/proto.d.ts src/proto.js",
-    "update-proto-cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/*.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/*.proto | pbts -o src/proto.d.ts -",
+    "start": "rollup -cw",
+    "build": "rollup -c",
+    "update-proto:es6": "pbjs -t static-module -w es6 -o src/proto.js ../../keeperapp-protobuf/*.proto && pbts -o src/proto.d.ts src/proto.js",
+    "update-proto:cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/*.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/*.proto | pbts -o src/proto.d.ts -",
     "link-local": "yarn link",
     "test": "ts-node test/test.ts",
-    "jsttst": "jest"
+    "test:2": "jest",
+    "types": "tsc --watch",
+    "types:ci": "tsc"
   },
   "license": "ISC",
   "dependencies": {

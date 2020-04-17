@@ -20,16 +20,30 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Installation
-        run: |
-          npm i -g yarn
-          yarn
+      - name: Examples (node) - Installation
+        run: npm i
+        working-directory: ./examples/print-vault-node
+
+      - name: Lib - Build
+        run: yarn build
         working-directory: ./keeperapi
 
-      - name: Check Types
+      - name: Examples (node) - Check Types
         run: npm run types:ci
+        working-directory: ./examples/print-vault-node
+
+      - name: Examples (browser) - Installation
+        run: npm i
+        working-directory: ./examples/print-vault-browser
+
+      - name: Examples (browser) - Check Types
+        run: npm run types:ci
+        working-directory: ./examples/print-vault-browser
+
+      - name: Lib - Check Types
+        run: yarn types:ci
         working-directory: ./keeperapi
 
-      - name: Run Tests
-        run: npm run test:ci
-        working-directory: ./keeperapi
+#      - name: Lib - Run Tests
+#        run: npm run test:ci
+#        working-directory: ./keeperapi

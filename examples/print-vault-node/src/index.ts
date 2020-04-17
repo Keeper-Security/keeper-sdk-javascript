@@ -5,6 +5,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 let authUI: AuthUI = {
     displayDialog(): Promise<boolean> {
+        // @ts-ignore TODO: finish implementing
         return null
     },
     getTwoFactorCode(): Promise<string> {
