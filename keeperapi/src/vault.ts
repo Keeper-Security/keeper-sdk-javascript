@@ -105,7 +105,7 @@ export class Vault {
     }
 
     async syncDown(logResponse: boolean = false) {
-        console.log(`syncing revision ${this.revision}`)
+        console.log(`syncing revision ${this.revision} for ${this.auth.username}`)
         let syncDownCommand = new SyncDownCommand(this.revision)
         syncDownCommand.include = ['record', 'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
         if (!this.noTypedRecords) {
@@ -272,6 +272,46 @@ export class Vault {
         }
 
         return recordAddResponse
+    }
+
+    async addRecordsNew(recordsData: any[]): Promise<Records.IRecordsModifyResponse> {
+        const now = new Date().getTime()
+
+        let records: Records.IRecordAdd[] = []
+        let keys: Record<string, Uint8Array> = {}
+        for (const recordData of recordsData) {
+            const recordKey = generateEncryptionKey()
+
+            const encryptedKey = await platform.aesGcmEncrypt(recordKey, this.auth.dataKey)
+            const encryptedData = await encryptObjectForStorageGCM(recordData, recordKey)
+
+            let recordAdd: Records.IRecordAdd = {
+                recordUid: platform.getRandomBytes(16),
+                recordKey: encryptedKey,
+                data: encryptedData,
+                clientModifiedTime: now
+            }
+            records.push(recordAdd)
+            keys[webSafe64FromBytes(recordAdd.recordUid)] = recordKey
+        }
+
+        const recordsAddResponse = await this.auth.executeRest(recordsAddMessage({
+            clientTime: now,
+            records: records
+        }))
+
+        for (const recordResponse of recordsAddResponse.records) {
+            const recordUid = webSafe64FromBytes(recordResponse.recordUid)
+            this._records[recordUid] = {
+                recordData: {
+                    record_uid: recordUid,
+                    version: 3
+                },
+                key: keys[recordUid]
+            }
+        }
+
+        return recordsAddResponse
     }
 
     async uploadFile(fileName: string, fileData: Uint8Array, thumbnailData?: Uint8Array): Promise<string> {
