@@ -13,12 +13,11 @@ import {
     RequestDownloadCommand
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {addUserKeyMessage, getUserKeysMessage, recordTypesGetMessage} from '../src/restMessages'
+import {recordTypesGetMessage} from '../src/restMessages'
 import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
 import RecordModifyResult = Records.RecordModifyResult;
-import UserKeyType = Records.UserKeyType;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -57,7 +56,7 @@ async function printVault() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        // vault.noTypedRecords = true;
+        vault.noTypedRecords = true;
         await vault.syncDown(true)
         for (let record of vault.records) {
             console.log(record.data)
@@ -716,8 +715,8 @@ const currentUser = 'admin@yozik.us'
 // const currentUser = 'admin+msp@yozik.us'
 
 // printCompany().finally();
-// printVault().finally();
-provideECKey().finally()
+printVault().finally();
+// provideECKey().finally()
 // testCommand().finally();
 // testRecordShareViaRecord().finally();
 // testRecordShareViaFolder().finally();

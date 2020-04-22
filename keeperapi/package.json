@@ -15,6 +15,7 @@
     "update-proto-cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/*.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/*.proto | pbts -o src/proto.d.ts -",
     "link-local": "yarn link",
     "test": "ts-node test/test.ts",
+    "test-new-login": "ts-node test/new_login.ts",
     "jsttst": "jest"
   },
   "license": "ISC",

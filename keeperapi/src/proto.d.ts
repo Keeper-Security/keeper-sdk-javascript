@@ -38,9 +38,10 @@ export namespace Authentication {
 
     /** DeviceStatus enum. */
     enum DeviceStatus {
-        NEED_APPROVAL = 0,
-        OK = 1,
-        DEVICE_DISABLED = 2
+        DEVICE_NEEDS_APPROVAL = 0,
+        DEVICE_OK = 1,
+        DEVICE_DISABLED = 2,
+        DEVICE_LOCKED = 3
     }
 
     /** LicenseStatus enum. */
@@ -73,6 +74,12 @@ export namespace Authentication {
         invalid_version = 0,
         default_version = 1,
         second_version = 2
+    }
+
+    /** MasterPasswordReentryActionType enum. */
+    enum MasterPasswordReentryActionType {
+        UNMASK = 0,
+        COPY = 1
     }
 
     /** Properties of an ApiRequest. */
@@ -699,120 +706,6 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a SsoRequestParams. */
-    interface ISsoRequestParams {
-
-        /** SsoRequestParams action */
-        action?: (string|null);
-
-        /** SsoRequestParams dest */
-        dest?: (string|null);
-
-        /** SsoRequestParams embedded */
-        embedded?: (boolean|null);
-
-        /** SsoRequestParams json */
-        json?: (boolean|null);
-
-        /** SsoRequestParams key */
-        key?: (string|null);
-    }
-
-    /** Represents a SsoRequestParams. */
-    class SsoRequestParams implements ISsoRequestParams {
-
-        /**
-         * Constructs a new SsoRequestParams.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.ISsoRequestParams);
-
-        /** SsoRequestParams action. */
-        public action: string;
-
-        /** SsoRequestParams dest. */
-        public dest: string;
-
-        /** SsoRequestParams embedded. */
-        public embedded: boolean;
-
-        /** SsoRequestParams json. */
-        public json: boolean;
-
-        /** SsoRequestParams key. */
-        public key: string;
-
-        /**
-         * Creates a new SsoRequestParams instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns SsoRequestParams instance
-         */
-        public static create(properties?: Authentication.ISsoRequestParams): Authentication.SsoRequestParams;
-
-        /**
-         * Encodes the specified SsoRequestParams message. Does not implicitly {@link Authentication.SsoRequestParams.verify|verify} messages.
-         * @param message SsoRequestParams message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.ISsoRequestParams, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified SsoRequestParams message, length delimited. Does not implicitly {@link Authentication.SsoRequestParams.verify|verify} messages.
-         * @param message SsoRequestParams message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.ISsoRequestParams, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a SsoRequestParams message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns SsoRequestParams
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SsoRequestParams;
-
-        /**
-         * Decodes a SsoRequestParams message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns SsoRequestParams
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SsoRequestParams;
-
-        /**
-         * Verifies a SsoRequestParams message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a SsoRequestParams message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns SsoRequestParams
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.SsoRequestParams;
-
-        /**
-         * Creates a plain object from a SsoRequestParams message. Also converts values to other types if specified.
-         * @param message SsoRequestParams
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.SsoRequestParams, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this SsoRequestParams to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a PreLoginRequest. */
     interface IPreLoginRequest {
 
@@ -824,9 +717,6 @@ export namespace Authentication {
 
         /** PreLoginRequest twoFactorToken */
         twoFactorToken?: (Uint8Array|null);
-
-        /** PreLoginRequest ssoRequestParams */
-        ssoRequestParams?: (Authentication.ISsoRequestParams|null);
     }
 
     /** Represents a PreLoginRequest. */
@@ -846,9 +736,6 @@ export namespace Authentication {
 
         /** PreLoginRequest twoFactorToken. */
         public twoFactorToken: Uint8Array;
-
-        /** PreLoginRequest ssoRequestParams. */
-        public ssoRequestParams?: (Authentication.ISsoRequestParams|null);
 
         /**
          * Creates a new PreLoginRequest instance using the specified properties.
@@ -933,14 +820,17 @@ export namespace Authentication {
         /** LoginRequest authenticationHashPrime */
         authenticationHashPrime?: (Uint8Array|null);
 
-        /** LoginRequest randomHashKey */
-        randomHashKey?: (Uint8Array|null);
+        /** LoginRequest timestampForAuth */
+        timestampForAuth?: (number|Long|null);
 
         /** LoginRequest encryptedTwoFactorToken */
         encryptedTwoFactorToken?: (Uint8Array|null);
 
-        /** LoginRequest encryptedBreachWatchToken */
-        encryptedBreachWatchToken?: (Uint8Array|null);
+        /** LoginRequest pushToken */
+        pushToken?: (string|null);
+
+        /** LoginRequest platform */
+        platform?: (string|null);
     }
 
     /** Represents a LoginRequest. */
@@ -961,14 +851,17 @@ export namespace Authentication {
         /** LoginRequest authenticationHashPrime. */
         public authenticationHashPrime: Uint8Array;
 
-        /** LoginRequest randomHashKey. */
-        public randomHashKey: Uint8Array;
+        /** LoginRequest timestampForAuth. */
+        public timestampForAuth: (number|Long);
 
         /** LoginRequest encryptedTwoFactorToken. */
         public encryptedTwoFactorToken: Uint8Array;
 
-        /** LoginRequest encryptedBreachWatchToken. */
-        public encryptedBreachWatchToken: Uint8Array;
+        /** LoginRequest pushToken. */
+        public pushToken: string;
+
+        /** LoginRequest platform. */
+        public platform: string;
 
         /**
          * Creates a new LoginRequest instance using the specified properties.
@@ -2391,97 +2284,109 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a DeviceClientVersionUpdateRequest. */
-    interface IDeviceClientVersionUpdateRequest {
+    /** Properties of a DeviceUpdateRequest. */
+    interface IDeviceUpdateRequest {
 
-        /** DeviceClientVersionUpdateRequest encryptedDeviceToken */
+        /** DeviceUpdateRequest encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
 
-        /** DeviceClientVersionUpdateRequest clientVersion */
+        /** DeviceUpdateRequest clientVersion */
         clientVersion?: (string|null);
+
+        /** DeviceUpdateRequest deviceName */
+        deviceName?: (string|null);
+
+        /** DeviceUpdateRequest deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
     }
 
-    /** Represents a DeviceClientVersionUpdateRequest. */
-    class DeviceClientVersionUpdateRequest implements IDeviceClientVersionUpdateRequest {
+    /** Represents a DeviceUpdateRequest. */
+    class DeviceUpdateRequest implements IDeviceUpdateRequest {
 
         /**
-         * Constructs a new DeviceClientVersionUpdateRequest.
+         * Constructs a new DeviceUpdateRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IDeviceClientVersionUpdateRequest);
+        constructor(properties?: Authentication.IDeviceUpdateRequest);
 
-        /** DeviceClientVersionUpdateRequest encryptedDeviceToken. */
+        /** DeviceUpdateRequest encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
 
-        /** DeviceClientVersionUpdateRequest clientVersion. */
+        /** DeviceUpdateRequest clientVersion. */
         public clientVersion: string;
 
+        /** DeviceUpdateRequest deviceName. */
+        public deviceName: string;
+
+        /** DeviceUpdateRequest deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
         /**
-         * Creates a new DeviceClientVersionUpdateRequest instance using the specified properties.
+         * Creates a new DeviceUpdateRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns DeviceClientVersionUpdateRequest instance
+         * @returns DeviceUpdateRequest instance
          */
-        public static create(properties?: Authentication.IDeviceClientVersionUpdateRequest): Authentication.DeviceClientVersionUpdateRequest;
+        public static create(properties?: Authentication.IDeviceUpdateRequest): Authentication.DeviceUpdateRequest;
 
         /**
-         * Encodes the specified DeviceClientVersionUpdateRequest message. Does not implicitly {@link Authentication.DeviceClientVersionUpdateRequest.verify|verify} messages.
-         * @param message DeviceClientVersionUpdateRequest message or plain object to encode
+         * Encodes the specified DeviceUpdateRequest message. Does not implicitly {@link Authentication.DeviceUpdateRequest.verify|verify} messages.
+         * @param message DeviceUpdateRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IDeviceClientVersionUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.IDeviceUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified DeviceClientVersionUpdateRequest message, length delimited. Does not implicitly {@link Authentication.DeviceClientVersionUpdateRequest.verify|verify} messages.
-         * @param message DeviceClientVersionUpdateRequest message or plain object to encode
+         * Encodes the specified DeviceUpdateRequest message, length delimited. Does not implicitly {@link Authentication.DeviceUpdateRequest.verify|verify} messages.
+         * @param message DeviceUpdateRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IDeviceClientVersionUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.IDeviceUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a DeviceClientVersionUpdateRequest message from the specified reader or buffer.
+         * Decodes a DeviceUpdateRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns DeviceClientVersionUpdateRequest
+         * @returns DeviceUpdateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeviceClientVersionUpdateRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeviceUpdateRequest;
 
         /**
-         * Decodes a DeviceClientVersionUpdateRequest message from the specified reader or buffer, length delimited.
+         * Decodes a DeviceUpdateRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns DeviceClientVersionUpdateRequest
+         * @returns DeviceUpdateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeviceClientVersionUpdateRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeviceUpdateRequest;
 
         /**
-         * Verifies a DeviceClientVersionUpdateRequest message.
+         * Verifies a DeviceUpdateRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a DeviceClientVersionUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a DeviceUpdateRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns DeviceClientVersionUpdateRequest
+         * @returns DeviceUpdateRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.DeviceClientVersionUpdateRequest;
+        public static fromObject(object: { [k: string]: any }): Authentication.DeviceUpdateRequest;
 
         /**
-         * Creates a plain object from a DeviceClientVersionUpdateRequest message. Also converts values to other types if specified.
-         * @param message DeviceClientVersionUpdateRequest
+         * Creates a plain object from a DeviceUpdateRequest message. Also converts values to other types if specified.
+         * @param message DeviceUpdateRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.DeviceClientVersionUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.DeviceUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this DeviceClientVersionUpdateRequest to JSON.
+         * Converts this DeviceUpdateRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -4284,109 +4189,6 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** ProcessTokenType enum. */
-    enum ProcessTokenType {
-        CHANGE_EMAIL = 0,
-        EMAIL_VERIFICATION = 1,
-        IP_ADDRESS_VERIFICATION = 2
-    }
-
-    /** Properties of a ProcessToken. */
-    interface IProcessToken {
-
-        /** ProcessToken processTokenType */
-        processTokenType?: (Authentication.ProcessTokenType|null);
-
-        /** ProcessToken payload */
-        payload?: (Uint8Array|null);
-    }
-
-    /** Represents a ProcessToken. */
-    class ProcessToken implements IProcessToken {
-
-        /**
-         * Constructs a new ProcessToken.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IProcessToken);
-
-        /** ProcessToken processTokenType. */
-        public processTokenType: Authentication.ProcessTokenType;
-
-        /** ProcessToken payload. */
-        public payload: Uint8Array;
-
-        /**
-         * Creates a new ProcessToken instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ProcessToken instance
-         */
-        public static create(properties?: Authentication.IProcessToken): Authentication.ProcessToken;
-
-        /**
-         * Encodes the specified ProcessToken message. Does not implicitly {@link Authentication.ProcessToken.verify|verify} messages.
-         * @param message ProcessToken message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IProcessToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ProcessToken message, length delimited. Does not implicitly {@link Authentication.ProcessToken.verify|verify} messages.
-         * @param message ProcessToken message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IProcessToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ProcessToken message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ProcessToken
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ProcessToken;
-
-        /**
-         * Decodes a ProcessToken message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ProcessToken
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ProcessToken;
-
-        /**
-         * Verifies a ProcessToken message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ProcessToken message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ProcessToken
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.ProcessToken;
-
-        /**
-         * Creates a plain object from a ProcessToken message. Also converts values to other types if specified.
-         * @param message ProcessToken
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.ProcessToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ProcessToken to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a SetKey. */
     interface ISetKey {
 
@@ -4678,8 +4480,8 @@ export namespace Authentication {
     /** Properties of a RegisterUserRequest. */
     interface IRegisterUserRequest {
 
-        /** RegisterUserRequest email */
-        email?: (string|null);
+        /** RegisterUserRequest username */
+        username?: (string|null);
 
         /** RegisterUserRequest version */
         version?: (Authentication.Version|null);
@@ -4732,14 +4534,8 @@ export namespace Authentication {
         /** RegisterUserRequest skipGroupAccept */
         skipGroupAccept?: (boolean|null);
 
-        /** RegisterUserRequest locale */
-        locale?: (string|null);
-
         /** RegisterUserRequest clientVersion */
         clientVersion?: (string|null);
-
-        /** RegisterUserRequest ipAddress */
-        ipAddress?: (string|null);
 
         /** RegisterUserRequest fromSP */
         fromSP?: (boolean|null);
@@ -4760,8 +4556,8 @@ export namespace Authentication {
          */
         constructor(properties?: Authentication.IRegisterUserRequest);
 
-        /** RegisterUserRequest email. */
-        public email: string;
+        /** RegisterUserRequest username. */
+        public username: string;
 
         /** RegisterUserRequest version. */
         public version: Authentication.Version;
@@ -4814,14 +4610,8 @@ export namespace Authentication {
         /** RegisterUserRequest skipGroupAccept. */
         public skipGroupAccept: boolean;
 
-        /** RegisterUserRequest locale. */
-        public locale: string;
-
         /** RegisterUserRequest clientVersion. */
         public clientVersion: string;
-
-        /** RegisterUserRequest ipAddress. */
-        public ipAddress: string;
 
         /** RegisterUserRequest fromSP. */
         public fromSP: boolean;
@@ -4903,217 +4693,805 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a RegisterUserResponse. */
-    interface IRegisterUserResponse {
+    /** Properties of a NodeEnforcementAddOrUpdateRequest. */
+    interface INodeEnforcementAddOrUpdateRequest {
 
-        /** RegisterUserResponse emailId */
-        emailId?: (number|null);
+        /** NodeEnforcementAddOrUpdateRequest nodeId */
+        nodeId?: (number|Long|null);
 
-        /** RegisterUserResponse userId */
-        userId?: (number|null);
+        /** NodeEnforcementAddOrUpdateRequest enforcement */
+        enforcement?: (string|null);
 
-        /** RegisterUserResponse userUid */
-        userUid?: (Uint8Array|null);
+        /** NodeEnforcementAddOrUpdateRequest value */
+        value?: (string|null);
     }
 
-    /** Represents a RegisterUserResponse. */
-    class RegisterUserResponse implements IRegisterUserResponse {
+    /** Represents a NodeEnforcementAddOrUpdateRequest. */
+    class NodeEnforcementAddOrUpdateRequest implements INodeEnforcementAddOrUpdateRequest {
 
         /**
-         * Constructs a new RegisterUserResponse.
+         * Constructs a new NodeEnforcementAddOrUpdateRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IRegisterUserResponse);
+        constructor(properties?: Authentication.INodeEnforcementAddOrUpdateRequest);
 
-        /** RegisterUserResponse emailId. */
-        public emailId: number;
+        /** NodeEnforcementAddOrUpdateRequest nodeId. */
+        public nodeId: (number|Long);
 
-        /** RegisterUserResponse userId. */
-        public userId: number;
+        /** NodeEnforcementAddOrUpdateRequest enforcement. */
+        public enforcement: string;
 
-        /** RegisterUserResponse userUid. */
-        public userUid: Uint8Array;
+        /** NodeEnforcementAddOrUpdateRequest value. */
+        public value: string;
 
         /**
-         * Creates a new RegisterUserResponse instance using the specified properties.
+         * Creates a new NodeEnforcementAddOrUpdateRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns RegisterUserResponse instance
+         * @returns NodeEnforcementAddOrUpdateRequest instance
          */
-        public static create(properties?: Authentication.IRegisterUserResponse): Authentication.RegisterUserResponse;
+        public static create(properties?: Authentication.INodeEnforcementAddOrUpdateRequest): Authentication.NodeEnforcementAddOrUpdateRequest;
 
         /**
-         * Encodes the specified RegisterUserResponse message. Does not implicitly {@link Authentication.RegisterUserResponse.verify|verify} messages.
-         * @param message RegisterUserResponse message or plain object to encode
+         * Encodes the specified NodeEnforcementAddOrUpdateRequest message. Does not implicitly {@link Authentication.NodeEnforcementAddOrUpdateRequest.verify|verify} messages.
+         * @param message NodeEnforcementAddOrUpdateRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IRegisterUserResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.INodeEnforcementAddOrUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified RegisterUserResponse message, length delimited. Does not implicitly {@link Authentication.RegisterUserResponse.verify|verify} messages.
-         * @param message RegisterUserResponse message or plain object to encode
+         * Encodes the specified NodeEnforcementAddOrUpdateRequest message, length delimited. Does not implicitly {@link Authentication.NodeEnforcementAddOrUpdateRequest.verify|verify} messages.
+         * @param message NodeEnforcementAddOrUpdateRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IRegisterUserResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.INodeEnforcementAddOrUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a RegisterUserResponse message from the specified reader or buffer.
+         * Decodes a NodeEnforcementAddOrUpdateRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns RegisterUserResponse
+         * @returns NodeEnforcementAddOrUpdateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RegisterUserResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.NodeEnforcementAddOrUpdateRequest;
 
         /**
-         * Decodes a RegisterUserResponse message from the specified reader or buffer, length delimited.
+         * Decodes a NodeEnforcementAddOrUpdateRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns RegisterUserResponse
+         * @returns NodeEnforcementAddOrUpdateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RegisterUserResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.NodeEnforcementAddOrUpdateRequest;
 
         /**
-         * Verifies a RegisterUserResponse message.
+         * Verifies a NodeEnforcementAddOrUpdateRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a RegisterUserResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a NodeEnforcementAddOrUpdateRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns RegisterUserResponse
+         * @returns NodeEnforcementAddOrUpdateRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.RegisterUserResponse;
+        public static fromObject(object: { [k: string]: any }): Authentication.NodeEnforcementAddOrUpdateRequest;
 
         /**
-         * Creates a plain object from a RegisterUserResponse message. Also converts values to other types if specified.
-         * @param message RegisterUserResponse
+         * Creates a plain object from a NodeEnforcementAddOrUpdateRequest message. Also converts values to other types if specified.
+         * @param message NodeEnforcementAddOrUpdateRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.RegisterUserResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.NodeEnforcementAddOrUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this RegisterUserResponse to JSON.
+         * Converts this NodeEnforcementAddOrUpdateRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a DeviceVerification. */
-    interface IDeviceVerification {
+    /** Properties of a NodeEnforcementRemoveRequest. */
+    interface INodeEnforcementRemoveRequest {
 
-        /** DeviceVerification email */
-        email?: (string|null);
+        /** NodeEnforcementRemoveRequest nodeId */
+        nodeId?: (number|Long|null);
 
-        /** DeviceVerification twoFactorChannel */
-        twoFactorChannel?: (string|null);
-
-        /** DeviceVerification clientVersion */
-        clientVersion?: (string|null);
-
-        /** DeviceVerification locale */
-        locale?: (string|null);
-
-        /** DeviceVerification encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
+        /** NodeEnforcementRemoveRequest enforcement */
+        enforcement?: (string|null);
     }
 
-    /** Represents a DeviceVerification. */
-    class DeviceVerification implements IDeviceVerification {
+    /** Represents a NodeEnforcementRemoveRequest. */
+    class NodeEnforcementRemoveRequest implements INodeEnforcementRemoveRequest {
 
         /**
-         * Constructs a new DeviceVerification.
+         * Constructs a new NodeEnforcementRemoveRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IDeviceVerification);
+        constructor(properties?: Authentication.INodeEnforcementRemoveRequest);
 
-        /** DeviceVerification email. */
-        public email: string;
+        /** NodeEnforcementRemoveRequest nodeId. */
+        public nodeId: (number|Long);
 
-        /** DeviceVerification twoFactorChannel. */
-        public twoFactorChannel: string;
-
-        /** DeviceVerification clientVersion. */
-        public clientVersion: string;
-
-        /** DeviceVerification locale. */
-        public locale: string;
-
-        /** DeviceVerification encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
+        /** NodeEnforcementRemoveRequest enforcement. */
+        public enforcement: string;
 
         /**
-         * Creates a new DeviceVerification instance using the specified properties.
+         * Creates a new NodeEnforcementRemoveRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns DeviceVerification instance
+         * @returns NodeEnforcementRemoveRequest instance
          */
-        public static create(properties?: Authentication.IDeviceVerification): Authentication.DeviceVerification;
+        public static create(properties?: Authentication.INodeEnforcementRemoveRequest): Authentication.NodeEnforcementRemoveRequest;
 
         /**
-         * Encodes the specified DeviceVerification message. Does not implicitly {@link Authentication.DeviceVerification.verify|verify} messages.
-         * @param message DeviceVerification message or plain object to encode
+         * Encodes the specified NodeEnforcementRemoveRequest message. Does not implicitly {@link Authentication.NodeEnforcementRemoveRequest.verify|verify} messages.
+         * @param message NodeEnforcementRemoveRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IDeviceVerification, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.INodeEnforcementRemoveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified DeviceVerification message, length delimited. Does not implicitly {@link Authentication.DeviceVerification.verify|verify} messages.
-         * @param message DeviceVerification message or plain object to encode
+         * Encodes the specified NodeEnforcementRemoveRequest message, length delimited. Does not implicitly {@link Authentication.NodeEnforcementRemoveRequest.verify|verify} messages.
+         * @param message NodeEnforcementRemoveRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IDeviceVerification, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.INodeEnforcementRemoveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a DeviceVerification message from the specified reader or buffer.
+         * Decodes a NodeEnforcementRemoveRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns DeviceVerification
+         * @returns NodeEnforcementRemoveRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeviceVerification;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.NodeEnforcementRemoveRequest;
 
         /**
-         * Decodes a DeviceVerification message from the specified reader or buffer, length delimited.
+         * Decodes a NodeEnforcementRemoveRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns DeviceVerification
+         * @returns NodeEnforcementRemoveRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeviceVerification;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.NodeEnforcementRemoveRequest;
 
         /**
-         * Verifies a DeviceVerification message.
+         * Verifies a NodeEnforcementRemoveRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a DeviceVerification message from a plain object. Also converts values to their respective internal types.
+         * Creates a NodeEnforcementRemoveRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns DeviceVerification
+         * @returns NodeEnforcementRemoveRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.DeviceVerification;
+        public static fromObject(object: { [k: string]: any }): Authentication.NodeEnforcementRemoveRequest;
 
         /**
-         * Creates a plain object from a DeviceVerification message. Also converts values to other types if specified.
-         * @param message DeviceVerification
+         * Creates a plain object from a NodeEnforcementRemoveRequest message. Also converts values to other types if specified.
+         * @param message NodeEnforcementRemoveRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.DeviceVerification, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.NodeEnforcementRemoveRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this DeviceVerification to JSON.
+         * Converts this NodeEnforcementRemoveRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserNames. */
+    interface IUserNames {
+
+        /** UserNames username */
+        username?: (string[]|null);
+    }
+
+    /** Represents a UserNames. */
+    class UserNames implements IUserNames {
+
+        /**
+         * Constructs a new UserNames.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserNames);
+
+        /** UserNames username. */
+        public username: string[];
+
+        /**
+         * Creates a new UserNames instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserNames instance
+         */
+        public static create(properties?: Authentication.IUserNames): Authentication.UserNames;
+
+        /**
+         * Encodes the specified UserNames message. Does not implicitly {@link Authentication.UserNames.verify|verify} messages.
+         * @param message UserNames message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserNames, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserNames message, length delimited. Does not implicitly {@link Authentication.UserNames.verify|verify} messages.
+         * @param message UserNames message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserNames, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserNames message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserNames
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserNames;
+
+        /**
+         * Decodes a UserNames message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserNames
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserNames;
+
+        /**
+         * Verifies a UserNames message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserNames message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserNames
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserNames;
+
+        /**
+         * Creates a plain object from a UserNames message. Also converts values to other types if specified.
+         * @param message UserNames
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserNames, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserNames to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApiRequestByKey. */
+    interface IApiRequestByKey {
+
+        /** ApiRequestByKey keyId */
+        keyId?: (number|null);
+
+        /** ApiRequestByKey payload */
+        payload?: (Uint8Array|null);
+
+        /** ApiRequestByKey username */
+        username?: (string|null);
+
+        /** ApiRequestByKey locale */
+        locale?: (string|null);
+
+        /** ApiRequestByKey supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
+    }
+
+    /** Represents an ApiRequestByKey. */
+    class ApiRequestByKey implements IApiRequestByKey {
+
+        /**
+         * Constructs a new ApiRequestByKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IApiRequestByKey);
+
+        /** ApiRequestByKey keyId. */
+        public keyId: number;
+
+        /** ApiRequestByKey payload. */
+        public payload: Uint8Array;
+
+        /** ApiRequestByKey username. */
+        public username: string;
+
+        /** ApiRequestByKey locale. */
+        public locale: string;
+
+        /** ApiRequestByKey supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
+
+        /**
+         * Creates a new ApiRequestByKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApiRequestByKey instance
+         */
+        public static create(properties?: Authentication.IApiRequestByKey): Authentication.ApiRequestByKey;
+
+        /**
+         * Encodes the specified ApiRequestByKey message. Does not implicitly {@link Authentication.ApiRequestByKey.verify|verify} messages.
+         * @param message ApiRequestByKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IApiRequestByKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApiRequestByKey message, length delimited. Does not implicitly {@link Authentication.ApiRequestByKey.verify|verify} messages.
+         * @param message ApiRequestByKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IApiRequestByKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApiRequestByKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApiRequestByKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ApiRequestByKey;
+
+        /**
+         * Decodes an ApiRequestByKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApiRequestByKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ApiRequestByKey;
+
+        /**
+         * Verifies an ApiRequestByKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApiRequestByKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApiRequestByKey
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ApiRequestByKey;
+
+        /**
+         * Creates a plain object from an ApiRequestByKey message. Also converts values to other types if specified.
+         * @param message ApiRequestByKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ApiRequestByKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApiRequestByKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a MemcacheRequest. */
+    interface IMemcacheRequest {
+
+        /** MemcacheRequest key */
+        key?: (string|null);
+    }
+
+    /** Represents a MemcacheRequest. */
+    class MemcacheRequest implements IMemcacheRequest {
+
+        /**
+         * Constructs a new MemcacheRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IMemcacheRequest);
+
+        /** MemcacheRequest key. */
+        public key: string;
+
+        /**
+         * Creates a new MemcacheRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MemcacheRequest instance
+         */
+        public static create(properties?: Authentication.IMemcacheRequest): Authentication.MemcacheRequest;
+
+        /**
+         * Encodes the specified MemcacheRequest message. Does not implicitly {@link Authentication.MemcacheRequest.verify|verify} messages.
+         * @param message MemcacheRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IMemcacheRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MemcacheRequest message, length delimited. Does not implicitly {@link Authentication.MemcacheRequest.verify|verify} messages.
+         * @param message MemcacheRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IMemcacheRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MemcacheRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MemcacheRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.MemcacheRequest;
+
+        /**
+         * Decodes a MemcacheRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MemcacheRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.MemcacheRequest;
+
+        /**
+         * Verifies a MemcacheRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MemcacheRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MemcacheRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.MemcacheRequest;
+
+        /**
+         * Creates a plain object from a MemcacheRequest message. Also converts values to other types if specified.
+         * @param message MemcacheRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.MemcacheRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MemcacheRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a MemcacheResponse. */
+    interface IMemcacheResponse {
+
+        /** MemcacheResponse key */
+        key?: (string|null);
+
+        /** MemcacheResponse value */
+        value?: (string|null);
+    }
+
+    /** Represents a MemcacheResponse. */
+    class MemcacheResponse implements IMemcacheResponse {
+
+        /**
+         * Constructs a new MemcacheResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IMemcacheResponse);
+
+        /** MemcacheResponse key. */
+        public key: string;
+
+        /** MemcacheResponse value. */
+        public value: string;
+
+        /**
+         * Creates a new MemcacheResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MemcacheResponse instance
+         */
+        public static create(properties?: Authentication.IMemcacheResponse): Authentication.MemcacheResponse;
+
+        /**
+         * Encodes the specified MemcacheResponse message. Does not implicitly {@link Authentication.MemcacheResponse.verify|verify} messages.
+         * @param message MemcacheResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IMemcacheResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MemcacheResponse message, length delimited. Does not implicitly {@link Authentication.MemcacheResponse.verify|verify} messages.
+         * @param message MemcacheResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IMemcacheResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MemcacheResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MemcacheResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.MemcacheResponse;
+
+        /**
+         * Decodes a MemcacheResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MemcacheResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.MemcacheResponse;
+
+        /**
+         * Verifies a MemcacheResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MemcacheResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MemcacheResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.MemcacheResponse;
+
+        /**
+         * Creates a plain object from a MemcacheResponse message. Also converts values to other types if specified.
+         * @param message MemcacheResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.MemcacheResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MemcacheResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a MasterPasswordReentryRequest. */
+    interface IMasterPasswordReentryRequest {
+
+        /** MasterPasswordReentryRequest pbkdf2Password */
+        pbkdf2Password?: (string|null);
+
+        /** MasterPasswordReentryRequest action */
+        action?: (Authentication.MasterPasswordReentryActionType|null);
+    }
+
+    /** Represents a MasterPasswordReentryRequest. */
+    class MasterPasswordReentryRequest implements IMasterPasswordReentryRequest {
+
+        /**
+         * Constructs a new MasterPasswordReentryRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IMasterPasswordReentryRequest);
+
+        /** MasterPasswordReentryRequest pbkdf2Password. */
+        public pbkdf2Password: string;
+
+        /** MasterPasswordReentryRequest action. */
+        public action: Authentication.MasterPasswordReentryActionType;
+
+        /**
+         * Creates a new MasterPasswordReentryRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MasterPasswordReentryRequest instance
+         */
+        public static create(properties?: Authentication.IMasterPasswordReentryRequest): Authentication.MasterPasswordReentryRequest;
+
+        /**
+         * Encodes the specified MasterPasswordReentryRequest message. Does not implicitly {@link Authentication.MasterPasswordReentryRequest.verify|verify} messages.
+         * @param message MasterPasswordReentryRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IMasterPasswordReentryRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MasterPasswordReentryRequest message, length delimited. Does not implicitly {@link Authentication.MasterPasswordReentryRequest.verify|verify} messages.
+         * @param message MasterPasswordReentryRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IMasterPasswordReentryRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MasterPasswordReentryRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MasterPasswordReentryRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.MasterPasswordReentryRequest;
+
+        /**
+         * Decodes a MasterPasswordReentryRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MasterPasswordReentryRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.MasterPasswordReentryRequest;
+
+        /**
+         * Verifies a MasterPasswordReentryRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MasterPasswordReentryRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MasterPasswordReentryRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.MasterPasswordReentryRequest;
+
+        /**
+         * Creates a plain object from a MasterPasswordReentryRequest message. Also converts values to other types if specified.
+         * @param message MasterPasswordReentryRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.MasterPasswordReentryRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MasterPasswordReentryRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeviceVerificationRequest. */
+    interface IDeviceVerificationRequest {
+
+        /** DeviceVerificationRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** DeviceVerificationRequest username */
+        username?: (string|null);
+
+        /** DeviceVerificationRequest clientVersion */
+        clientVersion?: (string|null);
+
+        /** DeviceVerificationRequest deviceName */
+        deviceName?: (string|null);
+
+        /** DeviceVerificationRequest devicePublicKey */
+        devicePublicKey?: (Uint8Array|null);
+
+        /** DeviceVerificationRequest verificationChannel */
+        verificationChannel?: (string|null);
+    }
+
+    /** Represents a DeviceVerificationRequest. */
+    class DeviceVerificationRequest implements IDeviceVerificationRequest {
+
+        /**
+         * Constructs a new DeviceVerificationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDeviceVerificationRequest);
+
+        /** DeviceVerificationRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** DeviceVerificationRequest username. */
+        public username: string;
+
+        /** DeviceVerificationRequest clientVersion. */
+        public clientVersion: string;
+
+        /** DeviceVerificationRequest deviceName. */
+        public deviceName: string;
+
+        /** DeviceVerificationRequest devicePublicKey. */
+        public devicePublicKey: Uint8Array;
+
+        /** DeviceVerificationRequest verificationChannel. */
+        public verificationChannel: string;
+
+        /**
+         * Creates a new DeviceVerificationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeviceVerificationRequest instance
+         */
+        public static create(properties?: Authentication.IDeviceVerificationRequest): Authentication.DeviceVerificationRequest;
+
+        /**
+         * Encodes the specified DeviceVerificationRequest message. Does not implicitly {@link Authentication.DeviceVerificationRequest.verify|verify} messages.
+         * @param message DeviceVerificationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDeviceVerificationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeviceVerificationRequest message, length delimited. Does not implicitly {@link Authentication.DeviceVerificationRequest.verify|verify} messages.
+         * @param message DeviceVerificationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDeviceVerificationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeviceVerificationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeviceVerificationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeviceVerificationRequest;
+
+        /**
+         * Decodes a DeviceVerificationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeviceVerificationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeviceVerificationRequest;
+
+        /**
+         * Verifies a DeviceVerificationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeviceVerificationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeviceVerificationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.DeviceVerificationRequest;
+
+        /**
+         * Creates a plain object from a DeviceVerificationRequest message. Also converts values to other types if specified.
+         * @param message DeviceVerificationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.DeviceVerificationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeviceVerificationRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -5340,16 +5718,721 @@ export namespace Authentication {
          */
         public toJSON(): { [k: string]: any };
     }
+
+    /** Properties of an EnterpriseUserAliasRequest. */
+    interface IEnterpriseUserAliasRequest {
+
+        /** EnterpriseUserAliasRequest enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** EnterpriseUserAliasRequest alias */
+        alias?: (string|null);
+    }
+
+    /** Represents an EnterpriseUserAliasRequest. */
+    class EnterpriseUserAliasRequest implements IEnterpriseUserAliasRequest {
+
+        /**
+         * Constructs a new EnterpriseUserAliasRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IEnterpriseUserAliasRequest);
+
+        /** EnterpriseUserAliasRequest enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** EnterpriseUserAliasRequest alias. */
+        public alias: string;
+
+        /**
+         * Creates a new EnterpriseUserAliasRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserAliasRequest instance
+         */
+        public static create(properties?: Authentication.IEnterpriseUserAliasRequest): Authentication.EnterpriseUserAliasRequest;
+
+        /**
+         * Encodes the specified EnterpriseUserAliasRequest message. Does not implicitly {@link Authentication.EnterpriseUserAliasRequest.verify|verify} messages.
+         * @param message EnterpriseUserAliasRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IEnterpriseUserAliasRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserAliasRequest message, length delimited. Does not implicitly {@link Authentication.EnterpriseUserAliasRequest.verify|verify} messages.
+         * @param message EnterpriseUserAliasRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IEnterpriseUserAliasRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserAliasRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserAliasRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.EnterpriseUserAliasRequest;
+
+        /**
+         * Decodes an EnterpriseUserAliasRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserAliasRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.EnterpriseUserAliasRequest;
+
+        /**
+         * Verifies an EnterpriseUserAliasRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserAliasRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserAliasRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.EnterpriseUserAliasRequest;
+
+        /**
+         * Creates a plain object from an EnterpriseUserAliasRequest message. Also converts values to other types if specified.
+         * @param message EnterpriseUserAliasRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.EnterpriseUserAliasRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserAliasRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a Device. */
+    interface IDevice {
+
+        /** Device encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+    }
+
+    /** Represents a Device. */
+    class Device implements IDevice {
+
+        /**
+         * Constructs a new Device.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDevice);
+
+        /** Device encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /**
+         * Creates a new Device instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Device instance
+         */
+        public static create(properties?: Authentication.IDevice): Authentication.Device;
+
+        /**
+         * Encodes the specified Device message. Does not implicitly {@link Authentication.Device.verify|verify} messages.
+         * @param message Device message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDevice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Device message, length delimited. Does not implicitly {@link Authentication.Device.verify|verify} messages.
+         * @param message Device message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDevice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Device message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Device
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.Device;
+
+        /**
+         * Decodes a Device message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Device
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.Device;
+
+        /**
+         * Verifies a Device message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Device message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Device
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.Device;
+
+        /**
+         * Creates a plain object from a Device message. Also converts values to other types if specified.
+         * @param message Device
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.Device, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Device to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserDeviceStatus. */
+    interface IUserDeviceStatus {
+
+        /** UserDeviceStatus username */
+        username?: (string|null);
+
+        /** UserDeviceStatus encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** UserDeviceStatus accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** UserDeviceStatus regionName */
+        regionName?: (string|null);
+
+        /** UserDeviceStatus deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
+    }
+
+    /** Represents a UserDeviceStatus. */
+    class UserDeviceStatus implements IUserDeviceStatus {
+
+        /**
+         * Constructs a new UserDeviceStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserDeviceStatus);
+
+        /** UserDeviceStatus username. */
+        public username: string;
+
+        /** UserDeviceStatus encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** UserDeviceStatus accountUid. */
+        public accountUid: Uint8Array;
+
+        /** UserDeviceStatus regionName. */
+        public regionName: string;
+
+        /** UserDeviceStatus deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
+        /**
+         * Creates a new UserDeviceStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserDeviceStatus instance
+         */
+        public static create(properties?: Authentication.IUserDeviceStatus): Authentication.UserDeviceStatus;
+
+        /**
+         * Encodes the specified UserDeviceStatus message. Does not implicitly {@link Authentication.UserDeviceStatus.verify|verify} messages.
+         * @param message UserDeviceStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserDeviceStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserDeviceStatus message, length delimited. Does not implicitly {@link Authentication.UserDeviceStatus.verify|verify} messages.
+         * @param message UserDeviceStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserDeviceStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserDeviceStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserDeviceStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserDeviceStatus;
+
+        /**
+         * Decodes a UserDeviceStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserDeviceStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserDeviceStatus;
+
+        /**
+         * Verifies a UserDeviceStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserDeviceStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserDeviceStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserDeviceStatus;
+
+        /**
+         * Creates a plain object from a UserDeviceStatus message. Also converts values to other types if specified.
+         * @param message UserDeviceStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserDeviceStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserDeviceStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserAccount. */
+    interface IUserAccount {
+
+        /** UserAccount username */
+        username?: (string|null);
+
+        /** UserAccount accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** UserAccount regionName */
+        regionName?: (string|null);
+    }
+
+    /** Represents a UserAccount. */
+    class UserAccount implements IUserAccount {
+
+        /**
+         * Constructs a new UserAccount.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserAccount);
+
+        /** UserAccount username. */
+        public username: string;
+
+        /** UserAccount accountUid. */
+        public accountUid: Uint8Array;
+
+        /** UserAccount regionName. */
+        public regionName: string;
+
+        /**
+         * Creates a new UserAccount instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserAccount instance
+         */
+        public static create(properties?: Authentication.IUserAccount): Authentication.UserAccount;
+
+        /**
+         * Encodes the specified UserAccount message. Does not implicitly {@link Authentication.UserAccount.verify|verify} messages.
+         * @param message UserAccount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserAccount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserAccount message, length delimited. Does not implicitly {@link Authentication.UserAccount.verify|verify} messages.
+         * @param message UserAccount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserAccount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserAccount message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserAccount;
+
+        /**
+         * Decodes a UserAccount message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserAccount;
+
+        /**
+         * Verifies a UserAccount message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserAccount message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserAccount
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserAccount;
+
+        /**
+         * Creates a plain object from a UserAccount message. Also converts values to other types if specified.
+         * @param message UserAccount
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserAccount, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserAccount to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApproveDevice. */
+    interface IApproveDevice {
+
+        /** ApproveDevice encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** ApproveDevice accountUid */
+        accountUid?: (Uint8Array|null);
+    }
+
+    /** Represents an ApproveDevice. */
+    class ApproveDevice implements IApproveDevice {
+
+        /**
+         * Constructs a new ApproveDevice.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IApproveDevice);
+
+        /** ApproveDevice encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** ApproveDevice accountUid. */
+        public accountUid: Uint8Array;
+
+        /**
+         * Creates a new ApproveDevice instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveDevice instance
+         */
+        public static create(properties?: Authentication.IApproveDevice): Authentication.ApproveDevice;
+
+        /**
+         * Encodes the specified ApproveDevice message. Does not implicitly {@link Authentication.ApproveDevice.verify|verify} messages.
+         * @param message ApproveDevice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IApproveDevice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveDevice message, length delimited. Does not implicitly {@link Authentication.ApproveDevice.verify|verify} messages.
+         * @param message ApproveDevice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IApproveDevice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveDevice message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveDevice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ApproveDevice;
+
+        /**
+         * Decodes an ApproveDevice message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveDevice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ApproveDevice;
+
+        /**
+         * Verifies an ApproveDevice message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveDevice message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveDevice
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ApproveDevice;
+
+        /**
+         * Creates a plain object from an ApproveDevice message. Also converts values to other types if specified.
+         * @param message ApproveDevice
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ApproveDevice, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveDevice to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a Domain. */
+    interface IDomain {
+
+        /** Domain domainId */
+        domainId?: (number|Long|null);
+
+        /** Domain domain */
+        domain?: (string|null);
+
+        /** Domain regionName */
+        regionName?: (string|null);
+
+        /** Domain autoRedirect */
+        autoRedirect?: (boolean|null);
+    }
+
+    /** Represents a Domain. */
+    class Domain implements IDomain {
+
+        /**
+         * Constructs a new Domain.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDomain);
+
+        /** Domain domainId. */
+        public domainId: (number|Long);
+
+        /** Domain domain. */
+        public domain: string;
+
+        /** Domain regionName. */
+        public regionName: string;
+
+        /** Domain autoRedirect. */
+        public autoRedirect: boolean;
+
+        /**
+         * Creates a new Domain instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Domain instance
+         */
+        public static create(properties?: Authentication.IDomain): Authentication.Domain;
+
+        /**
+         * Encodes the specified Domain message. Does not implicitly {@link Authentication.Domain.verify|verify} messages.
+         * @param message Domain message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDomain, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Domain message, length delimited. Does not implicitly {@link Authentication.Domain.verify|verify} messages.
+         * @param message Domain message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDomain, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Domain message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Domain
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.Domain;
+
+        /**
+         * Decodes a Domain message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Domain
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.Domain;
+
+        /**
+         * Verifies a Domain message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Domain message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Domain
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.Domain;
+
+        /**
+         * Creates a plain object from a Domain message. Also converts values to other types if specified.
+         * @param message Domain
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.Domain, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Domain to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
 
 /** Namespace AccountSummary. */
 export namespace AccountSummary {
+
+    /** Properties of an AccountSummaryRequest. */
+    interface IAccountSummaryRequest {
+
+        /** AccountSummaryRequest summaryVersion */
+        summaryVersion?: (number|null);
+
+        /** AccountSummaryRequest userId */
+        userId?: (number|null);
+    }
+
+    /** Represents an AccountSummaryRequest. */
+    class AccountSummaryRequest implements IAccountSummaryRequest {
+
+        /**
+         * Constructs a new AccountSummaryRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IAccountSummaryRequest);
+
+        /** AccountSummaryRequest summaryVersion. */
+        public summaryVersion: number;
+
+        /** AccountSummaryRequest userId. */
+        public userId: number;
+
+        /**
+         * Creates a new AccountSummaryRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AccountSummaryRequest instance
+         */
+        public static create(properties?: AccountSummary.IAccountSummaryRequest): AccountSummary.AccountSummaryRequest;
+
+        /**
+         * Encodes the specified AccountSummaryRequest message. Does not implicitly {@link AccountSummary.AccountSummaryRequest.verify|verify} messages.
+         * @param message AccountSummaryRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IAccountSummaryRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AccountSummaryRequest message, length delimited. Does not implicitly {@link AccountSummary.AccountSummaryRequest.verify|verify} messages.
+         * @param message AccountSummaryRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IAccountSummaryRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AccountSummaryRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AccountSummaryRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.AccountSummaryRequest;
+
+        /**
+         * Decodes an AccountSummaryRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AccountSummaryRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.AccountSummaryRequest;
+
+        /**
+         * Verifies an AccountSummaryRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AccountSummaryRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AccountSummaryRequest
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.AccountSummaryRequest;
+
+        /**
+         * Creates a plain object from an AccountSummaryRequest message. Also converts values to other types if specified.
+         * @param message AccountSummaryRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.AccountSummaryRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AccountSummaryRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 
     /** Properties of an AccountSummaryElements. */
     interface IAccountSummaryElements {
 
         /** AccountSummaryElements clientKey */
         clientKey?: (string|null);
+
+        /** AccountSummaryElements settings */
+        settings?: (AccountSummary.ISettings|null);
 
         /** AccountSummaryElements keysInfo */
         keysInfo?: (AccountSummary.IKeysInfo|null);
@@ -5363,17 +6446,23 @@ export namespace AccountSummary {
         /** AccountSummaryElements license */
         license?: (AccountSummary.ILicense|null);
 
-        /** AccountSummaryElements settings */
-        settings?: (AccountSummary.ISettings|null);
-
-        /** AccountSummaryElements groups */
-        groups?: (AccountSummary.IGroups|null);
+        /** AccountSummaryElements group */
+        group?: (AccountSummary.IGroup|null);
 
         /** AccountSummaryElements Enforcements */
         Enforcements?: (AccountSummary.IKeyValue[]|null);
 
         /** AccountSummaryElements Images */
         Images?: (AccountSummary.IKeyValue[]|null);
+
+        /** AccountSummaryElements personalLicense */
+        personalLicense?: (AccountSummary.ILicense|null);
+
+        /** AccountSummaryElements fixSharedFolderRecords */
+        fixSharedFolderRecords?: (boolean|null);
+
+        /** AccountSummaryElements usernames */
+        usernames?: (string[]|null);
     }
 
     /** Represents an AccountSummaryElements. */
@@ -5388,6 +6477,9 @@ export namespace AccountSummary {
         /** AccountSummaryElements clientKey. */
         public clientKey: string;
 
+        /** AccountSummaryElements settings. */
+        public settings?: (AccountSummary.ISettings|null);
+
         /** AccountSummaryElements keysInfo. */
         public keysInfo?: (AccountSummary.IKeysInfo|null);
 
@@ -5400,17 +6492,23 @@ export namespace AccountSummary {
         /** AccountSummaryElements license. */
         public license?: (AccountSummary.ILicense|null);
 
-        /** AccountSummaryElements settings. */
-        public settings?: (AccountSummary.ISettings|null);
-
-        /** AccountSummaryElements groups. */
-        public groups?: (AccountSummary.IGroups|null);
+        /** AccountSummaryElements group. */
+        public group?: (AccountSummary.IGroup|null);
 
         /** AccountSummaryElements Enforcements. */
         public Enforcements: AccountSummary.IKeyValue[];
 
         /** AccountSummaryElements Images. */
         public Images: AccountSummary.IKeyValue[];
+
+        /** AccountSummaryElements personalLicense. */
+        public personalLicense?: (AccountSummary.ILicense|null);
+
+        /** AccountSummaryElements fixSharedFolderRecords. */
+        public fixSharedFolderRecords: boolean;
+
+        /** AccountSummaryElements usernames. */
+        public usernames: string[];
 
         /**
          * Creates a new AccountSummaryElements instance using the specified properties.
@@ -5489,11 +6587,17 @@ export namespace AccountSummary {
         /** KeysInfo encryptionParams */
         encryptionParams?: (string|null);
 
-        /** KeysInfo encryptedPriveKeys */
-        encryptedPriveKeys?: (string|null);
+        /** KeysInfo encryptedDataKey */
+        encryptedDataKey?: (string|null);
 
-        /** KeysInfo dataKey */
-        dataKey?: (AccountSummary.IDataKey|null);
+        /** KeysInfo dataKeyBackupDate */
+        dataKeyBackupDate?: (number|null);
+
+        /** KeysInfo userAuthUid */
+        userAuthUid?: (string|null);
+
+        /** KeysInfo encryptedPrivateKey */
+        encryptedPrivateKey?: (string|null);
     }
 
     /** Represents a KeysInfo. */
@@ -5508,11 +6612,17 @@ export namespace AccountSummary {
         /** KeysInfo encryptionParams. */
         public encryptionParams: string;
 
-        /** KeysInfo encryptedPriveKeys. */
-        public encryptedPriveKeys: string;
+        /** KeysInfo encryptedDataKey. */
+        public encryptedDataKey: string;
 
-        /** KeysInfo dataKey. */
-        public dataKey?: (AccountSummary.IDataKey|null);
+        /** KeysInfo dataKeyBackupDate. */
+        public dataKeyBackupDate: number;
+
+        /** KeysInfo userAuthUid. */
+        public userAuthUid: string;
+
+        /** KeysInfo encryptedPrivateKey. */
+        public encryptedPrivateKey: string;
 
         /**
          * Creates a new KeysInfo instance using the specified properties.
@@ -5580,102 +6690,6 @@ export namespace AccountSummary {
 
         /**
          * Converts this KeysInfo to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a DataKey. */
-    interface IDataKey {
-
-        /** DataKey createdDate */
-        createdDate?: (number|null);
-
-        /** DataKey dataKey */
-        dataKey?: (string|null);
-    }
-
-    /** Represents a DataKey. */
-    class DataKey implements IDataKey {
-
-        /**
-         * Constructs a new DataKey.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: AccountSummary.IDataKey);
-
-        /** DataKey createdDate. */
-        public createdDate: number;
-
-        /** DataKey dataKey. */
-        public dataKey: string;
-
-        /**
-         * Creates a new DataKey instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns DataKey instance
-         */
-        public static create(properties?: AccountSummary.IDataKey): AccountSummary.DataKey;
-
-        /**
-         * Encodes the specified DataKey message. Does not implicitly {@link AccountSummary.DataKey.verify|verify} messages.
-         * @param message DataKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: AccountSummary.IDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified DataKey message, length delimited. Does not implicitly {@link AccountSummary.DataKey.verify|verify} messages.
-         * @param message DataKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: AccountSummary.IDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a DataKey message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns DataKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.DataKey;
-
-        /**
-         * Decodes a DataKey message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns DataKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.DataKey;
-
-        /**
-         * Verifies a DataKey message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a DataKey message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns DataKey
-         */
-        public static fromObject(object: { [k: string]: any }): AccountSummary.DataKey;
-
-        /**
-         * Creates a plain object from a DataKey message. Also converts values to other types if specified.
-         * @param message DataKey
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: AccountSummary.DataKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this DataKey to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -5846,8 +6860,44 @@ export namespace AccountSummary {
         /** License uploadsRemaining */
         uploadsRemaining?: (number|null);
 
-        /** License addOns */
-        addOns?: (AccountSummary.IAddOn[]|null);
+        /** License enterpriseId */
+        enterpriseId?: (number|null);
+
+        /** License chatEnabled */
+        chatEnabled?: (boolean|null);
+
+        /** License auditAndReportingEnabled */
+        auditAndReportingEnabled?: (boolean|null);
+
+        /** License breachWatchFeatureDisable */
+        breachWatchFeatureDisable?: (boolean|null);
+
+        /** License accountUid */
+        accountUid?: (string|null);
+
+        /** License allowPersonalLicense */
+        allowPersonalLicense?: (boolean|null);
+
+        /** License licensedBy */
+        licensedBy?: (string|null);
+
+        /** License email */
+        email?: (string|null);
+
+        /** License breachWatchEnabled */
+        breachWatchEnabled?: (boolean|null);
+
+        /** License breachWatchScanned */
+        breachWatchScanned?: (boolean|null);
+
+        /** License breachWatchExpiration */
+        breachWatchExpiration?: (number|Long|null);
+
+        /** License breachWatchDateCreated */
+        breachWatchDateCreated?: (number|Long|null);
+
+        /** License error */
+        error?: (string|null);
     }
 
     /** Represents a License. */
@@ -5901,8 +6951,44 @@ export namespace AccountSummary {
         /** License uploadsRemaining. */
         public uploadsRemaining: number;
 
-        /** License addOns. */
-        public addOns: AccountSummary.IAddOn[];
+        /** License enterpriseId. */
+        public enterpriseId: number;
+
+        /** License chatEnabled. */
+        public chatEnabled: boolean;
+
+        /** License auditAndReportingEnabled. */
+        public auditAndReportingEnabled: boolean;
+
+        /** License breachWatchFeatureDisable. */
+        public breachWatchFeatureDisable: boolean;
+
+        /** License accountUid. */
+        public accountUid: string;
+
+        /** License allowPersonalLicense. */
+        public allowPersonalLicense: boolean;
+
+        /** License licensedBy. */
+        public licensedBy: string;
+
+        /** License email. */
+        public email: string;
+
+        /** License breachWatchEnabled. */
+        public breachWatchEnabled: boolean;
+
+        /** License breachWatchScanned. */
+        public breachWatchScanned: boolean;
+
+        /** License breachWatchExpiration. */
+        public breachWatchExpiration: (number|Long);
+
+        /** License breachWatchDateCreated. */
+        public breachWatchDateCreated: (number|Long);
+
+        /** License error. */
+        public error: string;
 
         /**
          * Creates a new License instance using the specified properties.
@@ -6125,9 +7211,6 @@ export namespace AccountSummary {
         /** Settings passwordRulesIntro */
         passwordRulesIntro?: (string|null);
 
-        /** Settings twoFactorRequired */
-        twoFactorRequired?: (boolean|null);
-
         /** Settings autoBackupDays */
         autoBackupDays?: (number|null);
 
@@ -6155,8 +7238,38 @@ export namespace AccountSummary {
         /** Settings securityKeys */
         securityKeys?: (AccountSummary.ISecurityKey[]|null);
 
-        /** Settings keyValues */
+        /** ????? */
         keyValues?: (AccountSummary.IKeyValue[]|null);
+
+        /** Settings ssoUser */
+        ssoUser?: (boolean|null);
+
+        /** Settings onlineAccessOnly */
+        onlineAccessOnly?: (boolean|null);
+
+        /** Settings masterPasswordExpiry */
+        masterPasswordExpiry?: (number|null);
+
+        /** Settings twoFactorRequired */
+        twoFactorRequired?: (boolean|null);
+
+        /** Settings disallowExport */
+        disallowExport?: (boolean|null);
+
+        /** Settings restrictFiles */
+        restrictFiles?: (boolean|null);
+
+        /** Settings restrictAllSharing */
+        restrictAllSharing?: (boolean|null);
+
+        /** Settings restrictSharing */
+        restrictSharing?: (boolean|null);
+
+        /** Settings restrictSharingIncomingAll */
+        restrictSharingIncomingAll?: (boolean|null);
+
+        /** Settings restrictSharingIncomingEnterprise */
+        restrictSharingIncomingEnterprise?: (boolean|null);
     }
 
     /** Represents a Settings. */
@@ -6182,9 +7295,6 @@ export namespace AccountSummary {
 
         /** Settings passwordRulesIntro. */
         public passwordRulesIntro: string;
-
-        /** Settings twoFactorRequired. */
-        public twoFactorRequired: boolean;
 
         /** Settings autoBackupDays. */
         public autoBackupDays: number;
@@ -6213,8 +7323,38 @@ export namespace AccountSummary {
         /** Settings securityKeys. */
         public securityKeys: AccountSummary.ISecurityKey[];
 
-        /** Settings keyValues. */
+        /** ????? */
         public keyValues: AccountSummary.IKeyValue[];
+
+        /** Settings ssoUser. */
+        public ssoUser: boolean;
+
+        /** Settings onlineAccessOnly. */
+        public onlineAccessOnly: boolean;
+
+        /** Settings masterPasswordExpiry. */
+        public masterPasswordExpiry: number;
+
+        /** Settings twoFactorRequired. */
+        public twoFactorRequired: boolean;
+
+        /** Settings disallowExport. */
+        public disallowExport: boolean;
+
+        /** Settings restrictFiles. */
+        public restrictFiles: boolean;
+
+        /** Settings restrictAllSharing. */
+        public restrictAllSharing: boolean;
+
+        /** Settings restrictSharing. */
+        public restrictSharing: boolean;
+
+        /** Settings restrictSharingIncomingAll. */
+        public restrictSharingIncomingAll: boolean;
+
+        /** Settings restrictSharingIncomingEnterprise. */
+        public restrictSharingIncomingEnterprise: boolean;
 
         /**
          * Creates a new Settings instance using the specified properties.
@@ -6482,20 +7622,17 @@ export namespace AccountSummary {
     /** Properties of a PasswordRule. */
     interface IPasswordRule {
 
-        /** PasswordRule roleType */
-        roleType?: (string|null);
+        /** PasswordRule ruleType */
+        ruleType?: (string|null);
 
         /** PasswordRule pattern */
         pattern?: (string|null);
-
-        /** PasswordRule ruleType */
-        ruleType?: (string|null);
 
         /** PasswordRule match */
         match?: (boolean|null);
 
         /** PasswordRule minimum */
-        minimum?: (string|null);
+        minimum?: (number|null);
 
         /** PasswordRule description */
         description?: (string|null);
@@ -6513,20 +7650,17 @@ export namespace AccountSummary {
          */
         constructor(properties?: AccountSummary.IPasswordRule);
 
-        /** PasswordRule roleType. */
-        public roleType: string;
+        /** PasswordRule ruleType. */
+        public ruleType: string;
 
         /** PasswordRule pattern. */
         public pattern: string;
-
-        /** PasswordRule ruleType. */
-        public ruleType: string;
 
         /** PasswordRule match. */
         public match: boolean;
 
         /** PasswordRule minimum. */
-        public minimum: string;
+        public minimum: number;
 
         /** PasswordRule description. */
         public description: string;
@@ -6833,109 +7967,145 @@ export namespace AccountSummary {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a Groups. */
-    interface IGroups {
+    /** Properties of a Group. */
+    interface IGroup {
 
-        /** Groups admin */
+        /** Group admin */
         admin?: (boolean|null);
 
-        /** Groups groupVerificationCode */
+        /** Group groupVerificationCode */
         groupVerificationCode?: (string|null);
 
-        /** Groups groupSettings */
+        /** ? */
         groupSettings?: (AccountSummary.IKeyValue[]|null);
 
-        /** Groups administrator */
+        /** Group administrator */
         administrator?: (AccountSummary.IAdministrator|null);
+
+        /** Group error */
+        error?: (string|null);
+
+        /** Group twoFactorRequired */
+        twoFactorRequired?: (boolean|null);
+
+        /** Group restrictSharing */
+        restrictSharing?: (boolean|null);
+
+        /** Group restrictAllSharing */
+        restrictAllSharing?: (boolean|null);
+
+        /** Group autoBackupDays */
+        autoBackupDays?: (number|null);
+
+        /** Group adminAccountSharing */
+        adminAccountSharing?: (boolean|null);
     }
 
-    /** Represents a Groups. */
-    class Groups implements IGroups {
+    /** Represents a Group. */
+    class Group implements IGroup {
 
         /**
-         * Constructs a new Groups.
+         * Constructs a new Group.
          * @param [properties] Properties to set
          */
-        constructor(properties?: AccountSummary.IGroups);
+        constructor(properties?: AccountSummary.IGroup);
 
-        /** Groups admin. */
+        /** Group admin. */
         public admin: boolean;
 
-        /** Groups groupVerificationCode. */
+        /** Group groupVerificationCode. */
         public groupVerificationCode: string;
 
-        /** Groups groupSettings. */
+        /** ? */
         public groupSettings: AccountSummary.IKeyValue[];
 
-        /** Groups administrator. */
+        /** Group administrator. */
         public administrator?: (AccountSummary.IAdministrator|null);
 
+        /** Group error. */
+        public error: string;
+
+        /** Group twoFactorRequired. */
+        public twoFactorRequired: boolean;
+
+        /** Group restrictSharing. */
+        public restrictSharing: boolean;
+
+        /** Group restrictAllSharing. */
+        public restrictAllSharing: boolean;
+
+        /** Group autoBackupDays. */
+        public autoBackupDays: number;
+
+        /** Group adminAccountSharing. */
+        public adminAccountSharing: boolean;
+
         /**
-         * Creates a new Groups instance using the specified properties.
+         * Creates a new Group instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns Groups instance
+         * @returns Group instance
          */
-        public static create(properties?: AccountSummary.IGroups): AccountSummary.Groups;
+        public static create(properties?: AccountSummary.IGroup): AccountSummary.Group;
 
         /**
-         * Encodes the specified Groups message. Does not implicitly {@link AccountSummary.Groups.verify|verify} messages.
-         * @param message Groups message or plain object to encode
+         * Encodes the specified Group message. Does not implicitly {@link AccountSummary.Group.verify|verify} messages.
+         * @param message Group message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: AccountSummary.IGroups, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: AccountSummary.IGroup, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified Groups message, length delimited. Does not implicitly {@link AccountSummary.Groups.verify|verify} messages.
-         * @param message Groups message or plain object to encode
+         * Encodes the specified Group message, length delimited. Does not implicitly {@link AccountSummary.Group.verify|verify} messages.
+         * @param message Group message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: AccountSummary.IGroups, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: AccountSummary.IGroup, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a Groups message from the specified reader or buffer.
+         * Decodes a Group message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns Groups
+         * @returns Group
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.Groups;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.Group;
 
         /**
-         * Decodes a Groups message from the specified reader or buffer, length delimited.
+         * Decodes a Group message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns Groups
+         * @returns Group
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.Groups;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.Group;
 
         /**
-         * Verifies a Groups message.
+         * Verifies a Group message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a Groups message from a plain object. Also converts values to their respective internal types.
+         * Creates a Group message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns Groups
+         * @returns Group
          */
-        public static fromObject(object: { [k: string]: any }): AccountSummary.Groups;
+        public static fromObject(object: { [k: string]: any }): AccountSummary.Group;
 
         /**
-         * Creates a plain object from a Groups message. Also converts values to other types if specified.
-         * @param message Groups
+         * Creates a plain object from a Group message. Also converts values to other types if specified.
+         * @param message Group
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: AccountSummary.Groups, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: AccountSummary.Group, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this Groups to JSON.
+         * Converts this Group to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -12282,6 +13452,9 @@ export namespace Tokens {
 
         /** IpAddressVerificationToken expiration */
         expiration?: (number|Long|null);
+
+        /** IpAddressVerificationToken enterpriseId */
+        enterpriseId?: (number|null);
     }
 
     /** Represents an IpAddressVerificationToken. */
@@ -12310,6 +13483,9 @@ export namespace Tokens {
 
         /** IpAddressVerificationToken expiration. */
         public expiration: (number|Long);
+
+        /** IpAddressVerificationToken enterpriseId. */
+        public enterpriseId: number;
 
         /**
          * Creates a new IpAddressVerificationToken instance using the specified properties.
@@ -12497,6 +13673,363 @@ export namespace Tokens {
 
         /**
          * Converts this EnterprisePersonalAccountToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UsernameVerificationToken. */
+    interface IUsernameVerificationToken {
+
+        /** UsernameVerificationToken username */
+        username?: (string|null);
+
+        /** UsernameVerificationToken accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** UsernameVerificationToken locale */
+        locale?: (string|null);
+
+        /** UsernameVerificationToken expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a UsernameVerificationToken. */
+    class UsernameVerificationToken implements IUsernameVerificationToken {
+
+        /**
+         * Constructs a new UsernameVerificationToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IUsernameVerificationToken);
+
+        /** UsernameVerificationToken username. */
+        public username: string;
+
+        /** UsernameVerificationToken accountUid. */
+        public accountUid: Uint8Array;
+
+        /** UsernameVerificationToken locale. */
+        public locale: string;
+
+        /** UsernameVerificationToken expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new UsernameVerificationToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UsernameVerificationToken instance
+         */
+        public static create(properties?: Tokens.IUsernameVerificationToken): Tokens.UsernameVerificationToken;
+
+        /**
+         * Encodes the specified UsernameVerificationToken message. Does not implicitly {@link Tokens.UsernameVerificationToken.verify|verify} messages.
+         * @param message UsernameVerificationToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IUsernameVerificationToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UsernameVerificationToken message, length delimited. Does not implicitly {@link Tokens.UsernameVerificationToken.verify|verify} messages.
+         * @param message UsernameVerificationToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IUsernameVerificationToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UsernameVerificationToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UsernameVerificationToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.UsernameVerificationToken;
+
+        /**
+         * Decodes a UsernameVerificationToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UsernameVerificationToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.UsernameVerificationToken;
+
+        /**
+         * Verifies a UsernameVerificationToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UsernameVerificationToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UsernameVerificationToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.UsernameVerificationToken;
+
+        /**
+         * Creates a plain object from a UsernameVerificationToken message. Also converts values to other types if specified.
+         * @param message UsernameVerificationToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.UsernameVerificationToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UsernameVerificationToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeviceVerificationToken. */
+    interface IDeviceVerificationToken {
+
+        /** DeviceVerificationToken encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** DeviceVerificationToken username */
+        username?: (string|null);
+
+        /** DeviceVerificationToken accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** DeviceVerificationToken deviceName */
+        deviceName?: (string|null);
+
+        /** DeviceVerificationToken devicePublicKey */
+        devicePublicKey?: (Uint8Array|null);
+
+        /** DeviceVerificationToken clientVersion */
+        clientVersion?: (string|null);
+
+        /** DeviceVerificationToken locale */
+        locale?: (string|null);
+
+        /** DeviceVerificationToken expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a DeviceVerificationToken. */
+    class DeviceVerificationToken implements IDeviceVerificationToken {
+
+        /**
+         * Constructs a new DeviceVerificationToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IDeviceVerificationToken);
+
+        /** DeviceVerificationToken encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** DeviceVerificationToken username. */
+        public username: string;
+
+        /** DeviceVerificationToken accountUid. */
+        public accountUid: Uint8Array;
+
+        /** DeviceVerificationToken deviceName. */
+        public deviceName: string;
+
+        /** DeviceVerificationToken devicePublicKey. */
+        public devicePublicKey: Uint8Array;
+
+        /** DeviceVerificationToken clientVersion. */
+        public clientVersion: string;
+
+        /** DeviceVerificationToken locale. */
+        public locale: string;
+
+        /** DeviceVerificationToken expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new DeviceVerificationToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeviceVerificationToken instance
+         */
+        public static create(properties?: Tokens.IDeviceVerificationToken): Tokens.DeviceVerificationToken;
+
+        /**
+         * Encodes the specified DeviceVerificationToken message. Does not implicitly {@link Tokens.DeviceVerificationToken.verify|verify} messages.
+         * @param message DeviceVerificationToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IDeviceVerificationToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeviceVerificationToken message, length delimited. Does not implicitly {@link Tokens.DeviceVerificationToken.verify|verify} messages.
+         * @param message DeviceVerificationToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IDeviceVerificationToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeviceVerificationToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeviceVerificationToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.DeviceVerificationToken;
+
+        /**
+         * Decodes a DeviceVerificationToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeviceVerificationToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.DeviceVerificationToken;
+
+        /**
+         * Verifies a DeviceVerificationToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeviceVerificationToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeviceVerificationToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.DeviceVerificationToken;
+
+        /**
+         * Creates a plain object from a DeviceVerificationToken message. Also converts values to other types if specified.
+         * @param message DeviceVerificationToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.DeviceVerificationToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeviceVerificationToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** ProcessTokenType enum. */
+    enum ProcessTokenType {
+        CHANGE_EMAIL = 0,
+        EMAIL_VERIFICATION = 1,
+        IP_ADDRESS_VERIFICATION = 2,
+        USERNAME_VERIFICATION = 3,
+        DEVICE_VERIFICATION = 4
+    }
+
+    /** Properties of a ProcessToken. */
+    interface IProcessToken {
+
+        /** ProcessToken processTokenType */
+        processTokenType?: (Tokens.ProcessTokenType|null);
+
+        /** ProcessToken payload */
+        payload?: (Uint8Array|null);
+
+        /** ProcessToken expiration */
+        expiration?: (number|Long|null);
+
+        /** ProcessToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
+    }
+
+    /** Represents a ProcessToken. */
+    class ProcessToken implements IProcessToken {
+
+        /**
+         * Constructs a new ProcessToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IProcessToken);
+
+        /** ProcessToken processTokenType. */
+        public processTokenType: Tokens.ProcessTokenType;
+
+        /** ProcessToken payload. */
+        public payload: Uint8Array;
+
+        /** ProcessToken expiration. */
+        public expiration: (number|Long);
+
+        /** ProcessToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
+
+        /**
+         * Creates a new ProcessToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ProcessToken instance
+         */
+        public static create(properties?: Tokens.IProcessToken): Tokens.ProcessToken;
+
+        /**
+         * Encodes the specified ProcessToken message. Does not implicitly {@link Tokens.ProcessToken.verify|verify} messages.
+         * @param message ProcessToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IProcessToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ProcessToken message, length delimited. Does not implicitly {@link Tokens.ProcessToken.verify|verify} messages.
+         * @param message ProcessToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IProcessToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ProcessToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ProcessToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.ProcessToken;
+
+        /**
+         * Decodes a ProcessToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ProcessToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.ProcessToken;
+
+        /**
+         * Verifies a ProcessToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ProcessToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ProcessToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.ProcessToken;
+
+        /**
+         * Creates a plain object from a ProcessToken message. Also converts values to other types if specified.
+         * @param message ProcessToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.ProcessToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ProcessToken to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -12884,6 +14417,96 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an EnterpriseUserIds. */
+    interface IEnterpriseUserIds {
+
+        /** EnterpriseUserIds enterpriseUserId */
+        enterpriseUserId?: ((number|Long)[]|null);
+    }
+
+    /** Represents an EnterpriseUserIds. */
+    class EnterpriseUserIds implements IEnterpriseUserIds {
+
+        /**
+         * Constructs a new EnterpriseUserIds.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserIds);
+
+        /** EnterpriseUserIds enterpriseUserId. */
+        public enterpriseUserId: (number|Long)[];
+
+        /**
+         * Creates a new EnterpriseUserIds instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserIds instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserIds): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Encodes the specified EnterpriseUserIds message. Does not implicitly {@link Enterprise.EnterpriseUserIds.verify|verify} messages.
+         * @param message EnterpriseUserIds message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserIds, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserIds message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserIds.verify|verify} messages.
+         * @param message EnterpriseUserIds message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserIds, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserIds message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserIds
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Decodes an EnterpriseUserIds message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserIds
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Verifies an EnterpriseUserIds message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserIds message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserIds
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Creates a plain object from an EnterpriseUserIds message. Also converts values to other types if specified.
+         * @param message EnterpriseUserIds
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserIds, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserIds to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an EnterprisePersonalAccount. */
     interface IEnterprisePersonalAccount {
 
@@ -13172,6 +14795,102 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a ReEncryptedRoleKey. */
+    interface IReEncryptedRoleKey {
+
+        /** ReEncryptedRoleKey roleId */
+        roleId?: (number|Long|null);
+
+        /** ReEncryptedRoleKey encryptedRoleKey */
+        encryptedRoleKey?: (Uint8Array|null);
+    }
+
+    /** Represents a ReEncryptedRoleKey. */
+    class ReEncryptedRoleKey implements IReEncryptedRoleKey {
+
+        /**
+         * Constructs a new ReEncryptedRoleKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IReEncryptedRoleKey);
+
+        /** ReEncryptedRoleKey roleId. */
+        public roleId: (number|Long);
+
+        /** ReEncryptedRoleKey encryptedRoleKey. */
+        public encryptedRoleKey: Uint8Array;
+
+        /**
+         * Creates a new ReEncryptedRoleKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReEncryptedRoleKey instance
+         */
+        public static create(properties?: Enterprise.IReEncryptedRoleKey): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Encodes the specified ReEncryptedRoleKey message. Does not implicitly {@link Enterprise.ReEncryptedRoleKey.verify|verify} messages.
+         * @param message ReEncryptedRoleKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IReEncryptedRoleKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReEncryptedRoleKey message, length delimited. Does not implicitly {@link Enterprise.ReEncryptedRoleKey.verify|verify} messages.
+         * @param message ReEncryptedRoleKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IReEncryptedRoleKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReEncryptedRoleKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReEncryptedRoleKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Decodes a ReEncryptedRoleKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReEncryptedRoleKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Verifies a ReEncryptedRoleKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReEncryptedRoleKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReEncryptedRoleKey
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Creates a plain object from a ReEncryptedRoleKey message. Also converts values to other types if specified.
+         * @param message ReEncryptedRoleKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ReEncryptedRoleKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReEncryptedRoleKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a NodeToManagedCompanyRequest. */
     interface INodeToManagedCompanyRequest {
 
@@ -13186,6 +14905,9 @@ export namespace Enterprise {
 
         /** NodeToManagedCompanyRequest users */
         users?: (Enterprise.IReEncryptedData[]|null);
+
+        /** NodeToManagedCompanyRequest roleKeys */
+        roleKeys?: (Enterprise.IReEncryptedRoleKey[]|null);
     }
 
     /** Represents a NodeToManagedCompanyRequest. */
@@ -13208,6 +14930,9 @@ export namespace Enterprise {
 
         /** NodeToManagedCompanyRequest users. */
         public users: Enterprise.IReEncryptedData[];
+
+        /** NodeToManagedCompanyRequest roleKeys. */
+        public roleKeys: Enterprise.IReEncryptedRoleKey[];
 
         /**
          * Creates a new NodeToManagedCompanyRequest instance using the specified properties.
@@ -13275,6 +15000,613 @@ export namespace Enterprise {
 
         /**
          * Converts this NodeToManagedCompanyRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RoleTeam. */
+    interface IRoleTeam {
+
+        /** RoleTeam roleId */
+        roleId?: (number|Long|null);
+
+        /** RoleTeam teamUid */
+        teamUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RoleTeam. */
+    class RoleTeam implements IRoleTeam {
+
+        /**
+         * Constructs a new RoleTeam.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IRoleTeam);
+
+        /** RoleTeam roleId. */
+        public roleId: (number|Long);
+
+        /** RoleTeam teamUid. */
+        public teamUid: Uint8Array;
+
+        /**
+         * Creates a new RoleTeam instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RoleTeam instance
+         */
+        public static create(properties?: Enterprise.IRoleTeam): Enterprise.RoleTeam;
+
+        /**
+         * Encodes the specified RoleTeam message. Does not implicitly {@link Enterprise.RoleTeam.verify|verify} messages.
+         * @param message RoleTeam message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IRoleTeam, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RoleTeam message, length delimited. Does not implicitly {@link Enterprise.RoleTeam.verify|verify} messages.
+         * @param message RoleTeam message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IRoleTeam, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RoleTeam message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RoleTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RoleTeam;
+
+        /**
+         * Decodes a RoleTeam message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RoleTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RoleTeam;
+
+        /**
+         * Verifies a RoleTeam message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RoleTeam message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RoleTeam
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.RoleTeam;
+
+        /**
+         * Creates a plain object from a RoleTeam message. Also converts values to other types if specified.
+         * @param message RoleTeam
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.RoleTeam, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RoleTeam to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RoleTeams. */
+    interface IRoleTeams {
+
+        /** RoleTeams roleTeam */
+        roleTeam?: (Enterprise.IRoleTeam[]|null);
+    }
+
+    /** Represents a RoleTeams. */
+    class RoleTeams implements IRoleTeams {
+
+        /**
+         * Constructs a new RoleTeams.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IRoleTeams);
+
+        /** RoleTeams roleTeam. */
+        public roleTeam: Enterprise.IRoleTeam[];
+
+        /**
+         * Creates a new RoleTeams instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RoleTeams instance
+         */
+        public static create(properties?: Enterprise.IRoleTeams): Enterprise.RoleTeams;
+
+        /**
+         * Encodes the specified RoleTeams message. Does not implicitly {@link Enterprise.RoleTeams.verify|verify} messages.
+         * @param message RoleTeams message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IRoleTeams, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RoleTeams message, length delimited. Does not implicitly {@link Enterprise.RoleTeams.verify|verify} messages.
+         * @param message RoleTeams message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IRoleTeams, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RoleTeams message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RoleTeams
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RoleTeams;
+
+        /**
+         * Decodes a RoleTeams message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RoleTeams
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RoleTeams;
+
+        /**
+         * Verifies a RoleTeams message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RoleTeams message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RoleTeams
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.RoleTeams;
+
+        /**
+         * Creates a plain object from a RoleTeams message. Also converts values to other types if specified.
+         * @param message RoleTeams
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.RoleTeams, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RoleTeams to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
+/** Namespace ExternalService. */
+export namespace ExternalService {
+
+    /** Properties of a SaveSettingsRequest. */
+    interface ISaveSettingsRequest {
+
+        /** SaveSettingsRequest enterpriseId */
+        enterpriseId?: (number|null);
+
+        /** SaveSettingsRequest certificate */
+        certificate?: (Uint8Array|null);
+
+        /** SaveSettingsRequest password */
+        password?: (string|null);
+
+        /** SaveSettingsRequest directoryUrl */
+        directoryUrl?: (string|null);
+    }
+
+    /** Represents a SaveSettingsRequest. */
+    class SaveSettingsRequest implements ISaveSettingsRequest {
+
+        /**
+         * Constructs a new SaveSettingsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ExternalService.ISaveSettingsRequest);
+
+        /** SaveSettingsRequest enterpriseId. */
+        public enterpriseId: number;
+
+        /** SaveSettingsRequest certificate. */
+        public certificate: Uint8Array;
+
+        /** SaveSettingsRequest password. */
+        public password: string;
+
+        /** SaveSettingsRequest directoryUrl. */
+        public directoryUrl: string;
+
+        /**
+         * Creates a new SaveSettingsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SaveSettingsRequest instance
+         */
+        public static create(properties?: ExternalService.ISaveSettingsRequest): ExternalService.SaveSettingsRequest;
+
+        /**
+         * Encodes the specified SaveSettingsRequest message. Does not implicitly {@link ExternalService.SaveSettingsRequest.verify|verify} messages.
+         * @param message SaveSettingsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ExternalService.ISaveSettingsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SaveSettingsRequest message, length delimited. Does not implicitly {@link ExternalService.SaveSettingsRequest.verify|verify} messages.
+         * @param message SaveSettingsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ExternalService.ISaveSettingsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SaveSettingsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SaveSettingsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ExternalService.SaveSettingsRequest;
+
+        /**
+         * Decodes a SaveSettingsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SaveSettingsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ExternalService.SaveSettingsRequest;
+
+        /**
+         * Verifies a SaveSettingsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SaveSettingsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SaveSettingsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ExternalService.SaveSettingsRequest;
+
+        /**
+         * Creates a plain object from a SaveSettingsRequest message. Also converts values to other types if specified.
+         * @param message SaveSettingsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ExternalService.SaveSettingsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SaveSettingsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GetUsersRequest. */
+    interface IGetUsersRequest {
+
+        /** GetUsersRequest field */
+        field?: (string|null);
+
+        /** GetUsersRequest value */
+        value?: (string|null);
+    }
+
+    /** Represents a GetUsersRequest. */
+    class GetUsersRequest implements IGetUsersRequest {
+
+        /**
+         * Constructs a new GetUsersRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ExternalService.IGetUsersRequest);
+
+        /** GetUsersRequest field. */
+        public field: string;
+
+        /** GetUsersRequest value. */
+        public value: string;
+
+        /**
+         * Creates a new GetUsersRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetUsersRequest instance
+         */
+        public static create(properties?: ExternalService.IGetUsersRequest): ExternalService.GetUsersRequest;
+
+        /**
+         * Encodes the specified GetUsersRequest message. Does not implicitly {@link ExternalService.GetUsersRequest.verify|verify} messages.
+         * @param message GetUsersRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ExternalService.IGetUsersRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetUsersRequest message, length delimited. Does not implicitly {@link ExternalService.GetUsersRequest.verify|verify} messages.
+         * @param message GetUsersRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ExternalService.IGetUsersRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetUsersRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetUsersRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ExternalService.GetUsersRequest;
+
+        /**
+         * Decodes a GetUsersRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetUsersRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ExternalService.GetUsersRequest;
+
+        /**
+         * Verifies a GetUsersRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetUsersRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetUsersRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ExternalService.GetUsersRequest;
+
+        /**
+         * Creates a plain object from a GetUsersRequest message. Also converts values to other types if specified.
+         * @param message GetUsersRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ExternalService.GetUsersRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetUsersRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** UserStatus enum. */
+    enum UserStatus {
+        NEW = 0,
+        INVITED = 1,
+        ACTIVE = 2,
+        TAKEN = 3
+    }
+
+    /** LockStatus enum. */
+    enum LockStatus {
+        UNLOCKED = 0,
+        LOCKED = 1,
+        DISABLED = 2
+    }
+
+    /** Properties of a User. */
+    interface IUser {
+
+        /** User email */
+        email?: (string|null);
+
+        /** User name */
+        name?: (string|null);
+
+        /** User status */
+        status?: (ExternalService.UserStatus|null);
+
+        /** User lockStatus */
+        lockStatus?: (ExternalService.LockStatus|null);
+    }
+
+    /** Represents a User. */
+    class User implements IUser {
+
+        /**
+         * Constructs a new User.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ExternalService.IUser);
+
+        /** User email. */
+        public email: string;
+
+        /** User name. */
+        public name: string;
+
+        /** User status. */
+        public status: ExternalService.UserStatus;
+
+        /** User lockStatus. */
+        public lockStatus: ExternalService.LockStatus;
+
+        /**
+         * Creates a new User instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns User instance
+         */
+        public static create(properties?: ExternalService.IUser): ExternalService.User;
+
+        /**
+         * Encodes the specified User message. Does not implicitly {@link ExternalService.User.verify|verify} messages.
+         * @param message User message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ExternalService.IUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified User message, length delimited. Does not implicitly {@link ExternalService.User.verify|verify} messages.
+         * @param message User message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ExternalService.IUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a User message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns User
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ExternalService.User;
+
+        /**
+         * Decodes a User message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns User
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ExternalService.User;
+
+        /**
+         * Verifies a User message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a User message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns User
+         */
+        public static fromObject(object: { [k: string]: any }): ExternalService.User;
+
+        /**
+         * Creates a plain object from a User message. Also converts values to other types if specified.
+         * @param message User
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ExternalService.User, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this User to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GetUsersResponse. */
+    interface IGetUsersResponse {
+
+        /** GetUsersResponse users */
+        users?: (ExternalService.IUser[]|null);
+    }
+
+    /** Represents a GetUsersResponse. */
+    class GetUsersResponse implements IGetUsersResponse {
+
+        /**
+         * Constructs a new GetUsersResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ExternalService.IGetUsersResponse);
+
+        /** GetUsersResponse users. */
+        public users: ExternalService.IUser[];
+
+        /**
+         * Creates a new GetUsersResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetUsersResponse instance
+         */
+        public static create(properties?: ExternalService.IGetUsersResponse): ExternalService.GetUsersResponse;
+
+        /**
+         * Encodes the specified GetUsersResponse message. Does not implicitly {@link ExternalService.GetUsersResponse.verify|verify} messages.
+         * @param message GetUsersResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ExternalService.IGetUsersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetUsersResponse message, length delimited. Does not implicitly {@link ExternalService.GetUsersResponse.verify|verify} messages.
+         * @param message GetUsersResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ExternalService.IGetUsersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetUsersResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetUsersResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ExternalService.GetUsersResponse;
+
+        /**
+         * Decodes a GetUsersResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetUsersResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ExternalService.GetUsersResponse;
+
+        /**
+         * Verifies a GetUsersResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetUsersResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetUsersResponse
+         */
+        public static fromObject(object: { [k: string]: any }): ExternalService.GetUsersResponse;
+
+        /**
+         * Creates a plain object from a GetUsersResponse message. Also converts values to other types if specified.
+         * @param message GetUsersResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ExternalService.GetUsersResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetUsersResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -14661,6 +16993,5189 @@ export namespace Folder {
 
         /**
          * Converts this ImportFolderRecordResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
+/** Namespace Records. */
+export namespace Records {
+
+    /** RecordTypeScope enum. */
+    enum RecordTypeScope {
+        RT_STANDARD = 0,
+        RT_USER = 1,
+        RT_ENTERPRISE = 2
+    }
+
+    /** Properties of a RecordType. */
+    interface IRecordType {
+
+        /** RecordType recordTypeId */
+        recordTypeId?: (number|null);
+
+        /** RecordType content */
+        content?: (string|null);
+
+        /** RecordType scope */
+        scope?: (Records.RecordTypeScope|null);
+    }
+
+    /** Represents a RecordType. */
+    class RecordType implements IRecordType {
+
+        /**
+         * Constructs a new RecordType.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordType);
+
+        /** RecordType recordTypeId. */
+        public recordTypeId: number;
+
+        /** RecordType content. */
+        public content: string;
+
+        /** RecordType scope. */
+        public scope: Records.RecordTypeScope;
+
+        /**
+         * Creates a new RecordType instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordType instance
+         */
+        public static create(properties?: Records.IRecordType): Records.RecordType;
+
+        /**
+         * Encodes the specified RecordType message. Does not implicitly {@link Records.RecordType.verify|verify} messages.
+         * @param message RecordType message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordType, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordType message, length delimited. Does not implicitly {@link Records.RecordType.verify|verify} messages.
+         * @param message RecordType message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordType, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordType message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordType
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordType;
+
+        /**
+         * Decodes a RecordType message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordType
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordType;
+
+        /**
+         * Verifies a RecordType message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordType message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordType
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordType;
+
+        /**
+         * Creates a plain object from a RecordType message. Also converts values to other types if specified.
+         * @param message RecordType
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordType, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordType to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordTypesRequest. */
+    interface IRecordTypesRequest {
+
+        /** RecordTypesRequest standard */
+        standard?: (boolean|null);
+
+        /** RecordTypesRequest user */
+        user?: (boolean|null);
+
+        /** RecordTypesRequest enterprise */
+        enterprise?: (boolean|null);
+    }
+
+    /** Represents a RecordTypesRequest. */
+    class RecordTypesRequest implements IRecordTypesRequest {
+
+        /**
+         * Constructs a new RecordTypesRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordTypesRequest);
+
+        /** RecordTypesRequest standard. */
+        public standard: boolean;
+
+        /** RecordTypesRequest user. */
+        public user: boolean;
+
+        /** RecordTypesRequest enterprise. */
+        public enterprise: boolean;
+
+        /**
+         * Creates a new RecordTypesRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordTypesRequest instance
+         */
+        public static create(properties?: Records.IRecordTypesRequest): Records.RecordTypesRequest;
+
+        /**
+         * Encodes the specified RecordTypesRequest message. Does not implicitly {@link Records.RecordTypesRequest.verify|verify} messages.
+         * @param message RecordTypesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordTypesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordTypesRequest message, length delimited. Does not implicitly {@link Records.RecordTypesRequest.verify|verify} messages.
+         * @param message RecordTypesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordTypesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordTypesRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordTypesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordTypesRequest;
+
+        /**
+         * Decodes a RecordTypesRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordTypesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordTypesRequest;
+
+        /**
+         * Verifies a RecordTypesRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordTypesRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordTypesRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordTypesRequest;
+
+        /**
+         * Creates a plain object from a RecordTypesRequest message. Also converts values to other types if specified.
+         * @param message RecordTypesRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordTypesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordTypesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordTypesResponse. */
+    interface IRecordTypesResponse {
+
+        /** RecordTypesResponse recordTypes */
+        recordTypes?: (Records.IRecordType[]|null);
+
+        /** RecordTypesResponse standardCounter */
+        standardCounter?: (number|null);
+
+        /** RecordTypesResponse userCounter */
+        userCounter?: (number|null);
+
+        /** RecordTypesResponse enterpriseCounter */
+        enterpriseCounter?: (number|null);
+    }
+
+    /** Represents a RecordTypesResponse. */
+    class RecordTypesResponse implements IRecordTypesResponse {
+
+        /**
+         * Constructs a new RecordTypesResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordTypesResponse);
+
+        /** RecordTypesResponse recordTypes. */
+        public recordTypes: Records.IRecordType[];
+
+        /** RecordTypesResponse standardCounter. */
+        public standardCounter: number;
+
+        /** RecordTypesResponse userCounter. */
+        public userCounter: number;
+
+        /** RecordTypesResponse enterpriseCounter. */
+        public enterpriseCounter: number;
+
+        /**
+         * Creates a new RecordTypesResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordTypesResponse instance
+         */
+        public static create(properties?: Records.IRecordTypesResponse): Records.RecordTypesResponse;
+
+        /**
+         * Encodes the specified RecordTypesResponse message. Does not implicitly {@link Records.RecordTypesResponse.verify|verify} messages.
+         * @param message RecordTypesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordTypesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordTypesResponse message, length delimited. Does not implicitly {@link Records.RecordTypesResponse.verify|verify} messages.
+         * @param message RecordTypesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordTypesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordTypesResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordTypesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordTypesResponse;
+
+        /**
+         * Decodes a RecordTypesResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordTypesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordTypesResponse;
+
+        /**
+         * Verifies a RecordTypesResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordTypesResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordTypesResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordTypesResponse;
+
+        /**
+         * Creates a plain object from a RecordTypesResponse message. Also converts values to other types if specified.
+         * @param message RecordTypesResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordTypesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordTypesResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordTypeModifyResponse. */
+    interface IRecordTypeModifyResponse {
+
+        /** RecordTypeModifyResponse recordTypeId */
+        recordTypeId?: (number|null);
+
+        /** RecordTypeModifyResponse counter */
+        counter?: (number|null);
+    }
+
+    /** Represents a RecordTypeModifyResponse. */
+    class RecordTypeModifyResponse implements IRecordTypeModifyResponse {
+
+        /**
+         * Constructs a new RecordTypeModifyResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordTypeModifyResponse);
+
+        /** RecordTypeModifyResponse recordTypeId. */
+        public recordTypeId: number;
+
+        /** RecordTypeModifyResponse counter. */
+        public counter: number;
+
+        /**
+         * Creates a new RecordTypeModifyResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordTypeModifyResponse instance
+         */
+        public static create(properties?: Records.IRecordTypeModifyResponse): Records.RecordTypeModifyResponse;
+
+        /**
+         * Encodes the specified RecordTypeModifyResponse message. Does not implicitly {@link Records.RecordTypeModifyResponse.verify|verify} messages.
+         * @param message RecordTypeModifyResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordTypeModifyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordTypeModifyResponse message, length delimited. Does not implicitly {@link Records.RecordTypeModifyResponse.verify|verify} messages.
+         * @param message RecordTypeModifyResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordTypeModifyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordTypeModifyResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordTypeModifyResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordTypeModifyResponse;
+
+        /**
+         * Decodes a RecordTypeModifyResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordTypeModifyResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordTypeModifyResponse;
+
+        /**
+         * Verifies a RecordTypeModifyResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordTypeModifyResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordTypeModifyResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordTypeModifyResponse;
+
+        /**
+         * Creates a plain object from a RecordTypeModifyResponse message. Also converts values to other types if specified.
+         * @param message RecordTypeModifyResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordTypeModifyResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordTypeModifyResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** RecordFolderType enum. */
+    enum RecordFolderType {
+        user_folder = 0,
+        shared_folder = 1,
+        shared_folder_folder = 2
+    }
+
+    /** Properties of a RecordLink. */
+    interface IRecordLink {
+
+        /** RecordLink recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordLink recordKey */
+        recordKey?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordLink. */
+    class RecordLink implements IRecordLink {
+
+        /**
+         * Constructs a new RecordLink.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordLink);
+
+        /** RecordLink recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordLink recordKey. */
+        public recordKey: Uint8Array;
+
+        /**
+         * Creates a new RecordLink instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordLink instance
+         */
+        public static create(properties?: Records.IRecordLink): Records.RecordLink;
+
+        /**
+         * Encodes the specified RecordLink message. Does not implicitly {@link Records.RecordLink.verify|verify} messages.
+         * @param message RecordLink message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordLink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordLink message, length delimited. Does not implicitly {@link Records.RecordLink.verify|verify} messages.
+         * @param message RecordLink message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordLink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordLink message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordLink;
+
+        /**
+         * Decodes a RecordLink message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordLink;
+
+        /**
+         * Verifies a RecordLink message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordLink message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordLink
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordLink;
+
+        /**
+         * Creates a plain object from a RecordLink message. Also converts values to other types if specified.
+         * @param message RecordLink
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordLink, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordLink to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordAdd. */
+    interface IRecordAdd {
+
+        /** RecordAdd recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordAdd recordKey */
+        recordKey?: (Uint8Array|null);
+
+        /** RecordAdd clientModifiedTime */
+        clientModifiedTime?: (number|Long|null);
+
+        /** RecordAdd data */
+        data?: (Uint8Array|null);
+
+        /** RecordAdd nonSharedData */
+        nonSharedData?: (Uint8Array|null);
+
+        /** RecordAdd folderType */
+        folderType?: (Records.RecordFolderType|null);
+
+        /** RecordAdd folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** RecordAdd folderKey */
+        folderKey?: (Uint8Array|null);
+
+        /** RecordAdd recordLinks */
+        recordLinks?: (Records.IRecordLink[]|null);
+    }
+
+    /** Represents a RecordAdd. */
+    class RecordAdd implements IRecordAdd {
+
+        /**
+         * Constructs a new RecordAdd.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordAdd);
+
+        /** RecordAdd recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordAdd recordKey. */
+        public recordKey: Uint8Array;
+
+        /** RecordAdd clientModifiedTime. */
+        public clientModifiedTime: (number|Long);
+
+        /** RecordAdd data. */
+        public data: Uint8Array;
+
+        /** RecordAdd nonSharedData. */
+        public nonSharedData: Uint8Array;
+
+        /** RecordAdd folderType. */
+        public folderType: Records.RecordFolderType;
+
+        /** RecordAdd folderUid. */
+        public folderUid: Uint8Array;
+
+        /** RecordAdd folderKey. */
+        public folderKey: Uint8Array;
+
+        /** RecordAdd recordLinks. */
+        public recordLinks: Records.IRecordLink[];
+
+        /**
+         * Creates a new RecordAdd instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordAdd instance
+         */
+        public static create(properties?: Records.IRecordAdd): Records.RecordAdd;
+
+        /**
+         * Encodes the specified RecordAdd message. Does not implicitly {@link Records.RecordAdd.verify|verify} messages.
+         * @param message RecordAdd message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordAdd, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordAdd message, length delimited. Does not implicitly {@link Records.RecordAdd.verify|verify} messages.
+         * @param message RecordAdd message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordAdd, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordAdd message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordAdd
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordAdd;
+
+        /**
+         * Decodes a RecordAdd message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordAdd
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordAdd;
+
+        /**
+         * Verifies a RecordAdd message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordAdd message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordAdd
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordAdd;
+
+        /**
+         * Creates a plain object from a RecordAdd message. Also converts values to other types if specified.
+         * @param message RecordAdd
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordAdd, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordAdd to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordsAddRequest. */
+    interface IRecordsAddRequest {
+
+        /** RecordsAddRequest records */
+        records?: (Records.IRecordAdd[]|null);
+
+        /** RecordsAddRequest clientTime */
+        clientTime?: (number|Long|null);
+    }
+
+    /** Represents a RecordsAddRequest. */
+    class RecordsAddRequest implements IRecordsAddRequest {
+
+        /**
+         * Constructs a new RecordsAddRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsAddRequest);
+
+        /** RecordsAddRequest records. */
+        public records: Records.IRecordAdd[];
+
+        /** RecordsAddRequest clientTime. */
+        public clientTime: (number|Long);
+
+        /**
+         * Creates a new RecordsAddRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsAddRequest instance
+         */
+        public static create(properties?: Records.IRecordsAddRequest): Records.RecordsAddRequest;
+
+        /**
+         * Encodes the specified RecordsAddRequest message. Does not implicitly {@link Records.RecordsAddRequest.verify|verify} messages.
+         * @param message RecordsAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsAddRequest message, length delimited. Does not implicitly {@link Records.RecordsAddRequest.verify|verify} messages.
+         * @param message RecordsAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsAddRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsAddRequest;
+
+        /**
+         * Decodes a RecordsAddRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsAddRequest;
+
+        /**
+         * Verifies a RecordsAddRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsAddRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsAddRequest;
+
+        /**
+         * Creates a plain object from a RecordsAddRequest message. Also converts values to other types if specified.
+         * @param message RecordsAddRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsAddRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordUpdate. */
+    interface IRecordUpdate {
+
+        /** RecordUpdate recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordUpdate clientModifiedTime */
+        clientModifiedTime?: (number|Long|null);
+
+        /** RecordUpdate revision */
+        revision?: (number|Long|null);
+
+        /** RecordUpdate data */
+        data?: (Uint8Array|null);
+
+        /** RecordUpdate nonSharedData */
+        nonSharedData?: (Uint8Array|null);
+
+        /** RecordUpdate recordLinks */
+        recordLinks?: (Records.IRecordLink[]|null);
+    }
+
+    /** Represents a RecordUpdate. */
+    class RecordUpdate implements IRecordUpdate {
+
+        /**
+         * Constructs a new RecordUpdate.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordUpdate);
+
+        /** RecordUpdate recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordUpdate clientModifiedTime. */
+        public clientModifiedTime: (number|Long);
+
+        /** RecordUpdate revision. */
+        public revision: (number|Long);
+
+        /** RecordUpdate data. */
+        public data: Uint8Array;
+
+        /** RecordUpdate nonSharedData. */
+        public nonSharedData: Uint8Array;
+
+        /** RecordUpdate recordLinks. */
+        public recordLinks: Records.IRecordLink[];
+
+        /**
+         * Creates a new RecordUpdate instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordUpdate instance
+         */
+        public static create(properties?: Records.IRecordUpdate): Records.RecordUpdate;
+
+        /**
+         * Encodes the specified RecordUpdate message. Does not implicitly {@link Records.RecordUpdate.verify|verify} messages.
+         * @param message RecordUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordUpdate message, length delimited. Does not implicitly {@link Records.RecordUpdate.verify|verify} messages.
+         * @param message RecordUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordUpdate message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordUpdate;
+
+        /**
+         * Decodes a RecordUpdate message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordUpdate;
+
+        /**
+         * Verifies a RecordUpdate message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordUpdate message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordUpdate
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordUpdate;
+
+        /**
+         * Creates a plain object from a RecordUpdate message. Also converts values to other types if specified.
+         * @param message RecordUpdate
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordUpdate to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordsUpdateRequest. */
+    interface IRecordsUpdateRequest {
+
+        /** RecordsUpdateRequest records */
+        records?: (Records.IRecordUpdate[]|null);
+
+        /** RecordsUpdateRequest clientTime */
+        clientTime?: (number|Long|null);
+    }
+
+    /** Represents a RecordsUpdateRequest. */
+    class RecordsUpdateRequest implements IRecordsUpdateRequest {
+
+        /**
+         * Constructs a new RecordsUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUpdateRequest);
+
+        /** RecordsUpdateRequest records. */
+        public records: Records.IRecordUpdate[];
+
+        /** RecordsUpdateRequest clientTime. */
+        public clientTime: (number|Long);
+
+        /**
+         * Creates a new RecordsUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUpdateRequest instance
+         */
+        public static create(properties?: Records.IRecordsUpdateRequest): Records.RecordsUpdateRequest;
+
+        /**
+         * Encodes the specified RecordsUpdateRequest message. Does not implicitly {@link Records.RecordsUpdateRequest.verify|verify} messages.
+         * @param message RecordsUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUpdateRequest message, length delimited. Does not implicitly {@link Records.RecordsUpdateRequest.verify|verify} messages.
+         * @param message RecordsUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUpdateRequest;
+
+        /**
+         * Decodes a RecordsUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUpdateRequest;
+
+        /**
+         * Verifies a RecordsUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUpdateRequest;
+
+        /**
+         * Creates a plain object from a RecordsUpdateRequest message. Also converts values to other types if specified.
+         * @param message RecordsUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordsRemoveRequest. */
+    interface IRecordsRemoveRequest {
+
+        /** RecordsRemoveRequest records */
+        records?: (Uint8Array[]|null);
+    }
+
+    /** Represents a RecordsRemoveRequest. */
+    class RecordsRemoveRequest implements IRecordsRemoveRequest {
+
+        /**
+         * Constructs a new RecordsRemoveRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsRemoveRequest);
+
+        /** RecordsRemoveRequest records. */
+        public records: Uint8Array[];
+
+        /**
+         * Creates a new RecordsRemoveRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsRemoveRequest instance
+         */
+        public static create(properties?: Records.IRecordsRemoveRequest): Records.RecordsRemoveRequest;
+
+        /**
+         * Encodes the specified RecordsRemoveRequest message. Does not implicitly {@link Records.RecordsRemoveRequest.verify|verify} messages.
+         * @param message RecordsRemoveRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsRemoveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsRemoveRequest message, length delimited. Does not implicitly {@link Records.RecordsRemoveRequest.verify|verify} messages.
+         * @param message RecordsRemoveRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsRemoveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsRemoveRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsRemoveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsRemoveRequest;
+
+        /**
+         * Decodes a RecordsRemoveRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsRemoveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsRemoveRequest;
+
+        /**
+         * Verifies a RecordsRemoveRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsRemoveRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsRemoveRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsRemoveRequest;
+
+        /**
+         * Creates a plain object from a RecordsRemoveRequest message. Also converts values to other types if specified.
+         * @param message RecordsRemoveRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsRemoveRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsRemoveRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** RecordModifyResult enum. */
+    enum RecordModifyResult {
+        RS_SUCCESS = 0,
+        RS_OUT_OF_SYNC = 1,
+        RS_ACCESS_DENIED = 2,
+        RS_SHARE_DENIED = 3,
+        RS_RECORD_EXISTS = 4
+    }
+
+    /** Properties of a RecordModifyStatus. */
+    interface IRecordModifyStatus {
+
+        /** RecordModifyStatus recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordModifyStatus status */
+        status?: (Records.RecordModifyResult|null);
+    }
+
+    /** Represents a RecordModifyStatus. */
+    class RecordModifyStatus implements IRecordModifyStatus {
+
+        /**
+         * Constructs a new RecordModifyStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordModifyStatus);
+
+        /** RecordModifyStatus recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordModifyStatus status. */
+        public status: Records.RecordModifyResult;
+
+        /**
+         * Creates a new RecordModifyStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordModifyStatus instance
+         */
+        public static create(properties?: Records.IRecordModifyStatus): Records.RecordModifyStatus;
+
+        /**
+         * Encodes the specified RecordModifyStatus message. Does not implicitly {@link Records.RecordModifyStatus.verify|verify} messages.
+         * @param message RecordModifyStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordModifyStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordModifyStatus message, length delimited. Does not implicitly {@link Records.RecordModifyStatus.verify|verify} messages.
+         * @param message RecordModifyStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordModifyStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordModifyStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordModifyStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordModifyStatus;
+
+        /**
+         * Decodes a RecordModifyStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordModifyStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordModifyStatus;
+
+        /**
+         * Verifies a RecordModifyStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordModifyStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordModifyStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordModifyStatus;
+
+        /**
+         * Creates a plain object from a RecordModifyStatus message. Also converts values to other types if specified.
+         * @param message RecordModifyStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordModifyStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordModifyStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordsModifyResponse. */
+    interface IRecordsModifyResponse {
+
+        /** RecordsModifyResponse records */
+        records?: (Records.IRecordModifyStatus[]|null);
+
+        /** RecordsModifyResponse revision */
+        revision?: (number|Long|null);
+    }
+
+    /** Represents a RecordsModifyResponse. */
+    class RecordsModifyResponse implements IRecordsModifyResponse {
+
+        /**
+         * Constructs a new RecordsModifyResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsModifyResponse);
+
+        /** RecordsModifyResponse records. */
+        public records: Records.IRecordModifyStatus[];
+
+        /** RecordsModifyResponse revision. */
+        public revision: (number|Long);
+
+        /**
+         * Creates a new RecordsModifyResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsModifyResponse instance
+         */
+        public static create(properties?: Records.IRecordsModifyResponse): Records.RecordsModifyResponse;
+
+        /**
+         * Encodes the specified RecordsModifyResponse message. Does not implicitly {@link Records.RecordsModifyResponse.verify|verify} messages.
+         * @param message RecordsModifyResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsModifyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsModifyResponse message, length delimited. Does not implicitly {@link Records.RecordsModifyResponse.verify|verify} messages.
+         * @param message RecordsModifyResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsModifyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsModifyResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsModifyResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsModifyResponse;
+
+        /**
+         * Decodes a RecordsModifyResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsModifyResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsModifyResponse;
+
+        /**
+         * Verifies a RecordsModifyResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsModifyResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsModifyResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsModifyResponse;
+
+        /**
+         * Creates a plain object from a RecordsModifyResponse message. Also converts values to other types if specified.
+         * @param message RecordsModifyResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsModifyResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsModifyResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a File. */
+    interface IFile {
+
+        /** File recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** File recordKey */
+        recordKey?: (Uint8Array|null);
+
+        /** File data */
+        data?: (Uint8Array|null);
+
+        /** File fileSize */
+        fileSize?: (number|Long|null);
+
+        /** File thumbSize */
+        thumbSize?: (number|null);
+    }
+
+    /** Represents a File. */
+    class File implements IFile {
+
+        /**
+         * Constructs a new File.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFile);
+
+        /** File recordUid. */
+        public recordUid: Uint8Array;
+
+        /** File recordKey. */
+        public recordKey: Uint8Array;
+
+        /** File data. */
+        public data: Uint8Array;
+
+        /** File fileSize. */
+        public fileSize: (number|Long);
+
+        /** File thumbSize. */
+        public thumbSize: number;
+
+        /**
+         * Creates a new File instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns File instance
+         */
+        public static create(properties?: Records.IFile): Records.File;
+
+        /**
+         * Encodes the specified File message. Does not implicitly {@link Records.File.verify|verify} messages.
+         * @param message File message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified File message, length delimited. Does not implicitly {@link Records.File.verify|verify} messages.
+         * @param message File message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a File message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns File
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.File;
+
+        /**
+         * Decodes a File message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns File
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.File;
+
+        /**
+         * Verifies a File message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a File message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns File
+         */
+        public static fromObject(object: { [k: string]: any }): Records.File;
+
+        /**
+         * Creates a plain object from a File message. Also converts values to other types if specified.
+         * @param message File
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.File, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this File to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a FilesAddRequest. */
+    interface IFilesAddRequest {
+
+        /** FilesAddRequest files */
+        files?: (Records.IFile[]|null);
+
+        /** FilesAddRequest clientTime */
+        clientTime?: (number|Long|null);
+    }
+
+    /** Represents a FilesAddRequest. */
+    class FilesAddRequest implements IFilesAddRequest {
+
+        /**
+         * Constructs a new FilesAddRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFilesAddRequest);
+
+        /** FilesAddRequest files. */
+        public files: Records.IFile[];
+
+        /** FilesAddRequest clientTime. */
+        public clientTime: (number|Long);
+
+        /**
+         * Creates a new FilesAddRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FilesAddRequest instance
+         */
+        public static create(properties?: Records.IFilesAddRequest): Records.FilesAddRequest;
+
+        /**
+         * Encodes the specified FilesAddRequest message. Does not implicitly {@link Records.FilesAddRequest.verify|verify} messages.
+         * @param message FilesAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFilesAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FilesAddRequest message, length delimited. Does not implicitly {@link Records.FilesAddRequest.verify|verify} messages.
+         * @param message FilesAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFilesAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FilesAddRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FilesAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.FilesAddRequest;
+
+        /**
+         * Decodes a FilesAddRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FilesAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.FilesAddRequest;
+
+        /**
+         * Verifies a FilesAddRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FilesAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FilesAddRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.FilesAddRequest;
+
+        /**
+         * Creates a plain object from a FilesAddRequest message. Also converts values to other types if specified.
+         * @param message FilesAddRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.FilesAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FilesAddRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** FileAddResult enum. */
+    enum FileAddResult {
+        FA_SUCCESS = 0,
+        FA_ERROR = 1
+    }
+
+    /** Properties of a FileAddStatus. */
+    interface IFileAddStatus {
+
+        /** FileAddStatus recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** FileAddStatus status */
+        status?: (Records.FileAddResult|null);
+
+        /** FileAddStatus url */
+        url?: (string|null);
+
+        /** FileAddStatus parameters */
+        parameters?: (string|null);
+
+        /** FileAddStatus thumbnailParameters */
+        thumbnailParameters?: (string|null);
+
+        /** FileAddStatus successStatusCode */
+        successStatusCode?: (number|null);
+    }
+
+    /** Represents a FileAddStatus. */
+    class FileAddStatus implements IFileAddStatus {
+
+        /**
+         * Constructs a new FileAddStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFileAddStatus);
+
+        /** FileAddStatus recordUid. */
+        public recordUid: Uint8Array;
+
+        /** FileAddStatus status. */
+        public status: Records.FileAddResult;
+
+        /** FileAddStatus url. */
+        public url: string;
+
+        /** FileAddStatus parameters. */
+        public parameters: string;
+
+        /** FileAddStatus thumbnailParameters. */
+        public thumbnailParameters: string;
+
+        /** FileAddStatus successStatusCode. */
+        public successStatusCode: number;
+
+        /**
+         * Creates a new FileAddStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FileAddStatus instance
+         */
+        public static create(properties?: Records.IFileAddStatus): Records.FileAddStatus;
+
+        /**
+         * Encodes the specified FileAddStatus message. Does not implicitly {@link Records.FileAddStatus.verify|verify} messages.
+         * @param message FileAddStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFileAddStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FileAddStatus message, length delimited. Does not implicitly {@link Records.FileAddStatus.verify|verify} messages.
+         * @param message FileAddStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFileAddStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FileAddStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FileAddStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.FileAddStatus;
+
+        /**
+         * Decodes a FileAddStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FileAddStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.FileAddStatus;
+
+        /**
+         * Verifies a FileAddStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FileAddStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FileAddStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Records.FileAddStatus;
+
+        /**
+         * Creates a plain object from a FileAddStatus message. Also converts values to other types if specified.
+         * @param message FileAddStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.FileAddStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FileAddStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a FilesAddResponse. */
+    interface IFilesAddResponse {
+
+        /** FilesAddResponse files */
+        files?: (Records.IFileAddStatus[]|null);
+    }
+
+    /** Represents a FilesAddResponse. */
+    class FilesAddResponse implements IFilesAddResponse {
+
+        /**
+         * Constructs a new FilesAddResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFilesAddResponse);
+
+        /** FilesAddResponse files. */
+        public files: Records.IFileAddStatus[];
+
+        /**
+         * Creates a new FilesAddResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FilesAddResponse instance
+         */
+        public static create(properties?: Records.IFilesAddResponse): Records.FilesAddResponse;
+
+        /**
+         * Encodes the specified FilesAddResponse message. Does not implicitly {@link Records.FilesAddResponse.verify|verify} messages.
+         * @param message FilesAddResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFilesAddResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FilesAddResponse message, length delimited. Does not implicitly {@link Records.FilesAddResponse.verify|verify} messages.
+         * @param message FilesAddResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFilesAddResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FilesAddResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FilesAddResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.FilesAddResponse;
+
+        /**
+         * Decodes a FilesAddResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FilesAddResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.FilesAddResponse;
+
+        /**
+         * Verifies a FilesAddResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FilesAddResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FilesAddResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.FilesAddResponse;
+
+        /**
+         * Creates a plain object from a FilesAddResponse message. Also converts values to other types if specified.
+         * @param message FilesAddResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.FilesAddResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FilesAddResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a FilesGetRequest. */
+    interface IFilesGetRequest {
+
+        /** FilesGetRequest recordUids */
+        recordUids?: (Uint8Array[]|null);
+
+        /** FilesGetRequest forThumbnails */
+        forThumbnails?: (boolean|null);
+
+        /** FilesGetRequest emergencyAccessAccountOwner */
+        emergencyAccessAccountOwner?: (string|null);
+    }
+
+    /** Represents a FilesGetRequest. */
+    class FilesGetRequest implements IFilesGetRequest {
+
+        /**
+         * Constructs a new FilesGetRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFilesGetRequest);
+
+        /** FilesGetRequest recordUids. */
+        public recordUids: Uint8Array[];
+
+        /** FilesGetRequest forThumbnails. */
+        public forThumbnails: boolean;
+
+        /** FilesGetRequest emergencyAccessAccountOwner. */
+        public emergencyAccessAccountOwner: string;
+
+        /**
+         * Creates a new FilesGetRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FilesGetRequest instance
+         */
+        public static create(properties?: Records.IFilesGetRequest): Records.FilesGetRequest;
+
+        /**
+         * Encodes the specified FilesGetRequest message. Does not implicitly {@link Records.FilesGetRequest.verify|verify} messages.
+         * @param message FilesGetRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFilesGetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FilesGetRequest message, length delimited. Does not implicitly {@link Records.FilesGetRequest.verify|verify} messages.
+         * @param message FilesGetRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFilesGetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FilesGetRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FilesGetRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.FilesGetRequest;
+
+        /**
+         * Decodes a FilesGetRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FilesGetRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.FilesGetRequest;
+
+        /**
+         * Verifies a FilesGetRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FilesGetRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FilesGetRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.FilesGetRequest;
+
+        /**
+         * Creates a plain object from a FilesGetRequest message. Also converts values to other types if specified.
+         * @param message FilesGetRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.FilesGetRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FilesGetRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** FileGetResult enum. */
+    enum FileGetResult {
+        FG_SUCCESS = 0,
+        FG_ERROR = 1,
+        FG_ACCESS_DENIED = 2
+    }
+
+    /** Properties of a FileGetStatus. */
+    interface IFileGetStatus {
+
+        /** FileGetStatus recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** FileGetStatus status */
+        status?: (Records.FileGetResult|null);
+
+        /** FileGetStatus url */
+        url?: (string|null);
+
+        /** FileGetStatus successStatusCode */
+        successStatusCode?: (number|null);
+    }
+
+    /** Represents a FileGetStatus. */
+    class FileGetStatus implements IFileGetStatus {
+
+        /**
+         * Constructs a new FileGetStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFileGetStatus);
+
+        /** FileGetStatus recordUid. */
+        public recordUid: Uint8Array;
+
+        /** FileGetStatus status. */
+        public status: Records.FileGetResult;
+
+        /** FileGetStatus url. */
+        public url: string;
+
+        /** FileGetStatus successStatusCode. */
+        public successStatusCode: number;
+
+        /**
+         * Creates a new FileGetStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FileGetStatus instance
+         */
+        public static create(properties?: Records.IFileGetStatus): Records.FileGetStatus;
+
+        /**
+         * Encodes the specified FileGetStatus message. Does not implicitly {@link Records.FileGetStatus.verify|verify} messages.
+         * @param message FileGetStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFileGetStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FileGetStatus message, length delimited. Does not implicitly {@link Records.FileGetStatus.verify|verify} messages.
+         * @param message FileGetStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFileGetStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FileGetStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FileGetStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.FileGetStatus;
+
+        /**
+         * Decodes a FileGetStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FileGetStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.FileGetStatus;
+
+        /**
+         * Verifies a FileGetStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FileGetStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FileGetStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Records.FileGetStatus;
+
+        /**
+         * Creates a plain object from a FileGetStatus message. Also converts values to other types if specified.
+         * @param message FileGetStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.FileGetStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FileGetStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a FilesGetResponse. */
+    interface IFilesGetResponse {
+
+        /** FilesGetResponse files */
+        files?: (Records.IFileGetStatus[]|null);
+    }
+
+    /** Represents a FilesGetResponse. */
+    class FilesGetResponse implements IFilesGetResponse {
+
+        /**
+         * Constructs a new FilesGetResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IFilesGetResponse);
+
+        /** FilesGetResponse files. */
+        public files: Records.IFileGetStatus[];
+
+        /**
+         * Creates a new FilesGetResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FilesGetResponse instance
+         */
+        public static create(properties?: Records.IFilesGetResponse): Records.FilesGetResponse;
+
+        /**
+         * Encodes the specified FilesGetResponse message. Does not implicitly {@link Records.FilesGetResponse.verify|verify} messages.
+         * @param message FilesGetResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IFilesGetResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FilesGetResponse message, length delimited. Does not implicitly {@link Records.FilesGetResponse.verify|verify} messages.
+         * @param message FilesGetResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IFilesGetResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FilesGetResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FilesGetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.FilesGetResponse;
+
+        /**
+         * Decodes a FilesGetResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FilesGetResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.FilesGetResponse;
+
+        /**
+         * Verifies a FilesGetResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FilesGetResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FilesGetResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.FilesGetResponse;
+
+        /**
+         * Creates a plain object from a FilesGetResponse message. Also converts values to other types if specified.
+         * @param message FilesGetResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.FilesGetResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FilesGetResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
+/** Namespace ServiceLogger. */
+export namespace ServiceLogger {
+
+    /** Properties of an IdRange. */
+    interface IIdRange {
+
+        /** IdRange startingId */
+        startingId?: (number|Long|null);
+
+        /** IdRange endingId */
+        endingId?: (number|Long|null);
+    }
+
+    /** Specifies the first and last IDs of a range of IDs so that a Request can ask for information about a range of IDs. */
+    class IdRange implements IIdRange {
+
+        /**
+         * Constructs a new IdRange.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IIdRange);
+
+        /** IdRange startingId. */
+        public startingId: (number|Long);
+
+        /** IdRange endingId. */
+        public endingId: (number|Long);
+
+        /**
+         * Creates a new IdRange instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdRange instance
+         */
+        public static create(properties?: ServiceLogger.IIdRange): ServiceLogger.IdRange;
+
+        /**
+         * Encodes the specified IdRange message. Does not implicitly {@link ServiceLogger.IdRange.verify|verify} messages.
+         * @param message IdRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IIdRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdRange message, length delimited. Does not implicitly {@link ServiceLogger.IdRange.verify|verify} messages.
+         * @param message IdRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IIdRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdRange message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.IdRange;
+
+        /**
+         * Decodes an IdRange message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.IdRange;
+
+        /**
+         * Verifies an IdRange message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdRange message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdRange
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.IdRange;
+
+        /**
+         * Creates a plain object from an IdRange message. Also converts values to other types if specified.
+         * @param message IdRange
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.IdRange, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdRange to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceInfoSpecifier. */
+    interface IServiceInfoSpecifier {
+
+        /** ServiceInfoSpecifier all */
+        all?: (boolean|null);
+
+        /** ServiceInfoSpecifier serviceInfoId */
+        serviceInfoId?: (number|Long|null);
+
+        /** ServiceInfoSpecifier name */
+        name?: (string|null);
+    }
+
+    /** Used in ServiceInfoRequest */
+    class ServiceInfoSpecifier implements IServiceInfoSpecifier {
+
+        /**
+         * Constructs a new ServiceInfoSpecifier.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceInfoSpecifier);
+
+        /** ServiceInfoSpecifier all. */
+        public all: boolean;
+
+        /** ServiceInfoSpecifier serviceInfoId. */
+        public serviceInfoId: (number|Long);
+
+        /** ServiceInfoSpecifier name. */
+        public name: string;
+
+        /**
+         * Creates a new ServiceInfoSpecifier instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceInfoSpecifier instance
+         */
+        public static create(properties?: ServiceLogger.IServiceInfoSpecifier): ServiceLogger.ServiceInfoSpecifier;
+
+        /**
+         * Encodes the specified ServiceInfoSpecifier message. Does not implicitly {@link ServiceLogger.ServiceInfoSpecifier.verify|verify} messages.
+         * @param message ServiceInfoSpecifier message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceInfoSpecifier, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceInfoSpecifier message, length delimited. Does not implicitly {@link ServiceLogger.ServiceInfoSpecifier.verify|verify} messages.
+         * @param message ServiceInfoSpecifier message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceInfoSpecifier, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceInfoSpecifier message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceInfoSpecifier
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceInfoSpecifier;
+
+        /**
+         * Decodes a ServiceInfoSpecifier message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceInfoSpecifier
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceInfoSpecifier;
+
+        /**
+         * Verifies a ServiceInfoSpecifier message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceInfoSpecifier message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceInfoSpecifier
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceInfoSpecifier;
+
+        /**
+         * Creates a plain object from a ServiceInfoSpecifier message. Also converts values to other types if specified.
+         * @param message ServiceInfoSpecifier
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceInfoSpecifier, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceInfoSpecifier to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceInfoRequest. */
+    interface IServiceInfoRequest {
+
+        /** ServiceInfoRequest serviceInfoSpecifier */
+        serviceInfoSpecifier?: (ServiceLogger.IServiceInfoSpecifier[]|null);
+    }
+
+    /** Request information about one or more services by ID or name, or retrieve all. */
+    class ServiceInfoRequest implements IServiceInfoRequest {
+
+        /**
+         * Constructs a new ServiceInfoRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceInfoRequest);
+
+        /** ServiceInfoRequest serviceInfoSpecifier. */
+        public serviceInfoSpecifier: ServiceLogger.IServiceInfoSpecifier[];
+
+        /**
+         * Creates a new ServiceInfoRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceInfoRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceInfoRequest): ServiceLogger.ServiceInfoRequest;
+
+        /**
+         * Encodes the specified ServiceInfoRequest message. Does not implicitly {@link ServiceLogger.ServiceInfoRequest.verify|verify} messages.
+         * @param message ServiceInfoRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceInfoRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceInfoRequest.verify|verify} messages.
+         * @param message ServiceInfoRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceInfoRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceInfoRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceInfoRequest;
+
+        /**
+         * Decodes a ServiceInfoRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceInfoRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceInfoRequest;
+
+        /**
+         * Verifies a ServiceInfoRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceInfoRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceInfoRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceInfoRequest;
+
+        /**
+         * Creates a plain object from a ServiceInfoRequest message. Also converts values to other types if specified.
+         * @param message ServiceInfoRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceInfoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceInfoRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceInfoRecord. */
+    interface IServiceInfoRecord {
+
+        /** ServiceInfoRecord serviceInfoId */
+        serviceInfoId?: (number|Long|null);
+
+        /** ServiceInfoRecord name */
+        name?: (string|null);
+
+        /** ServiceInfoRecord deleteAfter */
+        deleteAfter?: (number|null);
+
+        /** ServiceInfoRecord deleteAfterTimeUnits */
+        deleteAfterTimeUnits?: (string|null);
+
+        /** ServiceInfoRecord isShortTermLogging */
+        isShortTermLogging?: (boolean|null);
+    }
+
+    /** Used in ServiceInfoResponse */
+    class ServiceInfoRecord implements IServiceInfoRecord {
+
+        /**
+         * Constructs a new ServiceInfoRecord.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceInfoRecord);
+
+        /** ServiceInfoRecord serviceInfoId. */
+        public serviceInfoId: (number|Long);
+
+        /** ServiceInfoRecord name. */
+        public name: string;
+
+        /** ServiceInfoRecord deleteAfter. */
+        public deleteAfter: number;
+
+        /** ServiceInfoRecord deleteAfterTimeUnits. */
+        public deleteAfterTimeUnits: string;
+
+        /** ServiceInfoRecord isShortTermLogging. */
+        public isShortTermLogging: boolean;
+
+        /**
+         * Creates a new ServiceInfoRecord instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceInfoRecord instance
+         */
+        public static create(properties?: ServiceLogger.IServiceInfoRecord): ServiceLogger.ServiceInfoRecord;
+
+        /**
+         * Encodes the specified ServiceInfoRecord message. Does not implicitly {@link ServiceLogger.ServiceInfoRecord.verify|verify} messages.
+         * @param message ServiceInfoRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceInfoRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceInfoRecord message, length delimited. Does not implicitly {@link ServiceLogger.ServiceInfoRecord.verify|verify} messages.
+         * @param message ServiceInfoRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceInfoRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceInfoRecord message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceInfoRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceInfoRecord;
+
+        /**
+         * Decodes a ServiceInfoRecord message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceInfoRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceInfoRecord;
+
+        /**
+         * Verifies a ServiceInfoRecord message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceInfoRecord message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceInfoRecord
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceInfoRecord;
+
+        /**
+         * Creates a plain object from a ServiceInfoRecord message. Also converts values to other types if specified.
+         * @param message ServiceInfoRecord
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceInfoRecord, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceInfoRecord to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceInfoResponse. */
+    interface IServiceInfoResponse {
+
+        /** ServiceInfoResponse serviceInfoRecord */
+        serviceInfoRecord?: (ServiceLogger.IServiceInfoRecord[]|null);
+    }
+
+    /** Returns information about Services */
+    class ServiceInfoResponse implements IServiceInfoResponse {
+
+        /**
+         * Constructs a new ServiceInfoResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceInfoResponse);
+
+        /** ServiceInfoResponse serviceInfoRecord. */
+        public serviceInfoRecord: ServiceLogger.IServiceInfoRecord[];
+
+        /**
+         * Creates a new ServiceInfoResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceInfoResponse instance
+         */
+        public static create(properties?: ServiceLogger.IServiceInfoResponse): ServiceLogger.ServiceInfoResponse;
+
+        /**
+         * Encodes the specified ServiceInfoResponse message. Does not implicitly {@link ServiceLogger.ServiceInfoResponse.verify|verify} messages.
+         * @param message ServiceInfoResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceInfoResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceInfoResponse message, length delimited. Does not implicitly {@link ServiceLogger.ServiceInfoResponse.verify|verify} messages.
+         * @param message ServiceInfoResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceInfoResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceInfoResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceInfoResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceInfoResponse;
+
+        /**
+         * Decodes a ServiceInfoResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceInfoResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceInfoResponse;
+
+        /**
+         * Verifies a ServiceInfoResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceInfoResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceInfoResponse
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceInfoResponse;
+
+        /**
+         * Creates a plain object from a ServiceInfoResponse message. Also converts values to other types if specified.
+         * @param message ServiceInfoResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceInfoResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceInfoResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceInfoUpdateRequest. */
+    interface IServiceInfoUpdateRequest {
+
+        /** ServiceInfoUpdateRequest serviceInfoRecord */
+        serviceInfoRecord?: (ServiceLogger.IServiceInfoRecord[]|null);
+    }
+
+    /** Update one or more ServiceInfo records by their IDs */
+    class ServiceInfoUpdateRequest implements IServiceInfoUpdateRequest {
+
+        /**
+         * Constructs a new ServiceInfoUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceInfoUpdateRequest);
+
+        /** ServiceInfoUpdateRequest serviceInfoRecord. */
+        public serviceInfoRecord: ServiceLogger.IServiceInfoRecord[];
+
+        /**
+         * Creates a new ServiceInfoUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceInfoUpdateRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceInfoUpdateRequest): ServiceLogger.ServiceInfoUpdateRequest;
+
+        /**
+         * Encodes the specified ServiceInfoUpdateRequest message. Does not implicitly {@link ServiceLogger.ServiceInfoUpdateRequest.verify|verify} messages.
+         * @param message ServiceInfoUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceInfoUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceInfoUpdateRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceInfoUpdateRequest.verify|verify} messages.
+         * @param message ServiceInfoUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceInfoUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceInfoUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceInfoUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceInfoUpdateRequest;
+
+        /**
+         * Decodes a ServiceInfoUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceInfoUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceInfoUpdateRequest;
+
+        /**
+         * Verifies a ServiceInfoUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceInfoUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceInfoUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceInfoUpdateRequest;
+
+        /**
+         * Creates a plain object from a ServiceInfoUpdateRequest message. Also converts values to other types if specified.
+         * @param message ServiceInfoUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceInfoUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceInfoUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceRuleSpecifier. */
+    interface IServiceRuleSpecifier {
+
+        /** ServiceRuleSpecifier all */
+        all?: (boolean|null);
+
+        /** ServiceRuleSpecifier serviceRuleId */
+        serviceRuleId?: (number|Long|null);
+
+        /** ServiceRuleSpecifier serviceInfoId */
+        serviceInfoId?: (number|Long|null);
+
+        /** ServiceRuleSpecifier resourceIdRange */
+        resourceIdRange?: (ServiceLogger.IIdRange[]|null);
+    }
+
+    /** Represents a ServiceRuleSpecifier. */
+    class ServiceRuleSpecifier implements IServiceRuleSpecifier {
+
+        /**
+         * Constructs a new ServiceRuleSpecifier.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceRuleSpecifier);
+
+        /** ServiceRuleSpecifier all. */
+        public all: boolean;
+
+        /** ServiceRuleSpecifier serviceRuleId. */
+        public serviceRuleId: (number|Long);
+
+        /** ServiceRuleSpecifier serviceInfoId. */
+        public serviceInfoId: (number|Long);
+
+        /** ServiceRuleSpecifier resourceIdRange. */
+        public resourceIdRange: ServiceLogger.IIdRange[];
+
+        /**
+         * Creates a new ServiceRuleSpecifier instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceRuleSpecifier instance
+         */
+        public static create(properties?: ServiceLogger.IServiceRuleSpecifier): ServiceLogger.ServiceRuleSpecifier;
+
+        /**
+         * Encodes the specified ServiceRuleSpecifier message. Does not implicitly {@link ServiceLogger.ServiceRuleSpecifier.verify|verify} messages.
+         * @param message ServiceRuleSpecifier message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceRuleSpecifier, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceRuleSpecifier message, length delimited. Does not implicitly {@link ServiceLogger.ServiceRuleSpecifier.verify|verify} messages.
+         * @param message ServiceRuleSpecifier message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceRuleSpecifier, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceRuleSpecifier message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceRuleSpecifier
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceRuleSpecifier;
+
+        /**
+         * Decodes a ServiceRuleSpecifier message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceRuleSpecifier
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceRuleSpecifier;
+
+        /**
+         * Verifies a ServiceRuleSpecifier message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceRuleSpecifier message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceRuleSpecifier
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceRuleSpecifier;
+
+        /**
+         * Creates a plain object from a ServiceRuleSpecifier message. Also converts values to other types if specified.
+         * @param message ServiceRuleSpecifier
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceRuleSpecifier, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceRuleSpecifier to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceRuleRequest. */
+    interface IServiceRuleRequest {
+
+        /** ServiceRuleRequest serviceRuleSpecifier */
+        serviceRuleSpecifier?: (ServiceLogger.IServiceRuleSpecifier[]|null);
+    }
+
+    /** Represents a ServiceRuleRequest. */
+    class ServiceRuleRequest implements IServiceRuleRequest {
+
+        /**
+         * Constructs a new ServiceRuleRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceRuleRequest);
+
+        /** ServiceRuleRequest serviceRuleSpecifier. */
+        public serviceRuleSpecifier: ServiceLogger.IServiceRuleSpecifier[];
+
+        /**
+         * Creates a new ServiceRuleRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceRuleRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceRuleRequest): ServiceLogger.ServiceRuleRequest;
+
+        /**
+         * Encodes the specified ServiceRuleRequest message. Does not implicitly {@link ServiceLogger.ServiceRuleRequest.verify|verify} messages.
+         * @param message ServiceRuleRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceRuleRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceRuleRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceRuleRequest.verify|verify} messages.
+         * @param message ServiceRuleRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceRuleRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceRuleRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceRuleRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceRuleRequest;
+
+        /**
+         * Decodes a ServiceRuleRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceRuleRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceRuleRequest;
+
+        /**
+         * Verifies a ServiceRuleRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceRuleRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceRuleRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceRuleRequest;
+
+        /**
+         * Creates a plain object from a ServiceRuleRequest message. Also converts values to other types if specified.
+         * @param message ServiceRuleRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceRuleRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceRuleRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceRuleRecord. */
+    interface IServiceRuleRecord {
+
+        /** ServiceRuleRecord serviceRuleId */
+        serviceRuleId?: (number|Long|null);
+
+        /** ServiceRuleRecord serviceInfoId */
+        serviceInfoId?: (number|Long|null);
+
+        /** ServiceRuleRecord resourceId */
+        resourceId?: (number|Long|null);
+
+        /** ServiceRuleRecord isLoggingEnabled */
+        isLoggingEnabled?: (boolean|null);
+
+        /** ServiceRuleRecord logLevel */
+        logLevel?: (string|null);
+
+        /** ServiceRuleRecord ruleStart */
+        ruleStart?: (string|null);
+
+        /** ServiceRuleRecord ruleEnd */
+        ruleEnd?: (string|null);
+
+        /** ServiceRuleRecord dateModified */
+        dateModified?: (string|null);
+    }
+
+    /** Represents a ServiceRuleRecord. */
+    class ServiceRuleRecord implements IServiceRuleRecord {
+
+        /**
+         * Constructs a new ServiceRuleRecord.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceRuleRecord);
+
+        /** ServiceRuleRecord serviceRuleId. */
+        public serviceRuleId: (number|Long);
+
+        /** ServiceRuleRecord serviceInfoId. */
+        public serviceInfoId: (number|Long);
+
+        /** ServiceRuleRecord resourceId. */
+        public resourceId: (number|Long);
+
+        /** ServiceRuleRecord isLoggingEnabled. */
+        public isLoggingEnabled: boolean;
+
+        /** ServiceRuleRecord logLevel. */
+        public logLevel: string;
+
+        /** ServiceRuleRecord ruleStart. */
+        public ruleStart: string;
+
+        /** ServiceRuleRecord ruleEnd. */
+        public ruleEnd: string;
+
+        /** ServiceRuleRecord dateModified. */
+        public dateModified: string;
+
+        /**
+         * Creates a new ServiceRuleRecord instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceRuleRecord instance
+         */
+        public static create(properties?: ServiceLogger.IServiceRuleRecord): ServiceLogger.ServiceRuleRecord;
+
+        /**
+         * Encodes the specified ServiceRuleRecord message. Does not implicitly {@link ServiceLogger.ServiceRuleRecord.verify|verify} messages.
+         * @param message ServiceRuleRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceRuleRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceRuleRecord message, length delimited. Does not implicitly {@link ServiceLogger.ServiceRuleRecord.verify|verify} messages.
+         * @param message ServiceRuleRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceRuleRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceRuleRecord message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceRuleRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceRuleRecord;
+
+        /**
+         * Decodes a ServiceRuleRecord message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceRuleRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceRuleRecord;
+
+        /**
+         * Verifies a ServiceRuleRecord message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceRuleRecord message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceRuleRecord
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceRuleRecord;
+
+        /**
+         * Creates a plain object from a ServiceRuleRecord message. Also converts values to other types if specified.
+         * @param message ServiceRuleRecord
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceRuleRecord, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceRuleRecord to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceRuleResponse. */
+    interface IServiceRuleResponse {
+
+        /** ServiceRuleResponse serviceRule */
+        serviceRule?: (ServiceLogger.IServiceRuleRecord[]|null);
+    }
+
+    /** Represents a ServiceRuleResponse. */
+    class ServiceRuleResponse implements IServiceRuleResponse {
+
+        /**
+         * Constructs a new ServiceRuleResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceRuleResponse);
+
+        /** ServiceRuleResponse serviceRule. */
+        public serviceRule: ServiceLogger.IServiceRuleRecord[];
+
+        /**
+         * Creates a new ServiceRuleResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceRuleResponse instance
+         */
+        public static create(properties?: ServiceLogger.IServiceRuleResponse): ServiceLogger.ServiceRuleResponse;
+
+        /**
+         * Encodes the specified ServiceRuleResponse message. Does not implicitly {@link ServiceLogger.ServiceRuleResponse.verify|verify} messages.
+         * @param message ServiceRuleResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceRuleResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceRuleResponse message, length delimited. Does not implicitly {@link ServiceLogger.ServiceRuleResponse.verify|verify} messages.
+         * @param message ServiceRuleResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceRuleResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceRuleResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceRuleResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceRuleResponse;
+
+        /**
+         * Decodes a ServiceRuleResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceRuleResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceRuleResponse;
+
+        /**
+         * Verifies a ServiceRuleResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceRuleResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceRuleResponse
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceRuleResponse;
+
+        /**
+         * Creates a plain object from a ServiceRuleResponse message. Also converts values to other types if specified.
+         * @param message ServiceRuleResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceRuleResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceRuleResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceRuleUpdateRequest. */
+    interface IServiceRuleUpdateRequest {
+
+        /** ServiceRuleUpdateRequest serviceRuleRecord */
+        serviceRuleRecord?: (ServiceLogger.IServiceRuleRecord[]|null);
+    }
+
+    /** Update one or more ServiceRule records by their IDs */
+    class ServiceRuleUpdateRequest implements IServiceRuleUpdateRequest {
+
+        /**
+         * Constructs a new ServiceRuleUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceRuleUpdateRequest);
+
+        /** ServiceRuleUpdateRequest serviceRuleRecord. */
+        public serviceRuleRecord: ServiceLogger.IServiceRuleRecord[];
+
+        /**
+         * Creates a new ServiceRuleUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceRuleUpdateRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceRuleUpdateRequest): ServiceLogger.ServiceRuleUpdateRequest;
+
+        /**
+         * Encodes the specified ServiceRuleUpdateRequest message. Does not implicitly {@link ServiceLogger.ServiceRuleUpdateRequest.verify|verify} messages.
+         * @param message ServiceRuleUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceRuleUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceRuleUpdateRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceRuleUpdateRequest.verify|verify} messages.
+         * @param message ServiceRuleUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceRuleUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceRuleUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceRuleUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceRuleUpdateRequest;
+
+        /**
+         * Decodes a ServiceRuleUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceRuleUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceRuleUpdateRequest;
+
+        /**
+         * Verifies a ServiceRuleUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceRuleUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceRuleUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceRuleUpdateRequest;
+
+        /**
+         * Creates a plain object from a ServiceRuleUpdateRequest message. Also converts values to other types if specified.
+         * @param message ServiceRuleUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceRuleUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceRuleUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogSpecifier. */
+    interface IServiceLogSpecifier {
+
+        /** ServiceLogSpecifier all */
+        all?: (boolean|null);
+
+        /** ServiceLogSpecifier serviceLogId */
+        serviceLogId?: (number|Long|null);
+
+        /** ServiceLogSpecifier serviceIdRange */
+        serviceIdRange?: (ServiceLogger.IIdRange[]|null);
+
+        /** ServiceLogSpecifier resourceIdRange */
+        resourceIdRange?: (ServiceLogger.IIdRange[]|null);
+
+        /** ServiceLogSpecifier startDateTime */
+        startDateTime?: (string|null);
+
+        /** ServiceLogSpecifier endDateTime */
+        endDateTime?: (string|null);
+    }
+
+    /** Represents a ServiceLogSpecifier. */
+    class ServiceLogSpecifier implements IServiceLogSpecifier {
+
+        /**
+         * Constructs a new ServiceLogSpecifier.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogSpecifier);
+
+        /** ServiceLogSpecifier all. */
+        public all: boolean;
+
+        /** ServiceLogSpecifier serviceLogId. */
+        public serviceLogId: (number|Long);
+
+        /** ServiceLogSpecifier serviceIdRange. */
+        public serviceIdRange: ServiceLogger.IIdRange[];
+
+        /** ServiceLogSpecifier resourceIdRange. */
+        public resourceIdRange: ServiceLogger.IIdRange[];
+
+        /** ServiceLogSpecifier startDateTime. */
+        public startDateTime: string;
+
+        /** ServiceLogSpecifier endDateTime. */
+        public endDateTime: string;
+
+        /**
+         * Creates a new ServiceLogSpecifier instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogSpecifier instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogSpecifier): ServiceLogger.ServiceLogSpecifier;
+
+        /**
+         * Encodes the specified ServiceLogSpecifier message. Does not implicitly {@link ServiceLogger.ServiceLogSpecifier.verify|verify} messages.
+         * @param message ServiceLogSpecifier message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogSpecifier, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogSpecifier message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogSpecifier.verify|verify} messages.
+         * @param message ServiceLogSpecifier message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogSpecifier, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogSpecifier message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogSpecifier
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogSpecifier;
+
+        /**
+         * Decodes a ServiceLogSpecifier message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogSpecifier
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogSpecifier;
+
+        /**
+         * Verifies a ServiceLogSpecifier message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogSpecifier message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogSpecifier
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogSpecifier;
+
+        /**
+         * Creates a plain object from a ServiceLogSpecifier message. Also converts values to other types if specified.
+         * @param message ServiceLogSpecifier
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogSpecifier, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogSpecifier to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogGetRequest. */
+    interface IServiceLogGetRequest {
+
+        /** ServiceLogGetRequest serviceLogSpecifier */
+        serviceLogSpecifier?: (ServiceLogger.IServiceLogSpecifier[]|null);
+    }
+
+    /** Represents a ServiceLogGetRequest. */
+    class ServiceLogGetRequest implements IServiceLogGetRequest {
+
+        /**
+         * Constructs a new ServiceLogGetRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogGetRequest);
+
+        /** ServiceLogGetRequest serviceLogSpecifier. */
+        public serviceLogSpecifier: ServiceLogger.IServiceLogSpecifier[];
+
+        /**
+         * Creates a new ServiceLogGetRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogGetRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogGetRequest): ServiceLogger.ServiceLogGetRequest;
+
+        /**
+         * Encodes the specified ServiceLogGetRequest message. Does not implicitly {@link ServiceLogger.ServiceLogGetRequest.verify|verify} messages.
+         * @param message ServiceLogGetRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogGetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogGetRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogGetRequest.verify|verify} messages.
+         * @param message ServiceLogGetRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogGetRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogGetRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogGetRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogGetRequest;
+
+        /**
+         * Decodes a ServiceLogGetRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogGetRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogGetRequest;
+
+        /**
+         * Verifies a ServiceLogGetRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogGetRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogGetRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogGetRequest;
+
+        /**
+         * Creates a plain object from a ServiceLogGetRequest message. Also converts values to other types if specified.
+         * @param message ServiceLogGetRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogGetRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogGetRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogRecord. */
+    interface IServiceLogRecord {
+
+        /** ServiceLogRecord serviceLogId */
+        serviceLogId?: (number|Long|null);
+
+        /** ServiceLogRecord serviceInfoId */
+        serviceInfoId?: (number|Long|null);
+
+        /** ServiceLogRecord resourceId */
+        resourceId?: (number|Long|null);
+
+        /** ServiceLogRecord logger */
+        logger?: (string|null);
+
+        /** ServiceLogRecord logLevel */
+        logLevel?: (string|null);
+
+        /** ServiceLogRecord message */
+        message?: (string|null);
+
+        /** ServiceLogRecord exception */
+        exception?: (string|null);
+
+        /** ServiceLogRecord dateCreated */
+        dateCreated?: (string|null);
+    }
+
+    /** Represents a ServiceLogRecord. */
+    class ServiceLogRecord implements IServiceLogRecord {
+
+        /**
+         * Constructs a new ServiceLogRecord.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogRecord);
+
+        /** ServiceLogRecord serviceLogId. */
+        public serviceLogId: (number|Long);
+
+        /** ServiceLogRecord serviceInfoId. */
+        public serviceInfoId: (number|Long);
+
+        /** ServiceLogRecord resourceId. */
+        public resourceId: (number|Long);
+
+        /** ServiceLogRecord logger. */
+        public logger: string;
+
+        /** ServiceLogRecord logLevel. */
+        public logLevel: string;
+
+        /** ServiceLogRecord message. */
+        public message: string;
+
+        /** ServiceLogRecord exception. */
+        public exception: string;
+
+        /** ServiceLogRecord dateCreated. */
+        public dateCreated: string;
+
+        /**
+         * Creates a new ServiceLogRecord instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogRecord instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogRecord): ServiceLogger.ServiceLogRecord;
+
+        /**
+         * Encodes the specified ServiceLogRecord message. Does not implicitly {@link ServiceLogger.ServiceLogRecord.verify|verify} messages.
+         * @param message ServiceLogRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogRecord message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogRecord.verify|verify} messages.
+         * @param message ServiceLogRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogRecord message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogRecord;
+
+        /**
+         * Decodes a ServiceLogRecord message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogRecord;
+
+        /**
+         * Verifies a ServiceLogRecord message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogRecord message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogRecord
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogRecord;
+
+        /**
+         * Creates a plain object from a ServiceLogRecord message. Also converts values to other types if specified.
+         * @param message ServiceLogRecord
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogRecord, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogRecord to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogAddRequest. */
+    interface IServiceLogAddRequest {
+
+        /** ServiceLogAddRequest entry */
+        entry?: (ServiceLogger.IServiceLogRecord[]|null);
+    }
+
+    /** Represents a ServiceLogAddRequest. */
+    class ServiceLogAddRequest implements IServiceLogAddRequest {
+
+        /**
+         * Constructs a new ServiceLogAddRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogAddRequest);
+
+        /** ServiceLogAddRequest entry. */
+        public entry: ServiceLogger.IServiceLogRecord[];
+
+        /**
+         * Creates a new ServiceLogAddRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogAddRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogAddRequest): ServiceLogger.ServiceLogAddRequest;
+
+        /**
+         * Encodes the specified ServiceLogAddRequest message. Does not implicitly {@link ServiceLogger.ServiceLogAddRequest.verify|verify} messages.
+         * @param message ServiceLogAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogAddRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogAddRequest.verify|verify} messages.
+         * @param message ServiceLogAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogAddRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogAddRequest;
+
+        /**
+         * Decodes a ServiceLogAddRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogAddRequest;
+
+        /**
+         * Verifies a ServiceLogAddRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogAddRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogAddRequest;
+
+        /**
+         * Creates a plain object from a ServiceLogAddRequest message. Also converts values to other types if specified.
+         * @param message ServiceLogAddRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogAddRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogResponse. */
+    interface IServiceLogResponse {
+
+        /** ServiceLogResponse entry */
+        entry?: (ServiceLogger.IServiceLogRecord[]|null);
+    }
+
+    /** Represents a ServiceLogResponse. */
+    class ServiceLogResponse implements IServiceLogResponse {
+
+        /**
+         * Constructs a new ServiceLogResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogResponse);
+
+        /** ServiceLogResponse entry. */
+        public entry: ServiceLogger.IServiceLogRecord[];
+
+        /**
+         * Creates a new ServiceLogResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogResponse instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogResponse): ServiceLogger.ServiceLogResponse;
+
+        /**
+         * Encodes the specified ServiceLogResponse message. Does not implicitly {@link ServiceLogger.ServiceLogResponse.verify|verify} messages.
+         * @param message ServiceLogResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogResponse message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogResponse.verify|verify} messages.
+         * @param message ServiceLogResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogResponse;
+
+        /**
+         * Decodes a ServiceLogResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogResponse;
+
+        /**
+         * Verifies a ServiceLogResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogResponse
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogResponse;
+
+        /**
+         * Creates a plain object from a ServiceLogResponse message. Also converts values to other types if specified.
+         * @param message ServiceLogResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogClearRequest. */
+    interface IServiceLogClearRequest {
+
+        /** ServiceLogClearRequest useDefaults */
+        useDefaults?: (boolean|null);
+
+        /** ServiceLogClearRequest serviceTypeId */
+        serviceTypeId?: (number|Long|null);
+
+        /** ServiceLogClearRequest daysOld */
+        daysOld?: (number|null);
+
+        /** ServiceLogClearRequest hoursOld */
+        hoursOld?: (number|null);
+
+        /** ServiceLogClearRequest resourceIdRange */
+        resourceIdRange?: (ServiceLogger.IIdRange[]|null);
+    }
+
+    /** This is a request to clear the SSO Service Provider log */
+    class ServiceLogClearRequest implements IServiceLogClearRequest {
+
+        /**
+         * Constructs a new ServiceLogClearRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogClearRequest);
+
+        /** ServiceLogClearRequest useDefaults. */
+        public useDefaults: boolean;
+
+        /** ServiceLogClearRequest serviceTypeId. */
+        public serviceTypeId: (number|Long);
+
+        /** ServiceLogClearRequest daysOld. */
+        public daysOld: number;
+
+        /** ServiceLogClearRequest hoursOld. */
+        public hoursOld: number;
+
+        /** ServiceLogClearRequest resourceIdRange. */
+        public resourceIdRange: ServiceLogger.IIdRange[];
+
+        /**
+         * Creates a new ServiceLogClearRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogClearRequest instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogClearRequest): ServiceLogger.ServiceLogClearRequest;
+
+        /**
+         * Encodes the specified ServiceLogClearRequest message. Does not implicitly {@link ServiceLogger.ServiceLogClearRequest.verify|verify} messages.
+         * @param message ServiceLogClearRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogClearRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogClearRequest message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogClearRequest.verify|verify} messages.
+         * @param message ServiceLogClearRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogClearRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogClearRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogClearRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogClearRequest;
+
+        /**
+         * Decodes a ServiceLogClearRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogClearRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogClearRequest;
+
+        /**
+         * Verifies a ServiceLogClearRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogClearRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogClearRequest
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogClearRequest;
+
+        /**
+         * Creates a plain object from a ServiceLogClearRequest message. Also converts values to other types if specified.
+         * @param message ServiceLogClearRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogClearRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogClearRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ServiceLogClearResponse. */
+    interface IServiceLogClearResponse {
+
+        /** ServiceLogClearResponse serviceTypeId */
+        serviceTypeId?: (number|Long|null);
+
+        /** ServiceLogClearResponse serviceName */
+        serviceName?: (string|null);
+
+        /** ServiceLogClearResponse resourceIdRange */
+        resourceIdRange?: (ServiceLogger.IIdRange[]|null);
+
+        /** ServiceLogClearResponse numDeleted */
+        numDeleted?: (number|null);
+
+        /** ServiceLogClearResponse numRemaining */
+        numRemaining?: (number|null);
+    }
+
+    /** This is the response from the sso_log_clear command */
+    class ServiceLogClearResponse implements IServiceLogClearResponse {
+
+        /**
+         * Constructs a new ServiceLogClearResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: ServiceLogger.IServiceLogClearResponse);
+
+        /** ServiceLogClearResponse serviceTypeId. */
+        public serviceTypeId: (number|Long);
+
+        /** ServiceLogClearResponse serviceName. */
+        public serviceName: string;
+
+        /** ServiceLogClearResponse resourceIdRange. */
+        public resourceIdRange: ServiceLogger.IIdRange[];
+
+        /** ServiceLogClearResponse numDeleted. */
+        public numDeleted: number;
+
+        /** ServiceLogClearResponse numRemaining. */
+        public numRemaining: number;
+
+        /**
+         * Creates a new ServiceLogClearResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServiceLogClearResponse instance
+         */
+        public static create(properties?: ServiceLogger.IServiceLogClearResponse): ServiceLogger.ServiceLogClearResponse;
+
+        /**
+         * Encodes the specified ServiceLogClearResponse message. Does not implicitly {@link ServiceLogger.ServiceLogClearResponse.verify|verify} messages.
+         * @param message ServiceLogClearResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: ServiceLogger.IServiceLogClearResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServiceLogClearResponse message, length delimited. Does not implicitly {@link ServiceLogger.ServiceLogClearResponse.verify|verify} messages.
+         * @param message ServiceLogClearResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: ServiceLogger.IServiceLogClearResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServiceLogClearResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServiceLogClearResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServiceLogger.ServiceLogClearResponse;
+
+        /**
+         * Decodes a ServiceLogClearResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServiceLogClearResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServiceLogger.ServiceLogClearResponse;
+
+        /**
+         * Verifies a ServiceLogClearResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServiceLogClearResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServiceLogClearResponse
+         */
+        public static fromObject(object: { [k: string]: any }): ServiceLogger.ServiceLogClearResponse;
+
+        /**
+         * Creates a plain object from a ServiceLogClearResponse message. Also converts values to other types if specified.
+         * @param message ServiceLogClearResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: ServiceLogger.ServiceLogClearResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServiceLogClearResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
+/** Namespace SsoCloud. */
+export namespace SsoCloud {
+
+    /** Authentication protocols we support. */
+    enum AuthProtocolType {
+        SAML2 = 0
+    }
+
+    /** Datatypes of SsoCloudSettings */
+    enum DataType {
+        ANY = 0,
+        BOOLEAN = 1,
+        INTEGER = 2,
+        STRING = 3,
+        BYTES = 4,
+        URL = 5,
+        com_keepersecurity_proto_SsoCloud_DataType = 6,
+        com_keepersecurity_proto_SsoCloud_AuthProtocolType = 7,
+        com_keepersecurity_proto_SsoCloud_SsoIdpType = 8
+    }
+
+    /** This is how the client can change a Configuration setting */
+    enum SsoCloudSettingOperationType {
+        SET = 0,
+        GET = 1,
+        DELETE = 2,
+        RESET_TO_DEFAULT = 3
+    }
+
+    /** SsoIdpType enum. */
+    enum SsoIdpType {
+        XX_UNUSED = 0,
+        GENERIC = 1,
+        F5 = 2,
+        GOOGLE = 3,
+        OKTA = 4,
+        ADFS = 5,
+        AZURE = 6,
+        ONELOGIN = 7
+    }
+
+    /** Properties of a SsoCloudSettingValue. */
+    interface ISsoCloudSettingValue {
+
+        /** SsoCloudSettingValue settingId */
+        settingId?: (string|null);
+
+        /** SsoCloudSettingValue label */
+        label?: (string|null);
+
+        /** SsoCloudSettingValue value */
+        value?: (string|null);
+
+        /** SsoCloudSettingValue valueType */
+        valueType?: (SsoCloud.DataType|null);
+
+        /** SsoCloudSettingValue ssoRevision */
+        ssoRevision?: (number|null);
+
+        /** SsoCloudSettingValue lastModified */
+        lastModified?: (string|null);
+
+        /** SsoCloudSettingValue isFromFile */
+        isFromFile?: (boolean|null);
+
+        /** SsoCloudSettingValue isEditable */
+        isEditable?: (boolean|null);
+
+        /** SsoCloudSettingValue isRequired */
+        isRequired?: (boolean|null);
+    }
+
+    /** This is the value of a Configuration setting */
+    class SsoCloudSettingValue implements ISsoCloudSettingValue {
+
+        /**
+         * Constructs a new SsoCloudSettingValue.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSettingValue);
+
+        /** SsoCloudSettingValue settingId. */
+        public settingId: string;
+
+        /** SsoCloudSettingValue label. */
+        public label: string;
+
+        /** SsoCloudSettingValue value. */
+        public value: string;
+
+        /** SsoCloudSettingValue valueType. */
+        public valueType: SsoCloud.DataType;
+
+        /** SsoCloudSettingValue ssoRevision. */
+        public ssoRevision: number;
+
+        /** SsoCloudSettingValue lastModified. */
+        public lastModified: string;
+
+        /** SsoCloudSettingValue isFromFile. */
+        public isFromFile: boolean;
+
+        /** SsoCloudSettingValue isEditable. */
+        public isEditable: boolean;
+
+        /** SsoCloudSettingValue isRequired. */
+        public isRequired: boolean;
+
+        /**
+         * Creates a new SsoCloudSettingValue instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSettingValue instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSettingValue): SsoCloud.SsoCloudSettingValue;
+
+        /**
+         * Encodes the specified SsoCloudSettingValue message. Does not implicitly {@link SsoCloud.SsoCloudSettingValue.verify|verify} messages.
+         * @param message SsoCloudSettingValue message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSettingValue, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSettingValue message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSettingValue.verify|verify} messages.
+         * @param message SsoCloudSettingValue message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSettingValue, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSettingValue message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSettingValue
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSettingValue;
+
+        /**
+         * Decodes a SsoCloudSettingValue message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSettingValue
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSettingValue;
+
+        /**
+         * Verifies a SsoCloudSettingValue message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSettingValue message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSettingValue
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSettingValue;
+
+        /**
+         * Creates a plain object from a SsoCloudSettingValue message. Also converts values to other types if specified.
+         * @param message SsoCloudSettingValue
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSettingValue, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSettingValue to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudSettingAction. */
+    interface ISsoCloudSettingAction {
+
+        /** SsoCloudSettingAction settingId */
+        settingId?: (string|null);
+
+        /** SsoCloudSettingAction operation */
+        operation?: (SsoCloud.SsoCloudSettingOperationType|null);
+
+        /** SsoCloudSettingAction value */
+        value?: (string|null);
+
+        /** SsoCloudSettingAction ssoRevision */
+        ssoRevision?: (number|null);
+    }
+
+    /** This performs an edit operation on a Configuration setting */
+    class SsoCloudSettingAction implements ISsoCloudSettingAction {
+
+        /**
+         * Constructs a new SsoCloudSettingAction.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSettingAction);
+
+        /** SsoCloudSettingAction settingId. */
+        public settingId: string;
+
+        /** SsoCloudSettingAction operation. */
+        public operation: SsoCloud.SsoCloudSettingOperationType;
+
+        /** SsoCloudSettingAction value. */
+        public value: string;
+
+        /** SsoCloudSettingAction ssoRevision. */
+        public ssoRevision: number;
+
+        /**
+         * Creates a new SsoCloudSettingAction instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSettingAction instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSettingAction): SsoCloud.SsoCloudSettingAction;
+
+        /**
+         * Encodes the specified SsoCloudSettingAction message. Does not implicitly {@link SsoCloud.SsoCloudSettingAction.verify|verify} messages.
+         * @param message SsoCloudSettingAction message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSettingAction, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSettingAction message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSettingAction.verify|verify} messages.
+         * @param message SsoCloudSettingAction message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSettingAction, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSettingAction message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSettingAction
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSettingAction;
+
+        /**
+         * Decodes a SsoCloudSettingAction message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSettingAction
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSettingAction;
+
+        /**
+         * Verifies a SsoCloudSettingAction message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSettingAction message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSettingAction
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSettingAction;
+
+        /**
+         * Creates a plain object from a SsoCloudSettingAction message. Also converts values to other types if specified.
+         * @param message SsoCloudSettingAction
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSettingAction, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSettingAction to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudConfigurationRequest. */
+    interface ISsoCloudConfigurationRequest {
+
+        /** SsoCloudConfigurationRequest ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SsoCloudConfigurationRequest ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+
+        /** SsoCloudConfigurationRequest name */
+        name?: (string|null);
+
+        /** SsoCloudConfigurationRequest ssoAuthProtocolType */
+        ssoAuthProtocolType?: (SsoCloud.AuthProtocolType|null);
+
+        /** SsoCloudConfigurationRequest ssoCloudSettingAction */
+        ssoCloudSettingAction?: (SsoCloud.ISsoCloudSettingAction[]|null);
+    }
+
+    /** Requesting the value of or a change to an SSO Configuration */
+    class SsoCloudConfigurationRequest implements ISsoCloudConfigurationRequest {
+
+        /**
+         * Constructs a new SsoCloudConfigurationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudConfigurationRequest);
+
+        /** SsoCloudConfigurationRequest ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SsoCloudConfigurationRequest ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /** SsoCloudConfigurationRequest name. */
+        public name: string;
+
+        /** SsoCloudConfigurationRequest ssoAuthProtocolType. */
+        public ssoAuthProtocolType: SsoCloud.AuthProtocolType;
+
+        /** SsoCloudConfigurationRequest ssoCloudSettingAction. */
+        public ssoCloudSettingAction: SsoCloud.ISsoCloudSettingAction[];
+
+        /**
+         * Creates a new SsoCloudConfigurationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudConfigurationRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudConfigurationRequest): SsoCloud.SsoCloudConfigurationRequest;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationRequest message. Does not implicitly {@link SsoCloud.SsoCloudConfigurationRequest.verify|verify} messages.
+         * @param message SsoCloudConfigurationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudConfigurationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudConfigurationRequest.verify|verify} messages.
+         * @param message SsoCloudConfigurationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudConfigurationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudConfigurationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudConfigurationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudConfigurationRequest;
+
+        /**
+         * Decodes a SsoCloudConfigurationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudConfigurationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudConfigurationRequest;
+
+        /**
+         * Verifies a SsoCloudConfigurationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudConfigurationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudConfigurationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudConfigurationRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudConfigurationRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudConfigurationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudConfigurationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudConfigurationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudConfigurationResponse. */
+    interface ISsoCloudConfigurationResponse {
+
+        /** SsoCloudConfigurationResponse ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SsoCloudConfigurationResponse ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+
+        /** SsoCloudConfigurationResponse enterpriseId */
+        enterpriseId?: (number|Long|null);
+
+        /** SsoCloudConfigurationResponse name */
+        name?: (string|null);
+
+        /** SsoCloudConfigurationResponse protocol */
+        protocol?: (string|null);
+
+        /** SsoCloudConfigurationResponse lastModified */
+        lastModified?: (string|null);
+
+        /** SsoCloudConfigurationResponse ssoCloudSettingValue */
+        ssoCloudSettingValue?: (SsoCloud.ISsoCloudSettingValue[]|null);
+    }
+
+    /** This is the response to an SsoConfigurationRequest */
+    class SsoCloudConfigurationResponse implements ISsoCloudConfigurationResponse {
+
+        /**
+         * Constructs a new SsoCloudConfigurationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudConfigurationResponse);
+
+        /** SsoCloudConfigurationResponse ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SsoCloudConfigurationResponse ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /** SsoCloudConfigurationResponse enterpriseId. */
+        public enterpriseId: (number|Long);
+
+        /** SsoCloudConfigurationResponse name. */
+        public name: string;
+
+        /** SsoCloudConfigurationResponse protocol. */
+        public protocol: string;
+
+        /** SsoCloudConfigurationResponse lastModified. */
+        public lastModified: string;
+
+        /** SsoCloudConfigurationResponse ssoCloudSettingValue. */
+        public ssoCloudSettingValue: SsoCloud.ISsoCloudSettingValue[];
+
+        /**
+         * Creates a new SsoCloudConfigurationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudConfigurationResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudConfigurationResponse): SsoCloud.SsoCloudConfigurationResponse;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationResponse message. Does not implicitly {@link SsoCloud.SsoCloudConfigurationResponse.verify|verify} messages.
+         * @param message SsoCloudConfigurationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudConfigurationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudConfigurationResponse.verify|verify} messages.
+         * @param message SsoCloudConfigurationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudConfigurationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudConfigurationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudConfigurationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudConfigurationResponse;
+
+        /**
+         * Decodes a SsoCloudConfigurationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudConfigurationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudConfigurationResponse;
+
+        /**
+         * Verifies a SsoCloudConfigurationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudConfigurationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudConfigurationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudConfigurationResponse;
+
+        /**
+         * Creates a plain object from a SsoCloudConfigurationResponse message. Also converts values to other types if specified.
+         * @param message SsoCloudConfigurationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudConfigurationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudConfigurationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoIdpTypeRequest. */
+    interface ISsoIdpTypeRequest {
+
+        /** SsoIdpTypeRequest ssoIdpTypeId */
+        ssoIdpTypeId?: (number|null);
+
+        /** SsoIdpTypeRequest tag */
+        tag?: (string|null);
+
+        /** SsoIdpTypeRequest label */
+        label?: (string|null);
+    }
+
+    /** This is a request to the IdpType API. */
+    class SsoIdpTypeRequest implements ISsoIdpTypeRequest {
+
+        /**
+         * Constructs a new SsoIdpTypeRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoIdpTypeRequest);
+
+        /** SsoIdpTypeRequest ssoIdpTypeId. */
+        public ssoIdpTypeId: number;
+
+        /** SsoIdpTypeRequest tag. */
+        public tag: string;
+
+        /** SsoIdpTypeRequest label. */
+        public label: string;
+
+        /**
+         * Creates a new SsoIdpTypeRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoIdpTypeRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoIdpTypeRequest): SsoCloud.SsoIdpTypeRequest;
+
+        /**
+         * Encodes the specified SsoIdpTypeRequest message. Does not implicitly {@link SsoCloud.SsoIdpTypeRequest.verify|verify} messages.
+         * @param message SsoIdpTypeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoIdpTypeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoIdpTypeRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoIdpTypeRequest.verify|verify} messages.
+         * @param message SsoIdpTypeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoIdpTypeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoIdpTypeRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoIdpTypeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoIdpTypeRequest;
+
+        /**
+         * Decodes a SsoIdpTypeRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoIdpTypeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoIdpTypeRequest;
+
+        /**
+         * Verifies a SsoIdpTypeRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoIdpTypeRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoIdpTypeRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoIdpTypeRequest;
+
+        /**
+         * Creates a plain object from a SsoIdpTypeRequest message. Also converts values to other types if specified.
+         * @param message SsoIdpTypeRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoIdpTypeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoIdpTypeRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoIdpTypeResponse. */
+    interface ISsoIdpTypeResponse {
+
+        /** SsoIdpTypeResponse ssoIdpTypeId */
+        ssoIdpTypeId?: (number|null);
+
+        /** SsoIdpTypeResponse tag */
+        tag?: (number|null);
+
+        /** SsoIdpTypeResponse label */
+        label?: (number|null);
+    }
+
+    /** This is a response from the IdpType API calls. */
+    class SsoIdpTypeResponse implements ISsoIdpTypeResponse {
+
+        /**
+         * Constructs a new SsoIdpTypeResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoIdpTypeResponse);
+
+        /** SsoIdpTypeResponse ssoIdpTypeId. */
+        public ssoIdpTypeId: number;
+
+        /** SsoIdpTypeResponse tag. */
+        public tag: number;
+
+        /** SsoIdpTypeResponse label. */
+        public label: number;
+
+        /**
+         * Creates a new SsoIdpTypeResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoIdpTypeResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoIdpTypeResponse): SsoCloud.SsoIdpTypeResponse;
+
+        /**
+         * Encodes the specified SsoIdpTypeResponse message. Does not implicitly {@link SsoCloud.SsoIdpTypeResponse.verify|verify} messages.
+         * @param message SsoIdpTypeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoIdpTypeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoIdpTypeResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoIdpTypeResponse.verify|verify} messages.
+         * @param message SsoIdpTypeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoIdpTypeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoIdpTypeResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoIdpTypeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoIdpTypeResponse;
+
+        /**
+         * Decodes a SsoIdpTypeResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoIdpTypeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoIdpTypeResponse;
+
+        /**
+         * Verifies a SsoIdpTypeResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoIdpTypeResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoIdpTypeResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoIdpTypeResponse;
+
+        /**
+         * Creates a plain object from a SsoIdpTypeResponse message. Also converts values to other types if specified.
+         * @param message SsoIdpTypeResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoIdpTypeResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoIdpTypeResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudSAMLLogRequest. */
+    interface ISsoCloudSAMLLogRequest {
+
+        /** SsoCloudSAMLLogRequest ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+    }
+
+    /** This is the request for the SAML logs of a service provider */
+    class SsoCloudSAMLLogRequest implements ISsoCloudSAMLLogRequest {
+
+        /**
+         * Constructs a new SsoCloudSAMLLogRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSAMLLogRequest);
+
+        /** SsoCloudSAMLLogRequest ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /**
+         * Creates a new SsoCloudSAMLLogRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSAMLLogRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSAMLLogRequest): SsoCloud.SsoCloudSAMLLogRequest;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogRequest message. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogRequest.verify|verify} messages.
+         * @param message SsoCloudSAMLLogRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSAMLLogRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogRequest.verify|verify} messages.
+         * @param message SsoCloudSAMLLogRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSAMLLogRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSAMLLogRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSAMLLogRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSAMLLogRequest;
+
+        /**
+         * Decodes a SsoCloudSAMLLogRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSAMLLogRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSAMLLogRequest;
+
+        /**
+         * Verifies a SsoCloudSAMLLogRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSAMLLogRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSAMLLogRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSAMLLogRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudSAMLLogRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudSAMLLogRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSAMLLogRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSAMLLogRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudSAMLLogEntry. */
+    interface ISsoCloudSAMLLogEntry {
+
+        /** SsoCloudSAMLLogEntry serverTime */
+        serverTime?: (string|null);
+
+        /** SsoCloudSAMLLogEntry direction */
+        direction?: (string|null);
+
+        /** SsoCloudSAMLLogEntry messageType */
+        messageType?: (string|null);
+
+        /** SsoCloudSAMLLogEntry messageIssued */
+        messageIssued?: (string|null);
+
+        /** SsoCloudSAMLLogEntry fromEntityId */
+        fromEntityId?: (string|null);
+
+        /** SsoCloudSAMLLogEntry samlStatus */
+        samlStatus?: (string|null);
+
+        /** SsoCloudSAMLLogEntry relayState */
+        relayState?: (string|null);
+
+        /** SsoCloudSAMLLogEntry samlContent */
+        samlContent?: (string|null);
+
+        /** SsoCloudSAMLLogEntry isSigned */
+        isSigned?: (boolean|null);
+
+        /** SsoCloudSAMLLogEntry isOK */
+        isOK?: (boolean|null);
+    }
+
+    /** This represents one SAML message in the log. */
+    class SsoCloudSAMLLogEntry implements ISsoCloudSAMLLogEntry {
+
+        /**
+         * Constructs a new SsoCloudSAMLLogEntry.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSAMLLogEntry);
+
+        /** SsoCloudSAMLLogEntry serverTime. */
+        public serverTime: string;
+
+        /** SsoCloudSAMLLogEntry direction. */
+        public direction: string;
+
+        /** SsoCloudSAMLLogEntry messageType. */
+        public messageType: string;
+
+        /** SsoCloudSAMLLogEntry messageIssued. */
+        public messageIssued: string;
+
+        /** SsoCloudSAMLLogEntry fromEntityId. */
+        public fromEntityId: string;
+
+        /** SsoCloudSAMLLogEntry samlStatus. */
+        public samlStatus: string;
+
+        /** SsoCloudSAMLLogEntry relayState. */
+        public relayState: string;
+
+        /** SsoCloudSAMLLogEntry samlContent. */
+        public samlContent: string;
+
+        /** SsoCloudSAMLLogEntry isSigned. */
+        public isSigned: boolean;
+
+        /** SsoCloudSAMLLogEntry isOK. */
+        public isOK: boolean;
+
+        /**
+         * Creates a new SsoCloudSAMLLogEntry instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSAMLLogEntry instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSAMLLogEntry): SsoCloud.SsoCloudSAMLLogEntry;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogEntry message. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogEntry.verify|verify} messages.
+         * @param message SsoCloudSAMLLogEntry message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSAMLLogEntry, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogEntry message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogEntry.verify|verify} messages.
+         * @param message SsoCloudSAMLLogEntry message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSAMLLogEntry, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSAMLLogEntry message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSAMLLogEntry
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSAMLLogEntry;
+
+        /**
+         * Decodes a SsoCloudSAMLLogEntry message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSAMLLogEntry
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSAMLLogEntry;
+
+        /**
+         * Verifies a SsoCloudSAMLLogEntry message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSAMLLogEntry message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSAMLLogEntry
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSAMLLogEntry;
+
+        /**
+         * Creates a plain object from a SsoCloudSAMLLogEntry message. Also converts values to other types if specified.
+         * @param message SsoCloudSAMLLogEntry
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSAMLLogEntry, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSAMLLogEntry to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudSAMLLogResponse. */
+    interface ISsoCloudSAMLLogResponse {
+
+        /** SsoCloudSAMLLogResponse ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SsoCloudSAMLLogResponse entry */
+        entry?: (SsoCloud.ISsoCloudSAMLLogEntry[]|null);
+    }
+
+    /** This represents an array of SAML responses from the log. */
+    class SsoCloudSAMLLogResponse implements ISsoCloudSAMLLogResponse {
+
+        /**
+         * Constructs a new SsoCloudSAMLLogResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSAMLLogResponse);
+
+        /** SsoCloudSAMLLogResponse ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SsoCloudSAMLLogResponse entry. */
+        public entry: SsoCloud.ISsoCloudSAMLLogEntry[];
+
+        /**
+         * Creates a new SsoCloudSAMLLogResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSAMLLogResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSAMLLogResponse): SsoCloud.SsoCloudSAMLLogResponse;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogResponse message. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogResponse.verify|verify} messages.
+         * @param message SsoCloudSAMLLogResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSAMLLogResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogResponse.verify|verify} messages.
+         * @param message SsoCloudSAMLLogResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSAMLLogResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSAMLLogResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSAMLLogResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSAMLLogResponse;
+
+        /**
+         * Decodes a SsoCloudSAMLLogResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSAMLLogResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSAMLLogResponse;
+
+        /**
+         * Verifies a SsoCloudSAMLLogResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSAMLLogResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSAMLLogResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSAMLLogResponse;
+
+        /**
+         * Creates a plain object from a SsoCloudSAMLLogResponse message. Also converts values to other types if specified.
+         * @param message SsoCloudSAMLLogResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSAMLLogResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSAMLLogResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudSAMLLogClearRequest. */
+    interface ISsoCloudSAMLLogClearRequest {
+
+        /** SsoCloudSAMLLogClearRequest ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+    }
+
+    /** This is a request to clear the SSO SAML log for a specific Service Provider */
+    class SsoCloudSAMLLogClearRequest implements ISsoCloudSAMLLogClearRequest {
+
+        /**
+         * Constructs a new SsoCloudSAMLLogClearRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSAMLLogClearRequest);
+
+        /** SsoCloudSAMLLogClearRequest ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /**
+         * Creates a new SsoCloudSAMLLogClearRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSAMLLogClearRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSAMLLogClearRequest): SsoCloud.SsoCloudSAMLLogClearRequest;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogClearRequest message. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogClearRequest.verify|verify} messages.
+         * @param message SsoCloudSAMLLogClearRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSAMLLogClearRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogClearRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogClearRequest.verify|verify} messages.
+         * @param message SsoCloudSAMLLogClearRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSAMLLogClearRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSAMLLogClearRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSAMLLogClearRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSAMLLogClearRequest;
+
+        /**
+         * Decodes a SsoCloudSAMLLogClearRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSAMLLogClearRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSAMLLogClearRequest;
+
+        /**
+         * Verifies a SsoCloudSAMLLogClearRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSAMLLogClearRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSAMLLogClearRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSAMLLogClearRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudSAMLLogClearRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudSAMLLogClearRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSAMLLogClearRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSAMLLogClearRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudSAMLLogClearResponse. */
+    interface ISsoCloudSAMLLogClearResponse {
+
+        /** SsoCloudSAMLLogClearResponse ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+    }
+
+    /** This is the response from the sso_log_saml_clear command */
+    class SsoCloudSAMLLogClearResponse implements ISsoCloudSAMLLogClearResponse {
+
+        /**
+         * Constructs a new SsoCloudSAMLLogClearResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudSAMLLogClearResponse);
+
+        /** SsoCloudSAMLLogClearResponse ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /**
+         * Creates a new SsoCloudSAMLLogClearResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudSAMLLogClearResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudSAMLLogClearResponse): SsoCloud.SsoCloudSAMLLogClearResponse;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogClearResponse message. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogClearResponse.verify|verify} messages.
+         * @param message SsoCloudSAMLLogClearResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudSAMLLogClearResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudSAMLLogClearResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudSAMLLogClearResponse.verify|verify} messages.
+         * @param message SsoCloudSAMLLogClearResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudSAMLLogClearResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudSAMLLogClearResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudSAMLLogClearResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudSAMLLogClearResponse;
+
+        /**
+         * Decodes a SsoCloudSAMLLogClearResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudSAMLLogClearResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudSAMLLogClearResponse;
+
+        /**
+         * Verifies a SsoCloudSAMLLogClearResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudSAMLLogClearResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudSAMLLogClearResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudSAMLLogClearResponse;
+
+        /**
+         * Creates a plain object from a SsoCloudSAMLLogClearResponse message. Also converts values to other types if specified.
+         * @param message SsoCloudSAMLLogClearResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudSAMLLogClearResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudSAMLLogClearResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudServiceProviderUpdateRequest. */
+    interface ISsoCloudServiceProviderUpdateRequest {
+
+        /** SsoCloudServiceProviderUpdateRequest ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SsoCloudServiceProviderUpdateRequest ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+    }
+
+    /**
+     * This is a request to set the SSO Configuration for an SSO Service Provider, by ID.
+     * The response is an instance of SsoCloudConfigurationRequest.
+     */
+    class SsoCloudServiceProviderUpdateRequest implements ISsoCloudServiceProviderUpdateRequest {
+
+        /**
+         * Constructs a new SsoCloudServiceProviderUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudServiceProviderUpdateRequest);
+
+        /** SsoCloudServiceProviderUpdateRequest ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SsoCloudServiceProviderUpdateRequest ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /**
+         * Creates a new SsoCloudServiceProviderUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudServiceProviderUpdateRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudServiceProviderUpdateRequest): SsoCloud.SsoCloudServiceProviderUpdateRequest;
+
+        /**
+         * Encodes the specified SsoCloudServiceProviderUpdateRequest message. Does not implicitly {@link SsoCloud.SsoCloudServiceProviderUpdateRequest.verify|verify} messages.
+         * @param message SsoCloudServiceProviderUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudServiceProviderUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudServiceProviderUpdateRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudServiceProviderUpdateRequest.verify|verify} messages.
+         * @param message SsoCloudServiceProviderUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudServiceProviderUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudServiceProviderUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudServiceProviderUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudServiceProviderUpdateRequest;
+
+        /**
+         * Decodes a SsoCloudServiceProviderUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudServiceProviderUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudServiceProviderUpdateRequest;
+
+        /**
+         * Verifies a SsoCloudServiceProviderUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudServiceProviderUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudServiceProviderUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudServiceProviderUpdateRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudServiceProviderUpdateRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudServiceProviderUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudServiceProviderUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudServiceProviderUpdateRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
