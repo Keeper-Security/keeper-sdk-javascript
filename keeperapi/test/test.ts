@@ -10,7 +10,7 @@ import {
     AccountSummaryCommand,
     EnterpriseDataInclude,
     GetEnterpriseDataCommand,
-    RequestDownloadCommand
+    RequestDownloadCommand, ResendEnterpriseInviteCommand
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {recordTypesGetMessage} from '../src/restMessages'
@@ -360,6 +360,14 @@ async function printCompany() {
     }
 }
 
+async function testResendInvite() {
+    const auth = await login()
+    const resendCommand = new ResendEnterpriseInviteCommand()
+    resendCommand.enterprise_user_id = 3195455668607
+    const resp = await auth.executeCommand(resendCommand)
+    console.log(resp)
+}
+
 async function getVendorEnterprise() {
     let privateKey = '-----BEGIN PRIVATE KEY-----\n' +
         'MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCrvFUEzWbHjy2H\n' +
@@ -681,41 +689,13 @@ async function testKeys() {
 }
 // testKeys().finally()
 
-async function provideECKey() {
-    const auth = await login()
-    const keysMessage = getUserKeysMessage()
-    const userKeys = await auth.executeRest(keysMessage);
-    console.log(userKeys)
-    if (userKeys.keys.length !== 0) {
-        return
-    }
-    const pair = generateKeyPairSync('ec', {
-        namedCurve: 'P-256'
-    })
-    const publicKey = pair.publicKey.export({
-        format: 'der',
-        type: 'spki'
-    })
-    const privateKey = pair.privateKey.export({
-        format: 'der',
-        type: 'sec1'
-    })
-    const encryptedPrivateKey = await platform.aesGcmEncrypt(privateKey, auth.dataKey)
-    const keyAddMessage = addUserKeyMessage({
-        keyUid: generateUidBytes(),
-        keyType: UserKeyType.KT_EC_256,
-        encryptedKey: encryptedPrivateKey,
-        publicKey: publicKey
-    })
-    await auth.executeRest(keyAddMessage);
-}
-
-const currentUser = 'admin@yozik.us'
-// const currentUser = 'saldoukhov@gmail.com'
+// const currentUser = 'admin@yozik.us'
+const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 
 // printCompany().finally();
-printVault().finally();
+// printVault().finally();
+testResendInvite().finally();
 // provideECKey().finally()
 // testCommand().finally();
 // testRecordShareViaRecord().finally();

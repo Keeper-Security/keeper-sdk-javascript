@@ -122,6 +122,10 @@ export class Auth {
     get username(): string {
         return this._username;
     }
+
+    get clientVersion(): string {
+        return this.endpoint.clientVersion;
+    }
 }
 
 async function decryptEncryptionParams(password: string, encryptionParams: string): Promise<Uint8Array> {

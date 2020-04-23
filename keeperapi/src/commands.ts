@@ -576,6 +576,16 @@ export class AcceptEnterpriseInviteCommand extends AuthorizedCommand {
     verification_code: string;
 }
 
+export class ResendEnterpriseInviteCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "resend_enterprise_invite"
+    }
+
+    enterprise_user_id: number;
+}
+
 // *************************
 // Responses
 // *************************

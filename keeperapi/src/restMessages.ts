@@ -27,8 +27,15 @@ function createMessage<TIn, TOut>(data: TIn, path: string, encoder: encoderClass
     }
 }
 
-export const registerDeviceWithKinfoMessage = (): RestMessage< {}, Authentication.IDevice> =>
+// new login
+
+export const registerDeviceMessage = (): RestMessage< {}, Authentication.IDevice> =>
     createMessage(null, 'authentication/register_device', null, Authentication.Device)
+
+export const verifyDeviceMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, Authentication.IUserDeviceStatus> =>
+    createMessage(data, 'authentication/verify_device', Authentication.DeviceVerificationRequest, Authentication.UserDeviceStatus)
+
+// end new login
 
 export const deviceMessage = (data: Authentication.IDeviceRequest): RestMessage<Authentication.IDeviceRequest, Authentication.IDeviceResponse> =>
     createMessage(data, 'authentication/get_device_token', Authentication.DeviceRequest, Authentication.DeviceResponse)
