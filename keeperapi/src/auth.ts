@@ -2,7 +2,7 @@ import {ClientConfiguration} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
-import {isTwoFactorResultCode, normal64, webSafe64, decryptFromStorage} from "./utils";
+import {isTwoFactorResultCode, normal64, webSafe64, decryptFromStorage, webSafe64FromBytes} from "./utils";
 import {RestMessage} from './restMessages'
 
 export interface AuthUI {
@@ -53,7 +53,7 @@ export class Auth {
             let preLoginResponse = await this.endpoint.getPreLogin(username);
             let salt = preLoginResponse.salt[0];
             let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
-            let authHash = await platform.calcAutoResponse(authHashKey);
+            let authHash = await platform.authVerifierAsString(authHashKey);
 
             let loginCommand = new LoginCommand();
             loginCommand.command = "login";
@@ -89,7 +89,7 @@ export class Auth {
             }
             this._sessionToken = loginResponse.session_token;
             this._username = username;
-            this.dataKey = await decryptEncryptionParams(password, loginResponse.keys.encryption_params);
+            this.dataKey = await decryptEncryptionParamsString(password, loginResponse.keys.encryption_params);
             this.privateKey = decryptFromStorage(loginResponse.keys.encrypted_private_key, this.dataKey);
         }
         catch (e) {
@@ -126,17 +126,46 @@ export class Auth {
     get clientVersion(): string {
         return this.endpoint.clientVersion;
     }
+
+    async get(path: string) {
+        return this.endpoint.get(path)
+    }
 }
 
-async function decryptEncryptionParams(password: string, encryptionParams: string): Promise<Uint8Array> {
+const iterationsToBytes = (iterations: number): Uint8Array => {
+    const iterationBytes = new ArrayBuffer(4)
+    new DataView(iterationBytes).setUint32(0, iterations)
+    const bytes = new Uint8Array(iterationBytes)
+    bytes[0] = 1 // version
+    return bytes
+};
+
+export async function createAuthVerifier(password: string, iterations: number): Promise<Uint8Array> {
+    const salt = platform.getRandomBytes(16);
+    const authHashKey = await platform.deriveKey(password, salt, iterations);
+    return Uint8Array.of(...iterationsToBytes(iterations), ...salt, ...authHashKey)
+}
+
+export async function createEncryptionParams(password: string, dataKey: Uint8Array, iterations: number): Promise<Uint8Array> {
+    const salt = platform.getRandomBytes(16);
+    const authHashKey = await platform.deriveKey(password, salt, iterations);
+    const doubledDataKey = Uint8Array.of(...dataKey, ...dataKey)
+    const encryptedDoubledKey = await platform.aesCbcEncrypt(doubledDataKey, authHashKey, false)
+    return Uint8Array.of(...iterationsToBytes(iterations), ...salt, ...encryptedDoubledKey)
+}
+
+async function decryptEncryptionParamsString(password: string, encryptionParams: string): Promise<Uint8Array> {
+    return decryptEncryptionParams(password, platform.base64ToBytes(normal64(encryptionParams)))
+}
+
+export async function decryptEncryptionParams(password: string, encryptionParams: Uint8Array): Promise<Uint8Array> {
     let corruptedEncryptionParametersMessage = "Corrupted encryption parameters";
-    let eParams = platform.base64ToBytes(normal64(encryptionParams));
-    if (eParams[0] !== 1)
+    if (encryptionParams[0] !== 1)
         throw new Error(corruptedEncryptionParametersMessage);
-    let iterations = (eParams[1] << 16) + (eParams[2] << 8) + eParams[3];
-    let saltBytes = eParams.subarray(4, 20);
+    let iterations = (encryptionParams[1] << 16) + (encryptionParams[2] << 8) + encryptionParams[3];
+    let saltBytes = encryptionParams.subarray(4, 20);
     let masterKey = await platform.deriveKey(password, saltBytes, iterations);
-    let encryptedDoubledDataKey = eParams.subarray(20);
+    let encryptedDoubledDataKey = encryptionParams.subarray(20);
     let doubledDataKey = await platform.aesCbcDecrypt(encryptedDoubledDataKey, masterKey, false);
     for (let i = 0; i < 32; i++) {
         if (doubledDataKey[i] !== doubledDataKey[i + 32]) {

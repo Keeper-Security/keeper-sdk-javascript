@@ -1,4 +1,4 @@
-import {Auth, AuthUI} from '../src/auth'
+import {Auth, AuthUI, createEncryptionParams, decryptEncryptionParams} from '../src/auth'
 import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
@@ -17,6 +17,7 @@ import {recordTypesGetMessage} from '../src/restMessages'
 import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
+import {prompt} from './testUtil'
 import RecordModifyResult = Records.RecordModifyResult;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -40,17 +41,6 @@ const authUI: AuthUI = {
         })
     }
 }
-
-const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-    rl.question(message, response => {
-        resolve(response)
-        rl.close()
-    });
-})
 
 async function printVault() {
     try {
@@ -689,13 +679,22 @@ async function testKeys() {
 }
 // testKeys().finally()
 
+async function testEncryptionParams() {
+    const dataKey = generateEncryptionKey();
+    console.log(dataKey)
+    const encParams = await createEncryptionParams('111111', dataKey, 1000)
+    const dataKey1 = await decryptEncryptionParams('111111', encParams);
+    console.log(dataKey1)
+}
+
 // const currentUser = 'admin@yozik.us'
-const currentUser = 'saldoukhov@gmail.com'
+// const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
+const currentUser = "saldoukhov+a23reg@keepersecurity.com"
 
 // printCompany().finally();
-// printVault().finally();
-testResendInvite().finally();
+printVault().finally();
+// testResendInvite().finally();
 // provideECKey().finally()
 // testCommand().finally();
 // testRecordShareViaRecord().finally();

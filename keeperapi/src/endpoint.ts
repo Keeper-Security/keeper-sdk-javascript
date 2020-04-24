@@ -1,4 +1,4 @@
-import {KeeperCommand} from './commands'
+import {KeeperCommand, KeeperHttpResponse} from './commands'
 import {Authentication} from './proto'
 import {platform} from './platform'
 import {isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
@@ -130,6 +130,10 @@ export class KeeperEndpoint {
                 }
             }
         }
+    }
+
+    async get(path: string): Promise<KeeperHttpResponse> {
+        return platform.get(this.getUrl(path), {})
     }
 
     private generateTransmissionKey(keyNumber: number) {

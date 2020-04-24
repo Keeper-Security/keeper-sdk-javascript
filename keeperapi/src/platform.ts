@@ -31,7 +31,9 @@ export interface Platform {
 
     deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
 
-    calcAutoResponse(key: Uint8Array): Promise<string>;
+    authVerifierAsString(key: Uint8Array): Promise<string>;
+
+    authVerifierAsBytes(key: Uint8Array): Promise<Uint8Array>;
 
     get(url: string, headers: any): Promise<KeeperHttpResponse>;
 

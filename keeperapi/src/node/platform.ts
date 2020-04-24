@@ -106,8 +106,12 @@ export const nodePlatform: Platform = class {
         return Promise.resolve(crypto.pbkdf2Sync(Buffer.from(password, "utf8"), saltBytes, iterations, 32, 'SHA256'));
     }
 
-    static calcAutoResponse(key: Uint8Array): Promise<string> {
+    static authVerifierAsString(key: Uint8Array): Promise<string> {
         return Promise.resolve(crypto.createHash("SHA256").update(key).digest("base64"));
+    }
+
+    static authVerifierAsBytes(key: Uint8Array): Promise<Uint8Array> {
+        return Promise.resolve(crypto.createHash("SHA256").update(key).digest());
     }
 
     static get(url: string, headers: any): Promise<KeeperHttpResponse> {
