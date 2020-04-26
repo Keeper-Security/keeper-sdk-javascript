@@ -13,7 +13,7 @@ import {
     RequestDownloadCommand, ResendEnterpriseInviteCommand
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {recordTypesGetMessage} from '../src/restMessages'
+import {accountSummaryMessage, recordTypesGetMessage} from '../src/restMessages'
 import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
@@ -64,6 +64,18 @@ async function testCommand() {
         let cmd = new AccountSummaryCommand();
         cmd.include = ["license", "settings", "group", "sync_log", "keys", "enforcements", "client_key", "images", "is_enterprise_admin", "security_keys", "personal_license"];
         let resp = await auth.executeCommand(cmd);
+        console.log(resp);
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function testRestAccountSummary() {
+    try {
+        let auth = await login()
+        let resp = await auth.executeRest(accountSummaryMessage({
+            summaryVersion: 1
+        }));
         console.log(resp);
     } catch (e) {
         console.log(e)
@@ -691,12 +703,14 @@ async function testEncryptionParams() {
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 const currentUser = "saldoukhov+a23reg@keepersecurity.com"
+// const currentUser = "vladimir+cw@keepersecurity.com"
 
 // printCompany().finally();
 printVault().finally();
 // testResendInvite().finally();
 // provideECKey().finally()
 // testCommand().finally();
+// testRestAccountSummary().finally();
 // testRecordShareViaRecord().finally();
 // testRecordShareViaFolder().finally();
 // testSharedLinkedRecordUpdate().finally();

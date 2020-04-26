@@ -6334,9 +6334,6 @@ export namespace AccountSummary {
 
         /** AccountSummaryRequest summaryVersion */
         summaryVersion?: (number|null);
-
-        /** AccountSummaryRequest userId */
-        userId?: (number|null);
     }
 
     /** Represents an AccountSummaryRequest. */
@@ -6350,9 +6347,6 @@ export namespace AccountSummary {
 
         /** AccountSummaryRequest summaryVersion. */
         public summaryVersion: number;
-
-        /** AccountSummaryRequest userId. */
-        public userId: number;
 
         /**
          * Creates a new AccountSummaryRequest instance using the specified properties.

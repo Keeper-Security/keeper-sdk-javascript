@@ -1217,10 +1217,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           summaryVersion: {
             type: "int32",
             id: 1
-          },
-          userId: {
-            type: "int32",
-            id: 2
           }
         }
       },

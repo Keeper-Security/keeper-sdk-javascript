@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {Authentication, Enterprise, Records} from './proto'
+import {AccountSummary, Authentication, Enterprise, Records} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -75,3 +75,6 @@ export const fileDownloadMessage = (data: Records.IFilesGetRequest): RestMessage
 
 export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Records.IFilesAddRequest, Records.IFilesAddResponse> =>
     createMessage(data, 'vault/files_add', Records.FilesAddRequest, Records.FilesAddResponse)
+
+export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryRequest): RestMessage<AccountSummary.IAccountSummaryRequest, AccountSummary.IAccountSummaryElements> =>
+    createMessage(data, 'login/account_summary', AccountSummary.AccountSummaryRequest, AccountSummary.AccountSummaryElements)
