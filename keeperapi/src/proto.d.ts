@@ -8129,8 +8129,8 @@ export namespace AccountSummary {
         /** Administrator subscriptionCode */
         subscriptionCode?: (string|null);
 
-        /** Administrator exiprationDate */
-        exiprationDate?: (string|null);
+        /** Administrator expirationDate */
+        expirationDate?: (string|null);
 
         /** Administrator purchaseDate */
         purchaseDate?: (string|null);
@@ -8169,8 +8169,8 @@ export namespace AccountSummary {
         /** Administrator subscriptionCode. */
         public subscriptionCode: string;
 
-        /** Administrator exiprationDate. */
-        public exiprationDate: string;
+        /** Administrator expirationDate. */
+        public expirationDate: string;
 
         /** Administrator purchaseDate. */
         public purchaseDate: string;

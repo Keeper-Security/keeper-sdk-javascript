@@ -1759,7 +1759,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 7
           },
-          exiprationDate: {
+          expirationDate: {
             type: "string",
             id: 8
           },
