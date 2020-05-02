@@ -231,17 +231,21 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 4
           },
-          encryptedTwoFactorToken: {
+          authResponse: {
             type: "bytes",
             id: 5
           },
+          mcEnterpriseId: {
+            type: "int32",
+            id: 6
+          },
           pushToken: {
             type: "string",
-            id: 6
+            id: 7
           },
           platform: {
             type: "string",
-            id: 7
+            id: 8
           }
         }
       },
@@ -425,6 +429,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "SessionTokenType",
             id: 11
+          },
+          additionalMessage: {
+            type: "string",
+            id: 12
           }
         }
       },
@@ -450,6 +458,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 5
           }
+        }
+      },
+      LicenseType: {
+        values: {
+          VAULT: 0,
+          CHAT: 1,
+          STORAGE: 2,
+          BREACHWATCH: 3
         }
       },
       OwnerlessRecord: {
@@ -2570,7 +2586,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 2
           },
-          ip: {
+          dontUseIp: {
             type: "string",
             id: 3
           },
@@ -2578,7 +2594,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 4
           },
-          deviceToken: {
+          dontUseDeviceToken: {
             type: "DeviceToken",
             id: 5
           },
@@ -2594,23 +2610,23 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 8
           },
-          vault: {
+          dontUseVault: {
             type: "LicenseToken",
             id: 9
           },
-          chat: {
+          dontUseChat: {
             type: "LicenseToken",
             id: 10
           },
-          storage: {
+          dontUseStorage: {
             type: "LicenseToken",
             id: 11
           },
-          breachWatch: {
+          dontUseBreachWatch: {
             type: "LicenseToken",
             id: 15
           },
-          accountType: {
+          dontUseAccountType: {
             type: "Authentication.AccountType",
             id: 12
           },
@@ -2626,9 +2642,30 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int32",
             id: 16
           },
-          offlineDisallowed: {
+          dontUseOfflineDisallowed: {
             type: "bool",
             id: 17
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 18
+          },
+          userLicenseStatus: {
+            rule: "repeated",
+            type: "UserLicenseStatus",
+            id: 19
+          }
+        }
+      },
+      UserLicenseStatus: {
+        fields: {
+          licenseType: {
+            type: "Authentication.LicenseType",
+            id: 1
+          },
+          expiration: {
+            type: "int64",
+            id: 2
           }
         }
       },

@@ -823,8 +823,11 @@ export namespace Authentication {
         /** LoginRequest timestampForAuth */
         timestampForAuth?: (number|Long|null);
 
-        /** LoginRequest encryptedTwoFactorToken */
-        encryptedTwoFactorToken?: (Uint8Array|null);
+        /** LoginRequest authResponse */
+        authResponse?: (Uint8Array|null);
+
+        /** LoginRequest mcEnterpriseId */
+        mcEnterpriseId?: (number|null);
 
         /** LoginRequest pushToken */
         pushToken?: (string|null);
@@ -854,8 +857,11 @@ export namespace Authentication {
         /** LoginRequest timestampForAuth. */
         public timestampForAuth: (number|Long);
 
-        /** LoginRequest encryptedTwoFactorToken. */
-        public encryptedTwoFactorToken: Uint8Array;
+        /** LoginRequest authResponse. */
+        public authResponse: Uint8Array;
+
+        /** LoginRequest mcEnterpriseId. */
+        public mcEnterpriseId: number;
 
         /** LoginRequest pushToken. */
         public pushToken: string;
@@ -1635,6 +1641,9 @@ export namespace Authentication {
 
         /** LoginResponse sessionTokenType */
         sessionTokenType?: (Authentication.SessionTokenType[]|null);
+
+        /** LoginResponse additionalMessage */
+        additionalMessage?: (string|null);
     }
 
     /** Represents a LoginResponse. */
@@ -1678,6 +1687,9 @@ export namespace Authentication {
 
         /** LoginResponse sessionTokenType. */
         public sessionTokenType: Authentication.SessionTokenType[];
+
+        /** LoginResponse additionalMessage. */
+        public additionalMessage: string;
 
         /**
          * Creates a new LoginResponse instance using the specified properties.
@@ -1862,6 +1874,14 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** LicenseType enum. */
+    enum LicenseType {
+        VAULT = 0,
+        CHAT = 1,
+        STORAGE = 2,
+        BREACHWATCH = 3
     }
 
     /** Properties of an OwnerlessRecord. */
@@ -12715,14 +12735,14 @@ export namespace Tokens {
         /** SessionToken expiration */
         expiration?: (number|Long|null);
 
-        /** SessionToken ip */
-        ip?: (string|null);
+        /** SessionToken dontUseIp */
+        dontUseIp?: (string|null);
 
         /** SessionToken sessionUid */
         sessionUid?: (Uint8Array|null);
 
-        /** SessionToken deviceToken */
-        deviceToken?: (Tokens.IDeviceToken|null);
+        /** SessionToken dontUseDeviceToken */
+        dontUseDeviceToken?: (Tokens.IDeviceToken|null);
 
         /** SessionToken fromUserId */
         fromUserId?: (number|null);
@@ -12733,20 +12753,20 @@ export namespace Tokens {
         /** SessionToken enterpriseUserId */
         enterpriseUserId?: (number|Long|null);
 
-        /** SessionToken vault */
-        vault?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseVault */
+        dontUseVault?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken chat */
-        chat?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseChat */
+        dontUseChat?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken storage */
-        storage?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseStorage */
+        dontUseStorage?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken breachWatch */
-        breachWatch?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseBreachWatch */
+        dontUseBreachWatch?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken accountType */
-        accountType?: (Authentication.AccountType|null);
+        /** SessionToken dontUseAccountType */
+        dontUseAccountType?: (Authentication.AccountType|null);
 
         /** SessionToken clientVersionId */
         clientVersionId?: (number|null);
@@ -12757,8 +12777,14 @@ export namespace Tokens {
         /** SessionToken mcEnterpriseId */
         mcEnterpriseId?: (number|null);
 
-        /** SessionToken offlineDisallowed */
-        offlineDisallowed?: (boolean|null);
+        /** SessionToken dontUseOfflineDisallowed */
+        dontUseOfflineDisallowed?: (boolean|null);
+
+        /** SessionToken encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** SessionToken userLicenseStatus */
+        userLicenseStatus?: (Tokens.IUserLicenseStatus[]|null);
     }
 
     /** Represents a SessionToken. */
@@ -12776,14 +12802,14 @@ export namespace Tokens {
         /** SessionToken expiration. */
         public expiration: (number|Long);
 
-        /** SessionToken ip. */
-        public ip: string;
+        /** SessionToken dontUseIp. */
+        public dontUseIp: string;
 
         /** SessionToken sessionUid. */
         public sessionUid: Uint8Array;
 
-        /** SessionToken deviceToken. */
-        public deviceToken?: (Tokens.IDeviceToken|null);
+        /** SessionToken dontUseDeviceToken. */
+        public dontUseDeviceToken?: (Tokens.IDeviceToken|null);
 
         /** SessionToken fromUserId. */
         public fromUserId: number;
@@ -12794,20 +12820,20 @@ export namespace Tokens {
         /** SessionToken enterpriseUserId. */
         public enterpriseUserId: (number|Long);
 
-        /** SessionToken vault. */
-        public vault?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseVault. */
+        public dontUseVault?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken chat. */
-        public chat?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseChat. */
+        public dontUseChat?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken storage. */
-        public storage?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseStorage. */
+        public dontUseStorage?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken breachWatch. */
-        public breachWatch?: (Tokens.ILicenseToken|null);
+        /** SessionToken dontUseBreachWatch. */
+        public dontUseBreachWatch?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken accountType. */
-        public accountType: Authentication.AccountType;
+        /** SessionToken dontUseAccountType. */
+        public dontUseAccountType: Authentication.AccountType;
 
         /** SessionToken clientVersionId. */
         public clientVersionId: number;
@@ -12818,8 +12844,14 @@ export namespace Tokens {
         /** SessionToken mcEnterpriseId. */
         public mcEnterpriseId: number;
 
-        /** SessionToken offlineDisallowed. */
-        public offlineDisallowed: boolean;
+        /** SessionToken dontUseOfflineDisallowed. */
+        public dontUseOfflineDisallowed: boolean;
+
+        /** SessionToken encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** SessionToken userLicenseStatus. */
+        public userLicenseStatus: Tokens.IUserLicenseStatus[];
 
         /**
          * Creates a new SessionToken instance using the specified properties.
@@ -12887,6 +12919,102 @@ export namespace Tokens {
 
         /**
          * Converts this SessionToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserLicenseStatus. */
+    interface IUserLicenseStatus {
+
+        /** UserLicenseStatus licenseType */
+        licenseType?: (Authentication.LicenseType|null);
+
+        /** UserLicenseStatus expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a UserLicenseStatus. */
+    class UserLicenseStatus implements IUserLicenseStatus {
+
+        /**
+         * Constructs a new UserLicenseStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IUserLicenseStatus);
+
+        /** UserLicenseStatus licenseType. */
+        public licenseType: Authentication.LicenseType;
+
+        /** UserLicenseStatus expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new UserLicenseStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserLicenseStatus instance
+         */
+        public static create(properties?: Tokens.IUserLicenseStatus): Tokens.UserLicenseStatus;
+
+        /**
+         * Encodes the specified UserLicenseStatus message. Does not implicitly {@link Tokens.UserLicenseStatus.verify|verify} messages.
+         * @param message UserLicenseStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IUserLicenseStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserLicenseStatus message, length delimited. Does not implicitly {@link Tokens.UserLicenseStatus.verify|verify} messages.
+         * @param message UserLicenseStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IUserLicenseStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserLicenseStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserLicenseStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.UserLicenseStatus;
+
+        /**
+         * Decodes a UserLicenseStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserLicenseStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.UserLicenseStatus;
+
+        /**
+         * Verifies a UserLicenseStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserLicenseStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserLicenseStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.UserLicenseStatus;
+
+        /**
+         * Creates a plain object from a UserLicenseStatus message. Also converts values to other types if specified.
+         * @param message UserLicenseStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.UserLicenseStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserLicenseStatus to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
