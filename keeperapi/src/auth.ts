@@ -60,6 +60,7 @@ export class Auth {
             loginCommand.username = username;
             loginCommand.version = 2;
             loginCommand.auth_response = webSafe64(authHash);
+            loginCommand.platform_device_token = webSafe64FromBytes(this.endpoint.deviceToken);
             loginCommand.include = ["keys"]; //["license","settings","group","sync_log","keys","enforcements","client_key","images","is_enterprise_admin","security_keys"]
             if (this.managedCompanyId) {
                 loginCommand.enterprise_id = this.managedCompanyId

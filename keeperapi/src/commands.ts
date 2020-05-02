@@ -23,6 +23,7 @@ export class LoginCommand extends KeeperCommand<LoginResponse> {
     auth_response: string;
     include: AccountDataInclude[];
     enterprise_id?: number; // for logging into managed company
+    platform_device_token: string;
 }
 
 export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse> extends KeeperCommand<Response> {

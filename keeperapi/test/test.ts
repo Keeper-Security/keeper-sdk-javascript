@@ -47,12 +47,12 @@ async function printVault() {
         let auth = await login()
         let vault = new Vault(auth)
         vault.noTypedRecords = true;
-        await vault.syncDown(true)
-        for (let record of vault.records) {
-            console.log(record.data)
-            console.log(record.recordData.udata)
-            console.log(record.nonSharedData)
-        }
+        // await vault.syncDown(true)
+        // for (let record of vault.records) {
+        //     console.log(record.data)
+        //     console.log(record.recordData.udata)
+        //     console.log(record.nonSharedData)
+        // }
     } catch (e) {
         console.log(e)
     }
@@ -699,10 +699,9 @@ async function testEncryptionParams() {
     console.log(dataKey1)
 }
 
-// const currentUser = 'admin@yozik.us'
+const currentUser = 'admin@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
-const currentUser = "saldoukhov+a23reg@keepersecurity.com"
 // const currentUser = "vladimir+cw@keepersecurity.com"
 
 // printCompany().finally();

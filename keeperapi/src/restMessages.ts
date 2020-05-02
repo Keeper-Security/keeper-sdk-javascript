@@ -32,11 +32,14 @@ function createMessage<TIn, TOut>(data: TIn, path: string, encoder: encoderClass
 export const registerDeviceMessage = (): RestMessage< {}, Authentication.IDevice> =>
     createMessage(null, 'authentication/register_device', null, Authentication.Device)
 
-export const verifyDeviceMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, Authentication.IUserDeviceStatus> =>
-    createMessage(data, 'authentication/verify_device', Authentication.DeviceVerificationRequest, Authentication.UserDeviceStatus)
+export const verifyDeviceMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
+    createMessage(data, 'authentication/verify_device', Authentication.DeviceVerificationRequest, null)
 
 export const registerUserMessage = (data: Authentication.IRegisterUserRequest): RestMessage<Authentication.IRegisterUserRequest, Authentication.IUserAccount> =>
     createMessage(data, 'authentication/register_user', Authentication.RegisterUserRequest, Authentication.UserAccount)
+
+export const preLoginV3Message = (data: Authentication.IPreLoginRequest): RestMessage<Authentication.IPreLoginRequest, Authentication.IPreLoginResponse> =>
+    createMessage(data, 'authentication/pre_login', Authentication.PreLoginRequest, Authentication.PreLoginResponse)
 
 // end new login
 
