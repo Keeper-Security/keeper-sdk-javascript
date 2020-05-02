@@ -15,16 +15,27 @@ connectPlatform(nodePlatform)
 const userName = "saldoukhov+m1reg1@keepersecurity.com"
 const clientVersion = 'w14.9.11'
 
-async function verifyDevice(auth: Auth): Promise<Uint8Array> {
+async function registerDevice(auth: Auth): Promise<Uint8Array> {
     try {
         return new Uint8Array(fs.readFileSync("device-token.dat"))
     } catch (e) {
     }
-
     const devRegMsg = registerDeviceMessage()
     const devRegResp = await auth.executeRest(devRegMsg)
     console.log(devRegResp)
-    devRegResp.encryptedDeviceToken
+
+    fs.writeFileSync("device-token.dat", devRegResp.encryptedDeviceToken)
+    return devRegResp.encryptedDeviceToken
+}
+
+async function verifyDevice(auth: Auth): Promise<Uint8Array> {
+    const deviceToken = await registerDevice(auth)
+
+    const approvedFileName = `device-${userName}.dat`
+
+    if (fs.existsSync(approvedFileName)) {
+        return deviceToken
+    }
 
     let pair = generateKeyPairSync('ec', {
         namedCurve: 'P-256'
@@ -39,18 +50,19 @@ async function verifyDevice(auth: Auth): Promise<Uint8Array> {
         deviceName: 'test device',
         devicePublicKey: publicKey,
         username: userName,
-        encryptedDeviceToken: devRegResp.encryptedDeviceToken
+        encryptedDeviceToken: deviceToken
     })
 
     await auth.executeRest(devVerMsg)
 
-    const token = await prompt('device token:')
+    const token = await prompt('Enter Device token or approve via email and press enter:')
+    if (!!token) {
+        const resp = await auth.get(`process_token/${token}`)
+        console.log(platform.bytesToString(resp.data))
+    }
+    fs.writeFileSync(approvedFileName, '')
 
-    const resp = await auth.get(`process_token/${token}`)
-    console.log(platform.bytesToString(resp.data))
-
-    fs.writeFileSync("device-token.dat", devRegResp.encryptedDeviceToken)
-    return devRegResp.encryptedDeviceToken
+    return deviceToken
 }
 
 async function testRegistration() {

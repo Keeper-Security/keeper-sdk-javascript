@@ -39,7 +39,7 @@ export const registerUserMessage = (data: Authentication.IRegisterUserRequest): 
     createMessage(data, 'authentication/register_user', Authentication.RegisterUserRequest, Authentication.UserAccount)
 
 export const preLoginV3Message = (data: Authentication.IPreLoginRequest): RestMessage<Authentication.IPreLoginRequest, Authentication.IPreLoginResponse> =>
-    createMessage(data, 'authentication/pre_login', Authentication.PreLoginRequest, Authentication.PreLoginResponse)
+    createMessage(data, 'authentication/pre_login_v3', Authentication.PreLoginRequest, Authentication.PreLoginResponse)
 
 // end new login
 
