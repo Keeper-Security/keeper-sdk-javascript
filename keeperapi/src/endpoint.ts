@@ -13,7 +13,7 @@ export class KeeperEndpoint {
     private transmissionKey: Uint8Array
     private publicKeyId: number
     private encryptedTransmissionKey: Uint8Array
-    private deviceToken: Uint8Array
+    public deviceToken: Uint8Array
     public clientVersion
 
     constructor(private host: KeeperEnvironment | string) {

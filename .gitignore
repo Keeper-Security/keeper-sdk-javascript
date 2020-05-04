@@ -3,7 +3,7 @@
 .DS_Store
 *.jpg
 *.png
-device-token.dat
+keeperapi/*.dat
 node_modules
 dist
 yarn-error.log
