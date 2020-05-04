@@ -2646,8 +2646,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 17
           },
-          encryptedDeviceToken: {
-            type: "bytes",
+          deviceId: {
+            type: "int64",
             id: 18
           },
           userLicenseStatus: {
@@ -2783,17 +2783,21 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          locale: {
+          doNotUseLocale: {
             type: "string",
             id: 5
           },
-          expiration: {
+          doNotUseExpiration: {
             type: "int64",
             id: 6
           },
           enterpriseId: {
             type: "int32",
             id: 7
+          },
+          deviceId: {
+            type: "int64",
+            id: 8
           }
         }
       },

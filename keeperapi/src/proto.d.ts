@@ -12780,8 +12780,8 @@ export namespace Tokens {
         /** SessionToken dontUseOfflineDisallowed */
         dontUseOfflineDisallowed?: (boolean|null);
 
-        /** SessionToken encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
+        /** SessionToken deviceId */
+        deviceId?: (number|Long|null);
 
         /** SessionToken userLicenseStatus */
         userLicenseStatus?: (Tokens.IUserLicenseStatus[]|null);
@@ -12847,8 +12847,8 @@ export namespace Tokens {
         /** SessionToken dontUseOfflineDisallowed. */
         public dontUseOfflineDisallowed: boolean;
 
-        /** SessionToken encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
+        /** SessionToken deviceId. */
+        public deviceId: (number|Long);
 
         /** SessionToken userLicenseStatus. */
         public userLicenseStatus: Tokens.IUserLicenseStatus[];
@@ -13569,14 +13569,17 @@ export namespace Tokens {
         /** IpAddressVerificationToken ipAddress */
         ipAddress?: (string|null);
 
-        /** IpAddressVerificationToken locale */
-        locale?: (string|null);
+        /** IpAddressVerificationToken doNotUseLocale */
+        doNotUseLocale?: (string|null);
 
-        /** IpAddressVerificationToken expiration */
-        expiration?: (number|Long|null);
+        /** IpAddressVerificationToken doNotUseExpiration */
+        doNotUseExpiration?: (number|Long|null);
 
         /** IpAddressVerificationToken enterpriseId */
         enterpriseId?: (number|null);
+
+        /** IpAddressVerificationToken deviceId */
+        deviceId?: (number|Long|null);
     }
 
     /** Represents an IpAddressVerificationToken. */
@@ -13600,14 +13603,17 @@ export namespace Tokens {
         /** IpAddressVerificationToken ipAddress. */
         public ipAddress: string;
 
-        /** IpAddressVerificationToken locale. */
-        public locale: string;
+        /** IpAddressVerificationToken doNotUseLocale. */
+        public doNotUseLocale: string;
 
-        /** IpAddressVerificationToken expiration. */
-        public expiration: (number|Long);
+        /** IpAddressVerificationToken doNotUseExpiration. */
+        public doNotUseExpiration: (number|Long);
 
         /** IpAddressVerificationToken enterpriseId. */
         public enterpriseId: number;
+
+        /** IpAddressVerificationToken deviceId. */
+        public deviceId: (number|Long);
 
         /**
          * Creates a new IpAddressVerificationToken instance using the specified properties.
