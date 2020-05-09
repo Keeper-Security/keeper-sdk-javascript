@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {Authentication, Enterprise, Records} from './proto'
+import {Authentication, Enterprise, Records, ServiceLogger} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -62,4 +62,16 @@ export const fileDownloadMessage = (data: Records.IFilesGetRequest): RestMessage
 
 export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Records.IFilesAddRequest, Records.IFilesAddResponse> =>
     createMessage(data, 'vault/files_add', Records.FilesAddRequest, Records.FilesAddResponse)
+
+
+/* -- SERVICE LOGGER -- */
+
+export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>
+    createMessage(data, 'logger/get', ServiceLogger.ServiceLogGetRequest, ServiceLogger.ServiceLogResponse);
+
+
+/* -- Cloud SSO Connect -- */
+
+export const ssoLoginMessage = (serviceProviderId): RestMessage<null, null> =>
+    createMessage(null, 'sso/saml/login/' + serviceProviderId, null, null);
 
