@@ -13,10 +13,12 @@ import {
     RequestDownloadCommand
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {recordTypesGetMessage} from '../src/restMessages'
-import {normal64Bytes, webSafe64FromBytes} from '../src/utils'
+import {addUserKeyMessage, getUserKeysMessage, recordTypesGetMessage} from '../src/restMessages'
+import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
-import RecordModifyResult = Records.RecordModifyResult
+import {generateKeyPairSync} from 'crypto';
+import RecordModifyResult = Records.RecordModifyResult;
+import UserKeyType = Records.UserKeyType;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -443,6 +445,7 @@ async function testAddRecordNew() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
+        await vault.syncDown(true)
         await vault.addRecordNew({
             title: 'new record',
             secret1: 'abcd',
@@ -453,7 +456,7 @@ async function testAddRecordNew() {
     }
 }
 
-async function uploadFiles(vault: Vault) {
+const uploadFiles = async (vault: Vault) => {
     const fileName1 = 'corona.jpg'
     const thumbName1 = 'corona_tn.jpg'
     const fileName2 = 'kitten.jpg'
@@ -465,30 +468,34 @@ async function uploadFiles(vault: Vault) {
     const fileRecordUid1 = await vault.uploadFile(fileName1, file1, thumb1)
     const fileRecordUid2 = await vault.uploadFile(fileName2, file2)
     return {fileRecordUid1, fileRecordUid2};
-}
+};
 
-async function downloadSharedFiles(fileRecordUid1: string, fileRecordUid2: string) {
-    let auth1 = await login("saldoukhov@gmail.com")
-    let vault1 = new Vault(auth1)
-    await vault1.syncDown(true)
+const downloadSharedFiles = async (fileRecordUid1: string, fileRecordUid2: string) => {
+    let auth = await login("saldoukhov@gmail.com")
+    let vault = new Vault(auth)
+    await vault.syncDown(true)
 
-    for (let record of vault1.records) {
+    for (let record of vault.records) {
         console.log(record.data)
         console.log(record.recordData.udata)
         console.log(record.nonSharedData)
     }
 
-    const file1_p = await vault1.downloadFile(fileRecordUid1, false);
+    const file1_p = await vault.downloadFile(fileRecordUid1, false);
     fs.writeFileSync('picture1.jpg', file1_p)
 
-    const file1_tn = await vault1.downloadFile(fileRecordUid1, true);
+    const file1_tn = await vault.downloadFile(fileRecordUid1, true);
     fs.writeFileSync('picture1_tn.jpg', file1_tn)
 
-    const file2_p = await vault1.downloadFile(fileRecordUid2, false);
+    const file2_p = await vault.downloadFile(fileRecordUid2, false);
     fs.writeFileSync('picture2.jpg', file2_p)
-}
+};
 
 async function testRecordShareViaRecord() {
+    // upload two files, one with thumbnail
+    // create a record linking the files
+    // share the record directly
+    // download the files via sharee's account
     try {
         let auth = await login()
         let vault = new Vault(auth)
@@ -514,6 +521,10 @@ async function testRecordShareViaRecord() {
 }
 
 async function testRecordShareViaFolder() {
+    // upload two files, one with thumbnail
+    // create a record linking the files
+    // share the record via shared folder
+    // download the files via sharee's account
     try {
         let auth = await login()
         let vault = new Vault(auth)
@@ -538,6 +549,108 @@ async function testRecordShareViaFolder() {
     }
 }
 
+const addTwoRecords = async (vault: Vault) => {
+    const recordsAddResponse = await vault.addRecordsNew([
+            {
+                title: 'linked record 1',
+                secret1: 'sec1'
+            },
+            {
+                title: 'linked record 2',
+                secret1: 'sec2'
+            },
+        ]
+    )
+    const rec1Uid = webSafe64FromBytes(recordsAddResponse.records[0].recordUid)
+    const rec2Uid = webSafe64FromBytes(recordsAddResponse.records[1].recordUid)
+    return { rec1Uid, rec2Uid }
+};
+
+const printVaultContent = (vault: Vault) => {
+    for (let record of vault.records) {
+        console.log(record.data)
+        console.log(record.recordData.udata)
+        console.log(record.nonSharedData)
+    }
+};
+
+const openShareeVaultAndSync = async () => {
+    let auth = await login("saldoukhov@gmail.com")
+    let vault = new Vault(auth)
+    await vault.syncDown(true)
+    printVaultContent(vault);
+    return vault
+};
+
+async function testSharedLinkedRecordUpdate() {
+    // log into the vault1 and vault2
+    // vault1 create two records
+    // vault1 create a third record linking the first two
+    // vault1 share the record with vault2
+    // sync vault2, should receive 3 records
+    // vault1 update the first of the linked records
+    // sync vault2, should receive only the linked record
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        const {rec1Uid, rec2Uid} = await addTwoRecords(vault);
+
+        console.log("Adding record linked to records...")
+        const recordAddResponse = await vault.addRecordNew({
+            title: 'record with links',
+            secret1: 'abcd',
+            addresses: [rec1Uid, rec2Uid]
+        }, null, [rec1Uid, rec2Uid])
+        const recordUid = webSafe64FromBytes(recordAddResponse.records[0].recordUid)
+
+        console.log("Sharing record with links...")
+        await vault.shareRecords([
+            recordUid
+        ], 'saldoukhov@gmail.com')
+
+        const vault2 = await openShareeVaultAndSync();
+
+        await vault.syncDown()
+        let rec1 = vault.recordByUid(rec1Uid)
+        rec1.data.title = rec1.data.title + " upd"
+        rec1.data.secret1 = rec1.data.secret1 + " upd"
+        await vault.updateRecord(rec1Uid)
+
+        await vault2.syncDown(true)
+        printVaultContent(vault2)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function testSharedLinkedRecordUpdateExisting() {
+    // log into the vault1 and vault2
+    // vault1 create two records
+    // vault1 create a third record linking the first two
+    // vault1 share the record with vault2
+    // sync vault2, should receive 3 records
+    // vault1 update the first of the linked records
+    // sync vault2, should receive only the linked record
+    try {
+        let auth = await login()
+        let vault = new Vault(auth)
+        await vault.syncDown()
+
+        const vault2 = await openShareeVaultAndSync();
+
+        console.log("Updating record")
+        let rec1 = vault.records[0]
+        rec1.data.title = rec1.data.title + " upd"
+        rec1.data.secret1 = rec1.data.secret1 + " upd"
+        await vault.updateRecord(rec1.recordData.record_uid)
+
+        await vault2.syncDown(true)
+        printVaultContent(vault2)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 async function login(user?: string): Promise<Auth> {
     let auth = new Auth({
         host: 'local.keepersecurity.com'
@@ -550,15 +663,65 @@ async function login(user?: string): Promise<Auth> {
     return auth;
 }
 
+async function testKeys() {
+    let dataKey = generateEncryptionKey()  // 256 bits
+    let pair = generateKeyPairSync('ec', {
+        namedCurve: 'P-256'
+    })
+    let publicKey = pair.publicKey.export({
+        format: 'der',
+        type: 'spki'
+    })
+    console.log(publicKey.length)           // 91 byte
+    let privateKey = pair.privateKey.export({
+        format: 'der',
+        type: 'sec1'
+    })
+    let encryptedPrivateKey = await platform.aesGcmEncrypt(privateKey, dataKey) // AES-256-GCM
+    console.log(encryptedPrivateKey.length) // 149 bytes
+}
+// testKeys().finally()
+
+async function provideECKey() {
+    const auth = await login()
+    const keysMessage = getUserKeysMessage()
+    const userKeys = await auth.executeRest(keysMessage);
+    console.log(userKeys)
+    if (userKeys.keys.length !== 0) {
+        return
+    }
+    const pair = generateKeyPairSync('ec', {
+        namedCurve: 'P-256'
+    })
+    const publicKey = pair.publicKey.export({
+        format: 'der',
+        type: 'spki'
+    })
+    const privateKey = pair.privateKey.export({
+        format: 'der',
+        type: 'sec1'
+    })
+    const encryptedPrivateKey = await platform.aesGcmEncrypt(privateKey, auth.dataKey)
+    const keyAddMessage = addUserKeyMessage({
+        keyUid: generateUidBytes(),
+        keyType: UserKeyType.KT_EC_256,
+        encryptedKey: encryptedPrivateKey,
+        publicKey: publicKey
+    })
+    await auth.executeRest(keyAddMessage);
+}
+
 const currentUser = 'admin@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 
 // printCompany().finally();
 // printVault().finally();
+provideECKey().finally()
 // testCommand().finally();
 // testRecordShareViaRecord().finally();
-testRecordShareViaFolder().finally();
+// testRecordShareViaFolder().finally();
+// testSharedLinkedRecordUpdate().finally();
 // testAddRecordNew().finally();
 // cleanVault().finally();
 // cleanVault('saldoukhov@gmail.com').finally();

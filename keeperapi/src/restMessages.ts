@@ -19,7 +19,7 @@ function createMessage<TIn, TOut>(data: TIn, path: string, encoder: encoderClass
     return {
         path: path,
         toBytes(): Uint8Array {
-            return encoder.encode(data).finish()
+            return encoder ? encoder.encode(data).finish() : null
         },
         fromBytes(data: Uint8Array): TOut {
             return decoder.decode(data)
@@ -62,6 +62,12 @@ export const fileDownloadMessage = (data: Records.IFilesGetRequest): RestMessage
 
 export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Records.IFilesAddRequest, Records.IFilesAddResponse> =>
     createMessage(data, 'vault/files_add', Records.FilesAddRequest, Records.FilesAddResponse)
+
+export const getUserKeysMessage = (): RestMessage<{}, Records.IUserKeysResponse> =>
+    createMessage(null, 'vault/get_user_keys', null, Records.UserKeysResponse)
+
+export const addUserKeyMessage = (data: Records.IUserKeyAddRequest): RestMessage<Records.IUserKeyAddRequest, {}> =>
+    createMessage(data, 'vault/add_user_key', Records.UserKeyAddRequest, null)
 
 
 /* -- SERVICE LOGGER -- */

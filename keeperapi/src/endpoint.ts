@@ -3,11 +3,11 @@ import {Authentication} from './proto'
 import {platform} from './platform'
 import {isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
 import {deviceMessage, preLoginMessage, RestMessage} from './restMessages'
-import ApiRequestPayload = Authentication.ApiRequestPayload
-import ApiRequest = Authentication.ApiRequest
-import IDeviceResponse = Authentication.IDeviceResponse
-import IPreLoginResponse = Authentication.IPreLoginResponse
-import IApiRequestPayload = Authentication.IApiRequestPayload
+import ApiRequestPayload = Authentication.ApiRequestPayload;
+import ApiRequest = Authentication.ApiRequest;
+import IDeviceResponse = Authentication.IDeviceResponse;
+import IPreLoginResponse = Authentication.IPreLoginResponse;
+import IApiRequestPayload = Authentication.IApiRequestPayload;
 
 export class KeeperEndpoint {
     private transmissionKey: Uint8Array
@@ -64,7 +64,7 @@ export class KeeperEndpoint {
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let response = await platform.post(this.getUrl(message.path), request)
-        if (response.data.length === 0 && response.statusCode === 200) {
+        if (!response.data || response.data.length === 0 && response.statusCode === 200) {
             return
         }
         try {
@@ -140,11 +140,11 @@ export class KeeperEndpoint {
     }
 
     private async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
-        let payloadBytes = payload instanceof Uint8Array
-            ? payload
-            : Buffer.from(JSON.stringify(payload))
-        let requestPayload: IApiRequestPayload = {
-            payload: payloadBytes
+        let requestPayload: IApiRequestPayload = {}
+        if (payload) {
+            requestPayload.payload = payload instanceof Uint8Array
+                ? payload
+                : Buffer.from(JSON.stringify(payload))
         }
         if (sessionToken) {
             requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
