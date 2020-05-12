@@ -44,7 +44,7 @@ export class Auth {
     private managedCompanyId?: number;
 
     constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
-        this.endpoint = new KeeperEndpoint(this.options.host);
+        this.endpoint = new KeeperEndpoint(this.options);
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
     }
 
@@ -91,7 +91,9 @@ export class Auth {
             this._sessionToken = loginResponse.session_token;
             this._username = username;
             this.dataKey = await decryptEncryptionParamsString(password, loginResponse.keys.encryption_params);
-            this.privateKey = decryptFromStorage(loginResponse.keys.encrypted_private_key, this.dataKey);
+            if (loginResponse.keys.encrypted_private_key) {
+                this.privateKey = decryptFromStorage(loginResponse.keys.encrypted_private_key, this.dataKey);
+            }
         }
         catch (e) {
             throw unifyLoginError(e);
@@ -130,6 +132,11 @@ export class Auth {
 
     async get(path: string) {
         return this.endpoint.get(path)
+    }
+
+    setLoginParameters(userName: string, sessionToken: string) {
+        this._username = userName;
+        this._sessionToken = sessionToken;
     }
 }
 

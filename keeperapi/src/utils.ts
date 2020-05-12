@@ -1,4 +1,18 @@
 import {platform} from "./platform";
+import {KeeperHost, TransmissionKey} from './configuration';
+
+export function getKeeperUrl(host: KeeperHost, forPath: string) {
+    return `https://${host}/api/rest/${forPath}`;
+}
+
+export function generateTransmissionKey(keyNumber: number): TransmissionKey {
+    const transmissionKey = platform.getRandomBytes(32)
+    return {
+        publicKeyId: keyNumber,
+        key: transmissionKey,
+        encryptedKey: platform.publicEncrypt(transmissionKey, platform.keys[keyNumber - 1])
+    }
+}
 
 export function webSafe64(source: string): string {
     return source.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');

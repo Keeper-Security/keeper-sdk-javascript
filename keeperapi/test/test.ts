@@ -47,12 +47,12 @@ async function printVault() {
         let auth = await login()
         let vault = new Vault(auth)
         vault.noTypedRecords = true;
-        // await vault.syncDown(true)
-        // for (let record of vault.records) {
-        //     console.log(record.data)
-        //     console.log(record.recordData.udata)
-        //     console.log(record.nonSharedData)
-        // }
+        await vault.syncDown(true)
+        for (let record of vault.records) {
+            console.log(record.data)
+            console.log(record.recordData.udata)
+            console.log(record.nonSharedData)
+        }
     } catch (e) {
         console.log(e)
     }
@@ -661,10 +661,22 @@ async function testSharedLinkedRecordUpdateExisting() {
 }
 
 async function login(user?: string): Promise<Auth> {
+    let deviceToken: Uint8Array;
+    try {
+        deviceToken = new Uint8Array(fs.readFileSync("device-token.dat"))
+    } catch (e) {
+    }
+
+    function saveDeviceToken(deviceToken: Uint8Array) {
+        fs.writeFileSync("device-token.dat", deviceToken)
+    }
+
     let auth = new Auth({
-        host: 'local.keepersecurity.com'
+        host: 'local.keepersecurity.com',
         // host: KeeperEnvironment.DEV
         // host: KeeperEnvironment.QA
+        deviceToken: deviceToken,
+        onDeviceToken: saveDeviceToken
     }, authUI)
     let userName = user || currentUser;
     await auth.login(userName, '111111')
@@ -699,7 +711,8 @@ async function testEncryptionParams() {
     console.log(dataKey1)
 }
 
-const currentUser = 'admin@yozik.us'
+// const currentUser = 'admin@yozik.us'
+const currentUser = 'admin+m6a@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 // const currentUser = "vladimir+cw@keepersecurity.com"

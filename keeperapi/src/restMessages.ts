@@ -29,17 +29,23 @@ function createMessage<TIn, TOut>(data: TIn, path: string, encoder: encoderClass
 
 // new login
 
-export const registerDeviceMessage = (): RestMessage< {}, Authentication.IDevice> =>
-    createMessage(null, 'authentication/register_device', null, Authentication.Device)
+export const registerDeviceMessage = (data: Authentication.IDeviceRegistrationRequest): RestMessage<Authentication.IDeviceRegistrationRequest, Authentication.IDevice> =>
+    createMessage(data, 'authentication/register_device', Authentication.DeviceRegistrationRequest, Authentication.Device)
 
-export const verifyDeviceMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
-    createMessage(data, 'authentication/verify_device', Authentication.DeviceVerificationRequest, null)
+export const updateDeviceMessage = (data: Authentication.IDeviceUpdateRequest): RestMessage<Authentication.IDeviceUpdateRequest, {}> =>
+    createMessage(data, 'authentication/update_device', Authentication.DeviceUpdateRequest, null)
 
-export const registerUserMessage = (data: Authentication.IRegisterUserRequest): RestMessage<Authentication.IRegisterUserRequest, Authentication.IUserAccount> =>
-    createMessage(data, 'authentication/register_user', Authentication.RegisterUserRequest, Authentication.UserAccount)
+export const requestDeviceVerificationMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
+    createMessage(data, 'authentication/request_device_verification', Authentication.DeviceVerificationRequest, null)
 
-export const preLoginV3Message = (data: Authentication.IPreLoginRequest): RestMessage<Authentication.IPreLoginRequest, Authentication.IPreLoginResponse> =>
-    createMessage(data, 'authentication/pre_login_v3', Authentication.PreLoginRequest, Authentication.PreLoginResponse)
+export const registerUserMessage = (data: Authentication.IRegisterUserRequest): RestMessage<Authentication.IRegisterUserRequest, Authentication.UserDeviceStatus> =>
+    createMessage(data, 'authentication/register_user', Authentication.RegisterUserRequest, Authentication.UserDeviceStatus)
+
+export const preLoginV3Message = (data: Authentication.IPreLoginV3Request): RestMessage<Authentication.IPreLoginV3Request, Authentication.IPreLoginV3Response> =>
+    createMessage(data, 'authentication/pre_login_v3', Authentication.PreLoginV3Request, Authentication.PreLoginV3Response)
+
+export const loginV3Message = (data: Authentication.ILoginRequest): RestMessage<Authentication.ILoginRequest, Authentication.ILoginResponse> =>
+    createMessage(data, 'authentication/login_v3', Authentication.LoginRequest, Authentication.LoginResponse)
 
 // end new login
 

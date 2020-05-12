@@ -75,7 +75,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           SHARE_ACCOUNT: 2,
           PURCHASE: 3,
           RESTRICT: 4,
-          ACCEPT_INVITE: 5
+          ACCEPT_INVITE: 5,
+          SUPPORT_SERVER: 6
         }
       },
       Version: {
@@ -227,8 +228,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 3
           },
-          timestampForAuth: {
-            type: "int64",
+          encryptedLoginToken: {
+            type: "bytes",
             id: 4
           },
           authResponse: {
@@ -383,9 +384,63 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      PreLoginV3Request: {
+        fields: {
+          authRequest: {
+            type: "AuthRequest",
+            id: 1
+          },
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 2
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 3
+          },
+          loginType: {
+            type: "LoginType",
+            id: 4
+          }
+        }
+      },
+      PreLoginV3Response: {
+        fields: {
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 1
+          },
+          salt: {
+            rule: "repeated",
+            type: "Salt",
+            id: 2
+          },
+          ssoUserInfo: {
+            type: "SsoUserInfo",
+            id: 3
+          },
+          twoFactorInfo: {
+            type: "TwoFactorInfo",
+            id: 4
+          }
+        }
+      },
+      TwoFactorInfo: {
+        fields: {
+          userTwoFactorChannel: {
+            type: "string",
+            id: 1
+          },
+          supportedTwoFactorChannels: {
+            rule: "repeated",
+            type: "string",
+            id: 2
+          }
+        }
+      },
       LoginResponse: {
         fields: {
-          encryrptedSessionToken: {
+          encryptedSessionToken: {
             type: "bytes",
             id: 1
           },
@@ -556,8 +611,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 3
           },
-          deviceStatus: {
-            type: "DeviceStatus",
+          devicePublicKey: {
+            type: "bytes",
             id: 4
           }
         }
@@ -1056,6 +1111,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      DeviceRegistrationRequest: {
+        fields: {
+          clientVersion: {
+            type: "string",
+            id: 1
+          },
+          deviceName: {
+            type: "string",
+            id: 2
+          },
+          devicePublicKey: {
+            type: "bytes",
+            id: 3
+          }
+        }
+      },
       DeviceVerificationRequest: {
         fields: {
           encryptedDeviceToken: {
@@ -1066,15 +1137,15 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 2
           },
-          clientVersion: {
+          dontUseClientVersion: {
             type: "string",
             id: 3
           },
-          deviceName: {
+          dontUseDeviceName: {
             type: "string",
             id: 4
           },
-          devicePublicKey: {
+          dontUseDevicePublicKey: {
             type: "bytes",
             id: 5
           },
@@ -1145,6 +1216,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedDeviceToken: {
             type: "bytes",
             id: 1
+          },
+          deviceId: {
+            type: "int64",
+            id: 2
           }
         }
       },
@@ -2470,6 +2545,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      LoginToken: {
+        fields: {
+          sessionId: {
+            type: "int64",
+            id: 1
+          },
+          encryptedSessionToken: {
+            type: "bytes",
+            id: 2
+          },
+          encryptedDataKey: {
+            type: "bytes",
+            id: 3
+          },
+          encryptedDataKeyType: {
+            type: "bytes",
+            id: 4
+          }
+        }
+      },
       DeviceApprovalToken: {
         fields: {
           creation: {
@@ -2867,7 +2962,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          devicePublicKey: {
+          dontUseDevicePublicKey: {
             type: "bytes",
             id: 5
           },
@@ -3422,6 +3517,79 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "RecordResponse",
             id: 2
+          }
+        }
+      }
+    }
+  },
+  Push: {
+    options: {
+      java_package: "com.keepersecurity.proto",
+      java_outer_classname: "Push"
+    },
+    nested: {
+      MessageType: {
+        values: {
+          PLATFORM: 0,
+          USER: 1,
+          SESSION: 2,
+          ENTERPRISE: 3
+        }
+      },
+      UserActivity: {
+        values: {
+          LOGIN: 0,
+          LOGOUT: 1
+        }
+      },
+      UserActivityRequest: {
+        fields: {
+          userActivity: {
+            type: "UserActivity",
+            id: 1
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 2
+          },
+          userId: {
+            type: "int32",
+            id: 3
+          },
+          enterpriseId: {
+            type: "int32",
+            id: 4
+          }
+        }
+      },
+      KAToPushServerRequest: {
+        fields: {
+          messageType: {
+            type: "MessageType",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 3
+          },
+          encryptedDeviceToken: {
+            rule: "repeated",
+            type: "bytes",
+            id: 4
+          },
+          userId: {
+            rule: "repeated",
+            type: "int32",
+            id: 5
+          },
+          enterpriseId: {
+            rule: "repeated",
+            type: "int32",
+            id: 6
           }
         }
       }
