@@ -384,27 +384,137 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      PreLoginV3Request: {
+      LoginMethod: {
+        values: {
+          EXISTING_ACCOUNT: 0,
+          SSO_DOMAIN: 1,
+          AFTER_SSO: 2
+        }
+      },
+      StartLoginRequest: {
         fields: {
           authRequest: {
             type: "AuthRequest",
             id: 1
           },
-          encryptedLoginToken: {
+          messageSessionUid: {
             type: "bytes",
             id: 2
           },
-          messageSessionUid: {
+          encryptedLoginToken: {
             type: "bytes",
             id: 3
           },
           loginType: {
             type: "LoginType",
             id: 4
+          },
+          mcEnterpriseId: {
+            type: "int32",
+            id: 5
+          },
+          loginMethod: {
+            type: "LoginMethod",
+            id: 6
           }
         }
       },
-      PreLoginV3Response: {
+      StartLoginResponse: {
+        fields: {
+          loginState: {
+            type: "LoginState",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          url: {
+            type: "string",
+            id: 3
+          },
+          accountUid: {
+            type: "bytes",
+            id: 4
+          },
+          loginInfo: {
+            type: "LoginInfo",
+            id: 5
+          },
+          twoFactorInfo: {
+            type: "TwoFactorInfo",
+            id: 6
+          },
+          authHashInfo: {
+            type: "AuthHashInfo",
+            id: 7
+          },
+          ssoUserInfo: {
+            type: "SsoUserInfo",
+            id: 8
+          }
+        }
+      },
+      LoginState: {
+        values: {
+          device_needs_approval: 0,
+          device_locked: 1,
+          account_locked: 2,
+          device_account_locked: 3,
+          license_expired: 4,
+          region_redirect: 5,
+          redirect_cloud_sso: 6,
+          redirect_onsite_sso: 7,
+          user_already_logged_in: 8,
+          requires_2fa: 9,
+          requires_authHash: 10
+        }
+      },
+      LoginInfo: {
+        fields: {
+          primaryUsername: {
+            type: "string",
+            id: 1
+          },
+          encryptedDataKeyForLogin: {
+            type: "bytes",
+            id: 2
+          },
+          encryptedDataKeyTypeForLogin: {
+            type: "EncryptedDataKeyTypeForLogin",
+            id: 3
+          },
+          encryptedSessionToken: {
+            type: "bytes",
+            id: 4
+          }
+        }
+      },
+      EncryptedDataKeyTypeForLogin: {
+        values: {
+          no_key: 0,
+          encrypted_by_device_public_key: 1,
+          encrypted_by_master_password: 2
+        }
+      },
+      TwoFactorInfo: {
+        fields: {
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 1
+          },
+          userTwoFactorChannel: {
+            type: "string",
+            id: 2
+          },
+          supportedTwoFactorChannels: {
+            rule: "repeated",
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      AuthHashInfo: {
         fields: {
           encryptedLoginToken: {
             type: "bytes",
@@ -414,27 +524,53 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "Salt",
             id: 2
+          }
+        }
+      },
+      TwoFactorType: {
+        values: {
+          TWO_FA_TYPE_NONE: 0,
+          TWO_FA_TYPE_TOTP: 1,
+          TWO_FA_TYPE_SMS: 2,
+          TWO_FA_TYPE_DUO: 3,
+          TWO_FA_TYPE_FIDO: 4
+        }
+      },
+      TwoFactorExpiration: {
+        values: {
+          TWO_FA_EXP_IMMEDIATELY: 0,
+          TWO_FA_EXP_5_MINUTES: 1,
+          TWO_FA_EXP_12_HOURS: 2,
+          TWO_FA_EXP_24_HOURS: 3,
+          TWO_FA_EXP_30_DAYS: 4,
+          TWO_FA_EXP_NEVER: 5
+        }
+      },
+      TwoFactorValidateCodeRequest: {
+        fields: {
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 1
           },
-          ssoUserInfo: {
-            type: "SsoUserInfo",
+          channel: {
+            type: "TwoFactorChannel",
+            id: 2
+          },
+          expireIn: {
+            type: "TwoFactorExpiration",
             id: 3
           },
-          twoFactorInfo: {
-            type: "TwoFactorInfo",
+          code: {
+            type: "string",
             id: 4
           }
         }
       },
-      TwoFactorInfo: {
+      TwoFactorResponse: {
         fields: {
-          userTwoFactorChannel: {
-            type: "string",
+          encryptedLoginToken: {
+            type: "bytes",
             id: 1
-          },
-          supportedTwoFactorChannels: {
-            rule: "repeated",
-            type: "string",
-            id: 2
           }
         }
       },
@@ -2551,17 +2687,29 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 1
           },
-          encryptedSessionToken: {
-            type: "bytes",
+          deviceId: {
+            type: "int64",
             id: 2
           },
-          encryptedDataKey: {
+          accountUid: {
             type: "bytes",
             id: 3
           },
-          encryptedDataKeyType: {
+          messageSessionUid: {
             type: "bytes",
             id: 4
+          },
+          loginState: {
+            type: "Authentication.LoginState",
+            id: 5
+          },
+          loginMethod: {
+            type: "Authentication.LoginMethod",
+            id: 6
+          },
+          creation: {
+            type: "int64",
+            id: 7
           }
         }
       },
@@ -3528,38 +3676,28 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       java_outer_classname: "Push"
     },
     nested: {
+      UserRegistrationRequest: {
+        fields: {
+          messageSessionUid: {
+            type: "bytes",
+            id: 1
+          },
+          userId: {
+            type: "int32",
+            id: 2
+          },
+          enterpriseId: {
+            type: "int32",
+            id: 3
+          }
+        }
+      },
       MessageType: {
         values: {
           PLATFORM: 0,
           USER: 1,
           SESSION: 2,
           ENTERPRISE: 3
-        }
-      },
-      UserActivity: {
-        values: {
-          LOGIN: 0,
-          LOGOUT: 1
-        }
-      },
-      UserActivityRequest: {
-        fields: {
-          userActivity: {
-            type: "UserActivity",
-            id: 1
-          },
-          messageSessionUid: {
-            type: "bytes",
-            id: 2
-          },
-          userId: {
-            type: "int32",
-            id: 3
-          },
-          enterpriseId: {
-            type: "int32",
-            id: 4
-          }
         }
       },
       KAToPushServerRequest: {
@@ -3590,6 +3728,46 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "int32",
             id: 6
+          }
+        }
+      },
+      OpenConnectionRequest: {
+        fields: {
+          messageSessionUid: {
+            type: "bytes",
+            id: 1
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 2
+          },
+          deviceTimeStamp: {
+            type: "int64",
+            id: 3
+          }
+        }
+      },
+      KAToPushServerResponse: {
+        fields: {
+          messageType: {
+            type: "MessageType",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 3
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 4
+          },
+          userId: {
+            type: "int32",
+            id: 5
           }
         }
       }

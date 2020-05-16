@@ -1,10 +1,12 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
 import {
     loginV3Message,
-    preLoginV3Message,
     registerDeviceMessage,
     registerUserMessage,
-    requestDeviceVerificationMessage, updateDeviceMessage
+    requestDeviceVerificationMessage,
+    startLoginMessage,
+    twoFactorValidateCodeMessage,
+    updateDeviceMessage
 } from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
@@ -13,13 +15,18 @@ import {prompt} from './testUtil'
 import {generateEncryptionKey, webSafe64FromBytes} from '../src/utils';
 import * as fs from 'fs'
 import {Authentication} from '../src/proto';
-import IAuthRequest = Authentication.IAuthRequest;
 import {AccountSummaryCommand} from '../src/commands';
+import IAuthRequest = Authentication.IAuthRequest;
+import TwoFactorExpiration = Authentication.TwoFactorExpiration;
+import LoginState = Authentication.LoginState;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
+// const userName = "admin@yozik.us"
+// const userName = "saldoukhov@gmail.com"
+// const userName = "saldoukhov@keepersecurity.com"
 const userName = "admin+m6a@yozik.us"
 const clientVersion = 'c16.0.0'
 
@@ -145,25 +152,69 @@ async function testLogin() {
         encryptedDeviceToken: deviceToken
     }
 
-    const preLoginMsg = preLoginV3Message({
-        authRequest: authRequest,
-        loginType: Authentication.LoginType.NORMAL
-    })
-    const preLoginResp = await auth.executeRest(preLoginMsg)
-    console.log(preLoginResp)
+    let loginToken: Uint8Array;
 
+    while (true) {
+        const startLoginMsg = startLoginMessage({
+            authRequest: authRequest,
+            loginType: Authentication.LoginType.NORMAL,
+            encryptedLoginToken: loginToken
+        })
+        const startLoginResp = await auth.executeRest(startLoginMsg)
+        console.log(startLoginResp)
+        switch (startLoginResp.loginState) {
+            case Authentication.LoginState.device_needs_approval:
+                throw new Error('Device is not approved')
+            case Authentication.LoginState.device_locked:
+                break;
+            case Authentication.LoginState.account_locked:
+                break;
+            case Authentication.LoginState.device_account_locked:
+                break;
+            case Authentication.LoginState.license_expired:
+                break;
+            case Authentication.LoginState.region_redirect:
+                break;
+            case Authentication.LoginState.redirect_cloud_sso:
+                break;
+            case Authentication.LoginState.redirect_onsite_sso:
+                break;
+            case Authentication.LoginState.user_already_logged_in:
+                break;
+            case Authentication.LoginState.requires_2fa:
+                const token = await prompt('Enter 2fa code:')
+                console.log(token)
+                const twoFactorCodeMsg = twoFactorValidateCodeMessage({
+                    channel: {
+                        type: 1
+                    },
+                    encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
+                    code: token,
+                    expireIn: TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
+                })
+                const twoFactorCodeResp = await auth.executeRest(twoFactorCodeMsg)
+                console.log(twoFactorCodeResp)
+                loginToken = twoFactorCodeResp.encryptedLoginToken
+                break;
+            case Authentication.LoginState.requires_authHash:
+                await authHashLogin(auth, authRequest, startLoginResp.authHashInfo)
+                return
+        }
+    }
+}
+
+async function authHashLogin(auth: Auth, authRequest: Authentication.IAuthRequest, authHashInfo: Authentication.IAuthHashInfo) {
+    // TODO test for account transfer and account recovery
     const password = '111111'
-    const salt = preLoginResp.salt[0]
+    const salt = authHashInfo.salt[0]
     const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
     let authHash = await platform.authVerifierAsBytes(authHashKey);
 
     const loginMsg = loginV3Message({
         authRequest: authRequest,
         authResponse: authHash,
-        encryptedLoginToken: preLoginResp.encryptedLoginToken
+        encryptedLoginToken: authHashInfo.encryptedLoginToken
     })
-
-// TODO test for account transfer and account recovery
     const loginResp = await auth.executeRest(loginMsg)
     console.log(loginResp)
 

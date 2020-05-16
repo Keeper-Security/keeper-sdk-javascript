@@ -41,11 +41,14 @@ export const requestDeviceVerificationMessage = (data: Authentication.IDeviceVer
 export const registerUserMessage = (data: Authentication.IRegisterUserRequest): RestMessage<Authentication.IRegisterUserRequest, Authentication.UserDeviceStatus> =>
     createMessage(data, 'authentication/register_user', Authentication.RegisterUserRequest, Authentication.UserDeviceStatus)
 
-export const preLoginV3Message = (data: Authentication.IPreLoginV3Request): RestMessage<Authentication.IPreLoginV3Request, Authentication.IPreLoginV3Response> =>
-    createMessage(data, 'authentication/pre_login_v3', Authentication.PreLoginV3Request, Authentication.PreLoginV3Response)
+export const startLoginMessage = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, Authentication.IStartLoginResponse> =>
+    createMessage(data, 'authentication/start_login', Authentication.StartLoginRequest, Authentication.StartLoginResponse)
 
 export const loginV3Message = (data: Authentication.ILoginRequest): RestMessage<Authentication.ILoginRequest, Authentication.ILoginResponse> =>
     createMessage(data, 'authentication/login_v3', Authentication.LoginRequest, Authentication.LoginResponse)
+
+export const twoFactorValidateCodeMessage = (data: Authentication.ITwoFactorValidateCodeRequest): RestMessage<Authentication.ITwoFactorValidateCodeRequest, Authentication.ITwoFactorResponse> =>
+    createMessage(data, 'authentication/2fa_validate_code', Authentication.TwoFactorValidateCodeRequest, Authentication.TwoFactorResponse)
 
 // end new login
 
