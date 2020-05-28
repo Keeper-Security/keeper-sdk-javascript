@@ -4,6 +4,7 @@ import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {isTwoFactorResultCode, normal64, webSafe64, decryptFromStorage, webSafe64FromBytes} from "./utils";
 import {RestMessage} from './restMessages'
+import * as WebSocket from 'faye-websocket'
 
 export interface AuthUI {
     getTwoFactorCode(errorMessage?: string): Promise<string>;
@@ -32,6 +33,27 @@ function unifyLoginError(e: any): LoginError {
             error: e.result_code,
             message: e.result_code
         }
+    }
+}
+
+export class SocketListener {
+    private socket;
+
+    constructor(url: string) {
+        console.log('Connecting to ' + url)
+        this.socket = new WebSocket.Client(url)
+    }
+
+    async getTwoFactorCode(): Promise<string> {
+        // this.socket.send('test')
+        console.log('Awaiting web socket')
+        return new Promise<string>((resolve, reject) => {
+            this.socket.on('message', (e) => {
+                resolve(e.data)
+                this.socket.close();
+                this.socket = null
+            })
+        })
     }
 }
 
@@ -65,12 +87,13 @@ export class Auth {
             if (this.managedCompanyId) {
                 loginCommand.enterprise_id = this.managedCompanyId
             }
-
             let loginResponse: LoginResponse;
+            let socketListener: SocketListener;
             while (true) {
                 loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
                 if (loginResponse.result_code === "auth_success")
                     break;
+                console.log(loginResponse)
                 if (isTwoFactorResultCode(loginResponse.result_code)) {
                     if (!!loginResponse.u2f_challenge) {
                         loginResponse.u2f_challenge = JSON.parse(loginResponse.u2f_challenge as string);
@@ -80,11 +103,23 @@ export class Auth {
                     let errorMessage = loginResponse.result_code === LoginResponseResultCode.InvalidTOTP
                         ? loginResponse.message
                         : undefined;
-                    let token = await this.authUI.getTwoFactorCode(errorMessage);
-                    if (!token)
-                        break;
-                    loginCommand["2fa_token"] = token;
-                    loginCommand["2fa_type"] = "one_time";
+                    if (loginResponse.channel === 'two_factor_channel_duo' && loginResponse.url) {
+                        loginCommand['2fa_mode'] = 'push'
+                        socketListener = new SocketListener(loginResponse.url)
+                    }
+                    else {
+                        let token: string
+                        if (socketListener) {
+                            token = await socketListener.getTwoFactorCode();
+                        }
+                        else {
+                            token = await this.authUI.getTwoFactorCode(errorMessage);
+                        }
+                        if (!token)
+                            break;
+                        loginCommand["2fa_token"] = token;
+                    }
+                    loginCommand['2fa_type'] = 'one_time';
                     loginCommand["device_token_expire_days"] = 9999;
                 }
             }

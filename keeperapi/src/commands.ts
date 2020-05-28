@@ -24,6 +24,9 @@ export class LoginCommand extends KeeperCommand<LoginResponse> {
     include: AccountDataInclude[];
     enterprise_id?: number; // for logging into managed company
     platform_device_token: string;
+    "2fa_type": "device_token" | "one_time" | "backup" | "u2f";
+    "2fa_mode": "auto" | "passcode" | "phone" | "push" | "sms";
+    "2fa_token": string;
 }
 
 export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse> extends KeeperCommand<Response> {
@@ -693,6 +696,13 @@ export interface LoginResponse extends KeeperResponse {
     region_host?: string;
     keys: Keys;
     sync_log: SyncLog[];
+    enforcements: any;
+    capabilities: string[];
+    phone: string;
+    channel: "two_factor_disabled" | "two_factor_channel_sms" | "two_factor_channel_voice" | "two_factor_channel_email"
+        | "two_factor_channel_google" | "two_factor_channel_rsa" | "two_factor_channel_push" | "two_factor_channel_duo"
+        | "two_factor_channel_u2f" | "two_factor_channel_security_keys"
+    url: string;
     u2f_challenge?: string | U2FChallenge;
 }
 

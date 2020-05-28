@@ -391,31 +391,124 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           AFTER_SSO: 2
         }
       },
-      StartLoginRequest: {
+      LoginState: {
+        values: {
+          device_needs_approval: 0,
+          device_locked: 1,
+          account_locked: 2,
+          device_account_locked: 3,
+          upgrade: 4,
+          license_expired: 5,
+          region_redirect: 6,
+          redirect_cloud_sso: 7,
+          redirect_onsite_sso: 8,
+          user_already_logged_in: 9,
+          requires_2fa: 10,
+          requires_authHash: 11,
+          requires_username: 12,
+          need_to_enter_password: 13
+        }
+      },
+      EncryptedDataKeyTypeForLogin: {
+        values: {
+          no_key: 0,
+          encrypted_by_device_public_key: 1,
+          encrypted_by_master_password: 2,
+          encrypted_by_alternate_master_password: 3
+        }
+      },
+      LoginInfo: {
         fields: {
-          authRequest: {
-            type: "AuthRequest",
+          primaryUsername: {
+            type: "string",
             id: 1
           },
-          messageSessionUid: {
+          encryptedDataKeyForLogin: {
             type: "bytes",
             id: 2
           },
+          encryptedDataKeyTypeForLogin: {
+            type: "EncryptedDataKeyTypeForLogin",
+            id: 3
+          },
+          encryptedSessionToken: {
+            type: "bytes",
+            id: 4
+          },
+          sessionTokenType: {
+            rule: "repeated",
+            type: "SessionTokenType",
+            id: 5
+          }
+        }
+      },
+      TwoFactorInfo: {
+        fields: {
           encryptedLoginToken: {
             type: "bytes",
+            id: 1
+          },
+          userTwoFactorChannel: {
+            type: "string",
+            id: 2
+          },
+          supportedTwoFactorChannels: {
+            rule: "repeated",
+            type: "string",
             id: 3
+          }
+        }
+      },
+      AuthHashInfo: {
+        fields: {
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 1
+          },
+          salt: {
+            rule: "repeated",
+            type: "Salt",
+            id: 2
+          }
+        }
+      },
+      StartLoginRequest: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
+          },
+          username: {
+            type: "string",
+            id: 2
+          },
+          clientVersion: {
+            type: "string",
+            id: 3
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 4
+          },
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 5
           },
           loginType: {
             type: "LoginType",
-            id: 4
+            id: 6
           },
           mcEnterpriseId: {
             type: "int32",
-            id: 5
+            id: 7
           },
           loginMethod: {
             type: "LoginMethod",
-            id: 6
+            id: 8
+          },
+          forceNewLogin: {
+            type: "bool",
+            id: 9
           }
         }
       },
@@ -455,76 +548,58 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      LoginState: {
-        values: {
-          device_needs_approval: 0,
-          device_locked: 1,
-          account_locked: 2,
-          device_account_locked: 3,
-          license_expired: 4,
-          region_redirect: 5,
-          redirect_cloud_sso: 6,
-          redirect_onsite_sso: 7,
-          user_already_logged_in: 8,
-          requires_2fa: 9,
-          requires_authHash: 10
-        }
-      },
-      LoginInfo: {
+      ValidateAuthHashRequest: {
         fields: {
-          primaryUsername: {
-            type: "string",
+          passwordMethod: {
+            type: "PasswordMethod",
             id: 1
           },
-          encryptedDataKeyForLogin: {
+          authResponse: {
             type: "bytes",
             id: 2
           },
-          encryptedDataKeyTypeForLogin: {
-            type: "EncryptedDataKeyTypeForLogin",
+          encryptedLoginToken: {
+            type: "bytes",
             id: 3
           },
-          encryptedSessionToken: {
+          clientVersion: {
+            type: "string",
+            id: 4
+          },
+          rememberMe: {
+            type: "bool",
+            id: 5
+          }
+        }
+      },
+      ValidateAuthHashResponse: {
+        fields: {
+          loginState: {
+            type: "LoginState",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          url: {
+            type: "string",
+            id: 3
+          },
+          accountUid: {
             type: "bytes",
             id: 4
+          },
+          loginInfo: {
+            type: "LoginInfo",
+            id: 5
           }
         }
       },
-      EncryptedDataKeyTypeForLogin: {
+      PasswordMethod: {
         values: {
-          no_key: 0,
-          encrypted_by_device_public_key: 1,
-          encrypted_by_master_password: 2
-        }
-      },
-      TwoFactorInfo: {
-        fields: {
-          encryptedLoginToken: {
-            type: "bytes",
-            id: 1
-          },
-          userTwoFactorChannel: {
-            type: "string",
-            id: 2
-          },
-          supportedTwoFactorChannels: {
-            rule: "repeated",
-            type: "string",
-            id: 3
-          }
-        }
-      },
-      AuthHashInfo: {
-        fields: {
-          encryptedLoginToken: {
-            type: "bytes",
-            id: 1
-          },
-          salt: {
-            rule: "repeated",
-            type: "Salt",
-            id: 2
-          }
+          ENTERED: 0,
+          BIOMETRICS: 1
         }
       },
       TwoFactorType: {
@@ -568,8 +643,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       TwoFactorResponse: {
         fields: {
-          encryptedLoginToken: {
-            type: "bytes",
+          authHashInfo: {
+            type: "AuthHashInfo",
             id: 1
           }
         }
@@ -2683,7 +2758,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       LoginToken: {
         fields: {
-          sessionId: {
+          loginSessionId: {
             type: "int64",
             id: 1
           },
@@ -2710,6 +2785,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           creation: {
             type: "int64",
             id: 7
+          },
+          mcEnterpriseId: {
+            type: "int32",
+            id: 8
           }
         }
       },
@@ -3694,10 +3773,13 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       MessageType: {
         values: {
-          PLATFORM: 0,
-          USER: 1,
-          SESSION: 2,
-          ENTERPRISE: 3
+          UNKNOWN: 0,
+          DNA: 1,
+          SSO: 2,
+          CHAT: 3,
+          USER: 4,
+          ENTERPRISE: 5,
+          KEEPER: 6
         }
       },
       KAToPushServerRequest: {

@@ -35,7 +35,7 @@ export const nodePlatform: Platform = class {
     }
 
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
-        let privateKey = key[0] === '-'  // PEM or DER?
+        let publicKey = key[0] === '-'  // PEM or DER?
             ? key
             : crypto.createPublicKey({
                 key: Buffer.from(key, 'base64'),
@@ -43,7 +43,7 @@ export const nodePlatform: Platform = class {
                 format: 'der'
             })
         return crypto.publicEncrypt({
-            key: privateKey,
+            key: publicKey,
             padding: RSA_PKCS1_PADDING
         }, data)
     }

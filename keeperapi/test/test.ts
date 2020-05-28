@@ -1,4 +1,4 @@
-import {Auth, AuthUI, createEncryptionParams, decryptEncryptionParams} from '../src/auth'
+import {Auth, AuthUI, createEncryptionParams, decryptEncryptionParams, SocketListener} from '../src/auth'
 import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
@@ -21,6 +21,14 @@ import {prompt} from './testUtil'
 import RecordModifyResult = Records.RecordModifyResult;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
+// async function testSockets() {
+//     const listener = new SocketListener('wss://echo.websocket.org')
+//     const code = await listener.getTwoFactorCode()
+//     console.log(code)
+// }
+//
+// testSockets().finally()
 
 connectPlatform(nodePlatform)
 
@@ -673,6 +681,7 @@ async function login(user?: string): Promise<Auth> {
 
     let auth = new Auth({
         host: 'local.keepersecurity.com',
+        // host: 'dev2.keepersecurity.com',
         // host: KeeperEnvironment.DEV
         // host: KeeperEnvironment.QA
         deviceToken: deviceToken,
@@ -685,6 +694,13 @@ async function login(user?: string): Promise<Auth> {
 }
 
 async function testKeys() {
+    // const ecdh = createECDH('prime256v1')
+    // ecdh.generateKeys()
+    // const priv = ecdh.getPrivateKey()
+    // const keys = priv.keys()
+    // const entries = priv.entries()
+    //
+    //
     let dataKey = generateEncryptionKey()  // 256 bits
     let pair = generateKeyPairSync('ec', {
         namedCurve: 'P-256'
@@ -711,8 +727,9 @@ async function testEncryptionParams() {
     console.log(dataKey1)
 }
 
-// const currentUser = 'admin@yozik.us'
-const currentUser = 'admin+m6a@yozik.us'
+const currentUser = 'admin@yozik.us'
+// const currentUser = 'admin+m6a@yozik.us'
+// const currentUser = 'admin+duo@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 // const currentUser = "vladimir+cw@keepersecurity.com"

@@ -1614,11 +1614,355 @@ export namespace Authentication {
         AFTER_SSO = 2
     }
 
+    /** LoginState enum. */
+    enum LoginState {
+        device_needs_approval = 0,
+        device_locked = 1,
+        account_locked = 2,
+        device_account_locked = 3,
+        upgrade = 4,
+        license_expired = 5,
+        region_redirect = 6,
+        redirect_cloud_sso = 7,
+        redirect_onsite_sso = 8,
+        user_already_logged_in = 9,
+        requires_2fa = 10,
+        requires_authHash = 11,
+        requires_username = 12,
+        need_to_enter_password = 13
+    }
+
+    /** EncryptedDataKeyTypeForLogin enum. */
+    enum EncryptedDataKeyTypeForLogin {
+        no_key = 0,
+        encrypted_by_device_public_key = 1,
+        encrypted_by_master_password = 2,
+        encrypted_by_alternate_master_password = 3
+    }
+
+    /** Properties of a LoginInfo. */
+    interface ILoginInfo {
+
+        /** LoginInfo primaryUsername */
+        primaryUsername?: (string|null);
+
+        /** LoginInfo encryptedDataKeyForLogin */
+        encryptedDataKeyForLogin?: (Uint8Array|null);
+
+        /** LoginInfo encryptedDataKeyTypeForLogin */
+        encryptedDataKeyTypeForLogin?: (Authentication.EncryptedDataKeyTypeForLogin|null);
+
+        /** LoginInfo encryptedSessionToken */
+        encryptedSessionToken?: (Uint8Array|null);
+
+        /** LoginInfo sessionTokenType */
+        sessionTokenType?: (Authentication.SessionTokenType[]|null);
+    }
+
+    /** Represents a LoginInfo. */
+    class LoginInfo implements ILoginInfo {
+
+        /**
+         * Constructs a new LoginInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ILoginInfo);
+
+        /** LoginInfo primaryUsername. */
+        public primaryUsername: string;
+
+        /** LoginInfo encryptedDataKeyForLogin. */
+        public encryptedDataKeyForLogin: Uint8Array;
+
+        /** LoginInfo encryptedDataKeyTypeForLogin. */
+        public encryptedDataKeyTypeForLogin: Authentication.EncryptedDataKeyTypeForLogin;
+
+        /** LoginInfo encryptedSessionToken. */
+        public encryptedSessionToken: Uint8Array;
+
+        /** LoginInfo sessionTokenType. */
+        public sessionTokenType: Authentication.SessionTokenType[];
+
+        /**
+         * Creates a new LoginInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns LoginInfo instance
+         */
+        public static create(properties?: Authentication.ILoginInfo): Authentication.LoginInfo;
+
+        /**
+         * Encodes the specified LoginInfo message. Does not implicitly {@link Authentication.LoginInfo.verify|verify} messages.
+         * @param message LoginInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ILoginInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified LoginInfo message, length delimited. Does not implicitly {@link Authentication.LoginInfo.verify|verify} messages.
+         * @param message LoginInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ILoginInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a LoginInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns LoginInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LoginInfo;
+
+        /**
+         * Decodes a LoginInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns LoginInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.LoginInfo;
+
+        /**
+         * Verifies a LoginInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a LoginInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns LoginInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.LoginInfo;
+
+        /**
+         * Creates a plain object from a LoginInfo message. Also converts values to other types if specified.
+         * @param message LoginInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.LoginInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this LoginInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a TwoFactorInfo. */
+    interface ITwoFactorInfo {
+
+        /** TwoFactorInfo encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+
+        /** TwoFactorInfo userTwoFactorChannel */
+        userTwoFactorChannel?: (string|null);
+
+        /** TwoFactorInfo supportedTwoFactorChannels */
+        supportedTwoFactorChannels?: (string[]|null);
+    }
+
+    /** Represents a TwoFactorInfo. */
+    class TwoFactorInfo implements ITwoFactorInfo {
+
+        /**
+         * Constructs a new TwoFactorInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITwoFactorInfo);
+
+        /** TwoFactorInfo encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
+        /** TwoFactorInfo userTwoFactorChannel. */
+        public userTwoFactorChannel: string;
+
+        /** TwoFactorInfo supportedTwoFactorChannels. */
+        public supportedTwoFactorChannels: string[];
+
+        /**
+         * Creates a new TwoFactorInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TwoFactorInfo instance
+         */
+        public static create(properties?: Authentication.ITwoFactorInfo): Authentication.TwoFactorInfo;
+
+        /**
+         * Encodes the specified TwoFactorInfo message. Does not implicitly {@link Authentication.TwoFactorInfo.verify|verify} messages.
+         * @param message TwoFactorInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITwoFactorInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TwoFactorInfo message, length delimited. Does not implicitly {@link Authentication.TwoFactorInfo.verify|verify} messages.
+         * @param message TwoFactorInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITwoFactorInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TwoFactorInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TwoFactorInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TwoFactorInfo;
+
+        /**
+         * Decodes a TwoFactorInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TwoFactorInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TwoFactorInfo;
+
+        /**
+         * Verifies a TwoFactorInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TwoFactorInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TwoFactorInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TwoFactorInfo;
+
+        /**
+         * Creates a plain object from a TwoFactorInfo message. Also converts values to other types if specified.
+         * @param message TwoFactorInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TwoFactorInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TwoFactorInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AuthHashInfo. */
+    interface IAuthHashInfo {
+
+        /** AuthHashInfo encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+
+        /** AuthHashInfo salt */
+        salt?: (Authentication.ISalt[]|null);
+    }
+
+    /** Represents an AuthHashInfo. */
+    class AuthHashInfo implements IAuthHashInfo {
+
+        /**
+         * Constructs a new AuthHashInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IAuthHashInfo);
+
+        /** AuthHashInfo encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
+        /** AuthHashInfo salt. */
+        public salt: Authentication.ISalt[];
+
+        /**
+         * Creates a new AuthHashInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AuthHashInfo instance
+         */
+        public static create(properties?: Authentication.IAuthHashInfo): Authentication.AuthHashInfo;
+
+        /**
+         * Encodes the specified AuthHashInfo message. Does not implicitly {@link Authentication.AuthHashInfo.verify|verify} messages.
+         * @param message AuthHashInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IAuthHashInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AuthHashInfo message, length delimited. Does not implicitly {@link Authentication.AuthHashInfo.verify|verify} messages.
+         * @param message AuthHashInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IAuthHashInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AuthHashInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AuthHashInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AuthHashInfo;
+
+        /**
+         * Decodes an AuthHashInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AuthHashInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AuthHashInfo;
+
+        /**
+         * Verifies an AuthHashInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AuthHashInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AuthHashInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.AuthHashInfo;
+
+        /**
+         * Creates a plain object from an AuthHashInfo message. Also converts values to other types if specified.
+         * @param message AuthHashInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.AuthHashInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AuthHashInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a StartLoginRequest. */
     interface IStartLoginRequest {
 
-        /** StartLoginRequest authRequest */
-        authRequest?: (Authentication.IAuthRequest|null);
+        /** StartLoginRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** StartLoginRequest username */
+        username?: (string|null);
+
+        /** StartLoginRequest clientVersion */
+        clientVersion?: (string|null);
 
         /** StartLoginRequest messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
@@ -1634,6 +1978,9 @@ export namespace Authentication {
 
         /** StartLoginRequest loginMethod */
         loginMethod?: (Authentication.LoginMethod|null);
+
+        /** StartLoginRequest forceNewLogin */
+        forceNewLogin?: (boolean|null);
     }
 
     /** Represents a StartLoginRequest. */
@@ -1645,8 +1992,14 @@ export namespace Authentication {
          */
         constructor(properties?: Authentication.IStartLoginRequest);
 
-        /** StartLoginRequest authRequest. */
-        public authRequest?: (Authentication.IAuthRequest|null);
+        /** StartLoginRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** StartLoginRequest username. */
+        public username: string;
+
+        /** StartLoginRequest clientVersion. */
+        public clientVersion: string;
 
         /** StartLoginRequest messageSessionUid. */
         public messageSessionUid: Uint8Array;
@@ -1662,6 +2015,9 @@ export namespace Authentication {
 
         /** StartLoginRequest loginMethod. */
         public loginMethod: Authentication.LoginMethod;
+
+        /** StartLoginRequest forceNewLogin. */
+        public forceNewLogin: boolean;
 
         /**
          * Creates a new StartLoginRequest instance using the specified properties.
@@ -1866,332 +2222,238 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** LoginState enum. */
-    enum LoginState {
-        device_needs_approval = 0,
-        device_locked = 1,
-        account_locked = 2,
-        device_account_locked = 3,
-        license_expired = 4,
-        region_redirect = 5,
-        redirect_cloud_sso = 6,
-        redirect_onsite_sso = 7,
-        user_already_logged_in = 8,
-        requires_2fa = 9,
-        requires_authHash = 10
-    }
+    /** Properties of a ValidateAuthHashRequest. */
+    interface IValidateAuthHashRequest {
 
-    /** Properties of a LoginInfo. */
-    interface ILoginInfo {
+        /** ValidateAuthHashRequest passwordMethod */
+        passwordMethod?: (Authentication.PasswordMethod|null);
 
-        /** LoginInfo primaryUsername */
-        primaryUsername?: (string|null);
+        /** ValidateAuthHashRequest authResponse */
+        authResponse?: (Uint8Array|null);
 
-        /** LoginInfo encryptedDataKeyForLogin */
-        encryptedDataKeyForLogin?: (Uint8Array|null);
-
-        /** LoginInfo encryptedDataKeyTypeForLogin */
-        encryptedDataKeyTypeForLogin?: (Authentication.EncryptedDataKeyTypeForLogin|null);
-
-        /** LoginInfo encryptedSessionToken */
-        encryptedSessionToken?: (Uint8Array|null);
-    }
-
-    /** Represents a LoginInfo. */
-    class LoginInfo implements ILoginInfo {
-
-        /**
-         * Constructs a new LoginInfo.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.ILoginInfo);
-
-        /** LoginInfo primaryUsername. */
-        public primaryUsername: string;
-
-        /** LoginInfo encryptedDataKeyForLogin. */
-        public encryptedDataKeyForLogin: Uint8Array;
-
-        /** LoginInfo encryptedDataKeyTypeForLogin. */
-        public encryptedDataKeyTypeForLogin: Authentication.EncryptedDataKeyTypeForLogin;
-
-        /** LoginInfo encryptedSessionToken. */
-        public encryptedSessionToken: Uint8Array;
-
-        /**
-         * Creates a new LoginInfo instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns LoginInfo instance
-         */
-        public static create(properties?: Authentication.ILoginInfo): Authentication.LoginInfo;
-
-        /**
-         * Encodes the specified LoginInfo message. Does not implicitly {@link Authentication.LoginInfo.verify|verify} messages.
-         * @param message LoginInfo message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.ILoginInfo, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified LoginInfo message, length delimited. Does not implicitly {@link Authentication.LoginInfo.verify|verify} messages.
-         * @param message LoginInfo message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.ILoginInfo, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a LoginInfo message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns LoginInfo
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LoginInfo;
-
-        /**
-         * Decodes a LoginInfo message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns LoginInfo
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.LoginInfo;
-
-        /**
-         * Verifies a LoginInfo message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a LoginInfo message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns LoginInfo
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.LoginInfo;
-
-        /**
-         * Creates a plain object from a LoginInfo message. Also converts values to other types if specified.
-         * @param message LoginInfo
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.LoginInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this LoginInfo to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** EncryptedDataKeyTypeForLogin enum. */
-    enum EncryptedDataKeyTypeForLogin {
-        no_key = 0,
-        encrypted_by_device_public_key = 1,
-        encrypted_by_master_password = 2
-    }
-
-    /** Properties of a TwoFactorInfo. */
-    interface ITwoFactorInfo {
-
-        /** TwoFactorInfo encryptedLoginToken */
+        /** ValidateAuthHashRequest encryptedLoginToken */
         encryptedLoginToken?: (Uint8Array|null);
 
-        /** TwoFactorInfo userTwoFactorChannel */
-        userTwoFactorChannel?: (string|null);
+        /** ValidateAuthHashRequest clientVersion */
+        clientVersion?: (string|null);
 
-        /** TwoFactorInfo supportedTwoFactorChannels */
-        supportedTwoFactorChannels?: (string[]|null);
+        /** ValidateAuthHashRequest rememberMe */
+        rememberMe?: (boolean|null);
     }
 
-    /** Represents a TwoFactorInfo. */
-    class TwoFactorInfo implements ITwoFactorInfo {
+    /** Represents a ValidateAuthHashRequest. */
+    class ValidateAuthHashRequest implements IValidateAuthHashRequest {
 
         /**
-         * Constructs a new TwoFactorInfo.
+         * Constructs a new ValidateAuthHashRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.ITwoFactorInfo);
+        constructor(properties?: Authentication.IValidateAuthHashRequest);
 
-        /** TwoFactorInfo encryptedLoginToken. */
+        /** ValidateAuthHashRequest passwordMethod. */
+        public passwordMethod: Authentication.PasswordMethod;
+
+        /** ValidateAuthHashRequest authResponse. */
+        public authResponse: Uint8Array;
+
+        /** ValidateAuthHashRequest encryptedLoginToken. */
         public encryptedLoginToken: Uint8Array;
 
-        /** TwoFactorInfo userTwoFactorChannel. */
-        public userTwoFactorChannel: string;
+        /** ValidateAuthHashRequest clientVersion. */
+        public clientVersion: string;
 
-        /** TwoFactorInfo supportedTwoFactorChannels. */
-        public supportedTwoFactorChannels: string[];
+        /** ValidateAuthHashRequest rememberMe. */
+        public rememberMe: boolean;
 
         /**
-         * Creates a new TwoFactorInfo instance using the specified properties.
+         * Creates a new ValidateAuthHashRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns TwoFactorInfo instance
+         * @returns ValidateAuthHashRequest instance
          */
-        public static create(properties?: Authentication.ITwoFactorInfo): Authentication.TwoFactorInfo;
+        public static create(properties?: Authentication.IValidateAuthHashRequest): Authentication.ValidateAuthHashRequest;
 
         /**
-         * Encodes the specified TwoFactorInfo message. Does not implicitly {@link Authentication.TwoFactorInfo.verify|verify} messages.
-         * @param message TwoFactorInfo message or plain object to encode
+         * Encodes the specified ValidateAuthHashRequest message. Does not implicitly {@link Authentication.ValidateAuthHashRequest.verify|verify} messages.
+         * @param message ValidateAuthHashRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.ITwoFactorInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.IValidateAuthHashRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified TwoFactorInfo message, length delimited. Does not implicitly {@link Authentication.TwoFactorInfo.verify|verify} messages.
-         * @param message TwoFactorInfo message or plain object to encode
+         * Encodes the specified ValidateAuthHashRequest message, length delimited. Does not implicitly {@link Authentication.ValidateAuthHashRequest.verify|verify} messages.
+         * @param message ValidateAuthHashRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.ITwoFactorInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.IValidateAuthHashRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a TwoFactorInfo message from the specified reader or buffer.
+         * Decodes a ValidateAuthHashRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns TwoFactorInfo
+         * @returns ValidateAuthHashRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TwoFactorInfo;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ValidateAuthHashRequest;
 
         /**
-         * Decodes a TwoFactorInfo message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateAuthHashRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns TwoFactorInfo
+         * @returns ValidateAuthHashRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TwoFactorInfo;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ValidateAuthHashRequest;
 
         /**
-         * Verifies a TwoFactorInfo message.
+         * Verifies a ValidateAuthHashRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a TwoFactorInfo message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateAuthHashRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns TwoFactorInfo
+         * @returns ValidateAuthHashRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.TwoFactorInfo;
+        public static fromObject(object: { [k: string]: any }): Authentication.ValidateAuthHashRequest;
 
         /**
-         * Creates a plain object from a TwoFactorInfo message. Also converts values to other types if specified.
-         * @param message TwoFactorInfo
+         * Creates a plain object from a ValidateAuthHashRequest message. Also converts values to other types if specified.
+         * @param message ValidateAuthHashRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.TwoFactorInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.ValidateAuthHashRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this TwoFactorInfo to JSON.
+         * Converts this ValidateAuthHashRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an AuthHashInfo. */
-    interface IAuthHashInfo {
+    /** Properties of a ValidateAuthHashResponse. */
+    interface IValidateAuthHashResponse {
 
-        /** AuthHashInfo encryptedLoginToken */
-        encryptedLoginToken?: (Uint8Array|null);
+        /** ValidateAuthHashResponse loginState */
+        loginState?: (Authentication.LoginState|null);
 
-        /** AuthHashInfo salt */
-        salt?: (Authentication.ISalt[]|null);
+        /** ValidateAuthHashResponse message */
+        message?: (string|null);
+
+        /** ValidateAuthHashResponse url */
+        url?: (string|null);
+
+        /** ValidateAuthHashResponse accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** ValidateAuthHashResponse loginInfo */
+        loginInfo?: (Authentication.ILoginInfo|null);
     }
 
-    /** Represents an AuthHashInfo. */
-    class AuthHashInfo implements IAuthHashInfo {
+    /** Represents a ValidateAuthHashResponse. */
+    class ValidateAuthHashResponse implements IValidateAuthHashResponse {
 
         /**
-         * Constructs a new AuthHashInfo.
+         * Constructs a new ValidateAuthHashResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IAuthHashInfo);
+        constructor(properties?: Authentication.IValidateAuthHashResponse);
 
-        /** AuthHashInfo encryptedLoginToken. */
-        public encryptedLoginToken: Uint8Array;
+        /** ValidateAuthHashResponse loginState. */
+        public loginState: Authentication.LoginState;
 
-        /** AuthHashInfo salt. */
-        public salt: Authentication.ISalt[];
+        /** ValidateAuthHashResponse message. */
+        public message: string;
+
+        /** ValidateAuthHashResponse url. */
+        public url: string;
+
+        /** ValidateAuthHashResponse accountUid. */
+        public accountUid: Uint8Array;
+
+        /** ValidateAuthHashResponse loginInfo. */
+        public loginInfo?: (Authentication.ILoginInfo|null);
 
         /**
-         * Creates a new AuthHashInfo instance using the specified properties.
+         * Creates a new ValidateAuthHashResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns AuthHashInfo instance
+         * @returns ValidateAuthHashResponse instance
          */
-        public static create(properties?: Authentication.IAuthHashInfo): Authentication.AuthHashInfo;
+        public static create(properties?: Authentication.IValidateAuthHashResponse): Authentication.ValidateAuthHashResponse;
 
         /**
-         * Encodes the specified AuthHashInfo message. Does not implicitly {@link Authentication.AuthHashInfo.verify|verify} messages.
-         * @param message AuthHashInfo message or plain object to encode
+         * Encodes the specified ValidateAuthHashResponse message. Does not implicitly {@link Authentication.ValidateAuthHashResponse.verify|verify} messages.
+         * @param message ValidateAuthHashResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IAuthHashInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.IValidateAuthHashResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified AuthHashInfo message, length delimited. Does not implicitly {@link Authentication.AuthHashInfo.verify|verify} messages.
-         * @param message AuthHashInfo message or plain object to encode
+         * Encodes the specified ValidateAuthHashResponse message, length delimited. Does not implicitly {@link Authentication.ValidateAuthHashResponse.verify|verify} messages.
+         * @param message ValidateAuthHashResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IAuthHashInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.IValidateAuthHashResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an AuthHashInfo message from the specified reader or buffer.
+         * Decodes a ValidateAuthHashResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns AuthHashInfo
+         * @returns ValidateAuthHashResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AuthHashInfo;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ValidateAuthHashResponse;
 
         /**
-         * Decodes an AuthHashInfo message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateAuthHashResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns AuthHashInfo
+         * @returns ValidateAuthHashResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AuthHashInfo;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ValidateAuthHashResponse;
 
         /**
-         * Verifies an AuthHashInfo message.
+         * Verifies a ValidateAuthHashResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an AuthHashInfo message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateAuthHashResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns AuthHashInfo
+         * @returns ValidateAuthHashResponse
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.AuthHashInfo;
+        public static fromObject(object: { [k: string]: any }): Authentication.ValidateAuthHashResponse;
 
         /**
-         * Creates a plain object from an AuthHashInfo message. Also converts values to other types if specified.
-         * @param message AuthHashInfo
+         * Creates a plain object from a ValidateAuthHashResponse message. Also converts values to other types if specified.
+         * @param message ValidateAuthHashResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.AuthHashInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.ValidateAuthHashResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this AuthHashInfo to JSON.
+         * Converts this ValidateAuthHashResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** PasswordMethod enum. */
+    enum PasswordMethod {
+        ENTERED = 0,
+        BIOMETRICS = 1
     }
 
     /** TwoFactorType enum. */
@@ -2324,8 +2586,8 @@ export namespace Authentication {
     /** Properties of a TwoFactorResponse. */
     interface ITwoFactorResponse {
 
-        /** TwoFactorResponse encryptedLoginToken */
-        encryptedLoginToken?: (Uint8Array|null);
+        /** TwoFactorResponse authHashInfo */
+        authHashInfo?: (Authentication.IAuthHashInfo|null);
     }
 
     /** Represents a TwoFactorResponse. */
@@ -2337,8 +2599,8 @@ export namespace Authentication {
          */
         constructor(properties?: Authentication.ITwoFactorResponse);
 
-        /** TwoFactorResponse encryptedLoginToken. */
-        public encryptedLoginToken: Uint8Array;
+        /** TwoFactorResponse authHashInfo. */
+        public authHashInfo?: (Authentication.IAuthHashInfo|null);
 
         /**
          * Creates a new TwoFactorResponse instance using the specified properties.
@@ -13100,8 +13362,8 @@ export namespace Tokens {
     /** Properties of a LoginToken. */
     interface ILoginToken {
 
-        /** LoginToken sessionId */
-        sessionId?: (number|Long|null);
+        /** LoginToken loginSessionId */
+        loginSessionId?: (number|Long|null);
 
         /** LoginToken deviceId */
         deviceId?: (number|Long|null);
@@ -13120,6 +13382,9 @@ export namespace Tokens {
 
         /** LoginToken creation */
         creation?: (number|Long|null);
+
+        /** LoginToken mcEnterpriseId */
+        mcEnterpriseId?: (number|null);
     }
 
     /** Represents a LoginToken. */
@@ -13131,8 +13396,8 @@ export namespace Tokens {
          */
         constructor(properties?: Tokens.ILoginToken);
 
-        /** LoginToken sessionId. */
-        public sessionId: (number|Long);
+        /** LoginToken loginSessionId. */
+        public loginSessionId: (number|Long);
 
         /** LoginToken deviceId. */
         public deviceId: (number|Long);
@@ -13151,6 +13416,9 @@ export namespace Tokens {
 
         /** LoginToken creation. */
         public creation: (number|Long);
+
+        /** LoginToken mcEnterpriseId. */
+        public mcEnterpriseId: number;
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -18273,10 +18541,13 @@ export namespace Push {
 
     /** MessageType enum. */
     enum MessageType {
-        PLATFORM = 0,
-        USER = 1,
-        SESSION = 2,
-        ENTERPRISE = 3
+        UNKNOWN = 0,
+        DNA = 1,
+        SSO = 2,
+        CHAT = 3,
+        USER = 4,
+        ENTERPRISE = 5,
+        KEEPER = 6
     }
 
     /** Properties of a KAToPushServerRequest. */

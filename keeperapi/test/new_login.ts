@@ -1,6 +1,6 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
 import {
-    loginV3Message,
+    validateAuthHashMessage,
     registerDeviceMessage,
     registerUserMessage,
     requestDeviceVerificationMessage,
@@ -10,24 +10,27 @@ import {
 } from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {generateKeyPairSync} from "crypto";
+import {createECDH, generateKeyPairSync} from "crypto";
+import {} from "ws"
 import {prompt} from './testUtil'
-import {generateEncryptionKey, webSafe64FromBytes} from '../src/utils';
+import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
 import * as fs from 'fs'
 import {Authentication} from '../src/proto';
 import {AccountSummaryCommand} from '../src/commands';
 import IAuthRequest = Authentication.IAuthRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import LoginState = Authentication.LoginState;
+import {util} from 'protobufjs';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-// const userName = "admin@yozik.us"
+const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
-const userName = "admin+m6a@yozik.us"
+// const userName = "admin+m6a@yozik.us"
+// const userName = "admin+m27a@yozik.us"
 const clientVersion = 'c16.0.0'
 
 async function registerDevice(auth: Auth): Promise<Uint8Array> {
@@ -48,17 +51,10 @@ async function registerDevice(auth: Auth): Promise<Uint8Array> {
         return deviceToken
     }
 
-    let pair = generateKeyPairSync('ec', {
-        namedCurve: 'P-256'
-    })
-    publicKey = pair.publicKey.export({
-        format: 'der',
-        type: 'spki'
-    })
-    privateKey = pair.privateKey.export({
-        format: 'der',
-        type: 'sec1'
-    })
+    const ecdh = createECDH('prime256v1')
+    ecdh.generateKeys()
+    publicKey = ecdh.getPublicKey()
+    privateKey = ecdh.getPrivateKey()
     if (deviceToken) {
         const devUpdMsg = updateDeviceMessage({
             encryptedDeviceToken: deviceToken,
@@ -146,19 +142,14 @@ async function testLogin() {
 
     const deviceToken = await verifyDevice(auth)
 
-    const authRequest: IAuthRequest = {
-        clientVersion: clientVersion,
-        username: userName,
-        encryptedDeviceToken: deviceToken
-    }
-
-    let loginToken: Uint8Array;
-
     while (true) {
         const startLoginMsg = startLoginMessage({
-            authRequest: authRequest,
+            username: userName,
+            clientVersion: clientVersion,
+            encryptedDeviceToken: deviceToken,
+            messageSessionUid: generateUidBytes(),
             loginType: Authentication.LoginType.NORMAL,
-            encryptedLoginToken: loginToken
+            forceNewLogin: true
         })
         const startLoginResp = await auth.executeRest(startLoginMsg)
         console.log(startLoginResp)
@@ -194,31 +185,31 @@ async function testLogin() {
                 })
                 const twoFactorCodeResp = await auth.executeRest(twoFactorCodeMsg)
                 console.log(twoFactorCodeResp)
-                loginToken = twoFactorCodeResp.encryptedLoginToken
+                await authHashLogin(auth, deviceToken, twoFactorCodeResp.authHashInfo)
                 break;
             case Authentication.LoginState.requires_authHash:
-                await authHashLogin(auth, authRequest, startLoginResp.authHashInfo)
+                await authHashLogin(auth, deviceToken, startLoginResp.authHashInfo)
                 return
         }
     }
 }
 
-async function authHashLogin(auth: Auth, authRequest: Authentication.IAuthRequest, authHashInfo: Authentication.IAuthHashInfo) {
+async function authHashLogin(auth: Auth, deviceToken: Uint8Array, authHashInfo: Authentication.IAuthHashInfo) {
     // TODO test for account transfer and account recovery
     const password = '111111'
     const salt = authHashInfo.salt[0]
     const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
     let authHash = await platform.authVerifierAsBytes(authHashKey);
 
-    const loginMsg = loginV3Message({
-        authRequest: authRequest,
+    const loginMsg = validateAuthHashMessage({
+        clientVersion: clientVersion,
         authResponse: authHash,
         encryptedLoginToken: authHashInfo.encryptedLoginToken
     })
     const loginResp = await auth.executeRest(loginMsg)
     console.log(loginResp)
 
-    auth.setLoginParameters(userName, webSafe64FromBytes(loginResp.encryptedSessionToken))
+    auth.setLoginParameters(userName, webSafe64FromBytes(loginResp.loginInfo.encryptedSessionToken))
 
     const accountSummaryCommand = new AccountSummaryCommand()
     accountSummaryCommand.include = ['license', 'settings']
