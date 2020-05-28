@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {AccountSummary, Authentication, Enterprise, Records} from './proto'
+import {AccountSummary, Authentication, Enterprise, Records, ServiceLogger} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -90,3 +90,20 @@ export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Reco
 
 export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryRequest): RestMessage<AccountSummary.IAccountSummaryRequest, AccountSummary.IAccountSummaryElements> =>
     createMessage(data, 'login/account_summary', AccountSummary.AccountSummaryRequest, AccountSummary.AccountSummaryElements)
+
+/* -- SERVICE LOGGER -- */
+
+export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>
+    createMessage(data, 'logger/get', ServiceLogger.ServiceLogGetRequest, ServiceLogger.ServiceLogResponse);
+
+
+/* -- Cloud SSO Connect -- */
+
+export const ssoLoginMessage = (serviceProviderId): RestMessage<null, null> =>
+    createMessage(null, 'sso/saml/login/' + serviceProviderId, null, null);
+
+export const ssoLogoutMessage = (serviceProviderId, data): RestMessage<null, null> =>
+    createMessage(null, 'sso/saml/logout/' + serviceProviderId, null, null);
+
+export const ssoGetMetadataMessage = (serviceProviderId): RestMessage<null, null> =>
+    createMessage(null, 'sso/saml/metadata/' + serviceProviderId, null, null);

@@ -8,6 +8,8 @@ import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
 import IPreLoginResponse = Authentication.IPreLoginResponse;
 import IApiRequestPayload = Authentication.IApiRequestPayload;
+const open = require('open');
+
 import {ClientConfiguration, TransmissionKey} from './configuration';
 
 export class KeeperEndpoint {
@@ -65,12 +67,44 @@ export class KeeperEndpoint {
         }))
     }
 
+    /**
+     * Call this for REST calls expected to return HTML.
+     */
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<string> {
+        let request = await this.prepareRequest(message.toBytes(), sessionToken)
+        let response = await platform.post(this.getUrl(message.path), request)
+
+        // Redirect?
+        if (response.statusCode === 303) {
+            let redirectUrl = response.headers["location"];
+            if (redirectUrl) {
+                console.log("Redirecting to " + redirectUrl);
+                await open(redirectUrl);
+            } else {
+                console.log("Expected URL with 303 status, but didn't get one");
+            }
+        }
+
+        // Any content?
+        if (!response.data || response.data.length === 0 && response.statusCode === 200) {
+            return "No content returned\n";
+        }
+
+        // Is it HTML?
+        if (response.data[0] != "<".charCodeAt(0)) {
+            console.log("non-HTML returned from rest call");
+        }
+
+        return new Promise(resolve => { resolve(platform.bytesToString(response.data)); });
+    }
+
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let response = await platform.post(this.getUrl(message.path), request)
         if (!response.data || response.data.length === 0 && response.statusCode === 200) {
             return
         }
+
         try {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
             return message.fromBytes(decrypted)
@@ -170,3 +204,5 @@ for (let key in keys.pem) {
 }
 
 export const keeperKeys: KeeperKeys = _keeperKeys
+
+
