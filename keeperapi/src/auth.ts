@@ -115,6 +115,10 @@ export class Auth {
         return this.endpoint.executeRest(message, this._sessionToken);
     }
 
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>): Promise<string> {
+        return this.endpoint.executeRestToHTML(message, this._sessionToken);
+    }
+
     get sessionToken(): string {
         return this._sessionToken;
     }
