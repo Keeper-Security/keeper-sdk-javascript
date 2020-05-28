@@ -7009,9 +7009,6 @@ export namespace Authentication {
 
         /** Device encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
-
-        /** Device deviceId */
-        deviceId?: (number|Long|null);
     }
 
     /** Represents a Device. */
@@ -7025,9 +7022,6 @@ export namespace Authentication {
 
         /** Device encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
-
-        /** Device deviceId. */
-        public deviceId: (number|Long);
 
         /**
          * Creates a new Device instance using the specified properties.
@@ -7095,6 +7089,102 @@ export namespace Authentication {
 
         /**
          * Converts this Device to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a KinfoDevice. */
+    interface IKinfoDevice {
+
+        /** KinfoDevice encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** KinfoDevice deviceId */
+        deviceId?: (number|Long|null);
+    }
+
+    /** Represents a KinfoDevice. */
+    class KinfoDevice implements IKinfoDevice {
+
+        /**
+         * Constructs a new KinfoDevice.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IKinfoDevice);
+
+        /** KinfoDevice encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** KinfoDevice deviceId. */
+        public deviceId: (number|Long);
+
+        /**
+         * Creates a new KinfoDevice instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns KinfoDevice instance
+         */
+        public static create(properties?: Authentication.IKinfoDevice): Authentication.KinfoDevice;
+
+        /**
+         * Encodes the specified KinfoDevice message. Does not implicitly {@link Authentication.KinfoDevice.verify|verify} messages.
+         * @param message KinfoDevice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IKinfoDevice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified KinfoDevice message, length delimited. Does not implicitly {@link Authentication.KinfoDevice.verify|verify} messages.
+         * @param message KinfoDevice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IKinfoDevice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a KinfoDevice message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns KinfoDevice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.KinfoDevice;
+
+        /**
+         * Decodes a KinfoDevice message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns KinfoDevice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.KinfoDevice;
+
+        /**
+         * Verifies a KinfoDevice message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a KinfoDevice message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns KinfoDevice
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.KinfoDevice;
+
+        /**
+         * Creates a plain object from a KinfoDevice message. Also converts values to other types if specified.
+         * @param message KinfoDevice
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.KinfoDevice, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this KinfoDevice to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

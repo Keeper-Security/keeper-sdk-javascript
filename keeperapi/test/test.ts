@@ -1,4 +1,11 @@
-import {Auth, AuthUI, createEncryptionParams, decryptEncryptionParams, SocketListener} from '../src/auth'
+import {
+    Auth,
+    AuthUI,
+    createAuthVerifier,
+    createEncryptionParams,
+    decryptEncryptionParams,
+    SocketListener
+} from '../src/auth'
 import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
@@ -9,11 +16,11 @@ import {Company} from '../src/company'
 import {
     AccountSummaryCommand,
     EnterpriseDataInclude,
-    GetEnterpriseDataCommand,
+    GetEnterpriseDataCommand, RegisterCommand,
     RequestDownloadCommand, ResendEnterpriseInviteCommand
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {accountSummaryMessage, recordTypesGetMessage} from '../src/restMessages'
+import {accountSummaryMessage, recordTypesGetMessage, registerUserMessage} from '../src/restMessages'
 import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
@@ -727,15 +734,39 @@ async function testEncryptionParams() {
     console.log(dataKey1)
 }
 
-const currentUser = 'admin@yozik.us'
+async function testRegistration() {
+    const auth = new Auth({
+        host: 'local.keepersecurity.com',
+        // host: KeeperEnvironment.DEV
+    })
+
+    const password = '111111'
+    const iterations = 1000
+    const dataKey = generateEncryptionKey()
+
+    const authVerifier = await createAuthVerifier(password, iterations)
+    const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
+
+    const registerCommand = new RegisterCommand()
+    registerCommand.email = 'admin+m28c@yozik.us'
+    registerCommand.encryption_params = webSafe64FromBytes(encryptionParams)
+    registerCommand.auth_verifier = webSafe64FromBytes(authVerifier)
+    registerCommand.public_key = webSafe64FromBytes(generateEncryptionKey())
+    registerCommand.encrypted_private_key = webSafe64FromBytes(generateEncryptionKey())
+    const resp = await auth.executeCommand(registerCommand)
+    console.log(resp)
+}
+
+// const currentUser = 'admin@yozik.us'
 // const currentUser = 'admin+m6a@yozik.us'
-// const currentUser = 'admin+duo@yozik.us'
+const currentUser = 'admin+duo@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 // const currentUser = "vladimir+cw@keepersecurity.com"
 
 // printCompany().finally();
-printVault().finally();
+testRegistration().finally();
+// printVault().finally();
 // testResendInvite().finally();
 // provideECKey().finally()
 // testCommand().finally();

@@ -2,35 +2,30 @@ import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
 import {
     validateAuthHashMessage,
     registerDeviceMessage,
-    registerUserMessage,
     requestDeviceVerificationMessage,
     startLoginMessage,
     twoFactorValidateCodeMessage,
-    updateDeviceMessage
+    updateDeviceMessage, requestCreateAccountMessage
 } from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {createECDH, generateKeyPairSync} from "crypto";
-import {} from "ws"
+import {createECDH} from "crypto";
 import {prompt} from './testUtil'
 import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
 import * as fs from 'fs'
 import {Authentication} from '../src/proto';
 import {AccountSummaryCommand} from '../src/commands';
-import IAuthRequest = Authentication.IAuthRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
-import LoginState = Authentication.LoginState;
-import {util} from 'protobufjs';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-const userName = "admin@yozik.us"
+// const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-// const userName = "admin+m27a@yozik.us"
+const userName = "admin+m28a@yozik.us"
 const clientVersion = 'c16.0.0'
 
 async function registerDevice(auth: Auth): Promise<Uint8Array> {
@@ -121,7 +116,7 @@ async function testRegistration() {
     const authVerifier = await createAuthVerifier(password, iterations)
     const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
 
-    const regUserMsg = registerUserMessage({
+    const regUserMsg = requestCreateAccountMessage({
         username: userName,
         authVerifier: authVerifier,
         encryptionParams: encryptionParams,
@@ -186,7 +181,7 @@ async function testLogin() {
                 const twoFactorCodeResp = await auth.executeRest(twoFactorCodeMsg)
                 console.log(twoFactorCodeResp)
                 await authHashLogin(auth, deviceToken, twoFactorCodeResp.authHashInfo)
-                break;
+                return;
             case Authentication.LoginState.requires_authHash:
                 await authHashLogin(auth, deviceToken, startLoginResp.authHashInfo)
                 return
@@ -217,5 +212,5 @@ async function authHashLogin(auth: Auth, deviceToken: Uint8Array, authHashInfo: 
     console.log(accSummary)
 }
 
-// testRegistration().finally()
-testLogin().finally()
+testRegistration().finally()
+// testLogin().finally()

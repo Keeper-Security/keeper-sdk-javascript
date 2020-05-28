@@ -1427,6 +1427,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedDeviceToken: {
             type: "bytes",
             id: 1
+          }
+        }
+      },
+      KinfoDevice: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
           },
           deviceId: {
             type: "int64",

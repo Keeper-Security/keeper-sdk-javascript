@@ -29,6 +29,20 @@ export class LoginCommand extends KeeperCommand<LoginResponse> {
     "2fa_token": string;
 }
 
+export class RegisterCommand extends KeeperCommand<LoginResponse> {
+
+    constructor() {
+        super()
+        this.command = "register"
+    }
+
+    email: string;
+    auth_verifier: string;
+    encryption_params: string;
+    public_key: string;
+    encrypted_private_key: string;
+}
+
 export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse> extends KeeperCommand<Response> {
     session_token: string;
     device_id: string
