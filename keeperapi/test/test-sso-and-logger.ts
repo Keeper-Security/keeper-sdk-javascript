@@ -16,6 +16,7 @@ import ServiceLogSpecifier = ServiceLogger.ServiceLogSpecifier;
 import ServiceLogResponse = ServiceLogger.ServiceLogResponse;
 import {serviceLoggerGetMessage} from '../src/restMessages'
 import {ssoLoginMessage, ssoLogoutMessage, ssoGetMetadataMessage} from '../src/restMessages'
+import {getKeeperSAMLUrl, getKeeperUrl} from '../src/utils';
 
 interface UserInfo {
     account: string,
@@ -94,7 +95,7 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
 TestSsoGetMetadata().finally();
-TestSsoLogin().finally();
+// TestSsoLogin().finally();
 
 
 /* ------------------ Service Logger -------------------- */
@@ -162,7 +163,6 @@ async function TestSsoLogin() {
 }
 
 async function TestSsoGetMetadata() {
-
     let keeperHost = 'local.keepersecurity.com';  // KeeperEnvironment.DEV;  //'local.keepersecurity.com';
     console.log("\n*** TestSsoGetMetadata on " + keeperHost + " ***");
 
@@ -170,26 +170,16 @@ async function TestSsoGetMetadata() {
     let serviceProviderId = 9710921056266; // 6219112644615;
 
     try {
-        let auth = new Auth({
-            host: keeperHost
-        }, authUI);
-
-    /*
-        await auth.login(user.account, user.password);
-        console.log("Logged in...");
-     */
-
-        // This should return HTML
         console.log("Getting Service Provider Metadata");
-        let url = "https://" + keeperHost + "/api/rest/" + ssoGetMetadataMessage(serviceProviderId).path;
-        request(url).pipe(fs.createWriteStream('sp-metadata.xml'));
-        console.log("File received");
-
-        // console.log("Trying method 2");
-        // let ssoMetadataResp = await platform.get(url, null);  // should be a byte array
-        // let download = ssoMetadataResp.downloads[0];
-        // console.log("\n---------- METADATA ---------------\n" + download.url + "-----------------------------------\n");
-
+        const url = getKeeperSAMLUrl(keeperHost, 'metadata', serviceProviderId)
+        const resp = await platform.get(url, {})
+        if (resp.statusCode === 200) {
+            fs.writeFileSync("sp-metadata.xml", resp.data)
+            console.log("File received");
+        }
+        else {
+            console.log(`Error getting metadata: Code ${resp.statusCode} Message: ${platform.bytesToString(resp.data)}`)
+        }
     } catch (e) {
         console.log(e)
     }

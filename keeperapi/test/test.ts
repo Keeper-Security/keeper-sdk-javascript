@@ -20,7 +20,7 @@ import {
     RequestDownloadCommand, ResendEnterpriseInviteCommand
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
-import {accountSummaryMessage, recordTypesGetMessage, registerUserMessage} from '../src/restMessages'
+import {accountSummaryMessage, recordTypesGetMessage} from '../src/restMessages'
 import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';

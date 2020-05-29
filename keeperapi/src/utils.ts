@@ -5,6 +5,10 @@ export function getKeeperUrl(host: KeeperHost, forPath: string) {
     return `https://${host}/api/rest/${forPath}`;
 }
 
+export function getKeeperSAMLUrl(host: KeeperHost, forPath: string, serviceProviderId: number) {
+    return getKeeperUrl(host, `sso/saml/${forPath}/${serviceProviderId}`);
+}
+
 export function generateTransmissionKey(keyNumber: number): TransmissionKey {
     const transmissionKey = platform.getRandomBytes(32)
     return {
