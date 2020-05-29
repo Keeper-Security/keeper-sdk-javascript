@@ -2,7 +2,13 @@ import {KeeperCommand, KeeperHttpResponse} from './commands'
 import {Authentication} from './proto'
 import {platform} from './platform'
 import {generateTransmissionKey, getKeeperUrl, isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
-import {deviceMessage, preLoginMessage, RestMessage} from './restMessages'
+import {
+    deviceMessage,
+    preLoginMessage, registerDeviceMessage,
+    requestDeviceVerificationMessage,
+    RestMessage,
+    updateDeviceMessage
+} from './restMessages'
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
@@ -11,6 +17,8 @@ import IApiRequestPayload = Authentication.IApiRequestPayload;
 const open = require('open');
 
 import {ClientConfiguration, TransmissionKey} from './configuration';
+import {prompt} from '../test/testUtil';
+import {createECDH} from "crypto";
 
 export class KeeperEndpoint {
     private transmissionKey: TransmissionKey
@@ -65,6 +73,72 @@ export class KeeperEndpoint {
             },
             loginType: Authentication.LoginType.NORMAL
         }))
+    }
+
+    async registerDevice() {
+        // Case 1 new device, no edt no keys - call registration with pub key
+        // Case 2 existing device on 14, edt but no keys - call device update
+        // Case 3 existing device on 15+, has edt and keys - skip registration
+
+        const deviceConfig = this.options.deviceConfig
+
+        if (deviceConfig.deviceToken && deviceConfig.privateKey && deviceConfig.publicKey) {  // Case 1
+            return
+        }
+
+        const ecdh = createECDH('prime256v1')
+        ecdh.generateKeys()
+        deviceConfig.publicKey = ecdh.getPublicKey()
+        deviceConfig.privateKey = ecdh.getPrivateKey()
+        if (deviceConfig.deviceToken) {
+            const devUpdMsg = updateDeviceMessage({
+                encryptedDeviceToken: deviceConfig.deviceToken,
+                clientVersion: this.options.clientVersion,
+                deviceName: 'test device1',
+                devicePublicKey: deviceConfig.publicKey,
+            })
+            await this.executeRest(devUpdMsg)
+        }
+        else {
+            const devRegMsg = registerDeviceMessage({
+                clientVersion: this.options.clientVersion,
+                deviceName: 'test device',
+                devicePublicKey: deviceConfig.publicKey,
+            })
+            const devRegResp = await this.executeRest(devRegMsg)
+            console.log(devRegResp)
+            deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
+        }
+        if (this.options.onDeviceConfig) {
+            this.options.onDeviceConfig(deviceConfig);
+        }
+    }
+
+    async verifyDevice(username: string) {
+        await this.registerDevice()
+
+        const deviceConfig = this.options.deviceConfig
+
+        if (deviceConfig.verifiedUsers.includes(username)) {
+            return
+        }
+
+        const devVerMsg = requestDeviceVerificationMessage({
+            username: username,
+            encryptedDeviceToken: deviceConfig.deviceToken
+        })
+
+        await this.executeRest(devVerMsg)
+
+        const token = await prompt('Enter Device token or approve via email and press enter:')
+        if (!!token) {
+            const resp = await this.get(`process_token/${token}`)
+            console.log(platform.bytesToString(resp.data))
+            deviceConfig.verifiedUsers.push(username)
+        }
+        if (this.options.onDeviceConfig) {
+            this.options.onDeviceConfig(deviceConfig);
+        }
     }
 
     /**

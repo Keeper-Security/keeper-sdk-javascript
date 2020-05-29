@@ -757,16 +757,16 @@ async function testRegistration() {
     console.log(resp)
 }
 
-// const currentUser = 'admin@yozik.us'
+const currentUser = 'admin@yozik.us'
 // const currentUser = 'admin+m6a@yozik.us'
-const currentUser = 'admin+duo@yozik.us'
+// const currentUser = 'admin+duo@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 // const currentUser = "vladimir+cw@keepersecurity.com"
 
 // printCompany().finally();
-testRegistration().finally();
-// printVault().finally();
+// testRegistration().finally();
+printVault().finally();
 // testResendInvite().finally();
 // provideECKey().finally()
 // testCommand().finally();

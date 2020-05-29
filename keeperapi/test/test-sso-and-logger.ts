@@ -26,6 +26,7 @@ interface UserInfo {
 const MIKE_VAULT_LOGIN_1 : UserInfo = { "account": "mhewett+reg70@keepersecurity.com", "password": "Password11" }
 const MIKE_ADMIN_LOGIN_1 : UserInfo = { "account": "mhewett+sso42@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_1 : UserInfo  = { "account": "mhewett+sso60@keepersecurity.com", "password": "Password11" }
+const SERGE_PLAIN_LOGIN_1 : UserInfo  = { "account": "admin@yozik.us", "password": "111111" }
 
 // end Mike Test ------------------------------------------
 
@@ -93,8 +94,8 @@ async function login(user?: UserInfo): Promise<Auth> {
 const currentUser = MIKE_VAULT_LOGIN_1;
 
 // ServiceLogger and Cloud SSO Connect ---------------
-// testServiceLogger().finally();
-TestSsoGetMetadata().finally();
+testServiceLogger().finally();
+// TestSsoGetMetadata().finally();
 // TestSsoLogin().finally();
 
 
