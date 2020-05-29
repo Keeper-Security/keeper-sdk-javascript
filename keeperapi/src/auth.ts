@@ -1,10 +1,31 @@
 import {ClientConfiguration} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
-import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
-import {isTwoFactorResultCode, normal64, webSafe64, decryptFromStorage, webSafe64FromBytes} from "./utils";
-import {RestMessage} from './restMessages'
+import {
+    AuthorizedCommand,
+    KeeperCommand,
+    LoginCommand,
+    LoginResponse,
+    LoginResponseResultCode
+} from "./commands";
+import {
+    isTwoFactorResultCode,
+    normal64,
+    webSafe64,
+    decryptFromStorage,
+    webSafe64FromBytes,
+    generateUidBytes
+} from "./utils";
+import {
+    RestMessage,
+    startLoginMessage,
+    twoFactorValidateCodeMessage,
+    validateAuthHashMessage
+} from './restMessages'
 import * as WebSocket from 'faye-websocket'
+import {Authentication} from './proto';
+import {prompt} from '../test/testUtil';
+import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 export interface AuthUI {
     getTwoFactorCode(errorMessage?: string): Promise<string>;
@@ -47,7 +68,7 @@ export class SocketListener {
     async getTwoFactorCode(): Promise<string> {
         // this.socket.send('test')
         console.log('Awaiting web socket')
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<string>((resolve) => {
             this.socket.on('message', (e) => {
                 resolve(e.data)
                 this.socket.close();
@@ -68,6 +89,79 @@ export class Auth {
     constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
         this.endpoint = new KeeperEndpoint(this.options);
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
+    }
+
+    async loginV3(username: string, password: string) {
+
+        await this.endpoint.verifyDevice(username)
+
+        while (true) {
+            const startLoginMsg = startLoginMessage({
+                username: username,
+                clientVersion: this.endpoint.clientVersion,
+                encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+                messageSessionUid: generateUidBytes(),
+                loginType: Authentication.LoginType.NORMAL,
+                forceNewLogin: true
+            })
+            const startLoginResp = await this.executeRest(startLoginMsg)
+            console.log(startLoginResp)
+            switch (startLoginResp.loginState) {
+                case Authentication.LoginState.device_needs_approval:
+                    throw new Error('Device is not approved')
+                case Authentication.LoginState.device_locked:
+                    break;
+                case Authentication.LoginState.account_locked:
+                    break;
+                case Authentication.LoginState.device_account_locked:
+                    break;
+                case Authentication.LoginState.license_expired:
+                    break;
+                case Authentication.LoginState.region_redirect:
+                    break;
+                case Authentication.LoginState.redirect_cloud_sso:
+                    break;
+                case Authentication.LoginState.redirect_onsite_sso:
+                    break;
+                case Authentication.LoginState.user_already_logged_in:
+                    break;
+                case Authentication.LoginState.requires_2fa:
+                    const token = await prompt('Enter 2fa code:')
+                    console.log(token)
+                    const twoFactorCodeMsg = twoFactorValidateCodeMessage({
+                        channel: {
+                            type: 1
+                        },
+                        encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
+                        code: token,
+                        expireIn: TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
+                    })
+                    const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
+                    console.log(twoFactorCodeResp)
+                    await this.authHashLogin(twoFactorCodeResp.authHashInfo, username, password)
+                    return;
+                case Authentication.LoginState.requires_authHash:
+                    await this.authHashLogin(startLoginResp.authHashInfo, username, password)
+                    return
+            }
+        }
+    }
+
+    async authHashLogin(authHashInfo: Authentication.IAuthHashInfo, username: string, password: string) {
+        // TODO test for account transfer and account recovery
+        const salt = authHashInfo.salt[0]
+        const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
+        let authHash = await platform.authVerifierAsBytes(authHashKey);
+
+        const loginMsg = validateAuthHashMessage({
+            clientVersion: this.endpoint.clientVersion,
+            authResponse: authHash,
+            encryptedLoginToken: authHashInfo.encryptedLoginToken
+        })
+        const loginResp = await this.executeRest(loginMsg)
+        console.log(loginResp)
+
+        this.setLoginParameters(username, webSafe64FromBytes(loginResp.loginInfo.encryptedSessionToken))
     }
 
     async login(username: string, password: string) {
@@ -176,6 +270,10 @@ export class Auth {
     setLoginParameters(userName: string, sessionToken: string) {
         this._username = userName;
         this._sessionToken = sessionToken;
+    }
+
+    async verifyDevice(username: string) {
+        await this.endpoint.verifyDevice(username)
     }
 }
 
