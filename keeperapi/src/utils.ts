@@ -5,8 +5,20 @@ export function getKeeperUrl(host: KeeperHost, forPath: string) {
     return `https://${host}/api/rest/${forPath}`;
 }
 
-export function getKeeperSAMLUrl(host: KeeperHost, forPath: string, serviceProviderId: number) {
-    return getKeeperUrl(host, `sso/saml/${forPath}/${serviceProviderId}`);
+export function getKeeperSAMLUrl(host: KeeperHost, forPath: string, serviceProviderId: number = null) {
+    if (serviceProviderId) {
+        return getKeeperUrl(host, `sso/saml/${forPath}/${serviceProviderId}`);
+    } else {
+        return getKeeperUrl(host, `sso/saml/${forPath}`);
+    }
+}
+
+export function getKeeperSsoConfigUrl(host: KeeperHost, forPath: string, serviceProviderId: number = null) {
+    if (serviceProviderId) {
+        return getKeeperUrl(host, `sso/config/${forPath}/${serviceProviderId}`);
+    } else {
+        return getKeeperUrl(host, `sso/config/${forPath}`);
+    }
 }
 
 export function generateTransmissionKey(keyNumber: number): TransmissionKey {

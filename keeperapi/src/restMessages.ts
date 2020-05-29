@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {AccountSummary, Authentication, Enterprise, Records, ServiceLogger} from './proto'
+import {AccountSummary, Authentication, Enterprise, Records, ServiceLogger, SsoCloud} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -107,3 +107,6 @@ export const ssoLogoutMessage = (serviceProviderId, data): RestMessage<null, nul
 
 export const ssoGetMetadataMessage = (serviceProviderId): RestMessage<null, null> =>
     createMessage(null, 'sso/saml/metadata/' + serviceProviderId, null, null);
+
+export const ssoUploadIdpMetadataMessage = (data: SsoCloud.ISsoCloudIdpMetadataRequest): RestMessage<SsoCloud.ISsoCloudIdpMetadataRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
+    createMessage(data, 'sso/config/sso_cloud_upload_idp_metadata', SsoCloud.SsoCloudIdpMetadataRequest, SsoCloud.SsoCloudConfigurationValidationResponse);

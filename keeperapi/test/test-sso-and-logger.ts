@@ -5,7 +5,7 @@ import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
 import * as fs from 'fs'
 import * as request from 'request'
-import {ServiceLogger} from '../src/proto'
+import {ServiceLogger, SsoCloud} from '../src/proto'
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -14,9 +14,10 @@ import {ServiceLogger} from '../src/proto'
 import ServiceLogGetRequest = ServiceLogger.ServiceLogGetRequest;
 import ServiceLogSpecifier = ServiceLogger.ServiceLogSpecifier;
 import ServiceLogResponse = ServiceLogger.ServiceLogResponse;
+import SsoCloudIdpMetadataRequest = SsoCloud.SsoCloudIdpMetadataRequest;
 import {serviceLoggerGetMessage} from '../src/restMessages'
-import {ssoLoginMessage, ssoLogoutMessage, ssoGetMetadataMessage} from '../src/restMessages'
-import {getKeeperSAMLUrl, getKeeperUrl} from '../src/utils';
+import {ssoLoginMessage, ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage} from '../src/restMessages'
+import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 interface UserInfo {
     account: string,
@@ -94,9 +95,9 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
-TestSsoGetMetadata().finally();
+// TestSsoGetMetadata().finally();
 // TestSsoLogin().finally();
-
+TestSsoUploadMetadata().finally();
 
 /* ------------------ Service Logger -------------------- */
 
@@ -116,8 +117,6 @@ async function testServiceLogger() {
 
         let serviceLoggerResp = await auth.executeRest(serviceLoggerGetMessage(serviceLoggerGetReq));
         console.log(serviceLoggerResp)
-        // let recTypes = recTypesResp.recordTypes.map(x => JSON.stringify(JSON.parse(x.content)))
-        // console.log(recTypes)
 
     } catch (e) {
         console.log(e)
@@ -146,7 +145,7 @@ async function TestSsoLogin() {
      */
 
         // This should return HTML
-        console.log("Logging in via sso");
+        console.log('Logging in via sso');
         let ssoLoginResp = await auth.executeRestToHTML(ssoLoginMessage(serviceProviderId));
         console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
 
@@ -175,12 +174,47 @@ async function TestSsoGetMetadata() {
         const resp = await platform.get(url, {})
         if (resp.statusCode === 200) {
             fs.writeFileSync("sp-metadata.xml", resp.data)
-            console.log("File received");
+            console.log("File received: sp-metadata.xml");
         }
         else {
             console.log(`Error getting metadata: Code ${resp.statusCode} Message: ${platform.bytesToString(resp.data)}`)
         }
     } catch (e) {
+        console.log(e)
+    }
+}
+
+
+async function TestSsoUploadMetadata() {
+    let keeperHost = 'local.keepersecurity.com';  // KeeperEnvironment.DEV;  //'local.keepersecurity.com';
+    console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    let filename = 'idp_metadata.xml';
+
+    try {
+        console.log("Uploading Service Provider Metadata from", filename);
+        const url = getKeeperSsoConfigUrl(keeperHost, 'sso_cloud_upload_idp_metadata');
+        console.log("REST endpoint =", url);
+        let fileBytes : Buffer = fs.readFileSync(filename);
+        
+        let auth = new Auth({
+            host: keeperHost
+        }, authUI);
+        await auth.login(user.account, user.password);
+        console.log("Logged in...");
+
+        let uploadReq = SsoCloudIdpMetadataRequest.create({
+            "ssoSpConfigurationId": 3121290,
+            "filename": filename,
+            "content": new Uint8Array(fileBytes)
+        });
+
+        let resp = await auth.executeRest(ssoUploadIdpMetadataMessage(uploadReq));
+        console.log(resp);
+     } catch (e) {
         console.log(e)
     }
 }

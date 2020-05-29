@@ -68,7 +68,7 @@ export class KeeperEndpoint {
     }
 
     /**
-     * Call this for REST calls expected to return HTML.
+     * Call this for REST calls expected to return HTML or a 303 redirect.
      */
     async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<string> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
@@ -83,6 +83,10 @@ export class KeeperEndpoint {
             } else {
                 console.log("Expected URL with 303 status, but didn't get one");
             }
+        }
+
+        if (response.statusCode === 404) {
+            return new Promise(resolve => { resolve("404 NOT FOUND"); });
         }
 
         // Any content?
