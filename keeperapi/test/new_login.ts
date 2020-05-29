@@ -15,11 +15,11 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-const userName = "admin@yozik.us"
+// const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-// const userName = "admin+m28a@yozik.us"
+const userName = "admin+m29a@yozik.us"
 const clientVersion = 'c16.0.0'
 
 type DeviceConfigStorage = {

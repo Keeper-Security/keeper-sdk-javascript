@@ -40,8 +40,8 @@ export namespace Authentication {
     enum DeviceStatus {
         DEVICE_NEEDS_APPROVAL = 0,
         DEVICE_OK = 1,
-        DEVICE_DISABLED = 2,
-        DEVICE_LOCKED = 3
+        DEVICE_DISABLED_BY_USER = 2,
+        DEVICE_LOCKED_BY_ADMIN = 3
     }
 
     /** LicenseStatus enum. */
@@ -3385,6 +3385,9 @@ export namespace Authentication {
 
         /** DeviceUpdateRequest devicePublicKey */
         devicePublicKey?: (Uint8Array|null);
+
+        /** DeviceUpdateRequest deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
     }
 
     /** Represents a DeviceUpdateRequest. */
@@ -3407,6 +3410,9 @@ export namespace Authentication {
 
         /** DeviceUpdateRequest devicePublicKey. */
         public devicePublicKey: Uint8Array;
+
+        /** DeviceUpdateRequest deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
 
         /**
          * Creates a new DeviceUpdateRequest instance using the specified properties.
@@ -5564,217 +5570,211 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a RegisterUserRequest. */
-    interface IRegisterUserRequest {
+    /** Properties of a CreateAccountRequest. */
+    interface ICreateAccountRequest {
 
-        /** RegisterUserRequest username */
+        /** CreateAccountRequest username */
         username?: (string|null);
 
-        /** RegisterUserRequest version */
+        /** CreateAccountRequest version */
         version?: (Authentication.Version|null);
 
-        /** RegisterUserRequest authVerifier */
+        /** CreateAccountRequest authVerifier */
         authVerifier?: (Uint8Array|null);
 
-        /** RegisterUserRequest encryptionParams */
+        /** CreateAccountRequest encryptionParams */
         encryptionParams?: (Uint8Array|null);
 
-        /** RegisterUserRequest publicKey */
+        /** CreateAccountRequest publicKey */
         publicKey?: (Uint8Array|null);
 
-        /** RegisterUserRequest encryptedPrivateKey */
+        /** CreateAccountRequest encryptedPrivateKey */
         encryptedPrivateKey?: (Uint8Array|null);
 
-        /** RegisterUserRequest installReferrer */
+        /** CreateAccountRequest installReferrer */
         installReferrer?: (string|null);
 
-        /** RegisterUserRequest clientKey */
+        /** CreateAccountRequest clientKey */
         clientKey?: (Uint8Array|null);
 
-        /** RegisterUserRequest deviceUid */
+        /** CreateAccountRequest deviceUid */
         deviceUid?: (string|null);
 
-        /** RegisterUserRequest mccMNC */
+        /** CreateAccountRequest mccMNC */
         mccMNC?: (number|null);
 
-        /** RegisterUserRequest mfg */
+        /** CreateAccountRequest mfg */
         mfg?: (string|null);
 
-        /** RegisterUserRequest model */
+        /** CreateAccountRequest model */
         model?: (string|null);
 
-        /** RegisterUserRequest brand */
+        /** CreateAccountRequest brand */
         brand?: (string|null);
 
-        /** RegisterUserRequest product */
+        /** CreateAccountRequest product */
         product?: (string|null);
 
-        /** RegisterUserRequest pushToken */
+        /** CreateAccountRequest pushToken */
         pushToken?: (string|null);
 
-        /** RegisterUserRequest device */
+        /** CreateAccountRequest device */
         device?: (string|null);
 
-        /** RegisterUserRequest carrier */
+        /** CreateAccountRequest carrier */
         carrier?: (string|null);
 
-        /** RegisterUserRequest skipGroupAccept */
+        /** CreateAccountRequest skipGroupAccept */
         skipGroupAccept?: (boolean|null);
 
-        /** RegisterUserRequest clientVersion */
+        /** CreateAccountRequest clientVersion */
         clientVersion?: (string|null);
 
-        /** RegisterUserRequest fromSP */
+        /** CreateAccountRequest fromSP */
         fromSP?: (boolean|null);
 
-        /** RegisterUserRequest verificationCode */
-        verificationCode?: (string|null);
-
-        /** RegisterUserRequest encryptedDeviceToken */
+        /** CreateAccountRequest encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
     }
 
-    /** Represents a RegisterUserRequest. */
-    class RegisterUserRequest implements IRegisterUserRequest {
+    /** Represents a CreateAccountRequest. */
+    class CreateAccountRequest implements ICreateAccountRequest {
 
         /**
-         * Constructs a new RegisterUserRequest.
+         * Constructs a new CreateAccountRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IRegisterUserRequest);
+        constructor(properties?: Authentication.ICreateAccountRequest);
 
-        /** RegisterUserRequest username. */
+        /** CreateAccountRequest username. */
         public username: string;
 
-        /** RegisterUserRequest version. */
+        /** CreateAccountRequest version. */
         public version: Authentication.Version;
 
-        /** RegisterUserRequest authVerifier. */
+        /** CreateAccountRequest authVerifier. */
         public authVerifier: Uint8Array;
 
-        /** RegisterUserRequest encryptionParams. */
+        /** CreateAccountRequest encryptionParams. */
         public encryptionParams: Uint8Array;
 
-        /** RegisterUserRequest publicKey. */
+        /** CreateAccountRequest publicKey. */
         public publicKey: Uint8Array;
 
-        /** RegisterUserRequest encryptedPrivateKey. */
+        /** CreateAccountRequest encryptedPrivateKey. */
         public encryptedPrivateKey: Uint8Array;
 
-        /** RegisterUserRequest installReferrer. */
+        /** CreateAccountRequest installReferrer. */
         public installReferrer: string;
 
-        /** RegisterUserRequest clientKey. */
+        /** CreateAccountRequest clientKey. */
         public clientKey: Uint8Array;
 
-        /** RegisterUserRequest deviceUid. */
+        /** CreateAccountRequest deviceUid. */
         public deviceUid: string;
 
-        /** RegisterUserRequest mccMNC. */
+        /** CreateAccountRequest mccMNC. */
         public mccMNC: number;
 
-        /** RegisterUserRequest mfg. */
+        /** CreateAccountRequest mfg. */
         public mfg: string;
 
-        /** RegisterUserRequest model. */
+        /** CreateAccountRequest model. */
         public model: string;
 
-        /** RegisterUserRequest brand. */
+        /** CreateAccountRequest brand. */
         public brand: string;
 
-        /** RegisterUserRequest product. */
+        /** CreateAccountRequest product. */
         public product: string;
 
-        /** RegisterUserRequest pushToken. */
+        /** CreateAccountRequest pushToken. */
         public pushToken: string;
 
-        /** RegisterUserRequest device. */
+        /** CreateAccountRequest device. */
         public device: string;
 
-        /** RegisterUserRequest carrier. */
+        /** CreateAccountRequest carrier. */
         public carrier: string;
 
-        /** RegisterUserRequest skipGroupAccept. */
+        /** CreateAccountRequest skipGroupAccept. */
         public skipGroupAccept: boolean;
 
-        /** RegisterUserRequest clientVersion. */
+        /** CreateAccountRequest clientVersion. */
         public clientVersion: string;
 
-        /** RegisterUserRequest fromSP. */
+        /** CreateAccountRequest fromSP. */
         public fromSP: boolean;
 
-        /** RegisterUserRequest verificationCode. */
-        public verificationCode: string;
-
-        /** RegisterUserRequest encryptedDeviceToken. */
+        /** CreateAccountRequest encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
 
         /**
-         * Creates a new RegisterUserRequest instance using the specified properties.
+         * Creates a new CreateAccountRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns RegisterUserRequest instance
+         * @returns CreateAccountRequest instance
          */
-        public static create(properties?: Authentication.IRegisterUserRequest): Authentication.RegisterUserRequest;
+        public static create(properties?: Authentication.ICreateAccountRequest): Authentication.CreateAccountRequest;
 
         /**
-         * Encodes the specified RegisterUserRequest message. Does not implicitly {@link Authentication.RegisterUserRequest.verify|verify} messages.
-         * @param message RegisterUserRequest message or plain object to encode
+         * Encodes the specified CreateAccountRequest message. Does not implicitly {@link Authentication.CreateAccountRequest.verify|verify} messages.
+         * @param message CreateAccountRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IRegisterUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.ICreateAccountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified RegisterUserRequest message, length delimited. Does not implicitly {@link Authentication.RegisterUserRequest.verify|verify} messages.
-         * @param message RegisterUserRequest message or plain object to encode
+         * Encodes the specified CreateAccountRequest message, length delimited. Does not implicitly {@link Authentication.CreateAccountRequest.verify|verify} messages.
+         * @param message CreateAccountRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IRegisterUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.ICreateAccountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a RegisterUserRequest message from the specified reader or buffer.
+         * Decodes a CreateAccountRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns RegisterUserRequest
+         * @returns CreateAccountRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RegisterUserRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.CreateAccountRequest;
 
         /**
-         * Decodes a RegisterUserRequest message from the specified reader or buffer, length delimited.
+         * Decodes a CreateAccountRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns RegisterUserRequest
+         * @returns CreateAccountRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RegisterUserRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.CreateAccountRequest;
 
         /**
-         * Verifies a RegisterUserRequest message.
+         * Verifies a CreateAccountRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a RegisterUserRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a CreateAccountRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns RegisterUserRequest
+         * @returns CreateAccountRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.RegisterUserRequest;
+        public static fromObject(object: { [k: string]: any }): Authentication.CreateAccountRequest;
 
         /**
-         * Creates a plain object from a RegisterUserRequest message. Also converts values to other types if specified.
-         * @param message RegisterUserRequest
+         * Creates a plain object from a CreateAccountRequest message. Also converts values to other types if specified.
+         * @param message CreateAccountRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.RegisterUserRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.CreateAccountRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this RegisterUserRequest to JSON.
+         * Converts this CreateAccountRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -15443,13 +15443,242 @@ export namespace Tokens {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a CreateAccountToken. */
+    interface ICreateAccountToken {
+
+        /** CreateAccountToken username */
+        username?: (string|null);
+
+        /** CreateAccountToken version */
+        version?: (Authentication.Version|null);
+
+        /** CreateAccountToken authVerifier */
+        authVerifier?: (Uint8Array|null);
+
+        /** CreateAccountToken encryptionParams */
+        encryptionParams?: (Uint8Array|null);
+
+        /** CreateAccountToken publicKey */
+        publicKey?: (Uint8Array|null);
+
+        /** CreateAccountToken encryptedPrivateKey */
+        encryptedPrivateKey?: (Uint8Array|null);
+
+        /** CreateAccountToken installReferrer */
+        installReferrer?: (string|null);
+
+        /** CreateAccountToken clientKey */
+        clientKey?: (Uint8Array|null);
+
+        /** CreateAccountToken deviceUid */
+        deviceUid?: (string|null);
+
+        /** CreateAccountToken mccMNC */
+        mccMNC?: (number|null);
+
+        /** CreateAccountToken mfg */
+        mfg?: (string|null);
+
+        /** CreateAccountToken model */
+        model?: (string|null);
+
+        /** CreateAccountToken brand */
+        brand?: (string|null);
+
+        /** CreateAccountToken product */
+        product?: (string|null);
+
+        /** CreateAccountToken pushToken */
+        pushToken?: (string|null);
+
+        /** CreateAccountToken device */
+        device?: (string|null);
+
+        /** CreateAccountToken carrier */
+        carrier?: (string|null);
+
+        /** CreateAccountToken skipGroupAccept */
+        skipGroupAccept?: (boolean|null);
+
+        /** CreateAccountToken clientVersion */
+        clientVersion?: (string|null);
+
+        /** CreateAccountToken fromSP */
+        fromSP?: (boolean|null);
+
+        /** CreateAccountToken verificationCode */
+        verificationCode?: (string|null);
+
+        /** CreateAccountToken encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** CreateAccountToken expiration */
+        expiration?: (number|Long|null);
+
+        /** CreateAccountToken locale */
+        locale?: (string|null);
+    }
+
+    /** Represents a CreateAccountToken. */
+    class CreateAccountToken implements ICreateAccountToken {
+
+        /**
+         * Constructs a new CreateAccountToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.ICreateAccountToken);
+
+        /** CreateAccountToken username. */
+        public username: string;
+
+        /** CreateAccountToken version. */
+        public version: Authentication.Version;
+
+        /** CreateAccountToken authVerifier. */
+        public authVerifier: Uint8Array;
+
+        /** CreateAccountToken encryptionParams. */
+        public encryptionParams: Uint8Array;
+
+        /** CreateAccountToken publicKey. */
+        public publicKey: Uint8Array;
+
+        /** CreateAccountToken encryptedPrivateKey. */
+        public encryptedPrivateKey: Uint8Array;
+
+        /** CreateAccountToken installReferrer. */
+        public installReferrer: string;
+
+        /** CreateAccountToken clientKey. */
+        public clientKey: Uint8Array;
+
+        /** CreateAccountToken deviceUid. */
+        public deviceUid: string;
+
+        /** CreateAccountToken mccMNC. */
+        public mccMNC: number;
+
+        /** CreateAccountToken mfg. */
+        public mfg: string;
+
+        /** CreateAccountToken model. */
+        public model: string;
+
+        /** CreateAccountToken brand. */
+        public brand: string;
+
+        /** CreateAccountToken product. */
+        public product: string;
+
+        /** CreateAccountToken pushToken. */
+        public pushToken: string;
+
+        /** CreateAccountToken device. */
+        public device: string;
+
+        /** CreateAccountToken carrier. */
+        public carrier: string;
+
+        /** CreateAccountToken skipGroupAccept. */
+        public skipGroupAccept: boolean;
+
+        /** CreateAccountToken clientVersion. */
+        public clientVersion: string;
+
+        /** CreateAccountToken fromSP. */
+        public fromSP: boolean;
+
+        /** CreateAccountToken verificationCode. */
+        public verificationCode: string;
+
+        /** CreateAccountToken encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** CreateAccountToken expiration. */
+        public expiration: (number|Long);
+
+        /** CreateAccountToken locale. */
+        public locale: string;
+
+        /**
+         * Creates a new CreateAccountToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns CreateAccountToken instance
+         */
+        public static create(properties?: Tokens.ICreateAccountToken): Tokens.CreateAccountToken;
+
+        /**
+         * Encodes the specified CreateAccountToken message. Does not implicitly {@link Tokens.CreateAccountToken.verify|verify} messages.
+         * @param message CreateAccountToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.ICreateAccountToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified CreateAccountToken message, length delimited. Does not implicitly {@link Tokens.CreateAccountToken.verify|verify} messages.
+         * @param message CreateAccountToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.ICreateAccountToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a CreateAccountToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns CreateAccountToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.CreateAccountToken;
+
+        /**
+         * Decodes a CreateAccountToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns CreateAccountToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.CreateAccountToken;
+
+        /**
+         * Verifies a CreateAccountToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a CreateAccountToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns CreateAccountToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.CreateAccountToken;
+
+        /**
+         * Creates a plain object from a CreateAccountToken message. Also converts values to other types if specified.
+         * @param message CreateAccountToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.CreateAccountToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this CreateAccountToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** ProcessTokenType enum. */
     enum ProcessTokenType {
         CHANGE_EMAIL = 0,
         EMAIL_VERIFICATION = 1,
         IP_ADDRESS_VERIFICATION = 2,
         USERNAME_VERIFICATION = 3,
-        DEVICE_VERIFICATION = 4
+        DEVICE_VERIFICATION = 4,
+        CREATE_ACCOUNT_VERIFICATION = 5
     }
 
     /** Properties of a ProcessToken. */
@@ -24154,6 +24383,396 @@ export namespace SsoCloud {
 
         /**
          * Converts this SsoCloudServiceProviderUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudIdpMetadataRequest. */
+    interface ISsoCloudIdpMetadataRequest {
+
+        /** SsoCloudIdpMetadataRequest ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+
+        /** SsoCloudIdpMetadataRequest filename */
+        filename?: (string|null);
+
+        /** SsoCloudIdpMetadataRequest content */
+        content?: (Uint8Array|null);
+    }
+
+    /**
+     * This request is to upload the IdP metadata file as its UTF-8 byte content.
+     * The response is an SsoCloudConfigurationValidationResponse.
+     */
+    class SsoCloudIdpMetadataRequest implements ISsoCloudIdpMetadataRequest {
+
+        /**
+         * Constructs a new SsoCloudIdpMetadataRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudIdpMetadataRequest);
+
+        /** SsoCloudIdpMetadataRequest ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /** SsoCloudIdpMetadataRequest filename. */
+        public filename: string;
+
+        /** SsoCloudIdpMetadataRequest content. */
+        public content: Uint8Array;
+
+        /**
+         * Creates a new SsoCloudIdpMetadataRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudIdpMetadataRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudIdpMetadataRequest): SsoCloud.SsoCloudIdpMetadataRequest;
+
+        /**
+         * Encodes the specified SsoCloudIdpMetadataRequest message. Does not implicitly {@link SsoCloud.SsoCloudIdpMetadataRequest.verify|verify} messages.
+         * @param message SsoCloudIdpMetadataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudIdpMetadataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudIdpMetadataRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudIdpMetadataRequest.verify|verify} messages.
+         * @param message SsoCloudIdpMetadataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudIdpMetadataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudIdpMetadataRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudIdpMetadataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudIdpMetadataRequest;
+
+        /**
+         * Decodes a SsoCloudIdpMetadataRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudIdpMetadataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudIdpMetadataRequest;
+
+        /**
+         * Verifies a SsoCloudIdpMetadataRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudIdpMetadataRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudIdpMetadataRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudIdpMetadataRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudIdpMetadataRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudIdpMetadataRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudIdpMetadataRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudIdpMetadataRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudConfigurationValidationRequest. */
+    interface ISsoCloudConfigurationValidationRequest {
+
+        /** SsoCloudConfigurationValidationRequest ssoSpConfigurationId */
+        ssoSpConfigurationId?: ((number|Long)[]|null);
+    }
+
+    /**
+     * Request validation of one or more SsoCloudConfigurations.
+     * The response is SsoCloudConfigurationValidationResponse.
+     */
+    class SsoCloudConfigurationValidationRequest implements ISsoCloudConfigurationValidationRequest {
+
+        /**
+         * Constructs a new SsoCloudConfigurationValidationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudConfigurationValidationRequest);
+
+        /** SsoCloudConfigurationValidationRequest ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long)[];
+
+        /**
+         * Creates a new SsoCloudConfigurationValidationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudConfigurationValidationRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudConfigurationValidationRequest): SsoCloud.SsoCloudConfigurationValidationRequest;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationValidationRequest message. Does not implicitly {@link SsoCloud.SsoCloudConfigurationValidationRequest.verify|verify} messages.
+         * @param message SsoCloudConfigurationValidationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudConfigurationValidationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationValidationRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudConfigurationValidationRequest.verify|verify} messages.
+         * @param message SsoCloudConfigurationValidationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudConfigurationValidationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudConfigurationValidationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudConfigurationValidationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudConfigurationValidationRequest;
+
+        /**
+         * Decodes a SsoCloudConfigurationValidationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudConfigurationValidationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudConfigurationValidationRequest;
+
+        /**
+         * Verifies a SsoCloudConfigurationValidationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudConfigurationValidationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudConfigurationValidationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudConfigurationValidationRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudConfigurationValidationRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudConfigurationValidationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudConfigurationValidationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudConfigurationValidationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ValidationContent. */
+    interface IValidationContent {
+
+        /** ValidationContent ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+
+        /** ValidationContent isSuccessful */
+        isSuccessful?: (boolean|null);
+
+        /** ValidationContent errorMessage */
+        errorMessage?: (string[]|null);
+    }
+
+    /** This is part of SsoCloudConfigurationValidationResponse. */
+    class ValidationContent implements IValidationContent {
+
+        /**
+         * Constructs a new ValidationContent.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.IValidationContent);
+
+        /** ValidationContent ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /** ValidationContent isSuccessful. */
+        public isSuccessful: boolean;
+
+        /** ValidationContent errorMessage. */
+        public errorMessage: string[];
+
+        /**
+         * Creates a new ValidationContent instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ValidationContent instance
+         */
+        public static create(properties?: SsoCloud.IValidationContent): SsoCloud.ValidationContent;
+
+        /**
+         * Encodes the specified ValidationContent message. Does not implicitly {@link SsoCloud.ValidationContent.verify|verify} messages.
+         * @param message ValidationContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.IValidationContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ValidationContent message, length delimited. Does not implicitly {@link SsoCloud.ValidationContent.verify|verify} messages.
+         * @param message ValidationContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.IValidationContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ValidationContent message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ValidationContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.ValidationContent;
+
+        /**
+         * Decodes a ValidationContent message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ValidationContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.ValidationContent;
+
+        /**
+         * Verifies a ValidationContent message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ValidationContent message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ValidationContent
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.ValidationContent;
+
+        /**
+         * Creates a plain object from a ValidationContent message. Also converts values to other types if specified.
+         * @param message ValidationContent
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.ValidationContent, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ValidationContent to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudConfigurationValidationResponse. */
+    interface ISsoCloudConfigurationValidationResponse {
+
+        /** SsoCloudConfigurationValidationResponse validationContent */
+        validationContent?: (SsoCloud.IValidationContent[]|null);
+    }
+
+    /** This response is sent for a configuration validation request and for a Metadata upload request. */
+    class SsoCloudConfigurationValidationResponse implements ISsoCloudConfigurationValidationResponse {
+
+        /**
+         * Constructs a new SsoCloudConfigurationValidationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudConfigurationValidationResponse);
+
+        /** SsoCloudConfigurationValidationResponse validationContent. */
+        public validationContent: SsoCloud.IValidationContent[];
+
+        /**
+         * Creates a new SsoCloudConfigurationValidationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudConfigurationValidationResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudConfigurationValidationResponse): SsoCloud.SsoCloudConfigurationValidationResponse;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationValidationResponse message. Does not implicitly {@link SsoCloud.SsoCloudConfigurationValidationResponse.verify|verify} messages.
+         * @param message SsoCloudConfigurationValidationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudConfigurationValidationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudConfigurationValidationResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudConfigurationValidationResponse.verify|verify} messages.
+         * @param message SsoCloudConfigurationValidationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudConfigurationValidationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudConfigurationValidationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudConfigurationValidationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudConfigurationValidationResponse;
+
+        /**
+         * Decodes a SsoCloudConfigurationValidationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudConfigurationValidationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudConfigurationValidationResponse;
+
+        /**
+         * Verifies a SsoCloudConfigurationValidationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudConfigurationValidationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudConfigurationValidationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudConfigurationValidationResponse;
+
+        /**
+         * Creates a plain object from a SsoCloudConfigurationValidationResponse message. Also converts values to other types if specified.
+         * @param message SsoCloudConfigurationValidationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudConfigurationValidationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudConfigurationValidationResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

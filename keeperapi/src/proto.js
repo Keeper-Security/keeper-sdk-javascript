@@ -49,8 +49,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
         values: {
           DEVICE_NEEDS_APPROVAL: 0,
           DEVICE_OK: 1,
-          DEVICE_DISABLED: 2,
-          DEVICE_LOCKED: 3
+          DEVICE_DISABLED_BY_USER: 2,
+          DEVICE_LOCKED_BY_ADMIN: 3
         }
       },
       LicenseStatus: {
@@ -825,6 +825,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           devicePublicKey: {
             type: "bytes",
             id: 4
+          },
+          deviceStatus: {
+            type: "DeviceStatus",
+            id: 5
           }
         }
       },
@@ -1137,7 +1141,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      RegisterUserRequest: {
+      CreateAccountRequest: {
         fields: {
           username: {
             type: "string",
@@ -1219,13 +1223,9 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 20
           },
-          verificationCode: {
-            type: "string",
-            id: 21
-          },
           encryptedDeviceToken: {
             type: "bytes",
-            id: 22
+            id: 21
           }
         }
       },
@@ -3215,13 +3215,114 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      CreateAccountToken: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          },
+          version: {
+            type: "Authentication.Version",
+            id: 2
+          },
+          authVerifier: {
+            type: "bytes",
+            id: 3
+          },
+          encryptionParams: {
+            type: "bytes",
+            id: 4
+          },
+          publicKey: {
+            type: "bytes",
+            id: 5
+          },
+          encryptedPrivateKey: {
+            type: "bytes",
+            id: 6
+          },
+          installReferrer: {
+            type: "string",
+            id: 7
+          },
+          clientKey: {
+            type: "bytes",
+            id: 8
+          },
+          deviceUid: {
+            type: "string",
+            id: 9
+          },
+          mccMNC: {
+            type: "int32",
+            id: 10
+          },
+          mfg: {
+            type: "string",
+            id: 11
+          },
+          model: {
+            type: "string",
+            id: 12
+          },
+          brand: {
+            type: "string",
+            id: 13
+          },
+          product: {
+            type: "string",
+            id: 14
+          },
+          pushToken: {
+            type: "string",
+            id: 15
+          },
+          device: {
+            type: "string",
+            id: 16
+          },
+          carrier: {
+            type: "string",
+            id: 17
+          },
+          skipGroupAccept: {
+            type: "bool",
+            id: 18
+          },
+          clientVersion: {
+            type: "string",
+            id: 19
+          },
+          fromSP: {
+            type: "bool",
+            id: 20
+          },
+          verificationCode: {
+            type: "string",
+            id: 21
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 22
+          },
+          expiration: {
+            type: "int64",
+            id: 23
+          },
+          locale: {
+            type: "string",
+            id: 24
+          }
+        }
+      },
       ProcessTokenType: {
         values: {
           CHANGE_EMAIL: 0,
           EMAIL_VERIFICATION: 1,
           IP_ADDRESS_VERIFICATION: 2,
           USERNAME_VERIFICATION: 3,
-          DEVICE_VERIFICATION: 4
+          DEVICE_VERIFICATION: 4,
+          CREATE_ACCOUNT_VERIFICATION: 5
         }
       },
       ProcessToken: {
@@ -4832,6 +4933,57 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           ssoSpConfigurationId: {
             type: "uint64",
             id: 2
+          }
+        }
+      },
+      SsoCloudIdpMetadataRequest: {
+        fields: {
+          ssoSpConfigurationId: {
+            type: "uint64",
+            id: 1
+          },
+          filename: {
+            type: "string",
+            id: 2
+          },
+          content: {
+            type: "bytes",
+            id: 3
+          }
+        }
+      },
+      SsoCloudConfigurationValidationRequest: {
+        fields: {
+          ssoSpConfigurationId: {
+            rule: "repeated",
+            type: "uint64",
+            id: 1
+          }
+        }
+      },
+      ValidationContent: {
+        fields: {
+          ssoSpConfigurationId: {
+            type: "uint64",
+            id: 1
+          },
+          isSuccessful: {
+            type: "bool",
+            id: 2
+          },
+          errorMessage: {
+            rule: "repeated",
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      SsoCloudConfigurationValidationResponse: {
+        fields: {
+          validationContent: {
+            rule: "repeated",
+            type: "ValidationContent",
+            id: 1
           }
         }
       }

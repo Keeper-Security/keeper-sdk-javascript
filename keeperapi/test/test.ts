@@ -687,9 +687,9 @@ async function login(user?: string): Promise<Auth> {
     }
 
     let auth = new Auth({
-        host: 'local.keepersecurity.com',
+        // host: 'local.keepersecurity.com',
         // host: 'dev2.keepersecurity.com',
-        // host: KeeperEnvironment.DEV
+        host: KeeperEnvironment.DEV,
         // host: KeeperEnvironment.QA
         deviceToken: deviceToken,
         onDeviceToken: saveDeviceToken
