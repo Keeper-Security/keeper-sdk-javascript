@@ -26,6 +26,9 @@ import * as WebSocket from 'faye-websocket'
 import {Authentication} from './proto';
 import {prompt} from '../test/testUtil';
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
+import {KeeperEnvironment} from './endpoint'
+import {ssoLoginMessage, ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage} from '../src/restMessages'
+import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 export interface AuthUI {
     getTwoFactorCode(errorMessage?: string): Promise<string>;
@@ -120,7 +123,9 @@ export class Auth {
                 case Authentication.LoginState.region_redirect:
                     break;
                 case Authentication.LoginState.redirect_cloud_sso:
-                    break;
+                    console.log("Starting SSO login");
+                    await this.cloudSsoLogin(startLoginResp.ssoUserInfo.url);
+                    return;
                 case Authentication.LoginState.redirect_onsite_sso:
                     break;
                 case Authentication.LoginState.user_already_logged_in:
@@ -162,6 +167,20 @@ export class Auth {
         console.log(loginResp)
 
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.loginInfo.encryptedSessionToken))
+    }
+
+    async cloudSsoLogin(ssoLoginUrl: string) {
+
+        try {
+            console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
+
+            // This should return HTML
+            let ssoLoginResp = await this.executeRestToHTML(ssoLoginMessage(ssoLoginUrl));
+            console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
+
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     async login(username: string, password: string) {

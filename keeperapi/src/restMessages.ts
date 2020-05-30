@@ -102,6 +102,9 @@ export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetReques
 export const ssoLoginMessage = (serviceProviderId): RestMessage<null, null> =>
     createMessage(null, 'sso/saml/login/' + serviceProviderId, null, null);
 
+export const ssoLoginMessageWithUrl = (url): RestMessage<null, null> =>
+    createMessage(null, url, null, null);
+
 export const ssoLogoutMessage = (serviceProviderId, data): RestMessage<null, null> =>
     createMessage(null, 'sso/saml/logout/' + serviceProviderId, null, null);
 

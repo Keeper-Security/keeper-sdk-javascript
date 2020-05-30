@@ -146,7 +146,11 @@ export class KeeperEndpoint {
      */
     async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<string> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
-        let response = await platform.post(this.getUrl(message.path), request)
+        let theUrl = message.path;
+        if (! theUrl.startsWith("http")) {
+            theUrl = this.getUrl(theUrl);
+        }
+        let response = await platform.post(theUrl, request)
 
         // Redirect?
         if (response.statusCode === 303) {
@@ -242,7 +246,8 @@ export class KeeperEndpoint {
 export enum KeeperEnvironment {
     Prod = 'keepersecurity.com',
     QA = 'qa.keepersecurity.com',
-    DEV = 'dev.keepersecurity.com'
+    DEV = 'dev.keepersecurity.com',
+    LOCAL = 'local.keepersecurity.com'
 }
 
 interface KeeperKeys {
