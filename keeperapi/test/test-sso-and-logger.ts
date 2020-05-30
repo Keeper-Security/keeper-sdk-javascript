@@ -5,7 +5,9 @@ import {nodePlatform} from '../src/node/platform'
 import * as readline from 'readline'
 import * as fs from 'fs'
 import * as request from 'request'
+import {DeviceConfig} from '../src/configuration';
 import {ServiceLogger, SsoCloud} from '../src/proto'
+import {KeeperEnvironment} from '../src/endpoint'
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -27,11 +29,22 @@ interface UserInfo {
 const MIKE_VAULT_LOGIN_1 : UserInfo = { "account": "mhewett+reg70@keepersecurity.com", "password": "Password11" }
 const MIKE_ADMIN_LOGIN_1 : UserInfo = { "account": "mhewett+sso42@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_1 : UserInfo  = { "account": "mhewett+sso60@keepersecurity.com", "password": "Password11" }
+const MIKE_SSO_LOGIN_2 : UserInfo  = { "account": "mhewett+sso61@keepersecurity.com", "password": "Password11" }
+const MIKE_SSO_LOGIN_3 : UserInfo  = { "account": "mhewett", "password": "Password11" }
 const SERGE_PLAIN_LOGIN_1 : UserInfo  = { "account": "admin@yozik.us", "password": "111111" }
+const clientVersion = 'c16.0.0'
 
 // end Mike Test ------------------------------------------
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
+
+type DeviceConfigStorage = {
+    deviceToken: string
+    privateKey: string
+    publicKey: string
+    verifiedUsers: string[]
+}
 
 connectPlatform(nodePlatform)
 
@@ -82,7 +95,7 @@ async function printVault() {
 
 async function login(user?: UserInfo): Promise<Auth> {
     let auth = new Auth({
-        host: 'local.keepersecurity.com'
+        host: KeeperEnvironment.LOCAL
         // host: KeeperEnvironment.DEV
         // host: KeeperEnvironment.QA
     }, authUI)
@@ -97,14 +110,14 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
 // TestSsoGetMetadata().finally();
-// TestSsoLogin().finally();
-TestSsoUploadMetadata().finally();
+// TestSsoUploadMetadata().finally();
+TestSsoLogin().finally();
 
 /* ------------------ Service Logger -------------------- */
 
 async function testServiceLogger() {
 
-    let keeperHost = 'local.keepersecurity.com';  // KeeperEnvironment.DEV;
+    let keeperHost = KeeperEnvironment.LOCAL;  // KeeperEnvironment.DEV;
     let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
 
     try {
@@ -112,7 +125,7 @@ async function testServiceLogger() {
             host: keeperHost
         }, authUI);
         await auth.login(user.account, user.password);
-        console.log("Logged in...");
+        console.log('Logged in...');
 
         let serviceLoggerGetReq = ServiceLogGetRequest.create({serviceLogSpecifier: [{all: true}]});
 
@@ -120,42 +133,34 @@ async function testServiceLogger() {
         console.log(serviceLoggerResp)
 
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 }
 
 
 /* ------------------ Cloud SSO Connect -------------------- */
 
+/** NOTE: original version was copied to auth.ts as cloudSsoLogin.  */
 async function TestSsoLogin() {
 
-    let keeperHost = 'local.keepersecurity.com';  // KeeperEnvironment.DEV;
+    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
-    let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let user = MIKE_SSO_LOGIN_2;  // MIKE_ADMIN_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    const deviceConfig = getDeviceConfig();
 
     try {
         let auth = new Auth({
-            host: keeperHost
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig
         }, authUI);
 
-    /*
-        await auth.login(user.account, user.password);
-        console.log("Logged in...");
-     */
-
-        // This should return HTML
-        console.log('Logging in via sso');
-        let ssoLoginResp = await auth.executeRestToHTML(ssoLoginMessage(serviceProviderId));
-        console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
-
-        // Wait a few seconds and then logout
-        // await new Promise(resolve => setTimeout(resolve, 5000));
-
-        // console.log("Logging out via slo");
-        // let ssoLogoutResp = await auth.executeRestToHTML(ssoLogoutMessage(serviceProviderId, { "username": "mhewett+sso61@keepersecurity.com"}));
-        // console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {
         console.log(e)
@@ -163,7 +168,7 @@ async function TestSsoLogin() {
 }
 
 async function TestSsoGetMetadata() {
-    let keeperHost = 'local.keepersecurity.com';  // KeeperEnvironment.DEV;  //'local.keepersecurity.com';
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoGetMetadata on " + keeperHost + " ***");
 
     let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
@@ -187,13 +192,14 @@ async function TestSsoGetMetadata() {
 
 
 async function TestSsoUploadMetadata() {
-    let keeperHost = 'local.keepersecurity.com';  // KeeperEnvironment.DEV;  //'local.keepersecurity.com';
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
     let configurationId = 3121290;
     let filename = 'idp_metadata.xml';
+    const deviceConfig = getDeviceConfig();
 
     try {
         console.log("Uploading Service Provider Metadata from", filename);
@@ -202,13 +208,16 @@ async function TestSsoUploadMetadata() {
         let fileBytes : Buffer = fs.readFileSync(filename);
         
         let auth = new Auth({
-            host: keeperHost
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig
         }, authUI);
-        await auth.login(user.account, user.password);
+        await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
 
         let uploadReq = SsoCloudIdpMetadataRequest.create({
-            "ssoSpConfigurationId": 3121290,
+            "ssoSpConfigurationId": configurationId,
             "filename": filename,
             "content": new Uint8Array(fileBytes)
         });
@@ -219,3 +228,34 @@ async function TestSsoUploadMetadata() {
         console.log(e)
     }
 }
+
+function getDeviceConfig(): DeviceConfig {
+    try {
+        const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync("device-config.json").toString())
+        return {
+            deviceToken: platform.base64ToBytes(configStorage.deviceToken),
+            publicKey: platform.base64ToBytes(configStorage.publicKey),
+            privateKey: platform.base64ToBytes(configStorage.privateKey),
+            verifiedUsers: configStorage.verifiedUsers
+        }
+    }
+    catch (e) {
+        return {
+            deviceToken: undefined,
+            privateKey: undefined,
+            publicKey: undefined,
+            verifiedUsers: []
+        }
+    }
+}
+
+function saveDeviceConfig(deviceConfig: DeviceConfig) {
+    const configStorage: DeviceConfigStorage = {
+        deviceToken: platform.bytesToBase64(deviceConfig.deviceToken),
+        publicKey: platform.bytesToBase64(deviceConfig.publicKey),
+        privateKey: platform.bytesToBase64(deviceConfig.privateKey),
+        verifiedUsers: deviceConfig.verifiedUsers
+    }
+    fs.writeFileSync("device-config.json", JSON.stringify(configStorage, null, 2))
+}
+
