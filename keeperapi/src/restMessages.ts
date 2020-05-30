@@ -99,8 +99,11 @@ export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetReques
 
 /* -- Cloud SSO Connect -- */
 
-export const ssoLoginMessage = (serviceProviderId): RestMessage<null, null> =>
-    createMessage(null, 'sso/saml/login/' + serviceProviderId, null, null);
+export const ssoSamlMessage = (endpoint: string): RestMessage<null, null> =>
+    createMessage(null, 'sso/saml/' + endpoint, null, null);
+
+export const ssoConfigMessage = (endpoint: string): RestMessage<null, null> =>
+    createMessage(null, 'sso/config/' + endpoint, null, null);
 
 export const ssoLoginMessageWithUrl = (url): RestMessage<null, null> =>
     createMessage(null, url, null, null);

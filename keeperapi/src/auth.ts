@@ -27,7 +27,7 @@ import {Authentication} from './proto';
 import {prompt} from '../test/testUtil';
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import {KeeperEnvironment} from './endpoint'
-import {ssoLoginMessage, ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage} from '../src/restMessages'
+import {ssoSamlMessage, ssoConfigMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage} from '../src/restMessages'
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 export interface AuthUI {
@@ -174,8 +174,12 @@ export class Auth {
         try {
             console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
 
+            // We have full URL but the library wants to recreate it so we let it.
+            let pos = ssoLoginUrl.indexOf("login");
+            ssoLoginUrl = ssoLoginUrl.substring(pos);
+
             // This should return HTML
-            let ssoLoginResp = await this.executeRestToHTML(ssoLoginMessage(ssoLoginUrl));
+            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl));
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
 
         } catch (e) {
