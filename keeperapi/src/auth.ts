@@ -124,7 +124,7 @@ export class Auth {
                     break;
                 case Authentication.LoginState.redirect_cloud_sso:
                     console.log("Starting SSO login");
-                    await this.cloudSsoLogin(startLoginResp.ssoUserInfo.url);
+                    await this.cloudSsoLogin(startLoginResp.ssoUserInfo.loginUrl);
                     return;
                 case Authentication.LoginState.redirect_onsite_sso:
                     break;

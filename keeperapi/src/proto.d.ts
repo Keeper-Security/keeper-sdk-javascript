@@ -1400,8 +1400,11 @@ export namespace Authentication {
         /** SsoUserInfo ssoDomainName */
         ssoDomainName?: (string|null);
 
-        /** SsoUserInfo url */
-        url?: (string|null);
+        /** SsoUserInfo loginUrl */
+        loginUrl?: (string|null);
+
+        /** SsoUserInfo logoutUrl */
+        logoutUrl?: (string|null);
     }
 
     /** Represents a SsoUserInfo. */
@@ -1425,8 +1428,11 @@ export namespace Authentication {
         /** SsoUserInfo ssoDomainName. */
         public ssoDomainName: string;
 
-        /** SsoUserInfo url. */
-        public url: string;
+        /** SsoUserInfo loginUrl. */
+        public loginUrl: string;
+
+        /** SsoUserInfo logoutUrl. */
+        public logoutUrl: string;
 
         /**
          * Creates a new SsoUserInfo instance using the specified properties.
@@ -5570,211 +5576,217 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a CreateAccountRequest. */
-    interface ICreateAccountRequest {
+    /** Properties of a CreateUserRequest. */
+    interface ICreateUserRequest {
 
-        /** CreateAccountRequest username */
+        /** CreateUserRequest username */
         username?: (string|null);
 
-        /** CreateAccountRequest version */
-        version?: (Authentication.Version|null);
-
-        /** CreateAccountRequest authVerifier */
+        /** CreateUserRequest authVerifier */
         authVerifier?: (Uint8Array|null);
 
-        /** CreateAccountRequest encryptionParams */
+        /** CreateUserRequest encryptionParams */
         encryptionParams?: (Uint8Array|null);
 
-        /** CreateAccountRequest publicKey */
-        publicKey?: (Uint8Array|null);
+        /** CreateUserRequest rsaPublicKey */
+        rsaPublicKey?: (Uint8Array|null);
 
-        /** CreateAccountRequest encryptedPrivateKey */
-        encryptedPrivateKey?: (Uint8Array|null);
+        /** CreateUserRequest rsaEncryptedPrivateKey */
+        rsaEncryptedPrivateKey?: (Uint8Array|null);
 
-        /** CreateAccountRequest installReferrer */
-        installReferrer?: (string|null);
+        /** CreateUserRequest eccPublicKey */
+        eccPublicKey?: (Uint8Array|null);
 
-        /** CreateAccountRequest clientKey */
-        clientKey?: (Uint8Array|null);
+        /** CreateUserRequest eccEncryptedPrivateKey */
+        eccEncryptedPrivateKey?: (Uint8Array|null);
 
-        /** CreateAccountRequest deviceUid */
-        deviceUid?: (string|null);
+        /** CreateUserRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
 
-        /** CreateAccountRequest mccMNC */
-        mccMNC?: (number|null);
+        /** CreateUserRequest encryptedClientKey */
+        encryptedClientKey?: (Uint8Array|null);
 
-        /** CreateAccountRequest mfg */
-        mfg?: (string|null);
-
-        /** CreateAccountRequest model */
-        model?: (string|null);
-
-        /** CreateAccountRequest brand */
-        brand?: (string|null);
-
-        /** CreateAccountRequest product */
-        product?: (string|null);
-
-        /** CreateAccountRequest pushToken */
-        pushToken?: (string|null);
-
-        /** CreateAccountRequest device */
-        device?: (string|null);
-
-        /** CreateAccountRequest carrier */
-        carrier?: (string|null);
-
-        /** CreateAccountRequest skipGroupAccept */
-        skipGroupAccept?: (boolean|null);
-
-        /** CreateAccountRequest clientVersion */
+        /** CreateUserRequest clientVersion */
         clientVersion?: (string|null);
 
-        /** CreateAccountRequest fromSP */
+        /** CreateUserRequest encryptedDeviceDataKey */
+        encryptedDeviceDataKey?: (Uint8Array|null);
+
+        /** CreateUserRequest fromSP */
         fromSP?: (boolean|null);
 
-        /** CreateAccountRequest encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
+        /** CreateUserRequest locale */
+        locale?: (string|null);
+
+        /** CreateUserRequest installReferrer */
+        installReferrer?: (string|null);
+
+        /** CreateUserRequest mccMNC */
+        mccMNC?: (number|null);
+
+        /** CreateUserRequest mfg */
+        mfg?: (string|null);
+
+        /** CreateUserRequest model */
+        model?: (string|null);
+
+        /** CreateUserRequest brand */
+        brand?: (string|null);
+
+        /** CreateUserRequest product */
+        product?: (string|null);
+
+        /** CreateUserRequest device */
+        device?: (string|null);
+
+        /** CreateUserRequest carrier */
+        carrier?: (string|null);
+
+        /** CreateUserRequest skipGroupAccept */
+        skipGroupAccept?: (boolean|null);
     }
 
-    /** Represents a CreateAccountRequest. */
-    class CreateAccountRequest implements ICreateAccountRequest {
+    /** Represents a CreateUserRequest. */
+    class CreateUserRequest implements ICreateUserRequest {
 
         /**
-         * Constructs a new CreateAccountRequest.
+         * Constructs a new CreateUserRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.ICreateAccountRequest);
+        constructor(properties?: Authentication.ICreateUserRequest);
 
-        /** CreateAccountRequest username. */
+        /** CreateUserRequest username. */
         public username: string;
 
-        /** CreateAccountRequest version. */
-        public version: Authentication.Version;
-
-        /** CreateAccountRequest authVerifier. */
+        /** CreateUserRequest authVerifier. */
         public authVerifier: Uint8Array;
 
-        /** CreateAccountRequest encryptionParams. */
+        /** CreateUserRequest encryptionParams. */
         public encryptionParams: Uint8Array;
 
-        /** CreateAccountRequest publicKey. */
-        public publicKey: Uint8Array;
+        /** CreateUserRequest rsaPublicKey. */
+        public rsaPublicKey: Uint8Array;
 
-        /** CreateAccountRequest encryptedPrivateKey. */
-        public encryptedPrivateKey: Uint8Array;
+        /** CreateUserRequest rsaEncryptedPrivateKey. */
+        public rsaEncryptedPrivateKey: Uint8Array;
 
-        /** CreateAccountRequest installReferrer. */
-        public installReferrer: string;
+        /** CreateUserRequest eccPublicKey. */
+        public eccPublicKey: Uint8Array;
 
-        /** CreateAccountRequest clientKey. */
-        public clientKey: Uint8Array;
+        /** CreateUserRequest eccEncryptedPrivateKey. */
+        public eccEncryptedPrivateKey: Uint8Array;
 
-        /** CreateAccountRequest deviceUid. */
-        public deviceUid: string;
-
-        /** CreateAccountRequest mccMNC. */
-        public mccMNC: number;
-
-        /** CreateAccountRequest mfg. */
-        public mfg: string;
-
-        /** CreateAccountRequest model. */
-        public model: string;
-
-        /** CreateAccountRequest brand. */
-        public brand: string;
-
-        /** CreateAccountRequest product. */
-        public product: string;
-
-        /** CreateAccountRequest pushToken. */
-        public pushToken: string;
-
-        /** CreateAccountRequest device. */
-        public device: string;
-
-        /** CreateAccountRequest carrier. */
-        public carrier: string;
-
-        /** CreateAccountRequest skipGroupAccept. */
-        public skipGroupAccept: boolean;
-
-        /** CreateAccountRequest clientVersion. */
-        public clientVersion: string;
-
-        /** CreateAccountRequest fromSP. */
-        public fromSP: boolean;
-
-        /** CreateAccountRequest encryptedDeviceToken. */
+        /** CreateUserRequest encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
 
+        /** CreateUserRequest encryptedClientKey. */
+        public encryptedClientKey: Uint8Array;
+
+        /** CreateUserRequest clientVersion. */
+        public clientVersion: string;
+
+        /** CreateUserRequest encryptedDeviceDataKey. */
+        public encryptedDeviceDataKey: Uint8Array;
+
+        /** CreateUserRequest fromSP. */
+        public fromSP: boolean;
+
+        /** CreateUserRequest locale. */
+        public locale: string;
+
+        /** CreateUserRequest installReferrer. */
+        public installReferrer: string;
+
+        /** CreateUserRequest mccMNC. */
+        public mccMNC: number;
+
+        /** CreateUserRequest mfg. */
+        public mfg: string;
+
+        /** CreateUserRequest model. */
+        public model: string;
+
+        /** CreateUserRequest brand. */
+        public brand: string;
+
+        /** CreateUserRequest product. */
+        public product: string;
+
+        /** CreateUserRequest device. */
+        public device: string;
+
+        /** CreateUserRequest carrier. */
+        public carrier: string;
+
+        /** CreateUserRequest skipGroupAccept. */
+        public skipGroupAccept: boolean;
+
         /**
-         * Creates a new CreateAccountRequest instance using the specified properties.
+         * Creates a new CreateUserRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns CreateAccountRequest instance
+         * @returns CreateUserRequest instance
          */
-        public static create(properties?: Authentication.ICreateAccountRequest): Authentication.CreateAccountRequest;
+        public static create(properties?: Authentication.ICreateUserRequest): Authentication.CreateUserRequest;
 
         /**
-         * Encodes the specified CreateAccountRequest message. Does not implicitly {@link Authentication.CreateAccountRequest.verify|verify} messages.
-         * @param message CreateAccountRequest message or plain object to encode
+         * Encodes the specified CreateUserRequest message. Does not implicitly {@link Authentication.CreateUserRequest.verify|verify} messages.
+         * @param message CreateUserRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.ICreateAccountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.ICreateUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified CreateAccountRequest message, length delimited. Does not implicitly {@link Authentication.CreateAccountRequest.verify|verify} messages.
-         * @param message CreateAccountRequest message or plain object to encode
+         * Encodes the specified CreateUserRequest message, length delimited. Does not implicitly {@link Authentication.CreateUserRequest.verify|verify} messages.
+         * @param message CreateUserRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.ICreateAccountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.ICreateUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a CreateAccountRequest message from the specified reader or buffer.
+         * Decodes a CreateUserRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns CreateAccountRequest
+         * @returns CreateUserRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.CreateAccountRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.CreateUserRequest;
 
         /**
-         * Decodes a CreateAccountRequest message from the specified reader or buffer, length delimited.
+         * Decodes a CreateUserRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns CreateAccountRequest
+         * @returns CreateUserRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.CreateAccountRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.CreateUserRequest;
 
         /**
-         * Verifies a CreateAccountRequest message.
+         * Verifies a CreateUserRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a CreateAccountRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a CreateUserRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns CreateAccountRequest
+         * @returns CreateUserRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.CreateAccountRequest;
+        public static fromObject(object: { [k: string]: any }): Authentication.CreateUserRequest;
 
         /**
-         * Creates a plain object from a CreateAccountRequest message. Also converts values to other types if specified.
-         * @param message CreateAccountRequest
+         * Creates a plain object from a CreateUserRequest message. Also converts values to other types if specified.
+         * @param message CreateUserRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.CreateAccountRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.CreateUserRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this CreateAccountRequest to JSON.
+         * Converts this CreateUserRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -15443,229 +15455,103 @@ export namespace Tokens {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a CreateAccountToken. */
-    interface ICreateAccountToken {
+    /** Properties of a CreateUserToken. */
+    interface ICreateUserToken {
 
-        /** CreateAccountToken username */
-        username?: (string|null);
+        /** CreateUserToken createUserRequestId */
+        createUserRequestId?: (number|null);
 
-        /** CreateAccountToken version */
-        version?: (Authentication.Version|null);
-
-        /** CreateAccountToken authVerifier */
-        authVerifier?: (Uint8Array|null);
-
-        /** CreateAccountToken encryptionParams */
-        encryptionParams?: (Uint8Array|null);
-
-        /** CreateAccountToken publicKey */
-        publicKey?: (Uint8Array|null);
-
-        /** CreateAccountToken encryptedPrivateKey */
-        encryptedPrivateKey?: (Uint8Array|null);
-
-        /** CreateAccountToken installReferrer */
-        installReferrer?: (string|null);
-
-        /** CreateAccountToken clientKey */
-        clientKey?: (Uint8Array|null);
-
-        /** CreateAccountToken deviceUid */
-        deviceUid?: (string|null);
-
-        /** CreateAccountToken mccMNC */
-        mccMNC?: (number|null);
-
-        /** CreateAccountToken mfg */
-        mfg?: (string|null);
-
-        /** CreateAccountToken model */
-        model?: (string|null);
-
-        /** CreateAccountToken brand */
-        brand?: (string|null);
-
-        /** CreateAccountToken product */
-        product?: (string|null);
-
-        /** CreateAccountToken pushToken */
-        pushToken?: (string|null);
-
-        /** CreateAccountToken device */
-        device?: (string|null);
-
-        /** CreateAccountToken carrier */
-        carrier?: (string|null);
-
-        /** CreateAccountToken skipGroupAccept */
-        skipGroupAccept?: (boolean|null);
-
-        /** CreateAccountToken clientVersion */
-        clientVersion?: (string|null);
-
-        /** CreateAccountToken fromSP */
-        fromSP?: (boolean|null);
-
-        /** CreateAccountToken verificationCode */
+        /** CreateUserToken verificationCode */
         verificationCode?: (string|null);
 
-        /** CreateAccountToken encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-
-        /** CreateAccountToken expiration */
-        expiration?: (number|Long|null);
-
-        /** CreateAccountToken locale */
-        locale?: (string|null);
+        /** CreateUserToken requestTimeStamp */
+        requestTimeStamp?: (number|Long|null);
     }
 
-    /** Represents a CreateAccountToken. */
-    class CreateAccountToken implements ICreateAccountToken {
+    /** Represents a CreateUserToken. */
+    class CreateUserToken implements ICreateUserToken {
 
         /**
-         * Constructs a new CreateAccountToken.
+         * Constructs a new CreateUserToken.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Tokens.ICreateAccountToken);
+        constructor(properties?: Tokens.ICreateUserToken);
 
-        /** CreateAccountToken username. */
-        public username: string;
+        /** CreateUserToken createUserRequestId. */
+        public createUserRequestId: number;
 
-        /** CreateAccountToken version. */
-        public version: Authentication.Version;
-
-        /** CreateAccountToken authVerifier. */
-        public authVerifier: Uint8Array;
-
-        /** CreateAccountToken encryptionParams. */
-        public encryptionParams: Uint8Array;
-
-        /** CreateAccountToken publicKey. */
-        public publicKey: Uint8Array;
-
-        /** CreateAccountToken encryptedPrivateKey. */
-        public encryptedPrivateKey: Uint8Array;
-
-        /** CreateAccountToken installReferrer. */
-        public installReferrer: string;
-
-        /** CreateAccountToken clientKey. */
-        public clientKey: Uint8Array;
-
-        /** CreateAccountToken deviceUid. */
-        public deviceUid: string;
-
-        /** CreateAccountToken mccMNC. */
-        public mccMNC: number;
-
-        /** CreateAccountToken mfg. */
-        public mfg: string;
-
-        /** CreateAccountToken model. */
-        public model: string;
-
-        /** CreateAccountToken brand. */
-        public brand: string;
-
-        /** CreateAccountToken product. */
-        public product: string;
-
-        /** CreateAccountToken pushToken. */
-        public pushToken: string;
-
-        /** CreateAccountToken device. */
-        public device: string;
-
-        /** CreateAccountToken carrier. */
-        public carrier: string;
-
-        /** CreateAccountToken skipGroupAccept. */
-        public skipGroupAccept: boolean;
-
-        /** CreateAccountToken clientVersion. */
-        public clientVersion: string;
-
-        /** CreateAccountToken fromSP. */
-        public fromSP: boolean;
-
-        /** CreateAccountToken verificationCode. */
+        /** CreateUserToken verificationCode. */
         public verificationCode: string;
 
-        /** CreateAccountToken encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /** CreateAccountToken expiration. */
-        public expiration: (number|Long);
-
-        /** CreateAccountToken locale. */
-        public locale: string;
+        /** CreateUserToken requestTimeStamp. */
+        public requestTimeStamp: (number|Long);
 
         /**
-         * Creates a new CreateAccountToken instance using the specified properties.
+         * Creates a new CreateUserToken instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns CreateAccountToken instance
+         * @returns CreateUserToken instance
          */
-        public static create(properties?: Tokens.ICreateAccountToken): Tokens.CreateAccountToken;
+        public static create(properties?: Tokens.ICreateUserToken): Tokens.CreateUserToken;
 
         /**
-         * Encodes the specified CreateAccountToken message. Does not implicitly {@link Tokens.CreateAccountToken.verify|verify} messages.
-         * @param message CreateAccountToken message or plain object to encode
+         * Encodes the specified CreateUserToken message. Does not implicitly {@link Tokens.CreateUserToken.verify|verify} messages.
+         * @param message CreateUserToken message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Tokens.ICreateAccountToken, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Tokens.ICreateUserToken, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified CreateAccountToken message, length delimited. Does not implicitly {@link Tokens.CreateAccountToken.verify|verify} messages.
-         * @param message CreateAccountToken message or plain object to encode
+         * Encodes the specified CreateUserToken message, length delimited. Does not implicitly {@link Tokens.CreateUserToken.verify|verify} messages.
+         * @param message CreateUserToken message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Tokens.ICreateAccountToken, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Tokens.ICreateUserToken, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a CreateAccountToken message from the specified reader or buffer.
+         * Decodes a CreateUserToken message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns CreateAccountToken
+         * @returns CreateUserToken
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.CreateAccountToken;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.CreateUserToken;
 
         /**
-         * Decodes a CreateAccountToken message from the specified reader or buffer, length delimited.
+         * Decodes a CreateUserToken message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns CreateAccountToken
+         * @returns CreateUserToken
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.CreateAccountToken;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.CreateUserToken;
 
         /**
-         * Verifies a CreateAccountToken message.
+         * Verifies a CreateUserToken message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a CreateAccountToken message from a plain object. Also converts values to their respective internal types.
+         * Creates a CreateUserToken message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns CreateAccountToken
+         * @returns CreateUserToken
          */
-        public static fromObject(object: { [k: string]: any }): Tokens.CreateAccountToken;
+        public static fromObject(object: { [k: string]: any }): Tokens.CreateUserToken;
 
         /**
-         * Creates a plain object from a CreateAccountToken message. Also converts values to other types if specified.
-         * @param message CreateAccountToken
+         * Creates a plain object from a CreateUserToken message. Also converts values to other types if specified.
+         * @param message CreateUserToken
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Tokens.CreateAccountToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Tokens.CreateUserToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this CreateAccountToken to JSON.
+         * Converts this CreateUserToken to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

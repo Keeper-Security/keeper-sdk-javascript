@@ -356,9 +356,13 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          url: {
+          loginUrl: {
             type: "string",
             id: 5
+          },
+          logoutUrl: {
+            type: "string",
+            id: 6
           }
         }
       },
@@ -1141,91 +1145,95 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      CreateAccountRequest: {
+      CreateUserRequest: {
         fields: {
           username: {
             type: "string",
             id: 1
           },
-          version: {
-            type: "Version",
-            id: 2
-          },
           authVerifier: {
             type: "bytes",
-            id: 3
+            id: 2
           },
           encryptionParams: {
             type: "bytes",
+            id: 3
+          },
+          rsaPublicKey: {
+            type: "bytes",
             id: 4
           },
-          publicKey: {
+          rsaEncryptedPrivateKey: {
             type: "bytes",
             id: 5
           },
-          encryptedPrivateKey: {
+          eccPublicKey: {
             type: "bytes",
             id: 6
           },
-          installReferrer: {
-            type: "string",
-            id: 7
-          },
-          clientKey: {
+          eccEncryptedPrivateKey: {
             type: "bytes",
-            id: 8
-          },
-          deviceUid: {
-            type: "string",
-            id: 9
-          },
-          mccMNC: {
-            type: "int32",
-            id: 10
-          },
-          mfg: {
-            type: "string",
-            id: 11
-          },
-          model: {
-            type: "string",
-            id: 12
-          },
-          brand: {
-            type: "string",
-            id: 13
-          },
-          product: {
-            type: "string",
-            id: 14
-          },
-          pushToken: {
-            type: "string",
-            id: 15
-          },
-          device: {
-            type: "string",
-            id: 16
-          },
-          carrier: {
-            type: "string",
-            id: 17
-          },
-          skipGroupAccept: {
-            type: "bool",
-            id: 18
-          },
-          clientVersion: {
-            type: "string",
-            id: 19
-          },
-          fromSP: {
-            type: "bool",
-            id: 20
+            id: 7
           },
           encryptedDeviceToken: {
             type: "bytes",
+            id: 8
+          },
+          encryptedClientKey: {
+            type: "bytes",
+            id: 9
+          },
+          clientVersion: {
+            type: "string",
+            id: 10
+          },
+          encryptedDeviceDataKey: {
+            type: "bytes",
+            id: 11
+          },
+          fromSP: {
+            type: "bool",
+            id: 12
+          },
+          locale: {
+            type: "string",
+            id: 13
+          },
+          installReferrer: {
+            type: "string",
+            id: 14
+          },
+          mccMNC: {
+            type: "int32",
+            id: 15
+          },
+          mfg: {
+            type: "string",
+            id: 16
+          },
+          model: {
+            type: "string",
+            id: 17
+          },
+          brand: {
+            type: "string",
+            id: 18
+          },
+          product: {
+            type: "string",
+            id: 19
+          },
+          device: {
+            type: "string",
+            id: 20
+          },
+          carrier: {
+            type: "string",
             id: 21
+          },
+          skipGroupAccept: {
+            type: "bool",
+            id: 22
           }
         }
       },
@@ -3215,103 +3223,19 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      CreateAccountToken: {
+      CreateUserToken: {
         fields: {
-          username: {
-            type: "string",
-            id: 1
-          },
-          version: {
-            type: "Authentication.Version",
-            id: 2
-          },
-          authVerifier: {
-            type: "bytes",
-            id: 3
-          },
-          encryptionParams: {
-            type: "bytes",
-            id: 4
-          },
-          publicKey: {
-            type: "bytes",
-            id: 5
-          },
-          encryptedPrivateKey: {
-            type: "bytes",
-            id: 6
-          },
-          installReferrer: {
-            type: "string",
-            id: 7
-          },
-          clientKey: {
-            type: "bytes",
-            id: 8
-          },
-          deviceUid: {
-            type: "string",
-            id: 9
-          },
-          mccMNC: {
+          createUserRequestId: {
             type: "int32",
-            id: 10
-          },
-          mfg: {
-            type: "string",
-            id: 11
-          },
-          model: {
-            type: "string",
-            id: 12
-          },
-          brand: {
-            type: "string",
-            id: 13
-          },
-          product: {
-            type: "string",
-            id: 14
-          },
-          pushToken: {
-            type: "string",
-            id: 15
-          },
-          device: {
-            type: "string",
-            id: 16
-          },
-          carrier: {
-            type: "string",
-            id: 17
-          },
-          skipGroupAccept: {
-            type: "bool",
-            id: 18
-          },
-          clientVersion: {
-            type: "string",
-            id: 19
-          },
-          fromSP: {
-            type: "bool",
-            id: 20
+            id: 1
           },
           verificationCode: {
             type: "string",
-            id: 21
+            id: 2
           },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 22
-          },
-          expiration: {
+          requestTimeStamp: {
             type: "int64",
-            id: 23
-          },
-          locale: {
-            type: "string",
-            id: 24
+            id: 3
           }
         }
       },
