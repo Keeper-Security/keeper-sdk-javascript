@@ -1,4 +1,4 @@
-import {ClientConfiguration} from "./configuration";
+import {ClientConfiguration, LoginError} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {
@@ -24,21 +24,7 @@ import {
 } from './restMessages'
 import * as WebSocket from 'faye-websocket'
 import {Authentication} from './proto';
-import {prompt} from '../test/testUtil';
-import TwoFactorExpiration = Authentication.TwoFactorExpiration;
-import {KeeperEnvironment} from './endpoint'
-import {ssoSamlMessage, ssoConfigMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage} from '../src/restMessages'
-import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
-
-export interface AuthUI {
-    getTwoFactorCode(errorMessage?: string): Promise<string>;
-    displayDialog(): Promise<boolean>;
-}
-
-export type LoginError = {
-    error: string;
-    message: string;
-}
+import {ssoSamlMessage} from './restMessages'
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -89,7 +75,7 @@ export class Auth {
     private _username: string;
     private managedCompanyId?: number;
 
-    constructor(private options: ClientConfiguration, private authUI?: AuthUI) {
+    constructor(private options: ClientConfiguration) {
         this.endpoint = new KeeperEndpoint(this.options);
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
     }
@@ -131,15 +117,23 @@ export class Auth {
                 case Authentication.LoginState.user_already_logged_in:
                     break;
                 case Authentication.LoginState.requires_2fa:
-                    const token = await prompt('Enter 2fa code:')
-                    console.log(token)
+                    if (!this.options.authUI3) {
+                        throw new Error('Unhandled prompt for second factor')
+                    }
+                    switch (startLoginResp.twoFactorInfo.userTwoFactorChannel) {
+                        case 'two_factor_channel_sms':
+                            break
+                        case 'two_factor_channel_google':
+                            break
+                    }
+                    const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
                     const twoFactorCodeMsg = twoFactorValidateCodeMessage({
                         channel: {
                             type: 1
                         },
                         encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
-                        code: token,
-                        expireIn: TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
+                        code: twoFactorInput.twoFactorCode,
+                        expireIn: twoFactorInput.desiredExpiration
                     })
                     const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
                     console.log(twoFactorCodeResp)
@@ -215,7 +209,7 @@ export class Auth {
                     if (!!loginResponse.u2f_challenge) {
                         loginResponse.u2f_challenge = JSON.parse(loginResponse.u2f_challenge as string);
                     }
-                    if (!this.authUI)
+                    if (!this.options.authUI)
                         break;
                     let errorMessage = loginResponse.result_code === LoginResponseResultCode.InvalidTOTP
                         ? loginResponse.message
@@ -230,7 +224,7 @@ export class Auth {
                             token = await socketListener.getTwoFactorCode();
                         }
                         else {
-                            token = await this.authUI.getTwoFactorCode(errorMessage);
+                            token = await this.options.authUI.getTwoFactorCode(errorMessage);
                         }
                         if (!token)
                             break;

@@ -1,13 +1,12 @@
-import {Auth, AuthUI} from '../src/auth'
+import {Auth} from '../src/auth'
 import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
-import * as readline from 'readline'
 import * as fs from 'fs'
-import * as request from 'request'
-import {DeviceConfig} from '../src/configuration';
+import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
+import {prompt} from './testUtil'
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -53,29 +52,20 @@ const authUI: AuthUI = {
         return null
     },
     getTwoFactorCode(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            const rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            })
-            rl.question('Enter Code: ', code => {
-                resolve(code)
-                rl.close()
-            })
-        })
+        return prompt('Enter Code: ')
     }
 }
 
-const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-    rl.question(message, response => {
-        resolve(response)
-        rl.close()
-    });
-})
+const authUI3: AuthUI3 = {
+    async getTwoFactorCode(): Promise<TwoFactorInput> {
+        const twoFactorCode = await prompt('Enter Code:');
+        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+        return {
+            twoFactorCode,
+            desiredExpiration: Number(exp)
+        }
+    }
+}
 
 async function printVault() {
     try {
@@ -95,10 +85,11 @@ async function printVault() {
 
 async function login(user?: UserInfo): Promise<Auth> {
     let auth = new Auth({
-        host: KeeperEnvironment.LOCAL
+        host: KeeperEnvironment.LOCAL,
         // host: KeeperEnvironment.DEV
-        // host: KeeperEnvironment.QA
-    }, authUI)
+        // host: KeeperEnvironment.QA,
+        authUI: authUI
+    })
     let userInfo = user || currentUser;
     await auth.login(userInfo.account, userInfo.password);
     console.log(`login to ${userInfo.account} successful`)
@@ -122,8 +113,9 @@ async function testServiceLogger() {
 
     try {
         let auth = new Auth({
-            host: keeperHost
-        }, authUI);
+            host: keeperHost,
+            authUI: authUI
+        });
         await auth.login(user.account, user.password);
         console.log('Logged in...');
 
@@ -156,8 +148,9 @@ async function TestSsoLogin() {
             host: keeperHost,
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
-            onDeviceConfig: saveDeviceConfig
-        }, authUI);
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
 
         await auth.loginV3(user.account, user.password);
         console.log("Logged in via Cloud SSO Connect!");
@@ -206,13 +199,14 @@ async function TestSsoUploadMetadata() {
         const url = getKeeperSsoConfigUrl(keeperHost, 'sso_cloud_upload_idp_metadata');
         console.log("REST endpoint =", url);
         let fileBytes : Buffer = fs.readFileSync(filename);
-        
+
         let auth = new Auth({
             host: keeperHost,
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
-            onDeviceConfig: saveDeviceConfig
-        }, authUI);
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
 

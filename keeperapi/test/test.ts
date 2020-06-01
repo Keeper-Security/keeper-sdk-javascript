@@ -1,10 +1,8 @@
 import {
     Auth,
-    AuthUI,
     createAuthVerifier,
     createEncryptionParams,
     decryptEncryptionParams,
-    SocketListener
 } from '../src/auth'
 import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
@@ -26,6 +24,7 @@ import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
 import {prompt} from './testUtil'
 import RecordModifyResult = Records.RecordModifyResult;
+import {AuthUI} from '../src/configuration';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -44,16 +43,7 @@ const authUI: AuthUI = {
         return null
     },
     getTwoFactorCode(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            const rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            })
-            rl.question('Enter Code: ', code => {
-                resolve(code)
-                rl.close()
-            })
-        })
+        return prompt('Enter Code: ')
     }
 }
 
@@ -214,8 +204,9 @@ async function testAttachmentsDownload() {
     try {
         let auth = new Auth({
             // host: 'local.keepersecurity.com'
-            host: KeeperEnvironment.DEV
-        }, authUI)
+            host: KeeperEnvironment.DEV,
+            authUI: authUI
+        })
         await auth.login('saldoukhov@gmail.com', '111111')
         console.log('login successful')
         let vault = new Vault(auth)
@@ -272,8 +263,9 @@ async function printMSPVault() {
 
     try {
         let auth = new Auth({
-            host: "local.keepersecurity.com"
-        }, authUI)
+            host: "local.keepersecurity.com",
+            authUI: authUI
+        })
         // await auth.login('admin+msp@yozik.us', '111111')
         // await auth.managedCompanyLogin('admin+msp@yozik.us', '111111', 2858)
         await auth.managedCompanyLogin('admin+mspn1@yozik.us', '111111', 2858)
@@ -296,8 +288,9 @@ async function printRecordTypes() {
 
     try {
         let auth = new Auth({
-            host: KeeperEnvironment.DEV
-        }, authUI)
+            host: KeeperEnvironment.DEV,
+            authUI: authUI
+        })
         await auth.login('saldoukhov@gmail.com', '111111')
         console.log("Logged in...")
         // await auth.login('saldoukhov@keepersecurity.eu', 'keeper')
@@ -687,13 +680,14 @@ async function login(user?: string): Promise<Auth> {
     }
 
     let auth = new Auth({
-        // host: 'local.keepersecurity.com',
+        host: 'local.keepersecurity.com',
         // host: 'dev2.keepersecurity.com',
-        host: KeeperEnvironment.DEV,
+        // host: KeeperEnvironment.DEV,
         // host: KeeperEnvironment.QA
         deviceToken: deviceToken,
-        onDeviceToken: saveDeviceToken
-    }, authUI)
+        onDeviceToken: saveDeviceToken,
+        authUI: authUI
+    })
     let userName = user || currentUser;
     await auth.login(userName, '111111')
     console.log(`login to ${userName} successful`)
@@ -757,8 +751,9 @@ async function testRegistration() {
     console.log(resp)
 }
 
-const currentUser = 'admin@yozik.us'
+// const currentUser = 'admin@yozik.us'
 // const currentUser = 'admin+m6a@yozik.us'
+const currentUser = 'admin+sms@yozik.us'
 // const currentUser = 'admin+duo@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'

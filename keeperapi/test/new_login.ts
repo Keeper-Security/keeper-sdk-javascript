@@ -9,17 +9,31 @@ import {generateEncryptionKey, webSafe64FromBytes} from '../src/utils';
 import * as fs from 'fs'
 import {Authentication} from '../src/proto';
 import {AccountSummaryCommand} from '../src/commands';
-import {DeviceConfig} from '../src/configuration';
+import {AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
+import {prompt} from './testUtil';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
+const authUI: AuthUI3 = {
+    async getTwoFactorCode(): Promise<TwoFactorInput> {
+        const twoFactorCode = await prompt('Enter Code:');
+        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+        return {
+            twoFactorCode,
+            desiredExpiration: Number(exp)
+        }
+    }
+}
+
 // const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
-// const userName = "admin+m6a@yozik.us"
-const userName = "admin+m29a@yozik.us"
+const userName = "admin+m6a@yozik.us"
+// const userName = "admin+sms@yozik.us"
+// const userName = "admin+m29a@yozik.us"
+// const userName = "brian+bp@keepersecurity.com"
 const clientVersion = 'c16.0.0'
 
 type DeviceConfigStorage = {
@@ -100,7 +114,8 @@ async function testLogin() {
         // host: KeeperEnvironment.DEV,
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
-        onDeviceConfig: saveDeviceConfig
+        onDeviceConfig: saveDeviceConfig,
+        authUI3: authUI
     })
 
     await auth.loginV3(userName, "111111")
