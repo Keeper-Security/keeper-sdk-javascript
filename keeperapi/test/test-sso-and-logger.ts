@@ -16,8 +16,10 @@ import ServiceLogGetRequest = ServiceLogger.ServiceLogGetRequest;
 import ServiceLogSpecifier = ServiceLogger.ServiceLogSpecifier;
 import ServiceLogResponse = ServiceLogger.ServiceLogResponse;
 import SsoCloudIdpMetadataRequest = SsoCloud.SsoCloudIdpMetadataRequest;
+import SsoCloudServiceProviderUpdateRequest = SsoCloud.SsoCloudServiceProviderUpdateRequest;
 import {serviceLoggerGetMessage} from '../src/restMessages'
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage} from '../src/restMessages'
+import {ssoCloudServiceProviderUpdateRequestMessage} from '../src/restMessages'
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 interface UserInfo {
@@ -100,9 +102,17 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
+
+// TestSsoLogin().finally();
 // TestSsoGetMetadata().finally();
 // TestSsoUploadMetadata().finally();
-TestSsoLogin().finally();
+TestSsoSetCurrentConfiguration().finally();
+// TestSsoGetConfigurationList().finally();
+// TestSsoAddNewConfiguration().finally();
+// TestSsoGetConfiguration().finally();
+// TestSsoSetConfigurationSettingValue().finally();
+// TestSsoResetConfigurationSettingValue().finally();
+
 
 /* ------------------ Service Logger -------------------- */
 
@@ -160,6 +170,7 @@ async function TestSsoLogin() {
     }
 }
 
+// GET, UNENCRYPTED, metadata/<serviceProviderId>
 async function TestSsoGetMetadata() {
     let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoGetMetadata on " + keeperHost + " ***");
@@ -183,7 +194,7 @@ async function TestSsoGetMetadata() {
     }
 }
 
-
+// POST, ENCRYPTED, sso_cloud_upload_idp_metadata/<serviceProviderId>
 async function TestSsoUploadMetadata() {
     let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
@@ -223,9 +234,107 @@ async function TestSsoUploadMetadata() {
     }
 }
 
+// POST, ENCRYPTED, sso_cloud_sp_configuration_set
+async function TestSsoSetCurrentConfiguration() {
+    let keeperHost = KeeperEnvironment.LOCAL;
+    console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    const deviceConfig = getDeviceConfig();
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, 'sso_cloud_sp_configuration_set');
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudServiceProviderUpdateRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configurationId
+        });
+
+        let resp = await auth.executeRest(ssoCloudServiceProviderUpdateRequestMessage(restReq));
+        console.log(resp);
+     } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, sso_cloud_sp_configuration_get/<serviceProviderId>
+async function TestSsoGetConfigurationList() {
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    let filename = 'idp_metadata.xml';
+    const deviceConfig = getDeviceConfig();
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_add/<serviceProviderId>
+async function TestSsoAddNewConfiguration() {
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    console.log("\n*** TestAddNewConfiguration on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    let filename = 'idp_metadata.xml';
+    const deviceConfig = getDeviceConfig();
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_get/<serviceProviderId>
+async function TestSsoGetConfiguration() {
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    let filename = 'idp_metadata.xml';
+    const deviceConfig = getDeviceConfig();
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_setting_set/<serviceProviderId>
+async function TestSsoSetConfigurationSettingValue() {
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    console.log("\n*** TestSetConfigurationSettingValue on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    let filename = 'idp_metadata.xml';
+    const deviceConfig = getDeviceConfig();
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_setting_set/<serviceProviderId>
+async function TestSsoResetConfigurationSettingValue() {
+    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    console.log("\n*** TestResetConfigurationSettingValue on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290;
+    let filename = 'idp_metadata.xml';
+    const deviceConfig = getDeviceConfig();
+}
+
+
 function getDeviceConfig(): DeviceConfig {
     try {
         const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync("device-config.json").toString())
+        console.log("found existing device");
         return {
             deviceToken: platform.base64ToBytes(configStorage.deviceToken),
             publicKey: platform.base64ToBytes(configStorage.publicKey),
@@ -234,6 +343,7 @@ function getDeviceConfig(): DeviceConfig {
         }
     }
     catch (e) {
+        console.log("creating new device");
         return {
             deviceToken: undefined,
             privateKey: undefined,
@@ -250,6 +360,7 @@ function saveDeviceConfig(deviceConfig: DeviceConfig) {
         privateKey: platform.bytesToBase64(deviceConfig.privateKey),
         verifiedUsers: deviceConfig.verifiedUsers
     }
+    console.log("Saving new device token");
     fs.writeFileSync("device-config.json", JSON.stringify(configStorage, null, 2))
 }
 
