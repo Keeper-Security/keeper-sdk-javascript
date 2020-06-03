@@ -1649,6 +1649,9 @@ export namespace Authentication {
     /** Properties of a LoginInfo. */
     interface ILoginInfo {
 
+        /** LoginInfo accountUid */
+        accountUid?: (Uint8Array|null);
+
         /** LoginInfo primaryUsername */
         primaryUsername?: (string|null);
 
@@ -1658,11 +1661,14 @@ export namespace Authentication {
         /** LoginInfo encryptedDataKeyTypeForLogin */
         encryptedDataKeyTypeForLogin?: (Authentication.EncryptedDataKeyTypeForLogin|null);
 
+        /** LoginInfo encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+
         /** LoginInfo encryptedSessionToken */
         encryptedSessionToken?: (Uint8Array|null);
 
         /** LoginInfo sessionTokenType */
-        sessionTokenType?: (Authentication.SessionTokenType[]|null);
+        sessionTokenType?: (Authentication.SessionTokenType|null);
     }
 
     /** Represents a LoginInfo. */
@@ -1674,6 +1680,9 @@ export namespace Authentication {
          */
         constructor(properties?: Authentication.ILoginInfo);
 
+        /** LoginInfo accountUid. */
+        public accountUid: Uint8Array;
+
         /** LoginInfo primaryUsername. */
         public primaryUsername: string;
 
@@ -1683,11 +1692,14 @@ export namespace Authentication {
         /** LoginInfo encryptedDataKeyTypeForLogin. */
         public encryptedDataKeyTypeForLogin: Authentication.EncryptedDataKeyTypeForLogin;
 
+        /** LoginInfo encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
         /** LoginInfo encryptedSessionToken. */
         public encryptedSessionToken: Uint8Array;
 
         /** LoginInfo sessionTokenType. */
-        public sessionTokenType: Authentication.SessionTokenType[];
+        public sessionTokenType: Authentication.SessionTokenType;
 
         /**
          * Creates a new LoginInfo instance using the specified properties.
@@ -2102,17 +2114,14 @@ export namespace Authentication {
         /** StartLoginResponse loginState */
         loginState?: (Authentication.LoginState|null);
 
+        /** StartLoginResponse loginInfo */
+        loginInfo?: (Authentication.ILoginInfo|null);
+
         /** StartLoginResponse message */
         message?: (string|null);
 
         /** StartLoginResponse url */
         url?: (string|null);
-
-        /** StartLoginResponse accountUid */
-        accountUid?: (Uint8Array|null);
-
-        /** StartLoginResponse loginInfo */
-        loginInfo?: (Authentication.ILoginInfo|null);
 
         /** StartLoginResponse twoFactorInfo */
         twoFactorInfo?: (Authentication.ITwoFactorInfo|null);
@@ -2136,17 +2145,14 @@ export namespace Authentication {
         /** StartLoginResponse loginState. */
         public loginState: Authentication.LoginState;
 
+        /** StartLoginResponse loginInfo. */
+        public loginInfo?: (Authentication.ILoginInfo|null);
+
         /** StartLoginResponse message. */
         public message: string;
 
         /** StartLoginResponse url. */
         public url: string;
-
-        /** StartLoginResponse accountUid. */
-        public accountUid: Uint8Array;
-
-        /** StartLoginResponse loginInfo. */
-        public loginInfo?: (Authentication.ILoginInfo|null);
 
         /** StartLoginResponse twoFactorInfo. */
         public twoFactorInfo?: (Authentication.ITwoFactorInfo|null);
@@ -2239,12 +2245,6 @@ export namespace Authentication {
 
         /** ValidateAuthHashRequest encryptedLoginToken */
         encryptedLoginToken?: (Uint8Array|null);
-
-        /** ValidateAuthHashRequest clientVersion */
-        clientVersion?: (string|null);
-
-        /** ValidateAuthHashRequest rememberMe */
-        rememberMe?: (boolean|null);
     }
 
     /** Represents a ValidateAuthHashRequest. */
@@ -2264,12 +2264,6 @@ export namespace Authentication {
 
         /** ValidateAuthHashRequest encryptedLoginToken. */
         public encryptedLoginToken: Uint8Array;
-
-        /** ValidateAuthHashRequest clientVersion. */
-        public clientVersion: string;
-
-        /** ValidateAuthHashRequest rememberMe. */
-        public rememberMe: boolean;
 
         /**
          * Creates a new ValidateAuthHashRequest instance using the specified properties.
@@ -2348,17 +2342,11 @@ export namespace Authentication {
         /** ValidateAuthHashResponse loginState */
         loginState?: (Authentication.LoginState|null);
 
-        /** ValidateAuthHashResponse message */
-        message?: (string|null);
-
-        /** ValidateAuthHashResponse url */
-        url?: (string|null);
-
-        /** ValidateAuthHashResponse accountUid */
-        accountUid?: (Uint8Array|null);
-
         /** ValidateAuthHashResponse loginInfo */
         loginInfo?: (Authentication.ILoginInfo|null);
+
+        /** ValidateAuthHashResponse message */
+        message?: (string|null);
     }
 
     /** Represents a ValidateAuthHashResponse. */
@@ -2373,17 +2361,11 @@ export namespace Authentication {
         /** ValidateAuthHashResponse loginState. */
         public loginState: Authentication.LoginState;
 
-        /** ValidateAuthHashResponse message. */
-        public message: string;
-
-        /** ValidateAuthHashResponse url. */
-        public url: string;
-
-        /** ValidateAuthHashResponse accountUid. */
-        public accountUid: Uint8Array;
-
         /** ValidateAuthHashResponse loginInfo. */
         public loginInfo?: (Authentication.ILoginInfo|null);
+
+        /** ValidateAuthHashResponse message. */
+        public message: string;
 
         /**
          * Creates a new ValidateAuthHashResponse instance using the specified properties.
@@ -5474,108 +5456,6 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an AuthenticateViaEmail. */
-    interface IAuthenticateViaEmail {
-
-        /** AuthenticateViaEmail email */
-        email?: (string|null);
-
-        /** AuthenticateViaEmail resend */
-        resend?: (boolean|null);
-
-        /** AuthenticateViaEmail locale */
-        locale?: (string|null);
-    }
-
-    /** Represents an AuthenticateViaEmail. */
-    class AuthenticateViaEmail implements IAuthenticateViaEmail {
-
-        /**
-         * Constructs a new AuthenticateViaEmail.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IAuthenticateViaEmail);
-
-        /** AuthenticateViaEmail email. */
-        public email: string;
-
-        /** AuthenticateViaEmail resend. */
-        public resend: boolean;
-
-        /** AuthenticateViaEmail locale. */
-        public locale: string;
-
-        /**
-         * Creates a new AuthenticateViaEmail instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns AuthenticateViaEmail instance
-         */
-        public static create(properties?: Authentication.IAuthenticateViaEmail): Authentication.AuthenticateViaEmail;
-
-        /**
-         * Encodes the specified AuthenticateViaEmail message. Does not implicitly {@link Authentication.AuthenticateViaEmail.verify|verify} messages.
-         * @param message AuthenticateViaEmail message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IAuthenticateViaEmail, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified AuthenticateViaEmail message, length delimited. Does not implicitly {@link Authentication.AuthenticateViaEmail.verify|verify} messages.
-         * @param message AuthenticateViaEmail message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IAuthenticateViaEmail, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an AuthenticateViaEmail message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns AuthenticateViaEmail
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AuthenticateViaEmail;
-
-        /**
-         * Decodes an AuthenticateViaEmail message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns AuthenticateViaEmail
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AuthenticateViaEmail;
-
-        /**
-         * Verifies an AuthenticateViaEmail message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an AuthenticateViaEmail message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns AuthenticateViaEmail
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.AuthenticateViaEmail;
-
-        /**
-         * Creates a plain object from an AuthenticateViaEmail message. Also converts values to other types if specified.
-         * @param message AuthenticateViaEmail
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.AuthenticateViaEmail, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this AuthenticateViaEmail to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a CreateUserRequest. */
     interface ICreateUserRequest {
 
@@ -5615,8 +5495,8 @@ export namespace Authentication {
         /** CreateUserRequest fromSP */
         fromSP?: (boolean|null);
 
-        /** CreateUserRequest locale */
-        locale?: (string|null);
+        /** CreateUserRequest messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
 
         /** CreateUserRequest installReferrer */
         installReferrer?: (string|null);
@@ -5644,6 +5524,9 @@ export namespace Authentication {
 
         /** CreateUserRequest skipGroupAccept */
         skipGroupAccept?: (boolean|null);
+
+        /** CreateUserRequest verificationCode */
+        verificationCode?: (string|null);
     }
 
     /** Represents a CreateUserRequest. */
@@ -5691,8 +5574,8 @@ export namespace Authentication {
         /** CreateUserRequest fromSP. */
         public fromSP: boolean;
 
-        /** CreateUserRequest locale. */
-        public locale: string;
+        /** CreateUserRequest messageSessionUid. */
+        public messageSessionUid: Uint8Array;
 
         /** CreateUserRequest installReferrer. */
         public installReferrer: string;
@@ -5720,6 +5603,9 @@ export namespace Authentication {
 
         /** CreateUserRequest skipGroupAccept. */
         public skipGroupAccept: boolean;
+
+        /** CreateUserRequest verificationCode. */
+        public verificationCode: string;
 
         /**
          * Creates a new CreateUserRequest instance using the specified properties.
@@ -13487,6 +13373,18 @@ export namespace Tokens {
 
         /** LoginToken mcEnterpriseId */
         mcEnterpriseId?: (number|null);
+
+        /** LoginToken userId */
+        userId?: (number|null);
+
+        /** LoginToken enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** LoginToken clientVersionId */
+        clientVersionId?: (number|null);
+
+        /** LoginToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
     }
 
     /** Represents a LoginToken. */
@@ -13521,6 +13419,18 @@ export namespace Tokens {
 
         /** LoginToken mcEnterpriseId. */
         public mcEnterpriseId: number;
+
+        /** LoginToken userId. */
+        public userId: number;
+
+        /** LoginToken enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** LoginToken clientVersionId. */
+        public clientVersionId: number;
+
+        /** LoginToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -14191,9 +14101,6 @@ export namespace Tokens {
 
         /** SessionToken deviceId */
         deviceId?: (number|Long|null);
-
-        /** SessionToken userLicenseStatus */
-        userLicenseStatus?: (Tokens.IUserLicenseStatus[]|null);
     }
 
     /** Represents a SessionToken. */
@@ -14258,9 +14165,6 @@ export namespace Tokens {
 
         /** SessionToken deviceId. */
         public deviceId: (number|Long);
-
-        /** SessionToken userLicenseStatus. */
-        public userLicenseStatus: Tokens.IUserLicenseStatus[];
 
         /**
          * Creates a new SessionToken instance using the specified properties.
@@ -15466,6 +15370,12 @@ export namespace Tokens {
 
         /** CreateUserToken requestTimeStamp */
         requestTimeStamp?: (number|Long|null);
+
+        /** CreateUserToken locale */
+        locale?: (string|null);
+
+        /** CreateUserToken remoteAddress */
+        remoteAddress?: (string|null);
     }
 
     /** Represents a CreateUserToken. */
@@ -15485,6 +15395,12 @@ export namespace Tokens {
 
         /** CreateUserToken requestTimeStamp. */
         public requestTimeStamp: (number|Long);
+
+        /** CreateUserToken locale. */
+        public locale: string;
+
+        /** CreateUserToken remoteAddress. */
+        public remoteAddress: string;
 
         /**
          * Creates a new CreateUserToken instance using the specified properties.
@@ -18875,217 +18791,205 @@ export namespace Push {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an OpenConnectionRequest. */
-    interface IOpenConnectionRequest {
+    /** Properties of a WssConnectionRequest. */
+    interface IWssConnectionRequest {
 
-        /** OpenConnectionRequest messageSessionUid */
+        /** WssConnectionRequest messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
 
-        /** OpenConnectionRequest encryptedDeviceToken */
+        /** WssConnectionRequest encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
 
-        /** OpenConnectionRequest deviceTimeStamp */
+        /** WssConnectionRequest deviceTimeStamp */
         deviceTimeStamp?: (number|Long|null);
+
+        /** WssConnectionRequest userId */
+        userId?: (number|null);
+
+        /** WssConnectionRequest enterpriseId */
+        enterpriseId?: (number|null);
     }
 
-    /** Represents an OpenConnectionRequest. */
-    class OpenConnectionRequest implements IOpenConnectionRequest {
+    /** Represents a WssConnectionRequest. */
+    class WssConnectionRequest implements IWssConnectionRequest {
 
         /**
-         * Constructs a new OpenConnectionRequest.
+         * Constructs a new WssConnectionRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Push.IOpenConnectionRequest);
+        constructor(properties?: Push.IWssConnectionRequest);
 
-        /** OpenConnectionRequest messageSessionUid. */
+        /** WssConnectionRequest messageSessionUid. */
         public messageSessionUid: Uint8Array;
 
-        /** OpenConnectionRequest encryptedDeviceToken. */
+        /** WssConnectionRequest encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
 
-        /** OpenConnectionRequest deviceTimeStamp. */
+        /** WssConnectionRequest deviceTimeStamp. */
         public deviceTimeStamp: (number|Long);
 
+        /** WssConnectionRequest userId. */
+        public userId: number;
+
+        /** WssConnectionRequest enterpriseId. */
+        public enterpriseId: number;
+
         /**
-         * Creates a new OpenConnectionRequest instance using the specified properties.
+         * Creates a new WssConnectionRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns OpenConnectionRequest instance
+         * @returns WssConnectionRequest instance
          */
-        public static create(properties?: Push.IOpenConnectionRequest): Push.OpenConnectionRequest;
+        public static create(properties?: Push.IWssConnectionRequest): Push.WssConnectionRequest;
 
         /**
-         * Encodes the specified OpenConnectionRequest message. Does not implicitly {@link Push.OpenConnectionRequest.verify|verify} messages.
-         * @param message OpenConnectionRequest message or plain object to encode
+         * Encodes the specified WssConnectionRequest message. Does not implicitly {@link Push.WssConnectionRequest.verify|verify} messages.
+         * @param message WssConnectionRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Push.IOpenConnectionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Push.IWssConnectionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified OpenConnectionRequest message, length delimited. Does not implicitly {@link Push.OpenConnectionRequest.verify|verify} messages.
-         * @param message OpenConnectionRequest message or plain object to encode
+         * Encodes the specified WssConnectionRequest message, length delimited. Does not implicitly {@link Push.WssConnectionRequest.verify|verify} messages.
+         * @param message WssConnectionRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Push.IOpenConnectionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Push.IWssConnectionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an OpenConnectionRequest message from the specified reader or buffer.
+         * Decodes a WssConnectionRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns OpenConnectionRequest
+         * @returns WssConnectionRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.OpenConnectionRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.WssConnectionRequest;
 
         /**
-         * Decodes an OpenConnectionRequest message from the specified reader or buffer, length delimited.
+         * Decodes a WssConnectionRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns OpenConnectionRequest
+         * @returns WssConnectionRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.OpenConnectionRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.WssConnectionRequest;
 
         /**
-         * Verifies an OpenConnectionRequest message.
+         * Verifies a WssConnectionRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an OpenConnectionRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a WssConnectionRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns OpenConnectionRequest
+         * @returns WssConnectionRequest
          */
-        public static fromObject(object: { [k: string]: any }): Push.OpenConnectionRequest;
+        public static fromObject(object: { [k: string]: any }): Push.WssConnectionRequest;
 
         /**
-         * Creates a plain object from an OpenConnectionRequest message. Also converts values to other types if specified.
-         * @param message OpenConnectionRequest
+         * Creates a plain object from a WssConnectionRequest message. Also converts values to other types if specified.
+         * @param message WssConnectionRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Push.OpenConnectionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Push.WssConnectionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this OpenConnectionRequest to JSON.
+         * Converts this WssConnectionRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a KAToPushServerResponse. */
-    interface IKAToPushServerResponse {
+    /** Properties of a WssClientResponse. */
+    interface IWssClientResponse {
 
-        /** KAToPushServerResponse messageType */
-        messageType?: (Push.MessageType|null);
-
-        /** KAToPushServerResponse message */
+        /** WssClientResponse message */
         message?: (string|null);
-
-        /** KAToPushServerResponse messageSessionUid */
-        messageSessionUid?: (Uint8Array|null);
-
-        /** KAToPushServerResponse encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-
-        /** KAToPushServerResponse userId */
-        userId?: (number|null);
     }
 
-    /** Represents a KAToPushServerResponse. */
-    class KAToPushServerResponse implements IKAToPushServerResponse {
+    /** Represents a WssClientResponse. */
+    class WssClientResponse implements IWssClientResponse {
 
         /**
-         * Constructs a new KAToPushServerResponse.
+         * Constructs a new WssClientResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Push.IKAToPushServerResponse);
+        constructor(properties?: Push.IWssClientResponse);
 
-        /** KAToPushServerResponse messageType. */
-        public messageType: Push.MessageType;
-
-        /** KAToPushServerResponse message. */
+        /** WssClientResponse message. */
         public message: string;
 
-        /** KAToPushServerResponse messageSessionUid. */
-        public messageSessionUid: Uint8Array;
-
-        /** KAToPushServerResponse encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /** KAToPushServerResponse userId. */
-        public userId: number;
-
         /**
-         * Creates a new KAToPushServerResponse instance using the specified properties.
+         * Creates a new WssClientResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns KAToPushServerResponse instance
+         * @returns WssClientResponse instance
          */
-        public static create(properties?: Push.IKAToPushServerResponse): Push.KAToPushServerResponse;
+        public static create(properties?: Push.IWssClientResponse): Push.WssClientResponse;
 
         /**
-         * Encodes the specified KAToPushServerResponse message. Does not implicitly {@link Push.KAToPushServerResponse.verify|verify} messages.
-         * @param message KAToPushServerResponse message or plain object to encode
+         * Encodes the specified WssClientResponse message. Does not implicitly {@link Push.WssClientResponse.verify|verify} messages.
+         * @param message WssClientResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Push.IKAToPushServerResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Push.IWssClientResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified KAToPushServerResponse message, length delimited. Does not implicitly {@link Push.KAToPushServerResponse.verify|verify} messages.
-         * @param message KAToPushServerResponse message or plain object to encode
+         * Encodes the specified WssClientResponse message, length delimited. Does not implicitly {@link Push.WssClientResponse.verify|verify} messages.
+         * @param message WssClientResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Push.IKAToPushServerResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Push.IWssClientResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a KAToPushServerResponse message from the specified reader or buffer.
+         * Decodes a WssClientResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns KAToPushServerResponse
+         * @returns WssClientResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.KAToPushServerResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.WssClientResponse;
 
         /**
-         * Decodes a KAToPushServerResponse message from the specified reader or buffer, length delimited.
+         * Decodes a WssClientResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns KAToPushServerResponse
+         * @returns WssClientResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.KAToPushServerResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.WssClientResponse;
 
         /**
-         * Verifies a KAToPushServerResponse message.
+         * Verifies a WssClientResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a KAToPushServerResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a WssClientResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns KAToPushServerResponse
+         * @returns WssClientResponse
          */
-        public static fromObject(object: { [k: string]: any }): Push.KAToPushServerResponse;
+        public static fromObject(object: { [k: string]: any }): Push.WssClientResponse;
 
         /**
-         * Creates a plain object from a KAToPushServerResponse message. Also converts values to other types if specified.
-         * @param message KAToPushServerResponse
+         * Creates a plain object from a WssClientResponse message. Also converts values to other types if specified.
+         * @param message WssClientResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Push.KAToPushServerResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Push.WssClientResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this KAToPushServerResponse to JSON.
+         * Converts this WssClientResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -24659,6 +24563,291 @@ export namespace SsoCloud {
 
         /**
          * Converts this SsoCloudConfigurationValidationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudServiceProviderConfigurationListRequest. */
+    interface ISsoCloudServiceProviderConfigurationListRequest {
+
+        /** SsoCloudServiceProviderConfigurationListRequest ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+    }
+
+    /** This request is sent to retrieve the list of configurations availble to a service provider. */
+    class SsoCloudServiceProviderConfigurationListRequest implements ISsoCloudServiceProviderConfigurationListRequest {
+
+        /**
+         * Constructs a new SsoCloudServiceProviderConfigurationListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest);
+
+        /** SsoCloudServiceProviderConfigurationListRequest ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /**
+         * Creates a new SsoCloudServiceProviderConfigurationListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudServiceProviderConfigurationListRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest): SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
+
+        /**
+         * Encodes the specified SsoCloudServiceProviderConfigurationListRequest message. Does not implicitly {@link SsoCloud.SsoCloudServiceProviderConfigurationListRequest.verify|verify} messages.
+         * @param message SsoCloudServiceProviderConfigurationListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudServiceProviderConfigurationListRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudServiceProviderConfigurationListRequest.verify|verify} messages.
+         * @param message SsoCloudServiceProviderConfigurationListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudServiceProviderConfigurationListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudServiceProviderConfigurationListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
+
+        /**
+         * Decodes a SsoCloudServiceProviderConfigurationListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudServiceProviderConfigurationListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
+
+        /**
+         * Verifies a SsoCloudServiceProviderConfigurationListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudServiceProviderConfigurationListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudServiceProviderConfigurationListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudServiceProviderConfigurationListRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudServiceProviderConfigurationListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudServiceProviderConfigurationListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudServiceProviderConfigurationListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ConfigurationListItem. */
+    interface IConfigurationListItem {
+
+        /** ConfigurationListItem ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+
+        /** ConfigurationListItem name */
+        name?: (string|null);
+
+        /** ConfigurationListItem isSelected */
+        isSelected?: (boolean|null);
+    }
+
+    /**
+     * This represents one configuration in the list.
+     * If isSelected is true this configuration is the one currently being used.
+     */
+    class ConfigurationListItem implements IConfigurationListItem {
+
+        /**
+         * Constructs a new ConfigurationListItem.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.IConfigurationListItem);
+
+        /** ConfigurationListItem ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /** ConfigurationListItem name. */
+        public name: string;
+
+        /** ConfigurationListItem isSelected. */
+        public isSelected: boolean;
+
+        /**
+         * Creates a new ConfigurationListItem instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ConfigurationListItem instance
+         */
+        public static create(properties?: SsoCloud.IConfigurationListItem): SsoCloud.ConfigurationListItem;
+
+        /**
+         * Encodes the specified ConfigurationListItem message. Does not implicitly {@link SsoCloud.ConfigurationListItem.verify|verify} messages.
+         * @param message ConfigurationListItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.IConfigurationListItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ConfigurationListItem message, length delimited. Does not implicitly {@link SsoCloud.ConfigurationListItem.verify|verify} messages.
+         * @param message ConfigurationListItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.IConfigurationListItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ConfigurationListItem message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ConfigurationListItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.ConfigurationListItem;
+
+        /**
+         * Decodes a ConfigurationListItem message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ConfigurationListItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.ConfigurationListItem;
+
+        /**
+         * Verifies a ConfigurationListItem message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ConfigurationListItem message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ConfigurationListItem
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.ConfigurationListItem;
+
+        /**
+         * Creates a plain object from a ConfigurationListItem message. Also converts values to other types if specified.
+         * @param message ConfigurationListItem
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.ConfigurationListItem, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ConfigurationListItem to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudServiceProviderConfigurationListResponse. */
+    interface ISsoCloudServiceProviderConfigurationListResponse {
+
+        /** SsoCloudServiceProviderConfigurationListResponse configurationItem */
+        configurationItem?: (SsoCloud.IConfigurationListItem[]|null);
+    }
+
+    /** This represents a list of Configuration entries. */
+    class SsoCloudServiceProviderConfigurationListResponse implements ISsoCloudServiceProviderConfigurationListResponse {
+
+        /**
+         * Constructs a new SsoCloudServiceProviderConfigurationListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudServiceProviderConfigurationListResponse);
+
+        /** SsoCloudServiceProviderConfigurationListResponse configurationItem. */
+        public configurationItem: SsoCloud.IConfigurationListItem[];
+
+        /**
+         * Creates a new SsoCloudServiceProviderConfigurationListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudServiceProviderConfigurationListResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudServiceProviderConfigurationListResponse): SsoCloud.SsoCloudServiceProviderConfigurationListResponse;
+
+        /**
+         * Encodes the specified SsoCloudServiceProviderConfigurationListResponse message. Does not implicitly {@link SsoCloud.SsoCloudServiceProviderConfigurationListResponse.verify|verify} messages.
+         * @param message SsoCloudServiceProviderConfigurationListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudServiceProviderConfigurationListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudServiceProviderConfigurationListResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudServiceProviderConfigurationListResponse.verify|verify} messages.
+         * @param message SsoCloudServiceProviderConfigurationListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudServiceProviderConfigurationListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudServiceProviderConfigurationListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudServiceProviderConfigurationListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudServiceProviderConfigurationListResponse;
+
+        /**
+         * Decodes a SsoCloudServiceProviderConfigurationListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudServiceProviderConfigurationListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudServiceProviderConfigurationListResponse;
+
+        /**
+         * Verifies a SsoCloudServiceProviderConfigurationListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudServiceProviderConfigurationListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudServiceProviderConfigurationListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudServiceProviderConfigurationListResponse;
+
+        /**
+         * Creates a plain object from a SsoCloudServiceProviderConfigurationListResponse message. Also converts values to other types if specified.
+         * @param message SsoCloudServiceProviderConfigurationListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudServiceProviderConfigurationListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudServiceProviderConfigurationListResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

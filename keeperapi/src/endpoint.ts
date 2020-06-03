@@ -110,13 +110,11 @@ export class KeeperEndpoint {
             deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
         }
         if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(deviceConfig);
+            this.options.onDeviceConfig(deviceConfig, this.options.host);
         }
     }
 
     async verifyDevice(username: string) {
-        await this.registerDevice()
-
         const deviceConfig = this.options.deviceConfig
 
         if (deviceConfig.verifiedUsers.includes(username)) {
@@ -137,7 +135,7 @@ export class KeeperEndpoint {
             deviceConfig.verifiedUsers.push(username)
         }
         if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(deviceConfig);
+            this.options.onDeviceConfig(deviceConfig, this.options.host);
         }
     }
 

@@ -6,7 +6,7 @@ import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
-import {prompt} from './testUtil'
+import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -363,4 +363,3 @@ function saveDeviceConfig(deviceConfig: DeviceConfig) {
     console.log("Saving new device token");
     fs.writeFileSync("device-config.json", JSON.stringify(configStorage, null, 2))
 }
-
