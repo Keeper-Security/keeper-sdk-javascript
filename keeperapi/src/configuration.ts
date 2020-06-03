@@ -10,7 +10,7 @@ export interface ClientConfiguration {
     deviceToken?: Uint8Array // pre - v15 device token
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
     deviceConfig?: DeviceConfig // v15+ device config
-    onDeviceConfig?: (deviceConfig: DeviceConfig) => void // event to store device config
+    onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     authUI?: AuthUI
     authUI3?: AuthUI3
 }

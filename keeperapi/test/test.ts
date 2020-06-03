@@ -680,7 +680,7 @@ async function login(user?: string): Promise<Auth> {
     }
 
     let auth = new Auth({
-        host: 'local.keepersecurity.com',
+        host: KeeperEnvironment.LOCAL,
         // host: 'dev2.keepersecurity.com',
         // host: KeeperEnvironment.DEV,
         // host: KeeperEnvironment.QA
@@ -753,8 +753,8 @@ async function testRegistration() {
 
 // const currentUser = 'admin@yozik.us'
 // const currentUser = 'admin+m6a@yozik.us'
-const currentUser = 'admin+sms@yozik.us'
-// const currentUser = 'admin+duo@yozik.us'
+// const currentUser = 'admin+sms@yozik.us'
+const currentUser = 'admin+duo@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 // const currentUser = "vladimir+cw@keepersecurity.com"

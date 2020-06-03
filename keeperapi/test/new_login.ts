@@ -1,16 +1,13 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
-import {
-    validateAuthHashMessage,
-    requestCreateAccountMessage
-} from '../src/restMessages';
+import {requestCreateAccountMessage, validateAuthHashMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateEncryptionKey, webSafe64FromBytes} from '../src/utils';
-import * as fs from 'fs'
 import {Authentication} from '../src/proto';
 import {AccountSummaryCommand} from '../src/commands';
 import {AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
-import {prompt} from './testUtil';
+import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
+import {KeeperEnvironment} from '../src/endpoint';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -30,56 +27,21 @@ const authUI: AuthUI3 = {
 // const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
-const userName = "admin+m6a@yozik.us"
+// const userName = "admin+m6a@yozik.us"
+// const userName = "admin+m6a@yozik.us"
+const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+m29a@yozik.us"
 // const userName = "brian+bp@keepersecurity.com"
 const clientVersion = 'c16.0.0'
-
-type DeviceConfigStorage = {
-    deviceToken: string
-    privateKey: string
-    publicKey: string
-    verifiedUsers: string[]
-}
-
-function getDeviceConfig(): DeviceConfig {
-    try {
-        const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync("device-config.json").toString())
-        return {
-            deviceToken: platform.base64ToBytes(configStorage.deviceToken),
-            publicKey: platform.base64ToBytes(configStorage.publicKey),
-            privateKey: platform.base64ToBytes(configStorage.privateKey),
-            verifiedUsers: configStorage.verifiedUsers
-        }
-    }
-    catch (e) {
-        return {
-            deviceToken: undefined,
-            privateKey: undefined,
-            publicKey: undefined,
-            verifiedUsers: []
-        }
-    }
-}
-
-function saveDeviceConfig(deviceConfig: DeviceConfig) {
-    const configStorage: DeviceConfigStorage = {
-        deviceToken: platform.bytesToBase64(deviceConfig.deviceToken),
-        publicKey: platform.bytesToBase64(deviceConfig.publicKey),
-        privateKey: platform.bytesToBase64(deviceConfig.privateKey),
-        verifiedUsers: deviceConfig.verifiedUsers
-    }
-    fs.writeFileSync("device-config.json", JSON.stringify(configStorage, null, 2))
-}
+const host = KeeperEnvironment.LOCAL
 
 async function testRegistration() {
 
-    const deviceConfig = getDeviceConfig()
+    const deviceConfig = getDeviceConfig(host)
 
     const auth = new Auth({
-        host: 'local.keepersecurity.com',
-        // host: KeeperEnvironment.DEV
+        host: host,
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         onDeviceConfig: saveDeviceConfig
@@ -107,11 +69,10 @@ async function testRegistration() {
 }
 
 async function testLogin() {
-    const deviceConfig = getDeviceConfig()
+    const deviceConfig = getDeviceConfig(host)
 
     const auth = new Auth({
-        host: 'local.keepersecurity.com',
-        // host: KeeperEnvironment.DEV,
+        host: host,
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         onDeviceConfig: saveDeviceConfig,
@@ -134,7 +95,6 @@ async function authHashLogin(auth: Auth, deviceToken: Uint8Array, authHashInfo: 
     let authHash = await platform.authVerifierAsBytes(authHashKey);
 
     const loginMsg = validateAuthHashMessage({
-        clientVersion: clientVersion,
         authResponse: authHash,
         encryptedLoginToken: authHashInfo.encryptedLoginToken
     })

@@ -4,7 +4,7 @@
 *.jpg
 *.png
 keeperapi/sp-metadata.xml
-keeperapi/device-config.json
+keeperapi/device-config*
 keeperapi/device-token.dat
 node_modules
 dist

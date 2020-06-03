@@ -46,6 +46,12 @@ function unifyLoginError(e: any): LoginError {
     }
 }
 
+type SocketMessage = {
+    event: 'received_totp'
+    type: 'dna'
+    passcode: string
+}
+
 export class SocketListener {
     private socket;
 
@@ -54,12 +60,11 @@ export class SocketListener {
         this.socket = new WebSocket.Client(url)
     }
 
-    async getTwoFactorCode(): Promise<string> {
-        // this.socket.send('test')
+    async getTwoFactorCode(): Promise<SocketMessage> {
         console.log('Awaiting web socket')
-        return new Promise<string>((resolve) => {
+        return new Promise<SocketMessage>((resolve) => {
             this.socket.on('message', (e) => {
-                resolve(e.data)
+                resolve(JSON.parse(e.data))
                 this.socket.close();
                 this.socket = null
             })
@@ -82,7 +87,9 @@ export class Auth {
 
     async loginV3(username: string, password: string) {
 
-        await this.endpoint.verifyDevice(username)
+        if (!this.options.deviceConfig.deviceToken) {
+            await this.endpoint.registerDevice()
+        }
 
         while (true) {
             const startLoginMsg = startLoginMessage({
@@ -97,25 +104,27 @@ export class Auth {
             console.log(startLoginResp)
             switch (startLoginResp.loginState) {
                 case Authentication.LoginState.device_needs_approval:
-                    throw new Error('Device is not approved')
+                    await this.endpoint.verifyDevice(username)
+                    break
                 case Authentication.LoginState.device_locked:
-                    break;
+                    break
                 case Authentication.LoginState.account_locked:
-                    break;
+                    break
                 case Authentication.LoginState.device_account_locked:
-                    break;
+                    break
                 case Authentication.LoginState.license_expired:
-                    break;
+                    throw new Error('License expired')
+                    break
                 case Authentication.LoginState.region_redirect:
-                    break;
+                    break
                 case Authentication.LoginState.redirect_cloud_sso:
                     console.log("Starting SSO login");
                     await this.cloudSsoLogin(startLoginResp.ssoUserInfo.loginUrl);
-                    return;
+                    return
                 case Authentication.LoginState.redirect_onsite_sso:
-                    break;
+                    break
                 case Authentication.LoginState.user_already_logged_in:
-                    break;
+                    break
                 case Authentication.LoginState.requires_2fa:
                     if (!this.options.authUI3) {
                         throw new Error('Unhandled prompt for second factor')
@@ -138,7 +147,7 @@ export class Auth {
                     const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
                     console.log(twoFactorCodeResp)
                     await this.authHashLogin(twoFactorCodeResp.authHashInfo, username, password)
-                    return;
+                    return
                 case Authentication.LoginState.requires_authHash:
                     await this.authHashLogin(startLoginResp.authHashInfo, username, password)
                     return
@@ -153,7 +162,6 @@ export class Auth {
         let authHash = await platform.authVerifierAsBytes(authHashKey);
 
         const loginMsg = validateAuthHashMessage({
-            clientVersion: this.endpoint.clientVersion,
             authResponse: authHash,
             encryptedLoginToken: authHashInfo.encryptedLoginToken
         })
@@ -221,10 +229,12 @@ export class Auth {
                     else {
                         let token: string
                         if (socketListener) {
-                            token = await socketListener.getTwoFactorCode();
+                            const socketMessage = await socketListener.getTwoFactorCode()
+                            console.log(socketMessage)
+                            token = socketMessage.passcode
                         }
                         else {
-                            token = await this.options.authUI.getTwoFactorCode(errorMessage);
+                            token = await this.options.authUI.getTwoFactorCode(errorMessage)
                         }
                         if (!token)
                             break;

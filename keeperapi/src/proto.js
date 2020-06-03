@@ -423,26 +423,33 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       LoginInfo: {
         fields: {
+          accountUid: {
+            type: "bytes",
+            id: 1
+          },
           primaryUsername: {
             type: "string",
-            id: 1
+            id: 2
           },
           encryptedDataKeyForLogin: {
             type: "bytes",
-            id: 2
+            id: 3
           },
           encryptedDataKeyTypeForLogin: {
             type: "EncryptedDataKeyTypeForLogin",
-            id: 3
+            id: 4
+          },
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 5
           },
           encryptedSessionToken: {
             type: "bytes",
-            id: 4
+            id: 6
           },
           sessionTokenType: {
-            rule: "repeated",
             type: "SessionTokenType",
-            id: 5
+            id: 7
           }
         }
       },
@@ -522,33 +529,29 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "LoginState",
             id: 1
           },
-          message: {
-            type: "string",
+          loginInfo: {
+            type: "LoginInfo",
             id: 2
           },
-          url: {
+          message: {
             type: "string",
             id: 3
           },
-          accountUid: {
-            type: "bytes",
+          url: {
+            type: "string",
             id: 4
-          },
-          loginInfo: {
-            type: "LoginInfo",
-            id: 5
           },
           twoFactorInfo: {
             type: "TwoFactorInfo",
-            id: 6
+            id: 5
           },
           authHashInfo: {
             type: "AuthHashInfo",
-            id: 7
+            id: 6
           },
           ssoUserInfo: {
             type: "SsoUserInfo",
-            id: 8
+            id: 7
           }
         }
       },
@@ -565,14 +568,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedLoginToken: {
             type: "bytes",
             id: 3
-          },
-          clientVersion: {
-            type: "string",
-            id: 4
-          },
-          rememberMe: {
-            type: "bool",
-            id: 5
           }
         }
       },
@@ -582,21 +577,13 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "LoginState",
             id: 1
           },
-          message: {
-            type: "string",
-            id: 2
-          },
-          url: {
-            type: "string",
-            id: 3
-          },
-          accountUid: {
-            type: "bytes",
-            id: 4
-          },
           loginInfo: {
             type: "LoginInfo",
-            id: 5
+            id: 2
+          },
+          message: {
+            type: "string",
+            id: 3
           }
         }
       },
@@ -1129,22 +1116,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      AuthenticateViaEmail: {
-        fields: {
-          email: {
-            type: "string",
-            id: 1
-          },
-          resend: {
-            type: "bool",
-            id: 2
-          },
-          locale: {
-            type: "string",
-            id: 3
-          }
-        }
-      },
       CreateUserRequest: {
         fields: {
           username: {
@@ -1195,8 +1166,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 12
           },
-          locale: {
-            type: "string",
+          messageSessionUid: {
+            type: "bytes",
             id: 13
           },
           installReferrer: {
@@ -1234,6 +1205,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           skipGroupAccept: {
             type: "bool",
             id: 22
+          },
+          verificationCode: {
+            type: "string",
+            id: 23
           }
         }
       },
@@ -2805,6 +2780,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           mcEnterpriseId: {
             type: "int32",
             id: 8
+          },
+          userId: {
+            type: "int32",
+            id: 9
+          },
+          enterpriseUserId: {
+            type: "int64",
+            id: 10
+          },
+          clientVersionId: {
+            type: "int32",
+            id: 11
+          },
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
+            id: 12
           }
         }
       },
@@ -2987,11 +2978,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           deviceId: {
             type: "int64",
             id: 18
-          },
-          userLicenseStatus: {
-            rule: "repeated",
-            type: "UserLicenseStatus",
-            id: 19
           }
         }
       },
@@ -3236,6 +3222,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           requestTimeStamp: {
             type: "int64",
             id: 3
+          },
+          locale: {
+            type: "string",
+            id: 4
+          },
+          remoteAddress: {
+            type: "string",
+            id: 5
           }
         }
       },
@@ -3846,7 +3840,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      OpenConnectionRequest: {
+      WssConnectionRequest: {
         fields: {
           messageSessionUid: {
             type: "bytes",
@@ -3859,30 +3853,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           deviceTimeStamp: {
             type: "int64",
             id: 3
-          }
-        }
-      },
-      KAToPushServerResponse: {
-        fields: {
-          messageType: {
-            type: "MessageType",
-            id: 1
-          },
-          message: {
-            type: "string",
-            id: 2
-          },
-          messageSessionUid: {
-            type: "bytes",
-            id: 3
-          },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 4
           },
           userId: {
             type: "int32",
+            id: 4
+          },
+          enterpriseId: {
+            type: "int32",
             id: 5
+          }
+        }
+      },
+      WssClientResponse: {
+        fields: {
+          message: {
+            type: "string",
+            id: 1
           }
         }
       }
@@ -4907,6 +4893,39 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           validationContent: {
             rule: "repeated",
             type: "ValidationContent",
+            id: 1
+          }
+        }
+      },
+      SsoCloudServiceProviderConfigurationListRequest: {
+        fields: {
+          ssoServiceProviderId: {
+            type: "uint64",
+            id: 1
+          }
+        }
+      },
+      ConfigurationListItem: {
+        fields: {
+          ssoSpConfigurationId: {
+            type: "uint64",
+            id: 1
+          },
+          name: {
+            type: "string",
+            id: 2
+          },
+          isSelected: {
+            type: "bool",
+            id: 3
+          }
+        }
+      },
+      SsoCloudServiceProviderConfigurationListResponse: {
+        fields: {
+          configurationItem: {
+            rule: "repeated",
+            type: "ConfigurationListItem",
             id: 1
           }
         }

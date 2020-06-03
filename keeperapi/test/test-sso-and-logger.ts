@@ -6,7 +6,7 @@ import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
-import {prompt} from './testUtil'
+import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -222,34 +222,3 @@ async function TestSsoUploadMetadata() {
         console.log(e)
     }
 }
-
-function getDeviceConfig(): DeviceConfig {
-    try {
-        const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync("device-config.json").toString())
-        return {
-            deviceToken: platform.base64ToBytes(configStorage.deviceToken),
-            publicKey: platform.base64ToBytes(configStorage.publicKey),
-            privateKey: platform.base64ToBytes(configStorage.privateKey),
-            verifiedUsers: configStorage.verifiedUsers
-        }
-    }
-    catch (e) {
-        return {
-            deviceToken: undefined,
-            privateKey: undefined,
-            publicKey: undefined,
-            verifiedUsers: []
-        }
-    }
-}
-
-function saveDeviceConfig(deviceConfig: DeviceConfig) {
-    const configStorage: DeviceConfigStorage = {
-        deviceToken: platform.bytesToBase64(deviceConfig.deviceToken),
-        publicKey: platform.bytesToBase64(deviceConfig.publicKey),
-        privateKey: platform.bytesToBase64(deviceConfig.privateKey),
-        verifiedUsers: deviceConfig.verifiedUsers
-    }
-    fs.writeFileSync("device-config.json", JSON.stringify(configStorage, null, 2))
-}
-
