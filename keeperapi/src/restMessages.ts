@@ -119,3 +119,9 @@ export const ssoUploadIdpMetadataMessage = (data: SsoCloud.ISsoCloudIdpMetadataR
 
 export const ssoCloudServiceProviderUpdateRequestMessage = (data: SsoCloud.ISsoCloudServiceProviderUpdateRequest): RestMessage<SsoCloud.ISsoCloudServiceProviderUpdateRequest, SsoCloud.ISsoCloudConfigurationResponse> =>
     createMessage(data, 'sso/config/sso_cloud_sp_configuration_set', SsoCloud.SsoCloudServiceProviderUpdateRequest, SsoCloud.SsoCloudConfigurationResponse);
+
+export const ssoCloudConfigurationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationRequest, url: string): RestMessage<SsoCloud.ISsoCloudConfigurationRequest, SsoCloud.ISsoCloudConfigurationResponse> =>
+    createMessage(data, url, SsoCloud.SsoCloudConfigurationRequest, SsoCloud.SsoCloudConfigurationResponse);
+
+export const ssoCloudServiceProviderConfigurationListRequestMessage = (data: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest): RestMessage<SsoCloud.ISsoCloudServiceProviderConfigurationListRequest, SsoCloud.ISsoCloudServiceProviderConfigurationListResponse> =>
+    createMessage(data, 'sso/config/sso_cloud_sp_configuration_get', SsoCloud.SsoCloudServiceProviderConfigurationListRequest, SsoCloud.SsoCloudServiceProviderConfigurationListResponse);
