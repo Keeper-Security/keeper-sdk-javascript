@@ -19,7 +19,7 @@ import {
 import {
     RestMessage,
     startLoginMessage, twoFactorSendOTPMessage,
-    twoFactorValidateCodeMessage,
+    twoFactorValidateMessage,
     validateAuthHashMessage
 } from './restMessages'
 import * as WebSocket from 'faye-websocket'
@@ -179,9 +179,8 @@ export class Auth {
                         break
                     } else {
                         const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
-                        const twoFactorCodeMsg = twoFactorValidateCodeMessage({
+                        const twoFactorCodeMsg = twoFactorValidateMessage({
                             encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
-                            code: twoFactorInput.twoFactorCode,
                             expireIn: twoFactorInput.desiredExpiration
                         })
                         const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
