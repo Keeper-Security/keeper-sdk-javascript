@@ -31,6 +31,7 @@ export interface DeviceConfig {
     deviceToken: Uint8Array
     privateKey: Uint8Array
     publicKey: Uint8Array
+    transmissionKeyId: number
     verifiedUsers: string[]
 }
 

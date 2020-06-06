@@ -1,13 +1,14 @@
-import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
-import {requestCreateAccountMessage, validateAuthHashMessage} from '../src/restMessages';
+import {Auth, createAuthVerifier, createEncryptionParams, SocketListener} from "../src/auth";
+import {requestCreateUserMessage, validateAuthHashMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {generateEncryptionKey, webSafe64FromBytes} from '../src/utils';
+import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
 import {Authentication} from '../src/proto';
 import {AccountSummaryCommand} from '../src/commands';
 import {AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
 import {KeeperEnvironment} from '../src/endpoint';
+import {createECDH} from "crypto";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -32,8 +33,11 @@ const authUI: AuthUI3 = {
 const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+m29a@yozik.us"
+// const userName = "admin+j4a@yozik.us"
 // const userName = "brian+bp@keepersecurity.com"
-const clientVersion = 'c16.0.0'
+// const userName = "arlen+dev5@keepersecurity.com"
+// const clientVersion = 'c16.0.0'
+const clientVersion = 'w15.0.0'
 const host = KeeperEnvironment.LOCAL
 
 async function testRegistration() {
@@ -47,6 +51,8 @@ async function testRegistration() {
         onDeviceConfig: saveDeviceConfig
     })
 
+    await auth.registerDevice()
+
     await auth.verifyDevice(userName)
 
     const password = '111111'
@@ -55,13 +61,23 @@ async function testRegistration() {
 
     const authVerifier = await createAuthVerifier(password, iterations)
     const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
+    // const rsaKeys = await platform.generateRSAKeyPair()
+    // const rsaEncryptedPrivateKey = await platform.aesGcmEncrypt(rsaKeys.privateKey, dataKey)
+    const ecdh = createECDH('prime256v1')
+    ecdh.generateKeys()
+    const eccEncryptedPrivateKey = await platform.aesGcmEncrypt(ecdh.getPrivateKey(), dataKey)
 
-    const regUserMsg = requestCreateAccountMessage({
+    const regUserMsg = requestCreateUserMessage({
         username: userName,
         authVerifier: authVerifier,
         encryptionParams: encryptionParams,
         encryptedDeviceToken: deviceConfig.deviceToken,
-        clientVersion: clientVersion
+        clientVersion: clientVersion,
+        rsaEncryptedPrivateKey: generateEncryptionKey(),
+        rsaPublicKey: generateEncryptionKey(),
+        encryptedDeviceDataKey: generateEncryptionKey(),
+        eccPublicKey: ecdh.getPublicKey(),
+        eccEncryptedPrivateKey: eccEncryptedPrivateKey
     })
 
     const regUserResp = await auth.executeRest(regUserMsg)
@@ -80,28 +96,6 @@ async function testLogin() {
     })
 
     await auth.loginV3(userName, "111111")
-
-    const accountSummaryCommand = new AccountSummaryCommand()
-    accountSummaryCommand.include = ['license', 'settings']
-    const accSummary = await auth.executeCommand(accountSummaryCommand)
-    console.log(accSummary)
-}
-
-async function authHashLogin(auth: Auth, deviceToken: Uint8Array, authHashInfo: Authentication.IAuthHashInfo) {
-    // TODO test for account transfer and account recovery
-    const password = '111111'
-    const salt = authHashInfo.salt[0]
-    const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
-    let authHash = await platform.authVerifierAsBytes(authHashKey);
-
-    const loginMsg = validateAuthHashMessage({
-        authResponse: authHash,
-        encryptedLoginToken: authHashInfo.encryptedLoginToken
-    })
-    const loginResp = await auth.executeRest(loginMsg)
-    console.log(loginResp)
-
-    auth.setLoginParameters(userName, webSafe64FromBytes(loginResp.loginInfo.encryptedSessionToken))
 
     const accountSummaryCommand = new AccountSummaryCommand()
     accountSummaryCommand.include = ['license', 'settings']

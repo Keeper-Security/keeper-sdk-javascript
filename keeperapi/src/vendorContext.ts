@@ -58,8 +58,8 @@ export class VendorContext {
             } catch (e) {
                 let error = platform.bytesToString(response.data)
                 let errorObj = JSON.parse(error)
-                if ((errorObj.error === 'key') && (this.transmissionKey.publicKeyId <= 6)) {
-                    this.updateTransmissionKey(this.transmissionKey.publicKeyId + 1)
+                if (errorObj.error === 'key') {
+                    this.updateTransmissionKey(errorObj.key_id)
                 } else {
                     throw(`Unable to decrypt response: ${error}`)
                 }

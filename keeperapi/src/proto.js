@@ -450,6 +450,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           sessionTokenType: {
             type: "SessionTokenType",
             id: 7
+          },
+          message: {
+            type: "string",
+            id: 8
           }
         }
       },
@@ -571,35 +575,30 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      ValidateAuthHashResponse: {
-        fields: {
-          loginState: {
-            type: "LoginState",
-            id: 1
-          },
-          loginInfo: {
-            type: "LoginInfo",
-            id: 2
-          },
-          message: {
-            type: "string",
-            id: 3
-          }
-        }
-      },
       PasswordMethod: {
         values: {
           ENTERED: 0,
           BIOMETRICS: 1
         }
       },
-      TwoFactorType: {
+      TwoFactorPushType: {
         values: {
-          TWO_FA_TYPE_NONE: 0,
-          TWO_FA_TYPE_TOTP: 1,
-          TWO_FA_TYPE_SMS: 2,
-          TWO_FA_TYPE_DUO: 3,
-          TWO_FA_TYPE_FIDO: 4
+          TWO_FA_PUSH_NONE: 0,
+          TWO_FA_PUSH_SMS: 1,
+          TWO_FA_PUSH_KEEPER: 2,
+          TWO_FA_PUSH_DUO_PUSH: 3,
+          TWO_FA_PUSH_DUO_TEXT: 4,
+          TWO_FA_PUSH_DUO_CALL: 5
+        }
+      },
+      TwoFactorValueType: {
+        values: {
+          TWO_FA_CODE_NONE: 0,
+          TWO_FA_CODE_TOTP: 1,
+          TWO_FA_CODE_SMS: 2,
+          TWO_FA_CODE_DUO: 3,
+          TWO_FA_RESP_U2F: 4,
+          TWO_FA_RESP_WEBAUTHN: 5
         }
       },
       TwoFactorExpiration: {
@@ -612,23 +611,43 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_EXP_NEVER: 5
         }
       },
-      TwoFactorValidateCodeRequest: {
+      TwoFactorValidateRequest: {
         fields: {
           encryptedLoginToken: {
             type: "bytes",
             id: 1
           },
-          channel: {
-            type: "TwoFactorChannel",
+          valueType: {
+            type: "TwoFactorValueType",
             id: 2
+          },
+          value: {
+            type: "string",
+            id: 3
+          },
+          channelUid: {
+            type: "bytes",
+            id: 4
           },
           expireIn: {
             type: "TwoFactorExpiration",
-            id: 3
+            id: 5
+          }
+        }
+      },
+      TwoFactorSendPushRequest: {
+        fields: {
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 1
           },
-          code: {
-            type: "string",
-            id: 4
+          pushType: {
+            type: "TwoFactorPushType",
+            id: 2
+          },
+          channelUid: {
+            type: "bytes",
+            id: 3
           }
         }
       },
@@ -637,59 +656,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           authHashInfo: {
             type: "AuthHashInfo",
             id: 1
-          }
-        }
-      },
-      LoginResponse: {
-        fields: {
-          encryptedSessionToken: {
-            type: "bytes",
-            id: 1
-          },
-          vault: {
-            type: "License",
-            id: 2
-          },
-          chat: {
-            type: "License",
-            id: 3
-          },
-          storage: {
-            type: "License",
-            id: 4
-          },
-          breachWatch: {
-            type: "License",
-            id: 5
-          },
-          accountType: {
-            type: "AccountType",
-            id: 6
-          },
-          encryptedDAT: {
-            type: "bytes",
-            id: 7
-          },
-          encryptedPAT: {
-            type: "bytes",
-            id: 8
-          },
-          encryptedEAT: {
-            type: "bytes",
-            id: 9
-          },
-          encryptedDataKey: {
-            type: "bytes",
-            id: 10
-          },
-          sessionTokenType: {
-            rule: "repeated",
-            type: "SessionTokenType",
-            id: 11
-          },
-          additionalMessage: {
-            type: "string",
-            id: 12
           }
         }
       },
@@ -1410,6 +1376,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedDeviceToken: {
             type: "bytes",
             id: 1
+          }
+        }
+      },
+      RegisterDeviceDataKeyRequest: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
+          },
+          encryptedDeviceDataKey: {
+            type: "bytes",
+            id: 2
           }
         }
       },
@@ -3230,6 +3208,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           remoteAddress: {
             type: "string",
             id: 5
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 6
+          },
+          deviceId: {
+            type: "int64",
+            id: 7
           }
         }
       },
@@ -3806,7 +3792,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           CHAT: 3,
           USER: 4,
           ENTERPRISE: 5,
-          KEEPER: 6
+          KEEPER: 6,
+          SESSION: 7
         }
       },
       KAToPushServerRequest: {
@@ -3853,22 +3840,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           deviceTimeStamp: {
             type: "int64",
             id: 3
-          },
-          userId: {
-            type: "int32",
-            id: 4
-          },
-          enterpriseId: {
-            type: "int32",
-            id: 5
           }
         }
       },
       WssClientResponse: {
         fields: {
+          messageType: {
+            type: "MessageType",
+            id: 1
+          },
           message: {
             type: "string",
-            id: 1
+            id: 2
           }
         }
       }

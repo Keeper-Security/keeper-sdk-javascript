@@ -38,17 +38,20 @@ export const updateDeviceMessage = (data: Authentication.IDeviceUpdateRequest): 
 export const requestDeviceVerificationMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
     createMessage(data, 'authentication/request_device_verification', Authentication.DeviceVerificationRequest, null)
 
-export const requestCreateAccountMessage = (data: Authentication.ICreateUserRequest): RestMessage<Authentication.ICreateUserRequest, Authentication.UserDeviceStatus> =>
-    createMessage(data, 'authentication/request_create_account', Authentication.CreateUserRequest, Authentication.UserDeviceStatus)
+export const requestCreateUserMessage = (data: Authentication.ICreateUserRequest): RestMessage<Authentication.ICreateUserRequest, Authentication.UserDeviceStatus> =>
+    createMessage(data, 'authentication/request_create_user', Authentication.CreateUserRequest, Authentication.UserDeviceStatus)
 
 export const startLoginMessage = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, Authentication.IStartLoginResponse> =>
     createMessage(data, 'authentication/start_login', Authentication.StartLoginRequest, Authentication.StartLoginResponse)
 
-export const validateAuthHashMessage = (data: Authentication.IValidateAuthHashRequest): RestMessage<Authentication.IValidateAuthHashRequest, Authentication.IValidateAuthHashResponse> =>
-    createMessage(data, 'authentication/validate_auth_hash', Authentication.ValidateAuthHashRequest, Authentication.ValidateAuthHashResponse)
+export const validateAuthHashMessage = (data: Authentication.IValidateAuthHashRequest): RestMessage<Authentication.IValidateAuthHashRequest, Authentication.ILoginInfo> =>
+    createMessage(data, 'authentication/validate_auth_hash', Authentication.ValidateAuthHashRequest, Authentication.LoginInfo)
 
-export const twoFactorValidateCodeMessage = (data: Authentication.ITwoFactorValidateCodeRequest): RestMessage<Authentication.ITwoFactorValidateCodeRequest, Authentication.ITwoFactorResponse> =>
-    createMessage(data, 'authentication/2fa_validate_code', Authentication.TwoFactorValidateCodeRequest, Authentication.TwoFactorResponse)
+export const twoFactorValidateMessage = (data: Authentication.ITwoFactorValidateRequest): RestMessage<Authentication.ITwoFactorValidateRequest, Authentication.ITwoFactorResponse> =>
+    createMessage(data, 'authentication/2fa_validate', Authentication.TwoFactorValidateRequest, Authentication.TwoFactorResponse)
+
+export const twoFactorSendOTPMessage = (data: Authentication.ITwoFactorSendPushRequest): RestMessage<Authentication.ITwoFactorSendPushRequest, {}> =>
+    createMessage(data, 'authentication/2fa_send_push', Authentication.TwoFactorSendPushRequest, null)
 
 // end new login
 
