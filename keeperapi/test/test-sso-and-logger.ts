@@ -17,12 +17,13 @@ import ServiceLogSpecifier = ServiceLogger.ServiceLogSpecifier;
 import ServiceLogResponse = ServiceLogger.ServiceLogResponse;
 import SsoCloudIdpMetadataRequest = SsoCloud.SsoCloudIdpMetadataRequest;
 import SsoCloudConfigurationRequest = SsoCloud.SsoCloudConfigurationRequest;
+import SsoCloudSAMLLogRequest = SsoCloud.SsoCloudSAMLLogRequest;
 import SsoCloudServiceProviderUpdateRequest = SsoCloud.SsoCloudServiceProviderUpdateRequest;
 import SsoCloudServiceProviderConfigurationListRequest = SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
 import SsoCloudSettingOperationType = SsoCloud.SsoCloudSettingOperationType;
 import SsoCloudSettingAction = SsoCloud.SsoCloudSettingAction;
 import AuthProtocolType = SsoCloud.AuthProtocolType;
-import {serviceLoggerGetMessage} from '../src/restMessages'
+import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/restMessages'
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages'
 import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages'
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
@@ -116,7 +117,9 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // TestSsoGetConfigurationList().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
-TestSsoResetConfigurationSettingValue().finally();
+// TestSsoResetConfigurationSettingValue().finally();
+// TestSsoGetSAMLLog().finally();
+TestSsoClearSAMLLog().finally();
 
 
 /* ------------------ Service Logger -------------------- */
@@ -476,5 +479,76 @@ async function TestSsoResetConfigurationSettingValue() {
     } catch (e) {
         console.log(e)
     }
+}
 
+// POST, ENCRYPTED, sso_cloud_log_saml_get
+async function TestSsoGetSAMLLog() {
+    let keeperHost = KeeperEnvironment.LOCAL;
+    console.log("\n*** TestSsoGetSAMLLog on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_log_saml_get';
+    
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudSAMLLogRequest.create({
+            "ssoServiceProviderId": serviceProviderId
+        });
+
+        let resp = await auth.executeRest(ssoCloudSAMLLogRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, sso_cloud_log_saml_clear
+async function TestSsoClearSAMLLog() {
+    let keeperHost = KeeperEnvironment.LOCAL;
+    console.log("\n*** TestSsoClearSAMLLog on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_log_saml_clear';
+    
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudSAMLLogRequest.create({
+            "ssoServiceProviderId": serviceProviderId
+        });
+
+        let resp = await auth.executeRest(ssoCloudSAMLLogRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+    } catch (e) {
+        console.log(e)
+    }
 }
