@@ -1,24 +1,34 @@
 import {KeeperCommand, KeeperHttpResponse} from './commands'
-import {Authentication} from './proto'
+import {Authentication, Push} from './proto'
 import {platform} from './platform'
-import {generateTransmissionKey, getKeeperUrl, isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
+import {
+    generateTransmissionKey,
+    getKeeperUrl,
+    isTwoFactorResultCode,
+    normal64,
+    normal64Bytes,
+    webSafe64FromBytes
+} from './utils'
 import {
     deviceMessage,
-    preLoginMessage, registerDeviceMessage,
+    preLoginMessage,
+    registerDeviceMessage,
     requestDeviceVerificationMessage,
     RestMessage,
     updateDeviceMessage
 } from './restMessages'
+import {ClientConfiguration, TransmissionKey} from './configuration';
+import {prompt} from '../test/testUtil';
+import {createECDH} from "crypto";
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
 import IPreLoginResponse = Authentication.IPreLoginResponse;
-import IApiRequestPayload = Authentication.IApiRequestPayload;
+import WssClientResponse = Push.WssClientResponse;
+import WssConnectionRequest = Push.WssConnectionRequest;
+
 const open = require('open');
 
-import {ClientConfiguration, TransmissionKey} from './configuration';
-import {prompt} from '../test/testUtil';
-import {createECDH} from "crypto";
 
 export class KeeperEndpoint {
     private transmissionKey: TransmissionKey
@@ -26,8 +36,12 @@ export class KeeperEndpoint {
     public clientVersion
 
     constructor(private options: ClientConfiguration) {
-        this.deviceToken = options.deviceToken
-        this.updateTransmissionKey(1)
+        if (options.deviceConfig) {
+            this.updateTransmissionKey(options.deviceConfig.transmissionKeyId || 1)
+        } else {
+            this.deviceToken = options.deviceToken
+            this.updateTransmissionKey(1)
+        }
     }
 
     private getUrl(forPath: string): string {
@@ -45,8 +59,8 @@ export class KeeperEndpoint {
                 if (!(e instanceof Error))
                     throw(e)
                 let errorObj = JSON.parse(e.message)
-                if ((errorObj.error === 'key') && (this.transmissionKey.publicKeyId <= 6)) {
-                    this.updateTransmissionKey(this.transmissionKey.publicKeyId + 1)
+                if (errorObj.error === 'key') {
+                    this.updateTransmissionKey(errorObj.key_id)
                 } else {
                     throw(e)
                 }
@@ -90,27 +104,44 @@ export class KeeperEndpoint {
         ecdh.generateKeys()
         deviceConfig.publicKey = ecdh.getPublicKey()
         deviceConfig.privateKey = ecdh.getPrivateKey()
-        if (deviceConfig.deviceToken) {
-            const devUpdMsg = updateDeviceMessage({
-                encryptedDeviceToken: deviceConfig.deviceToken,
-                clientVersion: this.options.clientVersion,
-                deviceName: 'test device1',
-                devicePublicKey: deviceConfig.publicKey,
-            })
-            await this.executeRest(devUpdMsg)
-        }
-        else {
-            const devRegMsg = registerDeviceMessage({
-                clientVersion: this.options.clientVersion,
-                deviceName: 'test device',
-                devicePublicKey: deviceConfig.publicKey,
-            })
-            const devRegResp = await this.executeRest(devRegMsg)
-            console.log(devRegResp)
-            deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
-        }
-        if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(deviceConfig, this.options.host);
+        while (true) {
+            try {
+                if (deviceConfig.deviceToken) {
+                    const devUpdMsg = updateDeviceMessage({
+                        encryptedDeviceToken: deviceConfig.deviceToken,
+                        clientVersion: this.options.clientVersion,
+                        deviceName: 'test device1',
+                        devicePublicKey: deviceConfig.publicKey,
+                    })
+                    await this.executeRest(devUpdMsg)
+                } else {
+                    const devRegMsg = registerDeviceMessage({
+                        clientVersion: this.options.clientVersion,
+                        deviceName: 'test device',
+                        devicePublicKey: deviceConfig.publicKey,
+                    })
+                    const devRegResp = await this.executeRest(devRegMsg)
+                    console.log(devRegResp)
+                    deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
+                }
+                if (this.options.onDeviceConfig) {
+                    this.options.onDeviceConfig(deviceConfig, this.options.host);
+                }
+                return
+            } catch (e) {
+                if (!(e instanceof Error))
+                    throw(e)
+                let errorObj = JSON.parse(e.message)
+                if (errorObj.error === 'key') {
+                    deviceConfig.transmissionKeyId = errorObj.key_id
+                    if (this.options.onDeviceConfig) {
+                        this.options.onDeviceConfig(deviceConfig, this.options.host);
+                    }
+                    this.updateTransmissionKey(errorObj.key_id)
+                } else {
+                    throw(e)
+                }
+            }
         }
     }
 
@@ -123,7 +154,7 @@ export class KeeperEndpoint {
 
         const devVerMsg = requestDeviceVerificationMessage({
             username: username,
-            encryptedDeviceToken: deviceConfig.deviceToken
+            encryptedDeviceToken: deviceConfig.deviceToken,
         })
 
         await this.executeRest(devVerMsg)
@@ -145,7 +176,7 @@ export class KeeperEndpoint {
     async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<string> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let theUrl = message.path;
-        if (! theUrl.startsWith("http")) {
+        if (!theUrl.startsWith("http")) {
             theUrl = this.getUrl(theUrl);
         }
         let response = await platform.post(theUrl, request)
@@ -162,7 +193,9 @@ export class KeeperEndpoint {
         }
 
         if (response.statusCode === 404) {
-            return new Promise(resolve => { resolve("404 NOT FOUND"); });
+            return new Promise(resolve => {
+                resolve("404 NOT FOUND");
+            });
         }
 
         // Any content?
@@ -175,7 +208,9 @@ export class KeeperEndpoint {
             console.log("non-HTML returned from rest call");
         }
 
-        return new Promise(resolve => { resolve(platform.bytesToString(response.data)); });
+        return new Promise(resolve => {
+            resolve(platform.bytesToString(response.data));
+        });
     }
 
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
@@ -222,25 +257,45 @@ export class KeeperEndpoint {
     }
 
     private async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
-        let requestPayload: IApiRequestPayload = {}
-        if (payload) {
-            requestPayload.payload = payload instanceof Uint8Array
-                ? payload
-                : Buffer.from(JSON.stringify(payload))
-        }
-        if (sessionToken) {
-            requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
-        }
-        let requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
-        let encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, this.transmissionKey.key)
-        let apiRequest = ApiRequest.create({
-            encryptedTransmissionKey: this.transmissionKey.encryptedKey,
-            encryptedPayload: encryptedRequestPayload,
-            publicKeyId: this.transmissionKey.publicKeyId,
-            locale: 'en_US'
-        })
-        return ApiRequest.encode(apiRequest).finish()
+        return prepareApiRequest(payload, this.transmissionKey, sessionToken)
     }
+
+    async decryptPushMessage(pushMessage: string): Promise<WssClientResponse> {
+        const encryptedPushMessage = normal64Bytes(pushMessage)
+        const decryptedPushMessage = await platform.aesGcmDecrypt(encryptedPushMessage, this.transmissionKey.key)
+        return WssClientResponse.decode(decryptedPushMessage)
+    }
+
+    async getPushConnectionRequest(messageSessionUid: Uint8Array) {
+        const connectionRequest = WssConnectionRequest.create({
+            messageSessionUid: messageSessionUid,
+            deviceTimeStamp: new Date().getTime()
+        })
+        const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
+        const apiRequest = await prepareApiRequest(connectionRequestBytes, this.transmissionKey)
+        return webSafe64FromBytes(apiRequest)
+    }
+}
+
+export async function prepareApiRequest(payload: Uint8Array | KeeperCommand, transmissionKey: TransmissionKey, sessionToken?: string): Promise<Uint8Array> {
+    const requestPayload = ApiRequestPayload.create()
+    if (payload) {
+        requestPayload.payload = payload instanceof Uint8Array
+            ? payload
+            : Buffer.from(JSON.stringify(payload))
+    }
+    if (sessionToken) {
+        requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
+    }
+    let requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
+    let encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key)
+    let apiRequest = ApiRequest.create({
+        encryptedTransmissionKey: transmissionKey.encryptedKey,
+        encryptedPayload: encryptedRequestPayload,
+        publicKeyId: transmissionKey.publicKeyId,
+        locale: 'en_US'
+    })
+    return ApiRequest.encode(apiRequest).finish()
 }
 
 export enum KeeperEnvironment {

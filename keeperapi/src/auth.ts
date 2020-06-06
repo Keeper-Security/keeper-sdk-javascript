@@ -1,5 +1,5 @@
 import {ClientConfiguration, LoginError} from "./configuration";
-import {KeeperEndpoint} from "./endpoint";
+import {KeeperEndpoint, prepareApiRequest} from "./endpoint";
 import {platform} from "./platform";
 import {
     AuthorizedCommand,
@@ -14,31 +14,31 @@ import {
     webSafe64,
     decryptFromStorage,
     webSafe64FromBytes,
-    generateUidBytes
+    generateUidBytes, generateTransmissionKey
 } from "./utils";
 import {
     RestMessage,
-    startLoginMessage,
+    startLoginMessage, twoFactorSendOTPMessage,
     twoFactorValidateCodeMessage,
     validateAuthHashMessage
 } from './restMessages'
 import * as WebSocket from 'faye-websocket'
-import {Authentication} from './proto';
+import {Authentication, Push} from './proto';
 import {ssoSamlMessage} from './restMessages'
+import WssConnectionRequest = Push.WssConnectionRequest;
+import IStartLoginRequest = Authentication.IStartLoginRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
         try {
             return JSON.parse(e.message);
-        }
-        catch (jsonError) {
+        } catch (jsonError) {
             return {
                 error: "unknown",
                 message: e.message
             }
         }
-    }
-    else {
+    } else {
         return {
             error: e.result_code,
             message: e.result_code
@@ -52,23 +52,36 @@ type SocketMessage = {
     passcode: string
 }
 
+type SocketResponseData = {
+    event: 'received_totp'
+}
+
 export class SocketListener {
     private socket;
 
     constructor(url: string) {
         console.log('Connecting to ' + url)
         this.socket = new WebSocket.Client(url)
+        this.socket.on('close', e => {
+            console.log('socket closed')
+        })
+        this.socket.on('error', e => {
+            console.log('socket error: ' + e)
+        })
     }
 
-    async getTwoFactorCode(): Promise<SocketMessage> {
+    async getPushMessage(): Promise<string> {
         console.log('Awaiting web socket')
-        return new Promise<SocketMessage>((resolve) => {
+        return new Promise<string>((resolve) => {
             this.socket.on('message', (e) => {
-                resolve(JSON.parse(e.data))
-                this.socket.close();
-                this.socket = null
+                resolve(e.data)
             })
         })
+    }
+
+    disconnect() {
+        this.socket.close();
+        this.socket = null
     }
 }
 
@@ -79,6 +92,7 @@ export class Auth {
     privateKey: Uint8Array;
     private _username: string;
     private managedCompanyId?: number;
+    private socket: SocketListener;
 
     constructor(private options: ClientConfiguration) {
         this.endpoint = new KeeperEndpoint(this.options);
@@ -91,16 +105,30 @@ export class Auth {
             await this.endpoint.registerDevice()
         }
 
+        const messageSessionUid = generateUidBytes()
+
+        if (!this.socket) {
+            const connectionRequest = await this.endpoint.getPushConnectionRequest(messageSessionUid)
+            this.socket = new SocketListener(`wss://push.services.local.keepersecurity.com/wss_open_connection/${connectionRequest}`)
+            console.log("Socket connected")
+        }
+
+        let loginToken;
+
         while (true) {
-            const startLoginMsg = startLoginMessage({
-                username: username,
+            const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken,
-                messageSessionUid: generateUidBytes(),
+                messageSessionUid: messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
-                forceNewLogin: true
-            })
-            const startLoginResp = await this.executeRest(startLoginMsg)
+                // forceNewLogin: true
+            }
+            if (loginToken) {
+                startLoginRequest.encryptedLoginToken = loginToken
+            } else {
+                startLoginRequest.username = username
+            }
+            const startLoginResp = await this.executeRest(startLoginMessage(startLoginRequest))
             console.log(startLoginResp)
             switch (startLoginResp.loginState) {
                 case Authentication.LoginState.device_needs_approval:
@@ -114,7 +142,6 @@ export class Auth {
                     break
                 case Authentication.LoginState.license_expired:
                     throw new Error('License expired')
-                    break
                 case Authentication.LoginState.region_redirect:
                     break
                 case Authentication.LoginState.redirect_cloud_sso:
@@ -129,25 +156,39 @@ export class Auth {
                     if (!this.options.authUI3) {
                         throw new Error('Unhandled prompt for second factor')
                     }
+                    let waitForPush = false;
+                    loginToken = startLoginResp.twoFactorInfo.encryptedLoginToken
                     switch (startLoginResp.twoFactorInfo.userTwoFactorChannel) {
                         case 'two_factor_channel_sms':
                             break
                         case 'two_factor_channel_google':
                             break
+                        case 'two_factor_channel_duo':
+                            const sentOTPMsg = twoFactorSendOTPMessage({
+                                encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken
+                            })
+                            await this.executeRest(sentOTPMsg)
+                            waitForPush = true
+                            break
                     }
-                    const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
-                    const twoFactorCodeMsg = twoFactorValidateCodeMessage({
-                        channel: {
-                            type: 1
-                        },
-                        encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
-                        code: twoFactorInput.twoFactorCode,
-                        expireIn: twoFactorInput.desiredExpiration
-                    })
-                    const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
-                    console.log(twoFactorCodeResp)
-                    await this.authHashLogin(twoFactorCodeResp.authHashInfo, username, password)
-                    return
+                    if (waitForPush) {
+                        const pushMessage = await this.socket.getPushMessage()
+                        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+                        const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
+                        console.log(socketResponseData)
+                        break
+                    } else {
+                        const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+                        const twoFactorCodeMsg = twoFactorValidateCodeMessage({
+                            encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
+                            code: twoFactorInput.twoFactorCode,
+                            expireIn: twoFactorInput.desiredExpiration
+                        })
+                        const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
+                        console.log(twoFactorCodeResp)
+                        await this.authHashLogin(twoFactorCodeResp.authHashInfo, username, password)
+                        return
+                    }
                 case Authentication.LoginState.requires_authHash:
                     await this.authHashLogin(startLoginResp.authHashInfo, username, password)
                     return
@@ -168,7 +209,7 @@ export class Auth {
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
 
-        this.setLoginParameters(username, webSafe64FromBytes(loginResp.loginInfo.encryptedSessionToken))
+        this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken))
     }
 
     async cloudSsoLogin(ssoLoginUrl: string) {
@@ -225,15 +266,14 @@ export class Auth {
                     if (loginResponse.channel === 'two_factor_channel_duo' && loginResponse.url) {
                         loginCommand['2fa_mode'] = 'push'
                         socketListener = new SocketListener(loginResponse.url)
-                    }
-                    else {
+                    } else {
                         let token: string
                         if (socketListener) {
-                            const socketMessage = await socketListener.getTwoFactorCode()
-                            console.log(socketMessage)
-                            token = socketMessage.passcode
-                        }
-                        else {
+                            const pushMessage: SocketMessage = JSON.parse(await socketListener.getPushMessage())
+                            socketListener.disconnect()
+                            console.log(pushMessage)
+                            token = pushMessage.passcode
+                        } else {
                             token = await this.options.authUI.getTwoFactorCode(errorMessage)
                         }
                         if (!token)
@@ -250,8 +290,7 @@ export class Auth {
             if (loginResponse.keys.encrypted_private_key) {
                 this.privateKey = decryptFromStorage(loginResponse.keys.encrypted_private_key, this.dataKey);
             }
-        }
-        catch (e) {
+        } catch (e) {
             throw unifyLoginError(e);
         }
     }
@@ -297,6 +336,10 @@ export class Auth {
     setLoginParameters(userName: string, sessionToken: string) {
         this._username = userName;
         this._sessionToken = sessionToken;
+    }
+
+    async registerDevice() {
+        await this.endpoint.registerDevice()
     }
 
     async verifyDevice(username: string) {

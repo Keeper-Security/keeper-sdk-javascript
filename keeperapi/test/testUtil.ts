@@ -19,6 +19,7 @@ type DeviceConfigStorage = {
     deviceToken: string
     privateKey: string
     publicKey: string
+    transmissionKeyId: number
     verifiedUsers: string[]
 }
 
@@ -26,9 +27,10 @@ export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
     try {
         const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync(configNames[environment]).toString())
         return {
-            deviceToken: platform.base64ToBytes(configStorage.deviceToken),
-            publicKey: platform.base64ToBytes(configStorage.publicKey),
-            privateKey: platform.base64ToBytes(configStorage.privateKey),
+            deviceToken: configStorage.deviceToken ? platform.base64ToBytes(configStorage.deviceToken) : undefined,
+            publicKey: configStorage.publicKey ? platform.base64ToBytes(configStorage.publicKey) : undefined,
+            privateKey: configStorage.privateKey ? platform.base64ToBytes(configStorage.privateKey) : undefined,
+            transmissionKeyId: configStorage.transmissionKeyId,
             verifiedUsers: configStorage.verifiedUsers
         }
     }
@@ -37,6 +39,7 @@ export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
             deviceToken: undefined,
             privateKey: undefined,
             publicKey: undefined,
+            transmissionKeyId: 0,
             verifiedUsers: []
         }
     }
@@ -45,9 +48,10 @@ export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
 export function saveDeviceConfig(deviceConfig: DeviceConfig, environment: KeeperEnvironment) {
 
     const configStorage: DeviceConfigStorage = {
-        deviceToken: platform.bytesToBase64(deviceConfig.deviceToken),
-        publicKey: platform.bytesToBase64(deviceConfig.publicKey),
-        privateKey: platform.bytesToBase64(deviceConfig.privateKey),
+        deviceToken: deviceConfig.deviceToken ? platform.bytesToBase64(deviceConfig.deviceToken) : undefined,
+        publicKey: deviceConfig.publicKey ? platform.bytesToBase64(deviceConfig.publicKey) : undefined,
+        privateKey: deviceConfig.privateKey ? platform.bytesToBase64(deviceConfig.privateKey): undefined,
+        transmissionKeyId: deviceConfig.transmissionKeyId,
         verifiedUsers: deviceConfig.verifiedUsers
     }
     fs.writeFileSync(configNames[environment], JSON.stringify(configStorage, null, 2))
