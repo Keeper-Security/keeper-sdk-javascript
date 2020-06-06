@@ -19,6 +19,8 @@ import SsoCloudIdpMetadataRequest = SsoCloud.SsoCloudIdpMetadataRequest;
 import SsoCloudConfigurationRequest = SsoCloud.SsoCloudConfigurationRequest;
 import SsoCloudServiceProviderUpdateRequest = SsoCloud.SsoCloudServiceProviderUpdateRequest;
 import SsoCloudServiceProviderConfigurationListRequest = SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
+import SsoCloudSettingOperationType = SsoCloud.SsoCloudSettingOperationType;
+import SsoCloudSettingAction = SsoCloud.SsoCloudSettingAction;
 import AuthProtocolType = SsoCloud.AuthProtocolType;
 import {serviceLoggerGetMessage} from '../src/restMessages'
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages'
@@ -112,9 +114,9 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // TestSsoSetCurrentConfiguration().finally();
 // TestSsoAddNewConfiguration().finally();
 // TestSsoGetConfigurationList().finally();
-TestSsoGetConfiguration().finally();
+// TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
-// TestSsoResetConfigurationSettingValue().finally();
+TestSsoResetConfigurationSettingValue().finally();
 
 
 /* ------------------ Service Logger -------------------- */
@@ -388,22 +390,91 @@ async function TestSsoGetConfiguration() {
 
 // POST, ENCRYPTED, sso_cloud_configuration_setting_set/<serviceProviderId>
 async function TestSsoSetConfigurationSettingValue() {
-    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestSetConfigurationSettingValue on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 3121290;
+    let configurationId = 99837914454064896; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_configuration_setting_set';
+    
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configurationId,
+            "ssoCloudSettingAction": [
+                SsoCloudSettingAction.create({
+                    "settingId": "sso_attribute_map_first_name",
+                    "operation": SsoCloudSettingOperationType.SET,
+                    "value": "--first name--"
+                })
+            ]
+        });
+
+        let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 // POST, ENCRYPTED, sso_cloud_configuration_setting_set/<serviceProviderId>
 async function TestSsoResetConfigurationSettingValue() {
-    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestResetConfigurationSettingValue on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 3121290;
+    let configurationId = 99837914454064896; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_configuration_setting_set';
+    
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configurationId,
+            "ssoCloudSettingAction": [
+                SsoCloudSettingAction.create({
+                    "settingId": "sso_attribute_map_first_name",
+                    "operation": SsoCloudSettingOperationType.RESET_TO_DEFAULT,
+                    "value": "--first name--"
+                })
+            ]
+        });
+
+        let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+    } catch (e) {
+        console.log(e)
+    }
+
 }
