@@ -94,13 +94,18 @@ async function testLogin() {
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI
     })
+    try {
+        await auth.loginV3(userName, "111111")
 
-    await auth.loginV3(userName, "111111")
+        const accountSummaryCommand = new AccountSummaryCommand()
+        accountSummaryCommand.include = ['license', 'settings']
+        const accSummary = await auth.executeCommand(accountSummaryCommand)
+        console.log(accSummary)
+    }
+    finally {
+        auth.disconnect()
+    }
 
-    const accountSummaryCommand = new AccountSummaryCommand()
-    accountSummaryCommand.include = ['license', 'settings']
-    const accSummary = await auth.executeCommand(accountSummaryCommand)
-    console.log(accSummary)
 }
 
 // testRegistration().finally()

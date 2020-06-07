@@ -99,6 +99,13 @@ export class Auth {
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
     }
 
+    disconnect() {
+        if (this.socket) {
+            this.socket.disconnect()
+            delete this.socket
+        }
+    }
+
     async loginV3(username: string, password: string) {
 
         if (!this.options.deviceConfig.deviceToken) {
@@ -121,7 +128,7 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken,
                 messageSessionUid: messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
-                // forceNewLogin: true
+                forceNewLogin: true
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
@@ -181,6 +188,7 @@ export class Auth {
                         const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
                         const twoFactorCodeMsg = twoFactorValidateMessage({
                             encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
+                            value: twoFactorInput.twoFactorCode,
                             expireIn: twoFactorInput.desiredExpiration
                         })
                         const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
