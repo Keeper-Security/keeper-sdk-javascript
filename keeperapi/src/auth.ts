@@ -222,7 +222,7 @@ export class Auth {
                     }
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
                     await this.authHashLogin(loginResponse, username, password)
-                    break;
+                    return;
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     break;
                 case Authentication.LoginState.LOGGED_IN:
