@@ -1516,7 +1516,7 @@ export namespace Authentication {
         REQUIRES_2FA = 12,
         REQUIRES_AUTH_HASH = 13,
         REQUIRES_USERNAME = 14,
-        LOGGED_IN = 999
+        LOGGED_IN = 99
     }
 
     /** EncryptedDataKeyType enum. */
@@ -1694,8 +1694,8 @@ export namespace Authentication {
         /** LoginResponse message */
         message?: (string|null);
 
-        /** LoginResponse redirectUrl */
-        redirectUrl?: (string|null);
+        /** LoginResponse url */
+        url?: (string|null);
 
         /** LoginResponse channels */
         channels?: (Authentication.ITwoFactorChannelInfo[]|null);
@@ -1740,8 +1740,8 @@ export namespace Authentication {
         /** LoginResponse message. */
         public message: string;
 
-        /** LoginResponse redirectUrl. */
-        public redirectUrl: string;
+        /** LoginResponse url. */
+        public url: string;
 
         /** LoginResponse channels. */
         public channels: Authentication.ITwoFactorChannelInfo[];
@@ -18999,6 +18999,108 @@ export namespace Push {
 
         /**
          * Converts this WssClientResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PushServerDeviceRegistrationRequest. */
+    interface IPushServerDeviceRegistrationRequest {
+
+        /** PushServerDeviceRegistrationRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** PushServerDeviceRegistrationRequest pushToken */
+        pushToken?: (string|null);
+
+        /** PushServerDeviceRegistrationRequest mobilePushPlatform */
+        mobilePushPlatform?: (string|null);
+    }
+
+    /** Represents a PushServerDeviceRegistrationRequest. */
+    class PushServerDeviceRegistrationRequest implements IPushServerDeviceRegistrationRequest {
+
+        /**
+         * Constructs a new PushServerDeviceRegistrationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Push.IPushServerDeviceRegistrationRequest);
+
+        /** PushServerDeviceRegistrationRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** PushServerDeviceRegistrationRequest pushToken. */
+        public pushToken: string;
+
+        /** PushServerDeviceRegistrationRequest mobilePushPlatform. */
+        public mobilePushPlatform: string;
+
+        /**
+         * Creates a new PushServerDeviceRegistrationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PushServerDeviceRegistrationRequest instance
+         */
+        public static create(properties?: Push.IPushServerDeviceRegistrationRequest): Push.PushServerDeviceRegistrationRequest;
+
+        /**
+         * Encodes the specified PushServerDeviceRegistrationRequest message. Does not implicitly {@link Push.PushServerDeviceRegistrationRequest.verify|verify} messages.
+         * @param message PushServerDeviceRegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Push.IPushServerDeviceRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PushServerDeviceRegistrationRequest message, length delimited. Does not implicitly {@link Push.PushServerDeviceRegistrationRequest.verify|verify} messages.
+         * @param message PushServerDeviceRegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Push.IPushServerDeviceRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PushServerDeviceRegistrationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PushServerDeviceRegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.PushServerDeviceRegistrationRequest;
+
+        /**
+         * Decodes a PushServerDeviceRegistrationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PushServerDeviceRegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.PushServerDeviceRegistrationRequest;
+
+        /**
+         * Verifies a PushServerDeviceRegistrationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PushServerDeviceRegistrationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PushServerDeviceRegistrationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Push.PushServerDeviceRegistrationRequest;
+
+        /**
+         * Creates a plain object from a PushServerDeviceRegistrationRequest message. Also converts values to other types if specified.
+         * @param message PushServerDeviceRegistrationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Push.PushServerDeviceRegistrationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PushServerDeviceRegistrationRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

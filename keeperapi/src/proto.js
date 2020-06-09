@@ -383,7 +383,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           REQUIRES_2FA: 12,
           REQUIRES_AUTH_HASH: 13,
           REQUIRES_USERNAME: 14,
-          LOGGED_IN: 999
+          LOGGED_IN: 99
         }
       },
       EncryptedDataKeyType: {
@@ -471,7 +471,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 9
           },
-          redirectUrl: {
+          url: {
             type: "string",
             id: 10
           },
@@ -3884,6 +3884,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           message: {
             type: "string",
             id: 2
+          }
+        }
+      },
+      PushServerDeviceRegistrationRequest: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
+          },
+          pushToken: {
+            type: "string",
+            id: 2
+          },
+          mobilePushPlatform: {
+            type: "string",
+            id: 3
           }
         }
       }

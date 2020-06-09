@@ -742,7 +742,7 @@ async function testRegistration() {
     const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
 
     const registerCommand = new RegisterCommand()
-    registerCommand.email = 'admin+m28c@yozik.us'
+    registerCommand.email = 'admin+j9a@yozik.us'
     registerCommand.encryption_params = webSafe64FromBytes(encryptionParams)
     registerCommand.auth_verifier = webSafe64FromBytes(authVerifier)
     registerCommand.public_key = webSafe64FromBytes(generateEncryptionKey())
@@ -752,9 +752,10 @@ async function testRegistration() {
 }
 
 // const currentUser = 'admin@yozik.us'
+const currentUser = 'admin+j9a@yozik.us'
 // const currentUser = 'admin+m6a@yozik.us'
 // const currentUser = 'admin+sms@yozik.us'
-const currentUser = 'admin+duo@yozik.us'
+// const currentUser = 'admin+duo@yozik.us'
 // const currentUser = 'saldoukhov@gmail.com'
 // const currentUser = 'admin+msp@yozik.us'
 // const currentUser = "vladimir+cw@keepersecurity.com"

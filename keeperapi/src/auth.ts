@@ -1,5 +1,5 @@
 import {ClientConfiguration, LoginError} from "./configuration";
-import {KeeperEndpoint, prepareApiRequest} from "./endpoint";
+import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {
     AuthorizedCommand,
@@ -14,7 +14,7 @@ import {
     webSafe64,
     decryptFromStorage,
     webSafe64FromBytes,
-    generateUidBytes, generateTransmissionKey
+    generateUidBytes
 } from "./utils";
 import {
     RestMessage,
@@ -23,9 +23,8 @@ import {
     validateAuthHashMessage
 } from './restMessages'
 import * as WebSocket from 'faye-websocket'
-import {Authentication, Push} from './proto';
+import {Authentication} from './proto';
 import {ssoSamlMessage} from './restMessages'
-import WssConnectionRequest = Push.WssConnectionRequest;
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 
@@ -63,7 +62,7 @@ export class SocketListener {
     constructor(url: string) {
         console.log('Connecting to ' + url)
         this.socket = new WebSocket.Client(url)
-        this.socket.on('close', e => {
+        this.socket.on('close', _ => {
             console.log('socket closed')
         })
         this.socket.on('error', e => {
@@ -160,7 +159,7 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Starting SSO login");
-                    await this.cloudSsoLogin(loginResponse.redirectUrl);
+                    await this.cloudSsoLogin(loginResponse.url);
                     break;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     break;
@@ -215,10 +214,8 @@ export class Auth {
                             value: twoFactorInput.twoFactorCode,
                             expireIn: twoFactorInput.desiredExpiration
                         })
-                        const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
-                        console.log(twoFactorCodeResp)
-                        await this.authHashLogin(loginResponse, username, password)
-                        return
+                        await this.executeRest(twoFactorCodeMsg)
+                        break
                     }
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
                     await this.authHashLogin(loginResponse, username, password)
