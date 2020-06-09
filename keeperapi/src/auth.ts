@@ -27,6 +27,7 @@ import {Authentication, Push} from './proto';
 import {ssoSamlMessage} from './restMessages'
 import WssConnectionRequest = Push.WssConnectionRequest;
 import IStartLoginRequest = Authentication.IStartLoginRequest;
+import TwoFactorPushType = Authentication.TwoFactorPushType;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -128,57 +129,80 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken,
                 messageSessionUid: messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
-                forceNewLogin: true
+                // forceNewLogin: true
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             } else {
                 startLoginRequest.username = username
             }
-            const startLoginResp = await this.executeRest(startLoginMessage(startLoginRequest))
-            console.log(startLoginResp)
-            switch (startLoginResp.loginState) {
-                case Authentication.LoginState.device_needs_approval:
+            const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
+            console.log(loginResponse)
+            switch (loginResponse.loginState) {
+                case Authentication.LoginState.INVALID:
+                    break;
+                case Authentication.LoginState.LOGGED_OUT:
+                    break;
+                case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
                     await this.endpoint.verifyDevice(username)
-                    break
-                case Authentication.LoginState.device_locked:
-                    break
-                case Authentication.LoginState.account_locked:
-                    break
-                case Authentication.LoginState.device_account_locked:
-                    break
-                case Authentication.LoginState.license_expired:
+                    break;
+                case Authentication.LoginState.DEVICE_LOCKED:
+                    break;
+                case Authentication.LoginState.ACCOUNT_LOCKED:
+                    break;
+                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
+                    break;
+                case Authentication.LoginState.UPGRADE:
+                    break;
+                case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
-                case Authentication.LoginState.region_redirect:
-                    break
-                case Authentication.LoginState.redirect_cloud_sso:
+                case Authentication.LoginState.REGION_REDIRECT:
+                    break;
+                case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Starting SSO login");
-                    await this.cloudSsoLogin(startLoginResp.ssoUserInfo.loginUrl);
-                    return
-                case Authentication.LoginState.redirect_onsite_sso:
-                    break
-                case Authentication.LoginState.user_already_logged_in:
-                    break
-                case Authentication.LoginState.requires_2fa:
+                    await this.cloudSsoLogin(loginResponse.redirectUrl);
+                    break;
+                case Authentication.LoginState.REDIRECT_ONSITE_SSO:
+                    break;
+                case Authentication.LoginState.REQUIRES_2FA:
                     if (!this.options.authUI3) {
                         throw new Error('Unhandled prompt for second factor')
                     }
-                    let waitForPush = false;
-                    loginToken = startLoginResp.twoFactorInfo.encryptedLoginToken
-                    switch (startLoginResp.twoFactorInfo.userTwoFactorChannel) {
-                        case 'two_factor_channel_sms':
-                            break
-                        case 'two_factor_channel_google':
-                            break
-                        case 'two_factor_channel_duo':
-                            const sentOTPMsg = twoFactorSendOTPMessage({
-                                encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken
-                            })
-                            await this.executeRest(sentOTPMsg)
-                            waitForPush = true
-                            break
+                    loginToken = loginResponse.encryptedLoginToken
+                    let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
+                    switch (loginResponse.channels[0].channelType) {
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
+                            break;
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_SMS:
+                            pushType = TwoFactorPushType.TWO_FA_PUSH_SMS
+                            break;
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_DUO:
+                            // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH // potentially ask for duo push type
+                            pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
+                            // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
+                            break;
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
+                            break;
+                        // case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
+                        //     break;
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
+                            break;
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
+                            break;
+                        case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
+                            pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                            break;
                     }
-                    if (waitForPush) {
+                    if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
+                        const sentOTPMsg = twoFactorSendOTPMessage({
+                            encryptedLoginToken: loginResponse.encryptedLoginToken,
+                            pushType: pushType
+                        })
+                        await this.executeRest(sentOTPMsg)
+                    }
+                    if (
+                        // pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH ||
+                        pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER) {
                         const pushMessage = await this.socket.getPushMessage()
                         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
                         const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
@@ -187,31 +211,35 @@ export class Auth {
                     } else {
                         const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
                         const twoFactorCodeMsg = twoFactorValidateMessage({
-                            encryptedLoginToken: startLoginResp.twoFactorInfo.encryptedLoginToken,
+                            encryptedLoginToken: loginResponse.encryptedLoginToken,
                             value: twoFactorInput.twoFactorCode,
                             expireIn: twoFactorInput.desiredExpiration
                         })
                         const twoFactorCodeResp = await this.executeRest(twoFactorCodeMsg)
                         console.log(twoFactorCodeResp)
-                        await this.authHashLogin(twoFactorCodeResp.authHashInfo, username, password)
+                        await this.authHashLogin(loginResponse, username, password)
                         return
                     }
-                case Authentication.LoginState.requires_authHash:
-                    await this.authHashLogin(startLoginResp.authHashInfo, username, password)
-                    return
+                case Authentication.LoginState.REQUIRES_AUTH_HASH:
+                    await this.authHashLogin(loginResponse, username, password)
+                    break;
+                case Authentication.LoginState.REQUIRES_USERNAME:
+                    break;
+                case Authentication.LoginState.LOGGED_IN:
+                    break;
             }
         }
     }
 
-    async authHashLogin(authHashInfo: Authentication.IAuthHashInfo, username: string, password: string) {
+    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
         // TODO test for account transfer and account recovery
-        const salt = authHashInfo.salt[0]
+        const salt = loginResponse.salt[0]
         const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
         let authHash = await platform.authVerifierAsBytes(authHashKey);
 
         const loginMsg = validateAuthHashMessage({
             authResponse: authHash,
-            encryptedLoginToken: authHashInfo.encryptedLoginToken
+            encryptedLoginToken: loginResponse.encryptedLoginToken
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)

@@ -25,12 +25,11 @@ const authUI: AuthUI3 = {
     }
 }
 
-// const userName = "admin@yozik.us"
+const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-// const userName = "admin+m6a@yozik.us"
-const userName = "admin+duo@yozik.us"
+// const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+m29a@yozik.us"
 // const userName = "admin+j4a@yozik.us"

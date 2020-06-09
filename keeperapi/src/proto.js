@@ -338,34 +338,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      SsoUserInfo: {
-        fields: {
-          companyName: {
-            type: "string",
-            id: 1
-          },
-          samlRequest: {
-            type: "string",
-            id: 2
-          },
-          samlRequestType: {
-            type: "string",
-            id: 3
-          },
-          ssoDomainName: {
-            type: "string",
-            id: 4
-          },
-          loginUrl: {
-            type: "string",
-            id: 5
-          },
-          logoutUrl: {
-            type: "string",
-            id: 6
-          }
-        }
-      },
       PreLoginResponse: {
         fields: {
           deviceStatus: {
@@ -397,94 +369,28 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       LoginState: {
         values: {
-          device_needs_approval: 0,
-          device_locked: 1,
-          account_locked: 2,
-          device_account_locked: 3,
-          upgrade: 4,
-          license_expired: 5,
-          region_redirect: 6,
-          redirect_cloud_sso: 7,
-          redirect_onsite_sso: 8,
-          user_already_logged_in: 9,
-          requires_2fa: 10,
-          requires_authHash: 11,
-          requires_username: 12,
-          need_to_enter_password: 13
+          INVALID: 0,
+          LOGGED_OUT: 1,
+          DEVICE_APPROVAL_REQUIRED: 2,
+          DEVICE_LOCKED: 3,
+          ACCOUNT_LOCKED: 4,
+          DEVICE_ACCOUNT_LOCKED: 5,
+          UPGRADE: 6,
+          LICENSE_EXPIRED: 7,
+          REGION_REDIRECT: 8,
+          REDIRECT_CLOUD_SSO: 9,
+          REDIRECT_ONSITE_SSO: 10,
+          REQUIRES_2FA: 12,
+          REQUIRES_AUTH_HASH: 13,
+          REQUIRES_USERNAME: 14,
+          LOGGED_IN: 999
         }
       },
-      EncryptedDataKeyTypeForLogin: {
+      EncryptedDataKeyType: {
         values: {
-          no_key: 0,
-          encrypted_by_device_public_key: 1,
-          encrypted_by_master_password: 2,
-          encrypted_by_alternate_master_password: 3
-        }
-      },
-      LoginInfo: {
-        fields: {
-          accountUid: {
-            type: "bytes",
-            id: 1
-          },
-          primaryUsername: {
-            type: "string",
-            id: 2
-          },
-          encryptedDataKeyForLogin: {
-            type: "bytes",
-            id: 3
-          },
-          encryptedDataKeyTypeForLogin: {
-            type: "EncryptedDataKeyTypeForLogin",
-            id: 4
-          },
-          encryptedLoginToken: {
-            type: "bytes",
-            id: 5
-          },
-          encryptedSessionToken: {
-            type: "bytes",
-            id: 6
-          },
-          sessionTokenType: {
-            type: "SessionTokenType",
-            id: 7
-          },
-          message: {
-            type: "string",
-            id: 8
-          }
-        }
-      },
-      TwoFactorInfo: {
-        fields: {
-          encryptedLoginToken: {
-            type: "bytes",
-            id: 1
-          },
-          userTwoFactorChannel: {
-            type: "string",
-            id: 2
-          },
-          supportedTwoFactorChannels: {
-            rule: "repeated",
-            type: "string",
-            id: 3
-          }
-        }
-      },
-      AuthHashInfo: {
-        fields: {
-          encryptedLoginToken: {
-            type: "bytes",
-            id: 1
-          },
-          salt: {
-            rule: "repeated",
-            type: "Salt",
-            id: 2
-          }
+          NO_KEY: 0,
+          BY_DEVICE_PUBLIC_KEY: 1,
+          BY_PASSWORD: 2
         }
       },
       StartLoginRequest: {
@@ -527,35 +433,85 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      StartLoginResponse: {
+      LoginResponse: {
         fields: {
           loginState: {
             type: "LoginState",
             id: 1
           },
-          loginInfo: {
-            type: "LoginInfo",
+          accountUid: {
+            type: "bytes",
             id: 2
           },
-          message: {
+          primaryUsername: {
             type: "string",
             id: 3
           },
-          url: {
+          encryptedDataKey: {
+            type: "bytes",
+            id: 4
+          },
+          encryptedDataKeyType: {
+            type: "EncryptedDataKeyType",
+            id: 5
+          },
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 6
+          },
+          encryptedSessionToken: {
+            type: "bytes",
+            id: 7
+          },
+          sessionTokenType: {
+            type: "SessionTokenType",
+            id: 8
+          },
+          message: {
+            type: "string",
+            id: 9
+          },
+          redirectUrl: {
+            type: "string",
+            id: 10
+          },
+          channels: {
+            rule: "repeated",
+            type: "TwoFactorChannelInfo",
+            id: 11
+          },
+          salt: {
+            rule: "repeated",
+            type: "Salt",
+            id: 12
+          }
+        }
+      },
+      SsoUserInfo: {
+        fields: {
+          companyName: {
+            type: "string",
+            id: 1
+          },
+          samlRequest: {
+            type: "string",
+            id: 2
+          },
+          samlRequestType: {
+            type: "string",
+            id: 3
+          },
+          ssoDomainName: {
             type: "string",
             id: 4
           },
-          twoFactorInfo: {
-            type: "TwoFactorInfo",
+          loginUrl: {
+            type: "string",
             id: 5
           },
-          authHashInfo: {
-            type: "AuthHashInfo",
+          logoutUrl: {
+            type: "string",
             id: 6
-          },
-          ssoUserInfo: {
-            type: "SsoUserInfo",
-            id: 7
           }
         }
       },
@@ -597,8 +553,42 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CODE_TOTP: 1,
           TWO_FA_CODE_SMS: 2,
           TWO_FA_CODE_DUO: 3,
-          TWO_FA_RESP_U2F: 4,
-          TWO_FA_RESP_WEBAUTHN: 5
+          TWO_FA_CODE_RSA: 4,
+          TWO_FA_CODE_BACKUP: 5,
+          TWO_FA_RESP_U2F: 6,
+          TWO_FA_RESP_WEBAUTHN: 7
+        }
+      },
+      TwoFactorChannelType: {
+        values: {
+          TWO_FA_CT_NONE: 0,
+          TWO_FA_CT_TOTP: 1,
+          TWO_FA_CT_SMS: 2,
+          TWO_FA_CT_DUO: 3,
+          TWO_FA_CT_RSA: 4,
+          TWO_FA_CT_U2F: 5,
+          TWO_FA_CT_WEBAUTHN: 6,
+          TWO_FA_CT_KEEPER: 7
+        }
+      },
+      TwoFactorChannelInfo: {
+        fields: {
+          channelType: {
+            type: "TwoFactorChannelType",
+            id: 1
+          },
+          channelUid: {
+            type: "bytes",
+            id: 2
+          },
+          channelName: {
+            type: "string",
+            id: 3
+          },
+          challenge: {
+            type: "string",
+            id: 4
+          }
         }
       },
       TwoFactorExpiration: {
@@ -648,14 +638,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           channelUid: {
             type: "bytes",
             id: 3
-          }
-        }
-      },
-      TwoFactorResponse: {
-        fields: {
-          authHashInfo: {
-            type: "AuthHashInfo",
-            id: 1
           }
         }
       },
@@ -1312,6 +1294,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           verificationChannel: {
             type: "string",
             id: 6
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 7
           }
         }
       },
@@ -1359,6 +1345,27 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      PlatformDeviceApprove: {
+        fields: {
+          approved: {
+            type: "bool",
+            id: 1
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      PlatformDeviceApproveRequest: {
+        fields: {
+          deviceApprove: {
+            rule: "repeated",
+            type: "PlatformDeviceApprove",
+            id: 1
+          }
+        }
+      },
       EnterpriseUserAliasRequest: {
         fields: {
           enterpriseUserId: {
@@ -1388,6 +1395,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedDeviceDataKey: {
             type: "bytes",
             id: 2
+          }
+        }
+      },
+      ValidateCreateUserVerificationCodeRequest: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          },
+          clientVersion: {
+            type: "string",
+            id: 2
+          },
+          verificationCode: {
+            type: "string",
+            id: 3
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 4
           }
         }
       },
@@ -3184,6 +3211,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           expiration: {
             type: "int64",
             id: 8
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 9
           }
         }
       },
@@ -3793,7 +3824,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           USER: 4,
           ENTERPRISE: 5,
           KEEPER: 6,
-          SESSION: 7
+          SESSION: 7,
+          DEVICE: 8
         }
       },
       KAToPushServerRequest: {
@@ -4798,22 +4830,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "SsoCloudSAMLLogEntry",
             id: 2
-          }
-        }
-      },
-      SsoCloudSAMLLogClearRequest: {
-        fields: {
-          ssoServiceProviderId: {
-            type: "uint64",
-            id: 1
-          }
-        }
-      },
-      SsoCloudSAMLLogClearResponse: {
-        fields: {
-          ssoServiceProviderId: {
-            type: "uint64",
-            id: 1
           }
         }
       },
