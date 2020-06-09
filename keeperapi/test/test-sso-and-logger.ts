@@ -35,6 +35,7 @@ interface UserInfo {
 
 const MIKE_VAULT_LOGIN_1 : UserInfo = { "account": "mhewett+reg70@keepersecurity.com", "password": "Password11" }
 const MIKE_ADMIN_LOGIN_1 : UserInfo = { "account": "mhewett+sso42@keepersecurity.com", "password": "Password11" }
+const MIKE_DEMO_LOGIN_1 : UserInfo  = { "account": "mht@keper.co", "password": "7YTiWT7@VqWLCz!P1Xfd" }
 const MIKE_SSO_LOGIN_1 : UserInfo  = { "account": "mhewett+sso60@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_2 : UserInfo  = { "account": "mhewett+sso61@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_3 : UserInfo  = { "account": "mhewett+idps@keepersecurity.com", "password": "Password11" }
@@ -109,9 +110,9 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
 
-// TestSsoLogin().finally();
-// TestSsoGetMetadata().finally();
+TestSsoLogin().finally();
 // TestSsoUploadMetadata().finally();
+// TestSsoGetMetadata().finally();
 // TestSsoSetCurrentConfiguration().finally();
 // TestSsoAddNewConfiguration().finally();
 // TestSsoGetConfigurationList().finally();
@@ -119,7 +120,7 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoResetConfigurationSettingValue().finally();
 // TestSsoGetSAMLLog().finally();
-TestSsoClearSAMLLog().finally();
+// TestSsoClearSAMLLog().finally();
 
 
 /* ------------------ Service Logger -------------------- */
@@ -160,10 +161,11 @@ async function TestSsoLogin() {
     let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
-    let user = MIKE_SSO_LOGIN_2;  // MIKE_ADMIN_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 3121290;
+    let user = MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let serviceProviderId = 9710921056299; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_upload_idp_metadata';
 
     try {
         let auth = new Auth({
@@ -188,7 +190,7 @@ async function TestSsoGetMetadata() {
     console.log("\n*** TestSsoGetMetadata on " + keeperHost + " ***");
 
     let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
+    let serviceProviderId = 9710921056299; // 6219112644615;
 
     try {
         console.log("Getting Service Provider Metadata");
@@ -212,14 +214,17 @@ async function TestSsoUploadMetadata() {
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 3121290;
-    let filename = 'idp_metadata.xml';
+    let serviceProviderId = 9710921056299; // 6219112644615;
+    let configurationId = 1774455125899304; // local 99837914454064896;         // dev 1774455125899304;
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_upload_idp_metadata';
+
+    let filename = 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
         console.log("Uploading Service Provider Metadata from", filename);
-        const url = getKeeperSsoConfigUrl(keeperHost, 'sso_cloud_upload_idp_metadata');
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
         let fileBytes : Buffer = fs.readFileSync(filename);
 
@@ -233,6 +238,8 @@ async function TestSsoUploadMetadata() {
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
 
+        console.log("Uploading to configuration:", configurationId);
+        
         let uploadReq = SsoCloudIdpMetadataRequest.create({
             "ssoSpConfigurationId": configurationId,
             "filename": filename,
@@ -288,7 +295,7 @@ async function TestSsoGetConfigurationList() {
     console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
+    let serviceProviderId = 9710921056266; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
@@ -318,11 +325,12 @@ async function TestSsoGetConfigurationList() {
 
 // POST, ENCRYPTED, sso_cloud_configuration_add/<serviceProviderId>
 async function TestSsoAddNewConfiguration() {
-    let keeperHost = KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestAddNewConfiguration on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
+    // let serviceProviderId = 9710921056266;
+    let serviceProviderId = 9710921056299;  // "demo azure"
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_add';
