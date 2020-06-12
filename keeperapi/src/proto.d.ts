@@ -7919,6 +7919,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements usernames */
         usernames?: (string[]|null);
+
+        /** AccountSummaryElements devices */
+        devices?: (AccountSummary.IDeviceInfo[]|null);
     }
 
     /** Represents an AccountSummaryElements. */
@@ -7965,6 +7968,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements usernames. */
         public usernames: string[];
+
+        /** AccountSummaryElements devices. */
+        public devices: AccountSummary.IDeviceInfo[];
 
         /**
          * Creates a new AccountSummaryElements instance using the specified properties.
@@ -8032,6 +8038,126 @@ export namespace AccountSummary {
 
         /**
          * Converts this AccountSummaryElements to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeviceInfo. */
+    interface IDeviceInfo {
+
+        /** DeviceInfo encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** DeviceInfo deviceName */
+        deviceName?: (string|null);
+
+        /** DeviceInfo deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
+
+        /** DeviceInfo devicePublicKey */
+        devicePublicKey?: (Uint8Array|null);
+
+        /** DeviceInfo encryptedDataKey */
+        encryptedDataKey?: (Uint8Array|null);
+
+        /** DeviceInfo clientVersion */
+        clientVersion?: (string|null);
+    }
+
+    /** Represents a DeviceInfo. */
+    class DeviceInfo implements IDeviceInfo {
+
+        /**
+         * Constructs a new DeviceInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IDeviceInfo);
+
+        /** DeviceInfo encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** DeviceInfo deviceName. */
+        public deviceName: string;
+
+        /** DeviceInfo deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
+        /** DeviceInfo devicePublicKey. */
+        public devicePublicKey: Uint8Array;
+
+        /** DeviceInfo encryptedDataKey. */
+        public encryptedDataKey: Uint8Array;
+
+        /** DeviceInfo clientVersion. */
+        public clientVersion: string;
+
+        /**
+         * Creates a new DeviceInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeviceInfo instance
+         */
+        public static create(properties?: AccountSummary.IDeviceInfo): AccountSummary.DeviceInfo;
+
+        /**
+         * Encodes the specified DeviceInfo message. Does not implicitly {@link AccountSummary.DeviceInfo.verify|verify} messages.
+         * @param message DeviceInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IDeviceInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeviceInfo message, length delimited. Does not implicitly {@link AccountSummary.DeviceInfo.verify|verify} messages.
+         * @param message DeviceInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IDeviceInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeviceInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeviceInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.DeviceInfo;
+
+        /**
+         * Decodes a DeviceInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeviceInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.DeviceInfo;
+
+        /**
+         * Verifies a DeviceInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeviceInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeviceInfo
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.DeviceInfo;
+
+        /**
+         * Creates a plain object from a DeviceInfo message. Also converts values to other types if specified.
+         * @param message DeviceInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.DeviceInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeviceInfo to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -19084,102 +19210,6 @@ export namespace Push {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a DeviceApproveStatus. */
-    interface IDeviceApproveStatus {
-
-        /** DeviceApproveStatus approved */
-        approved?: (boolean|null);
-
-        /** DeviceApproveStatus encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-    }
-
-    /** Represents a DeviceApproveStatus. */
-    class DeviceApproveStatus implements IDeviceApproveStatus {
-
-        /**
-         * Constructs a new DeviceApproveStatus.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Push.IDeviceApproveStatus);
-
-        /** DeviceApproveStatus approved. */
-        public approved: boolean;
-
-        /** DeviceApproveStatus encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /**
-         * Creates a new DeviceApproveStatus instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns DeviceApproveStatus instance
-         */
-        public static create(properties?: Push.IDeviceApproveStatus): Push.DeviceApproveStatus;
-
-        /**
-         * Encodes the specified DeviceApproveStatus message. Does not implicitly {@link Push.DeviceApproveStatus.verify|verify} messages.
-         * @param message DeviceApproveStatus message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Push.IDeviceApproveStatus, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified DeviceApproveStatus message, length delimited. Does not implicitly {@link Push.DeviceApproveStatus.verify|verify} messages.
-         * @param message DeviceApproveStatus message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Push.IDeviceApproveStatus, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a DeviceApproveStatus message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns DeviceApproveStatus
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.DeviceApproveStatus;
-
-        /**
-         * Decodes a DeviceApproveStatus message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns DeviceApproveStatus
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.DeviceApproveStatus;
-
-        /**
-         * Verifies a DeviceApproveStatus message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a DeviceApproveStatus message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns DeviceApproveStatus
-         */
-        public static fromObject(object: { [k: string]: any }): Push.DeviceApproveStatus;
-
-        /**
-         * Creates a plain object from a DeviceApproveStatus message. Also converts values to other types if specified.
-         * @param message DeviceApproveStatus
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Push.DeviceApproveStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this DeviceApproveStatus to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of an ApproveDeviceRequest. */
     interface IApproveDeviceRequest {
 
@@ -19190,7 +19220,7 @@ export namespace Push {
         message?: (string|null);
 
         /** ApproveDeviceRequest deviceApproveStatus */
-        deviceApproveStatus?: (Push.IDeviceApproveStatus[]|null);
+        deviceApproveStatus?: (Authentication.IDeviceApproveStatus[]|null);
     }
 
     /** Represents an ApproveDeviceRequest. */
@@ -19209,7 +19239,7 @@ export namespace Push {
         public message: string;
 
         /** ApproveDeviceRequest deviceApproveStatus. */
-        public deviceApproveStatus: Push.IDeviceApproveStatus[];
+        public deviceApproveStatus: Authentication.IDeviceApproveStatus[];
 
         /**
          * Creates a new ApproveDeviceRequest instance using the specified properties.

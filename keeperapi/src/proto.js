@@ -1605,6 +1605,39 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "string",
             id: 12
+          },
+          devices: {
+            rule: "repeated",
+            type: "DeviceInfo",
+            id: 13
+          }
+        }
+      },
+      DeviceInfo: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
+          },
+          deviceName: {
+            type: "string",
+            id: 2
+          },
+          deviceStatus: {
+            type: "Authentication.DeviceStatus",
+            id: 3
+          },
+          devicePublicKey: {
+            type: "bytes",
+            id: 4
+          },
+          encryptedDataKey: {
+            type: "bytes",
+            id: 5
+          },
+          clientVersion: {
+            type: "string",
+            id: 6
           }
         }
       },
@@ -3889,18 +3922,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      DeviceApproveStatus: {
-        fields: {
-          approved: {
-            type: "bool",
-            id: 1
-          },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
       ApproveDeviceRequest: {
         fields: {
           messageType: {
@@ -3913,7 +3934,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           },
           deviceApproveStatus: {
             rule: "repeated",
-            type: "DeviceApproveStatus",
+            type: "Authentication.DeviceApproveStatus",
             id: 3
           }
         }

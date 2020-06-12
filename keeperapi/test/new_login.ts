@@ -1,5 +1,5 @@
 import {Auth, createAuthVerifier, createEncryptionParams, SocketListener} from "../src/auth";
-import {requestCreateUserMessage, validateAuthHashMessage} from '../src/restMessages';
+import {accountSummaryMessage, requestCreateUserMessage, validateAuthHashMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
@@ -29,7 +29,8 @@ const authUI: AuthUI3 = {
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-const userName = "admin+duo@yozik.us"
+const userName = "admin+plain@yozik.us"
+// const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
 // const userName = "admin+m29a@yozik.us"
@@ -97,10 +98,15 @@ async function testLogin() {
     try {
         await auth.loginV3(userName, "111111")
 
-        const accountSummaryCommand = new AccountSummaryCommand()
-        accountSummaryCommand.include = ['license', 'settings']
-        const accSummary = await auth.executeCommand(accountSummaryCommand)
-        console.log(accSummary)
+        let resp = await auth.executeRest(accountSummaryMessage({
+            summaryVersion: 1
+        }));
+        console.log(resp)
+
+        // const accountSummaryCommand = new AccountSummaryCommand()
+        // accountSummaryCommand.include = ['license', 'settings']
+        // const accSummary = await auth.executeCommand(accountSummaryCommand)
+        // console.log(accSummary)
     }
     finally {
         auth.disconnect()
