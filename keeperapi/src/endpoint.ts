@@ -260,9 +260,8 @@ export class KeeperEndpoint {
         return prepareApiRequest(payload, this.transmissionKey, sessionToken)
     }
 
-    async decryptPushMessage(pushMessage: string): Promise<WssClientResponse> {
-        const encryptedPushMessage = normal64Bytes(pushMessage)
-        const decryptedPushMessage = await platform.aesGcmDecrypt(encryptedPushMessage, this.transmissionKey.key)
+    async decryptPushMessage(pushMessage: any): Promise<WssClientResponse> {
+        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessage, this.transmissionKey.key)
         return WssClientResponse.decode(decryptedPushMessage)
     }
 
