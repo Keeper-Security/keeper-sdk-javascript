@@ -47,10 +47,10 @@ export const startLoginMessage = (data: Authentication.IStartLoginRequest): Rest
 export const validateAuthHashMessage = (data: Authentication.IValidateAuthHashRequest): RestMessage<Authentication.IValidateAuthHashRequest, Authentication.ILoginResponse> =>
     createMessage(data, 'authentication/validate_auth_hash', Authentication.ValidateAuthHashRequest, Authentication.LoginResponse)
 
-export const twoFactorValidateMessage = (data: Authentication.ITwoFactorValidateRequest): RestMessage<Authentication.ITwoFactorValidateRequest, {}> =>
-    createMessage(data, 'authentication/2fa_validate', Authentication.TwoFactorValidateRequest, null)
+export const twoFactorValidateMessage = (data: Authentication.ITwoFactorValidateRequest): RestMessage<Authentication.ITwoFactorValidateRequest, Authentication.ITwoFactorValidateResponse> =>
+    createMessage(data, 'authentication/2fa_validate', Authentication.TwoFactorValidateRequest, Authentication.TwoFactorValidateResponse)
 
-export const twoFactorSendOTPMessage = (data: Authentication.ITwoFactorSendPushRequest): RestMessage<Authentication.ITwoFactorSendPushRequest, {}> =>
+export const twoFactorSend2FAPushMessage = (data: Authentication.ITwoFactorSendPushRequest): RestMessage<Authentication.ITwoFactorSendPushRequest, {}> =>
     createMessage(data, 'authentication/2fa_send_push', Authentication.TwoFactorSendPushRequest, null)
 
 // end new login

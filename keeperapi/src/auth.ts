@@ -18,7 +18,7 @@ import {
 } from "./utils";
 import {
     RestMessage,
-    startLoginMessage, twoFactorSendOTPMessage,
+    startLoginMessage, twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     validateAuthHashMessage
 } from './restMessages'
@@ -53,7 +53,8 @@ type SocketMessage = {
 }
 
 type SocketResponseData = {
-    event: 'received_totp'
+    event: 'received_totp',
+    encryptedLoginToken: string
 }
 
 export class SocketListener {
@@ -66,13 +67,13 @@ export class SocketListener {
             console.log('socket closed')
         })
         this.socket.on('error', e => {
-            console.log('socket error: ' + e)
+            console.log('socket error: ' + e.message)
         })
     }
 
-    async getPushMessage(): Promise<string> {
+    async getPushMessage(): Promise<any> {
         console.log('Awaiting web socket')
-        return new Promise<string>((resolve) => {
+        return new Promise<any>((resolve) => {
             this.socket.on('message', (e) => {
                 resolve(e.data)
             })
@@ -116,7 +117,7 @@ export class Auth {
 
         if (!this.socket) {
             const connectionRequest = await this.endpoint.getPushConnectionRequest(messageSessionUid)
-            this.socket = new SocketListener(`wss://push.services.local.keepersecurity.com/wss_open_connection/${connectionRequest}`)
+            this.socket = new SocketListener(`wss://push.services.${this.options.host}/wss_open_connection/${connectionRequest}`)
             console.log("Socket connected")
         }
 
@@ -150,9 +151,8 @@ export class Auth {
             previousLoginState = loginResponse.loginState;
             
             switch (loginResponse.loginState) {
-                case Authentication.LoginState.INVALID:
-                    console.log("Exiting on loginState = INVALID");
-                    return; // break;
+                case Authentication.LoginState.INVALID_LOGINSTATE:
+                    break;
                 case Authentication.LoginState.LOGGED_OUT:
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
@@ -182,56 +182,8 @@ export class Auth {
                     if (!this.options.authUI3) {
                         throw new Error('Unhandled prompt for second factor')
                     }
-                    loginToken = loginResponse.encryptedLoginToken
-                    let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
-                    switch (loginResponse.channels[0].channelType) {
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
-                            break;
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_SMS:
-                            pushType = TwoFactorPushType.TWO_FA_PUSH_SMS
-                            break;
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_DUO:
-                            // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH // potentially ask for duo push type
-                            pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
-                            // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
-                            break;
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
-                            break;
-                        // case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
-                        //     break;
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
-                            break;
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
-                            break;
-                        case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
-                            pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                            break;
-                    }
-                    if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
-                        const sentOTPMsg = twoFactorSendOTPMessage({
-                            encryptedLoginToken: loginResponse.encryptedLoginToken,
-                            pushType: pushType
-                        })
-                        await this.executeRest(sentOTPMsg)
-                    }
-                    if (
-                        // pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH ||
-                        pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER) {
-                        const pushMessage = await this.socket.getPushMessage()
-                        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-                        const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
-                        console.log(socketResponseData)
-                        break
-                    } else {
-                        const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
-                        const twoFactorCodeMsg = twoFactorValidateMessage({
-                            encryptedLoginToken: loginResponse.encryptedLoginToken,
-                            value: twoFactorInput.twoFactorCode,
-                            expireIn: twoFactorInput.desiredExpiration
-                        })
-                        await this.executeRest(twoFactorCodeMsg)
-                        break
-                    }
+                    loginToken = await this.handleTwoFactor(loginResponse)
+                    break
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
                     await this.authHashLogin(loginResponse, username, password)
                     return;
@@ -242,6 +194,58 @@ export class Auth {
                     return;
                     //break;
             }
+        }
+    }
+
+    private async handleTwoFactor(loginResponse: Authentication.ILoginResponse) {
+        let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
+        switch (loginResponse.channels[0].channelType) {
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
+                break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_SMS:
+                pushType = TwoFactorPushType.TWO_FA_PUSH_SMS
+                break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_DUO:
+                pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH // potentially ask for duo push type
+                // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
+                // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
+                break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
+                break;
+            // case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
+            //     break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
+                break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
+                break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
+                pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                break;
+        }
+        if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
+            const sentPushMsg = twoFactorSend2FAPushMessage({
+                encryptedLoginToken: loginResponse.encryptedLoginToken,
+                pushType: pushType
+            })
+            await this.executeRest(sentPushMsg)
+        }
+        if (
+            pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH ||
+            pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER) {
+            const pushMessage = await this.socket.getPushMessage()
+            const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+            const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
+            console.log(socketResponseData)
+            return socketResponseData.encryptedLoginToken
+        } else {
+            const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+            const twoFactorValidateMsg = twoFactorValidateMessage({
+                encryptedLoginToken: loginResponse.encryptedLoginToken,
+                value: twoFactorInput.twoFactorCode,
+                expireIn: twoFactorInput.desiredExpiration
+            })
+            const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+            return twoFactorValidateResp.encryptedLoginToken
         }
     }
 

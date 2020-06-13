@@ -941,150 +941,6 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a RegistrationRequest. */
-    interface IRegistrationRequest {
-
-        /** RegistrationRequest authRequest */
-        authRequest?: (Authentication.IAuthRequest|null);
-
-        /** RegistrationRequest userAuthRequest */
-        userAuthRequest?: (Authentication.IUserAuthRequest|null);
-
-        /** RegistrationRequest encryptedClientKey */
-        encryptedClientKey?: (Uint8Array|null);
-
-        /** RegistrationRequest encryptedPrivateKey */
-        encryptedPrivateKey?: (Uint8Array|null);
-
-        /** RegistrationRequest publicKey */
-        publicKey?: (Uint8Array|null);
-
-        /** RegistrationRequest verificationCode */
-        verificationCode?: (string|null);
-
-        /** RegistrationRequest deprecatedAuthHashHash */
-        deprecatedAuthHashHash?: (Uint8Array|null);
-
-        /** RegistrationRequest deprecatedEncryptedClientKey */
-        deprecatedEncryptedClientKey?: (Uint8Array|null);
-
-        /** RegistrationRequest deprecatedEncryptedPrivateKey */
-        deprecatedEncryptedPrivateKey?: (Uint8Array|null);
-
-        /** RegistrationRequest deprecatedEncryptionParams */
-        deprecatedEncryptionParams?: (Uint8Array|null);
-    }
-
-    /** Represents a RegistrationRequest. */
-    class RegistrationRequest implements IRegistrationRequest {
-
-        /**
-         * Constructs a new RegistrationRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IRegistrationRequest);
-
-        /** RegistrationRequest authRequest. */
-        public authRequest?: (Authentication.IAuthRequest|null);
-
-        /** RegistrationRequest userAuthRequest. */
-        public userAuthRequest?: (Authentication.IUserAuthRequest|null);
-
-        /** RegistrationRequest encryptedClientKey. */
-        public encryptedClientKey: Uint8Array;
-
-        /** RegistrationRequest encryptedPrivateKey. */
-        public encryptedPrivateKey: Uint8Array;
-
-        /** RegistrationRequest publicKey. */
-        public publicKey: Uint8Array;
-
-        /** RegistrationRequest verificationCode. */
-        public verificationCode: string;
-
-        /** RegistrationRequest deprecatedAuthHashHash. */
-        public deprecatedAuthHashHash: Uint8Array;
-
-        /** RegistrationRequest deprecatedEncryptedClientKey. */
-        public deprecatedEncryptedClientKey: Uint8Array;
-
-        /** RegistrationRequest deprecatedEncryptedPrivateKey. */
-        public deprecatedEncryptedPrivateKey: Uint8Array;
-
-        /** RegistrationRequest deprecatedEncryptionParams. */
-        public deprecatedEncryptionParams: Uint8Array;
-
-        /**
-         * Creates a new RegistrationRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RegistrationRequest instance
-         */
-        public static create(properties?: Authentication.IRegistrationRequest): Authentication.RegistrationRequest;
-
-        /**
-         * Encodes the specified RegistrationRequest message. Does not implicitly {@link Authentication.RegistrationRequest.verify|verify} messages.
-         * @param message RegistrationRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RegistrationRequest message, length delimited. Does not implicitly {@link Authentication.RegistrationRequest.verify|verify} messages.
-         * @param message RegistrationRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RegistrationRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RegistrationRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RegistrationRequest;
-
-        /**
-         * Decodes a RegistrationRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RegistrationRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RegistrationRequest;
-
-        /**
-         * Verifies a RegistrationRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RegistrationRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RegistrationRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.RegistrationRequest;
-
-        /**
-         * Creates a plain object from a RegistrationRequest message. Also converts values to other types if specified.
-         * @param message RegistrationRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.RegistrationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RegistrationRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of a DeviceResponse. */
     interface IDeviceResponse {
 
@@ -1385,124 +1241,17 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a PreLoginResponse. */
-    interface IPreLoginResponse {
-
-        /** PreLoginResponse deviceStatus */
-        deviceStatus?: (Authentication.DeviceStatus|null);
-
-        /** PreLoginResponse salt */
-        salt?: (Authentication.ISalt[]|null);
-
-        /** PreLoginResponse OBSOLETE_FIELD */
-        OBSOLETE_FIELD?: (Authentication.ITwoFactorChannel[]|null);
-
-        /** PreLoginResponse ssoUserInfo */
-        ssoUserInfo?: (Authentication.ISsoUserInfo|null);
-    }
-
-    /** Represents a PreLoginResponse. */
-    class PreLoginResponse implements IPreLoginResponse {
-
-        /**
-         * Constructs a new PreLoginResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IPreLoginResponse);
-
-        /** PreLoginResponse deviceStatus. */
-        public deviceStatus: Authentication.DeviceStatus;
-
-        /** PreLoginResponse salt. */
-        public salt: Authentication.ISalt[];
-
-        /** PreLoginResponse OBSOLETE_FIELD. */
-        public OBSOLETE_FIELD: Authentication.ITwoFactorChannel[];
-
-        /** PreLoginResponse ssoUserInfo. */
-        public ssoUserInfo?: (Authentication.ISsoUserInfo|null);
-
-        /**
-         * Creates a new PreLoginResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PreLoginResponse instance
-         */
-        public static create(properties?: Authentication.IPreLoginResponse): Authentication.PreLoginResponse;
-
-        /**
-         * Encodes the specified PreLoginResponse message. Does not implicitly {@link Authentication.PreLoginResponse.verify|verify} messages.
-         * @param message PreLoginResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IPreLoginResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PreLoginResponse message, length delimited. Does not implicitly {@link Authentication.PreLoginResponse.verify|verify} messages.
-         * @param message PreLoginResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IPreLoginResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PreLoginResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PreLoginResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PreLoginResponse;
-
-        /**
-         * Decodes a PreLoginResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PreLoginResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PreLoginResponse;
-
-        /**
-         * Verifies a PreLoginResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PreLoginResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PreLoginResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.PreLoginResponse;
-
-        /**
-         * Creates a plain object from a PreLoginResponse message. Also converts values to other types if specified.
-         * @param message PreLoginResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.PreLoginResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PreLoginResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** LoginMethod enum. */
     enum LoginMethod {
-        EXISTING_ACCOUNT = 0,
-        SSO_DOMAIN = 1,
-        AFTER_SSO = 2
+        INVALID_LOGINMETHOD = 0,
+        EXISTING_ACCOUNT = 1,
+        SSO_DOMAIN = 2,
+        AFTER_SSO = 3
     }
 
     /** LoginState enum. */
     enum LoginState {
-        INVALID = 0,
+        INVALID_LOGINSTATE = 0,
         LOGGED_OUT = 1,
         DEVICE_APPROVAL_REQUIRED = 2,
         DEVICE_LOCKED = 3,
@@ -1940,6 +1689,294 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a PreLoginResponse. */
+    interface IPreLoginResponse {
+
+        /** PreLoginResponse deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
+
+        /** PreLoginResponse salt */
+        salt?: (Authentication.ISalt[]|null);
+
+        /** PreLoginResponse OBSOLETE_FIELD */
+        OBSOLETE_FIELD?: (Authentication.ITwoFactorChannel[]|null);
+
+        /** PreLoginResponse ssoUserInfo */
+        ssoUserInfo?: (Authentication.ISsoUserInfo|null);
+    }
+
+    /** Represents a PreLoginResponse. */
+    class PreLoginResponse implements IPreLoginResponse {
+
+        /**
+         * Constructs a new PreLoginResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPreLoginResponse);
+
+        /** PreLoginResponse deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
+        /** PreLoginResponse salt. */
+        public salt: Authentication.ISalt[];
+
+        /** PreLoginResponse OBSOLETE_FIELD. */
+        public OBSOLETE_FIELD: Authentication.ITwoFactorChannel[];
+
+        /** PreLoginResponse ssoUserInfo. */
+        public ssoUserInfo?: (Authentication.ISsoUserInfo|null);
+
+        /**
+         * Creates a new PreLoginResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PreLoginResponse instance
+         */
+        public static create(properties?: Authentication.IPreLoginResponse): Authentication.PreLoginResponse;
+
+        /**
+         * Encodes the specified PreLoginResponse message. Does not implicitly {@link Authentication.PreLoginResponse.verify|verify} messages.
+         * @param message PreLoginResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPreLoginResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PreLoginResponse message, length delimited. Does not implicitly {@link Authentication.PreLoginResponse.verify|verify} messages.
+         * @param message PreLoginResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPreLoginResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PreLoginResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PreLoginResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PreLoginResponse;
+
+        /**
+         * Decodes a PreLoginResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PreLoginResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PreLoginResponse;
+
+        /**
+         * Verifies a PreLoginResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PreLoginResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PreLoginResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PreLoginResponse;
+
+        /**
+         * Creates a plain object from a PreLoginResponse message. Also converts values to other types if specified.
+         * @param message PreLoginResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PreLoginResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PreLoginResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a LoginToMcRequest. */
+    interface ILoginToMcRequest {
+
+        /** LoginToMcRequest mcEnterpriseId */
+        mcEnterpriseId?: (number|null);
+    }
+
+    /** Represents a LoginToMcRequest. */
+    class LoginToMcRequest implements ILoginToMcRequest {
+
+        /**
+         * Constructs a new LoginToMcRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ILoginToMcRequest);
+
+        /** LoginToMcRequest mcEnterpriseId. */
+        public mcEnterpriseId: number;
+
+        /**
+         * Creates a new LoginToMcRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns LoginToMcRequest instance
+         */
+        public static create(properties?: Authentication.ILoginToMcRequest): Authentication.LoginToMcRequest;
+
+        /**
+         * Encodes the specified LoginToMcRequest message. Does not implicitly {@link Authentication.LoginToMcRequest.verify|verify} messages.
+         * @param message LoginToMcRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ILoginToMcRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified LoginToMcRequest message, length delimited. Does not implicitly {@link Authentication.LoginToMcRequest.verify|verify} messages.
+         * @param message LoginToMcRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ILoginToMcRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a LoginToMcRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns LoginToMcRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LoginToMcRequest;
+
+        /**
+         * Decodes a LoginToMcRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns LoginToMcRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.LoginToMcRequest;
+
+        /**
+         * Verifies a LoginToMcRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a LoginToMcRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns LoginToMcRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.LoginToMcRequest;
+
+        /**
+         * Creates a plain object from a LoginToMcRequest message. Also converts values to other types if specified.
+         * @param message LoginToMcRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.LoginToMcRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this LoginToMcRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a LoginToMcResponse. */
+    interface ILoginToMcResponse {
+
+        /** LoginToMcResponse encryptedSessionToken */
+        encryptedSessionToken?: (Uint8Array|null);
+    }
+
+    /** Represents a LoginToMcResponse. */
+    class LoginToMcResponse implements ILoginToMcResponse {
+
+        /**
+         * Constructs a new LoginToMcResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ILoginToMcResponse);
+
+        /** LoginToMcResponse encryptedSessionToken. */
+        public encryptedSessionToken: Uint8Array;
+
+        /**
+         * Creates a new LoginToMcResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns LoginToMcResponse instance
+         */
+        public static create(properties?: Authentication.ILoginToMcResponse): Authentication.LoginToMcResponse;
+
+        /**
+         * Encodes the specified LoginToMcResponse message. Does not implicitly {@link Authentication.LoginToMcResponse.verify|verify} messages.
+         * @param message LoginToMcResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ILoginToMcResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified LoginToMcResponse message, length delimited. Does not implicitly {@link Authentication.LoginToMcResponse.verify|verify} messages.
+         * @param message LoginToMcResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ILoginToMcResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a LoginToMcResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns LoginToMcResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LoginToMcResponse;
+
+        /**
+         * Decodes a LoginToMcResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns LoginToMcResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.LoginToMcResponse;
+
+        /**
+         * Verifies a LoginToMcResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a LoginToMcResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns LoginToMcResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.LoginToMcResponse;
+
+        /**
+         * Creates a plain object from a LoginToMcResponse message. Also converts values to other types if specified.
+         * @param message LoginToMcResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.LoginToMcResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this LoginToMcResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a ValidateAuthHashRequest. */
     interface IValidateAuthHashRequest {
 
@@ -2077,9 +2114,10 @@ export namespace Authentication {
         TWO_FA_CT_SMS = 2,
         TWO_FA_CT_DUO = 3,
         TWO_FA_CT_RSA = 4,
-        TWO_FA_CT_U2F = 5,
-        TWO_FA_CT_WEBAUTHN = 6,
-        TWO_FA_CT_KEEPER = 7
+        TWO_FA_CT_BACKUP = 5,
+        TWO_FA_CT_U2F = 6,
+        TWO_FA_CT_WEBAUTHN = 7,
+        TWO_FA_CT_KEEPER = 8
     }
 
     /** Properties of a TwoFactorChannelInfo. */
@@ -2309,6 +2347,96 @@ export namespace Authentication {
 
         /**
          * Converts this TwoFactorValidateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a TwoFactorValidateResponse. */
+    interface ITwoFactorValidateResponse {
+
+        /** TwoFactorValidateResponse encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a TwoFactorValidateResponse. */
+    class TwoFactorValidateResponse implements ITwoFactorValidateResponse {
+
+        /**
+         * Constructs a new TwoFactorValidateResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITwoFactorValidateResponse);
+
+        /** TwoFactorValidateResponse encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
+        /**
+         * Creates a new TwoFactorValidateResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TwoFactorValidateResponse instance
+         */
+        public static create(properties?: Authentication.ITwoFactorValidateResponse): Authentication.TwoFactorValidateResponse;
+
+        /**
+         * Encodes the specified TwoFactorValidateResponse message. Does not implicitly {@link Authentication.TwoFactorValidateResponse.verify|verify} messages.
+         * @param message TwoFactorValidateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITwoFactorValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TwoFactorValidateResponse message, length delimited. Does not implicitly {@link Authentication.TwoFactorValidateResponse.verify|verify} messages.
+         * @param message TwoFactorValidateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITwoFactorValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TwoFactorValidateResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TwoFactorValidateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TwoFactorValidateResponse;
+
+        /**
+         * Decodes a TwoFactorValidateResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TwoFactorValidateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TwoFactorValidateResponse;
+
+        /**
+         * Verifies a TwoFactorValidateResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TwoFactorValidateResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TwoFactorValidateResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TwoFactorValidateResponse;
+
+        /**
+         * Creates a plain object from a TwoFactorValidateResponse message. Also converts values to other types if specified.
+         * @param message TwoFactorValidateResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TwoFactorValidateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TwoFactorValidateResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -3067,6 +3195,150 @@ export namespace Authentication {
 
         /**
          * Converts this DeviceUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RegistrationRequest. */
+    interface IRegistrationRequest {
+
+        /** RegistrationRequest authRequest */
+        authRequest?: (Authentication.IAuthRequest|null);
+
+        /** RegistrationRequest userAuthRequest */
+        userAuthRequest?: (Authentication.IUserAuthRequest|null);
+
+        /** RegistrationRequest encryptedClientKey */
+        encryptedClientKey?: (Uint8Array|null);
+
+        /** RegistrationRequest encryptedPrivateKey */
+        encryptedPrivateKey?: (Uint8Array|null);
+
+        /** RegistrationRequest publicKey */
+        publicKey?: (Uint8Array|null);
+
+        /** RegistrationRequest verificationCode */
+        verificationCode?: (string|null);
+
+        /** RegistrationRequest deprecatedAuthHashHash */
+        deprecatedAuthHashHash?: (Uint8Array|null);
+
+        /** RegistrationRequest deprecatedEncryptedClientKey */
+        deprecatedEncryptedClientKey?: (Uint8Array|null);
+
+        /** RegistrationRequest deprecatedEncryptedPrivateKey */
+        deprecatedEncryptedPrivateKey?: (Uint8Array|null);
+
+        /** RegistrationRequest deprecatedEncryptionParams */
+        deprecatedEncryptionParams?: (Uint8Array|null);
+    }
+
+    /** Represents a RegistrationRequest. */
+    class RegistrationRequest implements IRegistrationRequest {
+
+        /**
+         * Constructs a new RegistrationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IRegistrationRequest);
+
+        /** RegistrationRequest authRequest. */
+        public authRequest?: (Authentication.IAuthRequest|null);
+
+        /** RegistrationRequest userAuthRequest. */
+        public userAuthRequest?: (Authentication.IUserAuthRequest|null);
+
+        /** RegistrationRequest encryptedClientKey. */
+        public encryptedClientKey: Uint8Array;
+
+        /** RegistrationRequest encryptedPrivateKey. */
+        public encryptedPrivateKey: Uint8Array;
+
+        /** RegistrationRequest publicKey. */
+        public publicKey: Uint8Array;
+
+        /** RegistrationRequest verificationCode. */
+        public verificationCode: string;
+
+        /** RegistrationRequest deprecatedAuthHashHash. */
+        public deprecatedAuthHashHash: Uint8Array;
+
+        /** RegistrationRequest deprecatedEncryptedClientKey. */
+        public deprecatedEncryptedClientKey: Uint8Array;
+
+        /** RegistrationRequest deprecatedEncryptedPrivateKey. */
+        public deprecatedEncryptedPrivateKey: Uint8Array;
+
+        /** RegistrationRequest deprecatedEncryptionParams. */
+        public deprecatedEncryptionParams: Uint8Array;
+
+        /**
+         * Creates a new RegistrationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RegistrationRequest instance
+         */
+        public static create(properties?: Authentication.IRegistrationRequest): Authentication.RegistrationRequest;
+
+        /**
+         * Encodes the specified RegistrationRequest message. Does not implicitly {@link Authentication.RegistrationRequest.verify|verify} messages.
+         * @param message RegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RegistrationRequest message, length delimited. Does not implicitly {@link Authentication.RegistrationRequest.verify|verify} messages.
+         * @param message RegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RegistrationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RegistrationRequest;
+
+        /**
+         * Decodes a RegistrationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RegistrationRequest;
+
+        /**
+         * Verifies a RegistrationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RegistrationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RegistrationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.RegistrationRequest;
+
+        /**
+         * Creates a plain object from a RegistrationRequest message. Also converts values to other types if specified.
+         * @param message RegistrationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.RegistrationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RegistrationRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -7647,6 +7919,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements usernames */
         usernames?: (string[]|null);
+
+        /** AccountSummaryElements devices */
+        devices?: (AccountSummary.IDeviceInfo[]|null);
     }
 
     /** Represents an AccountSummaryElements. */
@@ -7693,6 +7968,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements usernames. */
         public usernames: string[];
+
+        /** AccountSummaryElements devices. */
+        public devices: AccountSummary.IDeviceInfo[];
 
         /**
          * Creates a new AccountSummaryElements instance using the specified properties.
@@ -7760,6 +8038,126 @@ export namespace AccountSummary {
 
         /**
          * Converts this AccountSummaryElements to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeviceInfo. */
+    interface IDeviceInfo {
+
+        /** DeviceInfo encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** DeviceInfo deviceName */
+        deviceName?: (string|null);
+
+        /** DeviceInfo deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
+
+        /** DeviceInfo devicePublicKey */
+        devicePublicKey?: (Uint8Array|null);
+
+        /** DeviceInfo encryptedDataKey */
+        encryptedDataKey?: (Uint8Array|null);
+
+        /** DeviceInfo clientVersion */
+        clientVersion?: (string|null);
+    }
+
+    /** Represents a DeviceInfo. */
+    class DeviceInfo implements IDeviceInfo {
+
+        /**
+         * Constructs a new DeviceInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IDeviceInfo);
+
+        /** DeviceInfo encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** DeviceInfo deviceName. */
+        public deviceName: string;
+
+        /** DeviceInfo deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
+        /** DeviceInfo devicePublicKey. */
+        public devicePublicKey: Uint8Array;
+
+        /** DeviceInfo encryptedDataKey. */
+        public encryptedDataKey: Uint8Array;
+
+        /** DeviceInfo clientVersion. */
+        public clientVersion: string;
+
+        /**
+         * Creates a new DeviceInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeviceInfo instance
+         */
+        public static create(properties?: AccountSummary.IDeviceInfo): AccountSummary.DeviceInfo;
+
+        /**
+         * Encodes the specified DeviceInfo message. Does not implicitly {@link AccountSummary.DeviceInfo.verify|verify} messages.
+         * @param message DeviceInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IDeviceInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeviceInfo message, length delimited. Does not implicitly {@link AccountSummary.DeviceInfo.verify|verify} messages.
+         * @param message DeviceInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IDeviceInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeviceInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeviceInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.DeviceInfo;
+
+        /**
+         * Decodes a DeviceInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeviceInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.DeviceInfo;
+
+        /**
+         * Verifies a DeviceInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeviceInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeviceInfo
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.DeviceInfo;
+
+        /**
+         * Creates a plain object from a DeviceInfo message. Also converts values to other types if specified.
+         * @param message DeviceInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.DeviceInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeviceInfo to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -18812,102 +19210,6 @@ export namespace Push {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a DeviceApproveStatus. */
-    interface IDeviceApproveStatus {
-
-        /** DeviceApproveStatus approved */
-        approved?: (boolean|null);
-
-        /** DeviceApproveStatus encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-    }
-
-    /** Represents a DeviceApproveStatus. */
-    class DeviceApproveStatus implements IDeviceApproveStatus {
-
-        /**
-         * Constructs a new DeviceApproveStatus.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Push.IDeviceApproveStatus);
-
-        /** DeviceApproveStatus approved. */
-        public approved: boolean;
-
-        /** DeviceApproveStatus encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /**
-         * Creates a new DeviceApproveStatus instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns DeviceApproveStatus instance
-         */
-        public static create(properties?: Push.IDeviceApproveStatus): Push.DeviceApproveStatus;
-
-        /**
-         * Encodes the specified DeviceApproveStatus message. Does not implicitly {@link Push.DeviceApproveStatus.verify|verify} messages.
-         * @param message DeviceApproveStatus message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Push.IDeviceApproveStatus, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified DeviceApproveStatus message, length delimited. Does not implicitly {@link Push.DeviceApproveStatus.verify|verify} messages.
-         * @param message DeviceApproveStatus message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Push.IDeviceApproveStatus, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a DeviceApproveStatus message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns DeviceApproveStatus
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.DeviceApproveStatus;
-
-        /**
-         * Decodes a DeviceApproveStatus message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns DeviceApproveStatus
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.DeviceApproveStatus;
-
-        /**
-         * Verifies a DeviceApproveStatus message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a DeviceApproveStatus message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns DeviceApproveStatus
-         */
-        public static fromObject(object: { [k: string]: any }): Push.DeviceApproveStatus;
-
-        /**
-         * Creates a plain object from a DeviceApproveStatus message. Also converts values to other types if specified.
-         * @param message DeviceApproveStatus
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Push.DeviceApproveStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this DeviceApproveStatus to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of an ApproveDeviceRequest. */
     interface IApproveDeviceRequest {
 
@@ -18918,7 +19220,7 @@ export namespace Push {
         message?: (string|null);
 
         /** ApproveDeviceRequest deviceApproveStatus */
-        deviceApproveStatus?: (Push.IDeviceApproveStatus[]|null);
+        deviceApproveStatus?: (Authentication.IDeviceApproveStatus[]|null);
     }
 
     /** Represents an ApproveDeviceRequest. */
@@ -18937,7 +19239,7 @@ export namespace Push {
         public message: string;
 
         /** ApproveDeviceRequest deviceApproveStatus. */
-        public deviceApproveStatus: Push.IDeviceApproveStatus[];
+        public deviceApproveStatus: Authentication.IDeviceApproveStatus[];
 
         /**
          * Creates a new ApproveDeviceRequest instance using the specified properties.

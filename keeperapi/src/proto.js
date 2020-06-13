@@ -250,50 +250,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      RegistrationRequest: {
-        fields: {
-          authRequest: {
-            type: "AuthRequest",
-            id: 1
-          },
-          userAuthRequest: {
-            type: "UserAuthRequest",
-            id: 2
-          },
-          encryptedClientKey: {
-            type: "bytes",
-            id: 3
-          },
-          encryptedPrivateKey: {
-            type: "bytes",
-            id: 4
-          },
-          publicKey: {
-            type: "bytes",
-            id: 5
-          },
-          verificationCode: {
-            type: "string",
-            id: 6
-          },
-          deprecatedAuthHashHash: {
-            type: "bytes",
-            id: 7
-          },
-          deprecatedEncryptedClientKey: {
-            type: "bytes",
-            id: 8
-          },
-          deprecatedEncryptedPrivateKey: {
-            type: "bytes",
-            id: 9
-          },
-          deprecatedEncryptionParams: {
-            type: "bytes",
-            id: 10
-          }
-        }
-      },
       DeviceResponse: {
         fields: {
           encryptedDeviceToken: {
@@ -338,38 +294,17 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      PreLoginResponse: {
-        fields: {
-          deviceStatus: {
-            type: "DeviceStatus",
-            id: 1
-          },
-          salt: {
-            rule: "repeated",
-            type: "Salt",
-            id: 2
-          },
-          OBSOLETE_FIELD: {
-            rule: "repeated",
-            type: "TwoFactorChannel",
-            id: 3
-          },
-          ssoUserInfo: {
-            type: "SsoUserInfo",
-            id: 4
-          }
-        }
-      },
       LoginMethod: {
         values: {
-          EXISTING_ACCOUNT: 0,
-          SSO_DOMAIN: 1,
-          AFTER_SSO: 2
+          INVALID_LOGINMETHOD: 0,
+          EXISTING_ACCOUNT: 1,
+          SSO_DOMAIN: 2,
+          AFTER_SSO: 3
         }
       },
       LoginState: {
         values: {
-          INVALID: 0,
+          INVALID_LOGINSTATE: 0,
           LOGGED_OUT: 1,
           DEVICE_APPROVAL_REQUIRED: 2,
           DEVICE_LOCKED: 3,
@@ -515,6 +450,44 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      PreLoginResponse: {
+        fields: {
+          deviceStatus: {
+            type: "DeviceStatus",
+            id: 1
+          },
+          salt: {
+            rule: "repeated",
+            type: "Salt",
+            id: 2
+          },
+          OBSOLETE_FIELD: {
+            rule: "repeated",
+            type: "TwoFactorChannel",
+            id: 3
+          },
+          ssoUserInfo: {
+            type: "SsoUserInfo",
+            id: 4
+          }
+        }
+      },
+      LoginToMcRequest: {
+        fields: {
+          mcEnterpriseId: {
+            type: "int32",
+            id: 1
+          }
+        }
+      },
+      LoginToMcResponse: {
+        fields: {
+          encryptedSessionToken: {
+            type: "bytes",
+            id: 1
+          }
+        }
+      },
       ValidateAuthHashRequest: {
         fields: {
           passwordMethod: {
@@ -566,9 +539,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CT_SMS: 2,
           TWO_FA_CT_DUO: 3,
           TWO_FA_CT_RSA: 4,
-          TWO_FA_CT_U2F: 5,
-          TWO_FA_CT_WEBAUTHN: 6,
-          TWO_FA_CT_KEEPER: 7
+          TWO_FA_CT_BACKUP: 5,
+          TWO_FA_CT_U2F: 6,
+          TWO_FA_CT_WEBAUTHN: 7,
+          TWO_FA_CT_KEEPER: 8
         }
       },
       TwoFactorChannelInfo: {
@@ -622,6 +596,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           expireIn: {
             type: "TwoFactorExpiration",
             id: 5
+          }
+        }
+      },
+      TwoFactorValidateResponse: {
+        fields: {
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 1
           }
         }
       },
@@ -768,6 +750,50 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           deviceStatus: {
             type: "DeviceStatus",
             id: 5
+          }
+        }
+      },
+      RegistrationRequest: {
+        fields: {
+          authRequest: {
+            type: "AuthRequest",
+            id: 1
+          },
+          userAuthRequest: {
+            type: "UserAuthRequest",
+            id: 2
+          },
+          encryptedClientKey: {
+            type: "bytes",
+            id: 3
+          },
+          encryptedPrivateKey: {
+            type: "bytes",
+            id: 4
+          },
+          publicKey: {
+            type: "bytes",
+            id: 5
+          },
+          verificationCode: {
+            type: "string",
+            id: 6
+          },
+          deprecatedAuthHashHash: {
+            type: "bytes",
+            id: 7
+          },
+          deprecatedEncryptedClientKey: {
+            type: "bytes",
+            id: 8
+          },
+          deprecatedEncryptedPrivateKey: {
+            type: "bytes",
+            id: 9
+          },
+          deprecatedEncryptionParams: {
+            type: "bytes",
+            id: 10
           }
         }
       },
@@ -1579,6 +1605,39 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "string",
             id: 12
+          },
+          devices: {
+            rule: "repeated",
+            type: "DeviceInfo",
+            id: 13
+          }
+        }
+      },
+      DeviceInfo: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
+          },
+          deviceName: {
+            type: "string",
+            id: 2
+          },
+          deviceStatus: {
+            type: "Authentication.DeviceStatus",
+            id: 3
+          },
+          devicePublicKey: {
+            type: "bytes",
+            id: 4
+          },
+          encryptedDataKey: {
+            type: "bytes",
+            id: 5
+          },
+          clientVersion: {
+            type: "string",
+            id: 6
           }
         }
       },
@@ -3863,18 +3922,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      DeviceApproveStatus: {
-        fields: {
-          approved: {
-            type: "bool",
-            id: 1
-          },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
       ApproveDeviceRequest: {
         fields: {
           messageType: {
@@ -3887,7 +3934,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           },
           deviceApproveStatus: {
             rule: "repeated",
-            type: "DeviceApproveStatus",
+            type: "Authentication.DeviceApproveStatus",
             id: 3
           }
         }
