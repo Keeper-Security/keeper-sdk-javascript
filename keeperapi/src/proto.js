@@ -1218,6 +1218,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           supportedLanguage: {
             type: "SupportedLanguage",
             id: 5
+          },
+          type: {
+            type: "int32",
+            id: 6
           }
         }
       },
@@ -1345,7 +1349,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      PlatformDeviceApprove: {
+      DeviceApproveStatus: {
         fields: {
           approved: {
             type: "bool",
@@ -1357,12 +1361,16 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      PlatformDeviceApproveRequest: {
+      DeviceApproveStatusRequest: {
         fields: {
-          deviceApprove: {
-            rule: "repeated",
-            type: "PlatformDeviceApprove",
+          accountUid: {
+            type: "bytes",
             id: 1
+          },
+          deviceApproveStatus: {
+            rule: "repeated",
+            type: "DeviceApproveStatus",
+            id: 2
           }
         }
       },
@@ -2782,25 +2790,21 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 7
           },
-          mcEnterpriseId: {
+          userId: {
             type: "int32",
             id: 8
           },
-          userId: {
-            type: "int32",
-            id: 9
-          },
           enterpriseUserId: {
             type: "int64",
-            id: 10
+            id: 9
           },
           clientVersionId: {
             type: "int32",
-            id: 11
+            id: 10
           },
           supportedLanguage: {
             type: "Authentication.SupportedLanguage",
-            id: 12
+            id: 11
           }
         }
       },
@@ -3856,6 +3860,35 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "int32",
             id: 6
+          }
+        }
+      },
+      DeviceApproveStatus: {
+        fields: {
+          approved: {
+            type: "bool",
+            id: 1
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      ApproveDeviceRequest: {
+        fields: {
+          messageType: {
+            type: "MessageType",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          deviceApproveStatus: {
+            rule: "repeated",
+            type: "DeviceApproveStatus",
+            id: 3
           }
         }
       },

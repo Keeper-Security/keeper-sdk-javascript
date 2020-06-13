@@ -173,13 +173,16 @@ export class KeeperEndpoint {
     /**
      * Call this for REST calls expected to return HTML or a 303 redirect.
      */
-    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<string> {
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any): Promise<string> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let theUrl = message.path;
         if (!theUrl.startsWith("http")) {
             theUrl = this.getUrl(theUrl);
         }
-        let response = await platform.post(theUrl, request)
+        // let response = await platform.post(theUrl, request);
+        let response = await platform.postForm(theUrl, request, formParams)
+
+        console.log("SSO response is", response.statusCode);
 
         // Redirect?
         if (response.statusCode === 303) {
@@ -226,7 +229,7 @@ export class KeeperEndpoint {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
             return message.fromBytes(decrypted)
         } catch {
-            throw(new Error(platform.bytesToString(response.data)))
+            throw(new Error(platform.bytesToString(response.data.slice(0, 100))))
         }
     }
 

@@ -39,6 +39,8 @@ export interface Platform {
 
     post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse>;
 
+    postForm(url: string, request: Uint8Array, headers?: any, formParams?: any): Promise<KeeperHttpResponse>;
+
     fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any>
 }
 

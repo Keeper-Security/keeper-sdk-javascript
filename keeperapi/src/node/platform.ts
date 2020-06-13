@@ -149,6 +149,32 @@ export const nodePlatform: Platform = class {
         })
     }
 
+
+    static postForm(url: string, request: Uint8Array, formParams: any, headers?: any): Promise<KeeperHttpResponse> {
+
+        let formParamString: string = formParams ? (new URLSearchParams(formParams)).toString() : "";
+
+        return new Promise<KeeperHttpResponse>((resolve) => {
+            let post = https.request(url, {
+                method: "post",
+                headers: {
+                    ...{
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Content-Length": formParamString.length,
+                        "User-Agent": `Node/${process.version}`
+                    },
+                    ...headers
+                }
+            }, (res) => {
+                this.fetchData(res, resolve)
+            });
+
+            console.log("Sending to " + url + " with params " + formParamString);
+            post.write(formParamString);
+            post.end();
+        })
+    }
+
     static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
         return new Promise<any>((resolve) => {
             const form = new FormData()

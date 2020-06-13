@@ -121,6 +121,7 @@ export class Auth {
         }
 
         let loginToken;
+        let previousLoginState = 0;
 
         while (true) {
             const startLoginRequest: IStartLoginRequest = {
@@ -137,9 +138,21 @@ export class Auth {
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             console.log(loginResponse)
+            if (! loginResponse.loginState) {
+                console.log("loginState is null");
+                loginResponse.loginState = 99;
+            }
+            console.log("login state =", loginResponse.loginState);
+
+            if (previousLoginState === 13) {
+                return;  // hack to stop infinite loop
+            }
+            previousLoginState = loginResponse.loginState;
+            
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.INVALID:
-                    break;
+                    console.log("Exiting on loginState = INVALID");
+                    return; // break;
                 case Authentication.LoginState.LOGGED_OUT:
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
@@ -158,11 +171,13 @@ export class Auth {
                 case Authentication.LoginState.REGION_REDIRECT:
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
-                    console.log("Starting SSO login");
-                    await this.cloudSsoLogin(loginResponse.url);
-                    break;
+                    console.log("Cloud SSO Connect login");
+                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid);
+                    return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
-                    break;
+                    console.log("SSO Connect login");
+                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid);
+                    return;
                 case Authentication.LoginState.REQUIRES_2FA:
                     if (!this.options.authUI3) {
                         throw new Error('Unhandled prompt for second factor')
@@ -223,7 +238,9 @@ export class Auth {
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     break;
                 case Authentication.LoginState.LOGGED_IN:
-                    break;
+                    console.log("Exiting on loginState = LOGGED_IN");
+                    return;
+                    //break;
             }
         }
     }
@@ -244,7 +261,7 @@ export class Auth {
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken))
     }
 
-    async cloudSsoLogin(ssoLoginUrl: string) {
+    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array) {
 
         try {
             console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
@@ -254,7 +271,7 @@ export class Auth {
             ssoLoginUrl = ssoLoginUrl.substring(pos);
 
             // This should return HTML
-            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl));
+            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken, { "message_session_uid": messageSessionUid });
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
 
         } catch (e) {
@@ -345,8 +362,8 @@ export class Auth {
         return this.endpoint.executeRest(message, this._sessionToken);
     }
 
-    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>): Promise<string> {
-        return this.endpoint.executeRestToHTML(message, this._sessionToken);
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any): Promise<string> {
+        return this.endpoint.executeRestToHTML(message, sessionToken, formParams);
     }
 
     get sessionToken(): string {

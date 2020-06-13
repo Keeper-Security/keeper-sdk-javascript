@@ -22,6 +22,8 @@ import SsoCloudServiceProviderUpdateRequest = SsoCloud.SsoCloudServiceProviderUp
 import SsoCloudServiceProviderConfigurationListRequest = SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
 import SsoCloudSettingOperationType = SsoCloud.SsoCloudSettingOperationType;
 import SsoCloudSettingAction = SsoCloud.SsoCloudSettingAction;
+import ISsoCloudConfigurationResponse = SsoCloud.ISsoCloudConfigurationResponse;
+
 import AuthProtocolType = SsoCloud.AuthProtocolType;
 import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/restMessages'
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages'
@@ -35,7 +37,7 @@ interface UserInfo {
 
 const MIKE_VAULT_LOGIN_1 : UserInfo = { "account": "mhewett+reg70@keepersecurity.com", "password": "Password11" }
 const MIKE_ADMIN_LOGIN_1 : UserInfo = { "account": "mhewett+sso42@keepersecurity.com", "password": "Password11" }
-const MIKE_DEMO_LOGIN_1 : UserInfo  = { "account": "mht@keper.co", "password": "7YTiWT7@VqWLCz!P1Xfd" }
+const MIKE_DEMO_LOGIN_1 : UserInfo  = { "account": "micheal@demo.kepr.co", "password": "7YTiWT7@VqWLCz!P1Xfd" }
 const MIKE_SSO_LOGIN_1 : UserInfo  = { "account": "mhewett+sso60@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_2 : UserInfo  = { "account": "mhewett+sso61@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_3 : UserInfo  = { "account": "mhewett+idps@keepersecurity.com", "password": "Password11" }
@@ -118,6 +120,7 @@ TestSsoLogin().finally();
 // TestSsoGetConfigurationList().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
+// TestSsoDeleteConfiguration().finally();
 // TestSsoResetConfigurationSettingValue().finally();
 // TestSsoGetSAMLLog().finally();
 // TestSsoClearSAMLLog().finally();
@@ -155,17 +158,16 @@ async function testServiceLogger() {
 
 /* ------------------ Cloud SSO Connect -------------------- */
 
-/** NOTE: original version was copied to auth.ts as cloudSsoLogin.  */
+/** Also see cloudSsoLogin in auth.ts.  */
 async function TestSsoLogin() {
 
-    let keeperHost = KeeperEnvironment.DEV;
+    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
     let user = MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
-    let serviceProviderId = 9710921056299; // 6219112644615;
+    let serviceProviderId = 6219112644615; // dev: 9710921056299; // local: 9710921056266;
     const deviceConfig = getDeviceConfig(keeperHost);
-    const configPrefix = 'sso/config/';
-    const configEndpoint = 'sso_cloud_upload_idp_metadata';
+    const configPrefix = 'sso/saml/';
 
     try {
         let auth = new Auth({
@@ -210,7 +212,7 @@ async function TestSsoGetMetadata() {
 
 // POST, ENCRYPTED, sso_cloud_upload_idp_metadata/<serviceProviderId>
 async function TestSsoUploadMetadata() {
-    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -394,6 +396,66 @@ async function TestSsoGetConfiguration() {
 
         let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
         console.log(resp);
+     } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_delete/<serviceProviderId>
+async function TestSsoDeleteConfiguration() {
+    let keeperHost = KeeperEnvironment.LOCAL;
+    console.log("\n*** TestDeleteConfiguration on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const addEndpoint = 'sso_cloud_configuration_add';
+    const deleteEndpoint = 'sso_cloud_configuration_delete';
+   
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, deleteEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI: authUI
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        // Get the list of current configurations
+        let listReq = SsoCloudServiceProviderConfigurationListRequest.create({
+            "ssoServiceProviderId": serviceProviderId
+        });
+        let listResp = await auth.executeRest(ssoCloudServiceProviderConfigurationListRequestMessage(listReq));
+        console.log("Starting configurations");
+        console.log(listResp);
+
+        // Create a new configuration, then delete it
+        let restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoAuthProtocolType": AuthProtocolType.SAML2
+        });
+        let resp : ISsoCloudConfigurationResponse = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + addEndpoint));
+        console.log("resp " + resp.name + " created with ID = " + resp.ssoSpConfigurationId);
+
+        restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": resp.ssoSpConfigurationId
+        });
+
+        resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + deleteEndpoint));
+        console.log(resp);
+
+        // Get the list of configurations after the DB changes
+        listResp = await auth.executeRest(ssoCloudServiceProviderConfigurationListRequestMessage(listReq));
+        console.log("Ending configurations");
+        console.log(listResp);
+
      } catch (e) {
         console.log(e)
     }
