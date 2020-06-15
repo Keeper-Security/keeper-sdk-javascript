@@ -8,11 +8,14 @@
   "files": [
     "dist"
   ],
+    "protobufFiles": "../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/BIApiRequest.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto",
+    
   "scripts": {
     "start": "rollup -cw",
     "build": "rollup -c",
     "update-proto:es6": "pbjs -t static-module -w es6 -o src/proto.js ../../keeperapp-protobuf/*.proto && pbts -o src/proto.d.ts src/proto.js",
     "update-proto:cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/*.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/*.proto | pbts -o src/proto.d.ts -",
+    "update-proto:cjs2": "pbjs -t json-module -w commonjs -o src/proto.js $npm_package_protobufFiles && pbjs -t static-module -w commonjs $npm_package_protobufFiles | pbts -o src/proto.d.ts -",
     "link-local": "yarn link",
     "test": "ts-node test/test.ts",
     "test-new-login": "ts-node test/new_login.ts",
