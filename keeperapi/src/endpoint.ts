@@ -145,31 +145,6 @@ export class KeeperEndpoint {
         }
     }
 
-    async verifyDevice(username: string) {
-        const deviceConfig = this.options.deviceConfig
-
-        if (deviceConfig.verifiedUsers.includes(username)) {
-            return
-        }
-
-        const devVerMsg = requestDeviceVerificationMessage({
-            username: username,
-            encryptedDeviceToken: deviceConfig.deviceToken,
-        })
-
-        await this.executeRest(devVerMsg)
-
-        const token = await prompt('Enter Device token or approve via email and press enter:')
-        if (!!token) {
-            const resp = await this.get(`process_token/${token}`)
-            console.log(platform.bytesToString(resp.data))
-            deviceConfig.verifiedUsers.push(username)
-        }
-        if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(deviceConfig, this.options.host);
-        }
-    }
-
     /**
      * Call this for REST calls expected to return HTML or a 303 redirect.
      */

@@ -20,7 +20,6 @@ type DeviceConfigStorage = {
     privateKey: string
     publicKey: string
     transmissionKeyId: number
-    verifiedUsers: string[]
 }
 
 export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
@@ -30,8 +29,7 @@ export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
             deviceToken: configStorage.deviceToken ? platform.base64ToBytes(configStorage.deviceToken) : undefined,
             publicKey: configStorage.publicKey ? platform.base64ToBytes(configStorage.publicKey) : undefined,
             privateKey: configStorage.privateKey ? platform.base64ToBytes(configStorage.privateKey) : undefined,
-            transmissionKeyId: configStorage.transmissionKeyId,
-            verifiedUsers: configStorage.verifiedUsers
+            transmissionKeyId: configStorage.transmissionKeyId
         }
     }
     catch (e) {
@@ -39,8 +37,7 @@ export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
             deviceToken: undefined,
             privateKey: undefined,
             publicKey: undefined,
-            transmissionKeyId: 0,
-            verifiedUsers: []
+            transmissionKeyId: 0
         }
     }
 }
@@ -51,8 +48,7 @@ export function saveDeviceConfig(deviceConfig: DeviceConfig, environment: Keeper
         deviceToken: deviceConfig.deviceToken ? platform.bytesToBase64(deviceConfig.deviceToken) : undefined,
         publicKey: deviceConfig.publicKey ? platform.bytesToBase64(deviceConfig.publicKey) : undefined,
         privateKey: deviceConfig.privateKey ? platform.bytesToBase64(deviceConfig.privateKey): undefined,
-        transmissionKeyId: deviceConfig.transmissionKeyId,
-        verifiedUsers: deviceConfig.verifiedUsers
+        transmissionKeyId: deviceConfig.transmissionKeyId
     }
     fs.writeFileSync(configNames[environment], JSON.stringify(configStorage, null, 2))
 }

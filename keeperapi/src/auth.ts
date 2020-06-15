@@ -17,6 +17,7 @@ import {
     generateUidBytes
 } from "./utils";
 import {
+    requestDeviceVerificationMessage,
     RestMessage,
     startLoginMessage, twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
@@ -27,6 +28,7 @@ import {Authentication} from './proto';
 import {ssoSamlMessage} from './restMessages'
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import {prompt} from '../test/testUtil';
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -121,7 +123,7 @@ export class Auth {
             console.log("Socket connected")
         }
 
-        let loginToken;
+        let loginToken: Uint8Array;
         let previousLoginState = 0;
 
         while (true) {
@@ -149,14 +151,14 @@ export class Auth {
                 return;  // hack to stop infinite loop
             }
             previousLoginState = loginResponse.loginState;
-            
+
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                     break;
                 case Authentication.LoginState.LOGGED_OUT:
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
-                    await this.endpoint.verifyDevice(username)
+                    loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken)
                     break;
                 case Authentication.LoginState.DEVICE_LOCKED:
                     break;
@@ -197,7 +199,41 @@ export class Auth {
         }
     }
 
-    private async handleTwoFactor(loginResponse: Authentication.ILoginResponse) {
+    async verifyDevice(username: string, loginToken: Uint8Array): Promise<Uint8Array> {
+        const deviceConfig = this.options.deviceConfig
+
+        const verifyMethod = await prompt('Enter device verification method: \n1 - email\n2 - 2fa code\n3 - 2fa push\n');
+
+        switch (verifyMethod) {
+            case '1':
+                await this.executeRest(requestDeviceVerificationMessage({
+                    username: username,
+                    encryptedDeviceToken: deviceConfig.deviceToken,
+                }))
+                const token = await prompt('Enter Device token or approve via email and press enter:')
+                if (!!token) {
+                    const resp = await this.get(`process_token/${token}`)
+                    console.log(platform.bytesToString(resp.data))
+                }
+                return undefined
+            case '2':
+                return this.handleTwoFactorCode(loginToken)
+            case '3':
+                const sentPushMsg = twoFactorSend2FAPushMessage({
+                    encryptedLoginToken: loginToken,
+                })
+                await this.executeRest(sentPushMsg)
+                const pushMessage = await this.socket.getPushMessage()
+                const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+                const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
+                console.log(socketResponseData)
+                return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
+            default:
+                throw new Error('Invalid choice for device verification')
+        }
+    }
+
+    private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
         let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
         switch (loginResponse.channels[0].channelType) {
             case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
@@ -236,17 +272,21 @@ export class Auth {
             const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
             const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
             console.log(socketResponseData)
-            return socketResponseData.encryptedLoginToken
+            return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
         } else {
-            const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
-            const twoFactorValidateMsg = twoFactorValidateMessage({
-                encryptedLoginToken: loginResponse.encryptedLoginToken,
-                value: twoFactorInput.twoFactorCode,
-                expireIn: twoFactorInput.desiredExpiration
-            })
-            const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
-            return twoFactorValidateResp.encryptedLoginToken
+            return this.handleTwoFactorCode(loginResponse.encryptedLoginToken)
         }
+    }
+
+    private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
+        const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+        const twoFactorValidateMsg = twoFactorValidateMessage({
+            encryptedLoginToken: loginToken,
+            value: twoFactorInput.twoFactorCode,
+            expireIn: twoFactorInput.desiredExpiration
+        })
+        const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+        return twoFactorValidateResp.encryptedLoginToken
     }
 
     async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
@@ -393,10 +433,6 @@ export class Auth {
 
     async registerDevice() {
         await this.endpoint.registerDevice()
-    }
-
-    async verifyDevice(username: string) {
-        await this.endpoint.verifyDevice(username)
     }
 }
 

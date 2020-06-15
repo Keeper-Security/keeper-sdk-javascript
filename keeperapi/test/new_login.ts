@@ -29,8 +29,8 @@ const authUI: AuthUI3 = {
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-const userName = "admin+plain@yozik.us"
-// const userName = "admin+duo@yozik.us"
+// const userName = "admin+plain@yozik.us"
+const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
 // const userName = "admin+m29a@yozik.us"
@@ -54,7 +54,7 @@ async function testRegistration() {
 
     await auth.registerDevice()
 
-    await auth.verifyDevice(userName)
+    await auth.verifyDevice(userName, null)
 
     const password = '111111'
     const iterations = 1000

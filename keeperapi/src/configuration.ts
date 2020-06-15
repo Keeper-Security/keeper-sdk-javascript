@@ -32,7 +32,6 @@ export interface DeviceConfig {
     privateKey: Uint8Array
     publicKey: Uint8Array
     transmissionKeyId: number
-    verifiedUsers: string[]
 }
 
 export interface AuthUI {
