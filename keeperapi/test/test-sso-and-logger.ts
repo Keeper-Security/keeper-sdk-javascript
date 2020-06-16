@@ -161,11 +161,11 @@ async function testServiceLogger() {
 /** Also see cloudSsoLogin in auth.ts.  */
 async function TestSsoLogin() {
 
-    let keeperHost = KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
     let user = MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
-    let serviceProviderId = 6219112644615; // dev: 9710921056299; // local: 9710921056266;
+    let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
 
@@ -468,7 +468,7 @@ async function TestSsoSetConfigurationSettingValue() {
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 99837914454064896; // 3121290;
+    let configurationId = 3121290; // 99837914454064896; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_setting_set';
@@ -487,19 +487,34 @@ async function TestSsoSetConfigurationSettingValue() {
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
 
+        // Test set attribute by name
         let restReq = SsoCloudConfigurationRequest.create({
             "ssoServiceProviderId": serviceProviderId,
             "ssoSpConfigurationId": configurationId,
             "ssoCloudSettingAction": [
                 SsoCloudSettingAction.create({
-                    "settingId": "sso_attribute_map_first_name",
+                    "settingName": "sso_attribute_map_first_name",
                     "operation": SsoCloudSettingOperationType.SET,
                     "value": "--first name--"
                 })
             ]
         });
-
         let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+
+        // Test set attribute by ID
+        restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configurationId,
+            "ssoCloudSettingAction": [
+                SsoCloudSettingAction.create({
+                    "settingId": 905,
+                    "operation": SsoCloudSettingOperationType.SET,
+                    "value": "urn:mace:dir:attribute-def:givenName"
+                })
+            ]
+        });
+        resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
         console.log(resp);
     } catch (e) {
         console.log(e)
@@ -537,7 +552,7 @@ async function TestSsoResetConfigurationSettingValue() {
             "ssoSpConfigurationId": configurationId,
             "ssoCloudSettingAction": [
                 SsoCloudSettingAction.create({
-                    "settingId": "sso_attribute_map_first_name",
+                    "settingName": "sso_attribute_map_first_name",
                     "operation": SsoCloudSettingOperationType.RESET_TO_DEFAULT,
                     "value": "--first name--"
                 })

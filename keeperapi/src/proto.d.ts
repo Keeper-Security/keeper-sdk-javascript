@@ -1265,6 +1265,7 @@ export namespace Authentication {
         REQUIRES_2FA = 12,
         REQUIRES_AUTH_HASH = 13,
         REQUIRES_USERNAME = 14,
+        AFTER_CLOUD_SSO_LOGIN = 15,
         LOGGED_IN = 99
     }
 
@@ -5398,6 +5399,9 @@ export namespace Authentication {
 
         /** CreateUserRequest verificationCode */
         verificationCode?: (string|null);
+
+        /** CreateUserRequest enterpriseRegistration */
+        enterpriseRegistration?: (Enterprise.IEnterpriseRegistration|null);
     }
 
     /** Represents a CreateUserRequest. */
@@ -5477,6 +5481,9 @@ export namespace Authentication {
 
         /** CreateUserRequest verificationCode. */
         public verificationCode: string;
+
+        /** CreateUserRequest enterpriseRegistration. */
+        public enterpriseRegistration?: (Enterprise.IEnterpriseRegistration|null);
 
         /**
          * Creates a new CreateUserRequest instance using the specified properties.
@@ -7591,6 +7598,9 @@ export namespace Authentication {
 
         /** ApproveDevice accountUid */
         accountUid?: (Uint8Array|null);
+
+        /** ApproveDevice deviceId */
+        deviceId?: (number|Long|null);
     }
 
     /** Represents an ApproveDevice. */
@@ -7607,6 +7617,9 @@ export namespace Authentication {
 
         /** ApproveDevice accountUid. */
         public accountUid: Uint8Array;
+
+        /** ApproveDevice deviceId. */
+        public deviceId: (number|Long);
 
         /**
          * Creates a new ApproveDevice instance using the specified properties.
@@ -7782,6 +7795,1504 @@ export namespace Authentication {
 
         /**
          * Converts this Domain to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+}
+
+/** Namespace Enterprise. */
+export namespace Enterprise {
+
+    /** Properties of an EnterpriseKeyPairRequest. */
+    interface IEnterpriseKeyPairRequest {
+
+        /** EnterpriseKeyPairRequest enterprisePublicKey */
+        enterprisePublicKey?: (Uint8Array|null);
+
+        /** EnterpriseKeyPairRequest encryptedEnterprisePrivateKey */
+        encryptedEnterprisePrivateKey?: (Uint8Array|null);
+    }
+
+    /** Represents an EnterpriseKeyPairRequest. */
+    class EnterpriseKeyPairRequest implements IEnterpriseKeyPairRequest {
+
+        /**
+         * Constructs a new EnterpriseKeyPairRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseKeyPairRequest);
+
+        /** EnterpriseKeyPairRequest enterprisePublicKey. */
+        public enterprisePublicKey: Uint8Array;
+
+        /** EnterpriseKeyPairRequest encryptedEnterprisePrivateKey. */
+        public encryptedEnterprisePrivateKey: Uint8Array;
+
+        /**
+         * Creates a new EnterpriseKeyPairRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseKeyPairRequest instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseKeyPairRequest): Enterprise.EnterpriseKeyPairRequest;
+
+        /**
+         * Encodes the specified EnterpriseKeyPairRequest message. Does not implicitly {@link Enterprise.EnterpriseKeyPairRequest.verify|verify} messages.
+         * @param message EnterpriseKeyPairRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseKeyPairRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseKeyPairRequest message, length delimited. Does not implicitly {@link Enterprise.EnterpriseKeyPairRequest.verify|verify} messages.
+         * @param message EnterpriseKeyPairRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseKeyPairRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseKeyPairRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseKeyPairRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseKeyPairRequest;
+
+        /**
+         * Decodes an EnterpriseKeyPairRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseKeyPairRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseKeyPairRequest;
+
+        /**
+         * Verifies an EnterpriseKeyPairRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseKeyPairRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseKeyPairRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseKeyPairRequest;
+
+        /**
+         * Creates a plain object from an EnterpriseKeyPairRequest message. Also converts values to other types if specified.
+         * @param message EnterpriseKeyPairRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseKeyPairRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseKeyPairRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GetTeamMemberRequest. */
+    interface IGetTeamMemberRequest {
+
+        /** GetTeamMemberRequest teamUid */
+        teamUid?: (Uint8Array|null);
+    }
+
+    /** Represents a GetTeamMemberRequest. */
+    class GetTeamMemberRequest implements IGetTeamMemberRequest {
+
+        /**
+         * Constructs a new GetTeamMemberRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IGetTeamMemberRequest);
+
+        /** GetTeamMemberRequest teamUid. */
+        public teamUid: Uint8Array;
+
+        /**
+         * Creates a new GetTeamMemberRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetTeamMemberRequest instance
+         */
+        public static create(properties?: Enterprise.IGetTeamMemberRequest): Enterprise.GetTeamMemberRequest;
+
+        /**
+         * Encodes the specified GetTeamMemberRequest message. Does not implicitly {@link Enterprise.GetTeamMemberRequest.verify|verify} messages.
+         * @param message GetTeamMemberRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IGetTeamMemberRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetTeamMemberRequest message, length delimited. Does not implicitly {@link Enterprise.GetTeamMemberRequest.verify|verify} messages.
+         * @param message GetTeamMemberRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IGetTeamMemberRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetTeamMemberRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetTeamMemberRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.GetTeamMemberRequest;
+
+        /**
+         * Decodes a GetTeamMemberRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetTeamMemberRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.GetTeamMemberRequest;
+
+        /**
+         * Verifies a GetTeamMemberRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetTeamMemberRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetTeamMemberRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.GetTeamMemberRequest;
+
+        /**
+         * Creates a plain object from a GetTeamMemberRequest message. Also converts values to other types if specified.
+         * @param message GetTeamMemberRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.GetTeamMemberRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetTeamMemberRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EnterpriseUser. */
+    interface IEnterpriseUser {
+
+        /** EnterpriseUser enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** EnterpriseUser email */
+        email?: (string|null);
+
+        /** EnterpriseUser enterpriseUsername */
+        enterpriseUsername?: (string|null);
+    }
+
+    /** Represents an EnterpriseUser. */
+    class EnterpriseUser implements IEnterpriseUser {
+
+        /**
+         * Constructs a new EnterpriseUser.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUser);
+
+        /** EnterpriseUser enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** EnterpriseUser email. */
+        public email: string;
+
+        /** EnterpriseUser enterpriseUsername. */
+        public enterpriseUsername: string;
+
+        /**
+         * Creates a new EnterpriseUser instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUser instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUser): Enterprise.EnterpriseUser;
+
+        /**
+         * Encodes the specified EnterpriseUser message. Does not implicitly {@link Enterprise.EnterpriseUser.verify|verify} messages.
+         * @param message EnterpriseUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUser message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUser.verify|verify} messages.
+         * @param message EnterpriseUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUser message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUser;
+
+        /**
+         * Decodes an EnterpriseUser message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUser;
+
+        /**
+         * Verifies an EnterpriseUser message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUser message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUser
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUser;
+
+        /**
+         * Creates a plain object from an EnterpriseUser message. Also converts values to other types if specified.
+         * @param message EnterpriseUser
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUser, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUser to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GetTeamMemberResponse. */
+    interface IGetTeamMemberResponse {
+
+        /** GetTeamMemberResponse enterpriseUser */
+        enterpriseUser?: (Enterprise.IEnterpriseUser[]|null);
+    }
+
+    /** Represents a GetTeamMemberResponse. */
+    class GetTeamMemberResponse implements IGetTeamMemberResponse {
+
+        /**
+         * Constructs a new GetTeamMemberResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IGetTeamMemberResponse);
+
+        /** GetTeamMemberResponse enterpriseUser. */
+        public enterpriseUser: Enterprise.IEnterpriseUser[];
+
+        /**
+         * Creates a new GetTeamMemberResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetTeamMemberResponse instance
+         */
+        public static create(properties?: Enterprise.IGetTeamMemberResponse): Enterprise.GetTeamMemberResponse;
+
+        /**
+         * Encodes the specified GetTeamMemberResponse message. Does not implicitly {@link Enterprise.GetTeamMemberResponse.verify|verify} messages.
+         * @param message GetTeamMemberResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IGetTeamMemberResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetTeamMemberResponse message, length delimited. Does not implicitly {@link Enterprise.GetTeamMemberResponse.verify|verify} messages.
+         * @param message GetTeamMemberResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IGetTeamMemberResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetTeamMemberResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetTeamMemberResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.GetTeamMemberResponse;
+
+        /**
+         * Decodes a GetTeamMemberResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetTeamMemberResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.GetTeamMemberResponse;
+
+        /**
+         * Verifies a GetTeamMemberResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetTeamMemberResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetTeamMemberResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.GetTeamMemberResponse;
+
+        /**
+         * Creates a plain object from a GetTeamMemberResponse message. Also converts values to other types if specified.
+         * @param message GetTeamMemberResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.GetTeamMemberResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetTeamMemberResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EnterpriseUserIds. */
+    interface IEnterpriseUserIds {
+
+        /** EnterpriseUserIds enterpriseUserId */
+        enterpriseUserId?: ((number|Long)[]|null);
+    }
+
+    /** Represents an EnterpriseUserIds. */
+    class EnterpriseUserIds implements IEnterpriseUserIds {
+
+        /**
+         * Constructs a new EnterpriseUserIds.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserIds);
+
+        /** EnterpriseUserIds enterpriseUserId. */
+        public enterpriseUserId: (number|Long)[];
+
+        /**
+         * Creates a new EnterpriseUserIds instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserIds instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserIds): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Encodes the specified EnterpriseUserIds message. Does not implicitly {@link Enterprise.EnterpriseUserIds.verify|verify} messages.
+         * @param message EnterpriseUserIds message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserIds, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserIds message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserIds.verify|verify} messages.
+         * @param message EnterpriseUserIds message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserIds, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserIds message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserIds
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Decodes an EnterpriseUserIds message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserIds
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Verifies an EnterpriseUserIds message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserIds message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserIds
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserIds;
+
+        /**
+         * Creates a plain object from an EnterpriseUserIds message. Also converts values to other types if specified.
+         * @param message EnterpriseUserIds
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserIds, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserIds to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EnterprisePersonalAccount. */
+    interface IEnterprisePersonalAccount {
+
+        /** EnterprisePersonalAccount email */
+        email?: (string|null);
+
+        /** EnterprisePersonalAccount OBSOLETE_FIELD */
+        OBSOLETE_FIELD?: (Uint8Array|null);
+    }
+
+    /** Represents an EnterprisePersonalAccount. */
+    class EnterprisePersonalAccount implements IEnterprisePersonalAccount {
+
+        /**
+         * Constructs a new EnterprisePersonalAccount.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterprisePersonalAccount);
+
+        /** EnterprisePersonalAccount email. */
+        public email: string;
+
+        /** EnterprisePersonalAccount OBSOLETE_FIELD. */
+        public OBSOLETE_FIELD: Uint8Array;
+
+        /**
+         * Creates a new EnterprisePersonalAccount instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterprisePersonalAccount instance
+         */
+        public static create(properties?: Enterprise.IEnterprisePersonalAccount): Enterprise.EnterprisePersonalAccount;
+
+        /**
+         * Encodes the specified EnterprisePersonalAccount message. Does not implicitly {@link Enterprise.EnterprisePersonalAccount.verify|verify} messages.
+         * @param message EnterprisePersonalAccount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterprisePersonalAccount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterprisePersonalAccount message, length delimited. Does not implicitly {@link Enterprise.EnterprisePersonalAccount.verify|verify} messages.
+         * @param message EnterprisePersonalAccount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterprisePersonalAccount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterprisePersonalAccount message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterprisePersonalAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterprisePersonalAccount;
+
+        /**
+         * Decodes an EnterprisePersonalAccount message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterprisePersonalAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterprisePersonalAccount;
+
+        /**
+         * Verifies an EnterprisePersonalAccount message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterprisePersonalAccount message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterprisePersonalAccount
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterprisePersonalAccount;
+
+        /**
+         * Creates a plain object from an EnterprisePersonalAccount message. Also converts values to other types if specified.
+         * @param message EnterprisePersonalAccount
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterprisePersonalAccount, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterprisePersonalAccount to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EncryptedTeamKeyRequest. */
+    interface IEncryptedTeamKeyRequest {
+
+        /** EncryptedTeamKeyRequest teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** EncryptedTeamKeyRequest encryptedTeamKey */
+        encryptedTeamKey?: (Uint8Array|null);
+    }
+
+    /** Represents an EncryptedTeamKeyRequest. */
+    class EncryptedTeamKeyRequest implements IEncryptedTeamKeyRequest {
+
+        /**
+         * Constructs a new EncryptedTeamKeyRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEncryptedTeamKeyRequest);
+
+        /** EncryptedTeamKeyRequest teamUid. */
+        public teamUid: Uint8Array;
+
+        /** EncryptedTeamKeyRequest encryptedTeamKey. */
+        public encryptedTeamKey: Uint8Array;
+
+        /**
+         * Creates a new EncryptedTeamKeyRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EncryptedTeamKeyRequest instance
+         */
+        public static create(properties?: Enterprise.IEncryptedTeamKeyRequest): Enterprise.EncryptedTeamKeyRequest;
+
+        /**
+         * Encodes the specified EncryptedTeamKeyRequest message. Does not implicitly {@link Enterprise.EncryptedTeamKeyRequest.verify|verify} messages.
+         * @param message EncryptedTeamKeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEncryptedTeamKeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EncryptedTeamKeyRequest message, length delimited. Does not implicitly {@link Enterprise.EncryptedTeamKeyRequest.verify|verify} messages.
+         * @param message EncryptedTeamKeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEncryptedTeamKeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EncryptedTeamKeyRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EncryptedTeamKeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EncryptedTeamKeyRequest;
+
+        /**
+         * Decodes an EncryptedTeamKeyRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EncryptedTeamKeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EncryptedTeamKeyRequest;
+
+        /**
+         * Verifies an EncryptedTeamKeyRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EncryptedTeamKeyRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EncryptedTeamKeyRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EncryptedTeamKeyRequest;
+
+        /**
+         * Creates a plain object from an EncryptedTeamKeyRequest message. Also converts values to other types if specified.
+         * @param message EncryptedTeamKeyRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EncryptedTeamKeyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EncryptedTeamKeyRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ReEncryptedData. */
+    interface IReEncryptedData {
+
+        /** ReEncryptedData id */
+        id?: (number|Long|null);
+
+        /** ReEncryptedData data */
+        data?: (string|null);
+    }
+
+    /** Represents a ReEncryptedData. */
+    class ReEncryptedData implements IReEncryptedData {
+
+        /**
+         * Constructs a new ReEncryptedData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IReEncryptedData);
+
+        /** ReEncryptedData id. */
+        public id: (number|Long);
+
+        /** ReEncryptedData data. */
+        public data: string;
+
+        /**
+         * Creates a new ReEncryptedData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReEncryptedData instance
+         */
+        public static create(properties?: Enterprise.IReEncryptedData): Enterprise.ReEncryptedData;
+
+        /**
+         * Encodes the specified ReEncryptedData message. Does not implicitly {@link Enterprise.ReEncryptedData.verify|verify} messages.
+         * @param message ReEncryptedData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IReEncryptedData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReEncryptedData message, length delimited. Does not implicitly {@link Enterprise.ReEncryptedData.verify|verify} messages.
+         * @param message ReEncryptedData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IReEncryptedData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReEncryptedData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReEncryptedData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ReEncryptedData;
+
+        /**
+         * Decodes a ReEncryptedData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReEncryptedData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ReEncryptedData;
+
+        /**
+         * Verifies a ReEncryptedData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReEncryptedData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReEncryptedData
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ReEncryptedData;
+
+        /**
+         * Creates a plain object from a ReEncryptedData message. Also converts values to other types if specified.
+         * @param message ReEncryptedData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ReEncryptedData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReEncryptedData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ReEncryptedRoleKey. */
+    interface IReEncryptedRoleKey {
+
+        /** ReEncryptedRoleKey roleId */
+        roleId?: (number|Long|null);
+
+        /** ReEncryptedRoleKey encryptedRoleKey */
+        encryptedRoleKey?: (Uint8Array|null);
+    }
+
+    /** Represents a ReEncryptedRoleKey. */
+    class ReEncryptedRoleKey implements IReEncryptedRoleKey {
+
+        /**
+         * Constructs a new ReEncryptedRoleKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IReEncryptedRoleKey);
+
+        /** ReEncryptedRoleKey roleId. */
+        public roleId: (number|Long);
+
+        /** ReEncryptedRoleKey encryptedRoleKey. */
+        public encryptedRoleKey: Uint8Array;
+
+        /**
+         * Creates a new ReEncryptedRoleKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReEncryptedRoleKey instance
+         */
+        public static create(properties?: Enterprise.IReEncryptedRoleKey): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Encodes the specified ReEncryptedRoleKey message. Does not implicitly {@link Enterprise.ReEncryptedRoleKey.verify|verify} messages.
+         * @param message ReEncryptedRoleKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IReEncryptedRoleKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReEncryptedRoleKey message, length delimited. Does not implicitly {@link Enterprise.ReEncryptedRoleKey.verify|verify} messages.
+         * @param message ReEncryptedRoleKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IReEncryptedRoleKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReEncryptedRoleKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReEncryptedRoleKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Decodes a ReEncryptedRoleKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReEncryptedRoleKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Verifies a ReEncryptedRoleKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReEncryptedRoleKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReEncryptedRoleKey
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ReEncryptedRoleKey;
+
+        /**
+         * Creates a plain object from a ReEncryptedRoleKey message. Also converts values to other types if specified.
+         * @param message ReEncryptedRoleKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ReEncryptedRoleKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReEncryptedRoleKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a NodeToManagedCompanyRequest. */
+    interface INodeToManagedCompanyRequest {
+
+        /** NodeToManagedCompanyRequest companyId */
+        companyId?: (number|null);
+
+        /** NodeToManagedCompanyRequest nodes */
+        nodes?: (Enterprise.IReEncryptedData[]|null);
+
+        /** NodeToManagedCompanyRequest roles */
+        roles?: (Enterprise.IReEncryptedData[]|null);
+
+        /** NodeToManagedCompanyRequest users */
+        users?: (Enterprise.IReEncryptedData[]|null);
+
+        /** NodeToManagedCompanyRequest roleKeys */
+        roleKeys?: (Enterprise.IReEncryptedRoleKey[]|null);
+    }
+
+    /** Represents a NodeToManagedCompanyRequest. */
+    class NodeToManagedCompanyRequest implements INodeToManagedCompanyRequest {
+
+        /**
+         * Constructs a new NodeToManagedCompanyRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.INodeToManagedCompanyRequest);
+
+        /** NodeToManagedCompanyRequest companyId. */
+        public companyId: number;
+
+        /** NodeToManagedCompanyRequest nodes. */
+        public nodes: Enterprise.IReEncryptedData[];
+
+        /** NodeToManagedCompanyRequest roles. */
+        public roles: Enterprise.IReEncryptedData[];
+
+        /** NodeToManagedCompanyRequest users. */
+        public users: Enterprise.IReEncryptedData[];
+
+        /** NodeToManagedCompanyRequest roleKeys. */
+        public roleKeys: Enterprise.IReEncryptedRoleKey[];
+
+        /**
+         * Creates a new NodeToManagedCompanyRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NodeToManagedCompanyRequest instance
+         */
+        public static create(properties?: Enterprise.INodeToManagedCompanyRequest): Enterprise.NodeToManagedCompanyRequest;
+
+        /**
+         * Encodes the specified NodeToManagedCompanyRequest message. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
+         * @param message NodeToManagedCompanyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.INodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NodeToManagedCompanyRequest message, length delimited. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
+         * @param message NodeToManagedCompanyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.INodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NodeToManagedCompanyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.NodeToManagedCompanyRequest;
+
+        /**
+         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NodeToManagedCompanyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.NodeToManagedCompanyRequest;
+
+        /**
+         * Verifies a NodeToManagedCompanyRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NodeToManagedCompanyRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NodeToManagedCompanyRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.NodeToManagedCompanyRequest;
+
+        /**
+         * Creates a plain object from a NodeToManagedCompanyRequest message. Also converts values to other types if specified.
+         * @param message NodeToManagedCompanyRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.NodeToManagedCompanyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NodeToManagedCompanyRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RoleTeam. */
+    interface IRoleTeam {
+
+        /** RoleTeam roleId */
+        roleId?: (number|Long|null);
+
+        /** RoleTeam teamUid */
+        teamUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RoleTeam. */
+    class RoleTeam implements IRoleTeam {
+
+        /**
+         * Constructs a new RoleTeam.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IRoleTeam);
+
+        /** RoleTeam roleId. */
+        public roleId: (number|Long);
+
+        /** RoleTeam teamUid. */
+        public teamUid: Uint8Array;
+
+        /**
+         * Creates a new RoleTeam instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RoleTeam instance
+         */
+        public static create(properties?: Enterprise.IRoleTeam): Enterprise.RoleTeam;
+
+        /**
+         * Encodes the specified RoleTeam message. Does not implicitly {@link Enterprise.RoleTeam.verify|verify} messages.
+         * @param message RoleTeam message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IRoleTeam, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RoleTeam message, length delimited. Does not implicitly {@link Enterprise.RoleTeam.verify|verify} messages.
+         * @param message RoleTeam message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IRoleTeam, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RoleTeam message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RoleTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RoleTeam;
+
+        /**
+         * Decodes a RoleTeam message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RoleTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RoleTeam;
+
+        /**
+         * Verifies a RoleTeam message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RoleTeam message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RoleTeam
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.RoleTeam;
+
+        /**
+         * Creates a plain object from a RoleTeam message. Also converts values to other types if specified.
+         * @param message RoleTeam
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.RoleTeam, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RoleTeam to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RoleTeams. */
+    interface IRoleTeams {
+
+        /** RoleTeams roleTeam */
+        roleTeam?: (Enterprise.IRoleTeam[]|null);
+    }
+
+    /** Represents a RoleTeams. */
+    class RoleTeams implements IRoleTeams {
+
+        /**
+         * Constructs a new RoleTeams.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IRoleTeams);
+
+        /** RoleTeams roleTeam. */
+        public roleTeam: Enterprise.IRoleTeam[];
+
+        /**
+         * Creates a new RoleTeams instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RoleTeams instance
+         */
+        public static create(properties?: Enterprise.IRoleTeams): Enterprise.RoleTeams;
+
+        /**
+         * Encodes the specified RoleTeams message. Does not implicitly {@link Enterprise.RoleTeams.verify|verify} messages.
+         * @param message RoleTeams message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IRoleTeams, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RoleTeams message, length delimited. Does not implicitly {@link Enterprise.RoleTeams.verify|verify} messages.
+         * @param message RoleTeams message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IRoleTeams, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RoleTeams message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RoleTeams
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RoleTeams;
+
+        /**
+         * Decodes a RoleTeams message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RoleTeams
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RoleTeams;
+
+        /**
+         * Verifies a RoleTeams message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RoleTeams message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RoleTeams
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.RoleTeams;
+
+        /**
+         * Creates a plain object from a RoleTeams message. Also converts values to other types if specified.
+         * @param message RoleTeams
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.RoleTeams, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RoleTeams to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** EnterpriseType enum. */
+    enum EnterpriseType {
+        ENTERPRISE_STANDARD = 0,
+        ENTERPRISE_MSP = 1
+    }
+
+    /** Properties of an EnterpriseRegistration. */
+    interface IEnterpriseRegistration {
+
+        /** EnterpriseRegistration encryptedTreeKey */
+        encryptedTreeKey?: (Uint8Array|null);
+
+        /** EnterpriseRegistration enterpriseName */
+        enterpriseName?: (string|null);
+
+        /** EnterpriseRegistration rootNodeData */
+        rootNodeData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration adminUserData */
+        adminUserData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration adminName */
+        adminName?: (string|null);
+
+        /** EnterpriseRegistration roleData */
+        roleData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration rsaKeyPair */
+        rsaKeyPair?: (Enterprise.IEnterpriseKeyPairRequest|null);
+
+        /** EnterpriseRegistration numberSeats */
+        numberSeats?: (number|null);
+
+        /** EnterpriseRegistration enterpriseType */
+        enterpriseType?: (Enterprise.EnterpriseType|null);
+
+        /** EnterpriseRegistration rolePublicKey */
+        rolePublicKey?: (Uint8Array|null);
+
+        /** EnterpriseRegistration rolePrivateKeyEncryptedWithRoleKey */
+        rolePrivateKeyEncryptedWithRoleKey?: (Uint8Array|null);
+
+        /** EnterpriseRegistration roleKeyEncryptedWithTreeKey */
+        roleKeyEncryptedWithTreeKey?: (Uint8Array|null);
+    }
+
+    /** Represents an EnterpriseRegistration. */
+    class EnterpriseRegistration implements IEnterpriseRegistration {
+
+        /**
+         * Constructs a new EnterpriseRegistration.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseRegistration);
+
+        /** EnterpriseRegistration encryptedTreeKey. */
+        public encryptedTreeKey: Uint8Array;
+
+        /** EnterpriseRegistration enterpriseName. */
+        public enterpriseName: string;
+
+        /** EnterpriseRegistration rootNodeData. */
+        public rootNodeData: Uint8Array;
+
+        /** EnterpriseRegistration adminUserData. */
+        public adminUserData: Uint8Array;
+
+        /** EnterpriseRegistration adminName. */
+        public adminName: string;
+
+        /** EnterpriseRegistration roleData. */
+        public roleData: Uint8Array;
+
+        /** EnterpriseRegistration rsaKeyPair. */
+        public rsaKeyPair?: (Enterprise.IEnterpriseKeyPairRequest|null);
+
+        /** EnterpriseRegistration numberSeats. */
+        public numberSeats: number;
+
+        /** EnterpriseRegistration enterpriseType. */
+        public enterpriseType: Enterprise.EnterpriseType;
+
+        /** EnterpriseRegistration rolePublicKey. */
+        public rolePublicKey: Uint8Array;
+
+        /** EnterpriseRegistration rolePrivateKeyEncryptedWithRoleKey. */
+        public rolePrivateKeyEncryptedWithRoleKey: Uint8Array;
+
+        /** EnterpriseRegistration roleKeyEncryptedWithTreeKey. */
+        public roleKeyEncryptedWithTreeKey: Uint8Array;
+
+        /**
+         * Creates a new EnterpriseRegistration instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseRegistration instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseRegistration): Enterprise.EnterpriseRegistration;
+
+        /**
+         * Encodes the specified EnterpriseRegistration message. Does not implicitly {@link Enterprise.EnterpriseRegistration.verify|verify} messages.
+         * @param message EnterpriseRegistration message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseRegistration, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseRegistration message, length delimited. Does not implicitly {@link Enterprise.EnterpriseRegistration.verify|verify} messages.
+         * @param message EnterpriseRegistration message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseRegistration, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseRegistration message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseRegistration
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseRegistration;
+
+        /**
+         * Decodes an EnterpriseRegistration message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseRegistration
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseRegistration;
+
+        /**
+         * Verifies an EnterpriseRegistration message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseRegistration message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseRegistration
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseRegistration;
+
+        /**
+         * Creates a plain object from an EnterpriseRegistration message. Also converts values to other types if specified.
+         * @param message EnterpriseRegistration
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseRegistration, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseRegistration to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DomainPasswordRulesRequest. */
+    interface IDomainPasswordRulesRequest {
+
+        /** DomainPasswordRulesRequest username */
+        username?: (string|null);
+    }
+
+    /** Represents a DomainPasswordRulesRequest. */
+    class DomainPasswordRulesRequest implements IDomainPasswordRulesRequest {
+
+        /**
+         * Constructs a new DomainPasswordRulesRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IDomainPasswordRulesRequest);
+
+        /** DomainPasswordRulesRequest username. */
+        public username: string;
+
+        /**
+         * Creates a new DomainPasswordRulesRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DomainPasswordRulesRequest instance
+         */
+        public static create(properties?: Enterprise.IDomainPasswordRulesRequest): Enterprise.DomainPasswordRulesRequest;
+
+        /**
+         * Encodes the specified DomainPasswordRulesRequest message. Does not implicitly {@link Enterprise.DomainPasswordRulesRequest.verify|verify} messages.
+         * @param message DomainPasswordRulesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IDomainPasswordRulesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DomainPasswordRulesRequest message, length delimited. Does not implicitly {@link Enterprise.DomainPasswordRulesRequest.verify|verify} messages.
+         * @param message DomainPasswordRulesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IDomainPasswordRulesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DomainPasswordRulesRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DomainPasswordRulesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.DomainPasswordRulesRequest;
+
+        /**
+         * Decodes a DomainPasswordRulesRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DomainPasswordRulesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.DomainPasswordRulesRequest;
+
+        /**
+         * Verifies a DomainPasswordRulesRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DomainPasswordRulesRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DomainPasswordRulesRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.DomainPasswordRulesRequest;
+
+        /**
+         * Creates a plain object from a DomainPasswordRulesRequest message. Also converts values to other types if specified.
+         * @param message DomainPasswordRulesRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.DomainPasswordRulesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DomainPasswordRulesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DomainPasswordRulesResponse. */
+    interface IDomainPasswordRulesResponse {
+
+        /** DomainPasswordRulesResponse maxEnforcementValue */
+        maxEnforcementValue?: (number|null);
+    }
+
+    /** Represents a DomainPasswordRulesResponse. */
+    class DomainPasswordRulesResponse implements IDomainPasswordRulesResponse {
+
+        /**
+         * Constructs a new DomainPasswordRulesResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IDomainPasswordRulesResponse);
+
+        /** DomainPasswordRulesResponse maxEnforcementValue. */
+        public maxEnforcementValue: number;
+
+        /**
+         * Creates a new DomainPasswordRulesResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DomainPasswordRulesResponse instance
+         */
+        public static create(properties?: Enterprise.IDomainPasswordRulesResponse): Enterprise.DomainPasswordRulesResponse;
+
+        /**
+         * Encodes the specified DomainPasswordRulesResponse message. Does not implicitly {@link Enterprise.DomainPasswordRulesResponse.verify|verify} messages.
+         * @param message DomainPasswordRulesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IDomainPasswordRulesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DomainPasswordRulesResponse message, length delimited. Does not implicitly {@link Enterprise.DomainPasswordRulesResponse.verify|verify} messages.
+         * @param message DomainPasswordRulesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IDomainPasswordRulesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DomainPasswordRulesResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DomainPasswordRulesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.DomainPasswordRulesResponse;
+
+        /**
+         * Decodes a DomainPasswordRulesResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DomainPasswordRulesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.DomainPasswordRulesResponse;
+
+        /**
+         * Verifies a DomainPasswordRulesResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DomainPasswordRulesResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DomainPasswordRulesResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.DomainPasswordRulesResponse;
+
+        /**
+         * Creates a plain object from a DomainPasswordRulesResponse message. Also converts values to other types if specified.
+         * @param message DomainPasswordRulesResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.DomainPasswordRulesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DomainPasswordRulesResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -13787,6 +15298,9 @@ export namespace Tokens {
 
         /** LoginToken supportedLanguage */
         supportedLanguage?: (Authentication.SupportedLanguage|null);
+
+        /** LoginToken username */
+        username?: (string|null);
     }
 
     /** Represents a LoginToken. */
@@ -13830,6 +15344,9 @@ export namespace Tokens {
 
         /** LoginToken supportedLanguage. */
         public supportedLanguage: Authentication.SupportedLanguage;
+
+        /** LoginToken username. */
+        public username: string;
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -16003,1162 +17520,6 @@ export namespace Tokens {
 
         /**
          * Converts this ProcessToken to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-}
-
-/** Namespace Enterprise. */
-export namespace Enterprise {
-
-    /** Properties of an EnterpriseKeyPairRequest. */
-    interface IEnterpriseKeyPairRequest {
-
-        /** EnterpriseKeyPairRequest enterprisePublicKey */
-        enterprisePublicKey?: (Uint8Array|null);
-
-        /** EnterpriseKeyPairRequest encryptedEnterprisePrivateKey */
-        encryptedEnterprisePrivateKey?: (Uint8Array|null);
-    }
-
-    /** Represents an EnterpriseKeyPairRequest. */
-    class EnterpriseKeyPairRequest implements IEnterpriseKeyPairRequest {
-
-        /**
-         * Constructs a new EnterpriseKeyPairRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IEnterpriseKeyPairRequest);
-
-        /** EnterpriseKeyPairRequest enterprisePublicKey. */
-        public enterprisePublicKey: Uint8Array;
-
-        /** EnterpriseKeyPairRequest encryptedEnterprisePrivateKey. */
-        public encryptedEnterprisePrivateKey: Uint8Array;
-
-        /**
-         * Creates a new EnterpriseKeyPairRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns EnterpriseKeyPairRequest instance
-         */
-        public static create(properties?: Enterprise.IEnterpriseKeyPairRequest): Enterprise.EnterpriseKeyPairRequest;
-
-        /**
-         * Encodes the specified EnterpriseKeyPairRequest message. Does not implicitly {@link Enterprise.EnterpriseKeyPairRequest.verify|verify} messages.
-         * @param message EnterpriseKeyPairRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IEnterpriseKeyPairRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified EnterpriseKeyPairRequest message, length delimited. Does not implicitly {@link Enterprise.EnterpriseKeyPairRequest.verify|verify} messages.
-         * @param message EnterpriseKeyPairRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IEnterpriseKeyPairRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an EnterpriseKeyPairRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns EnterpriseKeyPairRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseKeyPairRequest;
-
-        /**
-         * Decodes an EnterpriseKeyPairRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns EnterpriseKeyPairRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseKeyPairRequest;
-
-        /**
-         * Verifies an EnterpriseKeyPairRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an EnterpriseKeyPairRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns EnterpriseKeyPairRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseKeyPairRequest;
-
-        /**
-         * Creates a plain object from an EnterpriseKeyPairRequest message. Also converts values to other types if specified.
-         * @param message EnterpriseKeyPairRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.EnterpriseKeyPairRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this EnterpriseKeyPairRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a GetTeamMemberRequest. */
-    interface IGetTeamMemberRequest {
-
-        /** GetTeamMemberRequest teamUid */
-        teamUid?: (Uint8Array|null);
-    }
-
-    /** Represents a GetTeamMemberRequest. */
-    class GetTeamMemberRequest implements IGetTeamMemberRequest {
-
-        /**
-         * Constructs a new GetTeamMemberRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IGetTeamMemberRequest);
-
-        /** GetTeamMemberRequest teamUid. */
-        public teamUid: Uint8Array;
-
-        /**
-         * Creates a new GetTeamMemberRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns GetTeamMemberRequest instance
-         */
-        public static create(properties?: Enterprise.IGetTeamMemberRequest): Enterprise.GetTeamMemberRequest;
-
-        /**
-         * Encodes the specified GetTeamMemberRequest message. Does not implicitly {@link Enterprise.GetTeamMemberRequest.verify|verify} messages.
-         * @param message GetTeamMemberRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IGetTeamMemberRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified GetTeamMemberRequest message, length delimited. Does not implicitly {@link Enterprise.GetTeamMemberRequest.verify|verify} messages.
-         * @param message GetTeamMemberRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IGetTeamMemberRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a GetTeamMemberRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns GetTeamMemberRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.GetTeamMemberRequest;
-
-        /**
-         * Decodes a GetTeamMemberRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns GetTeamMemberRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.GetTeamMemberRequest;
-
-        /**
-         * Verifies a GetTeamMemberRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a GetTeamMemberRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns GetTeamMemberRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.GetTeamMemberRequest;
-
-        /**
-         * Creates a plain object from a GetTeamMemberRequest message. Also converts values to other types if specified.
-         * @param message GetTeamMemberRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.GetTeamMemberRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this GetTeamMemberRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an EnterpriseUser. */
-    interface IEnterpriseUser {
-
-        /** EnterpriseUser enterpriseUserId */
-        enterpriseUserId?: (number|Long|null);
-
-        /** EnterpriseUser email */
-        email?: (string|null);
-
-        /** EnterpriseUser enterpriseUsername */
-        enterpriseUsername?: (string|null);
-    }
-
-    /** Represents an EnterpriseUser. */
-    class EnterpriseUser implements IEnterpriseUser {
-
-        /**
-         * Constructs a new EnterpriseUser.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IEnterpriseUser);
-
-        /** EnterpriseUser enterpriseUserId. */
-        public enterpriseUserId: (number|Long);
-
-        /** EnterpriseUser email. */
-        public email: string;
-
-        /** EnterpriseUser enterpriseUsername. */
-        public enterpriseUsername: string;
-
-        /**
-         * Creates a new EnterpriseUser instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns EnterpriseUser instance
-         */
-        public static create(properties?: Enterprise.IEnterpriseUser): Enterprise.EnterpriseUser;
-
-        /**
-         * Encodes the specified EnterpriseUser message. Does not implicitly {@link Enterprise.EnterpriseUser.verify|verify} messages.
-         * @param message EnterpriseUser message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IEnterpriseUser, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified EnterpriseUser message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUser.verify|verify} messages.
-         * @param message EnterpriseUser message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IEnterpriseUser, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an EnterpriseUser message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns EnterpriseUser
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUser;
-
-        /**
-         * Decodes an EnterpriseUser message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns EnterpriseUser
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUser;
-
-        /**
-         * Verifies an EnterpriseUser message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an EnterpriseUser message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns EnterpriseUser
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUser;
-
-        /**
-         * Creates a plain object from an EnterpriseUser message. Also converts values to other types if specified.
-         * @param message EnterpriseUser
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.EnterpriseUser, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this EnterpriseUser to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a GetTeamMemberResponse. */
-    interface IGetTeamMemberResponse {
-
-        /** GetTeamMemberResponse enterpriseUser */
-        enterpriseUser?: (Enterprise.IEnterpriseUser[]|null);
-    }
-
-    /** Represents a GetTeamMemberResponse. */
-    class GetTeamMemberResponse implements IGetTeamMemberResponse {
-
-        /**
-         * Constructs a new GetTeamMemberResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IGetTeamMemberResponse);
-
-        /** GetTeamMemberResponse enterpriseUser. */
-        public enterpriseUser: Enterprise.IEnterpriseUser[];
-
-        /**
-         * Creates a new GetTeamMemberResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns GetTeamMemberResponse instance
-         */
-        public static create(properties?: Enterprise.IGetTeamMemberResponse): Enterprise.GetTeamMemberResponse;
-
-        /**
-         * Encodes the specified GetTeamMemberResponse message. Does not implicitly {@link Enterprise.GetTeamMemberResponse.verify|verify} messages.
-         * @param message GetTeamMemberResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IGetTeamMemberResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified GetTeamMemberResponse message, length delimited. Does not implicitly {@link Enterprise.GetTeamMemberResponse.verify|verify} messages.
-         * @param message GetTeamMemberResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IGetTeamMemberResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a GetTeamMemberResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns GetTeamMemberResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.GetTeamMemberResponse;
-
-        /**
-         * Decodes a GetTeamMemberResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns GetTeamMemberResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.GetTeamMemberResponse;
-
-        /**
-         * Verifies a GetTeamMemberResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a GetTeamMemberResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns GetTeamMemberResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.GetTeamMemberResponse;
-
-        /**
-         * Creates a plain object from a GetTeamMemberResponse message. Also converts values to other types if specified.
-         * @param message GetTeamMemberResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.GetTeamMemberResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this GetTeamMemberResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an EnterpriseUserIds. */
-    interface IEnterpriseUserIds {
-
-        /** EnterpriseUserIds enterpriseUserId */
-        enterpriseUserId?: ((number|Long)[]|null);
-    }
-
-    /** Represents an EnterpriseUserIds. */
-    class EnterpriseUserIds implements IEnterpriseUserIds {
-
-        /**
-         * Constructs a new EnterpriseUserIds.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IEnterpriseUserIds);
-
-        /** EnterpriseUserIds enterpriseUserId. */
-        public enterpriseUserId: (number|Long)[];
-
-        /**
-         * Creates a new EnterpriseUserIds instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns EnterpriseUserIds instance
-         */
-        public static create(properties?: Enterprise.IEnterpriseUserIds): Enterprise.EnterpriseUserIds;
-
-        /**
-         * Encodes the specified EnterpriseUserIds message. Does not implicitly {@link Enterprise.EnterpriseUserIds.verify|verify} messages.
-         * @param message EnterpriseUserIds message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IEnterpriseUserIds, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified EnterpriseUserIds message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserIds.verify|verify} messages.
-         * @param message EnterpriseUserIds message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IEnterpriseUserIds, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an EnterpriseUserIds message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns EnterpriseUserIds
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserIds;
-
-        /**
-         * Decodes an EnterpriseUserIds message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns EnterpriseUserIds
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserIds;
-
-        /**
-         * Verifies an EnterpriseUserIds message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an EnterpriseUserIds message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns EnterpriseUserIds
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserIds;
-
-        /**
-         * Creates a plain object from an EnterpriseUserIds message. Also converts values to other types if specified.
-         * @param message EnterpriseUserIds
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.EnterpriseUserIds, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this EnterpriseUserIds to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an EnterprisePersonalAccount. */
-    interface IEnterprisePersonalAccount {
-
-        /** EnterprisePersonalAccount email */
-        email?: (string|null);
-
-        /** EnterprisePersonalAccount OBSOLETE_FIELD */
-        OBSOLETE_FIELD?: (Uint8Array|null);
-    }
-
-    /** Represents an EnterprisePersonalAccount. */
-    class EnterprisePersonalAccount implements IEnterprisePersonalAccount {
-
-        /**
-         * Constructs a new EnterprisePersonalAccount.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IEnterprisePersonalAccount);
-
-        /** EnterprisePersonalAccount email. */
-        public email: string;
-
-        /** EnterprisePersonalAccount OBSOLETE_FIELD. */
-        public OBSOLETE_FIELD: Uint8Array;
-
-        /**
-         * Creates a new EnterprisePersonalAccount instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns EnterprisePersonalAccount instance
-         */
-        public static create(properties?: Enterprise.IEnterprisePersonalAccount): Enterprise.EnterprisePersonalAccount;
-
-        /**
-         * Encodes the specified EnterprisePersonalAccount message. Does not implicitly {@link Enterprise.EnterprisePersonalAccount.verify|verify} messages.
-         * @param message EnterprisePersonalAccount message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IEnterprisePersonalAccount, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified EnterprisePersonalAccount message, length delimited. Does not implicitly {@link Enterprise.EnterprisePersonalAccount.verify|verify} messages.
-         * @param message EnterprisePersonalAccount message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IEnterprisePersonalAccount, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an EnterprisePersonalAccount message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns EnterprisePersonalAccount
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterprisePersonalAccount;
-
-        /**
-         * Decodes an EnterprisePersonalAccount message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns EnterprisePersonalAccount
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterprisePersonalAccount;
-
-        /**
-         * Verifies an EnterprisePersonalAccount message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an EnterprisePersonalAccount message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns EnterprisePersonalAccount
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.EnterprisePersonalAccount;
-
-        /**
-         * Creates a plain object from an EnterprisePersonalAccount message. Also converts values to other types if specified.
-         * @param message EnterprisePersonalAccount
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.EnterprisePersonalAccount, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this EnterprisePersonalAccount to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an EncryptedTeamKeyRequest. */
-    interface IEncryptedTeamKeyRequest {
-
-        /** EncryptedTeamKeyRequest teamUid */
-        teamUid?: (Uint8Array|null);
-
-        /** EncryptedTeamKeyRequest encryptedTeamKey */
-        encryptedTeamKey?: (Uint8Array|null);
-    }
-
-    /** Represents an EncryptedTeamKeyRequest. */
-    class EncryptedTeamKeyRequest implements IEncryptedTeamKeyRequest {
-
-        /**
-         * Constructs a new EncryptedTeamKeyRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IEncryptedTeamKeyRequest);
-
-        /** EncryptedTeamKeyRequest teamUid. */
-        public teamUid: Uint8Array;
-
-        /** EncryptedTeamKeyRequest encryptedTeamKey. */
-        public encryptedTeamKey: Uint8Array;
-
-        /**
-         * Creates a new EncryptedTeamKeyRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns EncryptedTeamKeyRequest instance
-         */
-        public static create(properties?: Enterprise.IEncryptedTeamKeyRequest): Enterprise.EncryptedTeamKeyRequest;
-
-        /**
-         * Encodes the specified EncryptedTeamKeyRequest message. Does not implicitly {@link Enterprise.EncryptedTeamKeyRequest.verify|verify} messages.
-         * @param message EncryptedTeamKeyRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IEncryptedTeamKeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified EncryptedTeamKeyRequest message, length delimited. Does not implicitly {@link Enterprise.EncryptedTeamKeyRequest.verify|verify} messages.
-         * @param message EncryptedTeamKeyRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IEncryptedTeamKeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an EncryptedTeamKeyRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns EncryptedTeamKeyRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EncryptedTeamKeyRequest;
-
-        /**
-         * Decodes an EncryptedTeamKeyRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns EncryptedTeamKeyRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EncryptedTeamKeyRequest;
-
-        /**
-         * Verifies an EncryptedTeamKeyRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an EncryptedTeamKeyRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns EncryptedTeamKeyRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.EncryptedTeamKeyRequest;
-
-        /**
-         * Creates a plain object from an EncryptedTeamKeyRequest message. Also converts values to other types if specified.
-         * @param message EncryptedTeamKeyRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.EncryptedTeamKeyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this EncryptedTeamKeyRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a ReEncryptedData. */
-    interface IReEncryptedData {
-
-        /** ReEncryptedData id */
-        id?: (number|Long|null);
-
-        /** ReEncryptedData data */
-        data?: (string|null);
-    }
-
-    /** Represents a ReEncryptedData. */
-    class ReEncryptedData implements IReEncryptedData {
-
-        /**
-         * Constructs a new ReEncryptedData.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IReEncryptedData);
-
-        /** ReEncryptedData id. */
-        public id: (number|Long);
-
-        /** ReEncryptedData data. */
-        public data: string;
-
-        /**
-         * Creates a new ReEncryptedData instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ReEncryptedData instance
-         */
-        public static create(properties?: Enterprise.IReEncryptedData): Enterprise.ReEncryptedData;
-
-        /**
-         * Encodes the specified ReEncryptedData message. Does not implicitly {@link Enterprise.ReEncryptedData.verify|verify} messages.
-         * @param message ReEncryptedData message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IReEncryptedData, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ReEncryptedData message, length delimited. Does not implicitly {@link Enterprise.ReEncryptedData.verify|verify} messages.
-         * @param message ReEncryptedData message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IReEncryptedData, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ReEncryptedData message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ReEncryptedData
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ReEncryptedData;
-
-        /**
-         * Decodes a ReEncryptedData message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ReEncryptedData
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ReEncryptedData;
-
-        /**
-         * Verifies a ReEncryptedData message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ReEncryptedData message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ReEncryptedData
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.ReEncryptedData;
-
-        /**
-         * Creates a plain object from a ReEncryptedData message. Also converts values to other types if specified.
-         * @param message ReEncryptedData
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.ReEncryptedData, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ReEncryptedData to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a ReEncryptedRoleKey. */
-    interface IReEncryptedRoleKey {
-
-        /** ReEncryptedRoleKey roleId */
-        roleId?: (number|Long|null);
-
-        /** ReEncryptedRoleKey encryptedRoleKey */
-        encryptedRoleKey?: (Uint8Array|null);
-    }
-
-    /** Represents a ReEncryptedRoleKey. */
-    class ReEncryptedRoleKey implements IReEncryptedRoleKey {
-
-        /**
-         * Constructs a new ReEncryptedRoleKey.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IReEncryptedRoleKey);
-
-        /** ReEncryptedRoleKey roleId. */
-        public roleId: (number|Long);
-
-        /** ReEncryptedRoleKey encryptedRoleKey. */
-        public encryptedRoleKey: Uint8Array;
-
-        /**
-         * Creates a new ReEncryptedRoleKey instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ReEncryptedRoleKey instance
-         */
-        public static create(properties?: Enterprise.IReEncryptedRoleKey): Enterprise.ReEncryptedRoleKey;
-
-        /**
-         * Encodes the specified ReEncryptedRoleKey message. Does not implicitly {@link Enterprise.ReEncryptedRoleKey.verify|verify} messages.
-         * @param message ReEncryptedRoleKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IReEncryptedRoleKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ReEncryptedRoleKey message, length delimited. Does not implicitly {@link Enterprise.ReEncryptedRoleKey.verify|verify} messages.
-         * @param message ReEncryptedRoleKey message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IReEncryptedRoleKey, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ReEncryptedRoleKey message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ReEncryptedRoleKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ReEncryptedRoleKey;
-
-        /**
-         * Decodes a ReEncryptedRoleKey message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ReEncryptedRoleKey
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ReEncryptedRoleKey;
-
-        /**
-         * Verifies a ReEncryptedRoleKey message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ReEncryptedRoleKey message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ReEncryptedRoleKey
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.ReEncryptedRoleKey;
-
-        /**
-         * Creates a plain object from a ReEncryptedRoleKey message. Also converts values to other types if specified.
-         * @param message ReEncryptedRoleKey
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.ReEncryptedRoleKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ReEncryptedRoleKey to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a NodeToManagedCompanyRequest. */
-    interface INodeToManagedCompanyRequest {
-
-        /** NodeToManagedCompanyRequest companyId */
-        companyId?: (number|null);
-
-        /** NodeToManagedCompanyRequest nodes */
-        nodes?: (Enterprise.IReEncryptedData[]|null);
-
-        /** NodeToManagedCompanyRequest roles */
-        roles?: (Enterprise.IReEncryptedData[]|null);
-
-        /** NodeToManagedCompanyRequest users */
-        users?: (Enterprise.IReEncryptedData[]|null);
-
-        /** NodeToManagedCompanyRequest roleKeys */
-        roleKeys?: (Enterprise.IReEncryptedRoleKey[]|null);
-    }
-
-    /** Represents a NodeToManagedCompanyRequest. */
-    class NodeToManagedCompanyRequest implements INodeToManagedCompanyRequest {
-
-        /**
-         * Constructs a new NodeToManagedCompanyRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.INodeToManagedCompanyRequest);
-
-        /** NodeToManagedCompanyRequest companyId. */
-        public companyId: number;
-
-        /** NodeToManagedCompanyRequest nodes. */
-        public nodes: Enterprise.IReEncryptedData[];
-
-        /** NodeToManagedCompanyRequest roles. */
-        public roles: Enterprise.IReEncryptedData[];
-
-        /** NodeToManagedCompanyRequest users. */
-        public users: Enterprise.IReEncryptedData[];
-
-        /** NodeToManagedCompanyRequest roleKeys. */
-        public roleKeys: Enterprise.IReEncryptedRoleKey[];
-
-        /**
-         * Creates a new NodeToManagedCompanyRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns NodeToManagedCompanyRequest instance
-         */
-        public static create(properties?: Enterprise.INodeToManagedCompanyRequest): Enterprise.NodeToManagedCompanyRequest;
-
-        /**
-         * Encodes the specified NodeToManagedCompanyRequest message. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
-         * @param message NodeToManagedCompanyRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.INodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified NodeToManagedCompanyRequest message, length delimited. Does not implicitly {@link Enterprise.NodeToManagedCompanyRequest.verify|verify} messages.
-         * @param message NodeToManagedCompanyRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.INodeToManagedCompanyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns NodeToManagedCompanyRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.NodeToManagedCompanyRequest;
-
-        /**
-         * Decodes a NodeToManagedCompanyRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns NodeToManagedCompanyRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.NodeToManagedCompanyRequest;
-
-        /**
-         * Verifies a NodeToManagedCompanyRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a NodeToManagedCompanyRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns NodeToManagedCompanyRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.NodeToManagedCompanyRequest;
-
-        /**
-         * Creates a plain object from a NodeToManagedCompanyRequest message. Also converts values to other types if specified.
-         * @param message NodeToManagedCompanyRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.NodeToManagedCompanyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this NodeToManagedCompanyRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RoleTeam. */
-    interface IRoleTeam {
-
-        /** RoleTeam roleId */
-        roleId?: (number|Long|null);
-
-        /** RoleTeam teamUid */
-        teamUid?: (Uint8Array|null);
-    }
-
-    /** Represents a RoleTeam. */
-    class RoleTeam implements IRoleTeam {
-
-        /**
-         * Constructs a new RoleTeam.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRoleTeam);
-
-        /** RoleTeam roleId. */
-        public roleId: (number|Long);
-
-        /** RoleTeam teamUid. */
-        public teamUid: Uint8Array;
-
-        /**
-         * Creates a new RoleTeam instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RoleTeam instance
-         */
-        public static create(properties?: Enterprise.IRoleTeam): Enterprise.RoleTeam;
-
-        /**
-         * Encodes the specified RoleTeam message. Does not implicitly {@link Enterprise.RoleTeam.verify|verify} messages.
-         * @param message RoleTeam message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRoleTeam, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RoleTeam message, length delimited. Does not implicitly {@link Enterprise.RoleTeam.verify|verify} messages.
-         * @param message RoleTeam message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRoleTeam, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RoleTeam message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RoleTeam
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RoleTeam;
-
-        /**
-         * Decodes a RoleTeam message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RoleTeam
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RoleTeam;
-
-        /**
-         * Verifies a RoleTeam message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RoleTeam message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RoleTeam
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RoleTeam;
-
-        /**
-         * Creates a plain object from a RoleTeam message. Also converts values to other types if specified.
-         * @param message RoleTeam
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RoleTeam, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RoleTeam to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RoleTeams. */
-    interface IRoleTeams {
-
-        /** RoleTeams roleTeam */
-        roleTeam?: (Enterprise.IRoleTeam[]|null);
-    }
-
-    /** Represents a RoleTeams. */
-    class RoleTeams implements IRoleTeams {
-
-        /**
-         * Constructs a new RoleTeams.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRoleTeams);
-
-        /** RoleTeams roleTeam. */
-        public roleTeam: Enterprise.IRoleTeam[];
-
-        /**
-         * Creates a new RoleTeams instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RoleTeams instance
-         */
-        public static create(properties?: Enterprise.IRoleTeams): Enterprise.RoleTeams;
-
-        /**
-         * Encodes the specified RoleTeams message. Does not implicitly {@link Enterprise.RoleTeams.verify|verify} messages.
-         * @param message RoleTeams message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRoleTeams, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RoleTeams message, length delimited. Does not implicitly {@link Enterprise.RoleTeams.verify|verify} messages.
-         * @param message RoleTeams message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRoleTeams, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RoleTeams message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RoleTeams
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RoleTeams;
-
-        /**
-         * Decodes a RoleTeams message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RoleTeams
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RoleTeams;
-
-        /**
-         * Verifies a RoleTeams message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RoleTeams message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RoleTeams
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RoleTeams;
-
-        /**
-         * Creates a plain object from a RoleTeams message. Also converts values to other types if specified.
-         * @param message RoleTeams
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RoleTeams, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RoleTeams to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -23500,7 +23861,10 @@ export namespace SsoCloud {
     interface ISsoCloudSettingValue {
 
         /** SsoCloudSettingValue settingId */
-        settingId?: (string|null);
+        settingId?: (number|Long|null);
+
+        /** SsoCloudSettingValue settingName */
+        settingName?: (string|null);
 
         /** SsoCloudSettingValue label */
         label?: (string|null);
@@ -23537,7 +23901,10 @@ export namespace SsoCloud {
         constructor(properties?: SsoCloud.ISsoCloudSettingValue);
 
         /** SsoCloudSettingValue settingId. */
-        public settingId: string;
+        public settingId: (number|Long);
+
+        /** SsoCloudSettingValue settingName. */
+        public settingName: string;
 
         /** SsoCloudSettingValue label. */
         public label: string;
@@ -23638,7 +24005,10 @@ export namespace SsoCloud {
     interface ISsoCloudSettingAction {
 
         /** SsoCloudSettingAction settingId */
-        settingId?: (string|null);
+        settingId?: (number|Long|null);
+
+        /** SsoCloudSettingAction settingName */
+        settingName?: (string|null);
 
         /** SsoCloudSettingAction operation */
         operation?: (SsoCloud.SsoCloudSettingOperationType|null);
@@ -23660,7 +24030,10 @@ export namespace SsoCloud {
         constructor(properties?: SsoCloud.ISsoCloudSettingAction);
 
         /** SsoCloudSettingAction settingId. */
-        public settingId: string;
+        public settingId: (number|Long);
+
+        /** SsoCloudSettingAction settingName. */
+        public settingName: string;
 
         /** SsoCloudSettingAction operation. */
         public operation: SsoCloud.SsoCloudSettingOperationType;

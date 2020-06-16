@@ -9,6 +9,7 @@ import {
     LoginResponseResultCode
 } from "./commands";
 import {
+    generateEncryptionKey,
     isTwoFactorResultCode,
     normal64,
     webSafe64,
@@ -306,7 +307,8 @@ export class Auth {
     }
 
     async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array) {
-
+        let publicKey = webSafe64FromBytes(generateEncryptionKey());
+        
         try {
             console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
 
@@ -315,7 +317,12 @@ export class Auth {
             ssoLoginUrl = ssoLoginUrl.substring(pos);
 
             // This should return HTML
-            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken, { "message_session_uid": messageSessionUid });
+            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
+                                                            { "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                                                              "key": publicKey,
+                                                              "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
+                                                              "embedded": "embedded"
+                                                            });
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
 
         } catch (e) {

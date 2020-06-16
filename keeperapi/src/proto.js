@@ -318,6 +318,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           REQUIRES_2FA: 12,
           REQUIRES_AUTH_HASH: 13,
           REQUIRES_USERNAME: 14,
+          AFTER_CLOUD_SSO_LOGIN: 15,
           LOGGED_IN: 99
         }
       },
@@ -1183,6 +1184,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           verificationCode: {
             type: "string",
             id: 23
+          },
+          enterpriseRegistration: {
+            type: "Enterprise.EnterpriseRegistration",
+            id: 24
           }
         }
       },
@@ -1513,6 +1518,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           accountUid: {
             type: "bytes",
             id: 2
+          },
+          deviceId: {
+            type: "int64",
+            id: 3
           }
         }
       },
@@ -1533,6 +1542,239 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           autoRedirect: {
             type: "bool",
             id: 4
+          }
+        }
+      }
+    }
+  },
+  Enterprise: {
+    options: {
+      java_package: "com.keepersecurity.proto",
+      java_outer_classname: "Enterprise"
+    },
+    nested: {
+      EnterpriseKeyPairRequest: {
+        fields: {
+          enterprisePublicKey: {
+            type: "bytes",
+            id: 1
+          },
+          encryptedEnterprisePrivateKey: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      GetTeamMemberRequest: {
+        fields: {
+          teamUid: {
+            type: "bytes",
+            id: 1
+          }
+        }
+      },
+      EnterpriseUser: {
+        fields: {
+          enterpriseUserId: {
+            type: "int64",
+            id: 1
+          },
+          email: {
+            type: "string",
+            id: 2
+          },
+          enterpriseUsername: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      GetTeamMemberResponse: {
+        fields: {
+          enterpriseUser: {
+            rule: "repeated",
+            type: "EnterpriseUser",
+            id: 1
+          }
+        }
+      },
+      EnterpriseUserIds: {
+        fields: {
+          enterpriseUserId: {
+            rule: "repeated",
+            type: "int64",
+            id: 1
+          }
+        }
+      },
+      EnterprisePersonalAccount: {
+        fields: {
+          email: {
+            type: "string",
+            id: 1
+          },
+          OBSOLETE_FIELD: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      EncryptedTeamKeyRequest: {
+        fields: {
+          teamUid: {
+            type: "bytes",
+            id: 1
+          },
+          encryptedTeamKey: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      ReEncryptedData: {
+        fields: {
+          id: {
+            type: "int64",
+            id: 1
+          },
+          data: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      ReEncryptedRoleKey: {
+        fields: {
+          roleId: {
+            type: "int64",
+            id: 1
+          },
+          encryptedRoleKey: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      NodeToManagedCompanyRequest: {
+        fields: {
+          companyId: {
+            type: "int32",
+            id: 1
+          },
+          nodes: {
+            rule: "repeated",
+            type: "ReEncryptedData",
+            id: 2
+          },
+          roles: {
+            rule: "repeated",
+            type: "ReEncryptedData",
+            id: 3
+          },
+          users: {
+            rule: "repeated",
+            type: "ReEncryptedData",
+            id: 4
+          },
+          roleKeys: {
+            rule: "repeated",
+            type: "ReEncryptedRoleKey",
+            id: 5
+          }
+        }
+      },
+      RoleTeam: {
+        fields: {
+          roleId: {
+            type: "int64",
+            id: 1
+          },
+          teamUid: {
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      RoleTeams: {
+        fields: {
+          roleTeam: {
+            rule: "repeated",
+            type: "RoleTeam",
+            id: 1
+          }
+        }
+      },
+      EnterpriseType: {
+        values: {
+          ENTERPRISE_STANDARD: 0,
+          ENTERPRISE_MSP: 1
+        }
+      },
+      EnterpriseRegistration: {
+        fields: {
+          encryptedTreeKey: {
+            type: "bytes",
+            id: 1
+          },
+          enterpriseName: {
+            type: "string",
+            id: 2
+          },
+          rootNodeData: {
+            type: "bytes",
+            id: 3
+          },
+          adminUserData: {
+            type: "bytes",
+            id: 4
+          },
+          adminName: {
+            type: "string",
+            id: 5
+          },
+          roleData: {
+            type: "bytes",
+            id: 6
+          },
+          rsaKeyPair: {
+            type: "EnterpriseKeyPairRequest",
+            id: 7
+          },
+          numberSeats: {
+            type: "int32",
+            id: 8
+          },
+          enterpriseType: {
+            type: "EnterpriseType",
+            id: 9
+          },
+          rolePublicKey: {
+            type: "bytes",
+            id: 10
+          },
+          rolePrivateKeyEncryptedWithRoleKey: {
+            type: "bytes",
+            id: 11
+          },
+          roleKeyEncryptedWithTreeKey: {
+            type: "bytes",
+            id: 12
+          }
+        }
+      },
+      DomainPasswordRulesRequest: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      DomainPasswordRulesResponse: {
+        fields: {
+          maxEnforcementValue: {
+            type: "int32",
+            id: 1
           }
         }
       }
@@ -2864,6 +3106,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           supportedLanguage: {
             type: "Authentication.SupportedLanguage",
             id: 11
+          },
+          username: {
+            type: "string",
+            id: 12
           }
         }
       },
@@ -3340,165 +3586,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           supportedLanguage: {
             type: "Authentication.SupportedLanguage",
             id: 4
-          }
-        }
-      }
-    }
-  },
-  Enterprise: {
-    options: {
-      java_package: "com.keepersecurity.proto",
-      java_outer_classname: "Enterprise"
-    },
-    nested: {
-      EnterpriseKeyPairRequest: {
-        fields: {
-          enterprisePublicKey: {
-            type: "bytes",
-            id: 1
-          },
-          encryptedEnterprisePrivateKey: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      GetTeamMemberRequest: {
-        fields: {
-          teamUid: {
-            type: "bytes",
-            id: 1
-          }
-        }
-      },
-      EnterpriseUser: {
-        fields: {
-          enterpriseUserId: {
-            type: "int64",
-            id: 1
-          },
-          email: {
-            type: "string",
-            id: 2
-          },
-          enterpriseUsername: {
-            type: "string",
-            id: 3
-          }
-        }
-      },
-      GetTeamMemberResponse: {
-        fields: {
-          enterpriseUser: {
-            rule: "repeated",
-            type: "EnterpriseUser",
-            id: 1
-          }
-        }
-      },
-      EnterpriseUserIds: {
-        fields: {
-          enterpriseUserId: {
-            rule: "repeated",
-            type: "int64",
-            id: 1
-          }
-        }
-      },
-      EnterprisePersonalAccount: {
-        fields: {
-          email: {
-            type: "string",
-            id: 1
-          },
-          OBSOLETE_FIELD: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      EncryptedTeamKeyRequest: {
-        fields: {
-          teamUid: {
-            type: "bytes",
-            id: 1
-          },
-          encryptedTeamKey: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      ReEncryptedData: {
-        fields: {
-          id: {
-            type: "int64",
-            id: 1
-          },
-          data: {
-            type: "string",
-            id: 2
-          }
-        }
-      },
-      ReEncryptedRoleKey: {
-        fields: {
-          roleId: {
-            type: "int64",
-            id: 1
-          },
-          encryptedRoleKey: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      NodeToManagedCompanyRequest: {
-        fields: {
-          companyId: {
-            type: "int32",
-            id: 1
-          },
-          nodes: {
-            rule: "repeated",
-            type: "ReEncryptedData",
-            id: 2
-          },
-          roles: {
-            rule: "repeated",
-            type: "ReEncryptedData",
-            id: 3
-          },
-          users: {
-            rule: "repeated",
-            type: "ReEncryptedData",
-            id: 4
-          },
-          roleKeys: {
-            rule: "repeated",
-            type: "ReEncryptedRoleKey",
-            id: 5
-          }
-        }
-      },
-      RoleTeam: {
-        fields: {
-          roleId: {
-            type: "int64",
-            id: 1
-          },
-          teamUid: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      RoleTeams: {
-        fields: {
-          roleTeam: {
-            rule: "repeated",
-            type: "RoleTeam",
-            id: 1
           }
         }
       }
@@ -4717,60 +4804,68 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       SsoCloudSettingValue: {
         fields: {
           settingId: {
-            type: "string",
+            type: "uint64",
             id: 1
           },
-          label: {
+          settingName: {
             type: "string",
             id: 2
           },
-          value: {
+          label: {
             type: "string",
             id: 3
           },
+          value: {
+            type: "string",
+            id: 4
+          },
           valueType: {
             type: "DataType",
-            id: 4
+            id: 5
           },
           ssoRevision: {
             type: "int32",
-            id: 5
+            id: 6
           },
           lastModified: {
             type: "string",
-            id: 6
+            id: 7
           },
           isFromFile: {
             type: "bool",
-            id: 7
+            id: 8
           },
           isEditable: {
             type: "bool",
-            id: 8
+            id: 9
           },
           isRequired: {
             type: "bool",
-            id: 9
+            id: 10
           }
         }
       },
       SsoCloudSettingAction: {
         fields: {
           settingId: {
-            type: "string",
+            type: "uint64",
             id: 1
+          },
+          settingName: {
+            type: "string",
+            id: 2
           },
           operation: {
             type: "SsoCloudSettingOperationType",
-            id: 2
+            id: 3
           },
           value: {
             type: "string",
-            id: 3
+            id: 4
           },
           ssoRevision: {
             type: "int32",
-            id: 4
+            id: 5
           }
         }
       },
