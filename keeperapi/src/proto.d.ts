@@ -1305,6 +1305,9 @@ export namespace Authentication {
 
         /** StartLoginRequest forceNewLogin */
         forceNewLogin?: (boolean|null);
+
+        /** StartLoginRequest deviceSyncCode */
+        deviceSyncCode?: (Uint8Array|null);
     }
 
     /** Represents a StartLoginRequest. */
@@ -1342,6 +1345,9 @@ export namespace Authentication {
 
         /** StartLoginRequest forceNewLogin. */
         public forceNewLogin: boolean;
+
+        /** StartLoginRequest deviceSyncCode. */
+        public deviceSyncCode: Uint8Array;
 
         /**
          * Creates a new StartLoginRequest instance using the specified properties.
@@ -1452,6 +1458,9 @@ export namespace Authentication {
 
         /** LoginResponse salt */
         salt?: (Authentication.ISalt[]|null);
+
+        /** LoginResponse deviceSyncCode */
+        deviceSyncCode?: (Uint8Array|null);
     }
 
     /** Represents a LoginResponse. */
@@ -1498,6 +1507,9 @@ export namespace Authentication {
 
         /** LoginResponse salt. */
         public salt: Authentication.ISalt[];
+
+        /** LoginResponse deviceSyncCode. */
+        public deviceSyncCode: Uint8Array;
 
         /**
          * Creates a new LoginResponse instance using the specified properties.

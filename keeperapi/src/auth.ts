@@ -307,8 +307,10 @@ export class Auth {
     }
 
     async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array) {
-        let publicKey = webSafe64FromBytes(generateEncryptionKey());
-        
+        let keyPair : any = await platform.generateRSAKeyPair2();
+        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+
         try {
             console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
 
@@ -319,7 +321,7 @@ export class Auth {
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
                                                             { "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                                                              "key": publicKey,
+                                                              "key": encodedPublicKey,
                                                               "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
                                                               "embedded": "embedded"
                                                             });

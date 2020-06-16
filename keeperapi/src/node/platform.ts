@@ -5,6 +5,8 @@ import * as https from "https";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
 import * as FormData from "form-data"
+import * as NodeRSA from 'node-rsa';
+
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;
@@ -29,9 +31,18 @@ export const nodePlatform: Platform = class {
         return Buffer.from(data);
     }
 
-    static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
-        // TODO implement node key generation
-        throw "Not Implemented";
+    /**
+     * Returns the keys as Uint8Arrays.
+     */
+    static async generateRSAKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array}> {
+        throw "Not yet implemented";
+    }
+
+    /**
+     * Returns the keys as an object created by the NodeRSA library.
+     */
+    static async generateRSAKeyPair2(): Promise<any> {
+        return new NodeRSA({b: 1024});
     }
 
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {

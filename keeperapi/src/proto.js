@@ -366,6 +366,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           forceNewLogin: {
             type: "bool",
             id: 9
+          },
+          deviceSyncCode: {
+            type: "bytes",
+            id: 10
           }
         }
       },
@@ -420,6 +424,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "Salt",
             id: 12
+          },
+          deviceSyncCode: {
+            type: "bytes",
+            id: 13
           }
         }
       },
