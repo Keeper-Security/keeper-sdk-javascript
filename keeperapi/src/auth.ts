@@ -1,33 +1,29 @@
 import {ClientConfiguration, LoginError} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
+import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
-    AuthorizedCommand,
-    KeeperCommand,
-    LoginCommand,
-    LoginResponse,
-    LoginResponseResultCode
-} from "./commands";
-import {
+    decryptFromStorage,
+    generateUidBytes,
     isTwoFactorResultCode,
     normal64,
     webSafe64,
-    decryptFromStorage,
-    webSafe64FromBytes,
-    generateUidBytes
+    webSafe64FromBytes
 } from "./utils";
 import {
     requestDeviceVerificationMessage,
     RestMessage,
-    startLoginMessage, twoFactorSend2FAPushMessage,
+    ssoSamlMessage,
+    startLoginMessage,
+    twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     validateAuthHashMessage
 } from './restMessages'
 import * as WebSocket from 'faye-websocket'
 import {Authentication} from './proto';
-import {ssoSamlMessage} from './restMessages'
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -268,16 +264,18 @@ export class Auth {
                 pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
                 break;
         }
+        const codeLessPush = pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH || pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER
         if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
-            const sentPushMsg = twoFactorSend2FAPushMessage({
+            const sendPushRequest: ITwoFactorSendPushRequest = {
                 encryptedLoginToken: loginResponse.encryptedLoginToken,
                 pushType: pushType
-            })
-            await this.executeRest(sentPushMsg)
+            }
+            if (codeLessPush) {
+                sendPushRequest.expireIn = await this.options.authUI3.getTwoFactorExpiration()
+            }
+            await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
         }
-        if (
-            pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH ||
-            pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER) {
+        if (codeLessPush) {
             const pushMessage = await this.socket.getPushMessage()
             const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
             const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)

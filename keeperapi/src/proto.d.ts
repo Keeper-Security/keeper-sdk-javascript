@@ -6555,15 +6555,6 @@ export namespace Authentication {
         /** DeviceVerificationRequest username */
         username?: (string|null);
 
-        /** DeviceVerificationRequest dontUseClientVersion */
-        dontUseClientVersion?: (string|null);
-
-        /** DeviceVerificationRequest dontUseDeviceName */
-        dontUseDeviceName?: (string|null);
-
-        /** DeviceVerificationRequest dontUseDevicePublicKey */
-        dontUseDevicePublicKey?: (Uint8Array|null);
-
         /** DeviceVerificationRequest verificationChannel */
         verificationChannel?: (string|null);
 
@@ -6585,15 +6576,6 @@ export namespace Authentication {
 
         /** DeviceVerificationRequest username. */
         public username: string;
-
-        /** DeviceVerificationRequest dontUseClientVersion. */
-        public dontUseClientVersion: string;
-
-        /** DeviceVerificationRequest dontUseDeviceName. */
-        public dontUseDeviceName: string;
-
-        /** DeviceVerificationRequest dontUseDevicePublicKey. */
-        public dontUseDevicePublicKey: Uint8Array;
 
         /** DeviceVerificationRequest verificationChannel. */
         public verificationChannel: string;

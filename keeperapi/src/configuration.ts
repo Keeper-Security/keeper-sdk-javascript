@@ -41,6 +41,7 @@ export interface AuthUI {
 
 export interface AuthUI3 {
     getTwoFactorCode(): Promise<TwoFactorInput>;
+    getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
     prompt(message: string): Promise<String>;
 }
 

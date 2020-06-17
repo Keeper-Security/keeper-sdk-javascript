@@ -4,7 +4,7 @@ import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
 import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
-import {ServiceLogger, SsoCloud} from '../src/proto'
+import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
 import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
 
@@ -29,6 +29,7 @@ import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/res
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages'
 import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages'
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
+import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 interface UserInfo {
     account: string,
@@ -75,7 +76,12 @@ const authUI3: AuthUI3 = {
             twoFactorCode,
             desiredExpiration: Number(exp)
         }
-    }
+    },
+    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
+        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+        return Number(exp)
+    },
+    prompt: prompt
 }
 
 async function printVault() {
@@ -270,7 +276,7 @@ async function TestSsoUploadMetadata() {
         console.log("Logged in...");
 
         console.log("Uploading to configuration:", configurationId);
-        
+
         let uploadReq = SsoCloudIdpMetadataRequest.create({
             "ssoSpConfigurationId": configurationId,
             "filename": filename,
@@ -365,7 +371,7 @@ async function TestSsoAddNewConfiguration() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_add';
-    
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
@@ -403,7 +409,7 @@ async function TestSsoGetConfiguration() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
-   
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
@@ -441,7 +447,7 @@ async function TestSsoDeleteConfiguration() {
     const configPrefix = 'sso/config/';
     const addEndpoint = 'sso_cloud_configuration_add';
     const deleteEndpoint = 'sso_cloud_configuration_delete';
-   
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, deleteEndpoint);
         console.log("REST endpoint =", url);
@@ -501,7 +507,7 @@ async function TestSsoSetConfigurationSettingValue() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_setting_set';
-    
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
@@ -561,7 +567,7 @@ async function TestSsoResetConfigurationSettingValue() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_setting_set';
-    
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
@@ -605,7 +611,7 @@ async function TestSsoGetSAMLLog() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_saml_get';
-    
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
@@ -641,7 +647,7 @@ async function TestSsoClearSAMLLog() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_saml_clear';
-    
+
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
         console.log("REST endpoint =", url);
