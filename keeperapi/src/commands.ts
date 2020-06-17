@@ -404,6 +404,14 @@ export interface PublicKeysResponse extends KeeperResponse {
     }[]
 }
 
+export class EditUserCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'edit_user'
+    }
+    email: string
+}
+
 export type EnterpriseDataInclude =
     | "nodes"
     | "users"

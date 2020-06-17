@@ -69,6 +69,14 @@ export const browserPlatform: Platform = class {
         };
     }
 
+    static async generateRSAKeyPair2(): Promise<any> {
+        throw new Error("Not implemented")
+    }
+
+    static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
+        throw new Error("Not implemented")
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKeyHex = base64ToHex(key);
         const pos = _asnhex_getPosArrayOfChildren_AtObj(publicKeyHex, 0);
@@ -168,6 +176,14 @@ export const browserPlatform: Platform = class {
         return browserPlatform.bytesToBase64(new Uint8Array(digest));
     }
 
+    static authVerifierAsString(key: Uint8Array): Promise<string> {
+        throw new Error("Not implemented")
+    }
+
+    static authVerifierAsBytes(key: Uint8Array): Promise<Uint8Array> {
+        throw new Error("Not implemented")
+    }
+
     static async get(url: string, headers: any): Promise<KeeperHttpResponse> {
         let resp = await fetch(url, {
             method: "GET",
@@ -200,8 +216,12 @@ export const browserPlatform: Platform = class {
         }
     }
 
+    static postForm(url: string, request: Uint8Array, formParams: any, headers?: any): Promise<KeeperHttpResponse> {
+        throw new Error("Not implemented")
+    }
+
     static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
-        return null
+        throw new Error("Not implemented")
     }
 
 };

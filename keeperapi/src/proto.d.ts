@@ -1990,6 +1990,186 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a LoginAsUserRequest. */
+    interface ILoginAsUserRequest {
+
+        /** LoginAsUserRequest username */
+        username?: (string|null);
+    }
+
+    /** Represents a LoginAsUserRequest. */
+    class LoginAsUserRequest implements ILoginAsUserRequest {
+
+        /**
+         * Constructs a new LoginAsUserRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ILoginAsUserRequest);
+
+        /** LoginAsUserRequest username. */
+        public username: string;
+
+        /**
+         * Creates a new LoginAsUserRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns LoginAsUserRequest instance
+         */
+        public static create(properties?: Authentication.ILoginAsUserRequest): Authentication.LoginAsUserRequest;
+
+        /**
+         * Encodes the specified LoginAsUserRequest message. Does not implicitly {@link Authentication.LoginAsUserRequest.verify|verify} messages.
+         * @param message LoginAsUserRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ILoginAsUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified LoginAsUserRequest message, length delimited. Does not implicitly {@link Authentication.LoginAsUserRequest.verify|verify} messages.
+         * @param message LoginAsUserRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ILoginAsUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a LoginAsUserRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns LoginAsUserRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LoginAsUserRequest;
+
+        /**
+         * Decodes a LoginAsUserRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns LoginAsUserRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.LoginAsUserRequest;
+
+        /**
+         * Verifies a LoginAsUserRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a LoginAsUserRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns LoginAsUserRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.LoginAsUserRequest;
+
+        /**
+         * Creates a plain object from a LoginAsUserRequest message. Also converts values to other types if specified.
+         * @param message LoginAsUserRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.LoginAsUserRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this LoginAsUserRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a LoginAsUserResponse. */
+    interface ILoginAsUserResponse {
+
+        /** LoginAsUserResponse encryptedSessionToken */
+        encryptedSessionToken?: (Uint8Array|null);
+    }
+
+    /** Represents a LoginAsUserResponse. */
+    class LoginAsUserResponse implements ILoginAsUserResponse {
+
+        /**
+         * Constructs a new LoginAsUserResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ILoginAsUserResponse);
+
+        /** LoginAsUserResponse encryptedSessionToken. */
+        public encryptedSessionToken: Uint8Array;
+
+        /**
+         * Creates a new LoginAsUserResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns LoginAsUserResponse instance
+         */
+        public static create(properties?: Authentication.ILoginAsUserResponse): Authentication.LoginAsUserResponse;
+
+        /**
+         * Encodes the specified LoginAsUserResponse message. Does not implicitly {@link Authentication.LoginAsUserResponse.verify|verify} messages.
+         * @param message LoginAsUserResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ILoginAsUserResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified LoginAsUserResponse message, length delimited. Does not implicitly {@link Authentication.LoginAsUserResponse.verify|verify} messages.
+         * @param message LoginAsUserResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ILoginAsUserResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a LoginAsUserResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns LoginAsUserResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LoginAsUserResponse;
+
+        /**
+         * Decodes a LoginAsUserResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns LoginAsUserResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.LoginAsUserResponse;
+
+        /**
+         * Verifies a LoginAsUserResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a LoginAsUserResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns LoginAsUserResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.LoginAsUserResponse;
+
+        /**
+         * Creates a plain object from a LoginAsUserResponse message. Also converts values to other types if specified.
+         * @param message LoginAsUserResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.LoginAsUserResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this LoginAsUserResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a ValidateAuthHashRequest. */
     interface IValidateAuthHashRequest {
 
@@ -2466,6 +2646,9 @@ export namespace Authentication {
 
         /** TwoFactorSendPushRequest channelUid */
         channelUid?: (Uint8Array|null);
+
+        /** TwoFactorSendPushRequest expireIn */
+        expireIn?: (Authentication.TwoFactorExpiration|null);
     }
 
     /** Represents a TwoFactorSendPushRequest. */
@@ -2485,6 +2668,9 @@ export namespace Authentication {
 
         /** TwoFactorSendPushRequest channelUid. */
         public channelUid: Uint8Array;
+
+        /** TwoFactorSendPushRequest expireIn. */
+        public expireIn: Authentication.TwoFactorExpiration;
 
         /**
          * Creates a new TwoFactorSendPushRequest instance using the specified properties.
@@ -7811,6 +7997,108 @@ export namespace Authentication {
          */
         public toJSON(): { [k: string]: any };
     }
+
+    /** Properties of a SendSessionMessageRequest. */
+    interface ISendSessionMessageRequest {
+
+        /** SendSessionMessageRequest messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
+
+        /** SendSessionMessageRequest command */
+        command?: (string|null);
+
+        /** SendSessionMessageRequest username */
+        username?: (string|null);
+    }
+
+    /** Represents a SendSessionMessageRequest. */
+    class SendSessionMessageRequest implements ISendSessionMessageRequest {
+
+        /**
+         * Constructs a new SendSessionMessageRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISendSessionMessageRequest);
+
+        /** SendSessionMessageRequest messageSessionUid. */
+        public messageSessionUid: Uint8Array;
+
+        /** SendSessionMessageRequest command. */
+        public command: string;
+
+        /** SendSessionMessageRequest username. */
+        public username: string;
+
+        /**
+         * Creates a new SendSessionMessageRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SendSessionMessageRequest instance
+         */
+        public static create(properties?: Authentication.ISendSessionMessageRequest): Authentication.SendSessionMessageRequest;
+
+        /**
+         * Encodes the specified SendSessionMessageRequest message. Does not implicitly {@link Authentication.SendSessionMessageRequest.verify|verify} messages.
+         * @param message SendSessionMessageRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISendSessionMessageRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SendSessionMessageRequest message, length delimited. Does not implicitly {@link Authentication.SendSessionMessageRequest.verify|verify} messages.
+         * @param message SendSessionMessageRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISendSessionMessageRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SendSessionMessageRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SendSessionMessageRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SendSessionMessageRequest;
+
+        /**
+         * Decodes a SendSessionMessageRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SendSessionMessageRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SendSessionMessageRequest;
+
+        /**
+         * Verifies a SendSessionMessageRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SendSessionMessageRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SendSessionMessageRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SendSessionMessageRequest;
+
+        /**
+         * Creates a plain object from a SendSessionMessageRequest message. Also converts values to other types if specified.
+         * @param message SendSessionMessageRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SendSessionMessageRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SendSessionMessageRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
 
 /** Namespace Enterprise. */
@@ -9220,11 +9508,119 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a DomainPasswordRulesFields. */
+    interface IDomainPasswordRulesFields {
+
+        /** DomainPasswordRulesFields type */
+        type?: (string|null);
+
+        /** DomainPasswordRulesFields minimum */
+        minimum?: (number|null);
+
+        /** DomainPasswordRulesFields maximum */
+        maximum?: (number|null);
+
+        /** DomainPasswordRulesFields allowed */
+        allowed?: (boolean|null);
+    }
+
+    /** Represents a DomainPasswordRulesFields. */
+    class DomainPasswordRulesFields implements IDomainPasswordRulesFields {
+
+        /**
+         * Constructs a new DomainPasswordRulesFields.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IDomainPasswordRulesFields);
+
+        /** DomainPasswordRulesFields type. */
+        public type: string;
+
+        /** DomainPasswordRulesFields minimum. */
+        public minimum: number;
+
+        /** DomainPasswordRulesFields maximum. */
+        public maximum: number;
+
+        /** DomainPasswordRulesFields allowed. */
+        public allowed: boolean;
+
+        /**
+         * Creates a new DomainPasswordRulesFields instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DomainPasswordRulesFields instance
+         */
+        public static create(properties?: Enterprise.IDomainPasswordRulesFields): Enterprise.DomainPasswordRulesFields;
+
+        /**
+         * Encodes the specified DomainPasswordRulesFields message. Does not implicitly {@link Enterprise.DomainPasswordRulesFields.verify|verify} messages.
+         * @param message DomainPasswordRulesFields message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IDomainPasswordRulesFields, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DomainPasswordRulesFields message, length delimited. Does not implicitly {@link Enterprise.DomainPasswordRulesFields.verify|verify} messages.
+         * @param message DomainPasswordRulesFields message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IDomainPasswordRulesFields, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DomainPasswordRulesFields message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DomainPasswordRulesFields
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.DomainPasswordRulesFields;
+
+        /**
+         * Decodes a DomainPasswordRulesFields message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DomainPasswordRulesFields
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.DomainPasswordRulesFields;
+
+        /**
+         * Verifies a DomainPasswordRulesFields message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DomainPasswordRulesFields message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DomainPasswordRulesFields
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.DomainPasswordRulesFields;
+
+        /**
+         * Creates a plain object from a DomainPasswordRulesFields message. Also converts values to other types if specified.
+         * @param message DomainPasswordRulesFields
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.DomainPasswordRulesFields, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DomainPasswordRulesFields to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a DomainPasswordRulesResponse. */
     interface IDomainPasswordRulesResponse {
 
-        /** DomainPasswordRulesResponse maxEnforcementValue */
-        maxEnforcementValue?: (number|null);
+        /** DomainPasswordRulesResponse domainPasswordRulesFields */
+        domainPasswordRulesFields?: (Enterprise.IDomainPasswordRulesFields[]|null);
     }
 
     /** Represents a DomainPasswordRulesResponse. */
@@ -9236,8 +9632,8 @@ export namespace Enterprise {
          */
         constructor(properties?: Enterprise.IDomainPasswordRulesResponse);
 
-        /** DomainPasswordRulesResponse maxEnforcementValue. */
-        public maxEnforcementValue: number;
+        /** DomainPasswordRulesResponse domainPasswordRulesFields. */
+        public domainPasswordRulesFields: Enterprise.IDomainPasswordRulesFields[];
 
         /**
          * Creates a new DomainPasswordRulesResponse instance using the specified properties.

@@ -6,6 +6,7 @@ import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
 import * as FormData from "form-data"
 import * as NodeRSA from 'node-rsa';
+import {createECDH} from 'crypto';
 
 
 export const nodePlatform: Platform = class {
@@ -43,6 +44,15 @@ export const nodePlatform: Platform = class {
      */
     static async generateRSAKeyPair2(): Promise<any> {
         return new NodeRSA({b: 1024});
+    }
+
+    static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
+        const ecdh = createECDH('prime256v1')
+        ecdh.generateKeys()
+        return Promise.resolve({
+            privateKey: ecdh.getPrivateKey(),
+            publicKey: ecdh.getPublicKey()
+        })
     }
 
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
