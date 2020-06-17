@@ -25,8 +25,9 @@ let authUI: AuthUI = {
 async function printVault(username: string, password: string) {
     try {
         let auth = new Auth({
-            host: KeeperEnvironment.DEV
-        }, authUI);
+            host: KeeperEnvironment.DEV,
+            authUI: authUI
+        });
         await auth.login(username, password);
         console.log("login successful");
         let vault = new Vault(auth);

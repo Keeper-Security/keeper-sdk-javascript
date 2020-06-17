@@ -1,11 +1,9 @@
-import {Auth, createAuthVerifier, createEncryptionParams, SocketListener} from "../src/auth";
-import {accountSummaryMessage, requestCreateUserMessage, validateAuthHashMessage} from '../src/restMessages';
+import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
+import {accountSummaryMessage, requestCreateUserMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
-import {Authentication} from '../src/proto';
-import {AccountSummaryCommand} from '../src/commands';
-import {AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
+import {generateEncryptionKey} from '../src/utils';
+import {AuthUI3, TwoFactorInput} from '../src/configuration';
 import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
 import {KeeperEnvironment} from '../src/endpoint';
 import {createECDH} from "crypto";
@@ -22,19 +20,19 @@ const authUI: AuthUI3 = {
             twoFactorCode,
             desiredExpiration: Number(exp)
         }
-    }
+    },
+    prompt: prompt
 }
 
 // const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-// const userName = "admin+plain@yozik.us"
-const userName = "admin+duo@yozik.us"
+const userName = "admin+plain@yozik.us"
+// const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
-// const userName = "admin+m29a@yozik.us"
-// const userName = "admin+j4a@yozik.us"
+// const userName = "admin+j16a@yozik.us"
 // const userName = "brian+bp@keepersecurity.com"
 // const userName = "arlen+dev5@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
@@ -54,7 +52,7 @@ async function testRegistration() {
 
     await auth.registerDevice()
 
-    await auth.verifyDevice(userName, null)
+    // await auth.verifyDevice(userName, null)
 
     const password = '111111'
     const iterations = 1000

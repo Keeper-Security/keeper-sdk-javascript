@@ -13,13 +13,10 @@ import {
     deviceMessage,
     preLoginMessage,
     registerDeviceMessage,
-    requestDeviceVerificationMessage,
     RestMessage,
     updateDeviceMessage
 } from './restMessages'
 import {ClientConfiguration, TransmissionKey} from './configuration';
-import {prompt} from '../test/testUtil';
-import {createECDH} from "crypto";
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
@@ -100,10 +97,9 @@ export class KeeperEndpoint {
             return
         }
 
-        const ecdh = createECDH('prime256v1')
-        ecdh.generateKeys()
-        deviceConfig.publicKey = ecdh.getPublicKey()
-        deviceConfig.privateKey = ecdh.getPrivateKey()
+        const ecdh = await platform.generateECKeyPair()
+        deviceConfig.publicKey = ecdh.publicKey
+        deviceConfig.privateKey = ecdh.privateKey
         while (true) {
             try {
                 if (deviceConfig.deviceToken) {

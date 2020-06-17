@@ -9,7 +9,6 @@ import {
     LoginResponseResultCode
 } from "./commands";
 import {
-    generateEncryptionKey,
     isTwoFactorResultCode,
     normal64,
     webSafe64,
@@ -29,7 +28,6 @@ import {Authentication} from './proto';
 import {ssoSamlMessage} from './restMessages'
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
-import {prompt} from '../test/testUtil';
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -204,9 +202,13 @@ export class Auth {
     }
 
     async verifyDevice(username: string, loginToken: Uint8Array): Promise<Uint8Array> {
+        if (!this.options.authUI3) {
+            throw new Error('Unhandled prompt for device verification')
+        }
+
         const deviceConfig = this.options.deviceConfig
 
-        const verifyMethod = await prompt('Enter device verification method: \n1 - email\n2 - 2fa code\n3 - 2fa push\n');
+        const verifyMethod = await this.options.authUI3.prompt('Enter device verification method: \n1 - email\n2 - 2fa code\n3 - 2fa push\n4 - sms\n');
 
         switch (verifyMethod) {
             case '1':
@@ -214,7 +216,7 @@ export class Auth {
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
                 }))
-                const token = await prompt('Enter Device token or approve via email and press enter:')
+                const token = await this.options.authUI3.prompt('Enter Device token or approve via email and press enter:')
                 if (!!token) {
                     const resp = await this.get(`process_token/${token}`)
                     console.log(platform.bytesToString(resp.data))
@@ -223,15 +225,19 @@ export class Auth {
             case '2':
                 return this.handleTwoFactorCode(loginToken)
             case '3':
-                const sentPushMsg = twoFactorSend2FAPushMessage({
+                await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
-                })
-                await this.executeRest(sentPushMsg)
+                }))
                 const pushMessage = await this.socket.getPushMessage()
                 const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
                 const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
                 console.log(socketResponseData)
                 return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
+            case '4':
+                await this.executeRest(twoFactorSend2FAPushMessage({
+                    encryptedLoginToken: loginToken,
+                }))
+                return this.handleTwoFactorCode(loginToken)
             default:
                 throw new Error('Invalid choice for device verification')
         }
