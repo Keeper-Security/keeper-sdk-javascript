@@ -113,6 +113,7 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // testServiceLogger().finally();
 
 TestSsoLogin().finally();
+// TestSsoLoginWithGet().finally();
 // TestSsoUploadMetadata().finally();
 // TestSsoGetMetadata().finally();
 // TestSsoSetCurrentConfiguration().finally();
@@ -164,7 +165,7 @@ async function TestSsoLogin() {
     let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
-    let user = MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let user = MIKE_SSO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
@@ -175,10 +176,38 @@ async function TestSsoLogin() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
 
         await auth.loginV3(user.account, user.password);
+        console.log("Logged in via Cloud SSO Connect!");
+
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+/** Also see cloudSsoLogin in auth.ts.  */
+async function TestSsoLoginWithGet() {
+
+    let keeperHost = KeeperEnvironment.DEV;
+    console.log("\n*** TestSsoLogin with GET on " + keeperHost + " ***");
+
+    let user = MIKE_SSO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/saml/';
+
+    try {
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+
+        await auth.loginV3(user.account, user.password, true);
         console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {

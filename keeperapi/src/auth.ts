@@ -110,7 +110,10 @@ export class Auth {
         }
     }
 
-    async loginV3(username: string, password: string) {
+    /**
+     * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
+     */
+    async loginV3(username: string, password: string, useAlternate: boolean = false) {
 
         if (!this.options.deviceConfig.deviceToken) {
             await this.endpoint.registerDevice()
@@ -175,11 +178,11 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
-                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid);
+                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     console.log("SSO Connect login");
-                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid);
+                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REQUIRES_2FA:
                     if (!this.options.authUI3) {
@@ -306,7 +309,7 @@ export class Auth {
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken))
     }
 
-    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array) {
+    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) {
         let keyPair : any = await platform.generateRSAKeyPair2();
         let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey : string = webSafe64FromBytes(publicKey);
@@ -324,7 +327,8 @@ export class Auth {
                                                               "key": encodedPublicKey,
                                                               "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
                                                               "embedded": "embedded"
-                                                            });
+                                                            }, useGet);
+            
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
 
         } catch (e) {
@@ -415,8 +419,8 @@ export class Auth {
         return this.endpoint.executeRest(message, this._sessionToken);
     }
 
-    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any): Promise<string> {
-        return this.endpoint.executeRestToHTML(message, sessionToken, formParams);
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any, useGet?: boolean): Promise<string> {
+        return this.endpoint.executeRestToHTML(message, sessionToken, formParams, useGet);
     }
 
     get sessionToken(): string {
