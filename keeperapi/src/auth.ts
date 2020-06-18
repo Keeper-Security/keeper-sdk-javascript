@@ -95,10 +95,17 @@ export class Auth {
     private _username: string;
     private managedCompanyId?: number;
     private socket: SocketListener;
+    private messageSessionUid: Uint8Array;
+
 
     constructor(private options: ClientConfiguration) {
         this.endpoint = new KeeperEndpoint(this.options);
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
+        this.messageSessionUid = generateUidBytes()
+    }
+
+    getMessageSessionUid(): Uint8Array {
+        return this.messageSessionUid;
     }
 
     disconnect() {
@@ -114,10 +121,8 @@ export class Auth {
             await this.endpoint.registerDevice()
         }
 
-        const messageSessionUid = generateUidBytes()
-
         if (!this.socket) {
-            const connectionRequest = await this.endpoint.getPushConnectionRequest(messageSessionUid)
+            const connectionRequest = await this.endpoint.getPushConnectionRequest(this.messageSessionUid)
             this.socket = new SocketListener(`wss://push.services.${this.options.host}/wss_open_connection/${connectionRequest}`)
             console.log("Socket connected")
         }
@@ -129,7 +134,7 @@ export class Auth {
             const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken,
-                messageSessionUid: messageSessionUid,
+                messageSessionUid: this.messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
                 // forceNewLogin: true
             }
@@ -173,11 +178,11 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
-                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid);
+                    await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid);
                     return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     console.log("SSO Connect login");
-                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid);
+                    await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid);
                     return;
                 case Authentication.LoginState.REQUIRES_2FA:
                     if (!this.options.authUI3) {
@@ -238,6 +243,13 @@ export class Auth {
             default:
                 throw new Error('Invalid choice for device verification')
         }
+    }
+
+    async getWsMessage() {
+        const pushMessage = await this.socket.getPushMessage()
+        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+        const socketResponseData = JSON.parse(wssClientResponse.message)
+        return socketResponseData;
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {

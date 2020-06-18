@@ -35,6 +35,7 @@ const userName = "admin+plain@yozik.us"
 // const userName = "admin+j16a@yozik.us"
 // const userName = "brian+bp@keepersecurity.com"
 // const userName = "arlen+dev5@keepersecurity.com"
+//const userName = "vladimir+cw@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
 const host = KeeperEnvironment.LOCAL
