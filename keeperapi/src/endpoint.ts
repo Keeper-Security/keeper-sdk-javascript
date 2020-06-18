@@ -248,14 +248,18 @@ export class KeeperEndpoint {
     }
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
-        const connectionRequest = WssConnectionRequest.create({
-            messageSessionUid: messageSessionUid,
-            deviceTimeStamp: new Date().getTime()
-        })
-        const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
-        const apiRequest = await prepareApiRequest(connectionRequestBytes, this.transmissionKey)
-        return webSafe64FromBytes(apiRequest)
+        return getPushConnectionRequest(messageSessionUid, this.transmissionKey)
     }
+}
+
+export async function getPushConnectionRequest(messageSessionUid: Uint8Array, transmissionKey: TransmissionKey) {
+    const connectionRequest = WssConnectionRequest.create({
+        messageSessionUid: messageSessionUid,
+        deviceTimeStamp: new Date().getTime()
+    })
+    const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
+    const apiRequest = await prepareApiRequest(connectionRequestBytes, transmissionKey)
+    return webSafe64FromBytes(apiRequest)
 }
 
 export async function prepareApiRequest(payload: Uint8Array | KeeperCommand, transmissionKey: TransmissionKey, sessionToken?: string): Promise<Uint8Array> {

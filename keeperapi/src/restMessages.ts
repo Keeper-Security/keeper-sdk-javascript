@@ -94,6 +94,9 @@ export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Reco
 export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryRequest): RestMessage<AccountSummary.IAccountSummaryRequest, AccountSummary.IAccountSummaryElements> =>
     createMessage(data, 'login/account_summary', AccountSummary.AccountSummaryRequest, AccountSummary.AccountSummaryElements)
 
+export const sendSessionMessage = (data: Authentication.ISendSessionMessageRequest): RestMessage<Authentication.ISendSessionMessageRequest, {}> =>
+    createMessage(data, '/pushserver/send_session_message', Authentication.SendSessionMessageRequest, null)
+
 /* -- SERVICE LOGGER -- */
 
 export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>

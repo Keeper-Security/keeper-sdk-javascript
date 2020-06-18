@@ -1,33 +1,29 @@
 import {ClientConfiguration, LoginError} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
+import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
-    AuthorizedCommand,
-    KeeperCommand,
-    LoginCommand,
-    LoginResponse,
-    LoginResponseResultCode
-} from "./commands";
-import {
+    decryptFromStorage,
+    generateUidBytes,
     isTwoFactorResultCode,
     normal64,
     webSafe64,
-    decryptFromStorage,
-    webSafe64FromBytes,
-    generateUidBytes
+    webSafe64FromBytes
 } from "./utils";
 import {
     requestDeviceVerificationMessage,
     RestMessage,
-    startLoginMessage, twoFactorSend2FAPushMessage,
+    ssoSamlMessage,
+    startLoginMessage,
+    twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     validateAuthHashMessage
 } from './restMessages'
 import * as WebSocket from 'faye-websocket'
 import {Authentication} from './proto';
-import {ssoSamlMessage} from './restMessages'
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -95,10 +91,17 @@ export class Auth {
     private _username: string;
     private managedCompanyId?: number;
     private socket: SocketListener;
+    private messageSessionUid: Uint8Array;
+
 
     constructor(private options: ClientConfiguration) {
         this.endpoint = new KeeperEndpoint(this.options);
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
+        this.messageSessionUid = generateUidBytes()
+    }
+
+    getMessageSessionUid(): Uint8Array {
+        return this.messageSessionUid;
     }
 
     disconnect() {
@@ -117,10 +120,8 @@ export class Auth {
             await this.endpoint.registerDevice()
         }
 
-        const messageSessionUid = generateUidBytes()
-
         if (!this.socket) {
-            const connectionRequest = await this.endpoint.getPushConnectionRequest(messageSessionUid)
+            const connectionRequest = await this.endpoint.getPushConnectionRequest(this.messageSessionUid)
             this.socket = new SocketListener(`wss://push.services.${this.options.host}/wss_open_connection/${connectionRequest}`)
             console.log("Socket connected")
         }
@@ -132,7 +133,7 @@ export class Auth {
             const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken,
-                messageSessionUid: messageSessionUid,
+                messageSessionUid: this.messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
                 // forceNewLogin: true
             }
@@ -176,11 +177,11 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
-                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid, useAlternate);
+                    await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     console.log("SSO Connect login");
-                    await this.cloudSsoLogin(loginResponse.url, messageSessionUid, useAlternate);
+                    await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REQUIRES_2FA:
                     if (!this.options.authUI3) {
@@ -243,6 +244,13 @@ export class Auth {
         }
     }
 
+    async getWsMessage() {
+        const pushMessage = await this.socket.getPushMessage()
+        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+        const socketResponseData = JSON.parse(wssClientResponse.message)
+        return socketResponseData;
+    }
+
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
         let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
         switch (loginResponse.channels[0].channelType) {
@@ -268,16 +276,18 @@ export class Auth {
                 pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
                 break;
         }
+        const codeLessPush = pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH || pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER
         if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
-            const sentPushMsg = twoFactorSend2FAPushMessage({
+            const sendPushRequest: ITwoFactorSendPushRequest = {
                 encryptedLoginToken: loginResponse.encryptedLoginToken,
                 pushType: pushType
-            })
-            await this.executeRest(sentPushMsg)
+            }
+            if (codeLessPush) {
+                sendPushRequest.expireIn = await this.options.authUI3.getTwoFactorExpiration()
+            }
+            await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
         }
-        if (
-            pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH ||
-            pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER) {
+        if (codeLessPush) {
             const pushMessage = await this.socket.getPushMessage()
             const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
             const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
@@ -334,7 +344,7 @@ export class Auth {
                                                               "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
                                                               "embedded": "embedded"
                                                             }, useGet);
-            
+
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
 
         } catch (e) {

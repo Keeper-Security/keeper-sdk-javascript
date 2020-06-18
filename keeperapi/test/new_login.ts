@@ -7,6 +7,8 @@ import {AuthUI3, TwoFactorInput} from '../src/configuration';
 import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
 import {KeeperEnvironment} from '../src/endpoint';
 import {createECDH} from "crypto";
+import {Authentication} from '../src/proto';
+import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -20,6 +22,10 @@ const authUI: AuthUI3 = {
             twoFactorCode,
             desiredExpiration: Number(exp)
         }
+    },
+    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
+        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+        return Number(exp)
     },
     prompt: prompt
 }
@@ -35,6 +41,7 @@ const userName = "admin+plain@yozik.us"
 // const userName = "admin+j16a@yozik.us"
 // const userName = "brian+bp@keepersecurity.com"
 // const userName = "arlen+dev5@keepersecurity.com"
+//const userName = "vladimir+cw@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
 const host = KeeperEnvironment.LOCAL
