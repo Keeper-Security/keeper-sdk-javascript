@@ -144,14 +144,22 @@ export class KeeperEndpoint {
     /**
      * Call this for REST calls expected to return HTML or a 303 redirect.
      */
-    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any): Promise<string> {
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams: any = {}, useGet: boolean = false): Promise<string> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let theUrl = message.path;
         if (!theUrl.startsWith("http")) {
             theUrl = this.getUrl(theUrl);
         }
-        // let response = await platform.post(theUrl, request);
-        let response = await platform.postForm(theUrl, request, formParams)
+
+        let response = null;
+        if (useGet) {
+            console.log("  using GET");
+            theUrl = theUrl + "?" + (new URLSearchParams(formParams)).toString();
+            response = await platform.get(theUrl, {});
+        } else {
+            console.log("  using POST");
+            response = await platform.postForm(theUrl, request, formParams);
+        }
 
         console.log("SSO response is", response.statusCode);
 
