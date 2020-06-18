@@ -67,6 +67,8 @@ const authUI: AuthUI = {
     }
 }
 
+const tfaPrompt = 'Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n';
+
 const authUI3: AuthUI3 = {
     async getTwoFactorCode(): Promise<TwoFactorInput> {
         const twoFactorCode = await prompt('Enter Code:');
@@ -75,7 +77,8 @@ const authUI3: AuthUI3 = {
             twoFactorCode,
             desiredExpiration: Number(exp)
         }
-    }
+    },
+    prompt: prompt
 }
 
 async function printVault() {
@@ -165,7 +168,7 @@ async function TestSsoLogin() {
     let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
-    let user = MIKE_SSO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let user = MIKE_DEMO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
