@@ -144,7 +144,7 @@ async function testServiceLogger() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
        });
         await auth.login(user.account, user.password);
         console.log('Logged in...');
@@ -267,7 +267,7 @@ async function TestSsoUploadMetadata() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -306,7 +306,7 @@ async function TestSsoSetCurrentConfiguration() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -341,7 +341,7 @@ async function TestSsoGetConfigurationList() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -378,7 +378,7 @@ async function TestSsoAddNewConfiguration() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -416,7 +416,7 @@ async function TestSsoGetConfiguration() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -454,7 +454,7 @@ async function TestSsoDeleteConfiguration() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -514,7 +514,7 @@ async function TestSsoSetConfigurationSettingValue() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -574,7 +574,7 @@ async function TestSsoResetConfigurationSettingValue() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -618,7 +618,7 @@ async function TestSsoGetSAMLLog() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
@@ -654,7 +654,7 @@ async function TestSsoClearSAMLLog() {
             clientVersion: clientVersion,
             deviceConfig: deviceConfig,
             onDeviceConfig: saveDeviceConfig,
-            authUI: authUI
+            authUI3: authUI3
         });
         await auth.loginV3(user.account, user.password);
         console.log("Logged in...");
