@@ -1266,6 +1266,7 @@ export namespace Authentication {
         REQUIRES_AUTH_HASH = 13,
         REQUIRES_USERNAME = 14,
         AFTER_CLOUD_SSO_LOGIN = 15,
+        REQUIRES_ACCOUNT_CREATION = 16,
         LOGGED_IN = 99
     }
 
@@ -6555,15 +6556,6 @@ export namespace Authentication {
         /** DeviceVerificationRequest username */
         username?: (string|null);
 
-        /** DeviceVerificationRequest dontUseClientVersion */
-        dontUseClientVersion?: (string|null);
-
-        /** DeviceVerificationRequest dontUseDeviceName */
-        dontUseDeviceName?: (string|null);
-
-        /** DeviceVerificationRequest dontUseDevicePublicKey */
-        dontUseDevicePublicKey?: (Uint8Array|null);
-
         /** DeviceVerificationRequest verificationChannel */
         verificationChannel?: (string|null);
 
@@ -6585,15 +6577,6 @@ export namespace Authentication {
 
         /** DeviceVerificationRequest username. */
         public username: string;
-
-        /** DeviceVerificationRequest dontUseClientVersion. */
-        public dontUseClientVersion: string;
-
-        /** DeviceVerificationRequest dontUseDeviceName. */
-        public dontUseDeviceName: string;
-
-        /** DeviceVerificationRequest dontUseDevicePublicKey. */
-        public dontUseDevicePublicKey: Uint8Array;
 
         /** DeviceVerificationRequest verificationChannel. */
         public verificationChannel: string;
