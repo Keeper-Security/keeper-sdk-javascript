@@ -5,6 +5,7 @@ import {AES, pad, enc, mode} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
 import {normal64} from "../utils";
+import {SocketProxy} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 
@@ -224,6 +225,33 @@ export const browserPlatform: Platform = class {
         throw new Error("Not implemented")
     }
 
+    static createWebsocket(url: string): SocketProxy {
+        const socket = new WebSocket(url)
+
+        return {
+            close: () => {
+                socket.close()
+            },
+            onClose: (callback: ()=> void) => {
+                socket.onclose = callback
+            },
+            onError: (callback: (e: Event) => void) => {
+                socket.onerror = callback
+            },
+            onMessage: (callback: (e: MessageEvent) => void) => {
+                socket.onmessage = callback
+            },
+        }
+    }
+
+    static defaultRedirect(url: string): Promise<any> {
+        if (window && window.open) {
+            window.open(url)
+        } else {
+            console.log('Unable to redirect: window not present.')
+        }
+        return Promise.resolve()
+    }
 };
 
 
