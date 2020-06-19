@@ -342,7 +342,6 @@ export class Auth {
                                                             { "message_session_uid": webSafe64FromBytes(messageSessionUid),
                                                               "key": encodedPublicKey,
                                                               "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
-                                                              "embedded": "embedded"
                                                             }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
