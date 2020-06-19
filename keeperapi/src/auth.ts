@@ -59,6 +59,7 @@ export type SocketProxy = {
     onClose: (callback: () => void) => void
     onError: (callback: (e: Event | Error) => void) => void
     onMessage: (callback: (e: MessageEvent) => void) => void
+    send: (message: any) => void
 }
 
 export class SocketListener {

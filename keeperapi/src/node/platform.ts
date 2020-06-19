@@ -254,6 +254,9 @@ export const nodePlatform: Platform = class {
             onMessage: (callback: (e: MessageEvent) => void) => {
                 socket.on('message', callback)
             },
+            send: (message => {
+                socket.send(message)
+            })
         }
     }
 

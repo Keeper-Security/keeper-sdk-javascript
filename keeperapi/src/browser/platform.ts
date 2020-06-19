@@ -241,6 +241,9 @@ export const browserPlatform: Platform = class {
             onMessage: (callback: (e: MessageEvent) => void) => {
                 socket.onmessage = callback
             },
+            send: (message: any) => {
+                socket.send(message)
+            }
         }
     }
 
