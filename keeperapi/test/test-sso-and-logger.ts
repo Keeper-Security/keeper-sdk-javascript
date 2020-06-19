@@ -6,7 +6,7 @@ import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
-import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
+import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -69,22 +69,6 @@ const authUI: AuthUI = {
 }
 
 const tfaPrompt = 'Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n';
-
-const authUI3: AuthUI3 = {
-    async getTwoFactorCode(): Promise<TwoFactorInput> {
-        const twoFactorCode = await prompt('Enter Code:');
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return {
-            twoFactorCode,
-            desiredExpiration: Number(exp)
-        }
-    },
-    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return Number(exp)
-    },
-    prompt: prompt
-}
 
 async function printVault() {
     try {

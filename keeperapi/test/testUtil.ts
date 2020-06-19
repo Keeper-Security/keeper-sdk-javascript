@@ -1,8 +1,10 @@
 import * as readline from "readline";
-import {DeviceConfig} from '../src/configuration';
+import {AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import * as fs from 'fs'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
+import {Authentication} from '../src/proto';
+import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 export const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
     const rl = readline.createInterface({
@@ -15,6 +17,22 @@ export const prompt = async (message: string): Promise<string> => new Promise<st
     });
 })
 
+export const authUI3: AuthUI3 = {
+    async getTwoFactorCode(): Promise<TwoFactorInput> {
+        const twoFactorCode = await prompt('Enter Code:');
+        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+        return {
+            twoFactorCode,
+            desiredExpiration: Number(exp)
+        }
+    },
+    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
+        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+        return Number(exp)
+    },
+    prompt: prompt
+}
+
 type DeviceConfigStorage = {
     deviceToken: string
     privateKey: string
@@ -23,8 +41,12 @@ type DeviceConfigStorage = {
 }
 
 export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
+    return readDeviceConfig(configNames[environment])
+}
+
+export function readDeviceConfig(fileName: string): DeviceConfig {
     try {
-        const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync(configNames[environment]).toString())
+        const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync(fileName).toString())
         return {
             deviceToken: configStorage.deviceToken ? platform.base64ToBytes(configStorage.deviceToken) : undefined,
             publicKey: configStorage.publicKey ? platform.base64ToBytes(configStorage.publicKey) : undefined,
