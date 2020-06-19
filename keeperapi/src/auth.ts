@@ -20,7 +20,6 @@ import {
     twoFactorValidateMessage,
     validateAuthHashMessage
 } from './restMessages'
-import * as WebSocket from 'faye-websocket'
 import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
@@ -55,17 +54,26 @@ type SocketResponseData = {
     encryptedLoginToken: string
 }
 
+export type SocketProxy = {
+    close: () => void
+    onClose: (callback: () => void) => void
+    onError: (callback: (e: Event | Error) => void) => void
+    onMessage: (callback: (e: MessageEvent) => void) => void
+}
+
 export class SocketListener {
-    private socket;
+    private socket: SocketProxy;
 
     constructor(url: string) {
         console.log('Connecting to ' + url)
-        this.socket = new WebSocket.Client(url)
-        this.socket.on('close', _ => {
+
+        this.socket = platform.createWebsocket(url)
+
+        this.socket.onClose(() => {
             console.log('socket closed')
         })
-        this.socket.on('error', e => {
-            console.log('socket error: ' + e.message)
+        this.socket.onError((e: Event | Error) => {
+            console.log('socket error: ' + e)
         })
     }
 
@@ -76,7 +84,7 @@ export class SocketListener {
     async getPushMessage(): Promise<any> {
         console.log('Awaiting web socket')
         return new Promise<any>((resolve) => {
-            this.socket.on('message', (e) => {
+            this.socket.onMessage((e) => {
                 resolve(e.data)
             })
         })
@@ -359,7 +367,6 @@ export class Auth {
                                                             { "message_session_uid": webSafe64FromBytes(messageSessionUid),
                                                               "key": encodedPublicKey,
                                                               "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
-                                                              "embedded": "embedded"
                                                             }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");

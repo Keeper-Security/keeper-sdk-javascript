@@ -185,7 +185,7 @@ async function TestSsoLoginWithGet() {
     let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin with GET on " + keeperHost + " ***");
 
-    let user = MIKE_SSO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let user = MIKE_DEMO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
@@ -386,12 +386,12 @@ async function TestSsoAddNewConfiguration() {
 
 // POST, ENCRYPTED, sso_cloud_configuration_get/<serviceProviderId>
 async function TestSsoGetConfiguration() {
-    let keeperHost = KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 99837914454064896; // 3121290;
+    let serviceProviderId = 9710921056299; // 6219112644615;
+    let configurationId = 1774455125899304; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
@@ -589,11 +589,11 @@ async function TestSsoResetConfigurationSettingValue() {
 
 // POST, ENCRYPTED, sso_cloud_log_saml_get
 async function TestSsoGetSAMLLog() {
-    let keeperHost = KeeperEnvironment.LOCAL;
+    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoGetSAMLLog on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
+    let serviceProviderId = 9710921056299; // 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_saml_get';

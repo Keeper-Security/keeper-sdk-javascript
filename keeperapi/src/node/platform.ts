@@ -1,13 +1,17 @@
-import {Platform} from "../platform";
 import * as crypto from "crypto";
-import {RSA_PKCS1_PADDING} from "constants";
+import { createECDH } from 'crypto';
 import * as https from "https";
-import {KeeperHttpResponse} from "../commands";
-import {keeperKeys} from "../endpoint";
 import * as FormData from "form-data"
 import * as NodeRSA from 'node-rsa';
-import {createECDH} from 'crypto';
+import * as WebSocket from 'faye-websocket'
 
+import {Platform} from "../platform";
+import {RSA_PKCS1_PADDING} from "constants";
+import {KeeperHttpResponse} from "../commands";
+import {keeperKeys} from "../endpoint";
+import { SocketProxy } from '../auth'
+
+const open = require('open');
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;
@@ -232,5 +236,28 @@ export const nodePlatform: Platform = class {
         res.on("end", () => {
             resolve(retVal);
         });
+    }
+
+    static createWebsocket(url: string): SocketProxy {
+        const socket = new WebSocket.Client(url)
+
+        return {
+            close: () => {
+                socket.close()
+            },
+            onClose: (callback: () => void) => {
+                socket.on('close', callback)
+            },
+            onError: (callback: (err: Error) => void) => {
+                socket.on('error', callback)
+            },
+            onMessage: (callback: (e: MessageEvent) => void) => {
+                socket.on('message', callback)
+            },
+        }
+    }
+
+    static defaultRedirect(url: string): Promise<any> {
+        return open(url);
     }
 };
