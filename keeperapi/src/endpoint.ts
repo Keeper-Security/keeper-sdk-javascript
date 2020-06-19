@@ -24,9 +24,6 @@ import IPreLoginResponse = Authentication.IPreLoginResponse;
 import WssClientResponse = Push.WssClientResponse;
 import WssConnectionRequest = Push.WssConnectionRequest;
 
-const open = require('open');
-
-
 export class KeeperEndpoint {
     private transmissionKey: TransmissionKey
     public deviceToken: Uint8Array
@@ -168,7 +165,11 @@ export class KeeperEndpoint {
             let redirectUrl = response.headers["location"];
             if (redirectUrl) {
                 console.log("Redirecting to " + redirectUrl);
-                await open(redirectUrl);
+                if (this.options.authUI3 && this.options.authUI3.redirectCallback) {
+                    this.options.authUI3.redirectCallback(redirectUrl)
+                } else {
+                    await platform.defaultRedirect(redirectUrl)
+                }
             } else {
                 console.log("Expected URL with 303 status, but didn't get one");
             }

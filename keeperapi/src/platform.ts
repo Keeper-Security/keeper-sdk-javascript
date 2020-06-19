@@ -1,4 +1,5 @@
 import {KeeperHttpResponse} from "./commands";
+import {SocketProxy} from './auth'
 
 export interface Platform {
     keys: string[];
@@ -46,6 +47,10 @@ export interface Platform {
     postForm(url: string, request: Uint8Array, headers?: any, formParams?: any): Promise<KeeperHttpResponse>;
 
     fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any>
+
+    createWebsocket(url: string): SocketProxy
+
+    defaultRedirect(url: string): Promise<any>
 }
 
 export function connectPlatform(p: Platform) {
