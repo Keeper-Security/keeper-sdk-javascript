@@ -151,11 +151,16 @@ export class KeeperEndpoint {
         let response = null;
         if (useGet) {
             console.log("  using GET");
-            theUrl = theUrl + "?" + (new URLSearchParams(formParams)).toString();
+            theUrl = theUrl + "?" + String(new URLSearchParams(formParams));
             response = await platform.get(theUrl, {});
         } else {
             console.log("  using POST");
-            response = await platform.postForm(theUrl, request, formParams);
+            formParams = formParams ? String(new URLSearchParams(formParams)) : "";
+            response = await platform.post(
+              theUrl,
+              formParams,
+              {"Content-Type": "application/x-www-form-urlencoded"}
+            );
         }
 
         console.log("SSO response is", response.statusCode);

@@ -198,16 +198,19 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    static async post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse> {
-        let _headers: string[][] = headers ? Object.entries(headers) : [];
+    static async post(
+      url: string,
+      request: Uint8Array | string,
+      headers?: {[key: string]: string}
+    ): Promise<KeeperHttpResponse> {
         let resp = await fetch(url, {
             method: "POST",
-            headers: [
-                ["Content-Type", "application/octet-stream"],
-                ["Content-Length", request.length.toString()],
-                ..._headers
-            ],
-            body: request
+            headers: new Headers({
+                "Content-Type": "application/octet-stream",
+                "Content-Length": String(request.length),
+                ...headers
+            }),
+            body: request,
         });
         let body = await resp.arrayBuffer();
         return {
@@ -215,10 +218,6 @@ export const browserPlatform: Platform = class {
             headers: resp.headers,
             data: new Uint8Array(body)
         }
-    }
-
-    static postForm(url: string, request: Uint8Array, formParams: any, headers?: any): Promise<KeeperHttpResponse> {
-        throw new Error("Not implemented")
     }
 
     static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
