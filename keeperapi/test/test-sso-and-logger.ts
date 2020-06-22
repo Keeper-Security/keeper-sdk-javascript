@@ -120,13 +120,13 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
 
-TestSsoLogin().finally();
+// TestSsoLogin().finally();
 // TestSsoLoginWithGet().finally();
 // TestSsoUploadMetadata().finally();
 // TestSsoGetMetadata().finally();
 // TestSsoSetCurrentConfiguration().finally();
 // TestSsoAddNewConfiguration().finally();
-// TestSsoGetConfigurationList().finally();
+TestSsoGetConfigurationList().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();
@@ -334,7 +334,7 @@ async function TestSsoGetConfigurationList() {
     console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
+    let serviceProviderId = 9710921056299; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
