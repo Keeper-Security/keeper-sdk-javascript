@@ -3,38 +3,19 @@ import {accountSummaryMessage, requestCreateUserMessage} from '../src/restMessag
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateEncryptionKey} from '../src/utils';
-import {AuthUI3, TwoFactorInput} from '../src/configuration';
-import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
+import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
 import {KeeperEnvironment} from '../src/endpoint';
 import {createECDH} from "crypto";
-import {Authentication} from '../src/proto';
-import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-const authUI: AuthUI3 = {
-    async getTwoFactorCode(): Promise<TwoFactorInput> {
-        const twoFactorCode = await prompt('Enter Code:');
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return {
-            twoFactorCode,
-            desiredExpiration: Number(exp)
-        }
-    },
-    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return Number(exp)
-    },
-    prompt: prompt
-}
-
-// const userName = "admin@yozik.us"
+const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-const userName = "admin+plain@yozik.us"
+// const userName = "admin+plain@yozik.us"
 // const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
@@ -98,7 +79,7 @@ async function testLogin() {
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         onDeviceConfig: saveDeviceConfig,
-        authUI3: authUI
+        authUI3: authUI3
     })
     try {
         await auth.loginV3(userName, "111111")

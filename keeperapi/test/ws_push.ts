@@ -2,31 +2,12 @@ import {Auth} from "../src/auth";
 import {sendSessionMessage} from '../src/restMessages';
 import {connectPlatform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {AuthUI3, TwoFactorInput} from '../src/configuration';
-import {getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
+import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
 import {KeeperEnvironment} from '../src/endpoint';
-import {Authentication} from "../src/proto";
-import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
-
-const authUI: AuthUI3 = {
-    async getTwoFactorCode(): Promise<TwoFactorInput> {
-        const twoFactorCode = await prompt('Enter Code:');
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return {
-            twoFactorCode,
-            desiredExpiration: Number(exp)
-        }
-    },
-    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return Number(exp)
-    },
-    prompt: prompt
-}
 
 const userName = "vladimir+cw@keepersecurity.com"
 //const userName = "mhewett+sso42@keepersecurity.com"
@@ -41,7 +22,7 @@ async function testWsPushMessage() {
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         onDeviceConfig: saveDeviceConfig,
-        authUI3: authUI
+        authUI3: authUI3
     })
     try {
         await auth.loginV3(userName, "111111")

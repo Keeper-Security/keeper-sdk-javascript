@@ -11,6 +11,7 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
+    deviceApproveStatusMessage,
     requestDeviceVerificationMessage,
     RestMessage,
     ssoSamlMessage,
@@ -21,8 +22,8 @@ import {
 } from './restMessages'
 import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
-import TwoFactorPushType = Authentication.TwoFactorPushType;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
+import TwoFactorPushType = Authentication.TwoFactorPushType;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -58,6 +59,7 @@ export type SocketProxy = {
     onClose: (callback: () => void) => void
     onError: (callback: (e: Event | Error) => void) => void
     onMessage: (callback: (e: MessageEvent) => void) => void
+    send: (message: any) => void
 }
 
 export class SocketListener {
@@ -74,6 +76,10 @@ export class SocketListener {
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
         })
+    }
+
+    registerLogin(sessionToken: string) {
+        this.socket.send(sessionToken)
     }
 
     async getPushMessage(): Promise<any> {
@@ -100,7 +106,7 @@ export class Auth {
     private managedCompanyId?: number;
     private socket: SocketListener;
     private messageSessionUid: Uint8Array;
-
+    private _accountUid: Uint8Array;
 
     constructor(private options: ClientConfiguration) {
         this.endpoint = new KeeperEndpoint(this.options);
@@ -217,7 +223,7 @@ export class Auth {
 
         const deviceConfig = this.options.deviceConfig
 
-        const verifyMethod = await this.options.authUI3.prompt('Enter device verification method: \n1 - email\n2 - 2fa code\n3 - 2fa push\n4 - sms\n');
+        const verifyMethod = await this.options.authUI3.prompt('Enter device verification method: \n1 - email\n2 - 2fa code\n3 - 2fa push\n4 - sms\n5 - keeper push\n');
 
         switch (verifyMethod) {
             case '1':
@@ -247,6 +253,17 @@ export class Auth {
                     encryptedLoginToken: loginToken,
                 }))
                 return this.handleTwoFactorCode(loginToken)
+            case '5':
+                while (true) {
+                    await this.executeRest(twoFactorSend2FAPushMessage({
+                        encryptedLoginToken: loginToken,
+                        pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                    }))
+                    const resp = await this.options.authUI3.prompt("Press Enter to continue, x to exit\n")
+                    if (resp === "x") {
+                        process.exit()
+                    }
+                }
             default:
                 throw new Error('Invalid choice for device verification')
         }
@@ -330,7 +347,8 @@ export class Auth {
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
 
-        this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken))
+        this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
+        this.socket.registerLogin(this._sessionToken)
     }
 
     async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) {
@@ -462,13 +480,32 @@ export class Auth {
         return this.endpoint.get(path)
     }
 
-    setLoginParameters(userName: string, sessionToken: string) {
+    setLoginParameters(userName: string, sessionToken: string, accountUid: Uint8Array) {
         this._username = userName;
         this._sessionToken = sessionToken;
+        this._accountUid = accountUid;
     }
 
     async registerDevice() {
         await this.endpoint.registerDevice()
+    }
+
+    async getPushMessage(): Promise<any> {
+        const pushMessage = await this.socket.getPushMessage()
+        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+        return JSON.parse(wssClientResponse.message)
+    }
+
+    async approveDevice(encryptedDeviceToken: Uint8Array) {
+        const approveDeviceMsg = deviceApproveStatusMessage({
+            accountUid: this._accountUid,
+            deviceApproveStatus: [{
+                approved: true,
+                encryptedDeviceToken: encryptedDeviceToken
+            }]
+        })
+        const resp = await this.executeRest(approveDeviceMsg)
+        console.log(resp)
     }
 }
 

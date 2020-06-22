@@ -19,6 +19,7 @@
     "test-new-login": "ts-node test/new_login.ts",
     "test-ws_push": "ts-node test/ws_push.ts",
     "test-sso": "ts-node test/test-sso-and-logger.ts",
+    "push-agent": "ts-node test/keeperPush.ts",
     "test:2": "jest",
     "types": "tsc --watch",
     "types:ci": "tsc"

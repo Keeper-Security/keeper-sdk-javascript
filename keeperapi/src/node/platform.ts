@@ -154,48 +154,24 @@ export const nodePlatform: Platform = class {
         })
     }
 
-    static post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse> {
+    static post(
+      url: string,
+      request: Uint8Array | string,
+      headers?: {[key: string]: string}
+    ): Promise<KeeperHttpResponse> {
         return new Promise<KeeperHttpResponse>((resolve) => {
             let post = https.request(url, {
                 method: "post",
                 headers: {
-                    ...{
-                        "Content-Type": "application/octet-stream",
-                        "Content-Length": request.length,
-                        "User-Agent": `Node/${process.version}`
-                    },
-                    ...headers
-                }
+                    "Content-Type": "application/octet-stream",
+                    "Content-Length": request.length,
+                    "User-Agent": `Node/${process.version}`,
+                    ...headers,
+                },
             }, (res) => {
                 this.fetchData(res, resolve)
             });
             post.write(request);
-            post.end();
-        })
-    }
-
-
-    static postForm(url: string, request: Uint8Array, formParams: any, headers?: any): Promise<KeeperHttpResponse> {
-
-        let formParamString: string = formParams ? (new URLSearchParams(formParams)).toString() : "";
-
-        return new Promise<KeeperHttpResponse>((resolve) => {
-            let post = https.request(url, {
-                method: "post",
-                headers: {
-                    ...{
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "Content-Length": formParamString.length,
-                        "User-Agent": `Node/${process.version}`
-                    },
-                    ...headers
-                }
-            }, (res) => {
-                this.fetchData(res, resolve)
-            });
-
-            console.log("Sending to " + url + " with params " + formParamString);
-            post.write(formParamString);
             post.end();
         })
     }
@@ -254,6 +230,9 @@ export const nodePlatform: Platform = class {
             onMessage: (callback: (e: MessageEvent) => void) => {
                 socket.on('message', callback)
             },
+            send: (message => {
+                socket.send(message)
+            })
         }
     }
 
