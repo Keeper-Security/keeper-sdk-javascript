@@ -1,6 +1,11 @@
 .idea
 .rpt2_cache
 .DS_Store
+*.jpg
+*.png
+keeperapi/sp-metadata.xml
+keeperapi/device-config*
+keeperapi/device-token.dat
 node_modules
 dist
 yarn-error.log
