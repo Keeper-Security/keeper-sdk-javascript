@@ -230,6 +230,7 @@ export class Auth {
                 await this.executeRest(requestDeviceVerificationMessage({
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
+                    clientVersion: this.endpoint.clientVersion
                 }))
                 const token = await this.options.authUI3.prompt('Enter Device token or approve via email and press enter:')
                 if (!!token) {

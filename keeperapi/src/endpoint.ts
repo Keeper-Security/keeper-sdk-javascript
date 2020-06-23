@@ -214,7 +214,7 @@ export class KeeperEndpoint {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
             return message.fromBytes(decrypted)
         } catch {
-            throw(new Error(platform.bytesToString(response.data.slice(0, 100))))
+            throw(new Error(platform.bytesToString(response.data.slice(0, 1000))))
         }
     }
 

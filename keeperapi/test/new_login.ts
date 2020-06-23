@@ -11,7 +11,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-const userName = "admin@yozik.us"
+// const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
@@ -19,13 +19,15 @@ const userName = "admin@yozik.us"
 // const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
+// const userName = "admin+backup@yozik.us"
 // const userName = "admin+j16a@yozik.us"
 // const userName = "brian+bp@keepersecurity.com"
 // const userName = "arlen+dev5@keepersecurity.com"
 //const userName = "vladimir+cw@keepersecurity.com"
+const userName = "arlen+c6@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
-const host = KeeperEnvironment.LOCAL
+const host = KeeperEnvironment.DEV
 
 async function testRegistration() {
 

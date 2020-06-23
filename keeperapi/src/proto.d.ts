@@ -616,6 +616,9 @@ export namespace Authentication {
 
         /** NewUserMinimumParams passwordMatchDescription */
         passwordMatchDescription?: (string[]|null);
+
+        /** NewUserMinimumParams isEnterpriseDomain */
+        isEnterpriseDomain?: (boolean|null);
     }
 
     /** Represents a NewUserMinimumParams. */
@@ -635,6 +638,9 @@ export namespace Authentication {
 
         /** NewUserMinimumParams passwordMatchDescription. */
         public passwordMatchDescription: string[];
+
+        /** NewUserMinimumParams isEnterpriseDomain. */
+        public isEnterpriseDomain: boolean;
 
         /**
          * Creates a new NewUserMinimumParams instance using the specified properties.
@@ -2086,6 +2092,15 @@ export namespace Authentication {
 
         /** LoginAsUserResponse encryptedSessionToken */
         encryptedSessionToken?: (Uint8Array|null);
+
+        /** LoginAsUserResponse primaryUsername */
+        primaryUsername?: (string|null);
+
+        /** LoginAsUserResponse encryptedDataKey */
+        encryptedDataKey?: (Uint8Array|null);
+
+        /** LoginAsUserResponse encryptedDataKeyType */
+        encryptedDataKeyType?: (Authentication.EncryptedDataKeyType|null);
     }
 
     /** Represents a LoginAsUserResponse. */
@@ -2099,6 +2114,15 @@ export namespace Authentication {
 
         /** LoginAsUserResponse encryptedSessionToken. */
         public encryptedSessionToken: Uint8Array;
+
+        /** LoginAsUserResponse primaryUsername. */
+        public primaryUsername: string;
+
+        /** LoginAsUserResponse encryptedDataKey. */
+        public encryptedDataKey: Uint8Array;
+
+        /** LoginAsUserResponse encryptedDataKeyType. */
+        public encryptedDataKeyType: Authentication.EncryptedDataKeyType;
 
         /**
          * Creates a new LoginAsUserResponse instance using the specified properties.
@@ -5563,8 +5587,8 @@ export namespace Authentication {
         /** CreateUserRequest encryptedDeviceDataKey */
         encryptedDeviceDataKey?: (Uint8Array|null);
 
-        /** CreateUserRequest fromSP */
-        fromSP?: (boolean|null);
+        /** CreateUserRequest encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
 
         /** CreateUserRequest messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
@@ -5593,8 +5617,8 @@ export namespace Authentication {
         /** CreateUserRequest carrier */
         carrier?: (string|null);
 
-        /** CreateUserRequest skipGroupAccept */
-        skipGroupAccept?: (boolean|null);
+        /** CreateUserRequest removeThis */
+        removeThis?: (boolean|null);
 
         /** CreateUserRequest verificationCode */
         verificationCode?: (string|null);
@@ -5645,8 +5669,8 @@ export namespace Authentication {
         /** CreateUserRequest encryptedDeviceDataKey. */
         public encryptedDeviceDataKey: Uint8Array;
 
-        /** CreateUserRequest fromSP. */
-        public fromSP: boolean;
+        /** CreateUserRequest encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
 
         /** CreateUserRequest messageSessionUid. */
         public messageSessionUid: Uint8Array;
@@ -5675,8 +5699,8 @@ export namespace Authentication {
         /** CreateUserRequest carrier. */
         public carrier: string;
 
-        /** CreateUserRequest skipGroupAccept. */
-        public skipGroupAccept: boolean;
+        /** CreateUserRequest removeThis. */
+        public removeThis: boolean;
 
         /** CreateUserRequest verificationCode. */
         public verificationCode: string;
@@ -6561,6 +6585,9 @@ export namespace Authentication {
 
         /** DeviceVerificationRequest messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
+
+        /** DeviceVerificationRequest clientVersion */
+        clientVersion?: (string|null);
     }
 
     /** Represents a DeviceVerificationRequest. */
@@ -6583,6 +6610,9 @@ export namespace Authentication {
 
         /** DeviceVerificationRequest messageSessionUid. */
         public messageSessionUid: Uint8Array;
+
+        /** DeviceVerificationRequest clientVersion. */
+        public clientVersion: string;
 
         /**
          * Creates a new DeviceVerificationRequest instance using the specified properties.
@@ -7459,523 +7489,109 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a KinfoDevice. */
-    interface IKinfoDevice {
+    /** Properties of a ValidateDeviceVerificationCodeRequest. */
+    interface IValidateDeviceVerificationCodeRequest {
 
-        /** KinfoDevice encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-
-        /** KinfoDevice deviceId */
-        deviceId?: (number|Long|null);
-    }
-
-    /** Represents a KinfoDevice. */
-    class KinfoDevice implements IKinfoDevice {
-
-        /**
-         * Constructs a new KinfoDevice.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IKinfoDevice);
-
-        /** KinfoDevice encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /** KinfoDevice deviceId. */
-        public deviceId: (number|Long);
-
-        /**
-         * Creates a new KinfoDevice instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns KinfoDevice instance
-         */
-        public static create(properties?: Authentication.IKinfoDevice): Authentication.KinfoDevice;
-
-        /**
-         * Encodes the specified KinfoDevice message. Does not implicitly {@link Authentication.KinfoDevice.verify|verify} messages.
-         * @param message KinfoDevice message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IKinfoDevice, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified KinfoDevice message, length delimited. Does not implicitly {@link Authentication.KinfoDevice.verify|verify} messages.
-         * @param message KinfoDevice message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IKinfoDevice, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a KinfoDevice message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns KinfoDevice
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.KinfoDevice;
-
-        /**
-         * Decodes a KinfoDevice message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns KinfoDevice
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.KinfoDevice;
-
-        /**
-         * Verifies a KinfoDevice message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a KinfoDevice message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns KinfoDevice
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.KinfoDevice;
-
-        /**
-         * Creates a plain object from a KinfoDevice message. Also converts values to other types if specified.
-         * @param message KinfoDevice
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.KinfoDevice, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this KinfoDevice to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a UserDeviceStatus. */
-    interface IUserDeviceStatus {
-
-        /** UserDeviceStatus username */
+        /** ValidateDeviceVerificationCodeRequest username */
         username?: (string|null);
 
-        /** UserDeviceStatus encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
+        /** ValidateDeviceVerificationCodeRequest clientVersion */
+        clientVersion?: (string|null);
 
-        /** UserDeviceStatus accountUid */
-        accountUid?: (Uint8Array|null);
+        /** ValidateDeviceVerificationCodeRequest verificationCode */
+        verificationCode?: (string|null);
 
-        /** UserDeviceStatus regionName */
-        regionName?: (string|null);
-
-        /** UserDeviceStatus deviceStatus */
-        deviceStatus?: (Authentication.DeviceStatus|null);
+        /** ValidateDeviceVerificationCodeRequest messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
     }
 
-    /** Represents a UserDeviceStatus. */
-    class UserDeviceStatus implements IUserDeviceStatus {
+    /** Represents a ValidateDeviceVerificationCodeRequest. */
+    class ValidateDeviceVerificationCodeRequest implements IValidateDeviceVerificationCodeRequest {
 
         /**
-         * Constructs a new UserDeviceStatus.
+         * Constructs a new ValidateDeviceVerificationCodeRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IUserDeviceStatus);
+        constructor(properties?: Authentication.IValidateDeviceVerificationCodeRequest);
 
-        /** UserDeviceStatus username. */
+        /** ValidateDeviceVerificationCodeRequest username. */
         public username: string;
 
-        /** UserDeviceStatus encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
+        /** ValidateDeviceVerificationCodeRequest clientVersion. */
+        public clientVersion: string;
 
-        /** UserDeviceStatus accountUid. */
-        public accountUid: Uint8Array;
+        /** ValidateDeviceVerificationCodeRequest verificationCode. */
+        public verificationCode: string;
 
-        /** UserDeviceStatus regionName. */
-        public regionName: string;
-
-        /** UserDeviceStatus deviceStatus. */
-        public deviceStatus: Authentication.DeviceStatus;
+        /** ValidateDeviceVerificationCodeRequest messageSessionUid. */
+        public messageSessionUid: Uint8Array;
 
         /**
-         * Creates a new UserDeviceStatus instance using the specified properties.
+         * Creates a new ValidateDeviceVerificationCodeRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns UserDeviceStatus instance
+         * @returns ValidateDeviceVerificationCodeRequest instance
          */
-        public static create(properties?: Authentication.IUserDeviceStatus): Authentication.UserDeviceStatus;
+        public static create(properties?: Authentication.IValidateDeviceVerificationCodeRequest): Authentication.ValidateDeviceVerificationCodeRequest;
 
         /**
-         * Encodes the specified UserDeviceStatus message. Does not implicitly {@link Authentication.UserDeviceStatus.verify|verify} messages.
-         * @param message UserDeviceStatus message or plain object to encode
+         * Encodes the specified ValidateDeviceVerificationCodeRequest message. Does not implicitly {@link Authentication.ValidateDeviceVerificationCodeRequest.verify|verify} messages.
+         * @param message ValidateDeviceVerificationCodeRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IUserDeviceStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.IValidateDeviceVerificationCodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified UserDeviceStatus message, length delimited. Does not implicitly {@link Authentication.UserDeviceStatus.verify|verify} messages.
-         * @param message UserDeviceStatus message or plain object to encode
+         * Encodes the specified ValidateDeviceVerificationCodeRequest message, length delimited. Does not implicitly {@link Authentication.ValidateDeviceVerificationCodeRequest.verify|verify} messages.
+         * @param message ValidateDeviceVerificationCodeRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IUserDeviceStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.IValidateDeviceVerificationCodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a UserDeviceStatus message from the specified reader or buffer.
+         * Decodes a ValidateDeviceVerificationCodeRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns UserDeviceStatus
+         * @returns ValidateDeviceVerificationCodeRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserDeviceStatus;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ValidateDeviceVerificationCodeRequest;
 
         /**
-         * Decodes a UserDeviceStatus message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateDeviceVerificationCodeRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns UserDeviceStatus
+         * @returns ValidateDeviceVerificationCodeRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserDeviceStatus;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ValidateDeviceVerificationCodeRequest;
 
         /**
-         * Verifies a UserDeviceStatus message.
+         * Verifies a ValidateDeviceVerificationCodeRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a UserDeviceStatus message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateDeviceVerificationCodeRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns UserDeviceStatus
+         * @returns ValidateDeviceVerificationCodeRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.UserDeviceStatus;
+        public static fromObject(object: { [k: string]: any }): Authentication.ValidateDeviceVerificationCodeRequest;
 
         /**
-         * Creates a plain object from a UserDeviceStatus message. Also converts values to other types if specified.
-         * @param message UserDeviceStatus
+         * Creates a plain object from a ValidateDeviceVerificationCodeRequest message. Also converts values to other types if specified.
+         * @param message ValidateDeviceVerificationCodeRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.UserDeviceStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.ValidateDeviceVerificationCodeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this UserDeviceStatus to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a UserAccount. */
-    interface IUserAccount {
-
-        /** UserAccount username */
-        username?: (string|null);
-
-        /** UserAccount accountUid */
-        accountUid?: (Uint8Array|null);
-
-        /** UserAccount regionName */
-        regionName?: (string|null);
-    }
-
-    /** Represents a UserAccount. */
-    class UserAccount implements IUserAccount {
-
-        /**
-         * Constructs a new UserAccount.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IUserAccount);
-
-        /** UserAccount username. */
-        public username: string;
-
-        /** UserAccount accountUid. */
-        public accountUid: Uint8Array;
-
-        /** UserAccount regionName. */
-        public regionName: string;
-
-        /**
-         * Creates a new UserAccount instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UserAccount instance
-         */
-        public static create(properties?: Authentication.IUserAccount): Authentication.UserAccount;
-
-        /**
-         * Encodes the specified UserAccount message. Does not implicitly {@link Authentication.UserAccount.verify|verify} messages.
-         * @param message UserAccount message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IUserAccount, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UserAccount message, length delimited. Does not implicitly {@link Authentication.UserAccount.verify|verify} messages.
-         * @param message UserAccount message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IUserAccount, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a UserAccount message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UserAccount
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserAccount;
-
-        /**
-         * Decodes a UserAccount message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UserAccount
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserAccount;
-
-        /**
-         * Verifies a UserAccount message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a UserAccount message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UserAccount
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.UserAccount;
-
-        /**
-         * Creates a plain object from a UserAccount message. Also converts values to other types if specified.
-         * @param message UserAccount
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.UserAccount, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UserAccount to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an ApproveDevice. */
-    interface IApproveDevice {
-
-        /** ApproveDevice encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-
-        /** ApproveDevice accountUid */
-        accountUid?: (Uint8Array|null);
-
-        /** ApproveDevice deviceId */
-        deviceId?: (number|Long|null);
-    }
-
-    /** Represents an ApproveDevice. */
-    class ApproveDevice implements IApproveDevice {
-
-        /**
-         * Constructs a new ApproveDevice.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IApproveDevice);
-
-        /** ApproveDevice encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /** ApproveDevice accountUid. */
-        public accountUid: Uint8Array;
-
-        /** ApproveDevice deviceId. */
-        public deviceId: (number|Long);
-
-        /**
-         * Creates a new ApproveDevice instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ApproveDevice instance
-         */
-        public static create(properties?: Authentication.IApproveDevice): Authentication.ApproveDevice;
-
-        /**
-         * Encodes the specified ApproveDevice message. Does not implicitly {@link Authentication.ApproveDevice.verify|verify} messages.
-         * @param message ApproveDevice message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IApproveDevice, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ApproveDevice message, length delimited. Does not implicitly {@link Authentication.ApproveDevice.verify|verify} messages.
-         * @param message ApproveDevice message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IApproveDevice, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an ApproveDevice message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ApproveDevice
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ApproveDevice;
-
-        /**
-         * Decodes an ApproveDevice message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ApproveDevice
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ApproveDevice;
-
-        /**
-         * Verifies an ApproveDevice message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an ApproveDevice message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ApproveDevice
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.ApproveDevice;
-
-        /**
-         * Creates a plain object from an ApproveDevice message. Also converts values to other types if specified.
-         * @param message ApproveDevice
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.ApproveDevice, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ApproveDevice to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a Domain. */
-    interface IDomain {
-
-        /** Domain domainId */
-        domainId?: (number|Long|null);
-
-        /** Domain domain */
-        domain?: (string|null);
-
-        /** Domain regionName */
-        regionName?: (string|null);
-
-        /** Domain autoRedirect */
-        autoRedirect?: (boolean|null);
-    }
-
-    /** Represents a Domain. */
-    class Domain implements IDomain {
-
-        /**
-         * Constructs a new Domain.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IDomain);
-
-        /** Domain domainId. */
-        public domainId: (number|Long);
-
-        /** Domain domain. */
-        public domain: string;
-
-        /** Domain regionName. */
-        public regionName: string;
-
-        /** Domain autoRedirect. */
-        public autoRedirect: boolean;
-
-        /**
-         * Creates a new Domain instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns Domain instance
-         */
-        public static create(properties?: Authentication.IDomain): Authentication.Domain;
-
-        /**
-         * Encodes the specified Domain message. Does not implicitly {@link Authentication.Domain.verify|verify} messages.
-         * @param message Domain message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IDomain, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified Domain message, length delimited. Does not implicitly {@link Authentication.Domain.verify|verify} messages.
-         * @param message Domain message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IDomain, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a Domain message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns Domain
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.Domain;
-
-        /**
-         * Decodes a Domain message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns Domain
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.Domain;
-
-        /**
-         * Verifies a Domain message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Domain message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Domain
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.Domain;
-
-        /**
-         * Creates a plain object from a Domain message. Also converts values to other types if specified.
-         * @param message Domain
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.Domain, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Domain to JSON.
+         * Converts this ValidateDeviceVerificationCodeRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -15822,8 +15438,8 @@ export namespace Tokens {
         /** DeviceApprovalToken deviceToken */
         deviceToken?: (Tokens.IDeviceToken|null);
 
-        /** DeviceApprovalToken locale */
-        locale?: (string|null);
+        /** DeviceApprovalToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
     }
 
     /** Represents a DeviceApprovalToken. */
@@ -15844,8 +15460,8 @@ export namespace Tokens {
         /** DeviceApprovalToken deviceToken. */
         public deviceToken?: (Tokens.IDeviceToken|null);
 
-        /** DeviceApprovalToken locale. */
-        public locale: string;
+        /** DeviceApprovalToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
         /**
          * Creates a new DeviceApprovalToken instance using the specified properties.
@@ -16361,14 +15977,14 @@ export namespace Tokens {
         /** SessionToken expiration */
         expiration?: (number|Long|null);
 
-        /** SessionToken dontUseIp */
-        dontUseIp?: (string|null);
+        /** SessionToken du1 */
+        du1?: (string|null);
 
         /** SessionToken sessionUid */
         sessionUid?: (Uint8Array|null);
 
-        /** SessionToken dontUseDeviceToken */
-        dontUseDeviceToken?: (Tokens.IDeviceToken|null);
+        /** SessionToken du8 */
+        du8?: (Tokens.IDeviceToken|null);
 
         /** SessionToken fromUserId */
         fromUserId?: (number|null);
@@ -16379,20 +15995,20 @@ export namespace Tokens {
         /** SessionToken enterpriseUserId */
         enterpriseUserId?: (number|Long|null);
 
-        /** SessionToken dontUseVault */
-        dontUseVault?: (Tokens.ILicenseToken|null);
+        /** SessionToken du2 */
+        du2?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseChat */
-        dontUseChat?: (Tokens.ILicenseToken|null);
+        /** SessionToken du3 */
+        du3?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseStorage */
-        dontUseStorage?: (Tokens.ILicenseToken|null);
+        /** SessionToken du4 */
+        du4?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseBreachWatch */
-        dontUseBreachWatch?: (Tokens.ILicenseToken|null);
+        /** SessionToken du5 */
+        du5?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseAccountType */
-        dontUseAccountType?: (Authentication.AccountType|null);
+        /** SessionToken du6 */
+        du6?: (Authentication.AccountType|null);
 
         /** SessionToken clientVersionId */
         clientVersionId?: (number|null);
@@ -16403,8 +16019,8 @@ export namespace Tokens {
         /** SessionToken mcEnterpriseId */
         mcEnterpriseId?: (number|null);
 
-        /** SessionToken dontUseOfflineDisallowed */
-        dontUseOfflineDisallowed?: (boolean|null);
+        /** SessionToken du7 */
+        du7?: (boolean|null);
 
         /** SessionToken deviceId */
         deviceId?: (number|Long|null);
@@ -16425,14 +16041,14 @@ export namespace Tokens {
         /** SessionToken expiration. */
         public expiration: (number|Long);
 
-        /** SessionToken dontUseIp. */
-        public dontUseIp: string;
+        /** SessionToken du1. */
+        public du1: string;
 
         /** SessionToken sessionUid. */
         public sessionUid: Uint8Array;
 
-        /** SessionToken dontUseDeviceToken. */
-        public dontUseDeviceToken?: (Tokens.IDeviceToken|null);
+        /** SessionToken du8. */
+        public du8?: (Tokens.IDeviceToken|null);
 
         /** SessionToken fromUserId. */
         public fromUserId: number;
@@ -16443,20 +16059,20 @@ export namespace Tokens {
         /** SessionToken enterpriseUserId. */
         public enterpriseUserId: (number|Long);
 
-        /** SessionToken dontUseVault. */
-        public dontUseVault?: (Tokens.ILicenseToken|null);
+        /** SessionToken du2. */
+        public du2?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseChat. */
-        public dontUseChat?: (Tokens.ILicenseToken|null);
+        /** SessionToken du3. */
+        public du3?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseStorage. */
-        public dontUseStorage?: (Tokens.ILicenseToken|null);
+        /** SessionToken du4. */
+        public du4?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseBreachWatch. */
-        public dontUseBreachWatch?: (Tokens.ILicenseToken|null);
+        /** SessionToken du5. */
+        public du5?: (Tokens.ILicenseToken|null);
 
-        /** SessionToken dontUseAccountType. */
-        public dontUseAccountType: Authentication.AccountType;
+        /** SessionToken du6. */
+        public du6: Authentication.AccountType;
 
         /** SessionToken clientVersionId. */
         public clientVersionId: number;
@@ -16467,8 +16083,8 @@ export namespace Tokens {
         /** SessionToken mcEnterpriseId. */
         public mcEnterpriseId: number;
 
-        /** SessionToken dontUseOfflineDisallowed. */
-        public dontUseOfflineDisallowed: boolean;
+        /** SessionToken du7. */
+        public du7: boolean;
 
         /** SessionToken deviceId. */
         public deviceId: (number|Long);
@@ -16955,14 +16571,14 @@ export namespace Tokens {
         /** ChangeEmailToken newEmail */
         newEmail?: (string|null);
 
-        /** ChangeEmailToken locale */
-        locale?: (string|null);
+        /** ChangeEmailToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
 
         /** ChangeEmailToken enterpriseUserId */
         enterpriseUserId?: (number|Long|null);
 
-        /** ChangeEmailToken expiration */
-        expiration?: (number|Long|null);
+        /** ChangeEmailToken creation */
+        creation?: (number|Long|null);
     }
 
     /** Represents a ChangeEmailToken. */
@@ -16980,14 +16596,14 @@ export namespace Tokens {
         /** ChangeEmailToken newEmail. */
         public newEmail: string;
 
-        /** ChangeEmailToken locale. */
-        public locale: string;
+        /** ChangeEmailToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
         /** ChangeEmailToken enterpriseUserId. */
         public enterpriseUserId: (number|Long);
 
-        /** ChangeEmailToken expiration. */
-        public expiration: (number|Long);
+        /** ChangeEmailToken creation. */
+        public creation: (number|Long);
 
         /**
          * Creates a new ChangeEmailToken instance using the specified properties.
@@ -17069,14 +16685,14 @@ export namespace Tokens {
         /** EmailVerificationToken email */
         email?: (string|null);
 
-        /** EmailVerificationToken locale */
-        locale?: (string|null);
+        /** EmailVerificationToken du1 */
+        du1?: (string|null);
 
         /** EmailVerificationToken enterpriseUserId */
         enterpriseUserId?: (number|Long|null);
 
-        /** EmailVerificationToken expiration */
-        expiration?: (number|Long|null);
+        /** EmailVerificationToken du2 */
+        du2?: (number|Long|null);
     }
 
     /** Represents an EmailVerificationToken. */
@@ -17094,14 +16710,14 @@ export namespace Tokens {
         /** EmailVerificationToken email. */
         public email: string;
 
-        /** EmailVerificationToken locale. */
-        public locale: string;
+        /** EmailVerificationToken du1. */
+        public du1: string;
 
         /** EmailVerificationToken enterpriseUserId. */
         public enterpriseUserId: (number|Long);
 
-        /** EmailVerificationToken expiration. */
-        public expiration: (number|Long);
+        /** EmailVerificationToken du2. */
+        public du2: (number|Long);
 
         /**
          * Creates a new EmailVerificationToken instance using the specified properties.
@@ -17189,11 +16805,11 @@ export namespace Tokens {
         /** IpAddressVerificationToken ipAddress */
         ipAddress?: (string|null);
 
-        /** IpAddressVerificationToken doNotUseLocale */
-        doNotUseLocale?: (string|null);
+        /** IpAddressVerificationToken du1 */
+        du1?: (string|null);
 
-        /** IpAddressVerificationToken doNotUseExpiration */
-        doNotUseExpiration?: (number|Long|null);
+        /** IpAddressVerificationToken du2 */
+        du2?: (number|Long|null);
 
         /** IpAddressVerificationToken enterpriseId */
         enterpriseId?: (number|null);
@@ -17223,11 +16839,11 @@ export namespace Tokens {
         /** IpAddressVerificationToken ipAddress. */
         public ipAddress: string;
 
-        /** IpAddressVerificationToken doNotUseLocale. */
-        public doNotUseLocale: string;
+        /** IpAddressVerificationToken du1. */
+        public du1: string;
 
-        /** IpAddressVerificationToken doNotUseExpiration. */
-        public doNotUseExpiration: (number|Long);
+        /** IpAddressVerificationToken du2. */
+        public du2: (number|Long);
 
         /** IpAddressVerificationToken enterpriseId. */
         public enterpriseId: number;
@@ -17315,8 +16931,8 @@ export namespace Tokens {
         /** EnterprisePersonalAccountToken email */
         email?: (string|null);
 
-        /** EnterprisePersonalAccountToken locale */
-        locale?: (string|null);
+        /** EnterprisePersonalAccountToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
 
         /** EnterprisePersonalAccountToken duration */
         duration?: (number|Long|null);
@@ -17324,8 +16940,8 @@ export namespace Tokens {
         /** EnterprisePersonalAccountToken referralName */
         referralName?: (string|null);
 
-        /** EnterprisePersonalAccountToken expiration */
-        expiration?: (number|Long|null);
+        /** EnterprisePersonalAccountToken creation */
+        creation?: (number|Long|null);
     }
 
     /** Represents an EnterprisePersonalAccountToken. */
@@ -17343,8 +16959,8 @@ export namespace Tokens {
         /** EnterprisePersonalAccountToken email. */
         public email: string;
 
-        /** EnterprisePersonalAccountToken locale. */
-        public locale: string;
+        /** EnterprisePersonalAccountToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
         /** EnterprisePersonalAccountToken duration. */
         public duration: (number|Long);
@@ -17352,8 +16968,8 @@ export namespace Tokens {
         /** EnterprisePersonalAccountToken referralName. */
         public referralName: string;
 
-        /** EnterprisePersonalAccountToken expiration. */
-        public expiration: (number|Long);
+        /** EnterprisePersonalAccountToken creation. */
+        public creation: (number|Long);
 
         /**
          * Creates a new EnterprisePersonalAccountToken instance using the specified properties.
@@ -17435,11 +17051,11 @@ export namespace Tokens {
         /** UsernameVerificationToken accountUid */
         accountUid?: (Uint8Array|null);
 
-        /** UsernameVerificationToken locale */
-        locale?: (string|null);
+        /** UsernameVerificationToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
 
-        /** UsernameVerificationToken expiration */
-        expiration?: (number|Long|null);
+        /** UsernameVerificationToken creation */
+        creation?: (number|Long|null);
     }
 
     /** Represents a UsernameVerificationToken. */
@@ -17457,11 +17073,11 @@ export namespace Tokens {
         /** UsernameVerificationToken accountUid. */
         public accountUid: Uint8Array;
 
-        /** UsernameVerificationToken locale. */
-        public locale: string;
+        /** UsernameVerificationToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
-        /** UsernameVerificationToken expiration. */
-        public expiration: (number|Long);
+        /** UsernameVerificationToken creation. */
+        public creation: (number|Long);
 
         /**
          * Creates a new UsernameVerificationToken instance using the specified properties.
@@ -17549,17 +17165,14 @@ export namespace Tokens {
         /** DeviceVerificationToken deviceName */
         deviceName?: (string|null);
 
-        /** DeviceVerificationToken dontUseDevicePublicKey */
-        dontUseDevicePublicKey?: (Uint8Array|null);
-
         /** DeviceVerificationToken clientVersion */
         clientVersion?: (string|null);
 
-        /** DeviceVerificationToken locale */
-        locale?: (string|null);
+        /** DeviceVerificationToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
 
-        /** DeviceVerificationToken expiration */
-        expiration?: (number|Long|null);
+        /** DeviceVerificationToken creation */
+        creation?: (number|Long|null);
 
         /** DeviceVerificationToken messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
@@ -17586,17 +17199,14 @@ export namespace Tokens {
         /** DeviceVerificationToken deviceName. */
         public deviceName: string;
 
-        /** DeviceVerificationToken dontUseDevicePublicKey. */
-        public dontUseDevicePublicKey: Uint8Array;
-
         /** DeviceVerificationToken clientVersion. */
         public clientVersion: string;
 
-        /** DeviceVerificationToken locale. */
-        public locale: string;
+        /** DeviceVerificationToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
-        /** DeviceVerificationToken expiration. */
-        public expiration: (number|Long);
+        /** DeviceVerificationToken creation. */
+        public creation: (number|Long);
 
         /** DeviceVerificationToken messageSessionUid. */
         public messageSessionUid: Uint8Array;
@@ -17684,8 +17294,8 @@ export namespace Tokens {
         /** CreateUserToken requestTimeStamp */
         requestTimeStamp?: (number|Long|null);
 
-        /** CreateUserToken locale */
-        locale?: (string|null);
+        /** CreateUserToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
 
         /** CreateUserToken remoteAddress */
         remoteAddress?: (string|null);
@@ -17715,8 +17325,8 @@ export namespace Tokens {
         /** CreateUserToken requestTimeStamp. */
         public requestTimeStamp: (number|Long);
 
-        /** CreateUserToken locale. */
-        public locale: string;
+        /** CreateUserToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
 
         /** CreateUserToken remoteAddress. */
         public remoteAddress: string;
@@ -17817,8 +17427,8 @@ export namespace Tokens {
         /** ProcessToken payload */
         payload?: (Uint8Array|null);
 
-        /** ProcessToken expiration */
-        expiration?: (number|Long|null);
+        /** ProcessToken creation */
+        creation?: (number|Long|null);
 
         /** ProcessToken supportedLanguage */
         supportedLanguage?: (Authentication.SupportedLanguage|null);
@@ -17839,8 +17449,8 @@ export namespace Tokens {
         /** ProcessToken payload. */
         public payload: Uint8Array;
 
-        /** ProcessToken expiration. */
-        public expiration: (number|Long);
+        /** ProcessToken creation. */
+        public creation: (number|Long);
 
         /** ProcessToken supportedLanguage. */
         public supportedLanguage: Authentication.SupportedLanguage;
