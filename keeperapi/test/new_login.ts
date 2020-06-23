@@ -15,7 +15,7 @@ connectPlatform(nodePlatform)
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-// const userName = "admin+plain@yozik.us"
+const userName = "admin+plain@yozik.us"
 // const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
@@ -24,7 +24,7 @@ connectPlatform(nodePlatform)
 // const userName = "brian+bp@keepersecurity.com"
 // const userName = "arlen+dev5@keepersecurity.com"
 //const userName = "vladimir+cw@keepersecurity.com"
-const userName = "arlen+c6@keepersecurity.com"
+// const userName = "arlen+c6@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
 const host = KeeperEnvironment.DEV

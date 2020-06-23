@@ -172,17 +172,9 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(derived);
     }
 
-    static async calcAutoResponse(key: Uint8Array): Promise<string> {
+    static async calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
         let digest = await crypto.subtle.digest("SHA-256", key);
-        return browserPlatform.bytesToBase64(new Uint8Array(digest));
-    }
-
-    static authVerifierAsString(key: Uint8Array): Promise<string> {
-        throw new Error("Not implemented")
-    }
-
-    static authVerifierAsBytes(key: Uint8Array): Promise<Uint8Array> {
-        throw new Error("Not implemented")
+        return new Uint8Array(digest);
     }
 
     static async get(url: string, headers: any): Promise<KeeperHttpResponse> {

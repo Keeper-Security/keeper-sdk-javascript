@@ -569,9 +569,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CODE_SMS: 2,
           TWO_FA_CODE_DUO: 3,
           TWO_FA_CODE_RSA: 4,
-          TWO_FA_CODE_BACKUP: 5,
-          TWO_FA_RESP_U2F: 6,
-          TWO_FA_RESP_WEBAUTHN: 7
+          TWO_FA_RESP_U2F: 5,
+          TWO_FA_RESP_WEBAUTHN: 6
         }
       },
       TwoFactorChannelType: {
@@ -3113,9 +3112,29 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "Authentication.SupportedLanguage",
             id: 11
           },
+          ssoLoginToken: {
+            type: "SSOLoginToken",
+            id: 12
+          }
+        }
+      },
+      SSOLoginToken: {
+        fields: {
+          ssoServiceProviderId: {
+            type: "int64",
+            id: 1
+          },
           username: {
             type: "string",
-            id: 12
+            id: 2
+          },
+          alias: {
+            type: "string",
+            id: 3
+          },
+          displayname: {
+            type: "string",
+            id: 4
           }
         }
       },

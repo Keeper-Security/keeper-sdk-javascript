@@ -339,7 +339,7 @@ export class Auth {
         // TODO test for account transfer and account recovery
         const salt = loginResponse.salt[0]
         const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
-        let authHash = await platform.authVerifierAsBytes(authHashKey);
+        let authHash = await platform.calcAuthVerifier(authHashKey);
 
         const loginMsg = validateAuthHashMessage({
             authResponse: authHash,
@@ -383,7 +383,7 @@ export class Auth {
             let preLoginResponse = await this.endpoint.getPreLogin(username);
             let salt = preLoginResponse.salt[0];
             let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
-            let authHash = await platform.authVerifierAsString(authHashKey);
+            let authHash = platform.bytesToBase64(await platform.calcAuthVerifier(authHashKey));
 
             let loginCommand = new LoginCommand();
             loginCommand.command = "login";

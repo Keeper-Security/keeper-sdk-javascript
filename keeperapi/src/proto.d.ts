@@ -2320,9 +2320,8 @@ export namespace Authentication {
         TWO_FA_CODE_SMS = 2,
         TWO_FA_CODE_DUO = 3,
         TWO_FA_CODE_RSA = 4,
-        TWO_FA_CODE_BACKUP = 5,
-        TWO_FA_RESP_U2F = 6,
-        TWO_FA_RESP_WEBAUTHN = 7
+        TWO_FA_RESP_U2F = 5,
+        TWO_FA_RESP_WEBAUTHN = 6
     }
 
     /** TwoFactorChannelType enum. */
@@ -15306,8 +15305,8 @@ export namespace Tokens {
         /** LoginToken supportedLanguage */
         supportedLanguage?: (Authentication.SupportedLanguage|null);
 
-        /** LoginToken username */
-        username?: (string|null);
+        /** LoginToken ssoLoginToken */
+        ssoLoginToken?: (Tokens.ISSOLoginToken|null);
     }
 
     /** Represents a LoginToken. */
@@ -15352,8 +15351,8 @@ export namespace Tokens {
         /** LoginToken supportedLanguage. */
         public supportedLanguage: Authentication.SupportedLanguage;
 
-        /** LoginToken username. */
-        public username: string;
+        /** LoginToken ssoLoginToken. */
+        public ssoLoginToken?: (Tokens.ISSOLoginToken|null);
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -15421,6 +15420,114 @@ export namespace Tokens {
 
         /**
          * Converts this LoginToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SSOLoginToken. */
+    interface ISSOLoginToken {
+
+        /** SSOLoginToken ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SSOLoginToken username */
+        username?: (string|null);
+
+        /** SSOLoginToken alias */
+        alias?: (string|null);
+
+        /** SSOLoginToken displayname */
+        displayname?: (string|null);
+    }
+
+    /** Represents a SSOLoginToken. */
+    class SSOLoginToken implements ISSOLoginToken {
+
+        /**
+         * Constructs a new SSOLoginToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.ISSOLoginToken);
+
+        /** SSOLoginToken ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SSOLoginToken username. */
+        public username: string;
+
+        /** SSOLoginToken alias. */
+        public alias: string;
+
+        /** SSOLoginToken displayname. */
+        public displayname: string;
+
+        /**
+         * Creates a new SSOLoginToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SSOLoginToken instance
+         */
+        public static create(properties?: Tokens.ISSOLoginToken): Tokens.SSOLoginToken;
+
+        /**
+         * Encodes the specified SSOLoginToken message. Does not implicitly {@link Tokens.SSOLoginToken.verify|verify} messages.
+         * @param message SSOLoginToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.ISSOLoginToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SSOLoginToken message, length delimited. Does not implicitly {@link Tokens.SSOLoginToken.verify|verify} messages.
+         * @param message SSOLoginToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.ISSOLoginToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SSOLoginToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SSOLoginToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.SSOLoginToken;
+
+        /**
+         * Decodes a SSOLoginToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SSOLoginToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.SSOLoginToken;
+
+        /**
+         * Verifies a SSOLoginToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SSOLoginToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SSOLoginToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.SSOLoginToken;
+
+        /**
+         * Creates a plain object from a SSOLoginToken message. Also converts values to other types if specified.
+         * @param message SSOLoginToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.SSOLoginToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SSOLoginToken to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
