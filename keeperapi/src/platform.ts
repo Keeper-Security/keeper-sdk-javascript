@@ -42,7 +42,7 @@ export interface Platform {
 
     post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse>;
 
-    fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any>
+    fileUpload(url: string, uploadParameters: any, data: Uint8Array | Blob): Promise<any>
 
     createWebsocket(url: string): SocketProxy
 

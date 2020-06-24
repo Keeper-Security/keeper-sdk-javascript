@@ -135,12 +135,15 @@ export const nodePlatform: Platform = class {
         return Promise.resolve(crypto.createHash("SHA256").update(key).digest());
     }
 
-    static get(url: string, headers: any): Promise<KeeperHttpResponse> {
+    static get(
+      url: string,
+      headers?: {[key: string]: string}
+    ): Promise<KeeperHttpResponse> {
         return new Promise<KeeperHttpResponse>((resolve) => {
             let get = https.request(url, {
                 method: "get",
                 headers: {
-                    ...{"User-Agent": `Node/${process.version}`},
+                    "User-Agent": `Node/${process.version}`,
                     ...headers
                 }
             }, (res) => {
@@ -172,13 +175,19 @@ export const nodePlatform: Platform = class {
         })
     }
 
-    static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
+    static fileUpload(
+      url: string,
+      uploadParameters: {[key: string]: string},
+      data: Uint8Array
+    ): Promise<any> {
         return new Promise<any>((resolve) => {
             const form = new FormData()
+
             for (const key in uploadParameters) {
                 form.append(key, uploadParameters[key]);
             }
             form.append('file', data)
+
             let post = https.request(url, {
                 method: "post",
                 headers: form.getHeaders()
