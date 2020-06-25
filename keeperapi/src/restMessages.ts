@@ -137,3 +137,6 @@ export const ssoCloudSAMLLogRequestMessage = (data: SsoCloud.ISsoCloudSAMLLogReq
 
 export const ssoCloudServiceProviderConfigurationListRequestMessage = (data: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest): RestMessage<SsoCloud.ISsoCloudServiceProviderConfigurationListRequest, SsoCloud.ISsoCloudServiceProviderConfigurationListResponse> =>
     createMessage(data, 'sso/config/sso_cloud_sp_configuration_get', SsoCloud.SsoCloudServiceProviderConfigurationListRequest, SsoCloud.SsoCloudServiceProviderConfigurationListResponse);
+
+export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServiceProviderRequest, url:string): RestMessage<Authentication.ISsoServiceProviderRequest, Authentication.ISsoServiceProviderResponse> =>
+    createMessage(data, url, Authentication.SsoServiceProviderRequest, Authentication.SsoServiceProviderResponse);
