@@ -9,13 +9,7 @@ import {
     normal64Bytes,
     webSafe64FromBytes
 } from './utils'
-import {
-    deviceMessage,
-    preLoginMessage,
-    registerDeviceMessage,
-    RestMessage,
-    updateDeviceMessage
-} from './restMessages'
+import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from './restMessages'
 import {ClientConfiguration, TransmissionKey} from './configuration';
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
@@ -73,14 +67,29 @@ export class KeeperEndpoint {
             }
         }
 
-        return this.executeRest(preLoginMessage({
-            authRequest: {
-                clientVersion: this.clientVersion,
-                username: username,
-                encryptedDeviceToken: this.deviceToken
-            },
-            loginType: Authentication.LoginType.NORMAL
-        }))
+        while (true) {
+            try {
+                return await this.executeRest(preLoginMessage({
+                    authRequest: {
+                        clientVersion: this.clientVersion,
+                        username: username,
+                        encryptedDeviceToken: this.deviceToken
+                    },
+                    loginType: Authentication.LoginType.NORMAL
+                }))
+            }
+            catch (e) {
+                if (!(e instanceof Error))
+                    throw(e)
+                let errorObj = JSON.parse(e.message)
+                if (errorObj.error === 'region_redirect') {
+                    this.options.host = errorObj.region_host
+                    console.log(`Redirecting to ${this.options.host}`)
+                } else {
+                    throw(e)
+                }
+            }
+        }
     }
 
     async registerDevice() {
