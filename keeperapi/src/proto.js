@@ -195,6 +195,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "string",
             id: 3
+          },
+          isEnterpriseDomain: {
+            type: "bool",
+            id: 4
           }
         }
       },
@@ -511,6 +515,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedSessionToken: {
             type: "bytes",
             id: 1
+          },
+          primaryUsername: {
+            type: "string",
+            id: 2
+          },
+          encryptedDataKey: {
+            type: "bytes",
+            id: 3
+          },
+          encryptedDataKeyType: {
+            type: "EncryptedDataKeyType",
+            id: 4
           }
         }
       },
@@ -553,9 +569,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CODE_SMS: 2,
           TWO_FA_CODE_DUO: 3,
           TWO_FA_CODE_RSA: 4,
-          TWO_FA_CODE_BACKUP: 5,
-          TWO_FA_RESP_U2F: 6,
-          TWO_FA_RESP_WEBAUTHN: 7
+          TWO_FA_RESP_U2F: 5,
+          TWO_FA_RESP_WEBAUTHN: 6
         }
       },
       TwoFactorChannelType: {
@@ -1166,8 +1181,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 11
           },
-          fromSP: {
-            type: "bool",
+          encryptedLoginToken: {
+            type: "bytes",
             id: 12
           },
           messageSessionUid: {
@@ -1206,7 +1221,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 21
           },
-          skipGroupAccept: {
+          removeThis: {
             type: "bool",
             id: 22
           },
@@ -1350,6 +1365,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           messageSessionUid: {
             type: "bytes",
             id: 4
+          },
+          clientVersion: {
+            type: "string",
+            id: 5
           }
         }
       },
@@ -1474,90 +1493,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      KinfoDevice: {
-        fields: {
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 1
-          },
-          deviceId: {
-            type: "int64",
-            id: 2
-          }
-        }
-      },
-      UserDeviceStatus: {
+      ValidateDeviceVerificationCodeRequest: {
         fields: {
           username: {
             type: "string",
             id: 1
           },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 2
-          },
-          accountUid: {
-            type: "bytes",
-            id: 3
-          },
-          regionName: {
-            type: "string",
-            id: 4
-          },
-          deviceStatus: {
-            type: "DeviceStatus",
-            id: 5
-          }
-        }
-      },
-      UserAccount: {
-        fields: {
-          username: {
-            type: "string",
-            id: 1
-          },
-          accountUid: {
-            type: "bytes",
-            id: 2
-          },
-          regionName: {
-            type: "string",
-            id: 3
-          }
-        }
-      },
-      ApproveDevice: {
-        fields: {
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 1
-          },
-          accountUid: {
-            type: "bytes",
-            id: 2
-          },
-          deviceId: {
-            type: "int64",
-            id: 3
-          }
-        }
-      },
-      Domain: {
-        fields: {
-          domainId: {
-            type: "int64",
-            id: 1
-          },
-          domain: {
+          clientVersion: {
             type: "string",
             id: 2
           },
-          regionName: {
+          verificationCode: {
             type: "string",
             id: 3
           },
-          autoRedirect: {
-            type: "bool",
+          messageSessionUid: {
+            type: "bytes",
             id: 4
           }
         }
@@ -3161,9 +3112,29 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "Authentication.SupportedLanguage",
             id: 11
           },
+          ssoLoginToken: {
+            type: "SSOLoginToken",
+            id: 12
+          }
+        }
+      },
+      SSOLoginToken: {
+        fields: {
+          ssoServiceProviderId: {
+            type: "int64",
+            id: 1
+          },
           username: {
             type: "string",
-            id: 12
+            id: 2
+          },
+          alias: {
+            type: "string",
+            id: 3
+          },
+          displayname: {
+            type: "string",
+            id: 4
           }
         }
       },
@@ -3181,8 +3152,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "DeviceToken",
             id: 3
           },
-          locale: {
-            type: "string",
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
             id: 4
           }
         }
@@ -3283,7 +3254,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 2
           },
-          dontUseIp: {
+          du1: {
             type: "string",
             id: 3
           },
@@ -3291,7 +3262,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 4
           },
-          dontUseDeviceToken: {
+          du8: {
             type: "DeviceToken",
             id: 5
           },
@@ -3307,23 +3278,23 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 8
           },
-          dontUseVault: {
+          du2: {
             type: "LicenseToken",
             id: 9
           },
-          dontUseChat: {
+          du3: {
             type: "LicenseToken",
             id: 10
           },
-          dontUseStorage: {
+          du4: {
             type: "LicenseToken",
             id: 11
           },
-          dontUseBreachWatch: {
+          du5: {
             type: "LicenseToken",
             id: 15
           },
-          dontUseAccountType: {
+          du6: {
             type: "Authentication.AccountType",
             id: 12
           },
@@ -3339,7 +3310,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int32",
             id: 16
           },
-          dontUseOfflineDisallowed: {
+          du7: {
             type: "bool",
             id: 17
           },
@@ -3419,15 +3390,15 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 2
           },
-          locale: {
-            type: "string",
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
             id: 3
           },
           enterpriseUserId: {
             type: "int64",
             id: 4
           },
-          expiration: {
+          creation: {
             type: "int64",
             id: 5
           }
@@ -3443,7 +3414,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 2
           },
-          locale: {
+          du1: {
             type: "string",
             id: 3
           },
@@ -3451,7 +3422,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 4
           },
-          expiration: {
+          du2: {
             type: "int64",
             id: 5
           }
@@ -3475,11 +3446,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          doNotUseLocale: {
+          du1: {
             type: "string",
             id: 5
           },
-          doNotUseExpiration: {
+          du2: {
             type: "int64",
             id: 6
           },
@@ -3503,8 +3474,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 2
           },
-          locale: {
-            type: "string",
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
             id: 3
           },
           duration: {
@@ -3515,7 +3486,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 5
           },
-          expiration: {
+          creation: {
             type: "int64",
             id: 6
           }
@@ -3531,11 +3502,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 2
           },
-          locale: {
-            type: "string",
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
             id: 3
           },
-          expiration: {
+          creation: {
             type: "int64",
             id: 4
           }
@@ -3559,25 +3530,21 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          dontUseDevicePublicKey: {
-            type: "bytes",
-            id: 5
-          },
           clientVersion: {
             type: "string",
+            id: 5
+          },
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
             id: 6
           },
-          locale: {
-            type: "string",
-            id: 7
-          },
-          expiration: {
+          creation: {
             type: "int64",
-            id: 8
+            id: 7
           },
           messageSessionUid: {
             type: "bytes",
-            id: 9
+            id: 8
           }
         }
       },
@@ -3595,8 +3562,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 3
           },
-          locale: {
-            type: "string",
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
             id: 4
           },
           remoteAddress: {
@@ -3633,7 +3600,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 2
           },
-          expiration: {
+          creation: {
             type: "int64",
             id: 3
           },

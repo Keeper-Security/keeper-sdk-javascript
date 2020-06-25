@@ -39,7 +39,6 @@ export const browserPlatform: Platform = class {
     }
 
     static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
-
         let keyPair = await crypto.subtle.generateKey({
             name: rsaAlgorithmName,
             modulusLength: 2048,
@@ -172,17 +171,9 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(derived);
     }
 
-    static async calcAutoResponse(key: Uint8Array): Promise<string> {
+    static async calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
         let digest = await crypto.subtle.digest("SHA-256", key);
-        return browserPlatform.bytesToBase64(new Uint8Array(digest));
-    }
-
-    static authVerifierAsString(key: Uint8Array): Promise<string> {
-        throw new Error("Not implemented")
-    }
-
-    static authVerifierAsBytes(key: Uint8Array): Promise<Uint8Array> {
-        throw new Error("Not implemented")
+        return new Uint8Array(digest);
     }
 
     static async get(url: string, headers: any): Promise<KeeperHttpResponse> {
@@ -220,8 +211,38 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    static fileUpload(url: string, uploadParameters: any, data: Uint8Array): Promise<any> {
-        throw new Error("Not implemented")
+    static fileUpload(
+      url: string,
+      uploadParameters: {[key: string]: string},
+      data: Blob
+    ): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const form = new FormData();
+
+            for (const key in uploadParameters) {
+                form.append(key, uploadParameters[key]);
+            }
+            form.append('file', data)
+
+            const fetchCfg = {
+                method: 'PUT',
+                body: form,
+            }
+
+            fetch(url, fetchCfg)
+              .then(response => response.json())
+              .then(res => {
+                  resolve({
+                      headers: res.headers,
+                      statusCode: res.statusCode,
+                      statusMessage: res.statusMessage
+                  })
+              })
+              .catch(error => {
+                  console.error('Error uploading file:', error);
+                  reject(error)
+              });
+        })
     }
 
     static createWebsocket(url: string): SocketProxy {
