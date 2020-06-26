@@ -29,7 +29,7 @@ async function testWsPushMessage() {
 
         const command: string = "test_command"
 
-        let wsDataPromise = auth.getWsMessage();
+        let wsDataPromise = auth.getPushMessage();
 
         let resp = await auth.executeRest(sendSessionMessage({
             messageSessionUid: auth.getMessageSessionUid(),

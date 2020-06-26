@@ -11,11 +11,11 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-// const userName = "admin@yozik.us"
+const userName = "admin@yozik.us"
 // const userName = "saldoukhov@gmail.com"
 // const userName = "saldoukhov@keepersecurity.com"
 // const userName = "admin+m6a@yozik.us"
-const userName = "admin+plain@yozik.us"
+// const userName = "admin+plain@yozik.us"
 // const userName = "admin+duo@yozik.us"
 // const userName = "admin+sms@yozik.us"
 // const userName = "admin+totp@yozik.us"
@@ -25,6 +25,7 @@ const userName = "admin+plain@yozik.us"
 // const userName = "arlen+dev5@keepersecurity.com"
 //const userName = "vladimir+cw@keepersecurity.com"
 // const userName = "arlen+c6@keepersecurity.com"
+// const userName = "craig@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
 const host = KeeperEnvironment.LOCAL
@@ -86,10 +87,10 @@ async function testLogin() {
     try {
         await auth.loginV3(userName, "111111")
 
-        let resp = await auth.executeRest(accountSummaryMessage({
-            summaryVersion: 1
-        }));
-        console.log(resp)
+        // let resp = await auth.executeRest(accountSummaryMessage({
+        //     summaryVersion: 1
+        // }));
+        // console.log(resp)
 
         // const accountSummaryCommand = new AccountSummaryCommand()
         // accountSummaryCommand.include = ['license', 'settings']

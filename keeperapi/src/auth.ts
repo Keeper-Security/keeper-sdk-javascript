@@ -261,21 +261,14 @@ export class Auth {
                         encryptedLoginToken: loginToken,
                         pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
                     }))
-                    const resp = await this.options.authUI3.prompt("Press Enter to continue, x to exit\n")
-                    if (resp === "x") {
-                        process.exit()
+                    const msg = await this.getPushMessage()
+                    if (msg.approved && msg.message === 'device_approved') {
+                        return undefined
                     }
                 }
             default:
                 throw new Error('Invalid choice for device verification')
         }
-    }
-
-    async getWsMessage() {
-        const pushMessage = await this.socket.getPushMessage()
-        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-        const socketResponseData = JSON.parse(wssClientResponse.message)
-        return socketResponseData;
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
@@ -495,6 +488,7 @@ export class Auth {
     async getPushMessage(): Promise<any> {
         const pushMessage = await this.socket.getPushMessage()
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+        console.log(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
     }
 

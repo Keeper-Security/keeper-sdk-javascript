@@ -28,6 +28,7 @@ async function waitPush() {
         while (true) {
             const push = await auth.getPushMessage();
             console.log(push)
+            await authUI3.prompt('Press any key to approve...\n')
             await auth.approveDevice(normal64Bytes(push.encryptedDeviceToken))
         }
     }
