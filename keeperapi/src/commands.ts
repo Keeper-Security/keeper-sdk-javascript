@@ -612,6 +612,21 @@ export class ResendEnterpriseInviteCommand extends AuthorizedCommand {
     enterprise_user_id: number;
 }
 
+export class SsoServiceProviderAddCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "sso_service_provider_add";
+    }
+
+    sso_service_provider_id: number;
+    node_id: number;
+    sp_data_key: string;
+    name: string;
+    invite_new_users: true;
+    is_cloud: true;
+}
+
 // *************************
 // Responses
 // *************************

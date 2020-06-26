@@ -7,6 +7,7 @@ import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuratio
 import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
 import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
+import {SsoServiceProviderAddCommand} from '../src/commands';
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -17,18 +18,24 @@ import ServiceLogSpecifier = ServiceLogger.ServiceLogSpecifier;
 import ServiceLogResponse = ServiceLogger.ServiceLogResponse;
 import SsoCloudIdpMetadataRequest = SsoCloud.SsoCloudIdpMetadataRequest;
 import SsoCloudConfigurationRequest = SsoCloud.SsoCloudConfigurationRequest;
+import SsoCloudConfigurationResponse = SsoCloud.SsoCloudConfigurationResponse;
+import ConfigurationListItem = SsoCloud.ConfigurationListItem;
 import SsoCloudSAMLLogRequest = SsoCloud.SsoCloudSAMLLogRequest;
 import SsoCloudServiceProviderUpdateRequest = SsoCloud.SsoCloudServiceProviderUpdateRequest;
 import SsoCloudServiceProviderConfigurationListRequest = SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
 import SsoCloudSettingOperationType = SsoCloud.SsoCloudSettingOperationType;
 import SsoCloudSettingAction = SsoCloud.SsoCloudSettingAction;
+import SsoServiceProviderRequest = Authentication.SsoServiceProviderRequest;
+import SsoServiceProviderResponse = Authentication.SsoServiceProviderResponse;
 import ISsoCloudConfigurationResponse = SsoCloud.ISsoCloudConfigurationResponse;
-
+import IConfigurationListItem = SsoCloud.IConfigurationListItem;
 import AuthProtocolType = SsoCloud.AuthProtocolType;
-import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/restMessages'
-import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages'
-import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages'
+import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/restMessages';
+import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages';
+import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages';
+import {ssoServiceProviderRequestMessage} from '../src/restMessages';
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
+
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 interface UserInfo {
@@ -101,6 +108,10 @@ async function login(user?: UserInfo): Promise<Auth> {
 
 const currentUser = MIKE_VAULT_LOGIN_1;
 
+// ****************************************************
+let keeperHost = KeeperEnvironment.DEV;
+// ****************************************************
+
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
 
@@ -109,21 +120,22 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // TestSsoUploadMetadata().finally();
 // TestSsoGetMetadata().finally();
 // TestSsoSetCurrentConfiguration().finally();
+// TestSsoGetConfigurationList().finally();
 // TestSsoAddNewConfiguration().finally();
-TestSsoGetConfigurationList().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
-// TestSsoDeleteConfiguration().finally();
+TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
+// TestSsoUpdateConfiguration().finally();
 // TestSsoResetConfigurationSettingValue().finally();
 // TestSsoGetSAMLLog().finally();
 // TestSsoClearSAMLLog().finally();
-
+// TestSsoServiceProviderAdd().finally();
+// TestGetSsoServiceProvider().finally();
 
 /* ------------------ Service Logger -------------------- */
 
 async function testServiceLogger() {
 
-    let keeperHost = KeeperEnvironment.LOCAL;  // KeeperEnvironment.DEV;
     let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     const deviceConfig = getDeviceConfig(keeperHost);
 
@@ -154,7 +166,6 @@ async function testServiceLogger() {
 /** Also see cloudSsoLogin in auth.ts.  */
 async function TestSsoLogin() {
 
-    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
     let user = MIKE_DEMO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
@@ -182,7 +193,6 @@ async function TestSsoLogin() {
 /** Also see cloudSsoLogin in auth.ts.  */
 async function TestSsoLoginWithGet() {
 
-    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoLogin with GET on " + keeperHost + " ***");
 
     let user = MIKE_DEMO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
@@ -209,7 +219,6 @@ async function TestSsoLoginWithGet() {
 
 // GET, UNENCRYPTED, metadata/<serviceProviderId>
 async function TestSsoGetMetadata() {
-    let keeperHost = KeeperEnvironment.DEV;  // KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoGetMetadata on " + keeperHost + " ***");
 
     let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
@@ -233,12 +242,11 @@ async function TestSsoGetMetadata() {
 
 // POST, ENCRYPTED, sso_cloud_upload_idp_metadata/<serviceProviderId>
 async function TestSsoUploadMetadata() {
-    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056299; // 6219112644615;
-    let configurationId = 1774455125899304; // local 99837914454064896;         // dev 1774455125899304;
+    let serviceProviderId = 9710921056266; // 6219112644615;
+    let configurationId = 3121290; // 99837914454064896; // 3121290;
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_upload_idp_metadata';
 
@@ -278,12 +286,11 @@ async function TestSsoUploadMetadata() {
 
 // POST, ENCRYPTED, sso_cloud_sp_configuration_set
 async function TestSsoSetCurrentConfiguration() {
-    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 3121290;
+    let serviceProviderId = 9710921056266; // 9710921056299;
+    let configurationId = 3121290;  // 1774455125899304 // 1284294 // 3121290
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
@@ -314,7 +321,6 @@ async function TestSsoSetCurrentConfiguration() {
 
 // POST, ENCRYPTED, sso_cloud_sp_configuration_get/<serviceProviderId>
 async function TestSsoGetConfigurationList() {
-    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -348,7 +354,6 @@ async function TestSsoGetConfigurationList() {
 
 // POST, ENCRYPTED, sso_cloud_configuration_add/<serviceProviderId>
 async function TestSsoAddNewConfiguration() {
-    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestAddNewConfiguration on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -384,14 +389,14 @@ async function TestSsoAddNewConfiguration() {
     }
 }
 
-// POST, ENCRYPTED, sso_cloud_configuration_get/<serviceProviderId>
+// POST, ENCRYPTED, sso_cloud_configuration_get
 async function TestSsoGetConfiguration() {
-    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056299; // 6219112644615;
-    let configurationId = 1774455125899304; // 3121290;
+    // let serviceProviderId = 9710921056266;
+    let serviceProviderId = 9710921056299;  // "demo azure"
+    let configurationId = 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
@@ -422,9 +427,49 @@ async function TestSsoGetConfiguration() {
     }
 }
 
+// POST, ENCRYPTED, sso_service_provider_add
+async function TestSsoServiceProviderAdd() {
+    console.log("\n*** TestSsoServiceProviderAdd on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056313;  // 9710921056299; // 6219112644615;
+    let configurationId = 1774455125899304; // 3121290;
+    let nodeId = 9710921056312;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso//';
+    const configEndpoint = 'sso_cloud_configuration_get';
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let command = new SsoServiceProviderAddCommand();
+        command.sso_service_provider_id = serviceProviderId;
+        command.node_id = nodeId;
+        command.sp_data_key = "wBTm7ftTn8KEJniAOJEr4XDm-CU1vQp1KGYkExwIc-BmXBDUDZw2GZIuPVX9QvMlNw5AFUgtJn7frMiy5qOxfg";
+        command.name = "Mike test 123";
+        command.invite_new_users = true;
+        command.is_cloud = true;
+
+        let resp = await auth.executeCommand(command);
+        console.log(resp);
+     } catch (e) {
+        console.log(e)
+    }
+}
+
 // POST, ENCRYPTED, sso_cloud_configuration_delete/<serviceProviderId>
 async function TestSsoDeleteConfiguration() {
-    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestDeleteConfiguration on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -482,9 +527,72 @@ async function TestSsoDeleteConfiguration() {
     }
 }
 
+// POST, ENCRYPTED, sso_cloud_configuration_delete
+async function TestSsoUpdateConfiguration() {
+    console.log("\n*** TestUpdateConfiguration on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056299; // 6219112644615;
+    let configurationId = 1774455125899304;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const endpoint = 'sso_cloud_configuration_update';
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, endpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        // Get the list of current configurations
+        let listReq = SsoCloudServiceProviderConfigurationListRequest.create({
+            "ssoServiceProviderId": serviceProviderId
+        });
+        let listResp = await auth.executeRest(ssoCloudServiceProviderConfigurationListRequestMessage(listReq));
+        console.log("Starting configurations");
+        console.log(listResp);
+
+        let config1: IConfigurationListItem = listResp.configurationItem[0];
+        let oldName:string = config1.name;
+        let configId: number | Long = config1.ssoSpConfigurationId;
+
+        console.log("Old name of " + configId + " is '" + oldName + "'");
+
+        // Update the name of the first configuration, then set it back
+        let updateReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configId,
+            "name": "mike test 1 1 1 1 3"
+        });
+        let resp : ISsoCloudConfigurationResponse = await auth.executeRest(ssoCloudConfigurationRequestMessage(updateReq, configPrefix + endpoint));
+        console.log("resp " + resp.name + " updated with ID = " + resp.ssoSpConfigurationId);
+
+        // Get the list of configurations after the DB changes
+        listResp = await auth.executeRest(ssoCloudServiceProviderConfigurationListRequestMessage(listReq));
+        console.log("Ending configurations");
+        console.log(listResp);
+        
+        config1 = listResp.configurationItem[0];
+        oldName = config1.name;
+        configId = config1.ssoSpConfigurationId;
+
+        console.log("New name of " + configId + " is '" + oldName + "'");
+
+     } catch (e) {
+        console.log(e)
+    }
+}
+
 // POST, ENCRYPTED, sso_cloud_configuration_setting_set/<serviceProviderId>
 async function TestSsoSetConfigurationSettingValue() {
-    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestSetConfigurationSettingValue on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -544,7 +652,6 @@ async function TestSsoSetConfigurationSettingValue() {
 
 // POST, ENCRYPTED, sso_cloud_configuration_setting_set/<serviceProviderId>
 async function TestSsoResetConfigurationSettingValue() {
-    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestResetConfigurationSettingValue on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -589,7 +696,6 @@ async function TestSsoResetConfigurationSettingValue() {
 
 // POST, ENCRYPTED, sso_cloud_log_saml_get
 async function TestSsoGetSAMLLog() {
-    let keeperHost = KeeperEnvironment.DEV;
     console.log("\n*** TestSsoGetSAMLLog on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -625,7 +731,6 @@ async function TestSsoGetSAMLLog() {
 
 // POST, ENCRYPTED, sso_cloud_log_saml_clear
 async function TestSsoClearSAMLLog() {
-    let keeperHost = KeeperEnvironment.LOCAL;
     console.log("\n*** TestSsoClearSAMLLog on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
@@ -653,6 +758,44 @@ async function TestSsoClearSAMLLog() {
         });
 
         let resp = await auth.executeRest(ssoCloudSAMLLogRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, enterprise/get_sso_service_provider
+async function TestGetSsoServiceProvider() {
+    console.log("\n*** TestGetSsoServiceProvider on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let domainName = "not an sso";  // "devgene sso 2";  // "demo azure";  
+    const locale = "en_US";
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'enterprise/';
+    const configEndpoint = 'get_sso_service_provider';
+
+    try {
+        const url = keeperHost + "/api/rest/" + configPrefix + configEndpoint;
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in...");
+
+        let restReq = SsoServiceProviderRequest.create({
+            "name": domainName,
+            "locale": locale,
+            "clientVersion": clientVersion
+        });
+
+        let resp = await auth.executeRest(ssoServiceProviderRequestMessage(restReq, configPrefix + configEndpoint));
         console.log(resp);
     } catch (e) {
         console.log(e)
