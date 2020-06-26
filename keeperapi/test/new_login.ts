@@ -27,7 +27,7 @@ const userName = "admin+plain@yozik.us"
 // const userName = "arlen+c6@keepersecurity.com"
 // const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
-const host = KeeperEnvironment.DEV
+const host = KeeperEnvironment.LOCAL
 
 async function testRegistration() {
 

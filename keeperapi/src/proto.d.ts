@@ -1273,6 +1273,7 @@ export namespace Authentication {
         REQUIRES_USERNAME = 14,
         AFTER_CLOUD_SSO_LOGIN = 15,
         REQUIRES_ACCOUNT_CREATION = 16,
+        REQUIRES_DEVICE_ENCRYPTED_DATA_KEY = 17,
         LOGGED_IN = 99
     }
 
@@ -1912,6 +1913,9 @@ export namespace Authentication {
 
         /** LoginToMcResponse encryptedSessionToken */
         encryptedSessionToken?: (Uint8Array|null);
+
+        /** LoginToMcResponse encryptedTreeKey */
+        encryptedTreeKey?: (string|null);
     }
 
     /** Represents a LoginToMcResponse. */
@@ -1925,6 +1929,9 @@ export namespace Authentication {
 
         /** LoginToMcResponse encryptedSessionToken. */
         public encryptedSessionToken: Uint8Array;
+
+        /** LoginToMcResponse encryptedTreeKey. */
+        public encryptedTreeKey: string;
 
         /**
          * Creates a new LoginToMcResponse instance using the specified properties.
@@ -2093,14 +2100,8 @@ export namespace Authentication {
         /** LoginAsUserResponse encryptedSessionToken */
         encryptedSessionToken?: (Uint8Array|null);
 
-        /** LoginAsUserResponse primaryUsername */
-        primaryUsername?: (string|null);
-
-        /** LoginAsUserResponse encryptedDataKey */
-        encryptedDataKey?: (Uint8Array|null);
-
-        /** LoginAsUserResponse encryptedDataKeyType */
-        encryptedDataKeyType?: (Authentication.EncryptedDataKeyType|null);
+        /** LoginAsUserResponse encryptedSharedAccountKey */
+        encryptedSharedAccountKey?: (Uint8Array|null);
     }
 
     /** Represents a LoginAsUserResponse. */
@@ -2115,14 +2116,8 @@ export namespace Authentication {
         /** LoginAsUserResponse encryptedSessionToken. */
         public encryptedSessionToken: Uint8Array;
 
-        /** LoginAsUserResponse primaryUsername. */
-        public primaryUsername: string;
-
-        /** LoginAsUserResponse encryptedDataKey. */
-        public encryptedDataKey: Uint8Array;
-
-        /** LoginAsUserResponse encryptedDataKeyType. */
-        public encryptedDataKeyType: Authentication.EncryptedDataKeyType;
+        /** LoginAsUserResponse encryptedSharedAccountKey. */
+        public encryptedSharedAccountKey: Uint8Array;
 
         /**
          * Creates a new LoginAsUserResponse instance using the specified properties.
@@ -3418,6 +3413,114 @@ export namespace Authentication {
 
         /**
          * Converts this DeviceUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RegisterDeviceInRegionRequest. */
+    interface IRegisterDeviceInRegionRequest {
+
+        /** RegisterDeviceInRegionRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** RegisterDeviceInRegionRequest clientVersion */
+        clientVersion?: (string|null);
+
+        /** RegisterDeviceInRegionRequest deviceName */
+        deviceName?: (string|null);
+
+        /** RegisterDeviceInRegionRequest devicePublicKey */
+        devicePublicKey?: (Uint8Array|null);
+    }
+
+    /** Represents a RegisterDeviceInRegionRequest. */
+    class RegisterDeviceInRegionRequest implements IRegisterDeviceInRegionRequest {
+
+        /**
+         * Constructs a new RegisterDeviceInRegionRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IRegisterDeviceInRegionRequest);
+
+        /** RegisterDeviceInRegionRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** RegisterDeviceInRegionRequest clientVersion. */
+        public clientVersion: string;
+
+        /** RegisterDeviceInRegionRequest deviceName. */
+        public deviceName: string;
+
+        /** RegisterDeviceInRegionRequest devicePublicKey. */
+        public devicePublicKey: Uint8Array;
+
+        /**
+         * Creates a new RegisterDeviceInRegionRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RegisterDeviceInRegionRequest instance
+         */
+        public static create(properties?: Authentication.IRegisterDeviceInRegionRequest): Authentication.RegisterDeviceInRegionRequest;
+
+        /**
+         * Encodes the specified RegisterDeviceInRegionRequest message. Does not implicitly {@link Authentication.RegisterDeviceInRegionRequest.verify|verify} messages.
+         * @param message RegisterDeviceInRegionRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IRegisterDeviceInRegionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RegisterDeviceInRegionRequest message, length delimited. Does not implicitly {@link Authentication.RegisterDeviceInRegionRequest.verify|verify} messages.
+         * @param message RegisterDeviceInRegionRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IRegisterDeviceInRegionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RegisterDeviceInRegionRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RegisterDeviceInRegionRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RegisterDeviceInRegionRequest;
+
+        /**
+         * Decodes a RegisterDeviceInRegionRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RegisterDeviceInRegionRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RegisterDeviceInRegionRequest;
+
+        /**
+         * Verifies a RegisterDeviceInRegionRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RegisterDeviceInRegionRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RegisterDeviceInRegionRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.RegisterDeviceInRegionRequest;
+
+        /**
+         * Creates a plain object from a RegisterDeviceInRegionRequest message. Also converts values to other types if specified.
+         * @param message RegisterDeviceInRegionRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.RegisterDeviceInRegionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RegisterDeviceInRegionRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -5616,9 +5719,6 @@ export namespace Authentication {
         /** CreateUserRequest carrier */
         carrier?: (string|null);
 
-        /** CreateUserRequest removeThis */
-        removeThis?: (boolean|null);
-
         /** CreateUserRequest verificationCode */
         verificationCode?: (string|null);
 
@@ -5697,9 +5797,6 @@ export namespace Authentication {
 
         /** CreateUserRequest carrier. */
         public carrier: string;
-
-        /** CreateUserRequest removeThis. */
-        public removeThis: boolean;
 
         /** CreateUserRequest verificationCode. */
         public verificationCode: string;
@@ -8274,6 +8371,9 @@ export namespace Enterprise {
 
         /** EncryptedTeamKeyRequest encryptedTeamKey */
         encryptedTeamKey?: (Uint8Array|null);
+
+        /** EncryptedTeamKeyRequest force */
+        force?: (boolean|null);
     }
 
     /** Represents an EncryptedTeamKeyRequest. */
@@ -8290,6 +8390,9 @@ export namespace Enterprise {
 
         /** EncryptedTeamKeyRequest encryptedTeamKey. */
         public encryptedTeamKey: Uint8Array;
+
+        /** EncryptedTeamKeyRequest force. */
+        public force: boolean;
 
         /**
          * Creates a new EncryptedTeamKeyRequest instance using the specified properties.
@@ -8571,6 +8674,9 @@ export namespace Enterprise {
 
         /** NodeToManagedCompanyRequest roleKeys */
         roleKeys?: (Enterprise.IReEncryptedRoleKey[]|null);
+
+        /** NodeToManagedCompanyRequest teamKeys */
+        teamKeys?: (Enterprise.IEncryptedTeamKeyRequest[]|null);
     }
 
     /** Represents a NodeToManagedCompanyRequest. */
@@ -8596,6 +8702,9 @@ export namespace Enterprise {
 
         /** NodeToManagedCompanyRequest roleKeys. */
         public roleKeys: Enterprise.IReEncryptedRoleKey[];
+
+        /** NodeToManagedCompanyRequest teamKeys. */
+        public teamKeys: Enterprise.IEncryptedTeamKeyRequest[];
 
         /**
          * Creates a new NodeToManagedCompanyRequest instance using the specified properties.

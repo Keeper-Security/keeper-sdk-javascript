@@ -100,6 +100,9 @@ export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryReques
 export const sendSessionMessage = (data: Authentication.ISendSessionMessageRequest): RestMessage<Authentication.ISendSessionMessageRequest, {}> =>
     createMessage(data, '/pushserver/send_session_message', Authentication.SendSessionMessageRequest, null)
 
+export const setEncryptedTeamKeyMessage = (data: Enterprise.IEncryptedTeamKeyRequest): RestMessage<Enterprise.IEncryptedTeamKeyRequest, {}> =>
+    createMessage(data, '/enterprise/set_encrypted_team_key', Enterprise.EncryptedTeamKeyRequest, null)
+
 /* -- SERVICE LOGGER -- */
 
 export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>

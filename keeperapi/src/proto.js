@@ -324,6 +324,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           REQUIRES_USERNAME: 14,
           AFTER_CLOUD_SSO_LOGIN: 15,
           REQUIRES_ACCOUNT_CREATION: 16,
+          REQUIRES_DEVICE_ENCRYPTED_DATA_KEY: 17,
           LOGGED_IN: 99
         }
       },
@@ -499,6 +500,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedSessionToken: {
             type: "bytes",
             id: 1
+          },
+          encryptedTreeKey: {
+            type: "string",
+            id: 2
           }
         }
       },
@@ -516,17 +521,9 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 1
           },
-          primaryUsername: {
-            type: "string",
-            id: 2
-          },
-          encryptedDataKey: {
+          encryptedSharedAccountKey: {
             type: "bytes",
-            id: 3
-          },
-          encryptedDataKeyType: {
-            type: "EncryptedDataKeyType",
-            id: 4
+            id: 2
           }
         }
       },
@@ -795,6 +792,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           deviceStatus: {
             type: "DeviceStatus",
             id: 5
+          }
+        }
+      },
+      RegisterDeviceInRegionRequest: {
+        fields: {
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 1
+          },
+          clientVersion: {
+            type: "string",
+            id: 2
+          },
+          deviceName: {
+            type: "string",
+            id: 3
+          },
+          devicePublicKey: {
+            type: "bytes",
+            id: 4
           }
         }
       },
@@ -1221,17 +1238,13 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 21
           },
-          removeThis: {
-            type: "bool",
-            id: 22
-          },
           verificationCode: {
             type: "string",
-            id: 23
+            id: 22
           },
           enterpriseRegistration: {
             type: "Enterprise.EnterpriseRegistration",
-            id: 24
+            id: 23
           }
         }
       },
@@ -1612,6 +1625,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedTeamKey: {
             type: "bytes",
             id: 2
+          },
+          force: {
+            type: "bool",
+            id: 3
           }
         }
       },
@@ -1664,6 +1681,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "ReEncryptedRoleKey",
             id: 5
+          },
+          teamKeys: {
+            rule: "repeated",
+            type: "EncryptedTeamKeyRequest",
+            id: 6
           }
         }
       },

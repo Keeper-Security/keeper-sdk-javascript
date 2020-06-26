@@ -138,6 +138,10 @@ export class Company {
         return encryptKey(key, this.treeKey);
     }
 
+    async encryptKeyAsBytes(key: Uint8Array): Promise<Uint8Array> {
+        return platform.aesGcmEncrypt(key, this.treeKey)
+    }
+
     async decryptKey(encryptedKey: string): Promise<Uint8Array> {
         return decryptKey(encryptedKey, this.treeKey);
     }
