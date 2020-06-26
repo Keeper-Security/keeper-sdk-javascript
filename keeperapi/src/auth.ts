@@ -209,6 +209,7 @@ export class Auth {
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     break;
                 case Authentication.LoginState.LOGGED_IN:
+                    this.setLoginParameters(username, webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
                     //break;

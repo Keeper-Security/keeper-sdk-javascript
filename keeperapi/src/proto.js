@@ -325,6 +325,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           AFTER_CLOUD_SSO_LOGIN: 15,
           REQUIRES_ACCOUNT_CREATION: 16,
           REQUIRES_DEVICE_ENCRYPTED_DATA_KEY: 17,
+          LOGIN_TOKEN_EXPIRED: 18,
           LOGGED_IN: 99
         }
       },
@@ -1538,6 +1539,71 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           },
           username: {
             type: "string",
+            id: 3
+          }
+        }
+      },
+      GetUserAccountsFromPartialUsernameRequest: {
+        fields: {
+          partialUsername: {
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      GlobalUserAccount: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          },
+          accountUid: {
+            type: "bytes",
+            id: 2
+          },
+          regionName: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      GetUserAccountsFromPartialUsernameResponse: {
+        fields: {
+          globalUserAccount: {
+            rule: "repeated",
+            type: "GlobalUserAccount",
+            id: 1
+          }
+        }
+      },
+      SsoServiceProviderRequest: {
+        fields: {
+          name: {
+            type: "string",
+            id: 1
+          },
+          clientVersion: {
+            type: "string",
+            id: 2
+          },
+          locale: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      SsoServiceProviderResponse: {
+        fields: {
+          name: {
+            type: "string",
+            id: 1
+          },
+          spUrl: {
+            type: "string",
+            id: 2
+          },
+          isCloud: {
+            type: "bool",
             id: 3
           }
         }
@@ -3088,6 +3154,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      SSOLoginToken: {
+        fields: {
+          ssoServiceProviderId: {
+            type: "int64",
+            id: 1
+          },
+          username: {
+            type: "string",
+            id: 2
+          },
+          alias: {
+            type: "string",
+            id: 3
+          },
+          displayname: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
       LoginToken: {
         fields: {
           loginSessionId: {
@@ -3137,26 +3223,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           ssoLoginToken: {
             type: "SSOLoginToken",
             id: 12
-          }
-        }
-      },
-      SSOLoginToken: {
-        fields: {
-          ssoServiceProviderId: {
-            type: "int64",
-            id: 1
-          },
-          username: {
-            type: "string",
-            id: 2
-          },
-          alias: {
-            type: "string",
-            id: 3
-          },
-          displayname: {
-            type: "string",
-            id: 4
           }
         }
       },
