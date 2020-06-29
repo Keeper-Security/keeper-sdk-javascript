@@ -64,10 +64,19 @@ export type SocketProxy = {
 
 export class SocketListener {
     private socket: SocketProxy;
+    // Listeners that receive all messages
+    private messageListeners: Array<(data: any) => void>
+    // Listeners that receive a single message
+    private singleMessageListeners: Array<{
+        resolve: (data: any) => void,
+        reject: (errorMessage: string) => void
+    }>
 
     constructor(url: string) {
         console.log('Connecting to ' + url)
 
+        this.messageListeners = []
+        this.singleMessageListeners = []
         this.socket = platform.createWebsocket(url)
 
         this.socket.onClose(() => {
@@ -76,24 +85,53 @@ export class SocketListener {
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
         })
+        this.socket.onMessage(this.handleMessage)
     }
 
     registerLogin(sessionToken: string) {
         this.socket.send(sessionToken)
     }
 
+    onClose(callback: () => void): void {
+        this.socket.onClose(callback)
+    }
+
+    onError(callback: () => void): void {
+        this.socket.onError(callback)
+    }
+
+    private handleMessage(msgEvent: MessageEvent): void {
+        for (let callback of this.messageListeners) {
+            callback(msgEvent.data)
+        }
+
+        for (let {resolve} of this.singleMessageListeners) {
+            resolve(msgEvent.data)
+        }
+        this.singleMessageListeners.length = 0
+    }
+
+    onPushMessage(callback: (data: any) => void): void {
+        this.messageListeners.push(callback)
+    }
+
     async getPushMessage(): Promise<any> {
-        console.log('Awaiting web socket')
-        return new Promise<any>((resolve) => {
-            this.socket.onMessage((e) => {
-                resolve(e.data)
-            })
+        console.log('Awaiting web socket message')
+
+        return new Promise<any>((resolve, reject) => {
+            this.singleMessageListeners.push({resolve, reject})
         })
     }
 
     disconnect() {
         this.socket.close();
         this.socket = null
+        this.messageListeners.length = 0
+
+        for (let {reject} of this.singleMessageListeners) {
+            reject('Socket disconnected')
+        }
+        this.singleMessageListeners.length = 0
     }
 }
 
@@ -483,6 +521,18 @@ export class Auth {
 
     async registerDevice() {
         await this.endpoint.registerDevice()
+    }
+
+    onClose(callback: () => void): void {
+        this.socket.onClose(callback)
+    }
+
+    onError(callback: () => void): void {
+        this.socket.onError(callback)
+    }
+
+    onPushMessage(callback: (data: any) => void): void {
+        this.socket.onPushMessage(callback)
     }
 
     async getPushMessage(): Promise<any> {
