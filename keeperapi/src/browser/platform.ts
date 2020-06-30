@@ -252,11 +252,11 @@ export const browserPlatform: Platform = class {
             close: () => {
                 socket.close()
             },
-            onClose: (callback: ()=> void) => {
-                socket.onclose = callback
+            onClose: (callback: () => void) => {
+                socket.addEventListener("close", callback)
             },
             onError: (callback: (e: Event) => void) => {
-                socket.onerror = callback
+                socket.addEventListener("error", callback)
             },
             onMessage: (callback: (e: MessageEvent) => void) => {
                 socket.onmessage = callback
