@@ -7,7 +7,6 @@ import {
 import {Vault} from '../src/vault'
 import {connectPlatform, platform} from '../src/platform'
 import {nodePlatform} from '../src/node/platform'
-import * as readline from 'readline'
 import * as fs from 'fs'
 import {VendorContext} from '../src/vendorContext'
 import {Company} from '../src/company'
@@ -19,10 +18,10 @@ import {
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {accountSummaryMessage, recordTypesGetMessage} from '../src/restMessages'
-import {generateEncryptionKey, generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils'
+import {generateEncryptionKey, normal64Bytes, webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
-import {prompt} from './testUtil'
+import {getCredentialsAndHost, prompt} from './testUtil'
 import RecordModifyResult = Records.RecordModifyResult;
 import {AuthUI} from '../src/configuration';
 
@@ -669,6 +668,9 @@ async function testSharedLinkedRecordUpdateExisting() {
 }
 
 async function login(user?: string): Promise<Auth> {
+
+    const { userName, password, host } = getCredentialsAndHost()
+
     let deviceToken: Uint8Array;
     try {
         deviceToken = new Uint8Array(fs.readFileSync("device-token.dat"))
@@ -680,16 +682,12 @@ async function login(user?: string): Promise<Auth> {
     }
 
     let auth = new Auth({
-        host: KeeperEnvironment.LOCAL,
-        // host: 'dev2.keepersecurity.com',
-        // host: KeeperEnvironment.DEV,
-        // host: KeeperEnvironment.QA
+        host: host,
         deviceToken: deviceToken,
         onDeviceToken: saveDeviceToken,
         authUI: authUI
     })
-    let userName = user || currentUser;
-    await auth.login(userName, '111111')
+    await auth.login(user || userName, password)
     console.log(`login to ${userName} successful`)
     return auth;
 }
@@ -750,16 +748,6 @@ async function testRegistration() {
     const resp = await auth.executeCommand(registerCommand)
     console.log(resp)
 }
-
-// const currentUser = 'admin@yozik.us'
-// const currentUser = 'admin+j9a@yozik.us'
-// const currentUser = 'admin+m6a@yozik.us'
-// const currentUser = 'admin+sms@yozik.us'
-// const currentUser = 'admin+duo@yozik.us'
-const currentUser = 'admin+totp@yozik.us'
-// const currentUser = 'saldoukhov@gmail.com'
-// const currentUser = 'admin+msp@yozik.us'
-// const currentUser = "vladimir+cw@keepersecurity.com"
 
 // printCompany().finally();
 // testRegistration().finally();

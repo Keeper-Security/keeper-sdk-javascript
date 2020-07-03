@@ -374,7 +374,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 9
           },
-          deviceSyncCode: {
+          cloneCode: {
             type: "bytes",
             id: 10
           }
@@ -432,7 +432,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "Salt",
             id: 12
           },
-          deviceSyncCode: {
+          cloneCode: {
             type: "bytes",
             id: 13
           }
@@ -557,7 +557,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_PUSH_KEEPER: 2,
           TWO_FA_PUSH_DUO_PUSH: 3,
           TWO_FA_PUSH_DUO_TEXT: 4,
-          TWO_FA_PUSH_DUO_CALL: 5
+          TWO_FA_PUSH_DUO_CALL: 5,
+          TWO_FA_PUSH_DNA: 6
         }
       },
       TwoFactorValueType: {
@@ -568,7 +569,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CODE_DUO: 3,
           TWO_FA_CODE_RSA: 4,
           TWO_FA_RESP_U2F: 5,
-          TWO_FA_RESP_WEBAUTHN: 6
+          TWO_FA_RESP_WEBAUTHN: 6,
+          TWO_FA_CODE_DNA: 7
         }
       },
       TwoFactorChannelType: {
@@ -581,7 +583,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CT_BACKUP: 5,
           TWO_FA_CT_U2F: 6,
           TWO_FA_CT_WEBAUTHN: 7,
-          TWO_FA_CT_KEEPER: 8
+          TWO_FA_CT_KEEPER: 8,
+          TWO_FA_CT_DNA: 9
         }
       },
       TwoFactorChannelInfo: {

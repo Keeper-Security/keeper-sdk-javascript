@@ -78,6 +78,23 @@ export function saveDeviceConfig(deviceConfig: DeviceConfig, environment: Keeper
 const configNames = {
     'local.keepersecurity.com': 'device-config-local.json',
     'dev.keepersecurity.com': 'device-config-dev.json',
+    'dev2.keepersecurity.com': 'device-config-dev2.json',
     'qa.keepersecurity.com': 'device-config-qa.json',
-    'keepersecurity.com': 'device-config.json'
+    'keepersecurity.com': 'device-config.json',
+    'dev.keepersecurity.eu': 'device-config-dev-eu.json',
+    'qa.keepersecurity.eu': 'device-config-qa-eu.json',
+    'keepersecurity.eu': 'device-config-eu.json',
+}
+
+export function getCredentialsAndHost(): { userName: string; password: string; host: KeeperEnvironment  } {
+    try {
+        const fileContent = fs.readFileSync('credentials.config').toString()
+        const lines = fileContent.split('\n')
+        const hostOverride = lines[0][0] === '#' ? undefined : lines[0]
+        const parts = lines.slice(1).find(x => x && x[0] != '#').split(',')
+        return { userName: parts[0], password: parts[1], host: KeeperEnvironment[hostOverride || parts[2]] }
+    }
+    catch (e) {
+        throw Error('Error parsing credentials.config file')
+    }
 }

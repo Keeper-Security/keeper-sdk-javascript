@@ -6,6 +6,7 @@
 keeperapi/sp-metadata.xml
 keeperapi/device-config*
 keeperapi/device-token.dat
+credentials.config
 node_modules
 dist
 yarn-error.log

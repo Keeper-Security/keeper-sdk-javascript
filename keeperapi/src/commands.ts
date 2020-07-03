@@ -412,6 +412,15 @@ export class EditUserCommand extends AuthorizedCommand {
     email: string
 }
 
+export class ShareAccountCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'share_account'
+    }
+    to_role_id: number
+    transfer_key: string
+}
+
 export type EnterpriseDataInclude =
     | "nodes"
     | "users"

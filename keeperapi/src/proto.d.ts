@@ -1315,8 +1315,8 @@ export namespace Authentication {
         /** StartLoginRequest forceNewLogin */
         forceNewLogin?: (boolean|null);
 
-        /** StartLoginRequest deviceSyncCode */
-        deviceSyncCode?: (Uint8Array|null);
+        /** StartLoginRequest cloneCode */
+        cloneCode?: (Uint8Array|null);
     }
 
     /** Represents a StartLoginRequest. */
@@ -1355,8 +1355,8 @@ export namespace Authentication {
         /** StartLoginRequest forceNewLogin. */
         public forceNewLogin: boolean;
 
-        /** StartLoginRequest deviceSyncCode. */
-        public deviceSyncCode: Uint8Array;
+        /** StartLoginRequest cloneCode. */
+        public cloneCode: Uint8Array;
 
         /**
          * Creates a new StartLoginRequest instance using the specified properties.
@@ -1468,8 +1468,8 @@ export namespace Authentication {
         /** LoginResponse salt */
         salt?: (Authentication.ISalt[]|null);
 
-        /** LoginResponse deviceSyncCode */
-        deviceSyncCode?: (Uint8Array|null);
+        /** LoginResponse cloneCode */
+        cloneCode?: (Uint8Array|null);
     }
 
     /** Represents a LoginResponse. */
@@ -1517,8 +1517,8 @@ export namespace Authentication {
         /** LoginResponse salt. */
         public salt: Authentication.ISalt[];
 
-        /** LoginResponse deviceSyncCode. */
-        public deviceSyncCode: Uint8Array;
+        /** LoginResponse cloneCode. */
+        public cloneCode: Uint8Array;
 
         /**
          * Creates a new LoginResponse instance using the specified properties.
@@ -2306,7 +2306,8 @@ export namespace Authentication {
         TWO_FA_PUSH_KEEPER = 2,
         TWO_FA_PUSH_DUO_PUSH = 3,
         TWO_FA_PUSH_DUO_TEXT = 4,
-        TWO_FA_PUSH_DUO_CALL = 5
+        TWO_FA_PUSH_DUO_CALL = 5,
+        TWO_FA_PUSH_DNA = 6
     }
 
     /** TwoFactorValueType enum. */
@@ -2317,7 +2318,8 @@ export namespace Authentication {
         TWO_FA_CODE_DUO = 3,
         TWO_FA_CODE_RSA = 4,
         TWO_FA_RESP_U2F = 5,
-        TWO_FA_RESP_WEBAUTHN = 6
+        TWO_FA_RESP_WEBAUTHN = 6,
+        TWO_FA_CODE_DNA = 7
     }
 
     /** TwoFactorChannelType enum. */
@@ -2330,7 +2332,8 @@ export namespace Authentication {
         TWO_FA_CT_BACKUP = 5,
         TWO_FA_CT_U2F = 6,
         TWO_FA_CT_WEBAUTHN = 7,
-        TWO_FA_CT_KEEPER = 8
+        TWO_FA_CT_KEEPER = 8,
+        TWO_FA_CT_DNA = 9
     }
 
     /** Properties of a TwoFactorChannelInfo. */

@@ -381,6 +381,7 @@ export class Auth {
         console.log(loginResp)
 
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
+        this.dataKey = await decryptEncryptionParams(password, loginResp.encryptedDataKey);
         this.socket.registerLogin(this._sessionToken)
     }
 

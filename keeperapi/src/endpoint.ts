@@ -303,7 +303,11 @@ export enum KeeperEnvironment {
     Prod = 'keepersecurity.com',
     QA = 'qa.keepersecurity.com',
     DEV = 'dev.keepersecurity.com',
-    LOCAL = 'local.keepersecurity.com'
+    DEV2 = 'dev2.keepersecurity.com',
+    LOCAL = 'local.keepersecurity.com',
+    Prod_EU = 'keepersecurity.eu',
+    QA_EU = 'qa.keepersecurity.eu',
+    DEV_EU = 'dev.keepersecurity.eu',
 }
 
 interface KeeperKeys {
