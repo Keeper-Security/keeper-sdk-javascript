@@ -81,8 +81,9 @@ export const browserPlatform: Platform = class {
         };
     }
 
+    // todo: revisit
     static async generateRSAKeyPair2(): Promise<any> {
-        throw new Error("Not implemented")
+        return this.generateRSAKeyPair()
     }
 
     static generateECKeyPair(): { privateKey: Uint8Array; publicKey: Uint8Array } {
