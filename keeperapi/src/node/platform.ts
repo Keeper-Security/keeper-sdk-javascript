@@ -50,13 +50,13 @@ export const nodePlatform: Platform = class {
         return new NodeRSA({b: 1024});
     }
 
-    static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
+    static generateECKeyPair(): { privateKey: Uint8Array; publicKey: Uint8Array } {
         const ecdh = createECDH('prime256v1')
         ecdh.generateKeys()
-        return Promise.resolve({
+        return {
             privateKey: ecdh.getPrivateKey(),
             publicKey: ecdh.getPublicKey()
-        })
+        }
     }
 
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {

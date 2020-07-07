@@ -103,7 +103,7 @@ export class KeeperEndpoint {
             return
         }
 
-        const ecdh = await platform.generateECKeyPair()
+        const ecdh = platform.generateECKeyPair()
         deviceConfig.publicKey = ecdh.publicKey
         deviceConfig.privateKey = ecdh.privateKey
         while (true) {
