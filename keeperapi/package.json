@@ -1,6 +1,6 @@
 {
   "name": "keeperapi",
-  "version": "0.2.0",
+  "version": "0.3.0-beta.1",
   "browser": "dist/index.es.js",
   "main": "dist/index.cjs.js",
   "browsertest": "dist/test.cjs.js",
@@ -15,6 +15,7 @@
     "update-proto:es6": "pbjs -t static-module -w es6 -o src/proto.js $npm_package_protobufFiles && pbts -o src/proto.d.ts src/proto.js",
     "update-proto:cjs": "pbjs -t json-module -w commonjs -o src/proto.js $npm_package_protobufFiles && pbjs -t static-module -w commonjs $npm_package_protobufFiles | pbts -o src/proto.d.ts -",
     "link-local": "yarn link",
+    "publish:beta": "node ./scripts/verifyBetaVersion.js && npm publish --tag beta",
     "test": "ts-node test/test.ts",
     "test-new-login": "ts-node test/new_login.ts",
     "test-ws_push": "ts-node test/ws_push.ts",
