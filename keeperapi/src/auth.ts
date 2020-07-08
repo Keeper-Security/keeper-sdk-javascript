@@ -85,7 +85,9 @@ export class SocketListener {
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
         })
-        this.socket.onMessage(this.handleMessage)
+        this.socket.onMessage(e => {
+            this.handleMessage(e)
+        })
     }
 
     registerLogin(sessionToken: string) {
@@ -333,6 +335,9 @@ export class Auth {
             case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
                 pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
                 break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
+                pushType = TwoFactorPushType.TWO_FA_PUSH_DNA
+                break;
         }
         const codeLessPush = pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH || pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER
         if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
@@ -357,14 +362,21 @@ export class Auth {
     }
 
     private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
-        const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
-        const twoFactorValidateMsg = twoFactorValidateMessage({
-            encryptedLoginToken: loginToken,
-            value: twoFactorInput.twoFactorCode,
-            expireIn: twoFactorInput.desiredExpiration
-        })
-        const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
-        return twoFactorValidateResp.encryptedLoginToken
+        while (true) {
+            try {
+                const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+                const twoFactorValidateMsg = twoFactorValidateMessage({
+                    encryptedLoginToken: loginToken,
+                    value: twoFactorInput.twoFactorCode,
+                    expireIn: twoFactorInput.desiredExpiration
+                })
+                const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+                return twoFactorValidateResp.encryptedLoginToken
+            }
+            catch (e) {
+                console.log(e)
+            }
+        }
     }
 
     async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
