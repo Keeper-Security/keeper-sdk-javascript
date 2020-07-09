@@ -5,6 +5,7 @@ import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
 import {Authentication} from '../src/proto';
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
+import {normal64Bytes} from '../src/utils';
 
 export const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
     const rl = readline.createInterface({
@@ -97,4 +98,9 @@ export function getCredentialsAndHost(): { userName: string; password: string; h
     catch (e) {
         throw Error('Error parsing credentials.config file')
     }
+}
+
+export async function replayRest(path: string, request: string) {
+    const response = await platform.post(`https://local.keepersecurity.com/api/rest/${path}`, normal64Bytes(request))
+    console.log(response)
 }

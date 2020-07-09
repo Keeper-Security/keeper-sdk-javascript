@@ -339,7 +339,11 @@ export class Auth {
                 pushType = TwoFactorPushType.TWO_FA_PUSH_DNA
                 break;
         }
-        const codeLessPush = pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH || pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER
+        const codeLessPush = [
+            TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH,
+            TwoFactorPushType.TWO_FA_PUSH_DUO_CALL,
+            TwoFactorPushType.TWO_FA_PUSH_KEEPER
+        ].includes(pushType)
         if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
             const sendPushRequest: ITwoFactorSendPushRequest = {
                 encryptedLoginToken: loginResponse.encryptedLoginToken,
