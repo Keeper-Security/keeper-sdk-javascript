@@ -143,3 +143,6 @@ export const ssoCloudServiceProviderConfigurationListRequestMessage = (data: Sso
 
 export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServiceProviderRequest, url:string): RestMessage<Authentication.ISsoServiceProviderRequest, Authentication.ISsoServiceProviderResponse> =>
     createMessage(data, url, Authentication.SsoServiceProviderRequest, Authentication.SsoServiceProviderResponse);
+
+export const ssoCloudBasicRequestMessage = (data: Authentication.ISsoCloudRequest, url:string): RestMessage<Authentication.ISsoCloudRequest, Authentication.ISsoCloudResponse) =>
+    createMessage(data, url, Authentication.SsoCloudRequest, Authentication.SsoCloudResponse);

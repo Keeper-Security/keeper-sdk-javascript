@@ -8,6 +8,7 @@ import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
 import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
 import {SsoServiceProviderAddCommand} from '../src/commands';
+import {webSafe64, webSafe64FromBytes} from '../src/utils';
 
 // Mike Test -------------------------------------
 // 24-Apr-2020
@@ -33,7 +34,7 @@ import AuthProtocolType = SsoCloud.AuthProtocolType;
 import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/restMessages';
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages';
 import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages';
-import {ssoServiceProviderRequestMessage} from '../src/restMessages';
+import {ssoServiceProviderRequestMessage, ssoCloudBasicRequestMessage} from '../src/restMessages';
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
@@ -50,6 +51,7 @@ const MIKE_SSO_LOGIN_1 : UserInfo  = { "account": "mhewett+sso60@keepersecurity.
 const MIKE_SSO_LOGIN_2 : UserInfo  = { "account": "mhewett+sso61@keepersecurity.com", "password": "Password11" }
 const MIKE_SSO_LOGIN_3 : UserInfo  = { "account": "mhewett+idps@keepersecurity.com", "password": "Password11" }
 const SERGE_PLAIN_LOGIN_1 : UserInfo  = { "account": "admin@yozik.us", "password": "111111" }
+const RAINER_CLOUD_SSO_LOGIN : UserInfo = {"account": "rainer+kec@keepersecurity.com", "password": "Password-123" }
 const clientVersion = 'c16.0.0'
 
 // end Mike Test ------------------------------------------
@@ -93,11 +95,13 @@ async function printVault() {
     }
 }
 
+// ****************************************************
+let keeperHost = KeeperEnvironment.DEV;
+// ****************************************************
+
 async function login(user?: UserInfo): Promise<Auth> {
     let auth = new Auth({
-        host: KeeperEnvironment.LOCAL,
-        // host: KeeperEnvironment.DEV
-        // host: KeeperEnvironment.QA,
+        host: keeperHost,
         authUI: authUI
     })
     let userInfo = user || currentUser;
@@ -108,14 +112,16 @@ async function login(user?: UserInfo): Promise<Auth> {
 
 const currentUser = MIKE_VAULT_LOGIN_1;
 
-// ****************************************************
-let keeperHost = KeeperEnvironment.DEV;
+// TESTING
 // ****************************************************
 
 // ServiceLogger and Cloud SSO Connect ---------------
 // testServiceLogger().finally();
 
 // TestSsoLogin().finally();
+TestSsoLogin_2().finally();
+// TestSsoLogout().finally();
+// TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
 // TestSsoUploadMetadata().finally();
 // TestSsoGetMetadata().finally();
@@ -124,7 +130,7 @@ let keeperHost = KeeperEnvironment.DEV;
 // TestSsoAddNewConfiguration().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
-TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
+// TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
 // TestSsoUpdateConfiguration().finally();
 // TestSsoResetConfigurationSettingValue().finally();
 // TestSsoGetSAMLLog().finally();
@@ -168,10 +174,9 @@ async function TestSsoLogin() {
 
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
-    let user = MIKE_DEMO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
+    let user = MIKE_DEMO_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
-    const configPrefix = 'sso/saml/';
 
     try {
         let auth = new Auth({
@@ -186,6 +191,43 @@ async function TestSsoLogin() {
         console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {
+        console.log(e)
+    }
+}
+
+// GET, ENCRYPTED, login
+async function TestSsoLogin_2() {
+    console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
+
+    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 9710921056299; // 9710921056266;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/saml/';
+    const configEndpoint = 'login';
+
+    try {
+        const url = getKeeperSsoSAMLUrl(keeperHost, configEndpoint, serviceProviderId);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+
+        let restReq = SsoCloudBasicRequest.create({
+            "messageSessionUid": messageSessionUid,
+            "embedded": true,
+            "clientVersion": clientVersion,
+            "dest": "vault",
+            "forceLogin": false
+        });
+
+        let resp = await auth.executeRestToHTML(ssoCloudBasicRequestMessage(restReq));
+        console.log(resp);
+     } catch (e) {
         console.log(e)
     }
 }
@@ -211,6 +253,41 @@ async function TestSsoLoginWithGet() {
 
         await auth.loginV3(user.account, user.password, true);
         console.log("Logged in via Cloud SSO Connect!");
+
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+async function TestSsoLogout() {
+
+    console.log("\n*** TestSsoLogin / Logout on " + keeperHost + " ***");
+
+    let user = MIKE_DEMO_LOGIN_1;
+    let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
+    const deviceConfig = getDeviceConfig(keeperHost);
+    let sessionId : string = "unknown";
+    let keyPair : any = await platform.generateRSAKeyPair2();
+    let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
+    let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+
+    try {
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+
+        await auth.loginV3(user.account, user.password);
+        console.log("Logged in via Cloud SSO Connect!");
+        
+        console.log("Calling logout");
+        const url = getKeeperSAMLUrl(keeperHost, 'logout', serviceProviderId) + "?username=" + user.account + "&session_id=" + sessionId + "&key=" + encodedPublicKey;
+
+        const resp = await auth.cloudSsoLogout(url, auth.getMessageSessionUid());
+        console.log(resp);
 
     } catch (e) {
         console.log(e)
@@ -250,7 +327,7 @@ async function TestSsoUploadMetadata() {
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_upload_idp_metadata';
 
-    let filename = 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
+    let filename = 'craig_prod_okta_metadata.xml'; // 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
@@ -698,8 +775,8 @@ async function TestSsoResetConfigurationSettingValue() {
 async function TestSsoGetSAMLLog() {
     console.log("\n*** TestSsoGetSAMLLog on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056299; // 9710921056266; // 6219112644615;
+    let user = RAINER_CLOUD_SSO_LOGIN;  // MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
+    let serviceProviderId = 14577119002630; // 9710921056299; // 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_saml_get';
@@ -769,7 +846,7 @@ async function TestGetSsoServiceProvider() {
     console.log("\n*** TestGetSsoServiceProvider on " + keeperHost + " ***");
 
     let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let domainName = "not an sso";  // "devgene sso 2";  // "demo azure";  
+    let domainName = "demo azure";    // "devgene sso 2";  // "demo azure";  
     const locale = "en_US";
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'enterprise/';

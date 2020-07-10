@@ -352,10 +352,12 @@ export class Auth {
         this.socket.registerLogin(this._sessionToken)
     }
 
-    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) {
+    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
         let keyPair : any = await platform.generateRSAKeyPair2();
         let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+
+        console.log("public key length is " + encodedPublicKey.length);
 
         try {
             console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
@@ -372,10 +374,39 @@ export class Auth {
                                                             }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
+            return ssoLoginResp;
 
         } catch (e) {
             console.log(e)
         }
+        return {};
+    }
+
+    async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
+        let keyPair : any = await platform.generateRSAKeyPair2();
+        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+
+        try {
+            console.log("\n*** cloudSsoLogout at " + ssoLogoutUrl + " ***");
+
+            // We have full URL but the library wants to recreate it so we let it.
+            let pos = ssoLogoutUrl.indexOf("logout");
+            ssoLogoutUrl = ssoLogoutUrl.substring(pos);
+
+            // This should return HTML
+            let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
+                                                            { "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                                                              "key": encodedPublicKey
+                                                            }, useGet);
+
+            console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
+            return ssoLogoutResp;
+
+        } catch (e) {
+            console.log(e)
+        }
+        return {};
     }
 
     async login(username: string, password: string) {
