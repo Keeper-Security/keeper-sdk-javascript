@@ -325,6 +325,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           AFTER_CLOUD_SSO_LOGIN: 15,
           REQUIRES_ACCOUNT_CREATION: 16,
           REQUIRES_DEVICE_ENCRYPTED_DATA_KEY: 17,
+          LOGIN_TOKEN_EXPIRED: 18,
           LOGGED_IN: 99
         }
       },
@@ -373,7 +374,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 9
           },
-          deviceSyncCode: {
+          cloneCode: {
             type: "bytes",
             id: 10
           }
@@ -431,7 +432,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "Salt",
             id: 12
           },
-          deviceSyncCode: {
+          cloneCode: {
             type: "bytes",
             id: 13
           }
@@ -556,7 +557,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_PUSH_KEEPER: 2,
           TWO_FA_PUSH_DUO_PUSH: 3,
           TWO_FA_PUSH_DUO_TEXT: 4,
-          TWO_FA_PUSH_DUO_CALL: 5
+          TWO_FA_PUSH_DUO_CALL: 5,
+          TWO_FA_PUSH_DNA: 6
         }
       },
       TwoFactorValueType: {
@@ -567,7 +569,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CODE_DUO: 3,
           TWO_FA_CODE_RSA: 4,
           TWO_FA_RESP_U2F: 5,
-          TWO_FA_RESP_WEBAUTHN: 6
+          TWO_FA_RESP_WEBAUTHN: 6,
+          TWO_FA_CODE_DNA: 7
         }
       },
       TwoFactorChannelType: {
@@ -580,7 +583,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           TWO_FA_CT_BACKUP: 5,
           TWO_FA_CT_U2F: 6,
           TWO_FA_CT_WEBAUTHN: 7,
-          TWO_FA_CT_KEEPER: 8
+          TWO_FA_CT_KEEPER: 8,
+          TWO_FA_CT_DNA: 9
         }
       },
       TwoFactorChannelInfo: {
@@ -1538,6 +1542,71 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           },
           username: {
             type: "string",
+            id: 3
+          }
+        }
+      },
+      GetUserAccountsFromPartialUsernameRequest: {
+        fields: {
+          partialUsername: {
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      GlobalUserAccount: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          },
+          accountUid: {
+            type: "bytes",
+            id: 2
+          },
+          regionName: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      GetUserAccountsFromPartialUsernameResponse: {
+        fields: {
+          globalUserAccount: {
+            rule: "repeated",
+            type: "GlobalUserAccount",
+            id: 1
+          }
+        }
+      },
+      SsoServiceProviderRequest: {
+        fields: {
+          name: {
+            type: "string",
+            id: 1
+          },
+          clientVersion: {
+            type: "string",
+            id: 2
+          },
+          locale: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      SsoServiceProviderResponse: {
+        fields: {
+          name: {
+            type: "string",
+            id: 1
+          },
+          spUrl: {
+            type: "string",
+            id: 2
+          },
+          isCloud: {
+            type: "bool",
             id: 3
           }
         }
@@ -3088,6 +3157,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      SSOLoginToken: {
+        fields: {
+          ssoServiceProviderId: {
+            type: "int64",
+            id: 1
+          },
+          username: {
+            type: "string",
+            id: 2
+          },
+          alias: {
+            type: "string",
+            id: 3
+          },
+          displayname: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
       LoginToken: {
         fields: {
           loginSessionId: {
@@ -3137,26 +3226,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           ssoLoginToken: {
             type: "SSOLoginToken",
             id: 12
-          }
-        }
-      },
-      SSOLoginToken: {
-        fields: {
-          ssoServiceProviderId: {
-            type: "int64",
-            id: 1
-          },
-          username: {
-            type: "string",
-            id: 2
-          },
-          alias: {
-            type: "string",
-            id: 3
-          },
-          displayname: {
-            type: "string",
-            id: 4
           }
         }
       },

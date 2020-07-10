@@ -9,6 +9,18 @@ import {SocketProxy} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 
+type Ecies = {
+    generateKeys: () => {
+        publicKey: Uint8Array
+        privateKey: Uint8Array
+    }
+    encrypt: (message: string | Uint8Array, pubKey: Uint8Array, id?: Uint8Array) => Uint8Array
+    decrypt: (cipherText: Uint8Array, privKey: Uint8Array, id?: Uint8Array) => Uint8Array
+    derivePublicKey: (privKey: Uint8Array) => Uint8Array
+}
+
+const ECIES: Ecies = require('ecies/dist/browserify/ecies.js')
+
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
 
@@ -69,12 +81,13 @@ export const browserPlatform: Platform = class {
         };
     }
 
+    // todo: revisit
     static async generateRSAKeyPair2(): Promise<any> {
-        throw new Error("Not implemented")
+        return this.generateRSAKeyPair()
     }
 
-    static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
-        throw new Error("Not implemented")
+    static generateECKeyPair(): { privateKey: Uint8Array; publicKey: Uint8Array } {
+        return ECIES.generateKeys()
     }
 
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
@@ -252,11 +265,11 @@ export const browserPlatform: Platform = class {
             close: () => {
                 socket.close()
             },
-            onClose: (callback: ()=> void) => {
-                socket.onclose = callback
+            onClose: (callback: () => void) => {
+                socket.addEventListener("close", callback)
             },
             onError: (callback: (e: Event) => void) => {
-                socket.onerror = callback
+                socket.addEventListener("error", callback)
             },
             onMessage: (callback: (e: MessageEvent) => void) => {
                 socket.onmessage = callback

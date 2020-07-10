@@ -103,7 +103,7 @@ export class KeeperEndpoint {
             return
         }
 
-        const ecdh = await platform.generateECKeyPair()
+        const ecdh = platform.generateECKeyPair()
         deviceConfig.publicKey = ecdh.publicKey
         deviceConfig.privateKey = ecdh.privateKey
         while (true) {
@@ -263,13 +263,14 @@ export class KeeperEndpoint {
     }
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
-        return getPushConnectionRequest(messageSessionUid, this.transmissionKey)
+        return getPushConnectionRequest(messageSessionUid, this.options.deviceConfig.deviceToken, this.transmissionKey)
     }
 }
 
-export async function getPushConnectionRequest(messageSessionUid: Uint8Array, transmissionKey: TransmissionKey) {
+export async function getPushConnectionRequest(messageSessionUid: Uint8Array, encryptedDeviceToken: Uint8Array, transmissionKey: TransmissionKey) {
     const connectionRequest = WssConnectionRequest.create({
         messageSessionUid: messageSessionUid,
+        encryptedDeviceToken: encryptedDeviceToken,
         deviceTimeStamp: new Date().getTime()
     })
     const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
@@ -302,7 +303,11 @@ export enum KeeperEnvironment {
     Prod = 'keepersecurity.com',
     QA = 'qa.keepersecurity.com',
     DEV = 'dev.keepersecurity.com',
-    LOCAL = 'local.keepersecurity.com'
+    DEV2 = 'dev2.keepersecurity.com',
+    LOCAL = 'local.keepersecurity.com',
+    Prod_EU = 'keepersecurity.eu',
+    QA_EU = 'qa.keepersecurity.eu',
+    DEV_EU = 'dev.keepersecurity.eu',
 }
 
 interface KeeperKeys {

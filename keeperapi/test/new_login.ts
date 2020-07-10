@@ -1,35 +1,21 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
-import {accountSummaryMessage, requestCreateUserMessage} from '../src/restMessages';
+import {requestCreateUserMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateEncryptionKey} from '../src/utils';
-import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil';
-import {KeeperEnvironment} from '../src/endpoint';
+import {authUI3, getCredentialsAndHost, getDeviceConfig, saveDeviceConfig} from './testUtil';
 import {createECDH} from "crypto";
+import {Vault} from '../src/vault';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
-// const userName = "admin@yozik.us"
-// const userName = "saldoukhov@gmail.com"
-// const userName = "saldoukhov@keepersecurity.com"
-// const userName = "admin+m6a@yozik.us"
-const userName = "admin+plain@yozik.us"
-// const userName = "admin+duo@yozik.us"
-// const userName = "admin+sms@yozik.us"
-// const userName = "admin+totp@yozik.us"
-// const userName = "admin+backup@yozik.us"
-// const userName = "admin+j16a@yozik.us"
-// const userName = "brian+bp@keepersecurity.com"
-// const userName = "arlen+dev5@keepersecurity.com"
-//const userName = "vladimir+cw@keepersecurity.com"
-// const userName = "arlen+c6@keepersecurity.com"
-// const clientVersion = 'c16.0.0'
 const clientVersion = 'w15.0.0'
-const host = KeeperEnvironment.LOCAL
 
 async function testRegistration() {
+
+    const { userName, password, host } = getCredentialsAndHost()
 
     const deviceConfig = getDeviceConfig(host)
 
@@ -44,7 +30,6 @@ async function testRegistration() {
 
     // await auth.verifyDevice(userName, null)
 
-    const password = '111111'
     const iterations = 1000
     const dataKey = generateEncryptionKey()
 
@@ -74,6 +59,8 @@ async function testRegistration() {
 }
 
 async function testLogin() {
+    const { userName, password, host } = getCredentialsAndHost()
+
     const deviceConfig = getDeviceConfig(host)
 
     const auth = new Auth({
@@ -84,17 +71,24 @@ async function testLogin() {
         authUI3: authUI3
     })
     try {
-        await auth.loginV3(userName, "111111")
+        await auth.loginV3(userName, password)
 
-        let resp = await auth.executeRest(accountSummaryMessage({
-            summaryVersion: 1
-        }));
-        console.log(resp)
+        console.log(auth.dataKey)
 
-        // const accountSummaryCommand = new AccountSummaryCommand()
-        // accountSummaryCommand.include = ['license', 'settings']
-        // const accSummary = await auth.executeCommand(accountSummaryCommand)
-        // console.log(accSummary)
+        let vault = new Vault(auth)
+
+        vault.noTypedRecords = true;
+        await vault.syncDown(true)
+        for (let record of vault.records) {
+            console.log(record.data)
+            console.log(record.recordData.udata)
+            console.log(record.nonSharedData)
+        }
+
+        // let resp = await auth.executeRest(accountSummaryMessage({
+        //     summaryVersion: 1
+        // }));
+        // console.log(resp)
     }
     finally {
         auth.disconnect()
@@ -104,3 +98,4 @@ async function testLogin() {
 
 // testRegistration().finally()
 testLogin().finally()
+

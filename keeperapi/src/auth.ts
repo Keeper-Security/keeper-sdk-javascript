@@ -64,10 +64,19 @@ export type SocketProxy = {
 
 export class SocketListener {
     private socket: SocketProxy;
+    // Listeners that receive all messages
+    private messageListeners: Array<(data: any) => void>
+    // Listeners that receive a single message
+    private singleMessageListeners: Array<{
+        resolve: (data: any) => void,
+        reject: (errorMessage: string) => void
+    }>
 
     constructor(url: string) {
         console.log('Connecting to ' + url)
 
+        this.messageListeners = []
+        this.singleMessageListeners = []
         this.socket = platform.createWebsocket(url)
 
         this.socket.onClose(() => {
@@ -76,24 +85,55 @@ export class SocketListener {
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
         })
+        this.socket.onMessage(e => {
+            this.handleMessage(e)
+        })
     }
 
     registerLogin(sessionToken: string) {
         this.socket.send(sessionToken)
     }
 
+    onClose(callback: () => void): void {
+        this.socket.onClose(callback)
+    }
+
+    onError(callback: () => void): void {
+        this.socket.onError(callback)
+    }
+
+    private handleMessage(msgEvent: MessageEvent): void {
+        for (let callback of this.messageListeners) {
+            callback(msgEvent.data)
+        }
+
+        for (let {resolve} of this.singleMessageListeners) {
+            resolve(msgEvent.data)
+        }
+        this.singleMessageListeners.length = 0
+    }
+
+    onPushMessage(callback: (data: any) => void): void {
+        this.messageListeners.push(callback)
+    }
+
     async getPushMessage(): Promise<any> {
-        console.log('Awaiting web socket')
-        return new Promise<any>((resolve) => {
-            this.socket.onMessage((e) => {
-                resolve(e.data)
-            })
+        console.log('Awaiting web socket message')
+
+        return new Promise<any>((resolve, reject) => {
+            this.singleMessageListeners.push({resolve, reject})
         })
     }
 
     disconnect() {
         this.socket.close();
         this.socket = null
+        this.messageListeners.length = 0
+
+        for (let {reject} of this.singleMessageListeners) {
+            reject('Socket disconnected')
+        }
+        this.singleMessageListeners.length = 0
     }
 }
 
@@ -209,6 +249,7 @@ export class Auth {
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     break;
                 case Authentication.LoginState.LOGGED_IN:
+                    this.setLoginParameters(username, webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
                     //break;
@@ -260,21 +301,14 @@ export class Auth {
                         encryptedLoginToken: loginToken,
                         pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
                     }))
-                    const resp = await this.options.authUI3.prompt("Press Enter to continue, x to exit\n")
-                    if (resp === "x") {
-                        process.exit()
+                    const msg = await this.getPushMessage()
+                    if (msg.approved && msg.message === 'device_approved') {
+                        return undefined
                     }
                 }
             default:
                 throw new Error('Invalid choice for device verification')
         }
-    }
-
-    async getWsMessage() {
-        const pushMessage = await this.socket.getPushMessage()
-        const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-        const socketResponseData = JSON.parse(wssClientResponse.message)
-        return socketResponseData;
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
@@ -301,8 +335,15 @@ export class Auth {
             case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
                 pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
                 break;
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
+                pushType = TwoFactorPushType.TWO_FA_PUSH_DNA
+                break;
         }
-        const codeLessPush = pushType === TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH || pushType === TwoFactorPushType.TWO_FA_PUSH_KEEPER
+        const codeLessPush = [
+            TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH,
+            TwoFactorPushType.TWO_FA_PUSH_DUO_CALL,
+            TwoFactorPushType.TWO_FA_PUSH_KEEPER
+        ].includes(pushType)
         if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
             const sendPushRequest: ITwoFactorSendPushRequest = {
                 encryptedLoginToken: loginResponse.encryptedLoginToken,
@@ -325,14 +366,21 @@ export class Auth {
     }
 
     private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
-        const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
-        const twoFactorValidateMsg = twoFactorValidateMessage({
-            encryptedLoginToken: loginToken,
-            value: twoFactorInput.twoFactorCode,
-            expireIn: twoFactorInput.desiredExpiration
-        })
-        const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
-        return twoFactorValidateResp.encryptedLoginToken
+        while (true) {
+            try {
+                const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+                const twoFactorValidateMsg = twoFactorValidateMessage({
+                    encryptedLoginToken: loginToken,
+                    value: twoFactorInput.twoFactorCode,
+                    expireIn: twoFactorInput.desiredExpiration
+                })
+                const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+                return twoFactorValidateResp.encryptedLoginToken
+            }
+            catch (e) {
+                console.log(e)
+            }
+        }
     }
 
     async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
@@ -349,6 +397,7 @@ export class Auth {
         console.log(loginResp)
 
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
+        this.dataKey = await decryptEncryptionParams(password, loginResp.encryptedDataKey);
         this.socket.registerLogin(this._sessionToken)
     }
 
@@ -522,9 +571,22 @@ export class Auth {
         await this.endpoint.registerDevice()
     }
 
+    onClose(callback: () => void): void {
+        this.socket.onClose(callback)
+    }
+
+    onError(callback: () => void): void {
+        this.socket.onError(callback)
+    }
+
+    onPushMessage(callback: (data: any) => void): void {
+        this.socket.onPushMessage(callback)
+    }
+
     async getPushMessage(): Promise<any> {
         const pushMessage = await this.socket.getPushMessage()
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+        console.log(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
     }
 
