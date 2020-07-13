@@ -228,6 +228,8 @@ export class Auth {
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
+                    const url = new URL(loginResponse.url)
+                    this.options.host = url.host
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
