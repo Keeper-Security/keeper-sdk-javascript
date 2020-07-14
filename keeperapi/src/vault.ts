@@ -54,7 +54,7 @@ async function decryptRecord(record: VaultRecord) {
 export class Vault {
     private _records: Record<string, VaultRecord> = {}
     private _sharedFolders: Record<string, VaultSharedFolder> = {}
-    private revision: number = 0
+    private _revision: number = 0
     noTypedRecords: boolean = false
 
     constructor(private auth: Auth) {
@@ -84,6 +84,10 @@ export class Vault {
         }
     }
 
+    get revision(): number {
+        return this._revision
+    }
+
     get records(): VaultRecord[] {
         return Object.values(this._records)
     }
@@ -104,9 +108,14 @@ export class Vault {
         return this._records[record_uid]
     }
 
-    async syncDown(logResponse: boolean = false) {
-        console.log(`syncing revision ${this.revision} for ${this.auth.username}`)
-        let syncDownCommand = new SyncDownCommand(this.revision)
+    // todo: remove logResponse in favor of a unified log levels solution
+    async syncDown(revision?: number, logResponse?: boolean) {
+        if (typeof revision === 'number') {
+            this._revision = revision
+        }
+        console.log(`syncing revision ${this._revision} for ${this.auth.username}`)
+
+        let syncDownCommand = new SyncDownCommand(this._revision)
         syncDownCommand.include = ['record', 'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
         if (!this.noTypedRecords) {
             syncDownCommand.include.push('typed_record')
@@ -114,7 +123,7 @@ export class Vault {
         let syncDownResponse = await this.auth.executeCommand(syncDownCommand)
         if (logResponse)
             console.log(syncDownResponse)
-        this.revision = syncDownResponse.revision
+        this._revision = syncDownResponse.revision
         if (syncDownResponse.full_sync) {
             this._records = {}
         }
@@ -444,7 +453,7 @@ export class Vault {
         faCommand.key = encryptForStorage(folderKey, this.auth.dataKey)
         faCommand.data = encryptObjectForStorage({ name: folderName + '1', color: '#FF0000'}, folderKey)
         const addFolderResponse = await this.auth.executeCommand(faCommand)
-        this.revision = addFolderResponse.revision
+        this._revision = addFolderResponse.revision
 
         this._sharedFolders[folderUid] = {
             key: folderKey
@@ -461,7 +470,7 @@ export class Vault {
         sfuCommand.operation = 'update'
         sfuCommand.name = encryptForStorage(platform.stringToBytes('sftest2'), sharedFolder.key)
         sfuCommand.shared_folder_uid = sharedFolderUid
-        sfuCommand.revision = this.revision
+        sfuCommand.revision = this._revision
         sfuCommand.add_users = [{
             username: user,
             manage_records: false,

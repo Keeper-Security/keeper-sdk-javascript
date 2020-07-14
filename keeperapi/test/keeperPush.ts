@@ -1,4 +1,4 @@
-import {authUI3, readDeviceConfig, saveDeviceConfig} from './testUtil';
+import {authUI3, prompt, readDeviceConfig, saveDeviceConfig} from './testUtil';
 import {Auth} from '../src/auth';
 import {KeeperEnvironment} from '../src/endpoint';
 import {connectPlatform} from '../src/platform';
@@ -28,7 +28,7 @@ async function waitPush() {
         while (true) {
             const push = await auth.getPushMessage();
             console.log(push)
-            await authUI3.prompt('Press any key to approve...\n')
+            await prompt('Press any key to approve...\n')
             await auth.approveDevice(normal64Bytes(push.encryptedDeviceToken))
         }
     }

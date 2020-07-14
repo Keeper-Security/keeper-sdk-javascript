@@ -51,7 +51,7 @@ async function printVault() {
         let auth = await login()
         let vault = new Vault(auth)
         vault.noTypedRecords = true;
-        await vault.syncDown(true)
+        await vault.syncDown(0, true)
         for (let record of vault.records) {
             console.log(record.data)
             console.log(record.recordData.udata)
@@ -120,7 +120,7 @@ async function testRecordUpdateForLegacy() {
         let legacyVault = new Vault(auth)
         legacyVault.noTypedRecords = true
         let vault = new Vault(auth)
-        await vault.syncDown(true)
+        await vault.syncDown(0, true)
         console.log(vault.records[0])
         await prompt('Press any key...')
 
@@ -149,7 +149,7 @@ async function testRecordUpdateForLegacy() {
             return
         }
 
-        await legacyVault.syncDown(true)
+        await legacyVault.syncDown(0, true)
         if (legacyVault.records.length > 0) {
             rec = vault.records[0]
             console.log(rec)
@@ -168,7 +168,7 @@ async function cleanVault(user?: string) {
         let cleanTrash = false
         let auth = await login(user)
         let vault = new Vault(auth)
-        await vault.syncDown(true)
+        await vault.syncDown(0, true)
         let records = vault.records
             .filter(x => !x.sharedFolderUid)
             .map(x => x.recordData.record_uid)
@@ -461,12 +461,12 @@ async function testAddRecordNew() {
     try {
         let auth = await login()
         let vault = new Vault(auth)
-        await vault.syncDown(true)
+        await vault.syncDown(0, true)
         await vault.addRecordNew({
             title: 'new record',
             secret1: 'abcd',
         })
-        await vault.syncDown(true)
+        await vault.syncDown(0, true)
     } catch (e) {
         console.log(e)
     }
@@ -489,7 +489,7 @@ const uploadFiles = async (vault: Vault) => {
 const downloadSharedFiles = async (fileRecordUid1: string, fileRecordUid2: string) => {
     let auth = await login("saldoukhov@gmail.com")
     let vault = new Vault(auth)
-    await vault.syncDown(true)
+    await vault.syncDown(0, true)
 
     for (let record of vault.records) {
         console.log(record.data)
@@ -552,7 +552,7 @@ async function testRecordShareViaFolder() {
         console.log('Adding user to shared folder...')
         await vault.addUserToSharedFolder(folderUid,  'saldoukhov@gmail.com')
 
-        // await vault.syncDown(true)
+        // await vault.syncDown(0, true)
         console.log('Adding record to shared folder...')
         await vault.addRecordNew({
             title: 'new record 3',
@@ -593,7 +593,7 @@ const printVaultContent = (vault: Vault) => {
 const openShareeVaultAndSync = async () => {
     let auth = await login("saldoukhov@gmail.com")
     let vault = new Vault(auth)
-    await vault.syncDown(true)
+    await vault.syncDown(0, true)
     printVaultContent(vault);
     return vault
 };
@@ -632,7 +632,7 @@ async function testSharedLinkedRecordUpdate() {
         rec1.data.secret1 = rec1.data.secret1 + " upd"
         await vault.updateRecord(rec1Uid)
 
-        await vault2.syncDown(true)
+        await vault2.syncDown(0, true)
         printVaultContent(vault2)
     } catch (e) {
         console.log(e)
@@ -660,7 +660,7 @@ async function testSharedLinkedRecordUpdateExisting() {
         rec1.data.secret1 = rec1.data.secret1 + " upd"
         await vault.updateRecord(rec1.recordData.record_uid)
 
-        await vault2.syncDown(true)
+        await vault2.syncDown(0, true)
         printVaultContent(vault2)
     } catch (e) {
         console.log(e)
