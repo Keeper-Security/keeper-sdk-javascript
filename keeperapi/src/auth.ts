@@ -431,6 +431,39 @@ export class Auth {
         return {};
     }
 
+    /**
+     * This is the more secure version that uses an encrypted protobuf.
+     * July 2020
+     */
+    async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false) : Promise<any> {
+        let keyPair : any = await platform.generateRSAKeyPair2();
+        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+
+        console.log("public key length is " + encodedPublicKey.length);
+
+        try {
+            console.log("\n*** cloudSsoLogin_2 at " + ssoLoginUrl + " ***");
+
+            // We have full URL but the library wants to recreate it so we let it.
+            let pos = ssoLoginUrl.indexOf("login");
+            ssoLoginUrl = ssoLoginUrl.substring(pos);
+
+            // This should return HTML
+            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
+                                                            { "key": encodedPublicKey,
+                                                              "payload": encodedPayload
+                                                            }, useGet);
+
+            console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
+            return ssoLoginResp;
+
+        } catch (e) {
+            console.log(e)
+        }
+        return {};
+    }
+
     async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
         let keyPair : any = await platform.generateRSAKeyPair2();
         let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
@@ -545,7 +578,7 @@ export class Auth {
         return this.endpoint.executeRestToHTML(message, sessionToken, formParams, useGet);
     }
 
-    get sessionToken(): string {
+    public get sessionToken(): string {
         return this._sessionToken;
     }
 
@@ -555,6 +588,10 @@ export class Auth {
 
     get clientVersion(): string {
         return this.endpoint.clientVersion;
+    }
+
+    get _endpoint(): KeeperEndpoint {
+        return this.endpoint;
     }
 
     async get(path: string) {
