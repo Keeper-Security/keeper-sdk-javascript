@@ -635,12 +635,9 @@ export class Auth {
     }
 
     async approveDevice(encryptedDeviceToken: Uint8Array) {
-        const approveDeviceMsg = deviceApproveStatusMessage({
+        const approveDeviceMsg = approveDeviceMessage({
             accountUid: this._accountUid,
-            deviceApproveStatus: [{
-                approved: true,
-                encryptedDeviceToken: encryptedDeviceToken
-            }]
+            encryptedDeviceToken: encryptedDeviceToken
         })
         const resp = await this.executeRest(approveDeviceMsg)
         console.log(resp)

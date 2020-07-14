@@ -76,7 +76,7 @@ export function saveDeviceConfig(deviceConfig: DeviceConfig, environment: Keeper
     fs.writeFileSync(configNames[environment], JSON.stringify(configStorage, null, 2))
 }
 
-const configNames = {
+export const configNames = {
     'local.keepersecurity.com': 'device-config-local.json',
     'dev.keepersecurity.com': 'device-config-dev.json',
     'dev2.keepersecurity.com': 'device-config-dev2.json',

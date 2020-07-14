@@ -6,7 +6,7 @@ import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment} from '../src/endpoint'
-import {authUI3, getDeviceConfig, prompt, saveDeviceConfig} from './testUtil'
+import {authUI3, getDeviceConfig, readDeviceConfig, prompt, saveDeviceConfig, getCredentialsAndHost} from './testUtil'
 import {SsoServiceProviderAddCommand} from '../src/commands';
 import {webSafe64, webSafe64FromBytes} from '../src/utils';
 
@@ -17,6 +17,7 @@ import {webSafe64, webSafe64FromBytes} from '../src/utils';
 import ServiceLogGetRequest = ServiceLogger.ServiceLogGetRequest;
 import ServiceLogSpecifier = ServiceLogger.ServiceLogSpecifier;
 import ServiceLogResponse = ServiceLogger.ServiceLogResponse;
+import SsoCloudRequest = SsoCloud.SsoCloudRequest;
 import SsoCloudIdpMetadataRequest = SsoCloud.SsoCloudIdpMetadataRequest;
 import SsoCloudConfigurationRequest = SsoCloud.SsoCloudConfigurationRequest;
 import SsoCloudConfigurationResponse = SsoCloud.SsoCloudConfigurationResponse;
@@ -40,18 +41,12 @@ import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/util
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 interface UserInfo {
-    account: string,
-    password: string
+    userName: string,
+    password: string,
+    host: KeeperEnvironment
 }
 
-const MIKE_VAULT_LOGIN_1 : UserInfo = { "account": "mhewett+reg70@keepersecurity.com", "password": "Password11" }
-const MIKE_ADMIN_LOGIN_1 : UserInfo = { "account": "mhewett+sso42@keepersecurity.com", "password": "Password11" }
-const MIKE_DEMO_LOGIN_1 : UserInfo  = { "account": "micheal@demo.kepr.co", "password": "7YTiWT7@VqWLCz!P1Xfd" }
-const MIKE_SSO_LOGIN_1 : UserInfo  = { "account": "mhewett+sso60@keepersecurity.com", "password": "Password11" }
-const MIKE_SSO_LOGIN_2 : UserInfo  = { "account": "mhewett+sso61@keepersecurity.com", "password": "Password11" }
-const MIKE_SSO_LOGIN_3 : UserInfo  = { "account": "mhewett+idps@keepersecurity.com", "password": "Password11" }
-const SERGE_PLAIN_LOGIN_1 : UserInfo  = { "account": "admin@yozik.us", "password": "111111" }
-const RAINER_CLOUD_SSO_LOGIN : UserInfo = {"account": "rainer+kec@keepersecurity.com", "password": "Password-123" }
+const userInfo: UserInfo = getCredentialsAndHost()
 const clientVersion = 'c16.0.0'
 
 // end Mike Test ------------------------------------------
@@ -96,7 +91,7 @@ async function printVault() {
 }
 
 // ****************************************************
-let keeperHost = KeeperEnvironment.DEV;
+let keeperHost = userInfo.host
 // ****************************************************
 
 async function login(user?: UserInfo): Promise<Auth> {
@@ -104,13 +99,11 @@ async function login(user?: UserInfo): Promise<Auth> {
         host: keeperHost,
         authUI: authUI
     })
-    let userInfo = user || currentUser;
-    await auth.login(userInfo.account, userInfo.password);
-    console.log(`login to ${userInfo.account} successful`)
+    await auth.login(userInfo.userName, userInfo.password);
+    console.log(`login to ${userInfo.userName} successful`)
     return auth;
 }
 
-const currentUser = MIKE_VAULT_LOGIN_1;
 
 // TESTING
 // ****************************************************
@@ -119,7 +112,7 @@ const currentUser = MIKE_VAULT_LOGIN_1;
 // testServiceLogger().finally();
 
 // TestSsoLogin().finally();
-TestSsoLogin_2().finally();
+// TestSsoLogin_2().finally();
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -127,7 +120,7 @@ TestSsoLogin_2().finally();
 // TestSsoGetMetadata().finally();
 // TestSsoSetCurrentConfiguration().finally();
 // TestSsoGetConfigurationList().finally();
-// TestSsoAddNewConfiguration().finally();
+TestSsoAddNewConfiguration().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
@@ -142,7 +135,6 @@ TestSsoLogin_2().finally();
 
 async function testServiceLogger() {
 
-    let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
@@ -153,7 +145,7 @@ async function testServiceLogger() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
        });
-        await auth.login(user.account, user.password);
+        await auth.login(userInfo.userName, userInfo.password);
         console.log('Logged in...');
 
         let serviceLoggerGetReq = ServiceLogGetRequest.create({serviceLogSpecifier: [{all: true}]});
@@ -174,7 +166,6 @@ async function TestSsoLogin() {
 
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
 
-    let user = MIKE_DEMO_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
 
@@ -187,7 +178,7 @@ async function TestSsoLogin() {
             authUI3: authUI3
         });
 
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {
@@ -199,14 +190,13 @@ async function TestSsoLogin() {
 async function TestSsoLogin_2() {
     console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056299; // 9710921056266;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
     const configEndpoint = 'login';
 
     try {
-        const url = getKeeperSsoSAMLUrl(keeperHost, configEndpoint, serviceProviderId);
+        const url = getKeeperSAMLUrl(keeperHost, configEndpoint, serviceProviderId);
         console.log("REST endpoint =", url);
 
         let auth = new Auth({
@@ -217,15 +207,17 @@ async function TestSsoLogin_2() {
             authUI3: authUI3
         });
 
-        let restReq = SsoCloudBasicRequest.create({
-            "messageSessionUid": messageSessionUid,
+        let restReq = SsoCloudRequest.create({
+            "messageSessionUid": auth.getMessageSessionUid(),
             "embedded": true,
             "clientVersion": clientVersion,
             "dest": "vault",
-            "forceLogin": false
+            "forceLogin": false   // ,         "username": userInfo.userName
         });
 
-        let resp = await auth.executeRestToHTML(ssoCloudBasicRequestMessage(restReq));
+        let payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
+        let resp = await auth.cloudSsoLogin2(url,  payload, false);
+
         console.log(resp);
      } catch (e) {
         console.log(e)
@@ -237,7 +229,6 @@ async function TestSsoLoginWithGet() {
 
     console.log("\n*** TestSsoLogin with GET on " + keeperHost + " ***");
 
-    let user = MIKE_DEMO_LOGIN_1; // MIKE_DEMO_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
@@ -251,7 +242,7 @@ async function TestSsoLoginWithGet() {
             authUI3: authUI3
         });
 
-        await auth.loginV3(user.account, user.password, true);
+        await auth.loginV3(userInfo.userName, userInfo.password, true);
         console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {
@@ -263,7 +254,6 @@ async function TestSsoLogout() {
 
     console.log("\n*** TestSsoLogin / Logout on " + keeperHost + " ***");
 
-    let user = MIKE_DEMO_LOGIN_1;
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
     const deviceConfig = getDeviceConfig(keeperHost);
     let sessionId : string = "unknown";
@@ -280,11 +270,11 @@ async function TestSsoLogout() {
             authUI3: authUI3
         });
 
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in via Cloud SSO Connect!");
         
         console.log("Calling logout");
-        const url = getKeeperSAMLUrl(keeperHost, 'logout', serviceProviderId) + "?username=" + user.account + "&session_id=" + sessionId + "&key=" + encodedPublicKey;
+        const url = getKeeperSAMLUrl(keeperHost, 'logout', serviceProviderId) + "?username=" + userInfo.userName + "&session_id=" + sessionId + "&key=" + encodedPublicKey;
 
         const resp = await auth.cloudSsoLogout(url, auth.getMessageSessionUid());
         console.log(resp);
@@ -298,7 +288,6 @@ async function TestSsoLogout() {
 async function TestSsoGetMetadata() {
     console.log("\n*** TestSsoGetMetadata on " + keeperHost + " ***");
 
-    let user = MIKE_VAULT_LOGIN_1;  // MIKE_ADMIN_LOGIN_1;
     let serviceProviderId = 9710921056299; // 6219112644615;
 
     try {
@@ -321,7 +310,6 @@ async function TestSsoGetMetadata() {
 async function TestSsoUploadMetadata() {
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
     let configurationId = 3121290; // 99837914454064896; // 3121290;
     const configPrefix = 'sso/config/';
@@ -343,7 +331,7 @@ async function TestSsoUploadMetadata() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         console.log("Uploading to configuration:", configurationId);
@@ -365,7 +353,6 @@ async function TestSsoUploadMetadata() {
 async function TestSsoSetCurrentConfiguration() {
     console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 9710921056299;
     let configurationId = 3121290;  // 1774455125899304 // 1284294 // 3121290
     const deviceConfig = getDeviceConfig(keeperHost);
@@ -381,7 +368,7 @@ async function TestSsoSetCurrentConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudServiceProviderUpdateRequest.create({
@@ -400,7 +387,6 @@ async function TestSsoSetCurrentConfiguration() {
 async function TestSsoGetConfigurationList() {
     console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056299; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
 
@@ -415,7 +401,7 @@ async function TestSsoGetConfigurationList() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudServiceProviderConfigurationListRequest.create({
@@ -433,9 +419,8 @@ async function TestSsoGetConfigurationList() {
 async function TestSsoAddNewConfiguration() {
     console.log("\n*** TestAddNewConfiguration on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     // let serviceProviderId = 9710921056266;
-    let serviceProviderId = 9710921056299;  // "demo azure"
+    let serviceProviderId = 9710921056266;  // "mh sso 1"
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_add';
@@ -451,7 +436,7 @@ async function TestSsoAddNewConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -470,7 +455,6 @@ async function TestSsoAddNewConfiguration() {
 async function TestSsoGetConfiguration() {
     console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     // let serviceProviderId = 9710921056266;
     let serviceProviderId = 9710921056299;  // "demo azure"
     let configurationId = 3121290;
@@ -489,7 +473,7 @@ async function TestSsoGetConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -508,9 +492,6 @@ async function TestSsoGetConfiguration() {
 async function TestSsoServiceProviderAdd() {
     console.log("\n*** TestSsoServiceProviderAdd on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
-    let serviceProviderId = 9710921056313;  // 9710921056299; // 6219112644615;
-    let configurationId = 1774455125899304; // 3121290;
     let nodeId = 9710921056312;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso//';
@@ -527,14 +508,13 @@ async function TestSsoServiceProviderAdd() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let command = new SsoServiceProviderAddCommand();
-        command.sso_service_provider_id = serviceProviderId;
         command.node_id = nodeId;
         command.sp_data_key = "wBTm7ftTn8KEJniAOJEr4XDm-CU1vQp1KGYkExwIc-BmXBDUDZw2GZIuPVX9QvMlNw5AFUgtJn7frMiy5qOxfg";
-        command.name = "Mike test 123";
+        command.name = "Local OpenConext";
         command.invite_new_users = true;
         command.is_cloud = true;
 
@@ -549,7 +529,6 @@ async function TestSsoServiceProviderAdd() {
 async function TestSsoDeleteConfiguration() {
     console.log("\n*** TestDeleteConfiguration on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
@@ -567,7 +546,7 @@ async function TestSsoDeleteConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         // Get the list of current configurations
@@ -608,7 +587,6 @@ async function TestSsoDeleteConfiguration() {
 async function TestSsoUpdateConfiguration() {
     console.log("\n*** TestUpdateConfiguration on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056299; // 6219112644615;
     let configurationId = 1774455125899304;
     const deviceConfig = getDeviceConfig(keeperHost);
@@ -626,7 +604,7 @@ async function TestSsoUpdateConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         // Get the list of current configurations
@@ -672,7 +650,6 @@ async function TestSsoUpdateConfiguration() {
 async function TestSsoSetConfigurationSettingValue() {
     console.log("\n*** TestSetConfigurationSettingValue on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
     let configurationId = 3121290; // 99837914454064896; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
@@ -690,7 +667,7 @@ async function TestSsoSetConfigurationSettingValue() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         // Test set attribute by name
@@ -731,7 +708,6 @@ async function TestSsoSetConfigurationSettingValue() {
 async function TestSsoResetConfigurationSettingValue() {
     console.log("\n*** TestResetConfigurationSettingValue on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
     let configurationId = 99837914454064896; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
@@ -749,7 +725,7 @@ async function TestSsoResetConfigurationSettingValue() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -775,7 +751,6 @@ async function TestSsoResetConfigurationSettingValue() {
 async function TestSsoGetSAMLLog() {
     console.log("\n*** TestSsoGetSAMLLog on " + keeperHost + " ***");
 
-    let user = RAINER_CLOUD_SSO_LOGIN;  // MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 14577119002630; // 9710921056299; // 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
@@ -792,7 +767,7 @@ async function TestSsoGetSAMLLog() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudSAMLLogRequest.create({
@@ -810,7 +785,6 @@ async function TestSsoGetSAMLLog() {
 async function TestSsoClearSAMLLog() {
     console.log("\n*** TestSsoClearSAMLLog on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let serviceProviderId = 9710921056266; // 6219112644615;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
@@ -827,7 +801,7 @@ async function TestSsoClearSAMLLog() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoCloudSAMLLogRequest.create({
@@ -845,7 +819,6 @@ async function TestSsoClearSAMLLog() {
 async function TestGetSsoServiceProvider() {
     console.log("\n*** TestGetSsoServiceProvider on " + keeperHost + " ***");
 
-    let user = MIKE_ADMIN_LOGIN_1;  // MIKE_VAULT_LOGIN_1;
     let domainName = "demo azure";    // "devgene sso 2";  // "demo azure";  
     const locale = "en_US";
     const deviceConfig = getDeviceConfig(keeperHost);
@@ -863,7 +836,7 @@ async function TestGetSsoServiceProvider() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(user.account, user.password);
+        await auth.loginV3(userInfo.userName, userInfo.password);
         console.log("Logged in...");
 
         let restReq = SsoServiceProviderRequest.create({
