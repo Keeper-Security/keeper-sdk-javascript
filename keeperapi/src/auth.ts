@@ -18,7 +18,7 @@ import {
     startLoginMessage,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
-    validateAuthHashMessage
+    validateAuthHashMessage, validateDeviceVerificationCodeMessage
 } from './restMessages'
 import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
@@ -228,6 +228,8 @@ export class Auth {
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
+                    const url = new URL(loginResponse.url)
+                    this.options.host = url.host
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
@@ -271,12 +273,17 @@ export class Auth {
                 await this.executeRest(requestDeviceVerificationMessage({
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
-                    clientVersion: this.endpoint.clientVersion
+                    clientVersion: this.endpoint.clientVersion,
+                    messageSessionUid: this.messageSessionUid
                 }))
-                const token = await this.options.authUI3.prompt('Enter Device token or approve via email and press enter:')
+                const token = await this.options.authUI3.prompt('Enter Device code or approve via email and press enter:')
                 if (!!token) {
-                    const resp = await this.get(`process_token/${token}`)
-                    console.log(platform.bytesToString(resp.data))
+                    await this.executeRest(validateDeviceVerificationCodeMessage({
+                        verificationCode: token,
+                        username: username
+                    }))
+                    // const resp = await this.get(`validate_device_verification_code/${token}`)
+                    // console.log(platform.bytesToString(resp.data))
                 }
                 return undefined
             case '2':

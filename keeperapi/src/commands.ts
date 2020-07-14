@@ -421,6 +421,15 @@ export class ShareAccountCommand extends AuthorizedCommand {
     transfer_key: string
 }
 
+export class SendKeyVerificationCodeCommand extends KeeperCommand {
+    constructor() {
+        super()
+        this.command = 'send_key_verification_code'
+    }
+    device_id: string
+    email: string;
+}
+
 export type EnterpriseDataInclude =
     | "nodes"
     | "users"
