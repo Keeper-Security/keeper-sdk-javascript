@@ -42,7 +42,7 @@ export interface AuthUI {
 export interface AuthUI3 {
     getTwoFactorCode(): Promise<TwoFactorInput>;
     getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
-    prompt(message: string): Promise<String>;
+    prompt(message: string): Promise<string>;
     redirectCallback?(url: string): void;
 }
 

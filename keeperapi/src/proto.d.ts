@@ -1252,7 +1252,8 @@ export namespace Authentication {
         INVALID_LOGINMETHOD = 0,
         EXISTING_ACCOUNT = 1,
         SSO_DOMAIN = 2,
-        AFTER_SSO = 3
+        AFTER_SSO = 3,
+        NEW_ACCOUNT = 4
     }
 
     /** LoginState enum. */
@@ -1470,6 +1471,9 @@ export namespace Authentication {
 
         /** LoginResponse cloneCode */
         cloneCode?: (Uint8Array|null);
+
+        /** LoginResponse stateSpecificValue */
+        stateSpecificValue?: (string|null);
     }
 
     /** Represents a LoginResponse. */
@@ -1519,6 +1523,9 @@ export namespace Authentication {
 
         /** LoginResponse cloneCode. */
         public cloneCode: Uint8Array;
+
+        /** LoginResponse stateSpecificValue. */
+        public stateSpecificValue: string;
 
         /**
          * Creates a new LoginResponse instance using the specified properties.
@@ -6077,91 +6084,91 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a UserNames. */
-    interface IUserNames {
+    /** Properties of a UserAccounts. */
+    interface IUserAccounts {
 
-        /** UserNames username */
-        username?: (string[]|null);
+        /** UserAccounts accountUid */
+        accountUid?: (Uint8Array[]|null);
     }
 
-    /** Represents a UserNames. */
-    class UserNames implements IUserNames {
+    /** Represents a UserAccounts. */
+    class UserAccounts implements IUserAccounts {
 
         /**
-         * Constructs a new UserNames.
+         * Constructs a new UserAccounts.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IUserNames);
+        constructor(properties?: Authentication.IUserAccounts);
 
-        /** UserNames username. */
-        public username: string[];
+        /** UserAccounts accountUid. */
+        public accountUid: Uint8Array[];
 
         /**
-         * Creates a new UserNames instance using the specified properties.
+         * Creates a new UserAccounts instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns UserNames instance
+         * @returns UserAccounts instance
          */
-        public static create(properties?: Authentication.IUserNames): Authentication.UserNames;
+        public static create(properties?: Authentication.IUserAccounts): Authentication.UserAccounts;
 
         /**
-         * Encodes the specified UserNames message. Does not implicitly {@link Authentication.UserNames.verify|verify} messages.
-         * @param message UserNames message or plain object to encode
+         * Encodes the specified UserAccounts message. Does not implicitly {@link Authentication.UserAccounts.verify|verify} messages.
+         * @param message UserAccounts message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IUserNames, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.IUserAccounts, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified UserNames message, length delimited. Does not implicitly {@link Authentication.UserNames.verify|verify} messages.
-         * @param message UserNames message or plain object to encode
+         * Encodes the specified UserAccounts message, length delimited. Does not implicitly {@link Authentication.UserAccounts.verify|verify} messages.
+         * @param message UserAccounts message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IUserNames, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.IUserAccounts, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a UserNames message from the specified reader or buffer.
+         * Decodes a UserAccounts message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns UserNames
+         * @returns UserAccounts
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserNames;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserAccounts;
 
         /**
-         * Decodes a UserNames message from the specified reader or buffer, length delimited.
+         * Decodes a UserAccounts message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns UserNames
+         * @returns UserAccounts
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserNames;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserAccounts;
 
         /**
-         * Verifies a UserNames message.
+         * Verifies a UserAccounts message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a UserNames message from a plain object. Also converts values to their respective internal types.
+         * Creates a UserAccounts message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns UserNames
+         * @returns UserAccounts
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.UserNames;
+        public static fromObject(object: { [k: string]: any }): Authentication.UserAccounts;
 
         /**
-         * Creates a plain object from a UserNames message. Also converts values to other types if specified.
-         * @param message UserNames
+         * Creates a plain object from a UserAccounts message. Also converts values to other types if specified.
+         * @param message UserAccounts
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.UserNames, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.UserAccounts, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this UserNames to JSON.
+         * Converts this UserAccounts to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -8284,6 +8291,102 @@ export namespace Authentication {
          */
         public toJSON(): { [k: string]: any };
     }
+
+    /** Properties of a UserSettingRequest. */
+    interface IUserSettingRequest {
+
+        /** UserSettingRequest setting */
+        setting?: (string|null);
+
+        /** UserSettingRequest value */
+        value?: (string|null);
+    }
+
+    /** Represents a UserSettingRequest. */
+    class UserSettingRequest implements IUserSettingRequest {
+
+        /**
+         * Constructs a new UserSettingRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserSettingRequest);
+
+        /** UserSettingRequest setting. */
+        public setting: string;
+
+        /** UserSettingRequest value. */
+        public value: string;
+
+        /**
+         * Creates a new UserSettingRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserSettingRequest instance
+         */
+        public static create(properties?: Authentication.IUserSettingRequest): Authentication.UserSettingRequest;
+
+        /**
+         * Encodes the specified UserSettingRequest message. Does not implicitly {@link Authentication.UserSettingRequest.verify|verify} messages.
+         * @param message UserSettingRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserSettingRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserSettingRequest message, length delimited. Does not implicitly {@link Authentication.UserSettingRequest.verify|verify} messages.
+         * @param message UserSettingRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserSettingRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserSettingRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserSettingRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserSettingRequest;
+
+        /**
+         * Decodes a UserSettingRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserSettingRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserSettingRequest;
+
+        /**
+         * Verifies a UserSettingRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserSettingRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserSettingRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserSettingRequest;
+
+        /**
+         * Creates a plain object from a UserSettingRequest message. Also converts values to other types if specified.
+         * @param message UserSettingRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserSettingRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserSettingRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
 
 /** Namespace Enterprise. */
@@ -10179,6 +10282,15 @@ export namespace AccountSummary {
 
         /** DeviceInfo clientVersion */
         clientVersion?: (string|null);
+
+        /** DeviceInfo username */
+        username?: (string|null);
+
+        /** DeviceInfo ipAddress */
+        ipAddress?: (string|null);
+
+        /** DeviceInfo approveRequestTime */
+        approveRequestTime?: (number|Long|null);
     }
 
     /** Represents a DeviceInfo. */
@@ -10207,6 +10319,15 @@ export namespace AccountSummary {
 
         /** DeviceInfo clientVersion. */
         public clientVersion: string;
+
+        /** DeviceInfo username. */
+        public username: string;
+
+        /** DeviceInfo ipAddress. */
+        public ipAddress: string;
+
+        /** DeviceInfo approveRequestTime. */
+        public approveRequestTime: (number|Long);
 
         /**
          * Creates a new DeviceInfo instance using the specified properties.
@@ -16014,6 +16135,9 @@ export namespace Tokens {
 
         /** LoginToken ssoLoginToken */
         ssoLoginToken?: (Tokens.ISSOLoginToken|null);
+
+        /** LoginToken username */
+        username?: (string|null);
     }
 
     /** Represents a LoginToken. */
@@ -16060,6 +16184,9 @@ export namespace Tokens {
 
         /** LoginToken ssoLoginToken. */
         public ssoLoginToken?: (Tokens.ISSOLoginToken|null);
+
+        /** LoginToken username. */
+        public username: string;
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -16686,8 +16813,8 @@ export namespace Tokens {
         /** SessionToken du1 */
         du1?: (string|null);
 
-        /** SessionToken sessionUid */
-        sessionUid?: (Uint8Array|null);
+        /** SessionToken messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
 
         /** SessionToken du8 */
         du8?: (Tokens.IDeviceToken|null);
@@ -16730,6 +16857,9 @@ export namespace Tokens {
 
         /** SessionToken deviceId */
         deviceId?: (number|Long|null);
+
+        /** SessionToken loginSessionId */
+        loginSessionId?: (number|Long|null);
     }
 
     /** Represents a SessionToken. */
@@ -16750,8 +16880,8 @@ export namespace Tokens {
         /** SessionToken du1. */
         public du1: string;
 
-        /** SessionToken sessionUid. */
-        public sessionUid: Uint8Array;
+        /** SessionToken messageSessionUid. */
+        public messageSessionUid: Uint8Array;
 
         /** SessionToken du8. */
         public du8?: (Tokens.IDeviceToken|null);
@@ -16794,6 +16924,9 @@ export namespace Tokens {
 
         /** SessionToken deviceId. */
         public deviceId: (number|Long);
+
+        /** SessionToken loginSessionId. */
+        public loginSessionId: (number|Long);
 
         /**
          * Creates a new SessionToken instance using the specified properties.
@@ -17859,17 +17992,14 @@ export namespace Tokens {
     /** Properties of a DeviceVerificationToken. */
     interface IDeviceVerificationToken {
 
-        /** DeviceVerificationToken encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
+        /** DeviceVerificationToken deviceId */
+        deviceId?: (number|Long|null);
 
         /** DeviceVerificationToken username */
         username?: (string|null);
 
         /** DeviceVerificationToken accountUid */
         accountUid?: (Uint8Array|null);
-
-        /** DeviceVerificationToken deviceName */
-        deviceName?: (string|null);
 
         /** DeviceVerificationToken clientVersion */
         clientVersion?: (string|null);
@@ -17882,6 +18012,9 @@ export namespace Tokens {
 
         /** DeviceVerificationToken messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
+
+        /** DeviceVerificationToken ipAddress */
+        ipAddress?: (string|null);
     }
 
     /** Represents a DeviceVerificationToken. */
@@ -17893,17 +18026,14 @@ export namespace Tokens {
          */
         constructor(properties?: Tokens.IDeviceVerificationToken);
 
-        /** DeviceVerificationToken encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
+        /** DeviceVerificationToken deviceId. */
+        public deviceId: (number|Long);
 
         /** DeviceVerificationToken username. */
         public username: string;
 
         /** DeviceVerificationToken accountUid. */
         public accountUid: Uint8Array;
-
-        /** DeviceVerificationToken deviceName. */
-        public deviceName: string;
 
         /** DeviceVerificationToken clientVersion. */
         public clientVersion: string;
@@ -17916,6 +18046,9 @@ export namespace Tokens {
 
         /** DeviceVerificationToken messageSessionUid. */
         public messageSessionUid: Uint8Array;
+
+        /** DeviceVerificationToken ipAddress. */
+        public ipAddress: string;
 
         /**
          * Creates a new DeviceVerificationToken instance using the specified properties.
@@ -20155,7 +20288,8 @@ export namespace Push {
         ENTERPRISE = 5,
         KEEPER = 6,
         SESSION = 7,
-        DEVICE = 8
+        DEVICE = 8,
+        TOTP = 9
     }
 
     /** Properties of a KAToPushServerRequest. */
@@ -20589,6 +20723,9 @@ export namespace Push {
 
         /** PushServerDeviceRegistrationRequest mobilePushPlatform */
         mobilePushPlatform?: (string|null);
+
+        /** PushServerDeviceRegistrationRequest transmissionKey */
+        transmissionKey?: (Uint8Array|null);
     }
 
     /** Represents a PushServerDeviceRegistrationRequest. */
@@ -20608,6 +20745,9 @@ export namespace Push {
 
         /** PushServerDeviceRegistrationRequest mobilePushPlatform. */
         public mobilePushPlatform: string;
+
+        /** PushServerDeviceRegistrationRequest transmissionKey. */
+        public transmissionKey: Uint8Array;
 
         /**
          * Creates a new PushServerDeviceRegistrationRequest instance using the specified properties.
@@ -20675,6 +20815,102 @@ export namespace Push {
 
         /**
          * Converts this PushServerDeviceRegistrationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SnsMessage. */
+    interface ISnsMessage {
+
+        /** SnsMessage messageType */
+        messageType?: (Push.MessageType|null);
+
+        /** SnsMessage message */
+        message?: (Uint8Array|null);
+    }
+
+    /** Represents a SnsMessage. */
+    class SnsMessage implements ISnsMessage {
+
+        /**
+         * Constructs a new SnsMessage.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Push.ISnsMessage);
+
+        /** SnsMessage messageType. */
+        public messageType: Push.MessageType;
+
+        /** SnsMessage message. */
+        public message: Uint8Array;
+
+        /**
+         * Creates a new SnsMessage instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SnsMessage instance
+         */
+        public static create(properties?: Push.ISnsMessage): Push.SnsMessage;
+
+        /**
+         * Encodes the specified SnsMessage message. Does not implicitly {@link Push.SnsMessage.verify|verify} messages.
+         * @param message SnsMessage message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Push.ISnsMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SnsMessage message, length delimited. Does not implicitly {@link Push.SnsMessage.verify|verify} messages.
+         * @param message SnsMessage message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Push.ISnsMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SnsMessage message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SnsMessage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Push.SnsMessage;
+
+        /**
+         * Decodes a SnsMessage message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SnsMessage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Push.SnsMessage;
+
+        /**
+         * Verifies a SnsMessage message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SnsMessage message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SnsMessage
+         */
+        public static fromObject(object: { [k: string]: any }): Push.SnsMessage;
+
+        /**
+         * Creates a plain object from a SnsMessage message. Also converts values to other types if specified.
+         * @param message SnsMessage
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Push.SnsMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SnsMessage to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

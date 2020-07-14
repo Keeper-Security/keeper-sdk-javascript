@@ -303,7 +303,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           INVALID_LOGINMETHOD: 0,
           EXISTING_ACCOUNT: 1,
           SSO_DOMAIN: 2,
-          AFTER_SSO: 3
+          AFTER_SSO: 3,
+          NEW_ACCOUNT: 4
         }
       },
       LoginState: {
@@ -435,6 +436,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           cloneCode: {
             type: "bytes",
             id: 13
+          },
+          stateSpecificValue: {
+            type: "string",
+            id: 14
           }
         }
       },
@@ -1280,11 +1285,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      UserNames: {
+      UserAccounts: {
         fields: {
-          username: {
+          accountUid: {
             rule: "repeated",
-            type: "string",
+            type: "bytes",
             id: 1
           }
         }
@@ -1608,6 +1613,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           isCloud: {
             type: "bool",
             id: 3
+          }
+        }
+      },
+      UserSettingRequest: {
+        fields: {
+          setting: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "string",
+            id: 2
           }
         }
       }
@@ -1976,6 +1993,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           clientVersion: {
             type: "string",
             id: 6
+          },
+          username: {
+            type: "string",
+            id: 7
+          },
+          ipAddress: {
+            type: "string",
+            id: 8
+          },
+          approveRequestTime: {
+            type: "int64",
+            id: 9
           }
         }
       },
@@ -3226,6 +3255,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           ssoLoginToken: {
             type: "SSOLoginToken",
             id: 12
+          },
+          username: {
+            type: "string",
+            id: 13
           }
         }
       },
@@ -3349,7 +3382,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 3
           },
-          sessionUid: {
+          messageSessionUid: {
             type: "bytes",
             id: 4
           },
@@ -3408,6 +3441,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           deviceId: {
             type: "int64",
             id: 18
+          },
+          loginSessionId: {
+            type: "int64",
+            id: 19
           }
         }
       },
@@ -3605,8 +3642,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       DeviceVerificationToken: {
         fields: {
-          encryptedDeviceToken: {
-            type: "bytes",
+          deviceId: {
+            type: "int64",
             id: 1
           },
           username: {
@@ -3617,24 +3654,24 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 3
           },
-          deviceName: {
+          clientVersion: {
             type: "string",
             id: 4
           },
-          clientVersion: {
-            type: "string",
-            id: 5
-          },
           supportedLanguage: {
             type: "Authentication.SupportedLanguage",
-            id: 6
+            id: 5
           },
           creation: {
             type: "int64",
-            id: 7
+            id: 6
           },
           messageSessionUid: {
             type: "bytes",
+            id: 7
+          },
+          ipAddress: {
+            type: "string",
             id: 8
           }
         }
@@ -4087,7 +4124,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           ENTERPRISE: 5,
           KEEPER: 6,
           SESSION: 7,
-          DEVICE: 8
+          DEVICE: 8,
+          TOTP: 9
         }
       },
       KAToPushServerRequest: {
@@ -4179,6 +4217,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           mobilePushPlatform: {
             type: "string",
             id: 3
+          },
+          transmissionKey: {
+            type: "bytes",
+            id: 4
+          }
+        }
+      },
+      SnsMessage: {
+        fields: {
+          messageType: {
+            type: "MessageType",
+            id: 1
+          },
+          message: {
+            type: "bytes",
+            id: 2
           }
         }
       }
