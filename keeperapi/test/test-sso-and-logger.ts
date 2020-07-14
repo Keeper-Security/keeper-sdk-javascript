@@ -79,7 +79,7 @@ async function printVault() {
         let auth = await login()
         let vault = new Vault(auth)
         // vault.noTypedRecords = true;
-        await vault.syncDown(true)
+        await vault.syncDown(0, true)
         for (let record of vault.records) {
             console.log(record.data)
             console.log(record.recordData.udata)
@@ -634,7 +634,7 @@ async function TestSsoUpdateConfiguration() {
         listResp = await auth.executeRest(ssoCloudServiceProviderConfigurationListRequestMessage(listReq));
         console.log("Ending configurations");
         console.log(listResp);
-        
+
         config1 = listResp.configurationItem[0];
         oldName = config1.name;
         configId = config1.ssoSpConfigurationId;

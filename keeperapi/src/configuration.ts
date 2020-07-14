@@ -40,15 +40,24 @@ export interface AuthUI {
 }
 
 export interface AuthUI3 {
+    getDeviceVerificationCode(): Promise<string>;
+    getDeviceVerificationMethod(): Promise<DeviceVerificationMethods>;
     getTwoFactorCode(): Promise<TwoFactorInput>;
     getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
-    prompt(message: string): Promise<string>;
     redirectCallback?(url: string): void;
 }
 
 export type TwoFactorInput = {
     twoFactorCode: string
     desiredExpiration: TwoFactorExpiration
+}
+
+export enum DeviceVerificationMethods {
+    Email,
+    KeeperPush,
+    SMS,
+    TFACode,
+    TFAPush,
 }
 
 export type LoginError = {

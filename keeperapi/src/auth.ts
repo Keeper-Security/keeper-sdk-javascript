@@ -1,4 +1,4 @@
-import {ClientConfiguration, LoginError} from "./configuration";
+import {ClientConfiguration, DeviceVerificationMethods, LoginError} from "./configuration";
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
@@ -266,17 +266,17 @@ export class Auth {
 
         const deviceConfig = this.options.deviceConfig
 
-        const verifyMethod = await this.options.authUI3.prompt('Enter device verification method: \n1 - email\n2 - 2fa code\n3 - 2fa push\n4 - sms\n5 - keeper push\n');
+        const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
 
         switch (verifyMethod) {
-            case '1':
+            case DeviceVerificationMethods.Email:
                 await this.executeRest(requestDeviceVerificationMessage({
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
                     clientVersion: this.endpoint.clientVersion,
                     messageSessionUid: this.messageSessionUid
                 }))
-                const token = await this.options.authUI3.prompt('Enter Device code or approve via email and press enter:')
+                const token = await this.options.authUI3.getDeviceVerificationCode()
                 if (!!token) {
                     await this.executeRest(validateDeviceVerificationCodeMessage({
                         verificationCode: token,
@@ -286,9 +286,9 @@ export class Auth {
                     // console.log(platform.bytesToString(resp.data))
                 }
                 return undefined
-            case '2':
+            case DeviceVerificationMethods.TFACode:
                 return this.handleTwoFactorCode(loginToken)
-            case '3':
+            case DeviceVerificationMethods.TFAPush:
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
@@ -297,12 +297,12 @@ export class Auth {
                 const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
                 console.log(socketResponseData)
                 return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
-            case '4':
+            case DeviceVerificationMethods.SMS:
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
                 return this.handleTwoFactorCode(loginToken)
-            case '5':
+            case DeviceVerificationMethods.KeeperPush:
                 while (true) {
                     await this.executeRest(twoFactorSend2FAPushMessage({
                         encryptedLoginToken: loginToken,

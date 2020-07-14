@@ -1,5 +1,5 @@
 import * as readline from "readline";
-import {AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
+import {AuthUI3, DeviceConfig, DeviceVerificationMethods, TwoFactorInput} from '../src/configuration'
 import * as fs from 'fs'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
@@ -19,6 +19,14 @@ export const prompt = async (message: string): Promise<string> => new Promise<st
 })
 
 export const authUI3: AuthUI3 = {
+    async getDeviceVerificationCode(): Promise<string> {
+        const token = await prompt('Enter Device code or approve via email and press enter:')
+        return token
+    },
+    async getDeviceVerificationMethod(): Promise<DeviceVerificationMethods> {
+        const verifyMethod = await prompt('Enter device verification method: \n0 - email\n1 - 2fa code\n2 - 2fa push\n3 - sms\n4 - keeper push\n');
+        return Number(verifyMethod)
+    },
     async getTwoFactorCode(): Promise<TwoFactorInput> {
         const twoFactorCode = await prompt('Enter Code:');
         const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
@@ -31,7 +39,6 @@ export const authUI3: AuthUI3 = {
         const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
         return Number(exp)
     },
-    prompt: prompt
 }
 
 type DeviceConfigStorage = {
