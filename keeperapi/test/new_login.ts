@@ -1,5 +1,5 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
-import {requestCreateUserMessage} from '../src/restMessages';
+import {accountSummaryMessage, requestCreateUserMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateEncryptionKey} from '../src/utils';
