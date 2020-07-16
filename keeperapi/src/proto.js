@@ -1438,28 +1438,23 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      DeviceApproveStatus: {
-        fields: {
-          approved: {
-            type: "bool",
-            id: 1
-          },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      DeviceApproveStatusRequest: {
+      ApproveDeviceRequest: {
         fields: {
           accountUid: {
             type: "bytes",
             id: 1
           },
-          deviceApproveStatus: {
-            rule: "repeated",
-            type: "DeviceApproveStatus",
+          encryptedDeviceToken: {
+            type: "bytes",
             id: 2
+          },
+          encryptedDeviceDataKey: {
+            type: "bytes",
+            id: 3
+          },
+          denyApproval: {
+            type: "bool",
+            id: 4
           }
         }
       },
@@ -1910,7 +1905,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       AccountSummaryElements: {
         fields: {
           clientKey: {
-            type: "string",
+            type: "bytes",
             id: 1
           },
           settings: {
@@ -2011,11 +2006,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       KeysInfo: {
         fields: {
           encryptionParams: {
-            type: "string",
+            type: "bytes",
             id: 1
           },
           encryptedDataKey: {
-            type: "string",
+            type: "bytes",
             id: 2
           },
           dataKeyBackupDate: {
@@ -2023,11 +2018,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 3
           },
           userAuthUid: {
-            type: "string",
+            type: "bytes",
             id: 4
           },
           encryptedPrivateKey: {
-            type: "string",
+            type: "bytes",
             id: 5
           }
         }
@@ -2051,7 +2046,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 4
           },
           deviceUID: {
-            type: "string",
+            type: "bytes",
             id: 5
           },
           ipAddress: {
@@ -2135,7 +2130,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 18
           },
           accountUid: {
-            type: "string",
+            type: "bytes",
             id: 19
           },
           allowPersonalLicense: {
@@ -2261,7 +2256,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 12
           },
           accountFolderKey: {
-            type: "string",
+            type: "bytes",
             id: 13
           },
           securityKeys: {
@@ -2335,7 +2330,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 1
           },
           publicKey: {
-            type: "string",
+            type: "bytes",
             id: 2
           }
         }
@@ -2399,7 +2394,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 1
           },
           publicKey: {
-            type: "string",
+            type: "bytes",
             id: 2
           },
           attestationCert: {
@@ -3715,7 +3710,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           IP_ADDRESS_VERIFICATION: 2,
           USERNAME_VERIFICATION: 3,
           DEVICE_VERIFICATION: 4,
-          CREATE_ACCOUNT_VERIFICATION: 5
+          CREATE_ACCOUNT_VERIFICATION: 5,
+          REDEEM_PERSONAL_LICENSE: 6
         }
       },
       ProcessToken: {
@@ -4156,23 +4152,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "int32",
             id: 6
-          }
-        }
-      },
-      ApproveDeviceRequest: {
-        fields: {
-          messageType: {
-            type: "MessageType",
-            id: 1
-          },
-          message: {
-            type: "string",
-            id: 2
-          },
-          deviceApproveStatus: {
-            rule: "repeated",
-            type: "Authentication.DeviceApproveStatus",
-            id: 3
           }
         }
       },
