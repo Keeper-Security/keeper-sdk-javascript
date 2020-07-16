@@ -5,7 +5,7 @@ import {nodePlatform} from '../src/node/platform'
 import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
-import {KeeperEnvironment} from '../src/endpoint'
+import {KeeperEnvironment, KeeperEndpoint} from '../src/endpoint'
 import {authUI3, getDeviceConfig, readDeviceConfig, prompt, saveDeviceConfig, getCredentialsAndHost} from './testUtil'
 import {SsoServiceProviderAddCommand} from '../src/commands';
 import {webSafe64, webSafe64FromBytes} from '../src/utils';
@@ -90,9 +90,9 @@ async function printVault() {
     }
 }
 
-// ****************************************************
-let keeperHost = userInfo.host
-// ****************************************************
+// *****************************************************
+let keeperHost : KeeperEnvironment = userInfo.host
+// *****************************************************
 
 async function login(user?: UserInfo): Promise<Auth> {
     let auth = new Auth({
@@ -112,7 +112,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // testServiceLogger().finally();
 
 // TestSsoLogin().finally();
-// TestSsoLogin_2().finally();
+TestSsoLogin_2().finally();
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -120,7 +120,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // TestSsoGetMetadata().finally();
 // TestSsoSetCurrentConfiguration().finally();
 // TestSsoGetConfigurationList().finally();
-TestSsoAddNewConfiguration().finally();
+// TestSsoAddNewConfiguration().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
@@ -130,6 +130,8 @@ TestSsoAddNewConfiguration().finally();
 // TestSsoClearSAMLLog().finally();
 // TestSsoServiceProviderAdd().finally();
 // TestGetSsoServiceProvider().finally();
+
+// TestSetupForMujinaIdp().finally();
 
 /* ------------------ Service Logger -------------------- */
 
@@ -188,9 +190,8 @@ async function TestSsoLogin() {
 
 // GET, ENCRYPTED, login
 async function TestSsoLogin_2() {
-    console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
-
-    let serviceProviderId = 9710921056299; // 9710921056266;
+    console.log("\n*** TestSSOLogin v2 on " + keeperHost + " ***");
+    let serviceProviderId = 9710921056266; // 9710921056299;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/saml/';
     const configEndpoint = 'login';
@@ -209,10 +210,10 @@ async function TestSsoLogin_2() {
 
         let restReq = SsoCloudRequest.create({
             "messageSessionUid": auth.getMessageSessionUid(),
-            "embedded": true,
+            "embedded": false,
             "clientVersion": clientVersion,
             "dest": "vault",
-            "forceLogin": false   // ,         "username": userInfo.userName
+            "forceLogin": false
         });
 
         let payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
@@ -311,11 +312,11 @@ async function TestSsoUploadMetadata() {
     console.log("\n*** TestSsoUploadMetadata on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056266; // 6219112644615;
-    let configurationId = 3121290; // 99837914454064896; // 3121290;
+    let configurationId = 8080545707988631; // 99837914454064896; // 3121290;
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_upload_idp_metadata';
 
-    let filename = 'craig_prod_okta_metadata.xml'; // 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
+    let filename = '/Users/mhewett/work/sw/test-files/mujina-idp-metadata.xml'; // 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
     const deviceConfig = getDeviceConfig(keeperHost);
 
     try {
@@ -851,3 +852,66 @@ async function TestGetSsoServiceProvider() {
         console.log(e)
     }
 }
+
+
+// POST, ENCRYPTED, sso_cloud_configuration_delete
+async function TestSetupForMujinaIdp() {
+    console.log("\n*** Setup for Mujina IdP on " + keeperHost + " ***");
+
+    let serviceProviderId = 9710921056266;
+    let configurationId = 8080545707988631;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const endpoint = 'sso_cloud_configuration_update';
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, endpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(userInfo.userName, userInfo.password);
+        console.log("Logged in...");
+
+        let actions = [];
+        actions.push(SsoCloudSettingAction.create({
+            "settingId": 905,
+            "operation": SsoCloudSettingOperationType.SET,
+            "value": "urn:mace:dir:attribute-def:givenName"
+        }));
+        actions.push(SsoCloudSettingAction.create({
+            "settingId": 910,
+            "operation": SsoCloudSettingOperationType.SET,
+            "value": "urn:mace:dir:attribute-def:sn"
+        }));
+        actions.push(SsoCloudSettingAction.create({
+            "settingId": 915,
+            "operation": SsoCloudSettingOperationType.SET,
+            "value": "urn:mace:dir:attribute-def:uid"
+        }));
+        actions.push(SsoCloudSettingAction.create({
+            "settingId": 920,
+            "operation": SsoCloudSettingOperationType.SET,
+            "value": "redirect"
+        }));
+        
+        // Update the name of the first configuration, then set it back
+        let updateReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configurationId,
+            "ssoCloudSettingAction": actions
+        });
+        let resp : ISsoCloudConfigurationResponse = await auth.executeRest(ssoCloudConfigurationRequestMessage(updateReq, configPrefix + endpoint));
+        console.log("resp " + resp.name + " updated configuration " + resp.ssoSpConfigurationId);
+        console.log(resp);
+
+     } catch (e) {
+        console.log(e)
+    }
+}
+

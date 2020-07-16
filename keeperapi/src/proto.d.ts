@@ -24633,9 +24633,6 @@ export namespace SsoCloud {
         /** SsoCloudSettingValue valueType */
         valueType?: (SsoCloud.DataType|null);
 
-        /** SsoCloudSettingValue ssoRevision */
-        ssoRevision?: (number|null);
-
         /** SsoCloudSettingValue lastModified */
         lastModified?: (string|null);
 
@@ -24672,9 +24669,6 @@ export namespace SsoCloud {
 
         /** SsoCloudSettingValue valueType. */
         public valueType: SsoCloud.DataType;
-
-        /** SsoCloudSettingValue ssoRevision. */
-        public ssoRevision: number;
 
         /** SsoCloudSettingValue lastModified. */
         public lastModified: string;
@@ -24773,9 +24767,6 @@ export namespace SsoCloud {
 
         /** SsoCloudSettingAction value */
         value?: (string|null);
-
-        /** SsoCloudSettingAction ssoRevision */
-        ssoRevision?: (number|null);
     }
 
     /** This performs an edit operation on a Configuration setting */
@@ -24798,9 +24789,6 @@ export namespace SsoCloud {
 
         /** SsoCloudSettingAction value. */
         public value: string;
-
-        /** SsoCloudSettingAction ssoRevision. */
-        public ssoRevision: number;
 
         /**
          * Creates a new SsoCloudSettingAction instance using the specified properties.
@@ -26416,6 +26404,408 @@ export namespace SsoCloud {
 
         /**
          * Converts this SsoCloudServiceProviderConfigurationListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudRequest. */
+    interface ISsoCloudRequest {
+
+        /** SsoCloudRequest messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
+
+        /** SsoCloudRequest clientVersion */
+        clientVersion?: (string|null);
+
+        /** SsoCloudRequest embedded */
+        embedded?: (boolean|null);
+
+        /** SsoCloudRequest json */
+        json?: (boolean|null);
+
+        /** SsoCloudRequest dest */
+        dest?: (string|null);
+
+        /** SsoCloudRequest idpSessionId */
+        idpSessionId?: (string|null);
+
+        /** SsoCloudRequest forceLogin */
+        forceLogin?: (boolean|null);
+
+        /** SsoCloudRequest username */
+        username?: (string|null);
+    }
+
+    /**
+     * For security, this structure is used to make a Cloud SSO login or logout request rather than sending the parameters in the URL or in a form.
+     * A typical call is: https://www.keepersecurity.com/api/rest/sso/saml/login/123456789?key=BBAASSEE64KKEEYY&payload=encodedEncryptedAPIRequestContainingAnSsoCloudRequest
+     */
+    class SsoCloudRequest implements ISsoCloudRequest {
+
+        /**
+         * Constructs a new SsoCloudRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudRequest);
+
+        /** SsoCloudRequest messageSessionUid. */
+        public messageSessionUid: Uint8Array;
+
+        /** SsoCloudRequest clientVersion. */
+        public clientVersion: string;
+
+        /** SsoCloudRequest embedded. */
+        public embedded: boolean;
+
+        /** SsoCloudRequest json. */
+        public json: boolean;
+
+        /** SsoCloudRequest dest. */
+        public dest: string;
+
+        /** SsoCloudRequest idpSessionId. */
+        public idpSessionId: string;
+
+        /** SsoCloudRequest forceLogin. */
+        public forceLogin: boolean;
+
+        /** SsoCloudRequest username. */
+        public username: string;
+
+        /**
+         * Creates a new SsoCloudRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudRequest): SsoCloud.SsoCloudRequest;
+
+        /**
+         * Encodes the specified SsoCloudRequest message. Does not implicitly {@link SsoCloud.SsoCloudRequest.verify|verify} messages.
+         * @param message SsoCloudRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudRequest.verify|verify} messages.
+         * @param message SsoCloudRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudRequest;
+
+        /**
+         * Decodes a SsoCloudRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudRequest;
+
+        /**
+         * Verifies a SsoCloudRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudResponse. */
+    interface ISsoCloudResponse {
+
+        /** SsoCloudResponse command */
+        command?: (string|null);
+
+        /** SsoCloudResponse messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
+
+        /** SsoCloudResponse email */
+        email?: (string|null);
+
+        /** SsoCloudResponse encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+
+        /** SsoCloudResponse providerName */
+        providerName?: (string|null);
+
+        /** SsoCloudResponse idpSessionId */
+        idpSessionId?: (string|null);
+
+        /** SsoCloudResponse encryptedSessionToken */
+        encryptedSessionToken?: (Uint8Array|null);
+
+        /** SsoCloudResponse errorToken */
+        errorToken?: (string|null);
+    }
+
+    /**
+     * For security, this structure is used to return values from a Cloud SSO login or logout.
+     * It is encrypted with the key sent along with the SsoCloudRequest.
+     */
+    class SsoCloudResponse implements ISsoCloudResponse {
+
+        /**
+         * Constructs a new SsoCloudResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudResponse);
+
+        /** SsoCloudResponse command. */
+        public command: string;
+
+        /** SsoCloudResponse messageSessionUid. */
+        public messageSessionUid: Uint8Array;
+
+        /** SsoCloudResponse email. */
+        public email: string;
+
+        /** SsoCloudResponse encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
+        /** SsoCloudResponse providerName. */
+        public providerName: string;
+
+        /** SsoCloudResponse idpSessionId. */
+        public idpSessionId: string;
+
+        /** SsoCloudResponse encryptedSessionToken. */
+        public encryptedSessionToken: Uint8Array;
+
+        /** SsoCloudResponse errorToken. */
+        public errorToken: string;
+
+        /**
+         * Creates a new SsoCloudResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudResponse instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudResponse): SsoCloud.SsoCloudResponse;
+
+        /**
+         * Encodes the specified SsoCloudResponse message. Does not implicitly {@link SsoCloud.SsoCloudResponse.verify|verify} messages.
+         * @param message SsoCloudResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudResponse message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudResponse.verify|verify} messages.
+         * @param message SsoCloudResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudResponse;
+
+        /**
+         * Decodes a SsoCloudResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudResponse;
+
+        /**
+         * Verifies a SsoCloudResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudResponse
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudResponse;
+
+        /**
+         * Creates a plain object from a SsoCloudResponse message. Also converts values to other types if specified.
+         * @param message SsoCloudResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SamlRelayState. */
+    interface ISamlRelayState {
+
+        /** SamlRelayState messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
+
+        /** SamlRelayState username */
+        username?: (string|null);
+
+        /** SamlRelayState embedded */
+        embedded?: (boolean|null);
+
+        /** SamlRelayState json */
+        json?: (boolean|null);
+
+        /** SamlRelayState destId */
+        destId?: (number|null);
+
+        /** SamlRelayState keyId */
+        keyId?: (number|null);
+
+        /** SamlRelayState supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
+
+        /** SamlRelayState checksum */
+        checksum?: (number|Long|null);
+    }
+
+    /** This is used internally by Cloud SSO.  Clients do not use it. */
+    class SamlRelayState implements ISamlRelayState {
+
+        /**
+         * Constructs a new SamlRelayState.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISamlRelayState);
+
+        /** SamlRelayState messageSessionUid. */
+        public messageSessionUid: Uint8Array;
+
+        /** SamlRelayState username. */
+        public username: string;
+
+        /** SamlRelayState embedded. */
+        public embedded: boolean;
+
+        /** SamlRelayState json. */
+        public json: boolean;
+
+        /** SamlRelayState destId. */
+        public destId: number;
+
+        /** SamlRelayState keyId. */
+        public keyId: number;
+
+        /** SamlRelayState supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
+
+        /** SamlRelayState checksum. */
+        public checksum: (number|Long);
+
+        /**
+         * Creates a new SamlRelayState instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SamlRelayState instance
+         */
+        public static create(properties?: SsoCloud.ISamlRelayState): SsoCloud.SamlRelayState;
+
+        /**
+         * Encodes the specified SamlRelayState message. Does not implicitly {@link SsoCloud.SamlRelayState.verify|verify} messages.
+         * @param message SamlRelayState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISamlRelayState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SamlRelayState message, length delimited. Does not implicitly {@link SsoCloud.SamlRelayState.verify|verify} messages.
+         * @param message SamlRelayState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISamlRelayState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SamlRelayState message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SamlRelayState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SamlRelayState;
+
+        /**
+         * Decodes a SamlRelayState message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SamlRelayState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SamlRelayState;
+
+        /**
+         * Verifies a SamlRelayState message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SamlRelayState message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SamlRelayState
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SamlRelayState;
+
+        /**
+         * Creates a plain object from a SamlRelayState message. Also converts values to other types if specified.
+         * @param message SamlRelayState
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SamlRelayState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SamlRelayState to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

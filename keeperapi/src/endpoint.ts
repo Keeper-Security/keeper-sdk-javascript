@@ -151,7 +151,7 @@ export class KeeperEndpoint {
      * Call this for REST calls expected to return HTML or a 303 redirect.
      */
     async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams: any = {}, useGet: boolean = false): Promise<string> {
-        let request = await this.prepareRequest(message.toBytes(), sessionToken)
+        // let request = await this.prepareRequest(message.toBytes(), sessionToken)
         let theUrl = message.path;
         if (!theUrl.startsWith("http")) {
             theUrl = this.getUrl(theUrl);
@@ -253,7 +253,7 @@ export class KeeperEndpoint {
         this.transmissionKey = generateTransmissionKey(keyNumber)
     }
 
-    private async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
+    public async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
         return prepareApiRequest(payload, this.transmissionKey, sessionToken)
     }
 
@@ -264,6 +264,10 @@ export class KeeperEndpoint {
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
         return getPushConnectionRequest(messageSessionUid, this.options.deviceConfig.deviceToken, this.transmissionKey)
+    }
+
+    getTransmissionKey() : TransmissionKey {
+        return this.transmissionKey;
     }
 }
 

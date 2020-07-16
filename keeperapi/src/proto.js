@@ -4968,10 +4968,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "DataType",
             id: 5
           },
-          ssoRevision: {
-            type: "int32",
-            id: 6
-          },
           lastModified: {
             type: "string",
             id: 7
@@ -5007,10 +5003,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           value: {
             type: "string",
             id: 4
-          },
-          ssoRevision: {
-            type: "int32",
-            id: 5
           }
         }
       },
@@ -5262,6 +5254,114 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "ConfigurationListItem",
             id: 1
+          }
+        }
+      },
+      SsoCloudRequest: {
+        fields: {
+          messageSessionUid: {
+            type: "bytes",
+            id: 1
+          },
+          clientVersion: {
+            type: "string",
+            id: 2
+          },
+          embedded: {
+            type: "bool",
+            id: 3
+          },
+          json: {
+            type: "bool",
+            id: 4
+          },
+          dest: {
+            type: "string",
+            id: 5
+          },
+          idpSessionId: {
+            type: "string",
+            id: 6
+          },
+          forceLogin: {
+            type: "bool",
+            id: 7
+          },
+          username: {
+            type: "string",
+            id: 8
+          }
+        }
+      },
+      SsoCloudResponse: {
+        fields: {
+          command: {
+            type: "string",
+            id: 1
+          },
+          messageSessionUid: {
+            type: "bytes",
+            id: 2
+          },
+          email: {
+            type: "string",
+            id: 3
+          },
+          encryptedLoginToken: {
+            type: "bytes",
+            id: 4
+          },
+          providerName: {
+            type: "string",
+            id: 5
+          },
+          idpSessionId: {
+            type: "string",
+            id: 6
+          },
+          encryptedSessionToken: {
+            type: "bytes",
+            id: 7
+          },
+          errorToken: {
+            type: "string",
+            id: 8
+          }
+        }
+      },
+      SamlRelayState: {
+        fields: {
+          messageSessionUid: {
+            type: "bytes",
+            id: 1
+          },
+          username: {
+            type: "string",
+            id: 2
+          },
+          embedded: {
+            type: "bool",
+            id: 3
+          },
+          json: {
+            type: "bool",
+            id: 4
+          },
+          destId: {
+            type: "uint32",
+            id: 5
+          },
+          keyId: {
+            type: "int32",
+            id: 6
+          },
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
+            id: 7
+          },
+          checksum: {
+            type: "uint64",
+            id: 8
           }
         }
       }

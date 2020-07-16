@@ -1,9 +1,10 @@
-import {ClientConfiguration, DeviceVerificationMethods, LoginError} from "./configuration";
-import {KeeperEndpoint} from "./endpoint";
+import {ClientConfiguration, DeviceVerificationMethods, LoginError, TransmissionKey} from "./configuration";
+import {KeeperEndpoint, keeperKeys} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
     decryptFromStorage,
+    generateTransmissionKey,
     generateUidBytes,
     isTwoFactorResultCode,
     normal64,
@@ -11,7 +12,7 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
-    deviceApproveStatusMessage,
+    approveDeviceMessage,
     requestDeviceVerificationMessage,
     RestMessage,
     ssoSamlMessage,
@@ -439,18 +440,20 @@ export class Auth {
     }
 
     /**
-     * This is the more secure version that uses an encrypted protobuf.
+     * This is the more secure version of login that uses an encrypted protobuf.
      * July 2020
      */
     async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false) : Promise<any> {
+        const encryptionKey : TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
+        const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
         let keyPair : any = await platform.generateRSAKeyPair2();
         let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey : string = webSafe64FromBytes(publicKey);
 
-        console.log("public key length is " + encodedPublicKey.length);
+        console.log("encodedEncryptionKey = " + encodedEncryptionKey);
 
         try {
-            console.log("\n*** cloudSsoLogin_2 at " + ssoLoginUrl + " ***");
+            console.log("\n*** cloudSsoLogin2 at " + ssoLoginUrl + " ***");
 
             // We have full URL but the library wants to recreate it so we let it.
             let pos = ssoLoginUrl.indexOf("login");
@@ -458,7 +461,7 @@ export class Auth {
 
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                                                            { "key": encodedPublicKey,
+                                                            { "key": encodedEncryptionKey,
                                                               "payload": encodedPayload
                                                             }, useGet);
 
@@ -635,11 +638,11 @@ export class Auth {
     }
 
     async approveDevice(encryptedDeviceToken: Uint8Array) {
-        const approveDeviceMsg = approveDeviceMessage({
+        const approveDevMsg = approveDeviceMessage({
             accountUid: this._accountUid,
             encryptedDeviceToken: encryptedDeviceToken
         })
-        const resp = await this.executeRest(approveDeviceMsg)
+        const resp = await this.executeRest(approveDevMsg)
         console.log(resp)
     }
 }
