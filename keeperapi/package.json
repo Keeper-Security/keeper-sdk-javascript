@@ -1,6 +1,6 @@
 {
   "name": "keeperapi",
-  "version": "0.3.0-beta.5",
+  "version": "0.3.0-beta.6",
   "browser": "dist/index.es.js",
   "main": "dist/index.cjs.js",
   "browsertest": "dist/test.cjs.js",
@@ -28,6 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^3.1.9-1",
+    "ecies": "git+ssh://git@github.com/Keeper-Security/ecies.git",
     "faye-websocket": "^0.11.3",
     "form-data": "^3.0.0",
     "node-rsa": "^1.0.8",
@@ -38,7 +39,6 @@
     "@types/crypto-js": "^3.1.43",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.12.31",
-    "ecies": "git+ssh://git@github.com/Keeper-Security/ecies.git",
     "jest": "^24.8.0",
     "rollup": "^1.16.1",
     "rollup-plugin-sourcemaps": "^0.4.2",
