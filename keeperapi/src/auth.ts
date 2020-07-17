@@ -12,7 +12,6 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
-    approveDeviceMessage,
     requestDeviceVerificationMessage,
     RestMessage,
     ssoSamlMessage,
@@ -26,7 +25,6 @@ import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
-import Timeout = NodeJS.Timeout;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -201,7 +199,7 @@ export class Auth {
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             console.log(loginResponse)
-            if (! loginResponse.loginState) {
+            if (!loginResponse.loginState) {
                 console.log("loginState is null");
                 loginResponse.loginState = 99;
             }
@@ -257,7 +255,7 @@ export class Auth {
                     this.setLoginParameters(username, webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
-                    //break;
+                //break;
             }
         }
     }
@@ -271,7 +269,6 @@ export class Auth {
         const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
 
         let promiseFromUser: Promise<Uint8Array>
-        let timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
         switch (verifyMethod) {
             case DeviceVerificationMethods.Email: {
                 await this.executeRest(requestDeviceVerificationMessage({
@@ -324,9 +321,13 @@ export class Auth {
                 throw new Error('Invalid choice for device verification')
         }
 
-        const pushPromise = new Promise<Uint8Array>(async (resolve, reject) => {
+        return this.waitForVerifyDeviceInput(loginToken, promiseFromUser)
+    }
+
+    private async waitForVerifyDevicePush(loginToken: Uint8Array): Promise<Uint8Array> {
+        return new Promise<Uint8Array>(async (resolve, reject) => {
             let result: Uint8Array = loginToken
-            while(true) {
+            while (true) {
                 const pushMessage = await this.socket.getPushMessage()
                 const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
                 const wssRs = JSON.parse(wssClientResponse.message)
@@ -352,22 +353,23 @@ export class Auth {
                 }
             }
         })
-        const promises: Promise<Uint8Array>[] = []
-        let to: Timeout|undefined
-        if (timeout > 0) {
-            promises.push(new Promise<Uint8Array>(resolve => {
-                to = setTimeout(() => {
-                    to = undefined
-                    resolve(loginToken)
-                }, timeout)
-            }))
-        }
+    }
 
+    private async waitForVerifyDeviceInput(loginToken: Uint8Array, promiseFromUser: Promise<Uint8Array>): Promise<Uint8Array> {
+        const timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
+        let to: any | undefined
+        const timeoutPromise = new Promise<Uint8Array>(resolve => {
+            to = setTimeout(() => {
+                to = undefined
+                resolve(loginToken)
+            }, timeout)
+        })
+        const pushPromise = this.waitForVerifyDevicePush(loginToken)
+        const promises: Promise<Uint8Array>[] = [timeoutPromise, pushPromise]
         if (promiseFromUser) {
             promises.push(promiseFromUser)
         }
-        promises.push(pushPromise)
-        const rs =  await Promise.race(promises)
+        const rs = await Promise.race(promises)
         if (to) {
             clearTimeout(to!)
         }
@@ -439,8 +441,7 @@ export class Auth {
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
                 return twoFactorValidateResp.encryptedLoginToken
-            }
-            catch (e) {
+            } catch (e) {
                 console.log(e)
             }
         }
@@ -464,10 +465,10 @@ export class Auth {
         this.socket.registerLogin(this._sessionToken)
     }
 
-    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         console.log("public key length is " + encodedPublicKey.length);
 
@@ -480,10 +481,11 @@ export class Auth {
 
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                                                            { "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                                                              "key": encodedPublicKey,
-                                                              "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
-                                                            }, useGet);
+                {
+                    "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                    "key": encodedPublicKey,
+                    "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
             return ssoLoginResp;
@@ -498,12 +500,12 @@ export class Auth {
      * This is the more secure version of login that uses an encrypted protobuf.
      * July 2020
      */
-    async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false) : Promise<any> {
-        const encryptionKey : TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
+    async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
+        const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
         const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         console.log("encodedEncryptionKey = " + encodedEncryptionKey);
 
@@ -516,9 +518,10 @@ export class Auth {
 
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                                                            { "key": encodedEncryptionKey,
-                                                              "payload": encodedPayload
-                                                            }, useGet);
+                {
+                    "key": encodedEncryptionKey,
+                    "payload": encodedPayload
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
             return ssoLoginResp;
@@ -529,10 +532,10 @@ export class Auth {
         return {};
     }
 
-    async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+    async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         try {
             console.log("\n*** cloudSsoLogout at " + ssoLogoutUrl + " ***");
@@ -543,9 +546,10 @@ export class Auth {
 
             // This should return HTML
             let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
-                                                            { "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                                                              "key": encodedPublicKey
-                                                            }, useGet);
+                {
+                    "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                    "key": encodedPublicKey
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
             return ssoLogoutResp;
@@ -690,15 +694,6 @@ export class Auth {
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
         console.log(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
-    }
-
-    async approveDevice(encryptedDeviceToken: Uint8Array) {
-        const approveDevMsg = approveDeviceMessage({
-            accountUid: this._accountUid,
-            encryptedDeviceToken: encryptedDeviceToken
-        })
-        const resp = await this.executeRest(approveDevMsg)
-        console.log(resp)
     }
 }
 

@@ -4,6 +4,7 @@ import {KeeperEnvironment} from '../src/endpoint';
 import {connectPlatform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {normal64Bytes} from '../src/utils';
+import {approveDeviceMessage} from '../src/restMessages';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -29,7 +30,10 @@ async function waitPush() {
             const push = await auth.getPushMessage();
             console.log(push)
             await prompt('Press any key to approve...\n')
-            await auth.approveDevice(normal64Bytes(push.encryptedDeviceToken))
+            const resp = await auth.executeRest(approveDeviceMessage({
+                encryptedDeviceToken: normal64Bytes(push.encryptedDeviceToken)
+            }))
+            console.log(resp)
         }
     }
     finally {
