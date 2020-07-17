@@ -1,5 +1,5 @@
 import {ClientConfiguration, DeviceVerificationMethods, LoginError, TransmissionKey} from "./configuration";
-import {KeeperEndpoint, keeperKeys} from "./endpoint";
+import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
@@ -19,12 +19,14 @@ import {
     startLoginMessage,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
-    validateAuthHashMessage, validateDeviceVerificationCodeMessage
+    validateAuthHashMessage,
+    validateDeviceVerificationCodeMessage
 } from './restMessages'
 import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import Timeout = NodeJS.Timeout;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -266,57 +268,110 @@ export class Auth {
         }
 
         const deviceConfig = this.options.deviceConfig
-
         const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
 
+        let promiseFromUser: Promise<Uint8Array>
+        let timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
         switch (verifyMethod) {
-            case DeviceVerificationMethods.Email:
+            case DeviceVerificationMethods.Email: {
                 await this.executeRest(requestDeviceVerificationMessage({
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
                     clientVersion: this.endpoint.clientVersion,
                     messageSessionUid: this.messageSessionUid
                 }))
-                const token = await this.options.authUI3.getDeviceVerificationCode()
-                if (!!token) {
-                    await this.executeRest(validateDeviceVerificationCodeMessage({
-                        verificationCode: token,
-                        username: username
-                    }))
-                    // const resp = await this.get(`validate_device_verification_code/${token}`)
-                    // console.log(platform.bytesToString(resp.data))
-                }
-                return undefined
+
+                promiseFromUser = new Promise<Uint8Array>(async (resolve, reject) => {
+                    const token = await this.options.authUI3.getDeviceVerificationCode()
+                    if (!!token) {
+                        await this.executeRest(validateDeviceVerificationCodeMessage({
+                            verificationCode: token,
+                            username: username
+                        }))
+                    }
+                    return loginToken
+                })
+                // const resp = await this.get(`validate_device_verification_code/${token}`)
+                // console.log(platform.bytesToString(resp.data))
+            }
+                break
+
             case DeviceVerificationMethods.TFACode:
-                return this.handleTwoFactorCode(loginToken)
+                promiseFromUser = this.handleTwoFactorCode(loginToken)
+                break
+
             case DeviceVerificationMethods.TFAPush:
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
-                const pushMessage = await this.socket.getPushMessage()
-                const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-                const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
-                console.log(socketResponseData)
-                return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
+                break
+
             case DeviceVerificationMethods.SMS:
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
-                return this.handleTwoFactorCode(loginToken)
+                promiseFromUser = this.handleTwoFactorCode(loginToken)
+                break
+
             case DeviceVerificationMethods.KeeperPush:
-                while (true) {
-                    await this.executeRest(twoFactorSend2FAPushMessage({
-                        encryptedLoginToken: loginToken,
-                        pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                    }))
-                    const msg = await this.getPushMessage()
-                    if (msg.approved && msg.message === 'device_approved') {
-                        return undefined
-                    }
-                }
+                await this.executeRest(twoFactorSend2FAPushMessage({
+                    encryptedLoginToken: loginToken,
+                    pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                }))
+                break
+
             default:
                 throw new Error('Invalid choice for device verification')
         }
+
+        const pushPromise = new Promise<Uint8Array>(async (resolve, reject) => {
+            let result: Uint8Array = loginToken
+            while(true) {
+                const pushMessage = await this.socket.getPushMessage()
+                const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+                const wssRs = JSON.parse(wssClientResponse.message)
+                console.log(wssRs)
+                if (wssRs.event && wssRs.event === 'received_totp') {
+                    if (wssRs.encryptedLoginToken) {
+                        result = platform.base64ToBytes(wssRs.encryptedLoginToken)
+                    }
+                    resolve(result)
+                    return
+                }
+                if (wssRs.message && wssRs.message === 'device_approved') {
+                    if (wssRs.approved) {
+                        resolve(result)
+                    } else {
+                        reject('rejected')
+                    }
+                    return
+                }
+                if (wssRs.command && wssRs.command === 'device_verified') {
+                    resolve(result)
+                    return
+                }
+            }
+        })
+        const promises: Promise<Uint8Array>[] = []
+        let to: Timeout|undefined
+        if (timeout > 0) {
+            promises.push(new Promise<Uint8Array>(resolve => {
+                to = setTimeout(() => {
+                    to = undefined
+                    resolve(loginToken)
+                }, timeout)
+            }))
+        }
+
+        if (promiseFromUser) {
+            promises.push(promiseFromUser)
+        }
+        promises.push(pushPromise)
+        const rs =  await Promise.race(promises)
+        if (to) {
+            clearTimeout(to!)
+        }
+        return rs
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
