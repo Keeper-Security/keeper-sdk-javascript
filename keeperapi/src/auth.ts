@@ -501,6 +501,41 @@ export class Auth {
         return {};
     }
 
+    /**
+     * This is the more secure version of logout that uses an encrypted protobuf.
+     * July 2020
+     */
+    async cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false) : Promise<any> {
+        const encryptionKey : TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
+        const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
+        let keyPair : any = await platform.generateRSAKeyPair2();
+        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+
+        console.log("encodedEncryptionKey = " + encodedEncryptionKey);
+
+        try {
+            console.log("\n*** cloudSsoLogout2 at " + ssoLogoutUrl + " ***");
+
+            // We have full URL but the library wants to recreate it so we let it.
+            let pos = ssoLogoutUrl.indexOf("logout");
+            ssoLogoutUrl = ssoLogoutUrl.substring(pos);
+
+            // This should return HTML
+            let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
+                                                            { "key": encodedEncryptionKey,
+                                                              "payload": encodedPayload
+                                                            }, useGet);
+
+            console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
+            return ssoLogoutResp;
+
+        } catch (e) {
+            console.log(e)
+        }
+        return {};
+    }
+
     async login(username: string, password: string) {
         try {
             let preLoginResponse = await this.endpoint.getPreLogin(username);

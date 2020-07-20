@@ -112,7 +112,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // testServiceLogger().finally();
 
 // TestSsoLogin().finally();
-TestSsoLogin_2().finally();
+// TestSsoLogin_2().finally();
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -121,6 +121,8 @@ TestSsoLogin_2().finally();
 // TestSsoSetCurrentConfiguration().finally();
 // TestSsoGetConfigurationList().finally();
 // TestSsoAddNewConfiguration().finally();
+// TestSsoCopyConfiguration().finally();
+TestSsoResetConfiguration().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
@@ -251,18 +253,18 @@ async function TestSsoLoginWithGet() {
     }
 }
 
-async function TestSsoLogout() {
+async function TestSsoLogout_2() {
+    console.log("\n*** TestSSOLogout v2 on " + keeperHost + " ***");
 
-    console.log("\n*** TestSsoLogin / Logout on " + keeperHost + " ***");
-
-    let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
+    let serviceProviderId = 9710921056266; // 9710921056299;
     const deviceConfig = getDeviceConfig(keeperHost);
-    let sessionId : string = "unknown";
-    let keyPair : any = await platform.generateRSAKeyPair2();
-    let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-    let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+    const configPrefix = 'sso/saml/';
+    const configEndpoint = 'logout';
 
     try {
+        const url = getKeeperSAMLUrl(keeperHost, configEndpoint, serviceProviderId);
+        console.log("REST endpoint =", url);
+
         let auth = new Auth({
             host: keeperHost,
             clientVersion: clientVersion,
@@ -271,16 +273,22 @@ async function TestSsoLogout() {
             authUI3: authUI3
         });
 
-        await auth.loginV3(userInfo.userName, userInfo.password);
-        console.log("Logged in via Cloud SSO Connect!");
+        let restReq = SsoCloudRequest.create({
+            "messageSessionUid": auth.getMessageSessionUid(),
+            "embedded": false,
+            "clientVersion": clientVersion,
+            "dest": "vault",
+            "username": userInfo.userName
+        });
+
+        // Login to get the sessionToken
         
-        console.log("Calling logout");
-        const url = getKeeperSAMLUrl(keeperHost, 'logout', serviceProviderId) + "?username=" + userInfo.userName + "&session_id=" + sessionId + "&key=" + encodedPublicKey;
 
-        const resp = await auth.cloudSsoLogout(url, auth.getMessageSessionUid());
+        let payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
+        let resp = await auth.cloudSsoLogout2(url,  payload, false);
+
         console.log(resp);
-
-    } catch (e) {
+     } catch (e) {
         console.log(e)
     }
 }
@@ -462,6 +470,81 @@ async function TestSsoGetConfiguration() {
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(userInfo.userName, userInfo.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "ssoSpConfigurationId": configurationId
+        });
+
+        let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+     } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_copy/<serviceProviderId>
+async function TestSsoCopyConfiguration() {
+    console.log("\n*** TestCopyConfiguration on " + keeperHost + " ***");
+
+    // let serviceProviderId = 9710921056266;
+    let serviceProviderId = 9710921056299;  // "mh sso 1"
+    let configurationId = 8080545707988631;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_configuration_copy';
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(userInfo.userName, userInfo.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudConfigurationRequest.create({
+            "ssoServiceProviderId": serviceProviderId,
+            "name": "my new config",
+            "ssoSpConfigurationId": configurationId
+        });
+
+        let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+     } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_reset/<serviceProviderId>
+async function TestSsoResetConfiguration() {
+    console.log("\n*** TestAddNewConfiguration on " + keeperHost + " ***");
+
+    // let serviceProviderId = 9710921056266;
+    let serviceProviderId = 9710921056299;  // "mh sso 1"
+    let configurationId = 3521244517327075;
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_configuration_reset';
 
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
