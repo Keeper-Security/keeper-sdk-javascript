@@ -24,7 +24,14 @@ export const authUI3: AuthUI3 = {
         return token
     },
     async getDeviceVerificationMethod(): Promise<DeviceVerificationMethods> {
-        const verifyMethod = await prompt('Enter device verification method: \n0 - email\n1 - 2fa code\n2 - 2fa push\n3 - sms\n4 - keeper push\n');
+        const methods = [
+            DeviceVerificationMethods.Email,
+            DeviceVerificationMethods.KeeperPush,
+            DeviceVerificationMethods.SMS,
+            DeviceVerificationMethods.TFACode,
+            DeviceVerificationMethods.TFAPush,
+        ].sort().map(x => `${x} - ${DeviceVerificationMethods[x]}`).join('\n')
+        const verifyMethod = await prompt(`Enter device verification method:\n${methods}\n`);
         return Number(verifyMethod)
     },
     async getTwoFactorCode(): Promise<TwoFactorInput> {

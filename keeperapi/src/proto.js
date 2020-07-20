@@ -440,6 +440,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           stateSpecificValue: {
             type: "string",
             id: 14
+          },
+          ssoClientVersion: {
+            type: "string",
+            id: 15
           }
         }
       },
@@ -1440,21 +1444,17 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       ApproveDeviceRequest: {
         fields: {
-          accountUid: {
+          encryptedDeviceToken: {
             type: "bytes",
             id: 1
           },
-          encryptedDeviceToken: {
+          encryptedDeviceDataKey: {
             type: "bytes",
             id: 2
           },
-          encryptedDeviceDataKey: {
-            type: "bytes",
-            id: 3
-          },
           denyApproval: {
             type: "bool",
-            id: 4
+            id: 3
           }
         }
       },
@@ -1608,6 +1608,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           isCloud: {
             type: "bool",
             id: 3
+          },
+          clientVersion: {
+            type: "string",
+            id: 4
           }
         }
       },
@@ -1882,6 +1886,64 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           domainPasswordRulesFields: {
             rule: "repeated",
             type: "DomainPasswordRulesFields",
+            id: 1
+          }
+        }
+      },
+      ApproveUserDeviceRequest: {
+        fields: {
+          accountUid: {
+            type: "bytes",
+            id: 1
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 2
+          },
+          encryptedDeviceDataKey: {
+            type: "bytes",
+            id: 3
+          },
+          denyApproval: {
+            type: "bool",
+            id: 4
+          }
+        }
+      },
+      ApproveUserDeviceResponse: {
+        fields: {
+          accountUid: {
+            type: "bytes",
+            id: 1
+          },
+          encryptedDeviceToken: {
+            type: "bytes",
+            id: 2
+          },
+          failed: {
+            type: "bool",
+            id: 3
+          },
+          message: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
+      ApproveUserDevicesRequest: {
+        fields: {
+          deviceRequests: {
+            rule: "repeated",
+            type: "ApproveUserDeviceRequest",
+            id: 1
+          }
+        }
+      },
+      ApproveUserDevicesResponse: {
+        fields: {
+          deviceResponses: {
+            rule: "repeated",
+            type: "ApproveUserDeviceResponse",
             id: 1
           }
         }

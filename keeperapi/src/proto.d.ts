@@ -1474,6 +1474,9 @@ export namespace Authentication {
 
         /** LoginResponse stateSpecificValue */
         stateSpecificValue?: (string|null);
+
+        /** LoginResponse ssoClientVersion */
+        ssoClientVersion?: (string|null);
     }
 
     /** Represents a LoginResponse. */
@@ -1526,6 +1529,9 @@ export namespace Authentication {
 
         /** LoginResponse stateSpecificValue. */
         public stateSpecificValue: string;
+
+        /** LoginResponse ssoClientVersion. */
+        public ssoClientVersion: string;
 
         /**
          * Creates a new LoginResponse instance using the specified properties.
@@ -7017,9 +7023,6 @@ export namespace Authentication {
     /** Properties of an ApproveDeviceRequest. */
     interface IApproveDeviceRequest {
 
-        /** ApproveDeviceRequest accountUid */
-        accountUid?: (Uint8Array|null);
-
         /** ApproveDeviceRequest encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
 
@@ -7038,9 +7041,6 @@ export namespace Authentication {
          * @param [properties] Properties to set
          */
         constructor(properties?: Authentication.IApproveDeviceRequest);
-
-        /** ApproveDeviceRequest accountUid. */
-        public accountUid: Uint8Array;
 
         /** ApproveDeviceRequest encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
@@ -8117,6 +8117,9 @@ export namespace Authentication {
 
         /** SsoServiceProviderResponse isCloud */
         isCloud?: (boolean|null);
+
+        /** SsoServiceProviderResponse clientVersion */
+        clientVersion?: (string|null);
     }
 
     /** This is the response from the get_sso_service_provider command. */
@@ -8136,6 +8139,9 @@ export namespace Authentication {
 
         /** SsoServiceProviderResponse isCloud. */
         public isCloud: boolean;
+
+        /** SsoServiceProviderResponse clientVersion. */
+        public clientVersion: string;
 
         /**
          * Creates a new SsoServiceProviderResponse instance using the specified properties.
@@ -9917,6 +9923,402 @@ export namespace Enterprise {
 
         /**
          * Converts this DomainPasswordRulesResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApproveUserDeviceRequest. */
+    interface IApproveUserDeviceRequest {
+
+        /** ApproveUserDeviceRequest accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** ApproveUserDeviceRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** ApproveUserDeviceRequest encryptedDeviceDataKey */
+        encryptedDeviceDataKey?: (Uint8Array|null);
+
+        /** ApproveUserDeviceRequest denyApproval */
+        denyApproval?: (boolean|null);
+    }
+
+    /** Represents an ApproveUserDeviceRequest. */
+    class ApproveUserDeviceRequest implements IApproveUserDeviceRequest {
+
+        /**
+         * Constructs a new ApproveUserDeviceRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IApproveUserDeviceRequest);
+
+        /** ApproveUserDeviceRequest accountUid. */
+        public accountUid: Uint8Array;
+
+        /** ApproveUserDeviceRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** ApproveUserDeviceRequest encryptedDeviceDataKey. */
+        public encryptedDeviceDataKey: Uint8Array;
+
+        /** ApproveUserDeviceRequest denyApproval. */
+        public denyApproval: boolean;
+
+        /**
+         * Creates a new ApproveUserDeviceRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveUserDeviceRequest instance
+         */
+        public static create(properties?: Enterprise.IApproveUserDeviceRequest): Enterprise.ApproveUserDeviceRequest;
+
+        /**
+         * Encodes the specified ApproveUserDeviceRequest message. Does not implicitly {@link Enterprise.ApproveUserDeviceRequest.verify|verify} messages.
+         * @param message ApproveUserDeviceRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IApproveUserDeviceRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveUserDeviceRequest message, length delimited. Does not implicitly {@link Enterprise.ApproveUserDeviceRequest.verify|verify} messages.
+         * @param message ApproveUserDeviceRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IApproveUserDeviceRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveUserDeviceRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveUserDeviceRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ApproveUserDeviceRequest;
+
+        /**
+         * Decodes an ApproveUserDeviceRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveUserDeviceRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ApproveUserDeviceRequest;
+
+        /**
+         * Verifies an ApproveUserDeviceRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveUserDeviceRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveUserDeviceRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ApproveUserDeviceRequest;
+
+        /**
+         * Creates a plain object from an ApproveUserDeviceRequest message. Also converts values to other types if specified.
+         * @param message ApproveUserDeviceRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ApproveUserDeviceRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveUserDeviceRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApproveUserDeviceResponse. */
+    interface IApproveUserDeviceResponse {
+
+        /** ApproveUserDeviceResponse accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** ApproveUserDeviceResponse encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** ApproveUserDeviceResponse failed */
+        failed?: (boolean|null);
+
+        /** ApproveUserDeviceResponse message */
+        message?: (string|null);
+    }
+
+    /** Represents an ApproveUserDeviceResponse. */
+    class ApproveUserDeviceResponse implements IApproveUserDeviceResponse {
+
+        /**
+         * Constructs a new ApproveUserDeviceResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IApproveUserDeviceResponse);
+
+        /** ApproveUserDeviceResponse accountUid. */
+        public accountUid: Uint8Array;
+
+        /** ApproveUserDeviceResponse encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** ApproveUserDeviceResponse failed. */
+        public failed: boolean;
+
+        /** ApproveUserDeviceResponse message. */
+        public message: string;
+
+        /**
+         * Creates a new ApproveUserDeviceResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveUserDeviceResponse instance
+         */
+        public static create(properties?: Enterprise.IApproveUserDeviceResponse): Enterprise.ApproveUserDeviceResponse;
+
+        /**
+         * Encodes the specified ApproveUserDeviceResponse message. Does not implicitly {@link Enterprise.ApproveUserDeviceResponse.verify|verify} messages.
+         * @param message ApproveUserDeviceResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IApproveUserDeviceResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveUserDeviceResponse message, length delimited. Does not implicitly {@link Enterprise.ApproveUserDeviceResponse.verify|verify} messages.
+         * @param message ApproveUserDeviceResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IApproveUserDeviceResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveUserDeviceResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveUserDeviceResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ApproveUserDeviceResponse;
+
+        /**
+         * Decodes an ApproveUserDeviceResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveUserDeviceResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ApproveUserDeviceResponse;
+
+        /**
+         * Verifies an ApproveUserDeviceResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveUserDeviceResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveUserDeviceResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ApproveUserDeviceResponse;
+
+        /**
+         * Creates a plain object from an ApproveUserDeviceResponse message. Also converts values to other types if specified.
+         * @param message ApproveUserDeviceResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ApproveUserDeviceResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveUserDeviceResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApproveUserDevicesRequest. */
+    interface IApproveUserDevicesRequest {
+
+        /** ApproveUserDevicesRequest deviceRequests */
+        deviceRequests?: (Enterprise.IApproveUserDeviceRequest[]|null);
+    }
+
+    /** Represents an ApproveUserDevicesRequest. */
+    class ApproveUserDevicesRequest implements IApproveUserDevicesRequest {
+
+        /**
+         * Constructs a new ApproveUserDevicesRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IApproveUserDevicesRequest);
+
+        /** ApproveUserDevicesRequest deviceRequests. */
+        public deviceRequests: Enterprise.IApproveUserDeviceRequest[];
+
+        /**
+         * Creates a new ApproveUserDevicesRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveUserDevicesRequest instance
+         */
+        public static create(properties?: Enterprise.IApproveUserDevicesRequest): Enterprise.ApproveUserDevicesRequest;
+
+        /**
+         * Encodes the specified ApproveUserDevicesRequest message. Does not implicitly {@link Enterprise.ApproveUserDevicesRequest.verify|verify} messages.
+         * @param message ApproveUserDevicesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IApproveUserDevicesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveUserDevicesRequest message, length delimited. Does not implicitly {@link Enterprise.ApproveUserDevicesRequest.verify|verify} messages.
+         * @param message ApproveUserDevicesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IApproveUserDevicesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveUserDevicesRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveUserDevicesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ApproveUserDevicesRequest;
+
+        /**
+         * Decodes an ApproveUserDevicesRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveUserDevicesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ApproveUserDevicesRequest;
+
+        /**
+         * Verifies an ApproveUserDevicesRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveUserDevicesRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveUserDevicesRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ApproveUserDevicesRequest;
+
+        /**
+         * Creates a plain object from an ApproveUserDevicesRequest message. Also converts values to other types if specified.
+         * @param message ApproveUserDevicesRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ApproveUserDevicesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveUserDevicesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ApproveUserDevicesResponse. */
+    interface IApproveUserDevicesResponse {
+
+        /** ApproveUserDevicesResponse deviceResponses */
+        deviceResponses?: (Enterprise.IApproveUserDeviceResponse[]|null);
+    }
+
+    /** Represents an ApproveUserDevicesResponse. */
+    class ApproveUserDevicesResponse implements IApproveUserDevicesResponse {
+
+        /**
+         * Constructs a new ApproveUserDevicesResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IApproveUserDevicesResponse);
+
+        /** ApproveUserDevicesResponse deviceResponses. */
+        public deviceResponses: Enterprise.IApproveUserDeviceResponse[];
+
+        /**
+         * Creates a new ApproveUserDevicesResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveUserDevicesResponse instance
+         */
+        public static create(properties?: Enterprise.IApproveUserDevicesResponse): Enterprise.ApproveUserDevicesResponse;
+
+        /**
+         * Encodes the specified ApproveUserDevicesResponse message. Does not implicitly {@link Enterprise.ApproveUserDevicesResponse.verify|verify} messages.
+         * @param message ApproveUserDevicesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IApproveUserDevicesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveUserDevicesResponse message, length delimited. Does not implicitly {@link Enterprise.ApproveUserDevicesResponse.verify|verify} messages.
+         * @param message ApproveUserDevicesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IApproveUserDevicesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveUserDevicesResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveUserDevicesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ApproveUserDevicesResponse;
+
+        /**
+         * Decodes an ApproveUserDevicesResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveUserDevicesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ApproveUserDevicesResponse;
+
+        /**
+         * Verifies an ApproveUserDevicesResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveUserDevicesResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveUserDevicesResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ApproveUserDevicesResponse;
+
+        /**
+         * Creates a plain object from an ApproveUserDevicesResponse message. Also converts values to other types if specified.
+         * @param message ApproveUserDevicesResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ApproveUserDevicesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveUserDevicesResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

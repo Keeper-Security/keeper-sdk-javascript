@@ -53,15 +53,14 @@ export const twoFactorValidateMessage = (data: Authentication.ITwoFactorValidate
 export const twoFactorSend2FAPushMessage = (data: Authentication.ITwoFactorSendPushRequest): RestMessage<Authentication.ITwoFactorSendPushRequest, {}> =>
     createMessage(data, 'authentication/2fa_send_push', Authentication.TwoFactorSendPushRequest, null)
 
-//export const deviceApproveStatusMessage = (data: Authentication.IApproveDeviceRequest): RestMessage<Authentication.IApproveDeviceRequest, {}> =>
-//    createMessage(data, 'authentication/approve_device', Authentication.ApproveDeviceRequest, null)
-
 export const approveDeviceMessage = (data: Authentication.IApproveDeviceRequest): RestMessage<Authentication.IApproveDeviceRequest, {}> =>
     createMessage(data, 'authentication/approve_device', Authentication.ApproveDeviceRequest, null)
 
 export const validateDeviceVerificationCodeMessage = (data: Authentication.IValidateDeviceVerificationCodeRequest): RestMessage<Authentication.IValidateDeviceVerificationCodeRequest, {}> =>
     createMessage(data, 'authentication/validate_device_verification_code', Authentication.ValidateDeviceVerificationCodeRequest, null)
 
+export const approveUserDevicesMessage = (data: Enterprise.IApproveUserDevicesRequest): RestMessage<Enterprise.IApproveUserDevicesRequest, Enterprise.IApproveUserDevicesResponse> =>
+    createMessage(data, 'enterprise/approve_user_devices', Enterprise.ApproveUserDevicesRequest, Enterprise.ApproveUserDevicesResponse)
 
 // end new login
 

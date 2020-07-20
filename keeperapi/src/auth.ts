@@ -1,5 +1,5 @@
 import {ClientConfiguration, DeviceVerificationMethods, LoginError, TransmissionKey} from "./configuration";
-import {KeeperEndpoint, keeperKeys} from "./endpoint";
+import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
@@ -12,14 +12,14 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
-    approveDeviceMessage,
     requestDeviceVerificationMessage,
     RestMessage,
     ssoSamlMessage,
     startLoginMessage,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
-    validateAuthHashMessage, validateDeviceVerificationCodeMessage
+    validateAuthHashMessage,
+    validateDeviceVerificationCodeMessage
 } from './restMessages'
 import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
@@ -199,7 +199,7 @@ export class Auth {
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             console.log(loginResponse)
-            if (! loginResponse.loginState) {
+            if (!loginResponse.loginState) {
                 console.log("loginState is null");
                 loginResponse.loginState = 99;
             }
@@ -255,7 +255,7 @@ export class Auth {
                     this.setLoginParameters(username, webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
-                    //break;
+                //break;
             }
         }
     }
@@ -266,57 +266,114 @@ export class Auth {
         }
 
         const deviceConfig = this.options.deviceConfig
-
         const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
 
+        let promiseFromUser: Promise<Uint8Array>
         switch (verifyMethod) {
-            case DeviceVerificationMethods.Email:
+            case DeviceVerificationMethods.Email: {
                 await this.executeRest(requestDeviceVerificationMessage({
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
                     clientVersion: this.endpoint.clientVersion,
                     messageSessionUid: this.messageSessionUid
                 }))
-                const token = await this.options.authUI3.getDeviceVerificationCode()
-                if (!!token) {
-                    await this.executeRest(validateDeviceVerificationCodeMessage({
-                        verificationCode: token,
-                        username: username
-                    }))
-                    // const resp = await this.get(`validate_device_verification_code/${token}`)
-                    // console.log(platform.bytesToString(resp.data))
-                }
-                return undefined
+
+                promiseFromUser = new Promise<Uint8Array>(async (resolve, reject) => {
+                    const token = await this.options.authUI3.getDeviceVerificationCode()
+                    if (!!token) {
+                        await this.executeRest(validateDeviceVerificationCodeMessage({
+                            verificationCode: token,
+                            username: username
+                        }))
+                    }
+                    return loginToken
+                })
+                // const resp = await this.get(`validate_device_verification_code/${token}`)
+                // console.log(platform.bytesToString(resp.data))
+            }
+                break
+
             case DeviceVerificationMethods.TFACode:
-                return this.handleTwoFactorCode(loginToken)
+                promiseFromUser = this.handleTwoFactorCode(loginToken)
+                break
+
             case DeviceVerificationMethods.TFAPush:
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
-                const pushMessage = await this.socket.getPushMessage()
-                const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-                const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
-                console.log(socketResponseData)
-                return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
+                break
+
             case DeviceVerificationMethods.SMS:
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
-                return this.handleTwoFactorCode(loginToken)
+                promiseFromUser = this.handleTwoFactorCode(loginToken)
+                break
+
             case DeviceVerificationMethods.KeeperPush:
-                while (true) {
-                    await this.executeRest(twoFactorSend2FAPushMessage({
-                        encryptedLoginToken: loginToken,
-                        pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                    }))
-                    const msg = await this.getPushMessage()
-                    if (msg.approved && msg.message === 'device_approved') {
-                        return undefined
-                    }
-                }
+                await this.executeRest(twoFactorSend2FAPushMessage({
+                    encryptedLoginToken: loginToken,
+                    pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                }))
+                break
+
             default:
                 throw new Error('Invalid choice for device verification')
         }
+
+        return this.waitForVerifyDeviceInput(loginToken, promiseFromUser)
+    }
+
+    private async waitForVerifyDevicePush(loginToken: Uint8Array): Promise<Uint8Array> {
+        return new Promise<Uint8Array>(async (resolve, reject) => {
+            let result: Uint8Array = loginToken
+            while (true) {
+                const pushMessage = await this.socket.getPushMessage()
+                const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+                const wssRs = JSON.parse(wssClientResponse.message)
+                console.log(wssRs)
+                if (wssRs.event && wssRs.event === 'received_totp') {
+                    if (wssRs.encryptedLoginToken) {
+                        result = platform.base64ToBytes(wssRs.encryptedLoginToken)
+                    }
+                    resolve(result)
+                    return
+                }
+                if (wssRs.message && wssRs.message === 'device_approved') {
+                    if (wssRs.approved) {
+                        resolve(result)
+                    } else {
+                        reject('rejected')
+                    }
+                    return
+                }
+                if (wssRs.command && wssRs.command === 'device_verified') {
+                    resolve(result)
+                    return
+                }
+            }
+        })
+    }
+
+    private async waitForVerifyDeviceInput(loginToken: Uint8Array, promiseFromUser: Promise<Uint8Array>): Promise<Uint8Array> {
+        const timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
+        let to: any | undefined
+        const timeoutPromise = new Promise<Uint8Array>(resolve => {
+            to = setTimeout(() => {
+                to = undefined
+                resolve(loginToken)
+            }, timeout)
+        })
+        const pushPromise = this.waitForVerifyDevicePush(loginToken)
+        const promises: Promise<Uint8Array>[] = [timeoutPromise, pushPromise]
+        if (promiseFromUser) {
+            promises.push(promiseFromUser)
+        }
+        const rs = await Promise.race(promises)
+        if (to) {
+            clearTimeout(to!)
+        }
+        return rs
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
@@ -384,8 +441,7 @@ export class Auth {
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
                 return twoFactorValidateResp.encryptedLoginToken
-            }
-            catch (e) {
+            } catch (e) {
                 console.log(e)
             }
         }
@@ -409,10 +465,10 @@ export class Auth {
         this.socket.registerLogin(this._sessionToken)
     }
 
-    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         console.log("public key length is " + encodedPublicKey.length);
 
@@ -425,10 +481,11 @@ export class Auth {
 
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                                                            { "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                                                              "key": encodedPublicKey,
-                                                              "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
-                                                            }, useGet);
+                {
+                    "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                    "key": encodedPublicKey,
+                    "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
             return ssoLoginResp;
@@ -443,12 +500,12 @@ export class Auth {
      * This is the more secure version of login that uses an encrypted protobuf.
      * July 2020
      */
-    async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false) : Promise<any> {
-        const encryptionKey : TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
+    async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
+        const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
         const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         console.log("encodedEncryptionKey = " + encodedEncryptionKey);
 
@@ -461,9 +518,10 @@ export class Auth {
 
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                                                            { "key": encodedEncryptionKey,
-                                                              "payload": encodedPayload
-                                                            }, useGet);
+                {
+                    "key": encodedEncryptionKey,
+                    "payload": encodedPayload
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
             return ssoLoginResp;
@@ -474,10 +532,10 @@ export class Auth {
         return {};
     }
 
-    async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false) : Promise<any> {
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+    async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         try {
             console.log("\n*** cloudSsoLogout at " + ssoLogoutUrl + " ***");
@@ -488,9 +546,10 @@ export class Auth {
 
             // This should return HTML
             let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
-                                                            { "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                                                              "key": encodedPublicKey
-                                                            }, useGet);
+                {
+                    "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                    "key": encodedPublicKey
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
             return ssoLogoutResp;
@@ -670,15 +729,6 @@ export class Auth {
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
         console.log(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
-    }
-
-    async approveDevice(encryptedDeviceToken: Uint8Array) {
-        const approveDevMsg = approveDeviceMessage({
-            accountUid: this._accountUid,
-            encryptedDeviceToken: encryptedDeviceToken
-        })
-        const resp = await this.executeRest(approveDevMsg)
-        console.log(resp)
     }
 }
 
