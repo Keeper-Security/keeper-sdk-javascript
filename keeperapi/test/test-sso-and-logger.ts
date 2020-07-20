@@ -112,7 +112,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // testServiceLogger().finally();
 
 // TestSsoLogin().finally();
-// TestSsoLogin_2().finally();
+TestSsoLogin_2().finally();
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -122,7 +122,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // TestSsoGetConfigurationList().finally();
 // TestSsoAddNewConfiguration().finally();
 // TestSsoCopyConfiguration().finally();
-TestSsoResetConfiguration().finally();
+// TestSsoResetConfiguration().finally();
 // TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
