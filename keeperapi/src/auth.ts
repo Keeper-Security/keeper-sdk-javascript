@@ -138,6 +138,12 @@ export class SocketListener {
     }
 }
 
+export type LoginPayload = {
+    username: string,
+    password?: string,
+    useAlternate?: boolean
+}
+
 export class Auth {
     private endpoint: KeeperEndpoint;
     private _sessionToken: string;
@@ -169,7 +175,7 @@ export class Auth {
     /**
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
-    async loginV3({username, password = '', useAlternate = false}: {username: string, password?: string, useAlternate?: boolean}) {
+    async loginV3({username, password = '', useAlternate = false}: LoginPayload) {
 
         if (!this.options.deviceConfig.deviceToken) {
             await this.endpoint.registerDevice()
