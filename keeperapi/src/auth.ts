@@ -169,7 +169,7 @@ export class Auth {
     /**
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
-    async loginV3(username: string, password: string, useAlternate: boolean = false) {
+    async loginV3({username, password = '', useAlternate = false}: {username: string, password?: string, useAlternate?: boolean}) {
 
         if (!this.options.deviceConfig.deviceToken) {
             await this.endpoint.registerDevice()
@@ -247,6 +247,12 @@ export class Auth {
                     loginToken = await this.handleTwoFactor(loginResponse)
                     break
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
+                    if (!password && this.options.authUI3.getPassword) {
+                        password = await this.options.authUI3.getPassword()
+                    }
+                    if (!password) {
+                        throw new Error('User password required and not provided')
+                    }
                     await this.authHashLogin(loginResponse, username, password)
                     return;
                 case Authentication.LoginState.REQUIRES_USERNAME:

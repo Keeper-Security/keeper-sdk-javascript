@@ -25,7 +25,10 @@ async function testWsPushMessage() {
         authUI3: authUI3
     })
     try {
-        await auth.loginV3(userName, "111111")
+        await auth.loginV3({
+            username: userName,
+            password: "111111",
+        });
 
         const command: string = "test_command"
 
