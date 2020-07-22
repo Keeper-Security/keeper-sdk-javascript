@@ -30,9 +30,9 @@ export const authUI3: AuthUI3 = {
             DeviceVerificationMethods.SMS,
             DeviceVerificationMethods.TFACode,
             DeviceVerificationMethods.TFAPush,
-        ].sort().map(x => `${x} - ${DeviceVerificationMethods[x]}`).join('\n')
-        const verifyMethod = await prompt(`Enter device verification method:\n${methods}\n`);
-        return Number(verifyMethod)
+        ].sort().map(x => `${x + 1} - ${DeviceVerificationMethods[x]}`).join('\n')
+        const verifyMethod = await prompt(`Enter device verification method:\n${methods}\n`)
+        return Number(verifyMethod) - 1
     },
     async getTwoFactorCode(): Promise<TwoFactorInput> {
         const twoFactorCode = await prompt('Enter Code:');

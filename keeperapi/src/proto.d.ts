@@ -2363,6 +2363,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo challenge */
         challenge?: (string|null);
+
+        /** TwoFactorChannelInfo capabilities */
+        capabilities?: (string[]|null);
     }
 
     /** Represents a TwoFactorChannelInfo. */
@@ -2385,6 +2388,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo challenge. */
         public challenge: string;
+
+        /** TwoFactorChannelInfo capabilities. */
+        public capabilities: string[];
 
         /**
          * Creates a new TwoFactorChannelInfo instance using the specified properties.
@@ -9931,8 +9937,8 @@ export namespace Enterprise {
     /** Properties of an ApproveUserDeviceRequest. */
     interface IApproveUserDeviceRequest {
 
-        /** ApproveUserDeviceRequest accountUid */
-        accountUid?: (Uint8Array|null);
+        /** ApproveUserDeviceRequest enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
 
         /** ApproveUserDeviceRequest encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
@@ -9953,8 +9959,8 @@ export namespace Enterprise {
          */
         constructor(properties?: Enterprise.IApproveUserDeviceRequest);
 
-        /** ApproveUserDeviceRequest accountUid. */
-        public accountUid: Uint8Array;
+        /** ApproveUserDeviceRequest enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
 
         /** ApproveUserDeviceRequest encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;
@@ -10039,8 +10045,8 @@ export namespace Enterprise {
     /** Properties of an ApproveUserDeviceResponse. */
     interface IApproveUserDeviceResponse {
 
-        /** ApproveUserDeviceResponse accountUid */
-        accountUid?: (Uint8Array|null);
+        /** ApproveUserDeviceResponse enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
 
         /** ApproveUserDeviceResponse encryptedDeviceToken */
         encryptedDeviceToken?: (Uint8Array|null);
@@ -10061,8 +10067,8 @@ export namespace Enterprise {
          */
         constructor(properties?: Enterprise.IApproveUserDeviceResponse);
 
-        /** ApproveUserDeviceResponse accountUid. */
-        public accountUid: Uint8Array;
+        /** ApproveUserDeviceResponse enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
 
         /** ApproveUserDeviceResponse encryptedDeviceToken. */
         public encryptedDeviceToken: Uint8Array;

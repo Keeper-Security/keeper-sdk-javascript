@@ -613,6 +613,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           challenge: {
             type: "string",
             id: 4
+          },
+          capabilities: {
+            rule: "repeated",
+            type: "string",
+            id: 5
           }
         }
       },
@@ -1892,8 +1897,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       ApproveUserDeviceRequest: {
         fields: {
-          accountUid: {
-            type: "bytes",
+          enterpriseUserId: {
+            type: "int64",
             id: 1
           },
           encryptedDeviceToken: {
@@ -1912,8 +1917,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       ApproveUserDeviceResponse: {
         fields: {
-          accountUid: {
-            type: "bytes",
+          enterpriseUserId: {
+            type: "int64",
             id: 1
           },
           encryptedDeviceToken: {
