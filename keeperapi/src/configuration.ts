@@ -42,6 +42,7 @@ export interface AuthUI {
 export interface AuthUI3 {
     getDeviceVerificationCode(): Promise<string>;
     getDeviceVerificationMethod(): Promise<DeviceVerificationMethods>;
+    getPassword?(): Promise<string>;
     getTwoFactorCode(): Promise<TwoFactorInput>;
     getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
     redirectCallback?(url: string): void;

@@ -138,6 +138,12 @@ export class SocketListener {
     }
 }
 
+export type LoginPayload = {
+    username: string,
+    password?: string,
+    useAlternate?: boolean
+}
+
 export class Auth {
     private endpoint: KeeperEndpoint;
     private _sessionToken: string;
@@ -169,7 +175,7 @@ export class Auth {
     /**
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
-    async loginV3(username: string, password: string, useAlternate: boolean = false) {
+    async loginV3({username, password = '', useAlternate = false}: LoginPayload) {
 
         if (!this.options.deviceConfig.deviceToken) {
             await this.endpoint.registerDevice()
@@ -247,6 +253,12 @@ export class Auth {
                     loginToken = await this.handleTwoFactor(loginResponse)
                     break
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
+                    if (!password && this.options.authUI3.getPassword) {
+                        password = await this.options.authUI3.getPassword()
+                    }
+                    if (!password) {
+                        throw new Error('User password required and not provided')
+                    }
                     await this.authHashLogin(loginResponse, username, password)
                     return;
                 case Authentication.LoginState.REQUIRES_USERNAME:
@@ -269,6 +281,7 @@ export class Auth {
         const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
 
         let promiseFromUser: Promise<Uint8Array>
+        let waitOnSocket = true
         switch (verifyMethod) {
             case DeviceVerificationMethods.Email: {
                 await this.executeRest(requestDeviceVerificationMessage({
@@ -295,6 +308,7 @@ export class Auth {
 
             case DeviceVerificationMethods.TFACode:
                 promiseFromUser = this.handleTwoFactorCode(loginToken)
+                waitOnSocket = false
                 break
 
             case DeviceVerificationMethods.TFAPush:
@@ -308,6 +322,7 @@ export class Auth {
                     encryptedLoginToken: loginToken,
                 }))
                 promiseFromUser = this.handleTwoFactorCode(loginToken)
+                waitOnSocket = false
                 break
 
             case DeviceVerificationMethods.KeeperPush:
@@ -321,7 +336,7 @@ export class Auth {
                 throw new Error('Invalid choice for device verification')
         }
 
-        return this.waitForVerifyDeviceInput(loginToken, promiseFromUser)
+        return this.waitForVerifyDeviceInput(loginToken, promiseFromUser, waitOnSocket)
     }
 
     private async waitForVerifyDevicePush(loginToken: Uint8Array): Promise<Uint8Array> {
@@ -355,7 +370,7 @@ export class Auth {
         })
     }
 
-    private async waitForVerifyDeviceInput(loginToken: Uint8Array, promiseFromUser: Promise<Uint8Array>): Promise<Uint8Array> {
+    private async waitForVerifyDeviceInput(loginToken: Uint8Array, promiseFromUser: Promise<Uint8Array>, waitOnSocket: boolean): Promise<Uint8Array> {
         const timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
         let to: any | undefined
         const timeoutPromise = new Promise<Uint8Array>(resolve => {
@@ -364,8 +379,10 @@ export class Auth {
                 resolve(loginToken)
             }, timeout)
         })
-        const pushPromise = this.waitForVerifyDevicePush(loginToken)
-        const promises: Promise<Uint8Array>[] = [timeoutPromise, pushPromise]
+        const promises: Promise<Uint8Array>[] = [timeoutPromise]
+        if (waitOnSocket) {
+            promises.push(this.waitForVerifyDevicePush(loginToken))
+        }
         if (promiseFromUser) {
             promises.push(promiseFromUser)
         }

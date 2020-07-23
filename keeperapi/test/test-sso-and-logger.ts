@@ -195,7 +195,10 @@ async function TestSsoLogin() {
             authUI3: authUI3
         });
 
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {
@@ -258,7 +261,11 @@ async function TestSsoLoginWithGet() {
             authUI3: authUI3
         });
 
-        await auth.loginV3(userInfo.userName, userInfo.password, true);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+            useAlternate: true,
+        });
         console.log("Logged in via Cloud SSO Connect!");
 
     } catch (e) {
@@ -295,7 +302,7 @@ async function TestSsoLogout_2() {
         });
 
         // Login to get the sessionToken
-        
+
 
         let payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
         let resp = await auth.cloudSsoLogout2(url,  payload, false);
@@ -353,7 +360,10 @@ async function TestSsoUploadMetadata() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         console.log("Uploading to configuration:", configurationId);
@@ -390,7 +400,10 @@ async function TestSsoSetCurrentConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudServiceProviderUpdateRequest.create({
@@ -423,7 +436,10 @@ async function TestSsoGetConfigurationList() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudServiceProviderConfigurationListRequest.create({
@@ -503,7 +519,10 @@ async function TestSsoAddNewConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -540,7 +559,10 @@ async function TestSsoGetConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -577,7 +599,10 @@ async function TestSsoCopyConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -615,7 +640,10 @@ async function TestSsoResetConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -650,7 +678,10 @@ async function TestSsoServiceProviderAdd() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let command = new SsoServiceProviderAddCommand();
@@ -688,7 +719,10 @@ async function TestSsoDeleteConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         // Get the list of current configurations
@@ -746,7 +780,10 @@ async function TestSsoUpdateConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         // Get the list of current configurations
@@ -809,7 +846,10 @@ async function TestSsoSetConfigurationSettingValue() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         // Test set attribute by name
@@ -867,7 +907,10 @@ async function TestSsoResetConfigurationSettingValue() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
@@ -909,7 +952,10 @@ async function TestSsoGetSAMLLog() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudSAMLLogRequest.create({
@@ -943,7 +989,10 @@ async function TestSsoClearSAMLLog() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudSAMLLogRequest.create({
@@ -961,7 +1010,7 @@ async function TestSsoClearSAMLLog() {
 async function TestGetSsoServiceProvider() {
     console.log("\n*** TestGetSsoServiceProvider on " + keeperHost + " ***");
 
-    let domainName = "demo azure";    // "devgene sso 2";  // "demo azure";  
+    let domainName = "demo azure";    // "devgene sso 2";  // "demo azure";
     const locale = "en_US";
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'enterprise/';
@@ -978,7 +1027,10 @@ async function TestGetSsoServiceProvider() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let restReq = SsoServiceProviderRequest.create({
@@ -1016,7 +1068,10 @@ async function TestSetupForMujinaIdp() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
         console.log("Logged in...");
 
         let actions = [];
@@ -1040,7 +1095,7 @@ async function TestSetupForMujinaIdp() {
             "operation": SsoCloudSettingOperationType.SET,
             "value": "redirect"
         }));
-        
+
         // Update the name of the first configuration, then set it back
         let updateReq = SsoCloudConfigurationRequest.create({
             "ssoServiceProviderId": serviceProviderId,

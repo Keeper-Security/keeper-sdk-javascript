@@ -430,6 +430,31 @@ export class SendKeyVerificationCodeCommand extends KeeperCommand {
     email: string;
 }
 
+export class SetTwoFactorAuthCommand extends AuthorizedCommand<SetTwoFactorAuthResponse> {
+    constructor() {
+        super()
+        this.command = 'set_two_factor_auth'
+    }
+
+    version: number;
+    channel: TwoFactorChannel;
+    channel_value: string;
+    device_token_expire_days: number
+}
+
+export class TwoFactorSettingsCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'two_factor_settings'
+    }
+}
+
+export interface SetTwoFactorAuthResponse extends KeeperResponse {
+    device_token: string;
+    backup_codes: string[];
+    dt_scope: string
+}
+
 export type EnterpriseDataInclude =
     | "nodes"
     | "users"
@@ -645,6 +670,44 @@ export class SsoServiceProviderAddCommand extends AuthorizedCommand {
     is_cloud: true;
 }
 
+export class GetAuditEventReportsCommand extends AuthorizedCommand<GetAuditEventReportsResponse> {
+
+    constructor() {
+        super()
+        this.command = "get_audit_event_reports";
+    }
+
+    filter: {
+        created: 'today' | 'yesterday' | 'last_7_days' | 'last_30_days' | 'month_to_date' | 'last_month' | 'year_to_date' | 'last_year'
+    }
+    limit: number
+    order: 'descending' | 'ascending'
+    report_type: 'raw' | 'hour' | 'day' | 'week' | 'month' | 'span'
+    scope: 'enterprise'
+    timezone: string
+}
+
+export interface GetAuditEventReportsResponse extends KeeperResponse {
+    timezone: string;
+    audit_event_overview_report_rows: AuditEventOverviewReportRow[];
+}
+
+interface AuditEventOverviewReportRow {
+    geo_location: string;
+    keeper_version_category: string;
+    audit_event_type: string;
+    created: number;
+    keeper_version: string;
+    id: number;
+    ip_address?: string;
+    username: string;
+    node_id: number;
+    node?: string;
+    role_id?: string;
+    enforcement?: string;
+    value?: string;
+}
+
 // *************************
 // Responses
 // *************************
@@ -741,6 +804,10 @@ export enum LoginResponseResultCode {
     // there are a few more obscure ones, see https://keeper.atlassian.net/wiki/spaces/KA/pages/8028335/login
 }
 
+type TwoFactorChannel = "two_factor_disabled" | "two_factor_channel_sms" | "two_factor_channel_voice" | "two_factor_channel_email"
+    | "two_factor_channel_google" | "two_factor_channel_rsa" | "two_factor_channel_push" | "two_factor_channel_duo"
+    | "two_factor_channel_u2f" | "two_factor_channel_security_keys"
+
 export interface LoginResponse extends KeeperResponse {
     session_token: string
     client_key: string;
@@ -754,9 +821,7 @@ export interface LoginResponse extends KeeperResponse {
     enforcements: any;
     capabilities: string[];
     phone: string;
-    channel: "two_factor_disabled" | "two_factor_channel_sms" | "two_factor_channel_voice" | "two_factor_channel_email"
-        | "two_factor_channel_google" | "two_factor_channel_rsa" | "two_factor_channel_push" | "two_factor_channel_duo"
-        | "two_factor_channel_u2f" | "two_factor_channel_security_keys"
+    channel: TwoFactorChannel;
     url: string;
     u2f_challenge?: string | U2FChallenge;
 }

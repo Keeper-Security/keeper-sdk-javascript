@@ -71,7 +71,10 @@ async function testLogin() {
         authUI3: authUI3
     })
     try {
-        await auth.loginV3(userName, password)
+        await auth.loginV3({
+            username: userName,
+            password,
+        })
 
         console.log(auth.dataKey)
 
