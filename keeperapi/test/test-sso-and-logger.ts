@@ -23,6 +23,9 @@ import SsoCloudConfigurationRequest = SsoCloud.SsoCloudConfigurationRequest;
 import SsoCloudConfigurationResponse = SsoCloud.SsoCloudConfigurationResponse;
 import ConfigurationListItem = SsoCloud.ConfigurationListItem;
 import SsoCloudSAMLLogRequest = SsoCloud.SsoCloudSAMLLogRequest;
+import SsoCloudConfigurationValidationRequest = SsoCloud.SsoCloudConfigurationValidationRequest;
+import ISsoCloudConfigurationValidationResponse = SsoCloud.ISsoCloudConfigurationValidationResponse;
+import IValidationContent = SsoCloud.IValidationContent;
 import SsoCloudServiceProviderUpdateRequest = SsoCloud.SsoCloudServiceProviderUpdateRequest;
 import SsoCloudServiceProviderConfigurationListRequest = SsoCloud.SsoCloudServiceProviderConfigurationListRequest;
 import SsoCloudSettingOperationType = SsoCloud.SsoCloudSettingOperationType;
@@ -35,7 +38,7 @@ import AuthProtocolType = SsoCloud.AuthProtocolType;
 import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage} from '../src/restMessages';
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages';
 import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages';
-import {ssoServiceProviderRequestMessage, ssoCloudBasicRequestMessage} from '../src/restMessages';
+import {ssoServiceProviderRequestMessage, ssoCloudBasicRequestMessage, ssoCloudValidationRequestMessage} from '../src/restMessages';
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
@@ -109,10 +112,10 @@ async function login(user?: UserInfo): Promise<Auth> {
 // ****************************************************
 
 // ServiceLogger and Cloud SSO Connect ---------------
-// testServiceLogger().finally();
+testServiceLogger().finally();
 
 // TestSsoLogin().finally();
-TestSsoLogin_2().finally();
+// TestSsoLogin_2().finally();
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -127,6 +130,7 @@ TestSsoLogin_2().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
 // TestSsoUpdateConfiguration().finally();
+// TestSsoValidateConfiguration().finally();
 // TestSsoResetConfigurationSettingValue().finally();
 // TestSsoGetSAMLLog().finally();
 // TestSsoClearSAMLLog().finally();
@@ -151,6 +155,15 @@ async function testServiceLogger() {
        });
         await auth.login(userInfo.userName, userInfo.password);
         console.log('Logged in...');
+
+        let entries = [{
+            serviceInfoId: 1
+        },
+                       {
+        },
+                       {
+        }];
+        
 
         let serviceLoggerGetReq = ServiceLogGetRequest.create({serviceLogSpecifier: [{all: true}]});
 
@@ -211,7 +224,7 @@ async function TestSsoLogin_2() {
         });
 
         let restReq = SsoCloudRequest.create({
-            "messageSessionUid": auth.getMessageSessionUid(),
+            // "messageSessionUid": auth.getMessageSessionUid(),
             "embedded": false,
             "clientVersion": clientVersion,
             "dest": "vault",
@@ -419,6 +432,51 @@ async function TestSsoGetConfigurationList() {
 
         let resp = await auth.executeRest(ssoCloudServiceProviderConfigurationListRequestMessage(restReq));
         console.log(resp);
+     } catch (e) {
+        console.log(e)
+    }
+}
+
+// POST, ENCRYPTED, sso_cloud_configuration_validate/<serviceProviderId>
+async function TestSsoValidateConfiguration() {
+    console.log("\n*** TestValidateConfiguration on " + keeperHost + " ***");
+
+    let serviceProviderId = 9710921056299; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
+    let configurationIds = [6468304524777205, 3521244517327075, 8080545707988631, 7552260471721876, 1774455125899304, 1284294, 3121290];
+    const deviceConfig = getDeviceConfig(keeperHost);
+    const configPrefix = 'sso/config/';
+    const configEndpoint = 'sso_cloud_configuration_validate';
+
+    try {
+        const url = getKeeperSsoConfigUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3(userInfo.userName, userInfo.password);
+        console.log("Logged in...");
+
+        let restReq = SsoCloudConfigurationValidationRequest.create({
+            "ssoSpConfigurationId": configurationIds
+        });
+
+        let resp: ISsoCloudConfigurationValidationResponse = await auth.executeRest(ssoCloudValidationRequestMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+        for (var validationContent of resp.validationContent) {
+            if (validationContent.isSuccessful) {
+                console.log("Configuration " + validationContent.ssoSpConfigurationId + " is valid");
+            } else {
+                console.log("Configuration " + validationContent.ssoSpConfigurationId + " is not valid");
+                for (var errmsg of validationContent.errorMessage) {
+                    console.log("  " + errmsg);
+                }
+            }
+        }
      } catch (e) {
         console.log(e)
     }
