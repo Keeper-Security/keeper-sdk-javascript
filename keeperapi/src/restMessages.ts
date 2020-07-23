@@ -152,3 +152,6 @@ export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServic
 
 export const ssoCloudBasicRequestMessage = (data: SsoCloud.ISsoCloudRequest, url:string): RestMessage<SsoCloud.ISsoCloudRequest, SsoCloud.ISsoCloudResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudRequest, SsoCloud.SsoCloudResponse);
+
+export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url:string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
+    createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse);

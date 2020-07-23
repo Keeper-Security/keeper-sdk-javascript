@@ -112,7 +112,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // ****************************************************
 
 // ServiceLogger and Cloud SSO Connect ---------------
-testServiceLogger().finally();
+// testServiceLogger().finally();
 
 // TestSsoLogin().finally();
 // TestSsoLogin_2().finally();
@@ -126,7 +126,7 @@ testServiceLogger().finally();
 // TestSsoAddNewConfiguration().finally();
 // TestSsoCopyConfiguration().finally();
 // TestSsoResetConfiguration().finally();
-// TestSsoGetConfiguration().finally();
+TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
 // TestSsoUpdateConfiguration().finally();
@@ -158,10 +158,6 @@ async function testServiceLogger() {
 
         let entries = [{
             serviceInfoId: 1
-        },
-                       {
-        },
-                       {
         }];
         
 
@@ -474,7 +470,10 @@ async function TestSsoValidateConfiguration() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-        await auth.loginV3(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password
+        });
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationValidationRequest.create({
@@ -543,7 +542,7 @@ async function TestSsoGetConfiguration() {
 
     // let serviceProviderId = 9710921056266;
     let serviceProviderId = 9710921056299;  // "demo azure"
-    let configurationId = 3121290;
+    let configurationId = 3123456; // 3121290;
     const deviceConfig = getDeviceConfig(keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
@@ -570,8 +569,19 @@ async function TestSsoGetConfiguration() {
             "ssoSpConfigurationId": configurationId
         });
 
-        let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
-        console.log(resp);
+        try {
+            let resp = await auth.executeRest(ssoCloudConfigurationRequestMessage(restReq, configPrefix + configEndpoint));
+            console.log(resp);
+        } catch (ex) {
+            console.log(ex);
+        }
+
+        // Get the error log
+        let serviceLoggerGetReq = ServiceLogGetRequest.create({serviceLogSpecifier: [{serviceIdRange:[{startingId: 1, endingId: 1}], resourceIdRange: [{startingId: 2261, endingId: 2261}]}]});
+
+        let serviceLoggerResp = await auth.executeRest(serviceLoggerGetMessage(serviceLoggerGetReq));
+        console.log(serviceLoggerResp)
+
      } catch (e) {
         console.log(e)
     }
