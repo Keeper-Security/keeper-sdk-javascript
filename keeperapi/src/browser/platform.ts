@@ -19,7 +19,10 @@ type Ecies = {
     derivePublicKey: (privKey: Uint8Array) => Uint8Array
 }
 
-const ECIES: Ecies = require('ecies/dist/browserify/ecies.js')
+// todo: This file was copied from the repo https://github.com/Keeper-Security/ecies
+// todo: Move the repo's full implementation into this one
+const ECIES: Ecies = require('./ecies.browserified.js')
+// const ECIES: Ecies = require('ecies/dist/browserify/ecies.js')
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
