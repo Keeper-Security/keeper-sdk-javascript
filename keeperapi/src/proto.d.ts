@@ -8315,6 +8315,397 @@ export namespace Authentication {
          */
         public toJSON(): { [k: string]: any };
     }
+
+    /** Properties of a SupportToolChangeUsernameRequest. */
+    interface ISupportToolChangeUsernameRequest {
+
+        /** SupportToolChangeUsernameRequest username */
+        username?: (string|null);
+
+        /** SupportToolChangeUsernameRequest newUsername */
+        newUsername?: (string|null);
+    }
+
+    /** Represents a SupportToolChangeUsernameRequest. */
+    class SupportToolChangeUsernameRequest implements ISupportToolChangeUsernameRequest {
+
+        /**
+         * Constructs a new SupportToolChangeUsernameRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolChangeUsernameRequest);
+
+        /** SupportToolChangeUsernameRequest username. */
+        public username: string;
+
+        /** SupportToolChangeUsernameRequest newUsername. */
+        public newUsername: string;
+
+        /**
+         * Creates a new SupportToolChangeUsernameRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolChangeUsernameRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolChangeUsernameRequest): Authentication.SupportToolChangeUsernameRequest;
+
+        /**
+         * Encodes the specified SupportToolChangeUsernameRequest message. Does not implicitly {@link Authentication.SupportToolChangeUsernameRequest.verify|verify} messages.
+         * @param message SupportToolChangeUsernameRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolChangeUsernameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolChangeUsernameRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolChangeUsernameRequest.verify|verify} messages.
+         * @param message SupportToolChangeUsernameRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolChangeUsernameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolChangeUsernameRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolChangeUsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolChangeUsernameRequest;
+
+        /**
+         * Decodes a SupportToolChangeUsernameRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolChangeUsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolChangeUsernameRequest;
+
+        /**
+         * Verifies a SupportToolChangeUsernameRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolChangeUsernameRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolChangeUsernameRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolChangeUsernameRequest;
+
+        /**
+         * Creates a plain object from a SupportToolChangeUsernameRequest message. Also converts values to other types if specified.
+         * @param message SupportToolChangeUsernameRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolChangeUsernameRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolChangeUsernameRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserDataKeyRequest. */
+    interface IUserDataKeyRequest {
+
+        /** UserDataKeyRequest enterpriseUserId */
+        enterpriseUserId?: ((number|Long)[]|null);
+    }
+
+    /** Represents a UserDataKeyRequest. */
+    class UserDataKeyRequest implements IUserDataKeyRequest {
+
+        /**
+         * Constructs a new UserDataKeyRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserDataKeyRequest);
+
+        /** UserDataKeyRequest enterpriseUserId. */
+        public enterpriseUserId: (number|Long)[];
+
+        /**
+         * Creates a new UserDataKeyRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserDataKeyRequest instance
+         */
+        public static create(properties?: Authentication.IUserDataKeyRequest): Authentication.UserDataKeyRequest;
+
+        /**
+         * Encodes the specified UserDataKeyRequest message. Does not implicitly {@link Authentication.UserDataKeyRequest.verify|verify} messages.
+         * @param message UserDataKeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserDataKeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserDataKeyRequest message, length delimited. Does not implicitly {@link Authentication.UserDataKeyRequest.verify|verify} messages.
+         * @param message UserDataKeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserDataKeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserDataKeyRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserDataKeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserDataKeyRequest;
+
+        /**
+         * Decodes a UserDataKeyRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserDataKeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserDataKeyRequest;
+
+        /**
+         * Verifies a UserDataKeyRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserDataKeyRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserDataKeyRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserDataKeyRequest;
+
+        /**
+         * Creates a plain object from a UserDataKeyRequest message. Also converts values to other types if specified.
+         * @param message UserDataKeyRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserDataKeyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserDataKeyRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** DataKeyStatus enum. */
+    enum DataKeyStatus {
+        DK_OK = 0,
+        DK_DOESNOT_EXIST = 1,
+        DK_ACCESS_DENIED = 2
+    }
+
+    /** Properties of a UserDataKey. */
+    interface IUserDataKey {
+
+        /** UserDataKey enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** UserDataKey encryptedDataKey */
+        encryptedDataKey?: (Uint8Array|null);
+
+        /** UserDataKey roleKey */
+        roleKey?: (Uint8Array|null);
+
+        /** UserDataKey status */
+        status?: (Authentication.DataKeyStatus|null);
+    }
+
+    /** Represents a UserDataKey. */
+    class UserDataKey implements IUserDataKey {
+
+        /**
+         * Constructs a new UserDataKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserDataKey);
+
+        /** UserDataKey enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** UserDataKey encryptedDataKey. */
+        public encryptedDataKey: Uint8Array;
+
+        /** UserDataKey roleKey. */
+        public roleKey: Uint8Array;
+
+        /** UserDataKey status. */
+        public status: Authentication.DataKeyStatus;
+
+        /**
+         * Creates a new UserDataKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserDataKey instance
+         */
+        public static create(properties?: Authentication.IUserDataKey): Authentication.UserDataKey;
+
+        /**
+         * Encodes the specified UserDataKey message. Does not implicitly {@link Authentication.UserDataKey.verify|verify} messages.
+         * @param message UserDataKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserDataKey message, length delimited. Does not implicitly {@link Authentication.UserDataKey.verify|verify} messages.
+         * @param message UserDataKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserDataKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserDataKey;
+
+        /**
+         * Decodes a UserDataKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserDataKey;
+
+        /**
+         * Verifies a UserDataKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserDataKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserDataKey
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserDataKey;
+
+        /**
+         * Creates a plain object from a UserDataKey message. Also converts values to other types if specified.
+         * @param message UserDataKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserDataKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserDataKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserDataKeyResponse. */
+    interface IUserDataKeyResponse {
+
+        /** UserDataKeyResponse userDataKeys */
+        userDataKeys?: (Authentication.IUserDataKey[]|null);
+    }
+
+    /** Represents a UserDataKeyResponse. */
+    class UserDataKeyResponse implements IUserDataKeyResponse {
+
+        /**
+         * Constructs a new UserDataKeyResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserDataKeyResponse);
+
+        /** UserDataKeyResponse userDataKeys. */
+        public userDataKeys: Authentication.IUserDataKey[];
+
+        /**
+         * Creates a new UserDataKeyResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserDataKeyResponse instance
+         */
+        public static create(properties?: Authentication.IUserDataKeyResponse): Authentication.UserDataKeyResponse;
+
+        /**
+         * Encodes the specified UserDataKeyResponse message. Does not implicitly {@link Authentication.UserDataKeyResponse.verify|verify} messages.
+         * @param message UserDataKeyResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserDataKeyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserDataKeyResponse message, length delimited. Does not implicitly {@link Authentication.UserDataKeyResponse.verify|verify} messages.
+         * @param message UserDataKeyResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserDataKeyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserDataKeyResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserDataKeyResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserDataKeyResponse;
+
+        /**
+         * Decodes a UserDataKeyResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserDataKeyResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserDataKeyResponse;
+
+        /**
+         * Verifies a UserDataKeyResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserDataKeyResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserDataKeyResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserDataKeyResponse;
+
+        /**
+         * Creates a plain object from a UserDataKeyResponse message. Also converts values to other types if specified.
+         * @param message UserDataKeyResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserDataKeyResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserDataKeyResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
 
 /** Namespace Enterprise. */
@@ -10449,7 +10840,7 @@ export namespace AccountSummary {
         group?: (AccountSummary.IGroup|null);
 
         /** AccountSummaryElements Enforcements */
-        Enforcements?: (AccountSummary.IKeyValue[]|null);
+        Enforcements?: (AccountSummary.IEnforcements|null);
 
         /** AccountSummaryElements Images */
         Images?: (AccountSummary.IKeyValue[]|null);
@@ -10498,7 +10889,7 @@ export namespace AccountSummary {
         public group?: (AccountSummary.IGroup|null);
 
         /** AccountSummaryElements Enforcements. */
-        public Enforcements: AccountSummary.IKeyValue[];
+        public Enforcements?: (AccountSummary.IEnforcements|null);
 
         /** AccountSummaryElements Images. */
         public Images: AccountSummary.IKeyValue[];
@@ -10973,8 +11364,8 @@ export namespace AccountSummary {
         /** License expirationDate */
         expirationDate?: (string|null);
 
-        /** License secondsUnitExpiration */
-        secondsUnitExpiration?: (number|Long|null);
+        /** License secondsUntilExpiration */
+        secondsUntilExpiration?: (number|Long|null);
 
         /** License maxDevices */
         maxDevices?: (number|null);
@@ -11040,7 +11431,7 @@ export namespace AccountSummary {
         breachWatchDateCreated?: (number|Long|null);
 
         /** License error */
-        error?: (string|null);
+        error?: (AccountSummary.IResult|null);
     }
 
     /** Represents a License. */
@@ -11064,8 +11455,8 @@ export namespace AccountSummary {
         /** License expirationDate. */
         public expirationDate: string;
 
-        /** License secondsUnitExpiration. */
-        public secondsUnitExpiration: (number|Long);
+        /** License secondsUntilExpiration. */
+        public secondsUntilExpiration: (number|Long);
 
         /** License maxDevices. */
         public maxDevices: number;
@@ -11131,7 +11522,7 @@ export namespace AccountSummary {
         public breachWatchDateCreated: (number|Long);
 
         /** License error. */
-        public error: string;
+        public error?: (AccountSummary.IResult|null);
 
         /**
          * Creates a new License instance using the specified properties.
@@ -11342,8 +11733,8 @@ export namespace AccountSummary {
         /** Settings audit */
         audit?: (boolean|null);
 
-        /** Settings mustPerfromAccountShareBy */
-        mustPerfromAccountShareBy?: (number|Long|null);
+        /** Settings mustPerformAccountShareBy */
+        mustPerformAccountShareBy?: (number|Long|null);
 
         /** Settings shareAccountTo */
         shareAccountTo?: (AccountSummary.IMissingAccountShareKey[]|null);
@@ -11369,8 +11760,8 @@ export namespace AccountSummary {
         /** Settings rsaConfigured */
         rsaConfigured?: (boolean|null);
 
-        /** Settings emailVarified */
-        emailVarified?: (boolean|null);
+        /** Settings emailVerified */
+        emailVerified?: (boolean|null);
 
         /** Settings masterPasswordLastModified */
         masterPasswordLastModified?: (number|null);
@@ -11427,8 +11818,8 @@ export namespace AccountSummary {
         /** Settings audit. */
         public audit: boolean;
 
-        /** Settings mustPerfromAccountShareBy. */
-        public mustPerfromAccountShareBy: (number|Long);
+        /** Settings mustPerformAccountShareBy. */
+        public mustPerformAccountShareBy: (number|Long);
 
         /** Settings shareAccountTo. */
         public shareAccountTo: AccountSummary.IMissingAccountShareKey[];
@@ -11454,8 +11845,8 @@ export namespace AccountSummary {
         /** Settings rsaConfigured. */
         public rsaConfigured: boolean;
 
-        /** Settings emailVarified. */
-        public emailVarified: boolean;
+        /** Settings emailVerified. */
+        public emailVerified: boolean;
 
         /** Settings masterPasswordLastModified. */
         public masterPasswordLastModified: number;
@@ -11661,6 +12052,408 @@ export namespace AccountSummary {
 
         /**
          * Converts this KeyValue to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a KeyValueBoolean. */
+    interface IKeyValueBoolean {
+
+        /** KeyValueBoolean key */
+        key?: (string|null);
+
+        /** KeyValueBoolean value */
+        value?: (boolean|null);
+    }
+
+    /** Represents a KeyValueBoolean. */
+    class KeyValueBoolean implements IKeyValueBoolean {
+
+        /**
+         * Constructs a new KeyValueBoolean.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IKeyValueBoolean);
+
+        /** KeyValueBoolean key. */
+        public key: string;
+
+        /** KeyValueBoolean value. */
+        public value: boolean;
+
+        /**
+         * Creates a new KeyValueBoolean instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns KeyValueBoolean instance
+         */
+        public static create(properties?: AccountSummary.IKeyValueBoolean): AccountSummary.KeyValueBoolean;
+
+        /**
+         * Encodes the specified KeyValueBoolean message. Does not implicitly {@link AccountSummary.KeyValueBoolean.verify|verify} messages.
+         * @param message KeyValueBoolean message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IKeyValueBoolean, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified KeyValueBoolean message, length delimited. Does not implicitly {@link AccountSummary.KeyValueBoolean.verify|verify} messages.
+         * @param message KeyValueBoolean message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IKeyValueBoolean, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a KeyValueBoolean message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns KeyValueBoolean
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.KeyValueBoolean;
+
+        /**
+         * Decodes a KeyValueBoolean message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns KeyValueBoolean
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.KeyValueBoolean;
+
+        /**
+         * Verifies a KeyValueBoolean message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a KeyValueBoolean message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns KeyValueBoolean
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.KeyValueBoolean;
+
+        /**
+         * Creates a plain object from a KeyValueBoolean message. Also converts values to other types if specified.
+         * @param message KeyValueBoolean
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.KeyValueBoolean, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this KeyValueBoolean to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a KeyValueLong. */
+    interface IKeyValueLong {
+
+        /** KeyValueLong key */
+        key?: (string|null);
+
+        /** KeyValueLong value */
+        value?: (number|Long|null);
+    }
+
+    /** Represents a KeyValueLong. */
+    class KeyValueLong implements IKeyValueLong {
+
+        /**
+         * Constructs a new KeyValueLong.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IKeyValueLong);
+
+        /** KeyValueLong key. */
+        public key: string;
+
+        /** KeyValueLong value. */
+        public value: (number|Long);
+
+        /**
+         * Creates a new KeyValueLong instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns KeyValueLong instance
+         */
+        public static create(properties?: AccountSummary.IKeyValueLong): AccountSummary.KeyValueLong;
+
+        /**
+         * Encodes the specified KeyValueLong message. Does not implicitly {@link AccountSummary.KeyValueLong.verify|verify} messages.
+         * @param message KeyValueLong message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IKeyValueLong, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified KeyValueLong message, length delimited. Does not implicitly {@link AccountSummary.KeyValueLong.verify|verify} messages.
+         * @param message KeyValueLong message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IKeyValueLong, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a KeyValueLong message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns KeyValueLong
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.KeyValueLong;
+
+        /**
+         * Decodes a KeyValueLong message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns KeyValueLong
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.KeyValueLong;
+
+        /**
+         * Verifies a KeyValueLong message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a KeyValueLong message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns KeyValueLong
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.KeyValueLong;
+
+        /**
+         * Creates a plain object from a KeyValueLong message. Also converts values to other types if specified.
+         * @param message KeyValueLong
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.KeyValueLong, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this KeyValueLong to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a Result. */
+    interface IResult {
+
+        /** Result resultCode */
+        resultCode?: (string|null);
+
+        /** Result message */
+        message?: (string|null);
+
+        /** Result result */
+        result?: (string|null);
+    }
+
+    /** Represents a Result. */
+    class Result implements IResult {
+
+        /**
+         * Constructs a new Result.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IResult);
+
+        /** Result resultCode. */
+        public resultCode: string;
+
+        /** Result message. */
+        public message: string;
+
+        /** Result result. */
+        public result: string;
+
+        /**
+         * Creates a new Result instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Result instance
+         */
+        public static create(properties?: AccountSummary.IResult): AccountSummary.Result;
+
+        /**
+         * Encodes the specified Result message. Does not implicitly {@link AccountSummary.Result.verify|verify} messages.
+         * @param message Result message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Result message, length delimited. Does not implicitly {@link AccountSummary.Result.verify|verify} messages.
+         * @param message Result message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Result message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Result
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.Result;
+
+        /**
+         * Decodes a Result message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Result
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.Result;
+
+        /**
+         * Verifies a Result message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Result message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Result
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.Result;
+
+        /**
+         * Creates a plain object from a Result message. Also converts values to other types if specified.
+         * @param message Result
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.Result, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Result to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an Enforcements. */
+    interface IEnforcements {
+
+        /** Enforcements strings */
+        strings?: (AccountSummary.IKeyValue[]|null);
+
+        /** Enforcements booleans */
+        booleans?: (AccountSummary.IKeyValueBoolean[]|null);
+
+        /** Enforcements longs */
+        longs?: (AccountSummary.IKeyValueLong[]|null);
+
+        /** Enforcements jsons */
+        jsons?: (AccountSummary.IKeyValue[]|null);
+    }
+
+    /** Represents an Enforcements. */
+    class Enforcements implements IEnforcements {
+
+        /**
+         * Constructs a new Enforcements.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: AccountSummary.IEnforcements);
+
+        /** Enforcements strings. */
+        public strings: AccountSummary.IKeyValue[];
+
+        /** Enforcements booleans. */
+        public booleans: AccountSummary.IKeyValueBoolean[];
+
+        /** Enforcements longs. */
+        public longs: AccountSummary.IKeyValueLong[];
+
+        /** Enforcements jsons. */
+        public jsons: AccountSummary.IKeyValue[];
+
+        /**
+         * Creates a new Enforcements instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Enforcements instance
+         */
+        public static create(properties?: AccountSummary.IEnforcements): AccountSummary.Enforcements;
+
+        /**
+         * Encodes the specified Enforcements message. Does not implicitly {@link AccountSummary.Enforcements.verify|verify} messages.
+         * @param message Enforcements message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: AccountSummary.IEnforcements, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Enforcements message, length delimited. Does not implicitly {@link AccountSummary.Enforcements.verify|verify} messages.
+         * @param message Enforcements message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: AccountSummary.IEnforcements, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an Enforcements message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Enforcements
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): AccountSummary.Enforcements;
+
+        /**
+         * Decodes an Enforcements message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Enforcements
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): AccountSummary.Enforcements;
+
+        /**
+         * Verifies an Enforcements message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an Enforcements message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Enforcements
+         */
+        public static fromObject(object: { [k: string]: any }): AccountSummary.Enforcements;
+
+        /**
+         * Creates a plain object from an Enforcements message. Also converts values to other types if specified.
+         * @param message Enforcements
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: AccountSummary.Enforcements, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Enforcements to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -12126,7 +12919,7 @@ export namespace AccountSummary {
         administrator?: (AccountSummary.IAdministrator|null);
 
         /** Group error */
-        error?: (string|null);
+        error?: (AccountSummary.IResult|null);
 
         /** Group twoFactorRequired */
         twoFactorRequired?: (boolean|null);
@@ -12166,7 +12959,7 @@ export namespace AccountSummary {
         public administrator?: (AccountSummary.IAdministrator|null);
 
         /** Group error. */
-        public error: string;
+        public error?: (AccountSummary.IResult|null);
 
         /** Group twoFactorRequired. */
         public twoFactorRequired: boolean;
@@ -27113,6 +27906,9 @@ export namespace SsoCloud {
 
         /** SamlRelayState checksum */
         checksum?: (number|Long|null);
+
+        /** SamlRelayState isGeneratedUid */
+        isGeneratedUid?: (boolean|null);
     }
 
     /** This is used internally by Cloud SSO.  Clients do not use it. */
@@ -27147,6 +27943,9 @@ export namespace SsoCloud {
 
         /** SamlRelayState checksum. */
         public checksum: (number|Long);
+
+        /** SamlRelayState isGeneratedUid. */
+        public isGeneratedUid: boolean;
 
         /**
          * Creates a new SamlRelayState instance using the specified properties.
