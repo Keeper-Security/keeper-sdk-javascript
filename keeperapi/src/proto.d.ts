@@ -2366,6 +2366,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo capabilities */
         capabilities?: (string[]|null);
+
+        /** TwoFactorChannelInfo phoneNumber */
+        phoneNumber?: (string|null);
     }
 
     /** Represents a TwoFactorChannelInfo. */
@@ -2391,6 +2394,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo capabilities. */
         public capabilities: string[];
+
+        /** TwoFactorChannelInfo phoneNumber. */
+        public phoneNumber: string;
 
         /**
          * Creates a new TwoFactorChannelInfo instance using the specified properties.

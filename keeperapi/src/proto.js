@@ -618,6 +618,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "string",
             id: 5
+          },
+          phoneNumber: {
+            type: "string",
+            id: 6
           }
         }
       },

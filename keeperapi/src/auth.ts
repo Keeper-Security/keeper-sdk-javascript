@@ -264,11 +264,7 @@ export class Auth {
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
-                    if (!loginResponse.url) {
-                        throw new Error('URL missing from API response')
-                    }
-                    const url = new URL(loginResponse.url)
-                    this.options.host = url.host
+                    this.options.host = loginResponse.stateSpecificValue
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
@@ -459,8 +455,6 @@ export class Auth {
                 break;
             case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
                 break;
-            // case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
-            //     break;
             case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
                 break;
             case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
@@ -766,7 +760,9 @@ export class Auth {
     }
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
-        command.username = this._username;
+        if (!command.username) {
+            command.username = this._username;
+        }
         if (command instanceof AuthorizedCommand) {
             command.device_id = "JS Keeper API";
             command.session_token = this._sessionToken;
