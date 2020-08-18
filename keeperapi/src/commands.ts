@@ -670,6 +670,21 @@ export class SsoServiceProviderAddCommand extends AuthorizedCommand {
     is_cloud: true;
 }
 
+export class SsoServiceProviderUpdateCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "sso_service_provider_update";
+    }
+
+    sso_service_provider_id: number;
+    node_id: number;
+    sp_data_key: string;
+    name: string;
+    invite_new_users: true;
+    is_cloud: true;
+}
+
 export class GetAuditEventReportsCommand extends AuthorizedCommand<GetAuditEventReportsResponse> {
 
     constructor() {
