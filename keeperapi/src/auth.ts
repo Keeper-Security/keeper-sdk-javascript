@@ -1,4 +1,10 @@
-import {ClientConfiguration, DeviceVerificationMethods, LoginError, TransmissionKey} from "./configuration";
+import {
+    ClientConfiguration,
+    ClientConfigurationInternal,
+    DeviceVerificationMethods,
+    LoginError,
+    TransmissionKey
+} from './configuration'
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
@@ -64,7 +70,7 @@ export type SocketProxy = {
 }
 
 export class SocketListener {
-    private socket: SocketProxy;
+    private socket: SocketProxy | null;
     // Listeners that receive all messages
     private messageListeners: Array<(data: any) => void>
     // Listeners that receive a single message
@@ -92,14 +98,17 @@ export class SocketListener {
     }
 
     registerLogin(sessionToken: string) {
+        if (!this.socket) throw new Error('Socket not available')
         this.socket.send(sessionToken)
     }
 
     onClose(callback: () => void): void {
+        if (!this.socket) throw new Error('Socket not available')
         this.socket.onClose(callback)
     }
 
     onError(callback: () => void): void {
+        if (!this.socket) throw new Error('Socket not available')
         this.socket.onError(callback)
     }
 
@@ -127,7 +136,7 @@ export class SocketListener {
     }
 
     disconnect() {
-        this.socket.close();
+        this.socket?.close();
         this.socket = null
         this.messageListeners.length = 0
 
@@ -145,17 +154,39 @@ export type LoginPayload = {
 }
 
 export class Auth {
-    private endpoint: KeeperEndpoint;
-    private _sessionToken: string;
     dataKey: Uint8Array;
     privateKey: Uint8Array;
-    private _username: string;
-    private managedCompanyId?: number;
-    private socket: SocketListener;
-    private messageSessionUid: Uint8Array;
     private _accountUid: Uint8Array;
+    private _sessionToken: string;
+    private _username: string;
+    private endpoint: KeeperEndpoint;
+    private managedCompanyId?: number;
+    private messageSessionUid: Uint8Array;
+    private options: ClientConfigurationInternal
+    private socket: SocketListener;
 
-    constructor(private options: ClientConfiguration) {
+    constructor(options: ClientConfiguration) {
+        if (options.deviceConfig && options.deviceToken) {
+            throw new Error('Both loginV2 and loginV3 token strategies supplied')
+        }
+
+        // De-reference user provided config
+        this.options = {
+            ...options,
+            ...options.deviceConfig && {deviceConfig: {...options.deviceConfig}},
+            ...options.authUI && {authUI: {...options.authUI}},
+            ...options.authUI3 && {authUI3: {...options.authUI3}},
+        }
+
+        if (!this.options.deviceConfig) {
+            this.options.deviceConfig = {
+                deviceToken: null,
+                privateKey: null,
+                publicKey: null,
+                transmissionKeyId: null,
+            }
+        }
+
         this.endpoint = new KeeperEndpoint(this.options);
         this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
         this.messageSessionUid = generateUidBytes()
@@ -176,7 +207,6 @@ export class Auth {
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
     async loginV3({username, password = '', useAlternate = false}: LoginPayload) {
-
         if (!this.options.deviceConfig.deviceToken) {
             await this.endpoint.registerDevice()
         }
@@ -187,13 +217,13 @@ export class Auth {
             console.log("Socket connected")
         }
 
-        let loginToken: Uint8Array;
+        let loginToken: Uint8Array | null = null;
         let previousLoginState = 0;
 
         while (true) {
             const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
-                encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+                encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
                 // forceNewLogin: true
@@ -217,43 +247,44 @@ export class Auth {
             previousLoginState = loginResponse.loginState;
 
             switch (loginResponse.loginState) {
+                case Authentication.LoginState.ACCOUNT_LOCKED:
+                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
+                case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.INVALID_LOGINSTATE:
-                    break;
                 case Authentication.LoginState.LOGGED_OUT:
+                case Authentication.LoginState.REQUIRES_USERNAME:
+                case Authentication.LoginState.UPGRADE:
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
+                    if (!loginResponse.encryptedLoginToken) {
+                        throw new Error('Login token missing from API response')
+                    }
                     loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken)
-                    break;
-                case Authentication.LoginState.DEVICE_LOCKED:
-                    break;
-                case Authentication.LoginState.ACCOUNT_LOCKED:
-                    break;
-                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
-                    break;
-                case Authentication.LoginState.UPGRADE:
                     break;
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
-                    const url = new URL(loginResponse.url)
-                    this.options.host = url.host
+                    this.options.host = loginResponse.stateSpecificValue
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
+                    if (!loginResponse.url) {
+                        throw new Error('URL missing from API response')
+                    }
                     await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     console.log("SSO Connect login");
+                    if (!loginResponse.url) {
+                        throw new Error('URL missing from API response')
+                    }
                     await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REQUIRES_2FA:
-                    if (!this.options.authUI3) {
-                        throw new Error('Unhandled prompt for second factor')
-                    }
                     loginToken = await this.handleTwoFactor(loginResponse)
                     break
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
-                    if (!password && this.options.authUI3.getPassword) {
+                    if (!password && this.options.authUI3?.getPassword) {
                         password = await this.options.authUI3.getPassword()
                     }
                     if (!password) {
@@ -261,26 +292,33 @@ export class Auth {
                     }
                     await this.authHashLogin(loginResponse, username, password)
                     return;
-                case Authentication.LoginState.REQUIRES_USERNAME:
-                    break;
                 case Authentication.LoginState.LOGGED_IN:
-                    this.setLoginParameters(username, webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
+                    if (!loginResponse.encryptedSessionToken) {
+                        throw new Error('Session token missing from API response')
+                    }
+                    if (!loginResponse.accountUid) {
+                        throw new Error('Account UID missing from API response')
+                    }
+                    this.setLoginParameters(
+                      username,
+                      webSafe64FromBytes(loginResponse.encryptedSessionToken),
+                      loginResponse.accountUid
+                    )
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
-                //break;
             }
         }
     }
 
     async verifyDevice(username: string, loginToken: Uint8Array): Promise<Uint8Array> {
         if (!this.options.authUI3) {
-            throw new Error('Unhandled prompt for device verification')
+            throw new Error('No authUI3 provided. authUI3 required to verify devices')
         }
 
         const deviceConfig = this.options.deviceConfig
         const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
 
-        let promiseFromUser: Promise<Uint8Array>
+        let promiseFromUser: Promise<Uint8Array> | null = null
         let waitOnSocket = true
         switch (verifyMethod) {
             case DeviceVerificationMethods.Email: {
@@ -292,6 +330,9 @@ export class Auth {
                 }))
 
                 promiseFromUser = new Promise<Uint8Array>(async (resolve, reject) => {
+                    if (!this.options.authUI3) {
+                        throw new Error('No authUI3 provided. authUI3 required to verify devices')
+                    }
                     const token = await this.options.authUI3.getDeviceVerificationCode()
                     if (!!token) {
                         await this.executeRest(validateDeviceVerificationCodeMessage({
@@ -336,7 +377,7 @@ export class Auth {
                 throw new Error('Invalid choice for device verification')
         }
 
-        return this.waitForVerifyDeviceInput(loginToken, promiseFromUser, waitOnSocket)
+        return this.waitForVerifyDeviceInput(loginToken, waitOnSocket, promiseFromUser)
     }
 
     private async waitForVerifyDevicePush(loginToken: Uint8Array): Promise<Uint8Array> {
@@ -370,7 +411,11 @@ export class Auth {
         })
     }
 
-    private async waitForVerifyDeviceInput(loginToken: Uint8Array, promiseFromUser: Promise<Uint8Array>, waitOnSocket: boolean): Promise<Uint8Array> {
+    private async waitForVerifyDeviceInput(
+      loginToken: Uint8Array,
+      waitOnSocket: boolean,
+      promiseFromUser: Promise<Uint8Array> | null
+    ): Promise<Uint8Array> {
         const timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
         let to: any | undefined
         const timeoutPromise = new Promise<Uint8Array>(resolve => {
@@ -394,6 +439,8 @@ export class Auth {
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
+        if (!loginResponse.channels) throw new Error('Channels not provided by API')
+
         let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
         switch (loginResponse.channels[0].channelType) {
             case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
@@ -408,8 +455,6 @@ export class Auth {
                 break;
             case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
                 break;
-            // case Authentication.TwoFactorChannelType.TWO_FA_CT_BACKUP:
-            //     break;
             case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
                 break;
             case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
@@ -432,6 +477,9 @@ export class Auth {
                 pushType: pushType
             }
             if (codeLessPush) {
+                if (!this.options.authUI3) {
+                    throw new Error('No authUI3 provided. authUI3 required to do 2fa')
+                }
                 sendPushRequest.expireIn = await this.options.authUI3.getTwoFactorExpiration()
             }
             await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
@@ -443,6 +491,9 @@ export class Auth {
             console.log(socketResponseData)
             return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
         } else {
+            if (!loginResponse.encryptedLoginToken) {
+                throw new Error('Login token missing from API response')
+            }
             return this.handleTwoFactorCode(loginResponse.encryptedLoginToken)
         }
     }
@@ -450,6 +501,9 @@ export class Auth {
     private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
         while (true) {
             try {
+                if (!this.options.authUI3) {
+                    throw new Error('No authUI3 provided. authUI3 required to verify devices')
+                }
                 const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
                 const twoFactorValidateMsg = twoFactorValidateMessage({
                     encryptedLoginToken: loginToken,
@@ -457,6 +511,9 @@ export class Auth {
                     expireIn: twoFactorInput.desiredExpiration
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+                if (!twoFactorValidateResp.encryptedLoginToken) {
+                    throw new Error('Login token missing from API response')
+                }
                 return twoFactorValidateResp.encryptedLoginToken
             } catch (e) {
                 console.log(e)
@@ -466,7 +523,15 @@ export class Auth {
 
     async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
         // TODO test for account transfer and account recovery
+        if (!loginResponse.salt) {
+            throw new Error('Salt missing from API response')
+        }
+
         const salt = loginResponse.salt[0]
+        if (!salt.salt || !salt.iterations) {
+            throw new Error('Salt missing from API response')
+        }
+
         const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
         let authHash = await platform.calcAuthVerifier(authHashKey);
 
@@ -476,6 +541,10 @@ export class Auth {
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
+
+        if (!loginResp.encryptedSessionToken || !loginResp.encryptedDataKey || !loginResp.accountUid) {
+            throw new Error('Parameters missing from API response')
+        }
 
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
         this.dataKey = await decryptEncryptionParams(password, loginResp.encryptedDataKey);
@@ -615,7 +684,15 @@ export class Auth {
     async login(username: string, password: string) {
         try {
             let preLoginResponse = await this.endpoint.getPreLogin(username);
+            if (!preLoginResponse.salt) {
+                throw new Error('Salt missing from API response')
+            }
+
             let salt = preLoginResponse.salt[0];
+            if (!salt.salt || !salt.iterations) {
+                throw new Error('Salt missing from API response')
+            }
+
             let authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
             let authHash = platform.bytesToBase64(await platform.calcAuthVerifier(authHashKey));
 
@@ -630,7 +707,7 @@ export class Auth {
                 loginCommand.enterprise_id = this.managedCompanyId
             }
             let loginResponse: LoginResponse;
-            let socketListener: SocketListener;
+            let socketListener: SocketListener | null = null;
             while (true) {
                 loginResponse = await this.endpoint.executeV2Command<LoginResponse>(loginCommand);
                 if (loginResponse.result_code === "auth_success")
@@ -683,7 +760,9 @@ export class Auth {
     }
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
-        command.username = this._username;
+        if (!command.username) {
+            command.username = this._username;
+        }
         if (command instanceof AuthorizedCommand) {
             command.device_id = "JS Keeper API";
             command.session_token = this._sessionToken;

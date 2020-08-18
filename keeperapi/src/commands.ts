@@ -442,6 +442,12 @@ export class SetTwoFactorAuthCommand extends AuthorizedCommand<SetTwoFactorAuthR
     device_token_expire_days: number
 }
 
+export interface SetTwoFactorAuthResponse extends KeeperResponse {
+    device_token: string;
+    backup_codes: string[];
+    dt_scope: string
+}
+
 export class TwoFactorSettingsCommand extends AuthorizedCommand {
     constructor() {
         super()
@@ -449,10 +455,28 @@ export class TwoFactorSettingsCommand extends AuthorizedCommand {
     }
 }
 
-export interface SetTwoFactorAuthResponse extends KeeperResponse {
-    device_token: string;
-    backup_codes: string[];
-    dt_scope: string
+export class GetPushInfoCommand extends AuthorizedCommand<GetPushInfoResponse> {
+    constructor() {
+        super()
+        this.command = 'get_push_info'
+    }
+
+    type: 'USER' | 'DNA' | 'CHAT'
+}
+
+export interface GetPushInfoResponse extends KeeperResponse {
+    urk: string;
+}
+
+export class VerifyUserCommand extends KeeperCommand {
+    constructor() {
+        super()
+        this.command = 'verify_user'
+    }
+
+    username: string
+    code: string
+    requestor: string
 }
 
 export type EnterpriseDataInclude =

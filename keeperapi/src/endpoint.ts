@@ -10,7 +10,7 @@ import {
     webSafe64FromBytes
 } from './utils'
 import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from './restMessages'
-import {ClientConfiguration, TransmissionKey} from './configuration';
+import {ClientConfigurationInternal, TransmissionKey} from './configuration';
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
@@ -23,12 +23,12 @@ export class KeeperEndpoint {
     public deviceToken: Uint8Array
     public clientVersion
 
-    constructor(private options: ClientConfiguration) {
-        if (options.deviceConfig) {
-            this.updateTransmissionKey(options.deviceConfig.transmissionKeyId || 1)
-        } else {
+    constructor(private options: ClientConfigurationInternal) {
+        if (options.deviceToken) {
             this.deviceToken = options.deviceToken
             this.updateTransmissionKey(1)
+        } else {
+            this.updateTransmissionKey(options.deviceConfig.transmissionKeyId || 1)
         }
     }
 
@@ -124,7 +124,7 @@ export class KeeperEndpoint {
                     })
                     const devRegResp = await this.executeRest(devRegMsg)
                     console.log(devRegResp)
-                    deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
+                    deviceConfig.deviceToken = devRegResp.encryptedDeviceToken || null
                 }
                 if (this.options.onDeviceConfig) {
                     this.options.onDeviceConfig(deviceConfig, this.options.host);

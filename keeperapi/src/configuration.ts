@@ -14,6 +14,16 @@ export interface ClientConfiguration {
     authUI?: AuthUI
     authUI3?: AuthUI3
 }
+export interface ClientConfigurationInternal extends ClientConfiguration {
+    deviceConfig: DeviceConfig // v15+ device config
+}
+
+export interface DeviceConfig {
+    deviceToken: Uint8Array | null
+    privateKey: Uint8Array | null
+    publicKey: Uint8Array | null
+    transmissionKeyId: number | null
+}
 
 export interface VendorConfiguration {
     host: KeeperHost;
@@ -25,13 +35,6 @@ export interface TransmissionKey {
     key: Uint8Array
     publicKeyId: number
     encryptedKey: Uint8Array
-}
-
-export interface DeviceConfig {
-    deviceToken: Uint8Array
-    privateKey: Uint8Array
-    publicKey: Uint8Array
-    transmissionKeyId: number
 }
 
 export interface AuthUI {

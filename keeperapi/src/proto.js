@@ -618,6 +618,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "string",
             id: 5
+          },
+          phoneNumber: {
+            type: "string",
+            id: 6
           }
         }
       },
@@ -1631,6 +1635,63 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 2
           }
         }
+      },
+      SupportToolChangeUsernameRequest: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          },
+          newUsername: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      UserDataKeyRequest: {
+        fields: {
+          enterpriseUserId: {
+            rule: "repeated",
+            type: "int64",
+            id: 1
+          }
+        }
+      },
+      DataKeyStatus: {
+        values: {
+          DK_OK: 0,
+          DK_DOESNOT_EXIST: 1,
+          DK_ACCESS_DENIED: 2
+        }
+      },
+      UserDataKey: {
+        fields: {
+          enterpriseUserId: {
+            type: "int64",
+            id: 1
+          },
+          encryptedDataKey: {
+            type: "bytes",
+            id: 2
+          },
+          roleKey: {
+            type: "bytes",
+            id: 3
+          },
+          status: {
+            type: "DataKeyStatus",
+            id: 4
+          }
+        }
+      },
+      UserDataKeyResponse: {
+        fields: {
+          userDataKeys: {
+            rule: "repeated",
+            type: "UserDataKey",
+            id: 1
+          }
+        }
       }
     }
   },
@@ -2001,8 +2062,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 7
           },
           Enforcements: {
-            rule: "repeated",
-            type: "KeyValue",
+            type: "Enforcements",
             id: 8
           },
           Images: {
@@ -2140,7 +2200,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          secondsUnitExpiration: {
+          secondsUntilExpiration: {
             type: "int64",
             id: 5
           },
@@ -2229,7 +2289,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 26
           },
           error: {
-            type: "string",
+            type: "Result",
             id: 27
           }
         }
@@ -2276,7 +2336,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 1
           },
-          mustPerfromAccountShareBy: {
+          mustPerformAccountShareBy: {
             type: "int64",
             id: 2
           },
@@ -2314,7 +2374,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bool",
             id: 10
           },
-          emailVarified: {
+          emailVerified: {
             type: "bool",
             id: 11
           },
@@ -2387,6 +2447,70 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           value: {
             type: "string",
             id: 2
+          }
+        }
+      },
+      KeyValueBoolean: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "bool",
+            id: 2
+          }
+        }
+      },
+      KeyValueLong: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "int64",
+            id: 2
+          }
+        }
+      },
+      Result: {
+        fields: {
+          resultCode: {
+            type: "string",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          result: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      Enforcements: {
+        fields: {
+          strings: {
+            rule: "repeated",
+            type: "KeyValue",
+            id: 1
+          },
+          booleans: {
+            rule: "repeated",
+            type: "KeyValueBoolean",
+            id: 2
+          },
+          longs: {
+            rule: "repeated",
+            type: "KeyValueLong",
+            id: 3
+          },
+          jsons: {
+            rule: "repeated",
+            type: "KeyValue",
+            id: 4
           }
         }
       },
@@ -2498,7 +2622,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 4
           },
           error: {
-            type: "string",
+            type: "Result",
             id: 5
           },
           twoFactorRequired: {
@@ -5429,6 +5553,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           checksum: {
             type: "uint64",
             id: 8
+          },
+          isGeneratedUid: {
+            type: "bool",
+            id: 9
           }
         }
       }

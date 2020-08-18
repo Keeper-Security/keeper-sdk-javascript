@@ -59,6 +59,11 @@ export class Company {
             node.displayName = decryptObjectFromStorage<EncryptedData>(node.encrypted_data, this.treeKey).displayname;
             if (node.parent_id) {
                 let parent = this._data.nodes.find(x => x.node_id == node.parent_id);
+                if (!parent) {
+                    console.warn('Unable to find parent for node:', node)
+                    continue
+                }
+
                 if (!parent.nodes) {
                     parent.nodes = []
                 }
@@ -70,7 +75,13 @@ export class Company {
             role.displayName = role.role_type === "pool_manager"
                 ? "License Purchaser"
                 : decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
+
             let node = this._data.nodes.find(x => x.node_id == role.node_id);
+            if (!node) {
+                console.warn('Unable to find node for role:', role)
+                continue
+            }
+
             if (!node.roles) {
                 node.roles = []
             }
@@ -79,6 +90,11 @@ export class Company {
 
         for (let team of this._data.teams) {
             let node = this._data.nodes.find(x => x.node_id == team.node_id);
+            if (!node) {
+                console.warn('Unable to find node for team:', team)
+                continue
+            }
+
             if (!node.teams) {
                 node.teams = []
             }
@@ -96,7 +112,13 @@ export class Company {
                     user.displayName = user.encrypted_data;
                     break;
             }
+
             let node = this._data.nodes.find(x => x.node_id == user.node_id);
+            if (!node) {
+                console.warn('Unable to find node for user:', user)
+                continue
+            }
+
             if (!node.users) {
                 node.users = []
             }
@@ -105,7 +127,14 @@ export class Company {
                     if (!user.roles) {
                         user.roles = []
                     }
-                    user.roles.push(this._data.roles.find(x => x.role_id === user_role.role_id))
+
+                    const role = this._data.roles.find(x => x.role_id === user_role.role_id)
+                    if (!role) {
+                        console.warn('Unable to find role for user_role:', user_role)
+                        continue
+                    }
+
+                    user.roles.push(role)
                 }
             }
             for (let user_team of this._data.team_users || []) {
@@ -113,7 +142,14 @@ export class Company {
                     if (!user.teams) {
                         user.teams = []
                     }
-                    user.teams.push(this._data.teams.find(x => x.team_uid === user_team.team_uid))
+
+                    const team = this._data.teams.find(x => x.team_uid === user_team.team_uid)
+                    if (!team) {
+                        console.warn('Unable to find team for user_team:', user_team)
+                        continue
+                    }
+
+                    user.teams.push(team)
                 }
             }
             node.users.push(user);
