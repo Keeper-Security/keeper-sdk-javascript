@@ -171,12 +171,18 @@ export class Auth {
         }
 
         // De-reference user provided config if requested
-        if (this.options.cloneConfig) {
+        if (options.cloneConfig) {
             this.options = {
                 ...options,
                 ...options.deviceConfig && {deviceConfig: {...options.deviceConfig}},
                 ...options.authUI && {authUI: {...options.authUI}},
                 ...options.authUI3 && {authUI3: {...options.authUI3}},
+            }
+        }
+        else {
+            this.options = {
+                ...options,
+                deviceConfig: {...options.deviceConfig}
             }
         }
 
