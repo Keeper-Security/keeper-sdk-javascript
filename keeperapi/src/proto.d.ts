@@ -7427,9 +7427,6 @@ export namespace Authentication {
 
         /** ValidateCreateUserVerificationCodeRequest verificationCode */
         verificationCode?: (string|null);
-
-        /** ValidateCreateUserVerificationCodeRequest messageSessionUid */
-        messageSessionUid?: (Uint8Array|null);
     }
 
     /** Represents a ValidateCreateUserVerificationCodeRequest. */
@@ -7449,9 +7446,6 @@ export namespace Authentication {
 
         /** ValidateCreateUserVerificationCodeRequest verificationCode. */
         public verificationCode: string;
-
-        /** ValidateCreateUserVerificationCodeRequest messageSessionUid. */
-        public messageSessionUid: Uint8Array;
 
         /**
          * Creates a new ValidateCreateUserVerificationCodeRequest instance using the specified properties.
@@ -8418,6 +8412,540 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a SupportToolDeleteUserRequest. */
+    interface ISupportToolDeleteUserRequest {
+
+        /** SupportToolDeleteUserRequest agentUsername */
+        agentUsername?: (string|null);
+
+        /** SupportToolDeleteUserRequest usernameForDelete */
+        usernameForDelete?: (string|null);
+
+        /** SupportToolDeleteUserRequest reason */
+        reason?: (string|null);
+    }
+
+    /** Represents a SupportToolDeleteUserRequest. */
+    class SupportToolDeleteUserRequest implements ISupportToolDeleteUserRequest {
+
+        /**
+         * Constructs a new SupportToolDeleteUserRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolDeleteUserRequest);
+
+        /** SupportToolDeleteUserRequest agentUsername. */
+        public agentUsername: string;
+
+        /** SupportToolDeleteUserRequest usernameForDelete. */
+        public usernameForDelete: string;
+
+        /** SupportToolDeleteUserRequest reason. */
+        public reason: string;
+
+        /**
+         * Creates a new SupportToolDeleteUserRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolDeleteUserRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolDeleteUserRequest): Authentication.SupportToolDeleteUserRequest;
+
+        /**
+         * Encodes the specified SupportToolDeleteUserRequest message. Does not implicitly {@link Authentication.SupportToolDeleteUserRequest.verify|verify} messages.
+         * @param message SupportToolDeleteUserRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolDeleteUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolDeleteUserRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolDeleteUserRequest.verify|verify} messages.
+         * @param message SupportToolDeleteUserRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolDeleteUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolDeleteUserRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolDeleteUserRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolDeleteUserRequest;
+
+        /**
+         * Decodes a SupportToolDeleteUserRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolDeleteUserRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolDeleteUserRequest;
+
+        /**
+         * Verifies a SupportToolDeleteUserRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolDeleteUserRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolDeleteUserRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolDeleteUserRequest;
+
+        /**
+         * Creates a plain object from a SupportToolDeleteUserRequest message. Also converts values to other types if specified.
+         * @param message SupportToolDeleteUserRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolDeleteUserRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolDeleteUserRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeleteUserWithVerificationCodeRequest. */
+    interface IDeleteUserWithVerificationCodeRequest {
+
+        /** DeleteUserWithVerificationCodeRequest agentUsername */
+        agentUsername?: (string|null);
+
+        /** DeleteUserWithVerificationCodeRequest usernameForDelete */
+        usernameForDelete?: (string|null);
+
+        /** DeleteUserWithVerificationCodeRequest reason */
+        reason?: (string|null);
+
+        /** DeleteUserWithVerificationCodeRequest verificationCode */
+        verificationCode?: (string|null);
+
+        /** DeleteUserWithVerificationCodeRequest override */
+        override?: (boolean|null);
+    }
+
+    /** Represents a DeleteUserWithVerificationCodeRequest. */
+    class DeleteUserWithVerificationCodeRequest implements IDeleteUserWithVerificationCodeRequest {
+
+        /**
+         * Constructs a new DeleteUserWithVerificationCodeRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDeleteUserWithVerificationCodeRequest);
+
+        /** DeleteUserWithVerificationCodeRequest agentUsername. */
+        public agentUsername: string;
+
+        /** DeleteUserWithVerificationCodeRequest usernameForDelete. */
+        public usernameForDelete: string;
+
+        /** DeleteUserWithVerificationCodeRequest reason. */
+        public reason: string;
+
+        /** DeleteUserWithVerificationCodeRequest verificationCode. */
+        public verificationCode: string;
+
+        /** DeleteUserWithVerificationCodeRequest override. */
+        public override: boolean;
+
+        /**
+         * Creates a new DeleteUserWithVerificationCodeRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteUserWithVerificationCodeRequest instance
+         */
+        public static create(properties?: Authentication.IDeleteUserWithVerificationCodeRequest): Authentication.DeleteUserWithVerificationCodeRequest;
+
+        /**
+         * Encodes the specified DeleteUserWithVerificationCodeRequest message. Does not implicitly {@link Authentication.DeleteUserWithVerificationCodeRequest.verify|verify} messages.
+         * @param message DeleteUserWithVerificationCodeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDeleteUserWithVerificationCodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteUserWithVerificationCodeRequest message, length delimited. Does not implicitly {@link Authentication.DeleteUserWithVerificationCodeRequest.verify|verify} messages.
+         * @param message DeleteUserWithVerificationCodeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDeleteUserWithVerificationCodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteUserWithVerificationCodeRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteUserWithVerificationCodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeleteUserWithVerificationCodeRequest;
+
+        /**
+         * Decodes a DeleteUserWithVerificationCodeRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteUserWithVerificationCodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeleteUserWithVerificationCodeRequest;
+
+        /**
+         * Verifies a DeleteUserWithVerificationCodeRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteUserWithVerificationCodeRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteUserWithVerificationCodeRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.DeleteUserWithVerificationCodeRequest;
+
+        /**
+         * Creates a plain object from a DeleteUserWithVerificationCodeRequest message. Also converts values to other types if specified.
+         * @param message DeleteUserWithVerificationCodeRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.DeleteUserWithVerificationCodeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteUserWithVerificationCodeRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeleteUserWithVerificationCodeResponse. */
+    interface IDeleteUserWithVerificationCodeResponse {
+
+        /** DeleteUserWithVerificationCodeResponse deletedUserId */
+        deletedUserId?: (number|null);
+
+        /** DeleteUserWithVerificationCodeResponse deletedUsername */
+        deletedUsername?: (string|null);
+
+        /** DeleteUserWithVerificationCodeResponse deletedAccountUid */
+        deletedAccountUid?: (Uint8Array|null);
+
+        /** DeleteUserWithVerificationCodeResponse deletedBy */
+        deletedBy?: (string|null);
+
+        /** DeleteUserWithVerificationCodeResponse reason */
+        reason?: (string|null);
+
+        /** DeleteUserWithVerificationCodeResponse deleteDateTime */
+        deleteDateTime?: (string|null);
+    }
+
+    /** Represents a DeleteUserWithVerificationCodeResponse. */
+    class DeleteUserWithVerificationCodeResponse implements IDeleteUserWithVerificationCodeResponse {
+
+        /**
+         * Constructs a new DeleteUserWithVerificationCodeResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDeleteUserWithVerificationCodeResponse);
+
+        /** DeleteUserWithVerificationCodeResponse deletedUserId. */
+        public deletedUserId: number;
+
+        /** DeleteUserWithVerificationCodeResponse deletedUsername. */
+        public deletedUsername: string;
+
+        /** DeleteUserWithVerificationCodeResponse deletedAccountUid. */
+        public deletedAccountUid: Uint8Array;
+
+        /** DeleteUserWithVerificationCodeResponse deletedBy. */
+        public deletedBy: string;
+
+        /** DeleteUserWithVerificationCodeResponse reason. */
+        public reason: string;
+
+        /** DeleteUserWithVerificationCodeResponse deleteDateTime. */
+        public deleteDateTime: string;
+
+        /**
+         * Creates a new DeleteUserWithVerificationCodeResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteUserWithVerificationCodeResponse instance
+         */
+        public static create(properties?: Authentication.IDeleteUserWithVerificationCodeResponse): Authentication.DeleteUserWithVerificationCodeResponse;
+
+        /**
+         * Encodes the specified DeleteUserWithVerificationCodeResponse message. Does not implicitly {@link Authentication.DeleteUserWithVerificationCodeResponse.verify|verify} messages.
+         * @param message DeleteUserWithVerificationCodeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDeleteUserWithVerificationCodeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteUserWithVerificationCodeResponse message, length delimited. Does not implicitly {@link Authentication.DeleteUserWithVerificationCodeResponse.verify|verify} messages.
+         * @param message DeleteUserWithVerificationCodeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDeleteUserWithVerificationCodeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteUserWithVerificationCodeResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteUserWithVerificationCodeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeleteUserWithVerificationCodeResponse;
+
+        /**
+         * Decodes a DeleteUserWithVerificationCodeResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteUserWithVerificationCodeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeleteUserWithVerificationCodeResponse;
+
+        /**
+         * Verifies a DeleteUserWithVerificationCodeResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteUserWithVerificationCodeResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteUserWithVerificationCodeResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.DeleteUserWithVerificationCodeResponse;
+
+        /**
+         * Creates a plain object from a DeleteUserWithVerificationCodeResponse message. Also converts values to other types if specified.
+         * @param message DeleteUserWithVerificationCodeResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.DeleteUserWithVerificationCodeResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteUserWithVerificationCodeResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolRestoreDeletedUser. */
+    interface ISupportToolRestoreDeletedUser {
+
+        /** SupportToolRestoreDeletedUser agentUsername */
+        agentUsername?: (string|null);
+
+        /** SupportToolRestoreDeletedUser deletedUsername */
+        deletedUsername?: (string|null);
+    }
+
+    /** Represents a SupportToolRestoreDeletedUser. */
+    class SupportToolRestoreDeletedUser implements ISupportToolRestoreDeletedUser {
+
+        /**
+         * Constructs a new SupportToolRestoreDeletedUser.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolRestoreDeletedUser);
+
+        /** SupportToolRestoreDeletedUser agentUsername. */
+        public agentUsername: string;
+
+        /** SupportToolRestoreDeletedUser deletedUsername. */
+        public deletedUsername: string;
+
+        /**
+         * Creates a new SupportToolRestoreDeletedUser instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolRestoreDeletedUser instance
+         */
+        public static create(properties?: Authentication.ISupportToolRestoreDeletedUser): Authentication.SupportToolRestoreDeletedUser;
+
+        /**
+         * Encodes the specified SupportToolRestoreDeletedUser message. Does not implicitly {@link Authentication.SupportToolRestoreDeletedUser.verify|verify} messages.
+         * @param message SupportToolRestoreDeletedUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolRestoreDeletedUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolRestoreDeletedUser message, length delimited. Does not implicitly {@link Authentication.SupportToolRestoreDeletedUser.verify|verify} messages.
+         * @param message SupportToolRestoreDeletedUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolRestoreDeletedUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolRestoreDeletedUser message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolRestoreDeletedUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolRestoreDeletedUser;
+
+        /**
+         * Decodes a SupportToolRestoreDeletedUser message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolRestoreDeletedUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolRestoreDeletedUser;
+
+        /**
+         * Verifies a SupportToolRestoreDeletedUser message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolRestoreDeletedUser message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolRestoreDeletedUser
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolRestoreDeletedUser;
+
+        /**
+         * Creates a plain object from a SupportToolRestoreDeletedUser message. Also converts values to other types if specified.
+         * @param message SupportToolRestoreDeletedUser
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolRestoreDeletedUser, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolRestoreDeletedUser to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolRestoredUser. */
+    interface ISupportToolRestoredUser {
+
+        /** SupportToolRestoredUser userId */
+        userId?: (number|null);
+
+        /** SupportToolRestoredUser username */
+        username?: (string|null);
+
+        /** SupportToolRestoredUser accountUid */
+        accountUid?: (Uint8Array|null);
+    }
+
+    /** Represents a SupportToolRestoredUser. */
+    class SupportToolRestoredUser implements ISupportToolRestoredUser {
+
+        /**
+         * Constructs a new SupportToolRestoredUser.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolRestoredUser);
+
+        /** SupportToolRestoredUser userId. */
+        public userId: number;
+
+        /** SupportToolRestoredUser username. */
+        public username: string;
+
+        /** SupportToolRestoredUser accountUid. */
+        public accountUid: Uint8Array;
+
+        /**
+         * Creates a new SupportToolRestoredUser instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolRestoredUser instance
+         */
+        public static create(properties?: Authentication.ISupportToolRestoredUser): Authentication.SupportToolRestoredUser;
+
+        /**
+         * Encodes the specified SupportToolRestoredUser message. Does not implicitly {@link Authentication.SupportToolRestoredUser.verify|verify} messages.
+         * @param message SupportToolRestoredUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolRestoredUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolRestoredUser message, length delimited. Does not implicitly {@link Authentication.SupportToolRestoredUser.verify|verify} messages.
+         * @param message SupportToolRestoredUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolRestoredUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolRestoredUser message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolRestoredUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolRestoredUser;
+
+        /**
+         * Decodes a SupportToolRestoredUser message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolRestoredUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolRestoredUser;
+
+        /**
+         * Verifies a SupportToolRestoredUser message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolRestoredUser message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolRestoredUser
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolRestoredUser;
+
+        /**
+         * Creates a plain object from a SupportToolRestoredUser message. Also converts values to other types if specified.
+         * @param message SupportToolRestoredUser
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolRestoredUser, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolRestoredUser to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a UserDataKeyRequest. */
     interface IUserDataKeyRequest {
 
@@ -8508,27 +9036,116 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
-    /** DataKeyStatus enum. */
-    enum DataKeyStatus {
-        DK_OK = 0,
-        DK_DOESNOT_EXIST = 1,
-        DK_ACCESS_DENIED = 2
+    /** Properties of an EnterpriseUserIdDataKeyPair. */
+    interface IEnterpriseUserIdDataKeyPair {
+
+        /** EnterpriseUserIdDataKeyPair enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** EnterpriseUserIdDataKeyPair encryptedDataKey */
+        encryptedDataKey?: (Uint8Array|null);
+    }
+
+    /** Represents an EnterpriseUserIdDataKeyPair. */
+    class EnterpriseUserIdDataKeyPair implements IEnterpriseUserIdDataKeyPair {
+
+        /**
+         * Constructs a new EnterpriseUserIdDataKeyPair.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IEnterpriseUserIdDataKeyPair);
+
+        /** EnterpriseUserIdDataKeyPair enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** EnterpriseUserIdDataKeyPair encryptedDataKey. */
+        public encryptedDataKey: Uint8Array;
+
+        /**
+         * Creates a new EnterpriseUserIdDataKeyPair instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserIdDataKeyPair instance
+         */
+        public static create(properties?: Authentication.IEnterpriseUserIdDataKeyPair): Authentication.EnterpriseUserIdDataKeyPair;
+
+        /**
+         * Encodes the specified EnterpriseUserIdDataKeyPair message. Does not implicitly {@link Authentication.EnterpriseUserIdDataKeyPair.verify|verify} messages.
+         * @param message EnterpriseUserIdDataKeyPair message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IEnterpriseUserIdDataKeyPair, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserIdDataKeyPair message, length delimited. Does not implicitly {@link Authentication.EnterpriseUserIdDataKeyPair.verify|verify} messages.
+         * @param message EnterpriseUserIdDataKeyPair message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IEnterpriseUserIdDataKeyPair, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserIdDataKeyPair message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserIdDataKeyPair
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.EnterpriseUserIdDataKeyPair;
+
+        /**
+         * Decodes an EnterpriseUserIdDataKeyPair message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserIdDataKeyPair
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.EnterpriseUserIdDataKeyPair;
+
+        /**
+         * Verifies an EnterpriseUserIdDataKeyPair message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserIdDataKeyPair message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserIdDataKeyPair
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.EnterpriseUserIdDataKeyPair;
+
+        /**
+         * Creates a plain object from an EnterpriseUserIdDataKeyPair message. Also converts values to other types if specified.
+         * @param message EnterpriseUserIdDataKeyPair
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.EnterpriseUserIdDataKeyPair, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserIdDataKeyPair to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a UserDataKey. */
     interface IUserDataKey {
 
-        /** UserDataKey enterpriseUserId */
-        enterpriseUserId?: (number|Long|null);
-
-        /** UserDataKey encryptedDataKey */
-        encryptedDataKey?: (Uint8Array|null);
+        /** UserDataKey roleId */
+        roleId?: (number|Long|null);
 
         /** UserDataKey roleKey */
         roleKey?: (Uint8Array|null);
 
-        /** UserDataKey status */
-        status?: (Authentication.DataKeyStatus|null);
+        /** UserDataKey privateKey */
+        privateKey?: (string|null);
+
+        /** UserDataKey enterpriseUserIdDataKeyPairs */
+        enterpriseUserIdDataKeyPairs?: (Authentication.IEnterpriseUserIdDataKeyPair[]|null);
     }
 
     /** Represents a UserDataKey. */
@@ -8540,17 +9157,17 @@ export namespace Authentication {
          */
         constructor(properties?: Authentication.IUserDataKey);
 
-        /** UserDataKey enterpriseUserId. */
-        public enterpriseUserId: (number|Long);
-
-        /** UserDataKey encryptedDataKey. */
-        public encryptedDataKey: Uint8Array;
+        /** UserDataKey roleId. */
+        public roleId: (number|Long);
 
         /** UserDataKey roleKey. */
         public roleKey: Uint8Array;
 
-        /** UserDataKey status. */
-        public status: Authentication.DataKeyStatus;
+        /** UserDataKey privateKey. */
+        public privateKey: string;
+
+        /** UserDataKey enterpriseUserIdDataKeyPairs. */
+        public enterpriseUserIdDataKeyPairs: Authentication.IEnterpriseUserIdDataKeyPair[];
 
         /**
          * Creates a new UserDataKey instance using the specified properties.
@@ -8628,6 +9245,12 @@ export namespace Authentication {
 
         /** UserDataKeyResponse userDataKeys */
         userDataKeys?: (Authentication.IUserDataKey[]|null);
+
+        /** UserDataKeyResponse accessDenied */
+        accessDenied?: ((number|Long)[]|null);
+
+        /** UserDataKeyResponse noEncryptedDataKey */
+        noEncryptedDataKey?: ((number|Long)[]|null);
     }
 
     /** Represents a UserDataKeyResponse. */
@@ -8641,6 +9264,12 @@ export namespace Authentication {
 
         /** UserDataKeyResponse userDataKeys. */
         public userDataKeys: Authentication.IUserDataKey[];
+
+        /** UserDataKeyResponse accessDenied. */
+        public accessDenied: (number|Long)[];
+
+        /** UserDataKeyResponse noEncryptedDataKey. */
+        public noEncryptedDataKey: (number|Long)[];
 
         /**
          * Creates a new UserDataKeyResponse instance using the specified properties.
@@ -17261,6 +17890,9 @@ export namespace Tokens {
 
         /** LoginToken username */
         username?: (string|null);
+
+        /** LoginToken relogin */
+        relogin?: (boolean|null);
     }
 
     /** Represents a LoginToken. */
@@ -17310,6 +17942,9 @@ export namespace Tokens {
 
         /** LoginToken username. */
         public username: string;
+
+        /** LoginToken relogin. */
+        public relogin: boolean;
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -19370,6 +20005,120 @@ export namespace Tokens {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a DeleteUserToken. */
+    interface IDeleteUserToken {
+
+        /** DeleteUserToken userIdForDelete */
+        userIdForDelete?: (number|null);
+
+        /** DeleteUserToken username */
+        username?: (string|null);
+
+        /** DeleteUserToken reason */
+        reason?: (string|null);
+
+        /** DeleteUserToken requestTimeStamp */
+        requestTimeStamp?: (number|Long|null);
+
+        /** DeleteUserToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
+    }
+
+    /** Represents a DeleteUserToken. */
+    class DeleteUserToken implements IDeleteUserToken {
+
+        /**
+         * Constructs a new DeleteUserToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IDeleteUserToken);
+
+        /** DeleteUserToken userIdForDelete. */
+        public userIdForDelete: number;
+
+        /** DeleteUserToken username. */
+        public username: string;
+
+        /** DeleteUserToken reason. */
+        public reason: string;
+
+        /** DeleteUserToken requestTimeStamp. */
+        public requestTimeStamp: (number|Long);
+
+        /** DeleteUserToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
+
+        /**
+         * Creates a new DeleteUserToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteUserToken instance
+         */
+        public static create(properties?: Tokens.IDeleteUserToken): Tokens.DeleteUserToken;
+
+        /**
+         * Encodes the specified DeleteUserToken message. Does not implicitly {@link Tokens.DeleteUserToken.verify|verify} messages.
+         * @param message DeleteUserToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IDeleteUserToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteUserToken message, length delimited. Does not implicitly {@link Tokens.DeleteUserToken.verify|verify} messages.
+         * @param message DeleteUserToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IDeleteUserToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteUserToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteUserToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.DeleteUserToken;
+
+        /**
+         * Decodes a DeleteUserToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteUserToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.DeleteUserToken;
+
+        /**
+         * Verifies a DeleteUserToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteUserToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteUserToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.DeleteUserToken;
+
+        /**
+         * Creates a plain object from a DeleteUserToken message. Also converts values to other types if specified.
+         * @param message DeleteUserToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.DeleteUserToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteUserToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** ProcessTokenType enum. */
     enum ProcessTokenType {
         CHANGE_EMAIL = 0,
@@ -19378,7 +20127,8 @@ export namespace Tokens {
         USERNAME_VERIFICATION = 3,
         DEVICE_VERIFICATION = 4,
         CREATE_ACCOUNT_VERIFICATION = 5,
-        REDEEM_PERSONAL_LICENSE = 6
+        REDEEM_PERSONAL_LICENSE = 6,
+        DELETE_ACCOUNT_VERIFICATION = 7
     }
 
     /** Properties of a ProcessToken. */
@@ -27881,6 +28631,108 @@ export namespace SsoCloud {
 
         /**
          * Converts this SsoCloudResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SsoCloudLogRequest. */
+    interface ISsoCloudLogRequest {
+
+        /** SsoCloudLogRequest ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SsoCloudLogRequest serviceName */
+        serviceName?: (string|null);
+
+        /** SsoCloudLogRequest serviceId */
+        serviceId?: (number|null);
+    }
+
+    /** This allows the user to retrieve or clear SSO logs related to a service provider. */
+    class SsoCloudLogRequest implements ISsoCloudLogRequest {
+
+        /**
+         * Constructs a new SsoCloudLogRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoCloudLogRequest);
+
+        /** SsoCloudLogRequest ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SsoCloudLogRequest serviceName. */
+        public serviceName: string;
+
+        /** SsoCloudLogRequest serviceId. */
+        public serviceId: number;
+
+        /**
+         * Creates a new SsoCloudLogRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoCloudLogRequest instance
+         */
+        public static create(properties?: SsoCloud.ISsoCloudLogRequest): SsoCloud.SsoCloudLogRequest;
+
+        /**
+         * Encodes the specified SsoCloudLogRequest message. Does not implicitly {@link SsoCloud.SsoCloudLogRequest.verify|verify} messages.
+         * @param message SsoCloudLogRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoCloudLogRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoCloudLogRequest message, length delimited. Does not implicitly {@link SsoCloud.SsoCloudLogRequest.verify|verify} messages.
+         * @param message SsoCloudLogRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoCloudLogRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoCloudLogRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoCloudLogRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoCloudLogRequest;
+
+        /**
+         * Decodes a SsoCloudLogRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoCloudLogRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoCloudLogRequest;
+
+        /**
+         * Verifies a SsoCloudLogRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoCloudLogRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoCloudLogRequest
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoCloudLogRequest;
+
+        /**
+         * Creates a plain object from a SsoCloudLogRequest message. Also converts values to other types if specified.
+         * @param message SsoCloudLogRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoCloudLogRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoCloudLogRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

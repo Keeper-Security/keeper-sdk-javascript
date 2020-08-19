@@ -174,7 +174,6 @@ export class Auth {
         this.options = {
             ...options,
             ...options.deviceConfig && {deviceConfig: {...options.deviceConfig}},
-            ...options.authUI && {authUI: {...options.authUI}},
             ...options.authUI3 && {authUI3: {...options.authUI3}},
         }
 

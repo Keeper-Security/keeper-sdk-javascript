@@ -37,7 +37,17 @@ export class Company {
         this._data = await this.auth.executeCommand(getEnterpriseDataCommand);
 
         if (this._data.msp_key) {
-            let key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+            let key4TreeKey
+            switch (this._data.msp_key.encrypted_msp_tree_key_type) {
+                case 'encrypted_by_data_key':
+                    key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+                    break;
+                case 'encrypted_by_public_key':
+                    key4TreeKey = platform.privateDecrypt(normal64Bytes(this._data.msp_key.encrypted_msp_tree_key), this.auth.privateKey)
+                    break;
+                case 'no_key':
+                    throw new Error('invalid value for encrypted_msp_tree_key_type')
+            }
             this.treeKey = await decryptKey(this._data.tree_key, key4TreeKey);
         } else {
             if (this._data.key_type_id === 1) {

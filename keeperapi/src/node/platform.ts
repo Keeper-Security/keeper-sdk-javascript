@@ -47,7 +47,7 @@ export const nodePlatform: Platform = class {
      * Returns the keys as an object created by the NodeRSA library.
      */
     static async generateRSAKeyPair2(): Promise<any> {
-        return new NodeRSA({b: 1024});
+        return new NodeRSA({b: 2048});
     }
 
     static generateECKeyPair(): { privateKey: Uint8Array; publicKey: Uint8Array } {

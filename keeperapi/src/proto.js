@@ -1512,10 +1512,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           verificationCode: {
             type: "string",
             id: 3
-          },
-          messageSessionUid: {
-            type: "bytes",
-            id: 4
           }
         }
       },
@@ -1648,6 +1644,102 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      SupportToolDeleteUserRequest: {
+        fields: {
+          agentUsername: {
+            type: "string",
+            id: 1
+          },
+          usernameForDelete: {
+            type: "string",
+            id: 2
+          },
+          reason: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      DeleteUserWithVerificationCodeRequest: {
+        fields: {
+          agentUsername: {
+            type: "string",
+            id: 1
+          },
+          usernameForDelete: {
+            type: "string",
+            id: 2
+          },
+          reason: {
+            type: "string",
+            id: 3
+          },
+          verificationCode: {
+            type: "string",
+            id: 4
+          },
+          override: {
+            type: "bool",
+            id: 5
+          }
+        }
+      },
+      DeleteUserWithVerificationCodeResponse: {
+        fields: {
+          deletedUserId: {
+            type: "int32",
+            id: 1
+          },
+          deletedUsername: {
+            type: "string",
+            id: 2
+          },
+          deletedAccountUid: {
+            type: "bytes",
+            id: 3
+          },
+          deletedBy: {
+            type: "string",
+            id: 4
+          },
+          reason: {
+            type: "string",
+            id: 5
+          },
+          deleteDateTime: {
+            type: "string",
+            id: 6
+          }
+        }
+      },
+      SupportToolRestoreDeletedUser: {
+        fields: {
+          agentUsername: {
+            type: "string",
+            id: 1
+          },
+          deletedUsername: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      SupportToolRestoredUser: {
+        fields: {
+          userId: {
+            type: "int32",
+            id: 1
+          },
+          username: {
+            type: "string",
+            id: 2
+          },
+          accountUid: {
+            type: "bytes",
+            id: 3
+          }
+        }
+      },
       UserDataKeyRequest: {
         fields: {
           enterpriseUserId: {
@@ -1657,14 +1749,7 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
-      DataKeyStatus: {
-        values: {
-          DK_OK: 0,
-          DK_DOESNOT_EXIST: 1,
-          DK_ACCESS_DENIED: 2
-        }
-      },
-      UserDataKey: {
+      EnterpriseUserIdDataKeyPair: {
         fields: {
           enterpriseUserId: {
             type: "int64",
@@ -1673,13 +1758,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           encryptedDataKey: {
             type: "bytes",
             id: 2
+          }
+        }
+      },
+      UserDataKey: {
+        fields: {
+          roleId: {
+            type: "int64",
+            id: 1
           },
           roleKey: {
             type: "bytes",
+            id: 2
+          },
+          privateKey: {
+            type: "string",
             id: 3
           },
-          status: {
-            type: "DataKeyStatus",
+          enterpriseUserIdDataKeyPairs: {
+            rule: "repeated",
+            type: "EnterpriseUserIdDataKeyPair",
             id: 4
           }
         }
@@ -1690,6 +1788,16 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "UserDataKey",
             id: 1
+          },
+          accessDenied: {
+            rule: "repeated",
+            type: "int64",
+            id: 2
+          },
+          noEncryptedDataKey: {
+            rule: "repeated",
+            type: "int64",
+            id: 3
           }
         }
       }
@@ -3445,6 +3553,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           username: {
             type: "string",
             id: 13
+          },
+          relogin: {
+            type: "bool",
+            id: 14
           }
         }
       },
@@ -3894,6 +4006,30 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      DeleteUserToken: {
+        fields: {
+          userIdForDelete: {
+            type: "int32",
+            id: 1
+          },
+          username: {
+            type: "string",
+            id: 2
+          },
+          reason: {
+            type: "string",
+            id: 3
+          },
+          requestTimeStamp: {
+            type: "int64",
+            id: 4
+          },
+          supportedLanguage: {
+            type: "Authentication.SupportedLanguage",
+            id: 5
+          }
+        }
+      },
       ProcessTokenType: {
         values: {
           CHANGE_EMAIL: 0,
@@ -3902,7 +4038,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           USERNAME_VERIFICATION: 3,
           DEVICE_VERIFICATION: 4,
           CREATE_ACCOUNT_VERIFICATION: 5,
-          REDEEM_PERSONAL_LICENSE: 6
+          REDEEM_PERSONAL_LICENSE: 6,
+          DELETE_ACCOUNT_VERIFICATION: 7
         }
       },
       ProcessToken: {
@@ -5517,6 +5654,22 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           errorToken: {
             type: "string",
             id: 8
+          }
+        }
+      },
+      SsoCloudLogRequest: {
+        fields: {
+          ssoServiceProviderId: {
+            type: "uint64",
+            id: 1
+          },
+          serviceName: {
+            type: "string",
+            id: 2
+          },
+          serviceId: {
+            type: "uint32",
+            id: 3
           }
         }
       },

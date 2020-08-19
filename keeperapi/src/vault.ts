@@ -157,6 +157,9 @@ export class Vault {
                 sharedFolder: sharedFolder
             }
             this._sharedFolders[sharedFolder.shared_folder_uid] = vaultFolder
+            if (!(sharedFolder.shared_folder_key && sharedFolder.key_type)) {
+                continue
+            }
             try {
                 vaultFolder.key = await this.decryptKey(sharedFolder.shared_folder_key, sharedFolder.key_type);
                 for (let sfRecord of sharedFolder.records || []) {
