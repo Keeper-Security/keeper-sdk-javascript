@@ -141,6 +141,9 @@ export const ssoCloudServiceProviderUpdateRequestMessage = (data: SsoCloud.ISsoC
 export const ssoCloudConfigurationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationRequest, url: string): RestMessage<SsoCloud.ISsoCloudConfigurationRequest, SsoCloud.ISsoCloudConfigurationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationRequest, SsoCloud.SsoCloudConfigurationResponse);
 
+export const ssoCloudLogRequestMessage = (data: SsoCloud.ISsoCloudLogRequest, url: string): RestMessage<SsoCloud.ISsoCloudLogRequest, ServiceLogger.IServiceLogResponse> =>
+    createMessage(data, url, SsoCloud.SsoCloudLogRequest, ServiceLogger.ServiceLogResponse);
+
 export const ssoCloudSAMLLogRequestMessage = (data: SsoCloud.ISsoCloudSAMLLogRequest, url: string): RestMessage<SsoCloud.ISsoCloudSAMLLogRequest, SsoCloud.ISsoCloudSAMLLogResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudSAMLLogRequest, SsoCloud.SsoCloudSAMLLogResponse);
 
