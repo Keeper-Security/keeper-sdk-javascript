@@ -157,25 +157,33 @@ export class Auth {
     dataKey: Uint8Array;
     privateKey: Uint8Array;
     private _accountUid: Uint8Array;
-    private _sessionToken: string;
-    private _username: string;
+    private _sessionToken: string = '';
+    private _username: string = '';
     private endpoint: KeeperEndpoint;
     private managedCompanyId?: number;
     private messageSessionUid: Uint8Array;
     private options: ClientConfigurationInternal
-    private socket: SocketListener;
+    private socket: SocketListener | undefined;
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
             throw new Error('Both loginV2 and loginV3 token strategies supplied')
         }
 
-        // De-reference user provided config
-        this.options = {
-            ...options,
-            ...options.deviceConfig && {deviceConfig: {...options.deviceConfig}},
-            ...options.authUI && {authUI: {...options.authUI}},
-            ...options.authUI3 && {authUI3: {...options.authUI3}},
+        // De-reference user provided config if requested
+        if (options.cloneConfig) {
+            this.options = {
+                ...options,
+                ...options.deviceConfig && {deviceConfig: {...options.deviceConfig}},
+                ...options.authUI && {authUI: {...options.authUI}},
+                ...options.authUI3 && {authUI3: {...options.authUI3}},
+            }
+        }
+        else {
+            this.options = {
+                ...options,
+                deviceConfig: {...options.deviceConfig}
+            }
         }
 
         if (!this.options.deviceConfig) {
@@ -348,7 +356,7 @@ export class Auth {
                 break
 
             case DeviceVerificationMethods.TFACode:
-                promiseFromUser = this.handleTwoFactorCode(loginToken)
+                promiseFromUser = this.handleTwoFactorCode(loginToken, DeviceVerificationMethods.TFACode)
                 waitOnSocket = false
                 break
 
@@ -362,7 +370,7 @@ export class Auth {
                 await this.executeRest(twoFactorSend2FAPushMessage({
                     encryptedLoginToken: loginToken,
                 }))
-                promiseFromUser = this.handleTwoFactorCode(loginToken)
+                promiseFromUser = this.handleTwoFactorCode(loginToken, DeviceVerificationMethods.SMS)
                 waitOnSocket = false
                 break
 
@@ -384,6 +392,9 @@ export class Auth {
         return new Promise<Uint8Array>(async (resolve, reject) => {
             let result: Uint8Array = loginToken
             while (true) {
+                if (!this.socket) {
+                    throw new Error('No socket available')
+                }
                 const pushMessage = await this.socket.getPushMessage()
                 const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
                 const wssRs = JSON.parse(wssClientResponse.message)
@@ -485,6 +496,9 @@ export class Auth {
             await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
         }
         if (codeLessPush) {
+            if (!this.socket) {
+                throw new Error('No socket available')
+            }
             const pushMessage = await this.socket.getPushMessage()
             const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
             const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
@@ -498,13 +512,16 @@ export class Auth {
         }
     }
 
-    private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
+    private async handleTwoFactorCode(
+      loginToken: Uint8Array,
+      verifyMethod?: DeviceVerificationMethods.SMS | DeviceVerificationMethods.TFACode
+    ): Promise<Uint8Array> {
         while (true) {
             try {
                 if (!this.options.authUI3) {
                     throw new Error('No authUI3 provided. authUI3 required to verify devices')
                 }
-                const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+                const twoFactorInput = await this.options.authUI3.getTwoFactorCode(verifyMethod)
                 const twoFactorValidateMsg = twoFactorValidateMessage({
                     encryptedLoginToken: loginToken,
                     value: twoFactorInput.twoFactorCode,
@@ -548,6 +565,9 @@ export class Auth {
 
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
         this.dataKey = await decryptEncryptionParams(password, loginResp.encryptedDataKey);
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
         this.socket.registerLogin(this._sessionToken)
     }
 
@@ -809,18 +829,30 @@ export class Auth {
     }
 
     onClose(callback: () => void): void {
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
         this.socket.onClose(callback)
     }
 
     onError(callback: () => void): void {
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
         this.socket.onError(callback)
     }
 
     onPushMessage(callback: (data: any) => void): void {
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
         this.socket.onPushMessage(callback)
     }
 
     async getPushMessage(): Promise<any> {
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
         const pushMessage = await this.socket.getPushMessage()
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
         console.log(wssClientResponse.message)

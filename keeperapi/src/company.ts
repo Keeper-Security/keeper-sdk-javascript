@@ -37,7 +37,17 @@ export class Company {
         this._data = await this.auth.executeCommand(getEnterpriseDataCommand);
 
         if (this._data.msp_key) {
-            let key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+            let key4TreeKey
+            switch (this._data.msp_key.encrypted_msp_tree_key_type) {
+                case 'encrypted_by_data_key':
+                    key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+                    break;
+                case 'encrypted_by_public_key':
+                    key4TreeKey = platform.privateDecrypt(normal64Bytes(this._data.msp_key.encrypted_msp_tree_key), this.auth.privateKey)
+                    break;
+                case 'no_key':
+                    throw new Error('invalid value for encrypted_msp_tree_key_type')
+            }
             this.treeKey = await decryptKey(this._data.tree_key, key4TreeKey);
         } else {
             if (this._data.key_type_id === 1) {
@@ -60,8 +70,7 @@ export class Company {
             if (node.parent_id) {
                 let parent = this._data.nodes.find(x => x.node_id == node.parent_id);
                 if (!parent) {
-                    console.warn('Unable to find parent for node:', node)
-                    continue
+                    throw new Error(`Unable to find parent for node:${node.parent_id}`)
                 }
 
                 if (!parent.nodes) {
@@ -78,8 +87,7 @@ export class Company {
 
             let node = this._data.nodes.find(x => x.node_id == role.node_id);
             if (!node) {
-                console.warn('Unable to find node for role:', role)
-                continue
+                throw new Error(`Unable to find node for role:${role.node_id}`)
             }
 
             if (!node.roles) {
@@ -91,8 +99,7 @@ export class Company {
         for (let team of this._data.teams) {
             let node = this._data.nodes.find(x => x.node_id == team.node_id);
             if (!node) {
-                console.warn('Unable to find node for team:', team)
-                continue
+                throw new Error(`Unable to find node for team:${team.node_id}`)
             }
 
             if (!node.teams) {
@@ -115,8 +122,7 @@ export class Company {
 
             let node = this._data.nodes.find(x => x.node_id == user.node_id);
             if (!node) {
-                console.warn('Unable to find node for user:', user)
-                continue
+                throw new Error(`Unable to find node for user:${user.node_id}`)
             }
 
             if (!node.users) {
@@ -130,8 +136,7 @@ export class Company {
 
                     const role = this._data.roles.find(x => x.role_id === user_role.role_id)
                     if (!role) {
-                        console.warn('Unable to find role for user_role:', user_role)
-                        continue
+                        throw new Error(`Unable to find role for user_role:${user_role.role_id}`)
                     }
 
                     user.roles.push(role)
@@ -145,8 +150,7 @@ export class Company {
 
                     const team = this._data.teams.find(x => x.team_uid === user_team.team_uid)
                     if (!team) {
-                        console.warn('Unable to find team for user_team:', user_team)
-                        continue
+                        throw new Error(`Unable to find team for user_team:${user_team.team_uid}`)
                     }
 
                     user.teams.push(team)

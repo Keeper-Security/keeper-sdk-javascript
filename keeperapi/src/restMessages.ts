@@ -59,6 +59,9 @@ export const approveDeviceMessage = (data: Authentication.IApproveDeviceRequest)
 export const validateDeviceVerificationCodeMessage = (data: Authentication.IValidateDeviceVerificationCodeRequest): RestMessage<Authentication.IValidateDeviceVerificationCodeRequest, {}> =>
     createMessage(data, 'authentication/validate_device_verification_code', Authentication.ValidateDeviceVerificationCodeRequest, null)
 
+export const validateCreateUserVerificationCodeMessage = (data: Authentication.IValidateCreateUserVerificationCodeRequest): RestMessage<Authentication.IValidateCreateUserVerificationCodeRequest, {}> =>
+    createMessage(data, 'authentication/validate_create_user_verification_code', Authentication.ValidateCreateUserVerificationCodeRequest, null)
+
 export const approveUserDevicesMessage = (data: Enterprise.IApproveUserDevicesRequest): RestMessage<Enterprise.IApproveUserDevicesRequest, Enterprise.IApproveUserDevicesResponse> =>
     createMessage(data, 'enterprise/approve_user_devices', Enterprise.ApproveUserDevicesRequest, Enterprise.ApproveUserDevicesResponse)
 

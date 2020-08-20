@@ -5,14 +5,15 @@ import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 export type KeeperHost = KeeperEnvironment | string
 
 export interface ClientConfiguration {
-    host: KeeperHost
-    clientVersion?: string
-    deviceToken?: Uint8Array // pre - v15 device token
-    onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
-    deviceConfig?: DeviceConfig // v15+ device config
-    onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     authUI?: AuthUI
     authUI3?: AuthUI3
+    clientVersion?: string
+    cloneConfig?: boolean
+    deviceConfig?: DeviceConfig // v15+ device config
+    deviceToken?: Uint8Array // pre - v15 device token
+    host: KeeperHost
+    onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
+    onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
 }
 export interface ClientConfigurationInternal extends ClientConfiguration {
     deviceConfig: DeviceConfig // v15+ device config
@@ -46,7 +47,7 @@ export interface AuthUI3 {
     getDeviceVerificationCode(): Promise<string>;
     getDeviceVerificationMethod(): Promise<DeviceVerificationMethods>;
     getPassword?(): Promise<string>;
-    getTwoFactorCode(): Promise<TwoFactorInput>;
+    getTwoFactorCode(verifyMethod?: DeviceVerificationMethods.SMS | DeviceVerificationMethods.TFACode): Promise<TwoFactorInput>;
     getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
     redirectCallback?(url: string): void;
 }

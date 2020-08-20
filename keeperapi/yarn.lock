@@ -1063,10 +1063,6 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
-"ecies@git+ssh://git@github.com/Keeper-Security/ecies.git":
-  version "1.0.1"
-  resolved "git+ssh://git@github.com/Keeper-Security/ecies.git#97ec2d465b72da8eac710994fa2709428da47508"
-
 emoji-regex@^7.0.1:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"

@@ -32,14 +32,38 @@ async function testRegistration() {
 
     const iterations = 1000
     const dataKey = generateEncryptionKey()
-
+    //
     const authVerifier = await createAuthVerifier(password, iterations)
     const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
-    // const rsaKeys = await platform.generateRSAKeyPair()
-    // const rsaEncryptedPrivateKey = await platform.aesGcmEncrypt(rsaKeys.privateKey, dataKey)
+
+
+    const rsaKeys = await platform.generateRSAKeyPair2()
+    // const pk = getPrivateKey(rsaKeys.keyPair)
+    const rsaPublicKey: Buffer = rsaKeys.exportKey('public-der');
+    const rsaPrivateKey: Buffer = rsaKeys.exportKey('private-der');
+
+
+    // const keyPair = generateKeyPairSync("rsa", {
+    //     modulusLength: 2048,
+    // })
+    // console.log(keyPair.privateKey.export({
+    //     format: 'der',
+    //     type: 'pkcs1'
+    // }))
+
+    const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaPrivateKey, dataKey, true)
+    const encryptedClientKey = await platform.aesCbcEncrypt(generateEncryptionKey(), dataKey, true)
+    // const rsaEncryptedPrivateKey1 = await platform.aesCbcEncrypt(pk, dataKey, true)
+
+    console.log(rsaEncryptedPrivateKey.length)
+    // console.log(rsaEncryptedPrivateKey1)
+
+
     const ecdh = createECDH('prime256v1')
     ecdh.generateKeys()
     const eccEncryptedPrivateKey = await platform.aesGcmEncrypt(ecdh.getPrivateKey(), dataKey)
+
+    // const code = await prompt('Enter code:\n')
 
     const regUserMsg = requestCreateUserMessage({
         username: userName,
@@ -47,18 +71,32 @@ async function testRegistration() {
         encryptionParams: encryptionParams,
         encryptedDeviceToken: deviceConfig.deviceToken,
         clientVersion: clientVersion,
-        rsaEncryptedPrivateKey: generateEncryptionKey(),
-        rsaPublicKey: generateEncryptionKey(),
-        encryptedDeviceDataKey: generateEncryptionKey(),
+        rsaEncryptedPrivateKey: rsaEncryptedPrivateKey,
+        rsaPublicKey: rsaPublicKey,
         eccPublicKey: ecdh.getPublicKey(),
-        eccEncryptedPrivateKey: eccEncryptedPrivateKey
+        eccEncryptedPrivateKey: eccEncryptedPrivateKey,
+        encryptedClientKey: encryptedClientKey,
+        verificationCode: '6119991210'
+        // encryptedDeviceDataKey: // ??
     })
 
     const regUserResp = await auth.executeRest(regUserMsg)
     console.log(regUserResp)
+
+    // const code = await prompt('Enter code:\n')
+    // const validateMsg = validateCreateUserVerificationCodeMessage({
+    //     username: userName,
+    //     verificationCode: code,
+    //     clientVersion: clientVersion
+    // })
+    //
+    // const validateResp = await auth.executeRest(validateMsg)
+    // console.log(validateMsg)
+
 }
 
 async function testLogin() {
+
     const { userName, password, host } = getCredentialsAndHost()
 
     const deviceConfig = getDeviceConfig(host)
