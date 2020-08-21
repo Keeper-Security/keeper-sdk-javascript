@@ -200,6 +200,26 @@ export class Auth {
         this.messageSessionUid = generateUidBytes()
     }
 
+    get _endpoint(): KeeperEndpoint {
+        return this.endpoint;
+    }
+
+    get accountUid(): Uint8Array {
+        return this._accountUid;
+    }
+
+    get clientVersion(): string {
+        return this.endpoint.clientVersion;
+    }
+
+    get sessionToken(): string {
+        return this._sessionToken;
+    }
+
+    get username(): string {
+        return this._username;
+    }
+
     getMessageSessionUid(): Uint8Array {
         return this.messageSessionUid;
     }
@@ -796,22 +816,6 @@ export class Auth {
 
     async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any, useGet?: boolean): Promise<string> {
         return this.endpoint.executeRestToHTML(message, sessionToken, formParams, useGet);
-    }
-
-    public get sessionToken(): string {
-        return this._sessionToken;
-    }
-
-    get username(): string {
-        return this._username;
-    }
-
-    get clientVersion(): string {
-        return this.endpoint.clientVersion;
-    }
-
-    get _endpoint(): KeeperEndpoint {
-        return this.endpoint;
     }
 
     async get(path: string) {
