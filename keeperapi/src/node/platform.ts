@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { createECDH } from 'crypto';
+import {createECDH} from "crypto";
 import * as https from "https";
 import * as FormData from "form-data"
 import * as NodeRSA from 'node-rsa';
@@ -9,7 +9,7 @@ import {Platform} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
-import { SocketProxy } from '../auth'
+import {SocketProxy} from '../auth'
 
 const open = require('open');
 
@@ -73,6 +73,17 @@ export const nodePlatform: Platform = class {
         }, data)
     }
 
+    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        const ecdh = createECDH('prime256v1')
+        ecdh.generateKeys()
+        const ephemeralPublicKey = ecdh.getPublicKey()
+        const sharedSecret = ecdh.computeSecret(key)
+        const sharedSecretCombined = Buffer.concat([sharedSecret, id || new Uint8Array()])
+        const symmetricKey = crypto.createHash("SHA256").update(sharedSecretCombined).digest()
+        const encryptedData = await this.aesGcmEncrypt(data, symmetricKey)
+        return Buffer.concat([ephemeralPublicKey, encryptedData])
+    }
+
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
         return crypto.privateDecrypt({
             key: crypto.createPrivateKey({
@@ -82,6 +93,18 @@ export const nodePlatform: Platform = class {
             }),
             padding: RSA_PKCS1_PADDING
         }, data);
+    }
+
+    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        const ecdh = createECDH('prime256v1')
+        ecdh.setPrivateKey(privateKey)
+        const publicKeyLength = 65
+        const ephemeralPublicKey = data.slice(0, publicKeyLength)
+        const sharedSecret = ecdh.computeSecret(ephemeralPublicKey)
+        const sharedSecretCombined = Buffer.concat([sharedSecret, id || new Uint8Array()])
+        const symmetricKey = crypto.createHash("SHA256").update(sharedSecretCombined).digest()
+        const encryptedData = data.slice(publicKeyLength)
+        return await this.aesGcmDecrypt(encryptedData, symmetricKey)
     }
 
     static privateSign(data: Uint8Array, key: string): Promise<Uint8Array> {

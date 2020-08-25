@@ -1,7 +1,7 @@
 import {Platform} from "../platform";
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
-import {AES, pad, enc, mode} from "crypto-js";
+import {AES, enc, mode, pad} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
 import {normal64} from "../utils";
@@ -105,6 +105,23 @@ export const browserPlatform: Platform = class {
         return hexToBytes(encryptedBinary);
     }
 
+    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        const ephemeralKeyPair = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+        const ephemeralPublicKey = await crypto.subtle.exportKey('raw', ephemeralKeyPair.publicKey)
+        const recipientPublicKey = await crypto.subtle.importKey('raw', key, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
+        const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: recipientPublicKey }, ephemeralKeyPair.privateKey, 256)
+        const idBytes = id || new Uint8Array()
+        const sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + idBytes.byteLength)
+        sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
+        sharedSecretCombined.set(idBytes, sharedSecret.byteLength)
+        const symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+        const cipherText = await this.aesGcmEncrypt(data, new Uint8Array(symmetricKey))
+        const result = new Uint8Array(ephemeralPublicKey.byteLength + cipherText.byteLength)
+        result.set(new Uint8Array(ephemeralPublicKey), 0)
+        result.set(new Uint8Array(cipherText), ephemeralPublicKey.byteLength)
+        return result
+    }
+
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
         let pkh = bytesToHex(key);
         const rsa = new RSAKey();
@@ -112,6 +129,38 @@ export const browserPlatform: Platform = class {
         const hexBytes = bytesToHex(data);
         const decryptedBinary = rsa.decryptBinary(hexBytes);
         return hexToBytes(decryptedBinary);
+    }
+
+    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        const privateKeyImport = await (async () => {
+            const x = this.bytesToBase64(publicKey.subarray(1, 33))
+            const y = this.bytesToBase64(publicKey.subarray(33, 65))
+            const d = this.bytesToBase64(privateKey)
+
+            const jwk = {
+                'crv': 'P-256',
+                d,
+                'ext': true,
+                'key_ops': [
+                    'deriveBits'
+                ],
+                'kty': 'EC',
+                x,
+                y
+            }
+
+            return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+        })()
+        const publicKeyLength = 65
+        const message = data.slice(publicKeyLength)
+        const ephemeralPublicKey = data.slice(0, publicKeyLength)
+        const pubCryptoKey = await crypto.subtle.importKey('raw', ephemeralPublicKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
+        const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: pubCryptoKey }, privateKeyImport, 256)
+        const sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + id.byteLength)
+        sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
+        sharedSecretCombined.set(id, sharedSecret.byteLength)
+        const symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+        return await this.aesGcmDecrypt(message, new Uint8Array(symmetricKey))
     }
 
     // TODO Not tested

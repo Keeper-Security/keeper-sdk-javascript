@@ -22,7 +22,11 @@ export interface Platform {
 
     publicEncrypt(data: Uint8Array, key: string): Uint8Array;
 
+    publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array>
+
     privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array;
+
+    privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array>
 
     privateSign(data: Uint8Array, key: string): Promise<Uint8Array>;
 
