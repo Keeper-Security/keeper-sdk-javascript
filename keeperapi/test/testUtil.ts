@@ -50,6 +50,7 @@ export const authUI3: AuthUI3 = {
 
 type DeviceConfigStorage = {
     deviceToken: string
+    cloneCode: string
     privateKey: string
     publicKey: string
     transmissionKeyId: number
@@ -64,6 +65,7 @@ export function readDeviceConfig(fileName: string): DeviceConfig {
         const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync(fileName).toString())
         return {
             deviceToken: configStorage.deviceToken ? platform.base64ToBytes(configStorage.deviceToken) : undefined,
+            cloneCode: configStorage.cloneCode ? platform.base64ToBytes(configStorage.cloneCode) : undefined,
             publicKey: configStorage.publicKey ? platform.base64ToBytes(configStorage.publicKey) : undefined,
             privateKey: configStorage.privateKey ? platform.base64ToBytes(configStorage.privateKey) : undefined,
             transmissionKeyId: configStorage.transmissionKeyId
@@ -72,6 +74,7 @@ export function readDeviceConfig(fileName: string): DeviceConfig {
     catch (e) {
         return {
             deviceToken: undefined,
+            cloneCode: undefined,
             privateKey: undefined,
             publicKey: undefined,
             transmissionKeyId: 0
@@ -83,6 +86,7 @@ export function saveDeviceConfig(deviceConfig: DeviceConfig, environment: Keeper
 
     const configStorage: DeviceConfigStorage = {
         deviceToken: deviceConfig.deviceToken ? platform.bytesToBase64(deviceConfig.deviceToken) : undefined,
+        cloneCode: deviceConfig.cloneCode ? platform.bytesToBase64(deviceConfig.cloneCode) : undefined,
         publicKey: deviceConfig.publicKey ? platform.bytesToBase64(deviceConfig.publicKey) : undefined,
         privateKey: deviceConfig.privateKey ? platform.bytesToBase64(deviceConfig.privateKey): undefined,
         transmissionKeyId: deviceConfig.transmissionKeyId

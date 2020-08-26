@@ -21,6 +21,7 @@ export interface ClientConfigurationInternal extends ClientConfiguration {
 
 export interface DeviceConfig {
     deviceToken: Uint8Array | null
+    cloneCode: Uint8Array | null
     privateKey: Uint8Array | null
     publicKey: Uint8Array | null
     transmissionKeyId: number | null

@@ -189,6 +189,7 @@ export class Auth {
         if (!this.options.deviceConfig) {
             this.options.deviceConfig = {
                 deviceToken: null,
+                cloneCode: null,
                 privateKey: null,
                 publicKey: null,
                 transmissionKeyId: null,
@@ -259,7 +260,12 @@ export class Auth {
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             } else {
-                startLoginRequest.username = username
+                if (this.options.deviceConfig.cloneCode) {
+                    startLoginRequest.cloneCode = this.options.deviceConfig.cloneCode
+                }
+                else {
+                    startLoginRequest.username = username
+                }
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             console.log(loginResponse)
@@ -280,8 +286,13 @@ export class Auth {
                 case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                 case Authentication.LoginState.LOGGED_OUT:
-                case Authentication.LoginState.REQUIRES_USERNAME:
                 case Authentication.LoginState.UPGRADE:
+                    break;
+                case Authentication.LoginState.REQUIRES_USERNAME:
+                    this.options.deviceConfig.cloneCode = undefined
+                    if (this.options.onDeviceConfig) {
+                        this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
+                    }
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
                     if (!loginResponse.encryptedLoginToken) {
@@ -332,6 +343,7 @@ export class Auth {
                       webSafe64FromBytes(loginResponse.encryptedSessionToken),
                       loginResponse.accountUid
                     )
+                    this.dataKey = await platform.privateDecryptEC(loginResponse.encryptedDataKey, this.options.deviceConfig.privateKey, this.options.deviceConfig.publicKey)
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
             }
@@ -578,17 +590,16 @@ export class Auth {
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
-
+        this.options.deviceConfig.cloneCode = loginResp.cloneCode
+        if (this.options.onDeviceConfig) {
+            this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
+        }
         if (!loginResp.encryptedSessionToken || !loginResp.encryptedDataKey || !loginResp.accountUid) {
             throw new Error('Parameters missing from API response')
         }
 
         this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
         this.dataKey = await decryptEncryptionParams(password, loginResp.encryptedDataKey);
-        if (!this.socket) {
-            throw new Error('No socket available')
-        }
-        this.socket.registerLogin(this._sessionToken)
     }
 
     async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
@@ -826,6 +837,10 @@ export class Auth {
         this._username = userName;
         this._sessionToken = sessionToken;
         this._accountUid = accountUid;
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
+        this.socket.registerLogin(this._sessionToken)
     }
 
     async registerDevice() {

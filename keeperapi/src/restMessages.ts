@@ -65,6 +65,9 @@ export const validateCreateUserVerificationCodeMessage = (data: Authentication.I
 export const approveUserDevicesMessage = (data: Enterprise.IApproveUserDevicesRequest): RestMessage<Enterprise.IApproveUserDevicesRequest, Enterprise.IApproveUserDevicesResponse> =>
     createMessage(data, 'enterprise/approve_user_devices', Enterprise.ApproveUserDevicesRequest, Enterprise.ApproveUserDevicesResponse)
 
+export const registerEncryptedDataKeyForDeviceMessage = (data: Authentication.IRegisterDeviceDataKeyRequest): RestMessage<Authentication.IRegisterDeviceDataKeyRequest, {}> =>
+    createMessage(data, 'authentication/register_encrypted_data_key_for_device', Authentication.RegisterDeviceDataKeyRequest, null)
+
 // end new login
 
 export const deviceMessage = (data: Authentication.IDeviceRequest): RestMessage<Authentication.IDeviceRequest, Authentication.IDeviceResponse> =>

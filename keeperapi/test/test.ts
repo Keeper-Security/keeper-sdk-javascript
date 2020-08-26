@@ -331,7 +331,8 @@ async function printRecordTypes() {
 
 async function printCompany() {
     try {
-        let auth = await login()
+        // let auth = await login(null, 81169)
+        let auth = await login(null, 77395)
         let company = new Company(auth)
         let allIncludes: EnterpriseDataInclude[] = [
             'nodes',
@@ -667,7 +668,7 @@ async function testSharedLinkedRecordUpdateExisting() {
     }
 }
 
-async function login(user?: string): Promise<Auth> {
+async function login(user?: string, managedCompanyId?: number): Promise<Auth> {
 
     const { userName, password, host } = getCredentialsAndHost()
 
@@ -685,9 +686,13 @@ async function login(user?: string): Promise<Auth> {
         host: host,
         deviceToken: deviceToken,
         onDeviceToken: saveDeviceToken,
-        authUI: authUI
+        authUI: authUI,
+        clientVersion: 'zt14.0.2'
     })
-    await auth.login(user || userName, password)
+    if (managedCompanyId)
+        await auth.managedCompanyLogin(user || userName, password, managedCompanyId)
+    else
+        await auth.login(user || userName, password)
     console.log(`login to ${userName} successful`)
     return auth;
 }
