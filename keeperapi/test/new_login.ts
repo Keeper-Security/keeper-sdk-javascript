@@ -1,16 +1,24 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
 import {
-    accountSummaryMessage,
+    accountSummaryMessage, approveDeviceMessage,
     registerEncryptedDataKeyForDeviceMessage,
     requestCreateUserMessage
 } from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
-import {authUI3, getCredentialsAndHost, getDeviceConfig, replayRest, saveDeviceConfig, prompt} from './testUtil';
+import {
+    authUI3,
+    getCredentialsAndHost,
+    getDeviceConfig,
+    replayRest,
+    saveDeviceConfig,
+    prompt, TestSessionStorage
+} from './testUtil';
 import {createECDH} from "crypto";
 import {Vault} from '../src/vault';
 import {SetTwoFactorAuthCommand, VerifyUserCommand} from '../src/commands';
+import * as fs from 'fs'
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -22,7 +30,7 @@ async function testRegistration() {
 
     const {userName, password, host} = getCredentialsAndHost()
 
-    const deviceConfig = getDeviceConfig(host)
+    const deviceConfig = getDeviceConfig('test device', host)
 
     const auth = new Auth({
         host: host,
@@ -103,13 +111,15 @@ async function testRegistration() {
 async function testLogin() {
     const {userName, password, host} = getCredentialsAndHost()
 
-    const deviceConfig = getDeviceConfig(host)
+    const deviceName = 'test device'
+
+    const deviceConfig = getDeviceConfig(deviceName, host)
 
     const auth = new Auth({
         host: host,
-        clientVersion: 'i15.0.0',
-        // clientVersion: clientVersion,
+        clientVersion: clientVersion,
         deviceConfig: deviceConfig,
+        sessionStorage: new TestSessionStorage(deviceName, host),
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3
     })
@@ -140,11 +150,91 @@ async function testLogin() {
         let resp = await auth.executeRest(accountSummaryMessage({
             summaryVersion: 1
         }));
-        console.log(resp)
+        console.log(resp.devices)
     } finally {
         auth.disconnect()
     }
+}
 
+async function testNewDevice() {
+    const {userName, password, host} = getCredentialsAndHost()
+
+    const deviceConfig = getDeviceConfig('device1', host)
+
+    const auth = new Auth({
+        host: host,
+        clientVersion: clientVersion,
+        deviceConfig: deviceConfig,
+        onDeviceConfig: saveDeviceConfig,
+        authUI3: authUI3
+    })
+    try {
+        await auth.loginV3({
+            username: userName,
+            password,
+        })
+        console.log(auth.dataKey)
+    } finally {
+        auth.disconnect()
+    }
+}
+
+async function testLoginToLinkedDevice() {
+    const {userName, password, host} = getCredentialsAndHost()
+
+    const deviceConfig = getDeviceConfig('device1', host)
+
+    const auth = new Auth({
+        host: host,
+        clientVersion: clientVersion,
+        deviceConfig: deviceConfig,
+        onDeviceConfig: saveDeviceConfig,
+        authUI3: authUI3
+    })
+    try {
+        await auth.loginV3({
+            username: userName,
+            password,
+        })
+        console.log(auth.dataKey)
+    } finally {
+        auth.disconnect()
+    }
+}
+
+async function testApproveNewDevice() {
+    const {userName, password, host} = getCredentialsAndHost()
+
+    const deviceConfig = getDeviceConfig('test device', host)
+
+    const auth = new Auth({
+        host: host,
+        clientVersion: clientVersion,
+        deviceConfig: deviceConfig,
+        onDeviceConfig: saveDeviceConfig,
+        authUI3: authUI3
+    })
+    try {
+        await auth.loginV3({
+            username: userName,
+            password,
+        })
+        console.log(auth.dataKey)
+
+        let resp = await auth.executeRest(accountSummaryMessage({
+            summaryVersion: 1
+        }));
+        const device2approve = resp.devices.find(x => x.deviceName === 'device1')
+        const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, device2approve.devicePublicKey)
+        let resp1 = await auth.executeRest(approveDeviceMessage({
+            encryptedDeviceToken: device2approve.encryptedDeviceToken,
+            encryptedDeviceDataKey: encryptedDeviceDataKey,
+            linkDevice: true
+        }))
+        console.log(resp1)
+    } finally {
+        auth.disconnect()
+    }
 }
 
 async function testECIES() {
@@ -159,5 +249,8 @@ async function testECIES() {
 
 // testRegistration().finally()
 testLogin().finally()
+// testNewDevice().finally()
+// testApproveNewDevice().finally()
+// testLoginToLinkedDevice().finally()
 // testECIES().finally()
 

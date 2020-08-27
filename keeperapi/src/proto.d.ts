@@ -67,7 +67,8 @@ export namespace Authentication {
         PURCHASE = 3,
         RESTRICT = 4,
         ACCEPT_INVITE = 5,
-        SUPPORT_SERVER = 6
+        SUPPORT_SERVER = 6,
+        ENTERPRISE_CREATION = 7
     }
 
     /** Version enum. */
@@ -103,6 +104,9 @@ export namespace Authentication {
 
         /** ApiRequest recaptcha */
         recaptcha?: (string|null);
+
+        /** ApiRequest subEnvironment */
+        subEnvironment?: (string|null);
     }
 
     /** Represents an ApiRequest. */
@@ -131,6 +135,9 @@ export namespace Authentication {
 
         /** ApiRequest recaptcha. */
         public recaptcha: string;
+
+        /** ApiRequest subEnvironment. */
+        public subEnvironment: string;
 
         /**
          * Creates a new ApiRequest instance using the specified properties.
@@ -1283,7 +1290,9 @@ export namespace Authentication {
     enum EncryptedDataKeyType {
         NO_KEY = 0,
         BY_DEVICE_PUBLIC_KEY = 1,
-        BY_PASSWORD = 2
+        BY_PASSWORD = 2,
+        BY_ALTERNATE = 3,
+        BY_BIO = 4
     }
 
     /** Properties of a StartLoginRequest. */
@@ -2204,6 +2213,12 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** PasswordMethod enum. */
+    enum PasswordMethod {
+        ENTERED = 0,
+        BIOMETRICS = 1
+    }
+
     /** Properties of a ValidateAuthHashRequest. */
     interface IValidateAuthHashRequest {
 
@@ -2304,12 +2319,6 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
-    }
-
-    /** PasswordMethod enum. */
-    enum PasswordMethod {
-        ENTERED = 0,
-        BIOMETRICS = 1
     }
 
     /** TwoFactorPushType enum. */
@@ -6317,6 +6326,9 @@ export namespace Authentication {
 
         /** MemcacheRequest key */
         key?: (string|null);
+
+        /** MemcacheRequest userId */
+        userId?: (number|null);
     }
 
     /** Represents a MemcacheRequest. */
@@ -6330,6 +6342,9 @@ export namespace Authentication {
 
         /** MemcacheRequest key. */
         public key: string;
+
+        /** MemcacheRequest userId. */
+        public userId: number;
 
         /**
          * Creates a new MemcacheRequest instance using the specified properties.
@@ -7043,6 +7058,9 @@ export namespace Authentication {
 
         /** ApproveDeviceRequest denyApproval */
         denyApproval?: (boolean|null);
+
+        /** ApproveDeviceRequest linkDevice */
+        linkDevice?: (boolean|null);
     }
 
     /** Represents an ApproveDeviceRequest. */
@@ -7062,6 +7080,9 @@ export namespace Authentication {
 
         /** ApproveDeviceRequest denyApproval. */
         public denyApproval: boolean;
+
+        /** ApproveDeviceRequest linkDevice. */
+        public linkDevice: boolean;
 
         /**
          * Creates a new ApproveDeviceRequest instance using the specified properties.
@@ -8509,6 +8530,759 @@ export namespace Authentication {
 
         /**
          * Converts this SupportToolDeleteUserRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** LockReasonType enum. */
+    enum LockReasonType {
+        REASON_UNLOCKED = 0,
+        REASON_LOCKED = 1,
+        REASON_DISABLED = 2
+    }
+
+    /** Properties of a SupportToolChangeUserLockRequest. */
+    interface ISupportToolChangeUserLockRequest {
+
+        /** SupportToolChangeUserLockRequest userId */
+        userId?: (number|null);
+
+        /** SupportToolChangeUserLockRequest lockReasonType */
+        lockReasonType?: (Authentication.LockReasonType|null);
+    }
+
+    /** Represents a SupportToolChangeUserLockRequest. */
+    class SupportToolChangeUserLockRequest implements ISupportToolChangeUserLockRequest {
+
+        /**
+         * Constructs a new SupportToolChangeUserLockRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolChangeUserLockRequest);
+
+        /** SupportToolChangeUserLockRequest userId. */
+        public userId: number;
+
+        /** SupportToolChangeUserLockRequest lockReasonType. */
+        public lockReasonType: Authentication.LockReasonType;
+
+        /**
+         * Creates a new SupportToolChangeUserLockRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolChangeUserLockRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolChangeUserLockRequest): Authentication.SupportToolChangeUserLockRequest;
+
+        /**
+         * Encodes the specified SupportToolChangeUserLockRequest message. Does not implicitly {@link Authentication.SupportToolChangeUserLockRequest.verify|verify} messages.
+         * @param message SupportToolChangeUserLockRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolChangeUserLockRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolChangeUserLockRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolChangeUserLockRequest.verify|verify} messages.
+         * @param message SupportToolChangeUserLockRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolChangeUserLockRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolChangeUserLockRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolChangeUserLockRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolChangeUserLockRequest;
+
+        /**
+         * Decodes a SupportToolChangeUserLockRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolChangeUserLockRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolChangeUserLockRequest;
+
+        /**
+         * Verifies a SupportToolChangeUserLockRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolChangeUserLockRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolChangeUserLockRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolChangeUserLockRequest;
+
+        /**
+         * Creates a plain object from a SupportToolChangeUserLockRequest message. Also converts values to other types if specified.
+         * @param message SupportToolChangeUserLockRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolChangeUserLockRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolChangeUserLockRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolGetUserAccountInformationRequest. */
+    interface ISupportToolGetUserAccountInformationRequest {
+
+        /** SupportToolGetUserAccountInformationRequest userId */
+        userId?: (number|null);
+    }
+
+    /** Represents a SupportToolGetUserAccountInformationRequest. */
+    class SupportToolGetUserAccountInformationRequest implements ISupportToolGetUserAccountInformationRequest {
+
+        /**
+         * Constructs a new SupportToolGetUserAccountInformationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolGetUserAccountInformationRequest);
+
+        /** SupportToolGetUserAccountInformationRequest userId. */
+        public userId: number;
+
+        /**
+         * Creates a new SupportToolGetUserAccountInformationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolGetUserAccountInformationRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolGetUserAccountInformationRequest): Authentication.SupportToolGetUserAccountInformationRequest;
+
+        /**
+         * Encodes the specified SupportToolGetUserAccountInformationRequest message. Does not implicitly {@link Authentication.SupportToolGetUserAccountInformationRequest.verify|verify} messages.
+         * @param message SupportToolGetUserAccountInformationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolGetUserAccountInformationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolGetUserAccountInformationRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolGetUserAccountInformationRequest.verify|verify} messages.
+         * @param message SupportToolGetUserAccountInformationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolGetUserAccountInformationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolGetUserAccountInformationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolGetUserAccountInformationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolGetUserAccountInformationRequest;
+
+        /**
+         * Decodes a SupportToolGetUserAccountInformationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolGetUserAccountInformationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolGetUserAccountInformationRequest;
+
+        /**
+         * Verifies a SupportToolGetUserAccountInformationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolGetUserAccountInformationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolGetUserAccountInformationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolGetUserAccountInformationRequest;
+
+        /**
+         * Creates a plain object from a SupportToolGetUserAccountInformationRequest message. Also converts values to other types if specified.
+         * @param message SupportToolGetUserAccountInformationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolGetUserAccountInformationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolGetUserAccountInformationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** AlternateAuthenticationType enum. */
+    enum AlternateAuthenticationType {
+        ALTERNATE_MASTER_PASSWORD = 0,
+        BIOMETRIC = 1,
+        ACCOUNT_RECOVER = 2
+    }
+
+    /** ThrottleType enum. */
+    enum ThrottleType {
+        PASSWORD_RETRY_THROTTLE = 0,
+        PASSWORD_RETRY_LEGACY_THROTTLE = 1,
+        TWO_FA_THROTTLE = 2,
+        TWO_FA_LEGACY_THROTTLE = 3,
+        QA_RETRY_THROTTLE = 4,
+        ACCOUNT_RECOVER_THROTTLE = 5,
+        VALIDATE_DEVICE_VERIFICATION_CODE_THROTTLE = 6,
+        VALIDATE_CREATE_USER_VERIFICATION_CODE_THROTTLE = 7
+    }
+
+    /** Properties of a ThrottleState. */
+    interface IThrottleState {
+
+        /** ThrottleState type */
+        type?: (Authentication.ThrottleType|null);
+
+        /** ThrottleState key */
+        key?: (string|null);
+
+        /** ThrottleState value */
+        value?: (string|null);
+
+        /** ThrottleState state */
+        state?: (boolean|null);
+    }
+
+    /** Represents a ThrottleState. */
+    class ThrottleState implements IThrottleState {
+
+        /**
+         * Constructs a new ThrottleState.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IThrottleState);
+
+        /** ThrottleState type. */
+        public type: Authentication.ThrottleType;
+
+        /** ThrottleState key. */
+        public key: string;
+
+        /** ThrottleState value. */
+        public value: string;
+
+        /** ThrottleState state. */
+        public state: boolean;
+
+        /**
+         * Creates a new ThrottleState instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ThrottleState instance
+         */
+        public static create(properties?: Authentication.IThrottleState): Authentication.ThrottleState;
+
+        /**
+         * Encodes the specified ThrottleState message. Does not implicitly {@link Authentication.ThrottleState.verify|verify} messages.
+         * @param message ThrottleState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IThrottleState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ThrottleState message, length delimited. Does not implicitly {@link Authentication.ThrottleState.verify|verify} messages.
+         * @param message ThrottleState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IThrottleState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ThrottleState message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ThrottleState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ThrottleState;
+
+        /**
+         * Decodes a ThrottleState message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ThrottleState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ThrottleState;
+
+        /**
+         * Verifies a ThrottleState message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ThrottleState message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ThrottleState
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ThrottleState;
+
+        /**
+         * Creates a plain object from a ThrottleState message. Also converts values to other types if specified.
+         * @param message ThrottleState
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ThrottleState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ThrottleState to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DeviceInformation. */
+    interface IDeviceInformation {
+
+        /** DeviceInformation deviceId */
+        deviceId?: (number|Long|null);
+
+        /** DeviceInformation deviceName */
+        deviceName?: (string|null);
+
+        /** DeviceInformation clientVersion */
+        clientVersion?: (string|null);
+
+        /** DeviceInformation lastLogin */
+        lastLogin?: (number|Long|null);
+
+        /** DeviceInformation deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
+    }
+
+    /** Represents a DeviceInformation. */
+    class DeviceInformation implements IDeviceInformation {
+
+        /**
+         * Constructs a new DeviceInformation.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDeviceInformation);
+
+        /** DeviceInformation deviceId. */
+        public deviceId: (number|Long);
+
+        /** DeviceInformation deviceName. */
+        public deviceName: string;
+
+        /** DeviceInformation clientVersion. */
+        public clientVersion: string;
+
+        /** DeviceInformation lastLogin. */
+        public lastLogin: (number|Long);
+
+        /** DeviceInformation deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
+        /**
+         * Creates a new DeviceInformation instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeviceInformation instance
+         */
+        public static create(properties?: Authentication.IDeviceInformation): Authentication.DeviceInformation;
+
+        /**
+         * Encodes the specified DeviceInformation message. Does not implicitly {@link Authentication.DeviceInformation.verify|verify} messages.
+         * @param message DeviceInformation message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDeviceInformation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeviceInformation message, length delimited. Does not implicitly {@link Authentication.DeviceInformation.verify|verify} messages.
+         * @param message DeviceInformation message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDeviceInformation, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeviceInformation message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeviceInformation
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeviceInformation;
+
+        /**
+         * Decodes a DeviceInformation message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeviceInformation
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeviceInformation;
+
+        /**
+         * Verifies a DeviceInformation message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeviceInformation message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeviceInformation
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.DeviceInformation;
+
+        /**
+         * Creates a plain object from a DeviceInformation message. Also converts values to other types if specified.
+         * @param message DeviceInformation
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.DeviceInformation, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeviceInformation to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserSetting. */
+    interface IUserSetting {
+
+        /** UserSetting name */
+        name?: (string|null);
+
+        /** UserSetting value */
+        value?: (boolean|null);
+    }
+
+    /** Represents a UserSetting. */
+    class UserSetting implements IUserSetting {
+
+        /**
+         * Constructs a new UserSetting.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserSetting);
+
+        /** UserSetting name. */
+        public name: string;
+
+        /** UserSetting value. */
+        public value: boolean;
+
+        /**
+         * Creates a new UserSetting instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserSetting instance
+         */
+        public static create(properties?: Authentication.IUserSetting): Authentication.UserSetting;
+
+        /**
+         * Encodes the specified UserSetting message. Does not implicitly {@link Authentication.UserSetting.verify|verify} messages.
+         * @param message UserSetting message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserSetting, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserSetting message, length delimited. Does not implicitly {@link Authentication.UserSetting.verify|verify} messages.
+         * @param message UserSetting message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserSetting, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserSetting message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserSetting
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserSetting;
+
+        /**
+         * Decodes a UserSetting message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserSetting
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserSetting;
+
+        /**
+         * Verifies a UserSetting message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserSetting message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserSetting
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserSetting;
+
+        /**
+         * Creates a plain object from a UserSetting message. Also converts values to other types if specified.
+         * @param message UserSetting
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserSetting, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserSetting to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolGetUserAccountInformationResponse. */
+    interface ISupportToolGetUserAccountInformationResponse {
+
+        /** SupportToolGetUserAccountInformationResponse ssoUser */
+        ssoUser?: (boolean|null);
+
+        /** SupportToolGetUserAccountInformationResponse alternateAuthenticationType */
+        alternateAuthenticationType?: (Authentication.AlternateAuthenticationType[]|null);
+
+        /** SupportToolGetUserAccountInformationResponse throttleStates */
+        throttleStates?: (Authentication.IThrottleState[]|null);
+
+        /** SupportToolGetUserAccountInformationResponse deviceInfos */
+        deviceInfos?: (Authentication.IDeviceInformation[]|null);
+
+        /** SupportToolGetUserAccountInformationResponse userSettings */
+        userSettings?: (Authentication.IUserSetting[]|null);
+    }
+
+    /** Represents a SupportToolGetUserAccountInformationResponse. */
+    class SupportToolGetUserAccountInformationResponse implements ISupportToolGetUserAccountInformationResponse {
+
+        /**
+         * Constructs a new SupportToolGetUserAccountInformationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolGetUserAccountInformationResponse);
+
+        /** SupportToolGetUserAccountInformationResponse ssoUser. */
+        public ssoUser: boolean;
+
+        /** SupportToolGetUserAccountInformationResponse alternateAuthenticationType. */
+        public alternateAuthenticationType: Authentication.AlternateAuthenticationType[];
+
+        /** SupportToolGetUserAccountInformationResponse throttleStates. */
+        public throttleStates: Authentication.IThrottleState[];
+
+        /** SupportToolGetUserAccountInformationResponse deviceInfos. */
+        public deviceInfos: Authentication.IDeviceInformation[];
+
+        /** SupportToolGetUserAccountInformationResponse userSettings. */
+        public userSettings: Authentication.IUserSetting[];
+
+        /**
+         * Creates a new SupportToolGetUserAccountInformationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolGetUserAccountInformationResponse instance
+         */
+        public static create(properties?: Authentication.ISupportToolGetUserAccountInformationResponse): Authentication.SupportToolGetUserAccountInformationResponse;
+
+        /**
+         * Encodes the specified SupportToolGetUserAccountInformationResponse message. Does not implicitly {@link Authentication.SupportToolGetUserAccountInformationResponse.verify|verify} messages.
+         * @param message SupportToolGetUserAccountInformationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolGetUserAccountInformationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolGetUserAccountInformationResponse message, length delimited. Does not implicitly {@link Authentication.SupportToolGetUserAccountInformationResponse.verify|verify} messages.
+         * @param message SupportToolGetUserAccountInformationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolGetUserAccountInformationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolGetUserAccountInformationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolGetUserAccountInformationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolGetUserAccountInformationResponse;
+
+        /**
+         * Decodes a SupportToolGetUserAccountInformationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolGetUserAccountInformationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolGetUserAccountInformationResponse;
+
+        /**
+         * Verifies a SupportToolGetUserAccountInformationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolGetUserAccountInformationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolGetUserAccountInformationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolGetUserAccountInformationResponse;
+
+        /**
+         * Creates a plain object from a SupportToolGetUserAccountInformationResponse message. Also converts values to other types if specified.
+         * @param message SupportToolGetUserAccountInformationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolGetUserAccountInformationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolGetUserAccountInformationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** DeviceUpdateStatusAction enum. */
+    enum DeviceUpdateStatusAction {
+        APPROVE_DEVICE = 0,
+        LOCK_DEVICE = 1,
+        UNLOCK_DEVICE = 2
+    }
+
+    /** Properties of a SupportToolChangeUserDeviceStatusRequest. */
+    interface ISupportToolChangeUserDeviceStatusRequest {
+
+        /** SupportToolChangeUserDeviceStatusRequest userId */
+        userId?: (number|null);
+
+        /** SupportToolChangeUserDeviceStatusRequest deviceId */
+        deviceId?: (number|Long|null);
+
+        /** SupportToolChangeUserDeviceStatusRequest action */
+        action?: (Authentication.DeviceUpdateStatusAction|null);
+    }
+
+    /** Represents a SupportToolChangeUserDeviceStatusRequest. */
+    class SupportToolChangeUserDeviceStatusRequest implements ISupportToolChangeUserDeviceStatusRequest {
+
+        /**
+         * Constructs a new SupportToolChangeUserDeviceStatusRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolChangeUserDeviceStatusRequest);
+
+        /** SupportToolChangeUserDeviceStatusRequest userId. */
+        public userId: number;
+
+        /** SupportToolChangeUserDeviceStatusRequest deviceId. */
+        public deviceId: (number|Long);
+
+        /** SupportToolChangeUserDeviceStatusRequest action. */
+        public action: Authentication.DeviceUpdateStatusAction;
+
+        /**
+         * Creates a new SupportToolChangeUserDeviceStatusRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolChangeUserDeviceStatusRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolChangeUserDeviceStatusRequest): Authentication.SupportToolChangeUserDeviceStatusRequest;
+
+        /**
+         * Encodes the specified SupportToolChangeUserDeviceStatusRequest message. Does not implicitly {@link Authentication.SupportToolChangeUserDeviceStatusRequest.verify|verify} messages.
+         * @param message SupportToolChangeUserDeviceStatusRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolChangeUserDeviceStatusRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolChangeUserDeviceStatusRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolChangeUserDeviceStatusRequest.verify|verify} messages.
+         * @param message SupportToolChangeUserDeviceStatusRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolChangeUserDeviceStatusRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolChangeUserDeviceStatusRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolChangeUserDeviceStatusRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolChangeUserDeviceStatusRequest;
+
+        /**
+         * Decodes a SupportToolChangeUserDeviceStatusRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolChangeUserDeviceStatusRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolChangeUserDeviceStatusRequest;
+
+        /**
+         * Verifies a SupportToolChangeUserDeviceStatusRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolChangeUserDeviceStatusRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolChangeUserDeviceStatusRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolChangeUserDeviceStatusRequest;
+
+        /**
+         * Creates a plain object from a SupportToolChangeUserDeviceStatusRequest message. Also converts values to other types if specified.
+         * @param message SupportToolChangeUserDeviceStatusRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolChangeUserDeviceStatusRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolChangeUserDeviceStatusRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -12439,6 +13213,15 @@ export namespace AccountSummary {
 
         /** Settings restrictSharingIncomingEnterprise */
         restrictSharingIncomingEnterprise?: (boolean|null);
+
+        /** Settings logoutTimer */
+        logoutTimer?: (number|Long|null);
+
+        /** Settings persistentLogin */
+        persistentLogin?: (boolean|null);
+
+        /** Settings ipDisableAutoApprove */
+        ipDisableAutoApprove?: (boolean|null);
     }
 
     /** Represents a Settings. */
@@ -12524,6 +13307,15 @@ export namespace AccountSummary {
 
         /** Settings restrictSharingIncomingEnterprise. */
         public restrictSharingIncomingEnterprise: boolean;
+
+        /** Settings logoutTimer. */
+        public logoutTimer: (number|Long);
+
+        /** Settings persistentLogin. */
+        public persistentLogin: boolean;
+
+        /** Settings ipDisableAutoApprove. */
+        public ipDisableAutoApprove: boolean;
 
         /**
          * Creates a new Settings instance using the specified properties.
@@ -17893,6 +18685,9 @@ export namespace Tokens {
 
         /** LoginToken relogin */
         relogin?: (boolean|null);
+
+        /** LoginToken loginType */
+        loginType?: (Authentication.LoginType|null);
     }
 
     /** Represents a LoginToken. */
@@ -17945,6 +18740,9 @@ export namespace Tokens {
 
         /** LoginToken relogin. */
         public relogin: boolean;
+
+        /** LoginToken loginType. */
+        public loginType: Authentication.LoginType;
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -19062,6 +19860,9 @@ export namespace Tokens {
 
         /** ApiDecryptedRequest userAgent */
         userAgent?: (string|null);
+
+        /** ApiDecryptedRequest subEnvironment */
+        subEnvironment?: (string|null);
     }
 
     /** Represents an ApiDecryptedRequest. */
@@ -19087,6 +19888,9 @@ export namespace Tokens {
 
         /** ApiDecryptedRequest userAgent. */
         public userAgent: string;
+
+        /** ApiDecryptedRequest subEnvironment. */
+        public subEnvironment: string;
 
         /**
          * Creates a new ApiDecryptedRequest instance using the specified properties.
@@ -19176,6 +19980,9 @@ export namespace Tokens {
 
         /** ChangeEmailToken creation */
         creation?: (number|Long|null);
+
+        /** ChangeEmailToken clientVersionId */
+        clientVersionId?: (number|null);
     }
 
     /** Represents a ChangeEmailToken. */
@@ -19201,6 +20008,9 @@ export namespace Tokens {
 
         /** ChangeEmailToken creation. */
         public creation: (number|Long);
+
+        /** ChangeEmailToken clientVersionId. */
+        public clientVersionId: number;
 
         /**
          * Creates a new ChangeEmailToken instance using the specified properties.
@@ -19653,6 +20463,9 @@ export namespace Tokens {
 
         /** UsernameVerificationToken creation */
         creation?: (number|Long|null);
+
+        /** UsernameVerificationToken clientVersionId */
+        clientVersionId?: (number|null);
     }
 
     /** Represents a UsernameVerificationToken. */
@@ -19675,6 +20488,9 @@ export namespace Tokens {
 
         /** UsernameVerificationToken creation. */
         public creation: (number|Long);
+
+        /** UsernameVerificationToken clientVersionId. */
+        public clientVersionId: number;
 
         /**
          * Creates a new UsernameVerificationToken instance using the specified properties.
@@ -20145,6 +20961,9 @@ export namespace Tokens {
 
         /** ProcessToken supportedLanguage */
         supportedLanguage?: (Authentication.SupportedLanguage|null);
+
+        /** ProcessToken subEnvironment */
+        subEnvironment?: (string|null);
     }
 
     /** Represents a ProcessToken. */
@@ -20167,6 +20986,9 @@ export namespace Tokens {
 
         /** ProcessToken supportedLanguage. */
         public supportedLanguage: Authentication.SupportedLanguage;
+
+        /** ProcessToken subEnvironment. */
+        public subEnvironment: string;
 
         /**
          * Creates a new ProcessToken instance using the specified properties.
@@ -28396,7 +29218,7 @@ export namespace SsoCloud {
 
     /**
      * For security, this structure is used to make a Cloud SSO login or logout request rather than sending the parameters in the URL or in a form.
-     * A typical call is: https://www.keepersecurity.com/api/rest/sso/saml/login/123456789?key=BBAASSEE64KKEEYY&payload=encodedEncryptedAPIRequestContainingAnSsoCloudRequest
+     * A typical call is: https://www.keepersecurity.com/api/rest/sso/saml/login/123456789?payload=encodedEncryptedAPIRequestContainingAnSsoCloudRequest
      */
     class SsoCloudRequest implements ISsoCloudRequest {
 

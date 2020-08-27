@@ -128,7 +128,7 @@ export class SocketListener {
     }
 
     async getPushMessage(): Promise<any> {
-        console.log('Awaiting web socket message')
+        console.log('Awaiting web socket message...')
 
         return new Promise<any>((resolve, reject) => {
             this.singleMessageListeners.push({resolve, reject})
@@ -178,8 +178,7 @@ export class Auth {
                 ...options.authUI && {authUI: {...options.authUI}},
                 ...options.authUI3 && {authUI3: {...options.authUI3}},
             }
-        }
-        else {
+        } else {
             this.options = {
                 ...options,
                 deviceConfig: {...options.deviceConfig}
@@ -188,11 +187,19 @@ export class Auth {
 
         if (!this.options.deviceConfig) {
             this.options.deviceConfig = {
+                deviceName: null,
                 deviceToken: null,
-                cloneCode: null,
                 privateKey: null,
                 publicKey: null,
                 transmissionKeyId: null,
+            }
+        }
+
+        if (!this.options.sessionStorage) {
+            this.options.sessionStorage = {
+                lastUsername: null,
+                cloneCodeFor: () => null,
+                saveCloneCode: () => {}
             }
         }
 
@@ -236,6 +243,8 @@ export class Auth {
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
     async loginV3({username, password = '', useAlternate = false}: LoginPayload) {
+        this._username = username || this.options.sessionStorage.lastUsername
+
         if (!this.options.deviceConfig.deviceToken) {
             await this.endpoint.registerDevice()
         }
@@ -247,6 +256,7 @@ export class Auth {
         }
 
         let loginToken: Uint8Array | null = null;
+        let needUserName: boolean
         let previousLoginState = 0;
 
         while (true) {
@@ -255,16 +265,14 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
-                // forceNewLogin: true
+                cloneCode: this.options.sessionStorage.cloneCodeFor(this._username) || Uint8Array.of(0)
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             } else {
-                if (this.options.deviceConfig.cloneCode) {
-                    startLoginRequest.cloneCode = this.options.deviceConfig.cloneCode
-                }
-                else {
-                    startLoginRequest.username = username
+                if (needUserName) {
+                    startLoginRequest.username = this._username
+                    needUserName = false
                 }
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
@@ -289,10 +297,7 @@ export class Auth {
                 case Authentication.LoginState.UPGRADE:
                     break;
                 case Authentication.LoginState.REQUIRES_USERNAME:
-                    this.options.deviceConfig.cloneCode = undefined
-                    if (this.options.onDeviceConfig) {
-                        this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
-                    }
+                    needUserName = true
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
                     if (!loginResponse.encryptedLoginToken) {
@@ -332,18 +337,7 @@ export class Auth {
                     await this.authHashLogin(loginResponse, username, password)
                     return;
                 case Authentication.LoginState.LOGGED_IN:
-                    if (!loginResponse.encryptedSessionToken) {
-                        throw new Error('Session token missing from API response')
-                    }
-                    if (!loginResponse.accountUid) {
-                        throw new Error('Account UID missing from API response')
-                    }
-                    this.setLoginParameters(
-                      username,
-                      webSafe64FromBytes(loginResponse.encryptedSessionToken),
-                      loginResponse.accountUid
-                    )
-                    this.dataKey = await platform.privateDecryptEC(loginResponse.encryptedDataKey, this.options.deviceConfig.privateKey, this.options.deviceConfig.publicKey)
+                    await this.loginSuccess(loginResponse, null)
                     console.log("Exiting on loginState = LOGGED_IN");
                     return;
             }
@@ -361,7 +355,7 @@ export class Auth {
         let promiseFromUser: Promise<Uint8Array> | null = null
         let waitOnSocket = true
         switch (verifyMethod) {
-            case DeviceVerificationMethods.Email: {
+            case DeviceVerificationMethods.Email:
                 await this.executeRest(requestDeviceVerificationMessage({
                     username: username,
                     encryptedDeviceToken: deviceConfig.deviceToken,
@@ -382,9 +376,6 @@ export class Auth {
                     }
                     return loginToken
                 })
-                // const resp = await this.get(`validate_device_verification_code/${token}`)
-                // console.log(platform.bytesToString(resp.data))
-            }
                 break
 
             case DeviceVerificationMethods.TFACode:
@@ -455,9 +446,9 @@ export class Auth {
     }
 
     private async waitForVerifyDeviceInput(
-      loginToken: Uint8Array,
-      waitOnSocket: boolean,
-      promiseFromUser: Promise<Uint8Array> | null
+        loginToken: Uint8Array,
+        waitOnSocket: boolean,
+        promiseFromUser: Promise<Uint8Array> | null
     ): Promise<Uint8Array> {
         const timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
         let to: any | undefined
@@ -468,11 +459,11 @@ export class Auth {
             }, timeout)
         })
         const promises: Promise<Uint8Array>[] = [timeoutPromise]
-        if (waitOnSocket) {
-            promises.push(this.waitForVerifyDevicePush(loginToken))
-        }
         if (promiseFromUser) {
             promises.push(promiseFromUser)
+        }
+        if (waitOnSocket) {
+            promises.push(this.waitForVerifyDevicePush(loginToken))
         }
         const rs = await Promise.race(promises)
         if (to) {
@@ -545,8 +536,8 @@ export class Auth {
     }
 
     private async handleTwoFactorCode(
-      loginToken: Uint8Array,
-      verifyMethod?: DeviceVerificationMethods.SMS | DeviceVerificationMethods.TFACode
+        loginToken: Uint8Array,
+        verifyMethod?: DeviceVerificationMethods.SMS | DeviceVerificationMethods.TFACode
     ): Promise<Uint8Array> {
         while (true) {
             try {
@@ -590,16 +581,28 @@ export class Auth {
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
-        this.options.deviceConfig.cloneCode = loginResp.cloneCode
-        if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
-        }
-        if (!loginResp.encryptedSessionToken || !loginResp.encryptedDataKey || !loginResp.accountUid) {
+        await this.loginSuccess(loginResp, password)
+    }
+
+    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string) {
+        this.options.sessionStorage.saveCloneCode(this._username, loginResponse.cloneCode)
+        if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             throw new Error('Parameters missing from API response')
         }
 
-        this.setLoginParameters(username, webSafe64FromBytes(loginResp.encryptedSessionToken), loginResp.accountUid)
-        this.dataKey = await decryptEncryptionParams(password, loginResp.encryptedDataKey);
+        this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
+        switch (loginResponse.encryptedDataKeyType) {
+            case Authentication.EncryptedDataKeyType.BY_DEVICE_PUBLIC_KEY:
+                this.dataKey = await platform.privateDecryptEC(loginResponse.encryptedDataKey, this.options.deviceConfig.privateKey, this.options.deviceConfig.publicKey)
+                break;
+            case Authentication.EncryptedDataKeyType.BY_PASSWORD:
+                this.dataKey = await decryptEncryptionParams(password, loginResponse.encryptedDataKey);
+                break;
+            case Authentication.EncryptedDataKeyType.NO_KEY:
+            case Authentication.EncryptedDataKeyType.BY_ALTERNATE:
+            case Authentication.EncryptedDataKeyType.BY_BIO:
+                throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
+        }
     }
 
     async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
@@ -701,12 +704,12 @@ export class Auth {
      * This is the more secure version of logout that uses an encrypted protobuf.
      * July 2020
      */
-    async cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false) : Promise<any> {
-        const encryptionKey : TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
+    async cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
+        const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
         const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair : any = await platform.generateRSAKeyPair2();
-        let publicKey : Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey : string = webSafe64FromBytes(publicKey);
+        let keyPair: any = await platform.generateRSAKeyPair2();
+        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         console.log("encodedEncryptionKey = " + encodedEncryptionKey);
 
@@ -719,9 +722,10 @@ export class Auth {
 
             // This should return HTML
             let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
-                                                            { "key": encodedEncryptionKey,
-                                                              "payload": encodedPayload
-                                                            }, useGet);
+                {
+                    "key": encodedEncryptionKey,
+                    "payload": encodedPayload
+                }, useGet);
 
             console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
             return ssoLogoutResp;
@@ -833,8 +837,7 @@ export class Auth {
         return this.endpoint.get(path)
     }
 
-    setLoginParameters(userName: string, sessionToken: string, accountUid: Uint8Array) {
-        this._username = userName;
+    setLoginParameters(sessionToken: string, accountUid: Uint8Array) {
         this._sessionToken = sessionToken;
         this._accountUid = accountUid;
         if (!this.socket) {

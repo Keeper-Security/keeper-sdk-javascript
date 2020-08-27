@@ -11,6 +11,7 @@ export interface ClientConfiguration {
     cloneConfig?: boolean
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
+    sessionStorage?: SessionStorage
     host: KeeperHost
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
@@ -20,11 +21,17 @@ export interface ClientConfigurationInternal extends ClientConfiguration {
 }
 
 export interface DeviceConfig {
+    deviceName: string | null
     deviceToken: Uint8Array | null
-    cloneCode: Uint8Array | null
     privateKey: Uint8Array | null
     publicKey: Uint8Array | null
     transmissionKeyId: number | null
+}
+
+export interface SessionStorage {
+    lastUsername: string;
+    cloneCodeFor(username: string): Uint8Array | null;
+    saveCloneCode(username: string, cloneCode: Uint8Array): void;
 }
 
 export interface VendorConfiguration {

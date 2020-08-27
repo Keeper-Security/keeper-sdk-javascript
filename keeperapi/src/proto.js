@@ -76,7 +76,8 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           PURCHASE: 3,
           RESTRICT: 4,
           ACCEPT_INVITE: 5,
-          SUPPORT_SERVER: 6
+          SUPPORT_SERVER: 6,
+          ENTERPRISE_CREATION: 7
         }
       },
       Version: {
@@ -117,6 +118,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           recaptcha: {
             type: "string",
             id: 6
+          },
+          subEnvironment: {
+            type: "string",
+            id: 7
           }
         }
       },
@@ -334,7 +339,9 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
         values: {
           NO_KEY: 0,
           BY_DEVICE_PUBLIC_KEY: 1,
-          BY_PASSWORD: 2
+          BY_PASSWORD: 2,
+          BY_ALTERNATE: 3,
+          BY_BIO: 4
         }
       },
       StartLoginRequest: {
@@ -537,6 +544,12 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           }
         }
       },
+      PasswordMethod: {
+        values: {
+          ENTERED: 0,
+          BIOMETRICS: 1
+        }
+      },
       ValidateAuthHashRequest: {
         fields: {
           passwordMethod: {
@@ -551,12 +564,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 3
           }
-        }
-      },
-      PasswordMethod: {
-        values: {
-          ENTERED: 0,
-          BIOMETRICS: 1
         }
       },
       TwoFactorPushType: {
@@ -1340,6 +1347,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           key: {
             type: "string",
             id: 1
+          },
+          userId: {
+            type: "int32",
+            id: 2
           }
         }
       },
@@ -1464,6 +1475,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           denyApproval: {
             type: "bool",
             id: 3
+          },
+          linkDevice: {
+            type: "bool",
+            id: 4
           }
         }
       },
@@ -1656,6 +1671,159 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           },
           reason: {
             type: "string",
+            id: 3
+          }
+        }
+      },
+      LockReasonType: {
+        values: {
+          REASON_UNLOCKED: 0,
+          REASON_LOCKED: 1,
+          REASON_DISABLED: 2
+        }
+      },
+      SupportToolChangeUserLockRequest: {
+        fields: {
+          userId: {
+            type: "int32",
+            id: 1
+          },
+          lockReasonType: {
+            type: "LockReasonType",
+            id: 2
+          }
+        }
+      },
+      SupportToolGetUserAccountInformationRequest: {
+        fields: {
+          userId: {
+            type: "int32",
+            id: 1
+          }
+        }
+      },
+      AlternateAuthenticationType: {
+        values: {
+          ALTERNATE_MASTER_PASSWORD: 0,
+          BIOMETRIC: 1,
+          ACCOUNT_RECOVER: 2
+        }
+      },
+      ThrottleType: {
+        values: {
+          PASSWORD_RETRY_THROTTLE: 0,
+          PASSWORD_RETRY_LEGACY_THROTTLE: 1,
+          TWO_FA_THROTTLE: 2,
+          TWO_FA_LEGACY_THROTTLE: 3,
+          QA_RETRY_THROTTLE: 4,
+          ACCOUNT_RECOVER_THROTTLE: 5,
+          VALIDATE_DEVICE_VERIFICATION_CODE_THROTTLE: 6,
+          VALIDATE_CREATE_USER_VERIFICATION_CODE_THROTTLE: 7
+        }
+      },
+      ThrottleState: {
+        fields: {
+          type: {
+            type: "ThrottleType",
+            id: 1
+          },
+          key: {
+            type: "string",
+            id: 2
+          },
+          value: {
+            type: "string",
+            id: 3
+          },
+          state: {
+            type: "bool",
+            id: 4
+          }
+        }
+      },
+      DeviceInformation: {
+        fields: {
+          deviceId: {
+            type: "int64",
+            id: 1
+          },
+          deviceName: {
+            type: "string",
+            id: 2
+          },
+          clientVersion: {
+            type: "string",
+            id: 3
+          },
+          lastLogin: {
+            type: "int64",
+            id: 4
+          },
+          deviceStatus: {
+            type: "DeviceStatus",
+            id: 5
+          }
+        }
+      },
+      UserSetting: {
+        fields: {
+          name: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "bool",
+            id: 2
+          }
+        }
+      },
+      SupportToolGetUserAccountInformationResponse: {
+        fields: {
+          ssoUser: {
+            type: "bool",
+            id: 1
+          },
+          alternateAuthenticationType: {
+            rule: "repeated",
+            type: "AlternateAuthenticationType",
+            id: 2
+          },
+          throttleStates: {
+            rule: "repeated",
+            type: "ThrottleState",
+            id: 3
+          },
+          deviceInfos: {
+            rule: "repeated",
+            type: "DeviceInformation",
+            id: 4
+          },
+          userSettings: {
+            rule: "repeated",
+            type: "UserSetting",
+            id: 5
+          }
+        }
+      },
+      DeviceUpdateStatusAction: {
+        values: {
+          APPROVE_DEVICE: 0,
+          LOCK_DEVICE: 1,
+          UNLOCK_DEVICE: 2
+        }
+      },
+      SupportToolChangeUserDeviceStatusRequest: {
+        fields: {
+          userId: {
+            type: "int32",
+            id: 1
+          },
+          deviceId: {
+            type: "int64",
+            id: 2
+          },
+          action: {
+            type: "DeviceUpdateStatusAction",
             id: 3
           }
         }
@@ -2543,6 +2711,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           restrictSharingIncomingEnterprise: {
             type: "bool",
             id: 25
+          },
+          logoutTimer: {
+            type: "int64",
+            id: 26
+          },
+          persistentLogin: {
+            type: "bool",
+            id: 27
+          },
+          ipDisableAutoApprove: {
+            type: "bool",
+            id: 28
           }
         }
       },
@@ -3557,6 +3737,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           relogin: {
             type: "bool",
             id: 14
+          },
+          loginType: {
+            type: "Authentication.LoginType",
+            id: 15
           }
         }
       },
@@ -3803,6 +3987,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           userAgent: {
             type: "string",
             id: 6
+          },
+          subEnvironment: {
+            type: "string",
+            id: 7
           }
         }
       },
@@ -3827,6 +4015,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           creation: {
             type: "int64",
             id: 5
+          },
+          clientVersionId: {
+            type: "int32",
+            id: 6
           }
         }
       },
@@ -3935,6 +4127,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           creation: {
             type: "int64",
             id: 4
+          },
+          clientVersionId: {
+            type: "int32",
+            id: 5
           }
         }
       },
@@ -4059,6 +4255,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           supportedLanguage: {
             type: "Authentication.SupportedLanguage",
             id: 4
+          },
+          subEnvironment: {
+            type: "string",
+            id: 5
           }
         }
       }

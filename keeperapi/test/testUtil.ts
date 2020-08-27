@@ -1,5 +1,5 @@
 import * as readline from "readline";
-import {AuthUI3, DeviceConfig, DeviceVerificationMethods, TwoFactorInput} from '../src/configuration'
+import {AuthUI3, DeviceConfig, DeviceVerificationMethods, SessionStorage, TwoFactorInput} from '../src/configuration'
 import * as fs from 'fs'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
@@ -50,22 +50,31 @@ export const authUI3: AuthUI3 = {
 
 type DeviceConfigStorage = {
     deviceToken: string
-    cloneCode: string
     privateKey: string
     publicKey: string
     transmissionKeyId: number
 }
 
-export function getDeviceConfig(environment: KeeperEnvironment): DeviceConfig {
-    return readDeviceConfig(configNames[environment])
+const configFileName = (deviceName: string, environment: KeeperEnvironment): string => {
+    const folder = `test/config/${deviceName}`
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder)
+    }
+    return `${folder}/${configNames[environment]}`;
+};
+
+export function getDeviceConfig(deviceName: string, environment: KeeperEnvironment): DeviceConfig {
+    const config = readDeviceConfig(configFileName(deviceName, environment))
+    config.deviceName = deviceName
+    return config
 }
 
 export function readDeviceConfig(fileName: string): DeviceConfig {
     try {
         const configStorage: DeviceConfigStorage = JSON.parse(fs.readFileSync(fileName).toString())
         return {
+            deviceName: undefined,
             deviceToken: configStorage.deviceToken ? platform.base64ToBytes(configStorage.deviceToken) : undefined,
-            cloneCode: configStorage.cloneCode ? platform.base64ToBytes(configStorage.cloneCode) : undefined,
             publicKey: configStorage.publicKey ? platform.base64ToBytes(configStorage.publicKey) : undefined,
             privateKey: configStorage.privateKey ? platform.base64ToBytes(configStorage.privateKey) : undefined,
             transmissionKeyId: configStorage.transmissionKeyId
@@ -73,8 +82,8 @@ export function readDeviceConfig(fileName: string): DeviceConfig {
     }
     catch (e) {
         return {
+            deviceName: undefined,
             deviceToken: undefined,
-            cloneCode: undefined,
             privateKey: undefined,
             publicKey: undefined,
             transmissionKeyId: 0
@@ -86,15 +95,14 @@ export function saveDeviceConfig(deviceConfig: DeviceConfig, environment: Keeper
 
     const configStorage: DeviceConfigStorage = {
         deviceToken: deviceConfig.deviceToken ? platform.bytesToBase64(deviceConfig.deviceToken) : undefined,
-        cloneCode: deviceConfig.cloneCode ? platform.bytesToBase64(deviceConfig.cloneCode) : undefined,
         publicKey: deviceConfig.publicKey ? platform.bytesToBase64(deviceConfig.publicKey) : undefined,
         privateKey: deviceConfig.privateKey ? platform.bytesToBase64(deviceConfig.privateKey): undefined,
         transmissionKeyId: deviceConfig.transmissionKeyId
     }
-    fs.writeFileSync(configNames[environment], JSON.stringify(configStorage, null, 2))
+    fs.writeFileSync(configFileName(deviceConfig.deviceName, environment), JSON.stringify(configStorage, null, 2))
 }
 
-export const configNames = {
+const configNames = {
     'local.keepersecurity.com': 'device-config-local.json',
     'dev.keepersecurity.com': 'device-config-dev.json',
     'dev2.keepersecurity.com': 'device-config-dev2.json',
@@ -121,4 +129,44 @@ export function getCredentialsAndHost(): { userName: string; password: string; h
 export async function replayRest(path: string, request: string) {
     const response = await platform.post(`https://local.keepersecurity.com/api/rest/${path}`, normal64Bytes(request))
     console.log(response)
+}
+
+type SessionData = {
+    lastUsername: string
+    lastCloneCode: string
+}
+
+export class TestSessionStorage implements SessionStorage {
+
+    private sessionData: SessionData
+    private fileName: string;
+
+    constructor(deviceName: string, environment: KeeperEnvironment) {
+        this.fileName = configFileName(deviceName, environment).replace('device-config', 'session')
+        try {
+            this.sessionData = JSON.parse(fs.readFileSync(this.fileName).toString())
+        }
+        catch (e) {
+            this.sessionData = {
+                lastUsername: null,
+                lastCloneCode: null
+            }
+        }
+    }
+
+    get lastUsername() {
+        return this.sessionData.lastUsername
+    };
+
+    cloneCodeFor(username: string): Uint8Array | null {
+        return this.sessionData.lastCloneCode && this.sessionData.lastUsername === username
+            ? platform.base64ToBytes(this.sessionData.lastCloneCode)
+            : null;
+    }
+
+    saveCloneCode(username: string, cloneCode: Uint8Array): void {
+        this.sessionData.lastUsername = username
+        this.sessionData.lastCloneCode = platform.bytesToBase64(cloneCode)
+        fs.writeFileSync(this.fileName, JSON.stringify(this.sessionData, null, 2))
+    }
 }

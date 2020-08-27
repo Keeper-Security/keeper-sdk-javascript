@@ -112,14 +112,14 @@ export class KeeperEndpoint {
                     const devUpdMsg = updateDeviceMessage({
                         encryptedDeviceToken: deviceConfig.deviceToken,
                         clientVersion: this.options.clientVersion,
-                        deviceName: 'test device1',
+                        deviceName: deviceConfig.deviceName,
                         devicePublicKey: deviceConfig.publicKey,
                     })
                     await this.executeRest(devUpdMsg)
                 } else {
                     const devRegMsg = registerDeviceMessage({
                         clientVersion: this.options.clientVersion,
-                        deviceName: 'test device',
+                        deviceName: deviceConfig.deviceName,
                         devicePublicKey: deviceConfig.publicKey,
                     })
                     const devRegResp = await this.executeRest(devRegMsg)
