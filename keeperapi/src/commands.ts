@@ -941,23 +941,23 @@ export interface NonSharedData {
 
 export interface SyncResponse extends KeeperResponse {
     full_sync: boolean;
+    non_shared_data: NonSharedData[];
+    records: RecordData[];
+    record_meta_data: RecordMetaData[];
+    removed_records: string[];
+    result_code: string;
+    revision: number;
+    shared_folders: SharedFolder[];
+    shared_folder_folder_records: {
+        record_uid: string,
+        shared_folder_uid: string,
+        revision: number
+    }[]
     teams: Team[];
     user_folder_shared_folders: {
         shared_folder_uid: string,
         revision: number
     }[]
-    shared_folders: SharedFolder[];
-    records: RecordData[];
-    record_meta_data: RecordMetaData[];
-    non_shared_data: NonSharedData[];
-    shared_folder_folder_records: {
-      record_uid: string,
-      shared_folder_uid: string,
-      revision: number
-    }[]
-    removed_records: string[];
-    result_code: string;
-    revision: number;
 }
 
 export interface GetEnterpriseDataResponse extends KeeperResponse {

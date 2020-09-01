@@ -116,7 +116,7 @@ export class Vault {
         console.log(`syncing revision ${this._revision} for ${this.auth.username}`)
 
         let syncDownCommand = new SyncDownCommand(this._revision)
-        syncDownCommand.include = ['record', 'shared_folder', 'sfheaders', 'sfrecords', 'folders', 'non_shared_data']
+        syncDownCommand.include = ['folders', 'non_shared_data', 'record', 'shared_folder', 'sfheaders', 'sfrecords']
         if (!this.noTypedRecords) {
             syncDownCommand.include.push('typed_record')
         }

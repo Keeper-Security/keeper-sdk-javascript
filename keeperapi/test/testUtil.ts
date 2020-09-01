@@ -1,6 +1,8 @@
 import * as readline from "readline";
-import {AuthUI3, DeviceConfig, DeviceVerificationMethods, SessionStorage, TwoFactorInput} from '../src/configuration'
 import * as fs from 'fs'
+import * as path from 'path'
+
+import {AuthUI3, DeviceConfig, DeviceVerificationMethods, SessionStorage, TwoFactorInput} from '../src/configuration'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
 import {Authentication} from '../src/proto';
@@ -56,7 +58,7 @@ type DeviceConfigStorage = {
 }
 
 const configFileName = (deviceName: string, environment: KeeperEnvironment): string => {
-    const folder = `test/config/${deviceName}`
+    const folder = path.resolve(`${__dirname}/config/${deviceName}`)
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder)
     }
@@ -115,7 +117,7 @@ const configNames = {
 
 export function getCredentialsAndHost(): { userName: string; password: string; host: KeeperEnvironment  } {
     try {
-        const fileContent = fs.readFileSync('credentials.config').toString()
+        const fileContent = fs.readFileSync(path.resolve(`${__dirname}/../credentials.config`)).toString()
         const lines = fileContent.split('\n')
         const hostOverride = lines[0][0] === '#' ? undefined : lines[0]
         const parts = lines.slice(1).find(x => x && x[0] != '#').split(',')
@@ -158,7 +160,7 @@ export class TestSessionStorage implements SessionStorage {
         return this.sessionData.lastUsername
     };
 
-    cloneCodeFor(username: string): Uint8Array | null {
+    getCloneCode(username: string): Uint8Array | null {
         return this.sessionData.lastCloneCode && this.sessionData.lastUsername === username
             ? platform.base64ToBytes(this.sessionData.lastCloneCode)
             : null;

@@ -30,7 +30,7 @@ export interface DeviceConfig {
 
 export interface SessionStorage {
     lastUsername: string;
-    cloneCodeFor(username: string): Uint8Array | null;
+    getCloneCode(username: string): Uint8Array | null;
     saveCloneCode(username: string, cloneCode: Uint8Array): void;
 }
 

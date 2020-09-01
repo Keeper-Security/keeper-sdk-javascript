@@ -198,7 +198,7 @@ export class Auth {
         if (!this.options.sessionStorage) {
             this.options.sessionStorage = {
                 lastUsername: null,
-                cloneCodeFor: () => null,
+                getCloneCode: () => null,
                 saveCloneCode: () => {}
             }
         }
@@ -265,7 +265,7 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
-                cloneCode: this.options.sessionStorage.cloneCodeFor(this._username) || Uint8Array.of(0)
+                cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0)
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
