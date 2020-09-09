@@ -1,5 +1,5 @@
 import {
-    ClientConfiguration,
+    ClientConfiguration, ClientConfigurationInfo,
     ClientConfigurationInternal,
     DeviceVerificationMethods,
     LoginError,
@@ -309,6 +309,10 @@ export class Auth {
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
                     this.options.host = loginResponse.stateSpecificValue
+                    const cci = this.options as ClientConfigurationInfo
+                    if (cci.onRegionChanged) {
+                        cci.onRegionChanged(loginResponse.stateSpecificValue)
+                    }
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");

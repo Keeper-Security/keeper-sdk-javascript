@@ -4,6 +4,11 @@ import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 export type KeeperHost = KeeperEnvironment | string
 
+export type ClientConfigurationInfo = {
+    onRegionChanged?: (newRegion: string) => void,
+    onCommandFailure?: (code: string, message?: string) => void,
+}
+
 export interface ClientConfiguration {
     authUI?: AuthUI
     authUI3?: AuthUI3
