@@ -11,7 +11,8 @@ export interface ClientConfiguration {
     cloneConfig?: boolean
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
-    sessionStorage?: SessionStorage
+    sessionStorage?: SessionStorage,
+    useSessionResumption?: boolean,
     host: KeeperHost
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token

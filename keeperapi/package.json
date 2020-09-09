@@ -8,7 +8,7 @@
   "files": [
     "dist"
   ],
-  "protobufFiles": "../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/enterprise.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/kinfo.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto",
+  "protobufFiles": "../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto",
   "scripts": {
     "start": "rollup -cw",
     "build": "node ./scripts/cleanDistFolder.js && rollup -c && cp src/proto.d.ts src/browser/ecies.browserified.js dist",

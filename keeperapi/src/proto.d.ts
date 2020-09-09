@@ -2378,6 +2378,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo phoneNumber */
         phoneNumber?: (string|null);
+
+        /** TwoFactorChannelInfo maxExpiration */
+        maxExpiration?: (Authentication.TwoFactorExpiration|null);
     }
 
     /** Represents a TwoFactorChannelInfo. */
@@ -2406,6 +2409,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo phoneNumber. */
         public phoneNumber: string;
+
+        /** TwoFactorChannelInfo maxExpiration. */
+        public maxExpiration: Authentication.TwoFactorExpiration;
 
         /**
          * Creates a new TwoFactorChannelInfo instance using the specified properties.
@@ -10115,6 +10121,294 @@ export namespace Authentication {
          */
         public toJSON(): { [k: string]: any };
     }
+
+    /** Properties of a SupportTool2FAValidateRequest. */
+    interface ISupportTool2FAValidateRequest {
+
+        /** SupportTool2FAValidateRequest userId */
+        userId?: (number|null);
+
+        /** SupportTool2FAValidateRequest valueType */
+        valueType?: (Authentication.TwoFactorValueType|null);
+
+        /** SupportTool2FAValidateRequest value */
+        value?: (string|null);
+    }
+
+    /** Represents a SupportTool2FAValidateRequest. */
+    class SupportTool2FAValidateRequest implements ISupportTool2FAValidateRequest {
+
+        /**
+         * Constructs a new SupportTool2FAValidateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportTool2FAValidateRequest);
+
+        /** SupportTool2FAValidateRequest userId. */
+        public userId: number;
+
+        /** SupportTool2FAValidateRequest valueType. */
+        public valueType: Authentication.TwoFactorValueType;
+
+        /** SupportTool2FAValidateRequest value. */
+        public value: string;
+
+        /**
+         * Creates a new SupportTool2FAValidateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportTool2FAValidateRequest instance
+         */
+        public static create(properties?: Authentication.ISupportTool2FAValidateRequest): Authentication.SupportTool2FAValidateRequest;
+
+        /**
+         * Encodes the specified SupportTool2FAValidateRequest message. Does not implicitly {@link Authentication.SupportTool2FAValidateRequest.verify|verify} messages.
+         * @param message SupportTool2FAValidateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportTool2FAValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportTool2FAValidateRequest message, length delimited. Does not implicitly {@link Authentication.SupportTool2FAValidateRequest.verify|verify} messages.
+         * @param message SupportTool2FAValidateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportTool2FAValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportTool2FAValidateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportTool2FAValidateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportTool2FAValidateRequest;
+
+        /**
+         * Decodes a SupportTool2FAValidateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportTool2FAValidateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportTool2FAValidateRequest;
+
+        /**
+         * Verifies a SupportTool2FAValidateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportTool2FAValidateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportTool2FAValidateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportTool2FAValidateRequest;
+
+        /**
+         * Creates a plain object from a SupportTool2FAValidateRequest message. Also converts values to other types if specified.
+         * @param message SupportTool2FAValidateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportTool2FAValidateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportTool2FAValidateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolBooleanResponse. */
+    interface ISupportToolBooleanResponse {
+
+        /** SupportToolBooleanResponse result */
+        result?: (boolean|null);
+    }
+
+    /** Represents a SupportToolBooleanResponse. */
+    class SupportToolBooleanResponse implements ISupportToolBooleanResponse {
+
+        /**
+         * Constructs a new SupportToolBooleanResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolBooleanResponse);
+
+        /** SupportToolBooleanResponse result. */
+        public result: boolean;
+
+        /**
+         * Creates a new SupportToolBooleanResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolBooleanResponse instance
+         */
+        public static create(properties?: Authentication.ISupportToolBooleanResponse): Authentication.SupportToolBooleanResponse;
+
+        /**
+         * Encodes the specified SupportToolBooleanResponse message. Does not implicitly {@link Authentication.SupportToolBooleanResponse.verify|verify} messages.
+         * @param message SupportToolBooleanResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolBooleanResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolBooleanResponse message, length delimited. Does not implicitly {@link Authentication.SupportToolBooleanResponse.verify|verify} messages.
+         * @param message SupportToolBooleanResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolBooleanResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolBooleanResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolBooleanResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolBooleanResponse;
+
+        /**
+         * Decodes a SupportToolBooleanResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolBooleanResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolBooleanResponse;
+
+        /**
+         * Verifies a SupportToolBooleanResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolBooleanResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolBooleanResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolBooleanResponse;
+
+        /**
+         * Creates a plain object from a SupportToolBooleanResponse message. Also converts values to other types if specified.
+         * @param message SupportToolBooleanResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolBooleanResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolBooleanResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a BiCheckoutSendEmail. */
+    interface IBiCheckoutSendEmail {
+
+        /** BiCheckoutSendEmail licenseKeyId */
+        licenseKeyId?: (number|null);
+
+        /** BiCheckoutSendEmail contactEmail */
+        contactEmail?: (string|null);
+    }
+
+    /** Represents a BiCheckoutSendEmail. */
+    class BiCheckoutSendEmail implements IBiCheckoutSendEmail {
+
+        /**
+         * Constructs a new BiCheckoutSendEmail.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IBiCheckoutSendEmail);
+
+        /** BiCheckoutSendEmail licenseKeyId. */
+        public licenseKeyId: number;
+
+        /** BiCheckoutSendEmail contactEmail. */
+        public contactEmail: string;
+
+        /**
+         * Creates a new BiCheckoutSendEmail instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns BiCheckoutSendEmail instance
+         */
+        public static create(properties?: Authentication.IBiCheckoutSendEmail): Authentication.BiCheckoutSendEmail;
+
+        /**
+         * Encodes the specified BiCheckoutSendEmail message. Does not implicitly {@link Authentication.BiCheckoutSendEmail.verify|verify} messages.
+         * @param message BiCheckoutSendEmail message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IBiCheckoutSendEmail, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified BiCheckoutSendEmail message, length delimited. Does not implicitly {@link Authentication.BiCheckoutSendEmail.verify|verify} messages.
+         * @param message BiCheckoutSendEmail message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IBiCheckoutSendEmail, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a BiCheckoutSendEmail message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns BiCheckoutSendEmail
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.BiCheckoutSendEmail;
+
+        /**
+         * Decodes a BiCheckoutSendEmail message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns BiCheckoutSendEmail
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.BiCheckoutSendEmail;
+
+        /**
+         * Verifies a BiCheckoutSendEmail message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a BiCheckoutSendEmail message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns BiCheckoutSendEmail
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.BiCheckoutSendEmail;
+
+        /**
+         * Creates a plain object from a BiCheckoutSendEmail message. Also converts values to other types if specified.
+         * @param message BiCheckoutSendEmail
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.BiCheckoutSendEmail, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this BiCheckoutSendEmail to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
 }
 
 /** Namespace Enterprise. */
@@ -14613,1174 +14907,6 @@ export namespace AccountSummary {
 
         /**
          * Converts this Administrator to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-}
-
-/** Namespace BITokenValidation. */
-export namespace BITokenValidation {
-
-    /** SupportedLanguage enum. */
-    enum SupportedLanguage {
-        ENGLISH = 0,
-        ARABIC = 1,
-        BRITISH = 2,
-        CHINESE = 3,
-        CHINESE_HONG_KONG = 4,
-        CHINESE_TAIWAN = 5,
-        DUTCH = 6,
-        FRENCH = 7,
-        GERMAN = 8,
-        GREEK = 9,
-        HEBREW = 10,
-        ITALIAN = 11,
-        JAPANESE = 12,
-        KOREAN = 13,
-        POLISH = 14,
-        PORTUGUESE = 15,
-        PORTUGUESE_BRAZIL = 16,
-        ROMANIAN = 17,
-        RUSSIAN = 18,
-        SLOVAK = 19,
-        SPANISH = 20
-    }
-
-    /** SessionTokenType enum. */
-    enum SessionTokenType {
-        NO_RESTRICTION = 0,
-        ACCOUNT_RECOVERY = 1,
-        SHARE_ACCOUNT = 2,
-        PURCHASE = 3
-    }
-
-    /** LoginType enum. */
-    enum LoginType {
-        NORMAL = 0,
-        SSO = 1,
-        BIO = 2,
-        ALTERNATE = 3,
-        OFFLINE = 4
-    }
-
-    /** Properties of a BIApiRequest. */
-    interface IBIApiRequest {
-
-        /** BIApiRequest encryptedTransmissionKey */
-        encryptedTransmissionKey?: (Uint8Array|null);
-
-        /** BIApiRequest publicKeyId */
-        publicKeyId?: (number|null);
-
-        /** BIApiRequest locale */
-        locale?: (string|null);
-
-        /** BIApiRequest encryptedPayload */
-        encryptedPayload?: (Uint8Array|null);
-
-        /** BIApiRequest email */
-        email?: (string|null);
-
-        /** BIApiRequest clientVersion */
-        clientVersion?: (string|null);
-
-        /** BIApiRequest sessionToken */
-        sessionToken?: (string|null);
-    }
-
-    /** Represents a BIApiRequest. */
-    class BIApiRequest implements IBIApiRequest {
-
-        /**
-         * Constructs a new BIApiRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IBIApiRequest);
-
-        /** BIApiRequest encryptedTransmissionKey. */
-        public encryptedTransmissionKey: Uint8Array;
-
-        /** BIApiRequest publicKeyId. */
-        public publicKeyId: number;
-
-        /** BIApiRequest locale. */
-        public locale: string;
-
-        /** BIApiRequest encryptedPayload. */
-        public encryptedPayload: Uint8Array;
-
-        /** BIApiRequest email. */
-        public email: string;
-
-        /** BIApiRequest clientVersion. */
-        public clientVersion: string;
-
-        /** BIApiRequest sessionToken. */
-        public sessionToken: string;
-
-        /**
-         * Creates a new BIApiRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns BIApiRequest instance
-         */
-        public static create(properties?: BITokenValidation.IBIApiRequest): BITokenValidation.BIApiRequest;
-
-        /**
-         * Encodes the specified BIApiRequest message. Does not implicitly {@link BITokenValidation.BIApiRequest.verify|verify} messages.
-         * @param message BIApiRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IBIApiRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified BIApiRequest message, length delimited. Does not implicitly {@link BITokenValidation.BIApiRequest.verify|verify} messages.
-         * @param message BIApiRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IBIApiRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a BIApiRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns BIApiRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.BIApiRequest;
-
-        /**
-         * Decodes a BIApiRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns BIApiRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.BIApiRequest;
-
-        /**
-         * Verifies a BIApiRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a BIApiRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns BIApiRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.BIApiRequest;
-
-        /**
-         * Creates a plain object from a BIApiRequest message. Also converts values to other types if specified.
-         * @param message BIApiRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.BIApiRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this BIApiRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a BIApiRequestPayload. */
-    interface IBIApiRequestPayload {
-
-        /** BIApiRequestPayload payload */
-        payload?: (Uint8Array|null);
-
-        /** BIApiRequestPayload encryptedSessionToken */
-        encryptedSessionToken?: (Uint8Array|null);
-
-        /** BIApiRequestPayload timeToken */
-        timeToken?: (Uint8Array|null);
-
-        /** BIApiRequestPayload apiVersion */
-        apiVersion?: (number|null);
-    }
-
-    /** Represents a BIApiRequestPayload. */
-    class BIApiRequestPayload implements IBIApiRequestPayload {
-
-        /**
-         * Constructs a new BIApiRequestPayload.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IBIApiRequestPayload);
-
-        /** BIApiRequestPayload payload. */
-        public payload: Uint8Array;
-
-        /** BIApiRequestPayload encryptedSessionToken. */
-        public encryptedSessionToken: Uint8Array;
-
-        /** BIApiRequestPayload timeToken. */
-        public timeToken: Uint8Array;
-
-        /** BIApiRequestPayload apiVersion. */
-        public apiVersion: number;
-
-        /**
-         * Creates a new BIApiRequestPayload instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns BIApiRequestPayload instance
-         */
-        public static create(properties?: BITokenValidation.IBIApiRequestPayload): BITokenValidation.BIApiRequestPayload;
-
-        /**
-         * Encodes the specified BIApiRequestPayload message. Does not implicitly {@link BITokenValidation.BIApiRequestPayload.verify|verify} messages.
-         * @param message BIApiRequestPayload message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IBIApiRequestPayload, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified BIApiRequestPayload message, length delimited. Does not implicitly {@link BITokenValidation.BIApiRequestPayload.verify|verify} messages.
-         * @param message BIApiRequestPayload message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IBIApiRequestPayload, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a BIApiRequestPayload message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns BIApiRequestPayload
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.BIApiRequestPayload;
-
-        /**
-         * Decodes a BIApiRequestPayload message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns BIApiRequestPayload
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.BIApiRequestPayload;
-
-        /**
-         * Verifies a BIApiRequestPayload message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a BIApiRequestPayload message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns BIApiRequestPayload
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.BIApiRequestPayload;
-
-        /**
-         * Creates a plain object from a BIApiRequestPayload message. Also converts values to other types if specified.
-         * @param message BIApiRequestPayload
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.BIApiRequestPayload, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this BIApiRequestPayload to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a Transform. */
-    interface ITransform {
-
-        /** Transform key */
-        key?: (Uint8Array|null);
-
-        /** Transform encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-    }
-
-    /** Represents a Transform. */
-    class Transform implements ITransform {
-
-        /**
-         * Constructs a new Transform.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.ITransform);
-
-        /** Transform key. */
-        public key: Uint8Array;
-
-        /** Transform encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /**
-         * Creates a new Transform instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns Transform instance
-         */
-        public static create(properties?: BITokenValidation.ITransform): BITokenValidation.Transform;
-
-        /**
-         * Encodes the specified Transform message. Does not implicitly {@link BITokenValidation.Transform.verify|verify} messages.
-         * @param message Transform message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.ITransform, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified Transform message, length delimited. Does not implicitly {@link BITokenValidation.Transform.verify|verify} messages.
-         * @param message Transform message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.ITransform, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a Transform message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns Transform
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.Transform;
-
-        /**
-         * Decodes a Transform message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns Transform
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.Transform;
-
-        /**
-         * Verifies a Transform message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Transform message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Transform
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.Transform;
-
-        /**
-         * Creates a plain object from a Transform message. Also converts values to other types if specified.
-         * @param message Transform
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.Transform, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Transform to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a DeviceRequest. */
-    interface IDeviceRequest {
-
-        /** DeviceRequest clientVersion */
-        clientVersion?: (string|null);
-
-        /** DeviceRequest deviceName */
-        deviceName?: (string|null);
-    }
-
-    /** Represents a DeviceRequest. */
-    class DeviceRequest implements IDeviceRequest {
-
-        /**
-         * Constructs a new DeviceRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IDeviceRequest);
-
-        /** DeviceRequest clientVersion. */
-        public clientVersion: string;
-
-        /** DeviceRequest deviceName. */
-        public deviceName: string;
-
-        /**
-         * Creates a new DeviceRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns DeviceRequest instance
-         */
-        public static create(properties?: BITokenValidation.IDeviceRequest): BITokenValidation.DeviceRequest;
-
-        /**
-         * Encodes the specified DeviceRequest message. Does not implicitly {@link BITokenValidation.DeviceRequest.verify|verify} messages.
-         * @param message DeviceRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IDeviceRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified DeviceRequest message, length delimited. Does not implicitly {@link BITokenValidation.DeviceRequest.verify|verify} messages.
-         * @param message DeviceRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IDeviceRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a DeviceRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns DeviceRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.DeviceRequest;
-
-        /**
-         * Decodes a DeviceRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns DeviceRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.DeviceRequest;
-
-        /**
-         * Verifies a DeviceRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a DeviceRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns DeviceRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.DeviceRequest;
-
-        /**
-         * Creates a plain object from a DeviceRequest message. Also converts values to other types if specified.
-         * @param message DeviceRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.DeviceRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this DeviceRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an AuthRequest. */
-    interface IAuthRequest {
-
-        /** AuthRequest clientVersion */
-        clientVersion?: (string|null);
-
-        /** AuthRequest username */
-        username?: (string|null);
-
-        /** AuthRequest encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-    }
-
-    /** Represents an AuthRequest. */
-    class AuthRequest implements IAuthRequest {
-
-        /**
-         * Constructs a new AuthRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IAuthRequest);
-
-        /** AuthRequest clientVersion. */
-        public clientVersion: string;
-
-        /** AuthRequest username. */
-        public username: string;
-
-        /** AuthRequest encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /**
-         * Creates a new AuthRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns AuthRequest instance
-         */
-        public static create(properties?: BITokenValidation.IAuthRequest): BITokenValidation.AuthRequest;
-
-        /**
-         * Encodes the specified AuthRequest message. Does not implicitly {@link BITokenValidation.AuthRequest.verify|verify} messages.
-         * @param message AuthRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified AuthRequest message, length delimited. Does not implicitly {@link BITokenValidation.AuthRequest.verify|verify} messages.
-         * @param message AuthRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an AuthRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns AuthRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.AuthRequest;
-
-        /**
-         * Decodes an AuthRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns AuthRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.AuthRequest;
-
-        /**
-         * Verifies an AuthRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an AuthRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns AuthRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.AuthRequest;
-
-        /**
-         * Creates a plain object from an AuthRequest message. Also converts values to other types if specified.
-         * @param message AuthRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.AuthRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this AuthRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a Salt. */
-    interface ISalt {
-
-        /** Salt iterations */
-        iterations?: (number|null);
-
-        /** Salt salt */
-        salt?: (Uint8Array|null);
-
-        /** Salt algorithm */
-        algorithm?: (number|null);
-
-        /** Salt uid */
-        uid?: (Uint8Array|null);
-
-        /** Salt name */
-        name?: (string|null);
-    }
-
-    /** Represents a Salt. */
-    class Salt implements ISalt {
-
-        /**
-         * Constructs a new Salt.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.ISalt);
-
-        /** Salt iterations. */
-        public iterations: number;
-
-        /** Salt salt. */
-        public salt: Uint8Array;
-
-        /** Salt algorithm. */
-        public algorithm: number;
-
-        /** Salt uid. */
-        public uid: Uint8Array;
-
-        /** Salt name. */
-        public name: string;
-
-        /**
-         * Creates a new Salt instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns Salt instance
-         */
-        public static create(properties?: BITokenValidation.ISalt): BITokenValidation.Salt;
-
-        /**
-         * Encodes the specified Salt message. Does not implicitly {@link BITokenValidation.Salt.verify|verify} messages.
-         * @param message Salt message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.ISalt, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified Salt message, length delimited. Does not implicitly {@link BITokenValidation.Salt.verify|verify} messages.
-         * @param message Salt message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.ISalt, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a Salt message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns Salt
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.Salt;
-
-        /**
-         * Decodes a Salt message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns Salt
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.Salt;
-
-        /**
-         * Verifies a Salt message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Salt message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Salt
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.Salt;
-
-        /**
-         * Creates a plain object from a Salt message. Also converts values to other types if specified.
-         * @param message Salt
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.Salt, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Salt to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a UserAuthRequest. */
-    interface IUserAuthRequest {
-
-        /** UserAuthRequest uid */
-        uid?: (Uint8Array|null);
-
-        /** UserAuthRequest salt */
-        salt?: (Uint8Array|null);
-
-        /** UserAuthRequest iterations */
-        iterations?: (number|null);
-
-        /** UserAuthRequest encryptedClientKey */
-        encryptedClientKey?: (Uint8Array|null);
-
-        /** UserAuthRequest authHash */
-        authHash?: (Uint8Array|null);
-
-        /** UserAuthRequest encryptedDataKey */
-        encryptedDataKey?: (Uint8Array|null);
-
-        /** UserAuthRequest loginType */
-        loginType?: (BITokenValidation.LoginType|null);
-
-        /** UserAuthRequest name */
-        name?: (string|null);
-
-        /** UserAuthRequest algorithm */
-        algorithm?: (number|null);
-    }
-
-    /** Represents a UserAuthRequest. */
-    class UserAuthRequest implements IUserAuthRequest {
-
-        /**
-         * Constructs a new UserAuthRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IUserAuthRequest);
-
-        /** UserAuthRequest uid. */
-        public uid: Uint8Array;
-
-        /** UserAuthRequest salt. */
-        public salt: Uint8Array;
-
-        /** UserAuthRequest iterations. */
-        public iterations: number;
-
-        /** UserAuthRequest encryptedClientKey. */
-        public encryptedClientKey: Uint8Array;
-
-        /** UserAuthRequest authHash. */
-        public authHash: Uint8Array;
-
-        /** UserAuthRequest encryptedDataKey. */
-        public encryptedDataKey: Uint8Array;
-
-        /** UserAuthRequest loginType. */
-        public loginType: BITokenValidation.LoginType;
-
-        /** UserAuthRequest name. */
-        public name: string;
-
-        /** UserAuthRequest algorithm. */
-        public algorithm: number;
-
-        /**
-         * Creates a new UserAuthRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UserAuthRequest instance
-         */
-        public static create(properties?: BITokenValidation.IUserAuthRequest): BITokenValidation.UserAuthRequest;
-
-        /**
-         * Encodes the specified UserAuthRequest message. Does not implicitly {@link BITokenValidation.UserAuthRequest.verify|verify} messages.
-         * @param message UserAuthRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IUserAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UserAuthRequest message, length delimited. Does not implicitly {@link BITokenValidation.UserAuthRequest.verify|verify} messages.
-         * @param message UserAuthRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IUserAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a UserAuthRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UserAuthRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.UserAuthRequest;
-
-        /**
-         * Decodes a UserAuthRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UserAuthRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.UserAuthRequest;
-
-        /**
-         * Verifies a UserAuthRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a UserAuthRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UserAuthRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.UserAuthRequest;
-
-        /**
-         * Creates a plain object from a UserAuthRequest message. Also converts values to other types if specified.
-         * @param message UserAuthRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.UserAuthRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UserAuthRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a BIApiDecryptedRequest. */
-    interface IBIApiDecryptedRequest {
-
-        /** BIApiDecryptedRequest decryptedTransmissionKey */
-        decryptedTransmissionKey?: (Uint8Array|null);
-
-        /** BIApiDecryptedRequest bIApiRequestPayload */
-        bIApiRequestPayload?: (BITokenValidation.IBIApiRequestPayload|null);
-
-        /** BIApiDecryptedRequest supportedLanguage */
-        supportedLanguage?: (BITokenValidation.SupportedLanguage|null);
-    }
-
-    /** Represents a BIApiDecryptedRequest. */
-    class BIApiDecryptedRequest implements IBIApiDecryptedRequest {
-
-        /**
-         * Constructs a new BIApiDecryptedRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IBIApiDecryptedRequest);
-
-        /** BIApiDecryptedRequest decryptedTransmissionKey. */
-        public decryptedTransmissionKey: Uint8Array;
-
-        /** BIApiDecryptedRequest bIApiRequestPayload. */
-        public bIApiRequestPayload?: (BITokenValidation.IBIApiRequestPayload|null);
-
-        /** BIApiDecryptedRequest supportedLanguage. */
-        public supportedLanguage: BITokenValidation.SupportedLanguage;
-
-        /**
-         * Creates a new BIApiDecryptedRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns BIApiDecryptedRequest instance
-         */
-        public static create(properties?: BITokenValidation.IBIApiDecryptedRequest): BITokenValidation.BIApiDecryptedRequest;
-
-        /**
-         * Encodes the specified BIApiDecryptedRequest message. Does not implicitly {@link BITokenValidation.BIApiDecryptedRequest.verify|verify} messages.
-         * @param message BIApiDecryptedRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IBIApiDecryptedRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified BIApiDecryptedRequest message, length delimited. Does not implicitly {@link BITokenValidation.BIApiDecryptedRequest.verify|verify} messages.
-         * @param message BIApiDecryptedRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IBIApiDecryptedRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a BIApiDecryptedRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns BIApiDecryptedRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.BIApiDecryptedRequest;
-
-        /**
-         * Decodes a BIApiDecryptedRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns BIApiDecryptedRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.BIApiDecryptedRequest;
-
-        /**
-         * Verifies a BIApiDecryptedRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a BIApiDecryptedRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns BIApiDecryptedRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.BIApiDecryptedRequest;
-
-        /**
-         * Creates a plain object from a BIApiDecryptedRequest message. Also converts values to other types if specified.
-         * @param message BIApiDecryptedRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.BIApiDecryptedRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this BIApiDecryptedRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a SessionToken. */
-    interface ISessionToken {
-
-        /** SessionToken created */
-        created?: (number|Long|null);
-
-        /** SessionToken expiration */
-        expiration?: (number|Long|null);
-
-        /** SessionToken ip */
-        ip?: (string|null);
-
-        /** SessionToken sessionUid */
-        sessionUid?: (Uint8Array|null);
-
-        /** SessionToken deviceToken */
-        deviceToken?: (BITokenValidation.IDeviceToken|null);
-
-        /** SessionToken fromUserId */
-        fromUserId?: (number|null);
-
-        /** SessionToken forUserId */
-        forUserId?: (number|null);
-
-        /** SessionToken enterpriseUserId */
-        enterpriseUserId?: (number|Long|null);
-
-        /** SessionToken clientVersionId */
-        clientVersionId?: (number|null);
-
-        /** SessionToken sessionTokenType */
-        sessionTokenType?: (BITokenValidation.SessionTokenType|null);
-    }
-
-    /** Represents a SessionToken. */
-    class SessionToken implements ISessionToken {
-
-        /**
-         * Constructs a new SessionToken.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.ISessionToken);
-
-        /** SessionToken created. */
-        public created: (number|Long);
-
-        /** SessionToken expiration. */
-        public expiration: (number|Long);
-
-        /** SessionToken ip. */
-        public ip: string;
-
-        /** SessionToken sessionUid. */
-        public sessionUid: Uint8Array;
-
-        /** SessionToken deviceToken. */
-        public deviceToken?: (BITokenValidation.IDeviceToken|null);
-
-        /** SessionToken fromUserId. */
-        public fromUserId: number;
-
-        /** SessionToken forUserId. */
-        public forUserId: number;
-
-        /** SessionToken enterpriseUserId. */
-        public enterpriseUserId: (number|Long);
-
-        /** SessionToken clientVersionId. */
-        public clientVersionId: number;
-
-        /** SessionToken sessionTokenType. */
-        public sessionTokenType: BITokenValidation.SessionTokenType;
-
-        /**
-         * Creates a new SessionToken instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns SessionToken instance
-         */
-        public static create(properties?: BITokenValidation.ISessionToken): BITokenValidation.SessionToken;
-
-        /**
-         * Encodes the specified SessionToken message. Does not implicitly {@link BITokenValidation.SessionToken.verify|verify} messages.
-         * @param message SessionToken message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.ISessionToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified SessionToken message, length delimited. Does not implicitly {@link BITokenValidation.SessionToken.verify|verify} messages.
-         * @param message SessionToken message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.ISessionToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a SessionToken message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns SessionToken
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.SessionToken;
-
-        /**
-         * Decodes a SessionToken message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns SessionToken
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.SessionToken;
-
-        /**
-         * Verifies a SessionToken message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a SessionToken message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns SessionToken
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.SessionToken;
-
-        /**
-         * Creates a plain object from a SessionToken message. Also converts values to other types if specified.
-         * @param message SessionToken
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.SessionToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this SessionToken to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a DeviceToken. */
-    interface IDeviceToken {
-
-        /** DeviceToken deviceId */
-        deviceId?: (number|Long|null);
-
-        /** DeviceToken region */
-        region?: (number|null);
-    }
-
-    /** Represents a DeviceToken. */
-    class DeviceToken implements IDeviceToken {
-
-        /**
-         * Constructs a new DeviceToken.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BITokenValidation.IDeviceToken);
-
-        /** DeviceToken deviceId. */
-        public deviceId: (number|Long);
-
-        /** DeviceToken region. */
-        public region: number;
-
-        /**
-         * Creates a new DeviceToken instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns DeviceToken instance
-         */
-        public static create(properties?: BITokenValidation.IDeviceToken): BITokenValidation.DeviceToken;
-
-        /**
-         * Encodes the specified DeviceToken message. Does not implicitly {@link BITokenValidation.DeviceToken.verify|verify} messages.
-         * @param message DeviceToken message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BITokenValidation.IDeviceToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified DeviceToken message, length delimited. Does not implicitly {@link BITokenValidation.DeviceToken.verify|verify} messages.
-         * @param message DeviceToken message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BITokenValidation.IDeviceToken, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a DeviceToken message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns DeviceToken
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BITokenValidation.DeviceToken;
-
-        /**
-         * Decodes a DeviceToken message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns DeviceToken
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BITokenValidation.DeviceToken;
-
-        /**
-         * Verifies a DeviceToken message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a DeviceToken message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns DeviceToken
-         */
-        public static fromObject(object: { [k: string]: any }): BITokenValidation.DeviceToken;
-
-        /**
-         * Creates a plain object from a DeviceToken message. Also converts values to other types if specified.
-         * @param message DeviceToken
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BITokenValidation.DeviceToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this DeviceToken to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -27391,7 +26517,9 @@ export namespace SsoCloud {
         OKTA = 4,
         ADFS = 5,
         AZURE = 6,
-        ONELOGIN = 7
+        ONELOGIN = 7,
+        PING = 8,
+        JUMPCLOUD = 9
     }
 
     /** Properties of a SsoCloudSettingValue. */

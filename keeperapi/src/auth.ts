@@ -270,7 +270,7 @@ export class Auth {
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             } else {
-                if (needUserName) {
+                if (needUserName || !this.options.useSessionResumption) {
                     startLoginRequest.username = this._username
                     needUserName = false
                 }
