@@ -15,7 +15,7 @@ const clientVersion = 'w15.0.0'
 const host = KeeperEnvironment.DEV
 
 async function testWsPushMessage() {
-    const deviceConfig = getDeviceConfig(host)
+    const deviceConfig = getDeviceConfig(host, host)
 
     const auth = new Auth({
         host: host,

@@ -4,6 +4,11 @@ import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 export type KeeperHost = KeeperEnvironment | string
 
+export type ClientConfigurationInfo = {
+    onRegionChanged?: (newRegion: string) => void,
+    onCommandFailure?: (code: string, message?: string) => void,
+}
+
 export interface ClientConfiguration {
     authUI?: AuthUI
     authUI3?: AuthUI3
@@ -11,7 +16,8 @@ export interface ClientConfiguration {
     cloneConfig?: boolean
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
-    sessionStorage?: SessionStorage
+    sessionStorage?: SessionStorage,
+    useSessionResumption?: boolean,
     host: KeeperHost
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
@@ -30,7 +36,7 @@ export interface DeviceConfig {
 
 export interface SessionStorage {
     lastUsername: string;
-    cloneCodeFor(username: string): Uint8Array | null;
+    getCloneCode(username: string): Uint8Array | null;
     saveCloneCode(username: string, cloneCode: Uint8Array): void;
 }
 

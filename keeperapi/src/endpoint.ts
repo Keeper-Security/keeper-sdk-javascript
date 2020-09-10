@@ -10,7 +10,7 @@ import {
     webSafe64FromBytes
 } from './utils'
 import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from './restMessages'
-import {ClientConfigurationInternal, TransmissionKey} from './configuration';
+import {ClientConfigurationInfo, ClientConfigurationInternal, TransmissionKey} from './configuration';
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
@@ -223,7 +223,23 @@ export class KeeperEndpoint {
             let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
             return message.fromBytes(decrypted)
         } catch {
-            throw(new Error(platform.bytesToString(response.data.slice(0, 1000))))
+            const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
+            try {
+                const message = JSON.parse(errorMessage)
+                if (message.error) {
+                    const cci = this.options as ClientConfigurationInfo
+                    switch (message.error) {
+                        case 'auth_failed':
+                        case 'two_factor_code_invalid':
+                            if (cci.onCommandFailure) {
+                                cci.onCommandFailure(message.error, message.message)
+                            }
+                            break
+                    }
+                }
+            }
+            catch{}
+            throw(new Error(errorMessage))
         }
     }
 
@@ -257,8 +273,10 @@ export class KeeperEndpoint {
         return prepareApiRequest(payload, this.transmissionKey, sessionToken)
     }
 
-    async decryptPushMessage(pushMessage: any): Promise<WssClientResponse> {
-        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessage, this.transmissionKey.key)
+    async decryptPushMessage(pushMessage: Blob): Promise<WssClientResponse> {
+        const pmArrBuff = await pushMessage.arrayBuffer()
+        const pmUint8Buff = new Uint8Array(pmArrBuff);
+        const decryptedPushMessage = await platform.aesGcmDecrypt(pmUint8Buff, this.transmissionKey.key)
         return WssClientResponse.decode(decryptedPushMessage)
     }
 

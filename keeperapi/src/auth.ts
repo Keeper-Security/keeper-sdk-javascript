@@ -1,5 +1,5 @@
 import {
-    ClientConfiguration,
+    ClientConfiguration, ClientConfigurationInfo,
     ClientConfigurationInternal,
     DeviceVerificationMethods,
     LoginError,
@@ -198,7 +198,7 @@ export class Auth {
         if (!this.options.sessionStorage) {
             this.options.sessionStorage = {
                 lastUsername: null,
-                cloneCodeFor: () => null,
+                getCloneCode: () => null,
                 saveCloneCode: () => {}
             }
         }
@@ -265,12 +265,12 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginType: Authentication.LoginType.NORMAL,
-                cloneCode: this.options.sessionStorage.cloneCodeFor(this._username) || Uint8Array.of(0)
+                cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0)
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             } else {
-                if (needUserName) {
+                if (needUserName || !this.options.useSessionResumption) {
                     startLoginRequest.username = this._username
                     needUserName = false
                 }
@@ -309,6 +309,10 @@ export class Auth {
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
                     this.options.host = loginResponse.stateSpecificValue
+                    const cci = this.options as ClientConfigurationInfo
+                    if (cci.onRegionChanged) {
+                        cci.onRegionChanged(loginResponse.stateSpecificValue)
+                    }
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");

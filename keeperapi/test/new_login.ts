@@ -17,8 +17,14 @@ import {
 } from './testUtil';
 import {createECDH} from "crypto";
 import {Vault} from '../src/vault';
-import {SetTwoFactorAuthCommand, VerifyUserCommand} from '../src/commands';
+import {
+    EnterpriseDataInclude,
+    GetEnterpriseDataCommand,
+    SetTwoFactorAuthCommand,
+    VerifyUserCommand
+} from '../src/commands';
 import * as fs from 'fs'
+import {Company} from '../src/company';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -120,6 +126,7 @@ async function testLogin() {
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         sessionStorage: new TestSessionStorage(deviceName, host),
+        // useSessionResumption: true,
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3
     })
@@ -129,15 +136,15 @@ async function testLogin() {
             password,
         })
         console.log(auth.dataKey)
-        // let vault = new Vault(auth)
-        //
-        // vault.noTypedRecords = true;
-        // await vault.syncDown(0, true)
-        // for (let record of vault.records) {
-        //     console.log(record.data)
-        //     console.log(record.recordData.udata)
-        //     console.log(record.nonSharedData)
-        // }
+        let vault = new Vault(auth)
+
+        vault.noTypedRecords = true;
+        await vault.syncDown(0, true)
+        for (let record of vault.records) {
+            console.log(record.data)
+            console.log(record.recordData.udata)
+            console.log(record.nonSharedData)
+        }
 
         // const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, deviceConfig.publicKey)
         // const regEncDataKeyMsg = registerEncryptedDataKeyForDeviceMessage({
@@ -147,10 +154,49 @@ async function testLogin() {
         // let resp = await auth.executeRest(regEncDataKeyMsg);
         // console.log(resp)
 
-        let resp = await auth.executeRest(accountSummaryMessage({
-            summaryVersion: 1
-        }));
-        console.log(resp.devices)
+        // const cmd = new GetEnterpriseDataCommand()
+        // cmd.include = ['role_keys2']
+        // const resp = await auth.executeCommand(cmd)
+        // console.log(resp)
+
+        // let resp = await auth.executeRest(accountSummaryMessage({
+        //     summaryVersion: 1
+        // }));
+        // console.log(resp)
+
+        // let company = new Company(auth)
+        // let allIncludes: EnterpriseDataInclude[] = [
+        //     'nodes',
+        //     'users',
+        //     'roles',
+        //     'role_enforcements',
+        //     'role_privileges',
+        //     'role_users',
+        //     'managed_nodes',
+        //     'licenses',
+        //     'team_users',
+        //     'teams',
+        //     'role_keys',
+        //     'role_keys2',
+        //     'queued_teams',
+        //     'queued_team_users',
+        //     'bridges',
+        //     'scims',
+        //     'email_provision',
+        //     'sso_services',
+        //     'user_privileges'
+        // ]
+        // await company.load(allIncludes)
+        // for (let node of company.data.nodes) {
+        //     console.log(node.displayName)
+        // }
+        // for (let role of company.data.roles) {
+        //     console.log(role.displayName)
+        // }
+        // for (let user of company.data.users) {
+        //     console.log(user.displayName)
+        // }
+
     } finally {
         auth.disconnect()
     }
@@ -182,19 +228,24 @@ async function testNewDevice() {
 async function testLoginToLinkedDevice() {
     const {userName, password, host} = getCredentialsAndHost()
 
-    const deviceConfig = getDeviceConfig('device1', host)
+    const deviceName = 'device1'
+    // const deviceName = 'test device'
+
+    const deviceConfig = getDeviceConfig(deviceName, host)
 
     const auth = new Auth({
         host: host,
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
+        sessionStorage: new TestSessionStorage(deviceName, host),
+        useSessionResumption: true,
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3
     })
     try {
         await auth.loginV3({
             username: userName,
-            password,
+            password : '',
         })
         console.log(auth.dataKey)
     } finally {

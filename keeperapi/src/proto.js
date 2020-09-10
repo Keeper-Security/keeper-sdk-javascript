@@ -629,6 +629,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           phoneNumber: {
             type: "string",
             id: 6
+          },
+          maxExpiration: {
+            type: "TwoFactorExpiration",
+            id: 7
           }
         }
       },
@@ -1968,6 +1972,42 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             id: 3
           }
         }
+      },
+      SupportTool2FAValidateRequest: {
+        fields: {
+          userId: {
+            type: "int32",
+            id: 1
+          },
+          valueType: {
+            type: "TwoFactorValueType",
+            id: 2
+          },
+          value: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      SupportToolBooleanResponse: {
+        fields: {
+          result: {
+            type: "bool",
+            id: 1
+          }
+        }
+      },
+      BiCheckoutSendEmail: {
+        fields: {
+          licenseKeyId: {
+            type: "int32",
+            id: 1
+          },
+          contactEmail: {
+            type: "string",
+            id: 2
+          }
+        }
       }
     }
   },
@@ -2976,284 +3016,6 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           total: {
             type: "string",
             id: 10
-          }
-        }
-      }
-    }
-  },
-  BITokenValidation: {
-    options: {
-      java_package: "com.keepersecurity.proto",
-      java_outer_classname: "BITokenValidation"
-    },
-    nested: {
-      SupportedLanguage: {
-        values: {
-          ENGLISH: 0,
-          ARABIC: 1,
-          BRITISH: 2,
-          CHINESE: 3,
-          CHINESE_HONG_KONG: 4,
-          CHINESE_TAIWAN: 5,
-          DUTCH: 6,
-          FRENCH: 7,
-          GERMAN: 8,
-          GREEK: 9,
-          HEBREW: 10,
-          ITALIAN: 11,
-          JAPANESE: 12,
-          KOREAN: 13,
-          POLISH: 14,
-          PORTUGUESE: 15,
-          PORTUGUESE_BRAZIL: 16,
-          ROMANIAN: 17,
-          RUSSIAN: 18,
-          SLOVAK: 19,
-          SPANISH: 20
-        }
-      },
-      SessionTokenType: {
-        values: {
-          NO_RESTRICTION: 0,
-          ACCOUNT_RECOVERY: 1,
-          SHARE_ACCOUNT: 2,
-          PURCHASE: 3
-        }
-      },
-      LoginType: {
-        values: {
-          NORMAL: 0,
-          SSO: 1,
-          BIO: 2,
-          ALTERNATE: 3,
-          OFFLINE: 4
-        }
-      },
-      BIApiRequest: {
-        fields: {
-          encryptedTransmissionKey: {
-            type: "bytes",
-            id: 1
-          },
-          publicKeyId: {
-            type: "int32",
-            id: 2
-          },
-          locale: {
-            type: "string",
-            id: 3
-          },
-          encryptedPayload: {
-            type: "bytes",
-            id: 4
-          },
-          email: {
-            type: "string",
-            id: 5
-          },
-          clientVersion: {
-            type: "string",
-            id: 6
-          },
-          sessionToken: {
-            type: "string",
-            id: 7
-          }
-        }
-      },
-      BIApiRequestPayload: {
-        fields: {
-          payload: {
-            type: "bytes",
-            id: 1
-          },
-          encryptedSessionToken: {
-            type: "bytes",
-            id: 2
-          },
-          timeToken: {
-            type: "bytes",
-            id: 3
-          },
-          apiVersion: {
-            type: "int32",
-            id: 4
-          }
-        }
-      },
-      Transform: {
-        fields: {
-          key: {
-            type: "bytes",
-            id: 1
-          },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 2
-          }
-        }
-      },
-      DeviceRequest: {
-        fields: {
-          clientVersion: {
-            type: "string",
-            id: 1
-          },
-          deviceName: {
-            type: "string",
-            id: 2
-          }
-        }
-      },
-      AuthRequest: {
-        fields: {
-          clientVersion: {
-            type: "string",
-            id: 1
-          },
-          username: {
-            type: "string",
-            id: 2
-          },
-          encryptedDeviceToken: {
-            type: "bytes",
-            id: 3
-          }
-        }
-      },
-      Salt: {
-        fields: {
-          iterations: {
-            type: "int32",
-            id: 1
-          },
-          salt: {
-            type: "bytes",
-            id: 2
-          },
-          algorithm: {
-            type: "int32",
-            id: 3
-          },
-          uid: {
-            type: "bytes",
-            id: 4
-          },
-          name: {
-            type: "string",
-            id: 5
-          }
-        }
-      },
-      UserAuthRequest: {
-        fields: {
-          uid: {
-            type: "bytes",
-            id: 1
-          },
-          salt: {
-            type: "bytes",
-            id: 2
-          },
-          iterations: {
-            type: "int32",
-            id: 3
-          },
-          encryptedClientKey: {
-            type: "bytes",
-            id: 4
-          },
-          authHash: {
-            type: "bytes",
-            id: 5
-          },
-          encryptedDataKey: {
-            type: "bytes",
-            id: 6
-          },
-          loginType: {
-            type: "LoginType",
-            id: 7
-          },
-          name: {
-            type: "string",
-            id: 8
-          },
-          algorithm: {
-            type: "int32",
-            id: 9
-          }
-        }
-      },
-      BIApiDecryptedRequest: {
-        fields: {
-          decryptedTransmissionKey: {
-            type: "bytes",
-            id: 1
-          },
-          bIApiRequestPayload: {
-            type: "BITokenValidation.BIApiRequestPayload",
-            id: 3
-          },
-          supportedLanguage: {
-            type: "BITokenValidation.SupportedLanguage",
-            id: 4
-          }
-        }
-      },
-      SessionToken: {
-        fields: {
-          created: {
-            type: "int64",
-            id: 1
-          },
-          expiration: {
-            type: "int64",
-            id: 2
-          },
-          ip: {
-            type: "string",
-            id: 3
-          },
-          sessionUid: {
-            type: "bytes",
-            id: 4
-          },
-          deviceToken: {
-            type: "DeviceToken",
-            id: 5
-          },
-          fromUserId: {
-            type: "int32",
-            id: 6
-          },
-          forUserId: {
-            type: "int32",
-            id: 7
-          },
-          enterpriseUserId: {
-            type: "int64",
-            id: 8
-          },
-          clientVersionId: {
-            type: "int32",
-            id: 9
-          },
-          sessionTokenType: {
-            type: "BITokenValidation.SessionTokenType",
-            id: 10
-          }
-        }
-      },
-      DeviceToken: {
-        fields: {
-          deviceId: {
-            type: "int64",
-            id: 1
-          },
-          region: {
-            type: "int32",
-            id: 2
           }
         }
       }
@@ -5471,7 +5233,9 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           OKTA: 4,
           ADFS: 5,
           AZURE: 6,
-          ONELOGIN: 7
+          ONELOGIN: 7,
+          PING: 8,
+          JUMPCLOUD: 9
         }
       },
       SsoCloudSettingValue: {
