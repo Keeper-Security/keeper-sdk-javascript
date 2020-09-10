@@ -709,6 +709,16 @@ export class SsoServiceProviderUpdateCommand extends AuthorizedCommand {
     is_cloud: true;
 }
 
+export class SsoServiceProviderDeleteCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "sso_service_provider_delete";
+    }
+
+    sso_service_provider_id: number;
+}
+
 export class GetAuditEventReportsCommand extends AuthorizedCommand<GetAuditEventReportsResponse> {
 
     constructor() {
