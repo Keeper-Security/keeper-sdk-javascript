@@ -29,10 +29,13 @@ import {
     validateAuthHashMessage,
     validateDeviceVerificationCodeMessage
 } from './restMessages'
-import {Authentication} from './proto';
+import {Authentication, SsoCloud} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import SsoCloudRequest = SsoCloud.SsoCloudRequest;
+import ApiRequest = Authentication.ApiRequest;
+import {browserPlatform} from "./browser/platform";
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 function unifyLoginError(e: any): LoginError {
@@ -156,7 +159,16 @@ export type LoginPayload = {
     useAlternate?: boolean
 }
 
+export enum UserType {
+    normal = "normal",
+    onsiteSso = "onsite_sso",
+    cloudSso = "cloud_sso"
+}
+
 export class Auth {
+    ssoLogoutUrl: string = ''
+    userType: UserType = UserType.normal
+    ssoSessionId: string = ''
     dataKey: Uint8Array;
     privateKey: Uint8Array;
     private _accountUid: Uint8Array;
@@ -322,7 +334,27 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
-                    await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
+                    let restReq = SsoCloudRequest.create({
+                        "embedded": true,
+                        "clientVersion": this._endpoint.clientVersion,
+                        "dest": "vault",
+                        "forceLogin": false,
+                        "messageSessionUid": this.messageSessionUid
+                    });
+
+                    console.log("cloud sso url: " + loginResponse.url)
+
+                    let requestPayload = await this._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish());
+
+                    let payload = webSafe64FromBytes(requestPayload);
+
+                    if (browserPlatform != null) {
+                        let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
+                        this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
+                    } else {
+                        await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
+                    }
+                    // await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     console.log("SSO Connect login");
@@ -611,8 +643,7 @@ export class Auth {
     }
 
     async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
-        let keyPair: any = await platform.generateRSAKeyPair2();
-        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+        let {privateKey, publicKey} = await platform.generateRSAKeyPair();
         let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
         console.log("public key length is " + encodedPublicKey.length);
@@ -646,14 +677,6 @@ export class Auth {
      * July 2020
      */
     async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
-        const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
-        const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair: any = await platform.generateRSAKeyPair2();
-        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
-
-        console.log("encodedEncryptionKey = " + encodedEncryptionKey);
-
         try {
             console.log("\n*** cloudSsoLogin2 at " + ssoLoginUrl + " ***");
 
@@ -664,7 +687,6 @@ export class Auth {
             // This should return HTML
             let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
                 {
-                    "key": encodedEncryptionKey,
                     "payload": encodedPayload
                 }, useGet);
 

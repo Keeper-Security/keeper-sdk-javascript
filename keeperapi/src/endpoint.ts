@@ -174,9 +174,16 @@ export class KeeperEndpoint {
 
         console.log("SSO response is", response.statusCode);
 
+        const possibleRedirects = [200, 303]
+
         // Redirect?
-        if (response.statusCode === 303) {
-            let redirectUrl = response.headers["location"];
+        if (possibleRedirects.indexOf(response.statusCode) >= 0) {
+            let redirectUrl = '';
+            if (response.statusCode == 303) {
+                redirectUrl = response.headers["location"];
+            } else if (response.statusCode == 200) {
+                redirectUrl = theUrl + '?' + (formParams as string);
+            }
             if (redirectUrl) {
                 console.log("Redirecting to " + redirectUrl);
                 if (this.options.authUI3 && this.options.authUI3.redirectCallback) {
