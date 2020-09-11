@@ -30,13 +30,13 @@ import {
     validateDeviceVerificationCodeMessage
 } from './restMessages'
 import {Authentication, SsoCloud} from './proto';
+import {browserPlatform} from "./browser/platform";
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import SsoCloudRequest = SsoCloud.SsoCloudRequest;
-import ApiRequest = Authentication.ApiRequest;
-import {browserPlatform} from "./browser/platform";
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
+import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -839,6 +839,11 @@ export class Auth {
     async managedCompanyLogin(username: string, password: string, companyId: number) {
         this.managedCompanyId = companyId;
         await this.login(username, password);
+    }
+
+    async decryptCloudSsoResponse(cloudResponseToken: string): Promise<SsoCloudResponse> {
+        const decryptedData = await platform.aesGcmDecrypt(platform.base64ToBytes(cloudResponseToken), this._endpoint.getTransmissionKey().key)
+        return SsoCloudResponse.decode(decryptedData)
     }
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
