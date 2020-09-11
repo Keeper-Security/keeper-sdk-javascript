@@ -1,6 +1,8 @@
 import {
-    ClientConfiguration, ClientConfigurationInfo,
+    ClientConfiguration,
+    ClientConfigurationInfo,
     ClientConfigurationInternal,
+    DeviceApprovalChannel,
     DeviceVerificationMethods,
     LoginError,
     TransmissionKey
@@ -31,6 +33,7 @@ import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -162,7 +165,7 @@ export class Auth {
     private endpoint: KeeperEndpoint;
     private managedCompanyId?: number;
     private messageSessionUid: Uint8Array;
-    private options: ClientConfigurationInternal
+    options: ClientConfigurationInternal;
     private socket: SocketListener | undefined;
 
     constructor(options: ClientConfiguration) {
@@ -348,132 +351,133 @@ export class Auth {
         }
     }
 
-    async verifyDevice(username: string, loginToken: Uint8Array): Promise<Uint8Array> {
-        if (!this.options.authUI3) {
-            throw new Error('No authUI3 provided. authUI3 required to verify devices')
-        }
+    verifyDevice(username: string, loginToken: Uint8Array): Promise<Uint8Array> {
+        return new Promise<Uint8Array>((resolve, reject) => {
+            if (!this.options.authUI3) {
+                reject(new Error('No authUI3 provided. authUI3 required to verify devices'))
+                return
+            }
 
-        const deviceConfig = this.options.deviceConfig
-        const verifyMethod = await this.options.authUI3.getDeviceVerificationMethod()
+            let promiseDone: () => void | undefined
+            const onDone = new Promise<void>((resolve) => {
+                promiseDone = resolve
+            })
 
-        let promiseFromUser: Promise<Uint8Array> | null = null
-        let waitOnSocket = true
-        switch (verifyMethod) {
-            case DeviceVerificationMethods.Email:
-                await this.executeRest(requestDeviceVerificationMessage({
-                    username: username,
-                    encryptedDeviceToken: deviceConfig.deviceToken,
-                    clientVersion: this.endpoint.clientVersion,
-                    messageSessionUid: this.messageSessionUid
-                }))
-
-                promiseFromUser = new Promise<Uint8Array>(async (resolve, reject) => {
-                    if (!this.options.authUI3) {
-                        throw new Error('No authUI3 provided. authUI3 required to verify devices')
-                    }
-                    const token = await this.options.authUI3.getDeviceVerificationCode()
-                    if (!!token) {
+            let emailSent = false
+            let tfaExpiration = TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
+            const deviceConfig = this.options.deviceConfig
+            const channels: DeviceApprovalChannel[] = [
+                {
+                    channel: DeviceVerificationMethods.Email,
+                    sendPush: async () => {
+                        await this.executeRest(requestDeviceVerificationMessage({
+                            username: username,
+                            verificationChannel: emailSent ? 'email_resend' : 'email',
+                            encryptedDeviceToken: deviceConfig.deviceToken,
+                            clientVersion: this.endpoint.clientVersion,
+                            messageSessionUid: this.messageSessionUid
+                        }))
+                        emailSent = true
+                    },
+                    sendCode: async (code) => {
                         await this.executeRest(validateDeviceVerificationCodeMessage({
-                            verificationCode: token,
+                            verificationCode: code,
                             username: username
                         }))
                     }
-                    return loginToken
-                })
-                break
-
-            case DeviceVerificationMethods.TFACode:
-                promiseFromUser = this.handleTwoFactorCode(loginToken, DeviceVerificationMethods.TFACode)
-                waitOnSocket = false
-                break
-
-            case DeviceVerificationMethods.TFAPush:
-                await this.executeRest(twoFactorSend2FAPushMessage({
-                    encryptedLoginToken: loginToken,
-                }))
-                break
-
-            case DeviceVerificationMethods.SMS:
-                await this.executeRest(twoFactorSend2FAPushMessage({
-                    encryptedLoginToken: loginToken,
-                }))
-                promiseFromUser = this.handleTwoFactorCode(loginToken, DeviceVerificationMethods.SMS)
-                waitOnSocket = false
-                break
-
-            case DeviceVerificationMethods.KeeperPush:
-                await this.executeRest(twoFactorSend2FAPushMessage({
-                    encryptedLoginToken: loginToken,
-                    pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                }))
-                break
-
-            default:
-                throw new Error('Invalid choice for device verification')
-        }
-
-        return this.waitForVerifyDeviceInput(loginToken, waitOnSocket, promiseFromUser)
-    }
-
-    private async waitForVerifyDevicePush(loginToken: Uint8Array): Promise<Uint8Array> {
-        return new Promise<Uint8Array>(async (resolve, reject) => {
-            let result: Uint8Array = loginToken
-            while (true) {
-                if (!this.socket) {
-                    throw new Error('No socket available')
-                }
-                const pushMessage = await this.socket.getPushMessage()
-                const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-                const wssRs = JSON.parse(wssClientResponse.message)
-                console.log(wssRs)
-                if (wssRs.event && wssRs.event === 'received_totp') {
-                    if (wssRs.encryptedLoginToken) {
-                        result = platform.base64ToBytes(wssRs.encryptedLoginToken)
+                },
+                {
+                    channel: DeviceVerificationMethods.KeeperPush,
+                    sendPush: async () => {
+                        await this.executeRest(twoFactorSend2FAPushMessage({
+                            encryptedLoginToken: loginToken,
+                            pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                        }))
                     }
-                    resolve(result)
-                    return
+                },
+                {
+                    channel: DeviceVerificationMethods.TFA,
+                    sendPush: async () => {
+                        await this.executeRest(twoFactorSend2FAPushMessage({
+                            encryptedLoginToken: loginToken,
+                        }))
+                    },
+                    sendCode: async (code) => {
+                        const twoFactorValidateMsg = twoFactorValidateMessage({
+                            encryptedLoginToken: loginToken,
+                            value: code,
+                            expireIn: tfaExpiration
+                        })
+                        const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+                        if (twoFactorValidateResp.encryptedLoginToken) {
+                            const wssRs: Record<string, any> = {
+                                event: 'received_totp',
+                                encryptedLoginToken: platform.bytesToBase64(twoFactorValidateResp.encryptedLoginToken)
+                            }
+                            processPushNotification(wssRs)
+                        }
+                    },
+                    setExpiration: expiration => {
+                        tfaExpiration = expiration
+                    }
                 }
-                if (wssRs.message && wssRs.message === 'device_approved') {
+            ];
+
+            let done = false
+            const resumeWithToken = (token: Uint8Array) => {
+                done = true
+                if (promiseDone) {
+                    promiseDone()
+                }
+                resolve(token)
+            }
+            const rejectWithError = (error: Error) => {
+                done = true
+                if (promiseDone) {
+                    promiseDone()
+                }
+                reject(error)
+            }
+
+            const processPushNotification = (wssRs: Record<string, any>) => {
+                if (wssRs.event === 'received_totp') {
+                    const token = wssRs.encryptedLoginToken ? platform.base64ToBytes(wssRs.encryptedLoginToken) : loginToken
+                    resumeWithToken(token)
+                } else if (wssRs.message === 'device_approved') {
                     if (wssRs.approved) {
-                        resolve(result)
+                        resumeWithToken(loginToken)
                     } else {
-                        reject('rejected')
+                        rejectWithError(new Error('Rejected'))
                     }
-                    return
-                }
-                if (wssRs.command && wssRs.command === 'device_verified') {
-                    resolve(result)
-                    return
+                } else if (wssRs.command === 'device_verified') {
+                    resumeWithToken(loginToken)
                 }
             }
-        })
-    }
 
-    private async waitForVerifyDeviceInput(
-        loginToken: Uint8Array,
-        waitOnSocket: boolean,
-        promiseFromUser: Promise<Uint8Array> | null
-    ): Promise<Uint8Array> {
-        const timeout: number = 2 * 60 * 1000 // default timeout 2 minutes
-        let to: any | undefined
-        const timeoutPromise = new Promise<Uint8Array>(resolve => {
-            to = setTimeout(() => {
-                to = undefined
-                resolve(loginToken)
-            }, timeout)
+            // response from the client true - try again, false - cancel
+            this.options.authUI3.waitForDeviceApproval(channels, onDone)
+                .then((ok) => {
+                    promiseDone = undefined
+                    if (ok) {
+                        resumeWithToken(loginToken)
+                    } else {
+                        rejectWithError(new Error('Canceled'))
+                    }
+                });
+
+            // receive push notification
+            (async () => {
+                while (!done) {
+                    const pushMessage = await this.socket.getPushMessage()
+                    const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+                    if (!done) {
+                        const wssRs = JSON.parse(wssClientResponse.message)
+                        console.log(wssRs)
+                        processPushNotification(wssRs)
+                    }
+                }
+            })();
         })
-        const promises: Promise<Uint8Array>[] = [timeoutPromise]
-        if (promiseFromUser) {
-            promises.push(promiseFromUser)
-        }
-        if (waitOnSocket) {
-            promises.push(this.waitForVerifyDevicePush(loginToken))
-        }
-        const rs = await Promise.race(promises)
-        if (to) {
-            clearTimeout(to!)
-        }
-        return rs
     }
 
     private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
@@ -539,16 +543,13 @@ export class Auth {
         }
     }
 
-    private async handleTwoFactorCode(
-        loginToken: Uint8Array,
-        verifyMethod?: DeviceVerificationMethods.SMS | DeviceVerificationMethods.TFACode
-    ): Promise<Uint8Array> {
+    private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
         while (true) {
             try {
                 if (!this.options.authUI3) {
                     throw new Error('No authUI3 provided. authUI3 required to verify devices')
                 }
-                const twoFactorInput = await this.options.authUI3.getTwoFactorCode(verifyMethod)
+                const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
                 const twoFactorValidateMsg = twoFactorValidateMessage({
                     encryptedLoginToken: loginToken,
                     value: twoFactorInput.twoFactorCode,

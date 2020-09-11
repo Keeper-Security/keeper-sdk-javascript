@@ -58,10 +58,9 @@ export interface AuthUI {
 }
 
 export interface AuthUI3 {
-    getDeviceVerificationCode(): Promise<string>;
-    getDeviceVerificationMethod(): Promise<DeviceVerificationMethods>;
+    waitForDeviceApproval(channels: DeviceApprovalChannel[], onComplete: Promise<void>): Promise<boolean>
     getPassword?(): Promise<string>;
-    getTwoFactorCode(verifyMethod?: DeviceVerificationMethods.SMS | DeviceVerificationMethods.TFACode): Promise<TwoFactorInput>;
+    getTwoFactorCode(): Promise<TwoFactorInput>;
     getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
     redirectCallback?(url: string): void;
 }
@@ -74,9 +73,14 @@ export type TwoFactorInput = {
 export enum DeviceVerificationMethods {
     Email,
     KeeperPush,
-    SMS,
-    TFACode,
-    TFAPush,
+    TFA,
+}
+
+export type DeviceApprovalChannel = {
+    channel: DeviceVerificationMethods
+    sendPush?: () => Promise<any>
+    sendCode?: (code: string) => Promise<any>
+    setExpiration?: (expiration: TwoFactorExpiration) => void
 }
 
 export type LoginError = {

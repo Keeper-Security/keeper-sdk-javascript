@@ -2,7 +2,14 @@ import * as readline from "readline";
 import * as fs from 'fs'
 import * as path from 'path'
 
-import {AuthUI3, DeviceConfig, DeviceVerificationMethods, SessionStorage, TwoFactorInput} from '../src/configuration'
+import {
+    AuthUI3,
+    DeviceApprovalChannel,
+    DeviceConfig,
+    DeviceVerificationMethods,
+    SessionStorage,
+    TwoFactorInput
+} from '../src/configuration'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
 import {Authentication} from '../src/proto';
@@ -21,20 +28,32 @@ export const prompt = async (message: string): Promise<string> => new Promise<st
 })
 
 export const authUI3: AuthUI3 = {
-    async getDeviceVerificationCode(): Promise<string> {
-        const token = await prompt('Enter Device code or approve via email and press enter:')
-        return token
-    },
-    async getDeviceVerificationMethod(): Promise<DeviceVerificationMethods> {
-        const methods = [
-            DeviceVerificationMethods.Email,
-            DeviceVerificationMethods.KeeperPush,
-            DeviceVerificationMethods.SMS,
-            DeviceVerificationMethods.TFACode,
-            DeviceVerificationMethods.TFAPush,
-        ].sort().map(x => `${x + 1} - ${DeviceVerificationMethods[x]}`).join('\n')
+    async waitForDeviceApproval(channels, _): Promise<boolean> {
+        const ch = channels.map(x => x.channel).sort()
+        const methods = ch.map(x => `${x + 1} - ${DeviceVerificationMethods[x]}`).join('\n')
         const verifyMethod = await prompt(`Enter device verification method:\n${methods}\n`)
-        return Number(verifyMethod) - 1
+        const no = parseInt(verifyMethod)
+        if (isNaN(no)) return false
+        const channel = channels.find(x => x.channel === no - 1)
+        if (!channel) return false
+
+        if (channel.sendPush) {
+            await channel.sendPush()
+        }
+        if (channel.setExpiration) {
+            const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
+            channel.setExpiration(Number(exp))
+        }
+
+        if (channel.sendCode) {
+            const code = await prompt('Enter Device code or approve via email and press enter:')
+            if (code) {
+                await channel.sendCode(code)
+            }
+        } else {
+            await prompt('Press <Enter> to stop waiting.')
+        }
+        return true
     },
     async getTwoFactorCode(): Promise<TwoFactorInput> {
         const twoFactorCode = await prompt('Enter Code:');
