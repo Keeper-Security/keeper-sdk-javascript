@@ -842,8 +842,14 @@ export class Auth {
     }
 
     async decryptCloudSsoResponse(cloudResponseToken: string): Promise<SsoCloudResponse> {
-        const decryptedData = await platform.aesGcmDecrypt(platform.base64ToBytes(cloudResponseToken), this._endpoint.getTransmissionKey().key)
-        return SsoCloudResponse.decode(decryptedData)
+        let tokenToBytes: Uint8Array
+        try {
+            tokenToBytes = platform.base64ToBytes(cloudResponseToken);
+        } catch (e) {
+            tokenToBytes = platform.base64ToBytes(normal64(cloudResponseToken));
+        }
+        const decryptedData = await platform.aesGcmDecrypt(tokenToBytes, this._endpoint.getTransmissionKey().key);
+        return SsoCloudResponse.decode(decryptedData);
     }
 
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
