@@ -4,7 +4,8 @@ import {
     DeviceApprovalChannel,
     DeviceVerificationMethods,
     LoginError,
-    TransmissionKey
+    TransmissionKey,
+    TwoFactorChannelData
 } from './configuration'
 import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
@@ -32,10 +33,11 @@ import {Authentication, SsoCloud} from './proto';
 import {browserPlatform} from "./browser/platform";
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
-import TwoFactorPushType = Authentication.TwoFactorPushType;
 import SsoCloudRequest = SsoCloud.SsoCloudRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
+import TwoFactorPushType = Authentication.TwoFactorPushType;
+import TwoFactorChannelType = Authentication.TwoFactorChannelType;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -498,89 +500,141 @@ export class Auth {
         })
     }
 
-    private async handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
-        if (!loginResponse.channels) throw new Error('Channels not provided by API')
+    private handleTwoFactor(loginResponse: Authentication.ILoginResponse): Promise<Uint8Array> {
+        return new Promise<Uint8Array>((resolve, reject) => {
+            if (!loginResponse.channels) {
+                reject(new Error('Channels not provided by API'))
+                return
+            }
 
-        let pushType = TwoFactorPushType.TWO_FA_PUSH_NONE
-        switch (loginResponse.channels[0].channelType) {
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_SMS:
-                pushType = TwoFactorPushType.TWO_FA_PUSH_SMS
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_DUO:
-                pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH // potentially ask for duo push type
-                // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
-                // pushType = TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
-                pushType = TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                break;
-            case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
-                pushType = TwoFactorPushType.TWO_FA_PUSH_DNA
-                break;
-        }
-        const codeLessPush = [
-            TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH,
-            TwoFactorPushType.TWO_FA_PUSH_KEEPER
-        ].includes(pushType)
-        if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
-            const sendPushRequest: ITwoFactorSendPushRequest = {
-                encryptedLoginToken: loginResponse.encryptedLoginToken,
-                pushType: pushType,
-                expireIn: await this.options.authUI3.getTwoFactorExpiration() || 0
-            }
-            if (codeLessPush) {
-                if (!this.options.authUI3) {
-                    throw new Error('No authUI3 provided. authUI3 required to do 2fa')
-                }
-            }
-            await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
-        }
-        if (codeLessPush) {
-            if (!this.socket) {
-                throw new Error('No socket available')
-            }
-            const pushMessage = await this.socket.getPushMessage()
-            const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-            const socketResponseData: SocketResponseData = JSON.parse(wssClientResponse.message)
-            console.log(socketResponseData)
-            return platform.base64ToBytes(socketResponseData.encryptedLoginToken)
-        } else {
-            if (!loginResponse.encryptedLoginToken) {
-                throw new Error('Login token missing from API response')
-            }
-            return this.handleTwoFactorCode(loginResponse.encryptedLoginToken)
-        }
-    }
+            const loginToken = loginResponse.encryptedLoginToken
 
-    private async handleTwoFactorCode(loginToken: Uint8Array): Promise<Uint8Array> {
-        while (true) {
-            try {
-                if (!this.options.authUI3) {
-                    throw new Error('No authUI3 provided. authUI3 required to verify devices')
-                }
-                const twoFactorInput = await this.options.authUI3.getTwoFactorCode()
+            let done = false
+            const resumeWithToken = (token: Uint8Array) => {
+                done = true
+                resolve(token)
+            }
+            const rejectWithError = (error: Error) => {
+                done = true
+                reject(error)
+            }
+
+            let tfaExpiration = TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
+            const submitCode = async (channel: Authentication.TwoFactorChannelType, code: string) => {
+                const channelInfo = loginResponse.channels.find(x => x.channelType === channel)
                 const twoFactorValidateMsg = twoFactorValidateMessage({
+                    channelUid: channelInfo ? channelInfo.channelUid : undefined,
                     encryptedLoginToken: loginToken,
-                    value: twoFactorInput.twoFactorCode,
-                    expireIn: await this.options.authUI3.getTwoFactorExpiration() || 0
+                    value: code,
+                    expireIn: tfaExpiration
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
-                if (!twoFactorValidateResp.encryptedLoginToken) {
-                    throw new Error('Login token missing from API response')
+                if (twoFactorValidateResp.encryptedLoginToken) {
+                    resumeWithToken(twoFactorValidateResp.encryptedLoginToken)
                 }
-                return twoFactorValidateResp.encryptedLoginToken
-            } catch (e) {
-                console.log(e)
             }
-        }
+
+            let lastPushChannel = TwoFactorChannelType.TWO_FA_CT_NONE
+            const submitPush = async (channel: TwoFactorChannelType, pushType: TwoFactorPushType) => {
+                const sendPushRequest: ITwoFactorSendPushRequest = {
+                    encryptedLoginToken: loginResponse.encryptedLoginToken,
+                    pushType: pushType,
+                    expireIn: tfaExpiration
+                }
+                await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
+                lastPushChannel = channel
+            }
+
+            const channels: TwoFactorChannelData[] = loginResponse.channels
+                .map((x) => {
+                    const channelData: TwoFactorChannelData = {
+                        channel: x.channelType,
+                        name: x.channelName || '',
+                        setExpiration: (x) => {
+                            tfaExpiration = x
+                        },
+                        sendCode: async (code) => {
+                            return await submitCode(x.channelType, code)
+                        }
+                    }
+                    switch (x.channelType) {
+                        case TwoFactorChannelType.TWO_FA_CT_U2F:
+                        case TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
+                            // add support for security key as push
+                            break;
+                        case TwoFactorChannelType.TWO_FA_CT_TOTP:
+                        case TwoFactorChannelType.TWO_FA_CT_RSA:
+                            break
+                        case TwoFactorChannelType.TWO_FA_CT_SMS:
+                            channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_SMS]
+                            break
+                        case TwoFactorChannelType.TWO_FA_CT_DNA:
+                            channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_DNA]
+                            break
+                        case TwoFactorChannelType.TWO_FA_CT_KEEPER:
+                            channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_KEEPER]
+                            break;
+                        case TwoFactorChannelType.TWO_FA_CT_DUO:
+                            if (x.capabilities) {
+                                channelData.availablePushes = x.capabilities
+                                    .map(x => {
+                                        switch (x) {
+                                            case 'push':
+                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH
+                                            case 'sms':
+                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
+                                            case 'phone':
+                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
+                                            default:
+                                                return undefined
+                                        }
+                                    }).filter(x => !!x).map(x => x!)
+                            }
+                            break
+                    }
+                    if (channelData.availablePushes) {
+                        channelData.sendPush = async (pushType: TwoFactorPushType) => {
+                            return await submitPush(x.channelType, pushType)
+                        }
+                    }
+                    return channelData
+                }).filter((x: TwoFactorChannelData | undefined) => !!x).map(x => x!)
+
+            const processPushNotification = (wssRs: Record<string, any>) => {
+                if (wssRs.event === 'received_totp') {
+                    if (wssRs.encryptedLoginToken) {
+                        const token = platform.base64ToBytes(wssRs.encryptedLoginToken)
+                        resumeWithToken(token)
+                    } else if (wssRs.passcode) {
+                        (async () => {
+                            await submitCode(lastPushChannel, wssRs.passcode)
+                        })()
+                    }
+                }
+            }
+
+            this.options.authUI3.waitForTwoFactorCode(channels)
+                .then(ok => {
+                    if (ok) {
+                        resumeWithToken(loginToken)
+                    } else {
+                        rejectWithError(new Error('Canceled'))
+                    }
+                });
+
+            // receive push notification
+            (async () => {
+                while (!done) {
+                    const pushMessage = await this.socket.getPushMessage()
+                    const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
+                    if (!done) {
+                        const wssRs = JSON.parse(wssClientResponse.message)
+                        console.log(wssRs)
+                        processPushNotification(wssRs)
+                    }
+                }
+            })();
+        })
     }
 
     async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {

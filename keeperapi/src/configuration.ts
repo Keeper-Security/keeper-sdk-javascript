@@ -1,6 +1,8 @@
 import {KeeperEnvironment} from "./endpoint";
 import {Authentication} from './proto';
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
+import TwoFactorPushType = Authentication.TwoFactorPushType;
+import TwoFactorChannelType = Authentication.TwoFactorChannelType;
 
 export type KeeperHost = KeeperEnvironment | string
 
@@ -64,9 +66,8 @@ export interface AuthUI {
 
 export interface AuthUI3 {
     waitForDeviceApproval(channels: DeviceApprovalChannel[]): Promise<boolean>
+    waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean>
     getPassword?(): Promise<string>;
-    getTwoFactorCode(): Promise<TwoFactorInput>;
-    getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
     redirectCallback?(url: string): void;
 }
 
@@ -84,6 +85,15 @@ export enum DeviceVerificationMethods {
 export type DeviceApprovalChannel = {
     channel: DeviceVerificationMethods
     sendPush: () => Promise<any>
+    sendCode?: (code: string) => Promise<any>
+    setExpiration?: (expiration: TwoFactorExpiration) => void
+}
+
+export type TwoFactorChannelData = {
+    channel: TwoFactorChannelType
+    name: string,
+    availablePushes?: TwoFactorPushType[],
+    sendPush?: (type: TwoFactorPushType) => Promise<any>
     sendCode?: (code: string) => Promise<any>
     setExpiration?: (expiration: TwoFactorExpiration) => void
 }

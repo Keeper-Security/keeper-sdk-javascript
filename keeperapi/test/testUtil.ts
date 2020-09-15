@@ -4,17 +4,15 @@ import * as path from 'path'
 
 import {
     AuthUI3,
-    DeviceApprovalChannel,
     DeviceConfig,
     DeviceVerificationMethods,
-    SessionStorage,
-    TwoFactorInput
+    SessionStorage, TwoFactorChannelData
 } from '../src/configuration'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
 import {Authentication} from '../src/proto';
-import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import {normal64Bytes} from '../src/utils';
+import TwoFactorPushType = Authentication.TwoFactorPushType;
 
 export const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
     const rl = readline.createInterface({
@@ -55,17 +53,28 @@ export const authUI3: AuthUI3 = {
         }
         return true
     },
-    async getTwoFactorCode(): Promise<TwoFactorInput> {
-        const twoFactorCode = await prompt('Enter Code:');
+    async waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean> {
+        const channel = channels[0]
         const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return {
-            twoFactorCode,
-            desiredExpiration: Number(exp)
+        channel.setExpiration(Number(exp))
+        const pushPrefix = 'push='
+        if (channel.availablePushes) {
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            })
+            console.log(pushPrefix + '<action>, where action: ' + channel.availablePushes.map(x => `${x + 1} - ${TwoFactorPushType[x]}`).join('\n'))
         }
-    },
-    async getTwoFactorExpiration(): Promise<TwoFactorExpiration> {
-        const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
-        return Number(exp)
+        const answer = await prompt('Enter Code:')
+        if (channel.sendPush && answer.startsWith(pushPrefix)) {
+            const pushType = Number(answer.substr(pushPrefix.length))
+            if (!isNaN(pushType)) {
+                await channel.sendPush(pushType)
+            }
+        } else {
+            await channel.sendCode(answer)
+        }
+        return true
     },
 }
 
