@@ -4,11 +4,6 @@ import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 
 export type KeeperHost = KeeperEnvironment | string
 
-export type ClientConfigurationInfo = {
-    onRegionChanged?: (newRegion: string) => void,
-    onCommandFailure?: (code: string, message?: string) => void,
-}
-
 export interface ClientConfiguration {
     authUI?: AuthUI
     authUI3?: AuthUI3
@@ -16,14 +11,24 @@ export interface ClientConfiguration {
     cloneConfig?: boolean
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
-    sessionStorage?: SessionStorage,
-    useSessionResumption?: boolean,
     host: KeeperHost
+    onCommandFailure?: (error: KeeperError) => void,
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
+    onRegionChanged?: (newRegion: string) => void,
+    sessionStorage?: SessionStorage
+    useSessionResumption?: boolean
 }
 export interface ClientConfigurationInternal extends ClientConfiguration {
     deviceConfig: DeviceConfig // v15+ device config
+}
+
+export type KeeperError = {
+    additional_info: string
+    error: string
+    location: string
+    message: string
+    path: string
 }
 
 export interface DeviceConfig {
@@ -58,7 +63,7 @@ export interface AuthUI {
 }
 
 export interface AuthUI3 {
-    waitForDeviceApproval(channels: DeviceApprovalChannel[], onComplete: Promise<void>): Promise<boolean>
+    waitForDeviceApproval(channels: DeviceApprovalChannel[]): Promise<boolean>
     getPassword?(): Promise<string>;
     getTwoFactorCode(): Promise<TwoFactorInput>;
     getTwoFactorExpiration(): Promise<TwoFactorExpiration>;
@@ -78,7 +83,7 @@ export enum DeviceVerificationMethods {
 
 export type DeviceApprovalChannel = {
     channel: DeviceVerificationMethods
-    sendPush?: () => Promise<any>
+    sendPush: () => Promise<any>
     sendCode?: (code: string) => Promise<any>
     setExpiration?: (expiration: TwoFactorExpiration) => void
 }

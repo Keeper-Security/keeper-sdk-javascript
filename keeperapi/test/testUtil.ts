@@ -28,12 +28,12 @@ export const prompt = async (message: string): Promise<string> => new Promise<st
 })
 
 export const authUI3: AuthUI3 = {
-    async waitForDeviceApproval(channels, _): Promise<boolean> {
+    async waitForDeviceApproval(channels): Promise<boolean> {
         const ch = channels.map(x => x.channel).sort()
         const methods = ch.map(x => `${x + 1} - ${DeviceVerificationMethods[x]}`).join('\n')
         const verifyMethod = await prompt(`Enter device verification method:\n${methods}\n`)
         const no = parseInt(verifyMethod)
-        if (isNaN(no)) return false
+        if (Number.isNaN(no)) return false
         const channel = channels.find(x => x.channel === no - 1)
         if (!channel) return false
 

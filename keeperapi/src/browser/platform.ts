@@ -1,4 +1,4 @@
-import {Platform} from "../platform";
+import {Platform} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
 import {AES, enc, mode, pad} from "crypto-js";

@@ -1,6 +1,5 @@
 import {
     ClientConfiguration,
-    ClientConfigurationInfo,
     ClientConfigurationInternal,
     DeviceApprovalChannel,
     DeviceVerificationMethods,
@@ -324,9 +323,8 @@ export class Auth {
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
                     this.options.host = loginResponse.stateSpecificValue
-                    const cci = this.options as ClientConfigurationInfo
-                    if (cci.onRegionChanged) {
-                        cci.onRegionChanged(loginResponse.stateSpecificValue)
+                    if (this.options.onRegionChanged) {
+                        this.options.onRegionChanged(loginResponse.stateSpecificValue)
                     }
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
@@ -389,11 +387,6 @@ export class Auth {
                 reject(new Error('No authUI3 provided. authUI3 required to verify devices'))
                 return
             }
-
-            let promiseDone: () => void | undefined
-            const onDone = new Promise<void>((resolve) => {
-                promiseDone = resolve
-            })
 
             let emailSent = false
             let tfaExpiration = TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
@@ -458,16 +451,10 @@ export class Auth {
             let done = false
             const resumeWithToken = (token: Uint8Array) => {
                 done = true
-                if (promiseDone) {
-                    promiseDone()
-                }
                 resolve(token)
             }
             const rejectWithError = (error: Error) => {
                 done = true
-                if (promiseDone) {
-                    promiseDone()
-                }
                 reject(error)
             }
 
@@ -487,9 +474,8 @@ export class Auth {
             }
 
             // response from the client true - try again, false - cancel
-            this.options.authUI3.waitForDeviceApproval(channels, onDone)
+            this.options.authUI3.waitForDeviceApproval(channels)
                 .then((ok) => {
-                    promiseDone = undefined
                     if (ok) {
                         resumeWithToken(loginToken)
                     } else {
@@ -624,7 +610,7 @@ export class Auth {
     async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string) {
         this.options.sessionStorage.saveCloneCode(this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
-            throw new Error('Parameters missing from API response')
+            return
         }
 
         this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)

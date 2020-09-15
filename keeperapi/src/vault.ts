@@ -15,7 +15,8 @@ import {
     SharedFolder,
     SharedFolderUpdateCommand,
     ShareObject,
-    SyncDownCommand
+    SyncDownCommand,
+    SyncDataInclude
 } from './commands'
 import {platform} from './platform'
 import {
@@ -52,6 +53,7 @@ async function decryptRecord(record: VaultRecord) {
 }
 
 export class Vault {
+    private _includes: SyncDataInclude[] = ['folders', 'non_shared_data', 'record', 'shared_folder', 'sfheaders', 'sfrecords']
     private _records: Record<string, VaultRecord> = {}
     private _sharedFolders: Record<string, VaultSharedFolder> = {}
     private _revision: number = 0
@@ -71,17 +73,8 @@ export class Vault {
         return { record, isNew }
     }
 
-    async decryptKey(encryptedKey: string, keyType: number): Promise<Uint8Array> {
-        switch (keyType) {
-            case 1:
-                return decryptFromStorage(encryptedKey, this.auth.dataKey)
-            case 2:
-                return platform.privateDecrypt(normal64Bytes(encryptedKey), this.auth.privateKey)
-            case 3:
-                return decryptKey(encryptedKey, this.auth.dataKey)
-            default:
-                throw new Error(`Unknown key type: ${keyType}`)
-        }
+    get includes(): SyncDataInclude[] {
+        return this._includes
     }
 
     get revision(): number {
@@ -108,6 +101,23 @@ export class Vault {
         return this._records[record_uid]
     }
 
+    async decryptKey(encryptedKey: string, keyType: number): Promise<Uint8Array> {
+        switch (keyType) {
+            case 1:
+                return decryptFromStorage(encryptedKey, this.auth.dataKey)
+            case 2:
+                return platform.privateDecrypt(normal64Bytes(encryptedKey), this.auth.privateKey)
+            case 3:
+                return decryptKey(encryptedKey, this.auth.dataKey)
+            default:
+                throw new Error(`Unknown key type: ${keyType}`)
+        }
+    }
+
+    setIncludes(includes: SyncDataInclude[]): void {
+        this._includes = includes
+    }
+
     // todo: remove logResponse in favor of a unified log levels solution
     async syncDown(revision?: number, logResponse?: boolean) {
         if (typeof revision === 'number') {
@@ -116,7 +126,7 @@ export class Vault {
         console.log(`syncing revision ${this._revision} for ${this.auth.username}`)
 
         let syncDownCommand = new SyncDownCommand(this._revision)
-        syncDownCommand.include = ['folders', 'non_shared_data', 'record', 'shared_folder', 'sfheaders', 'sfrecords']
+        syncDownCommand.include = [...this._includes]
         if (!this.noTypedRecords) {
             syncDownCommand.include.push('typed_record')
         }
