@@ -528,19 +528,18 @@ export class Auth {
         }
         const codeLessPush = [
             TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH,
-            TwoFactorPushType.TWO_FA_PUSH_DUO_CALL,
             TwoFactorPushType.TWO_FA_PUSH_KEEPER
         ].includes(pushType)
         if (pushType !== TwoFactorPushType.TWO_FA_PUSH_NONE) {
             const sendPushRequest: ITwoFactorSendPushRequest = {
                 encryptedLoginToken: loginResponse.encryptedLoginToken,
-                pushType: pushType
+                pushType: pushType,
+                expireIn: await this.options.authUI3.getTwoFactorExpiration() || 0
             }
             if (codeLessPush) {
                 if (!this.options.authUI3) {
                     throw new Error('No authUI3 provided. authUI3 required to do 2fa')
                 }
-                sendPushRequest.expireIn = await this.options.authUI3.getTwoFactorExpiration()
             }
             await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
         }
@@ -571,7 +570,7 @@ export class Auth {
                 const twoFactorValidateMsg = twoFactorValidateMessage({
                     encryptedLoginToken: loginToken,
                     value: twoFactorInput.twoFactorCode,
-                    expireIn: twoFactorInput.desiredExpiration
+                    expireIn: await this.options.authUI3.getTwoFactorExpiration() || 0
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
                 if (!twoFactorValidateResp.encryptedLoginToken) {
