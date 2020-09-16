@@ -546,18 +546,18 @@ export class Auth {
             }
 
             const channels: TwoFactorChannelData[] = loginResponse.channels
-                .map((x) => {
+                .map((ch) => {
                     const channelData: TwoFactorChannelData = {
-                        channel: x.channelType,
-                        name: x.channelName || '',
-                        setExpiration: (x) => {
-                            tfaExpiration = x
+                        channel: ch.channelType,
+                        name: ch.channelName || '',
+                        setExpiration: (exp) => {
+                            tfaExpiration = exp
                         },
-                        sendCode: async (code) => {
-                            return await submitCode(x.channelType, code)
+                        sendCode: (code) => {
+                            submitCode(ch.channelType, code)
                         }
                     }
-                    switch (x.channelType) {
+                    switch (ch.channelType) {
                         case TwoFactorChannelType.TWO_FA_CT_U2F:
                         case TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
                             // add support for security key as push
@@ -575,10 +575,10 @@ export class Auth {
                             channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_KEEPER]
                             break;
                         case TwoFactorChannelType.TWO_FA_CT_DUO:
-                            if (x.capabilities) {
-                                channelData.availablePushes = x.capabilities
-                                    .map(x => {
-                                        switch (x) {
+                            if (ch.capabilities) {
+                                channelData.availablePushes = ch.capabilities
+                                    .map(cap => {
+                                        switch (cap) {
                                             case 'push':
                                                 return TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH
                                             case 'sms':
@@ -588,17 +588,17 @@ export class Auth {
                                             default:
                                                 return undefined
                                         }
-                                    }).filter(x => !!x).map(x => x!)
+                                    }).filter(cap => !!cap).map(cap => cap!)
                             }
                             break
                     }
                     if (channelData.availablePushes) {
-                        channelData.sendPush = async (pushType: TwoFactorPushType) => {
-                            return await submitPush(x.channelType, pushType)
+                        channelData.sendPush = (pushType: TwoFactorPushType) => {
+                            submitPush(ch.channelType, pushType)
                         }
                     }
                     return channelData
-                }).filter((x: TwoFactorChannelData | undefined) => !!x).map(x => x!)
+                }).filter((chd: TwoFactorChannelData | undefined) => !!chd).map(chd => chd!)
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {

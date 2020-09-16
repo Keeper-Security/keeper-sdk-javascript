@@ -84,18 +84,18 @@ export enum DeviceVerificationMethods {
 
 export type DeviceApprovalChannel = {
     channel: DeviceVerificationMethods
-    sendPush: () => Promise<any>
-    sendCode?: (code: string) => Promise<any>
+    sendPush: () => Promise<void>
+    sendCode?: (code: string) => Promise<void>
     setExpiration?: (expiration: TwoFactorExpiration) => void
 }
 
 export type TwoFactorChannelData = {
+    availablePushes?: TwoFactorPushType[],
     channel: TwoFactorChannelType
     name: string,
-    availablePushes?: TwoFactorPushType[],
-    sendPush?: (type: TwoFactorPushType) => Promise<any>
-    sendCode?: (code: string) => Promise<any>
-    setExpiration?: (expiration: TwoFactorExpiration) => void
+    sendPush?: (type: TwoFactorPushType) => void
+    sendCode: (code: string) => void
+    setExpiration: (expiration: TwoFactorExpiration) => void
 }
 
 export type LoginError = {
