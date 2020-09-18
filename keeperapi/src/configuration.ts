@@ -10,7 +10,6 @@ export interface ClientConfiguration {
     authUI?: AuthUI
     authUI3?: AuthUI3
     clientVersion?: string
-    cloneConfig?: boolean
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
     host: KeeperHost

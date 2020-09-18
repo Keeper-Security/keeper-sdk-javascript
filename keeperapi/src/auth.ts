@@ -186,20 +186,7 @@ export class Auth {
             throw new Error('Both loginV2 and loginV3 token strategies supplied')
         }
 
-        // De-reference user provided config if requested
-        if (options.cloneConfig) {
-            this.options = {
-                ...options,
-                ...options.deviceConfig && {deviceConfig: {...options.deviceConfig}},
-                ...options.authUI && {authUI: {...options.authUI}},
-                ...options.authUI3 && {authUI3: {...options.authUI3}},
-            }
-        } else {
-            this.options = {
-                ...options,
-                deviceConfig: {...options.deviceConfig}
-            }
-        }
+        this.options = options as ClientConfigurationInternal
 
         if (!this.options.deviceConfig) {
             this.options.deviceConfig = {
@@ -220,7 +207,7 @@ export class Auth {
         }
 
         this.endpoint = new KeeperEndpoint(this.options);
-        this.endpoint.clientVersion = options.clientVersion || "c14.0.0";
+        this.endpoint.clientVersion = this.options.clientVersion || "c14.0.0";
         this.messageSessionUid = generateUidBytes()
     }
 
