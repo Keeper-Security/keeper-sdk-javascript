@@ -234,16 +234,9 @@ export class KeeperEndpoint {
             const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
             try {
                 const message: KeeperError = JSON.parse(errorMessage)
-                if (message.error) {
-                    switch (message.error) {
-                        case 'auth_failed':
-                        case 'two_factor_code_invalid':
-                            if (this.options.onCommandFailure) {
-                                this.options.onCommandFailure(message)
-                            }
-                            break
-                    }
-                }
+                if (this.options.onCommandFailure) {
+                    this.options.onCommandFailure(message)
+                }                
             }
             catch{}
             throw(new Error(errorMessage))

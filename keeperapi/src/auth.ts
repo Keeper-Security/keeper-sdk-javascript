@@ -1,9 +1,11 @@
 import {
+    channel,
     ClientConfiguration,
     ClientConfigurationInternal,
     DeviceApprovalChannel,
     DeviceVerificationMethods,
     LoginError,
+    TfaChannel,
     TransmissionKey,
     TwoFactorChannelData
 } from './configuration'
@@ -11,11 +13,13 @@ import {KeeperEndpoint} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
+    chooseErrorMessage,
     decryptFromStorage,
     generateTransmissionKey,
     generateUidBytes,
     isTwoFactorResultCode,
     normal64,
+    normal64Bytes,
     webSafe64,
     webSafe64FromBytes
 } from "./utils";
@@ -156,7 +160,8 @@ export class SocketListener {
 export type LoginPayload = {
     username: string,
     password?: string,
-    useAlternate?: boolean
+    useAlternate?: boolean,
+    loginTokenFromClient?: Uint8Array
 }
 
 export enum UserType {
@@ -244,7 +249,7 @@ export class Auth {
     /**
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
-    async loginV3({username, password = '', useAlternate = false}: LoginPayload) {
+    async loginV3({username, password = '', useAlternate = false, loginTokenFromClient = null}: LoginPayload) {
         this._username = username || this.options.sessionStorage.lastUsername
 
         if (!this.options.deviceConfig.deviceToken) {
@@ -258,6 +263,11 @@ export class Auth {
         }
 
         let loginToken: Uint8Array | null = null;
+
+        if (loginTokenFromClient != null) {
+            loginToken = loginTokenFromClient;
+        }
+
         let needUserName: boolean
         let previousLoginState = 0;
 
@@ -266,7 +276,7 @@ export class Auth {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
-                loginType: Authentication.LoginType.NORMAL,
+                loginType: useAlternate ? Authentication.LoginType.ALTERNATE : Authentication.LoginType.NORMAL,
                 cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0)
             }
             if (loginToken) {
@@ -285,9 +295,10 @@ export class Auth {
             }
             console.log("login state =", loginResponse.loginState);
 
-            if (previousLoginState === 13) {
-                return;  // hack to stop infinite loop
-            }
+            // time to see what the infinite loop looks like
+                // if (previousLoginState === 13) {
+                //     return; // hack to stop infinite loop
+                // }
             previousLoginState = loginResponse.loginState;
 
             switch (loginResponse.loginState) {
@@ -296,20 +307,37 @@ export class Auth {
                 case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                 case Authentication.LoginState.LOGGED_OUT:
-                case Authentication.LoginState.UPGRADE:
                 case Authentication.LoginState.AFTER_CLOUD_SSO_LOGIN:
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
                 case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
                     break;
+                case Authentication.LoginState.UPGRADE:
+                    if (this.options.onCommandFailure) {
+                        this.options.onCommandFailure({
+                            result_code: 'generic_error',
+                            message: chooseErrorMessage(loginResponse.loginState)
+                        })
+                    }
+                    break;
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     needUserName = true
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
+                case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
                     if (!loginResponse.encryptedLoginToken) {
                         throw new Error('Login token missing from API response')
                     }
-                    loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken)
+                    try {
+                        loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
+                    } catch (e) {
+                        if (this.options.onCommandFailure) {
+                            this.options.onCommandFailure({
+                                result_code: 'auth_failed',
+                                message: chooseErrorMessage(loginResponse.loginState)
+                            });
+                        }
+                    }
                     break;
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
@@ -340,7 +368,6 @@ export class Auth {
 
                     let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
                     this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
-                    // TODO check under node
                     // await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
                     // await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
@@ -349,10 +376,20 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
-                    await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
-                    return;
+
+                    try{
+                        await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
+                        return;
+                    } catch(e){
+                        console.log('Error in Authentication.LoginState.REDIRECT_ONSITE_SSO: ', e)
+                        break;
+                    }
                 case Authentication.LoginState.REQUIRES_2FA:
-                    loginToken = await this.handleTwoFactor(loginResponse)
+                    try{
+                        loginToken = await this.handleTwoFactor(loginResponse)
+                    } catch(e){
+                        console.log('Error in Authentication.LoginState.REQUIRES_2FA: ', e)
+                    }
                     break
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
                     if (!password && this.options.authUI3?.getPassword) {
@@ -361,17 +398,34 @@ export class Auth {
                     if (!password) {
                         throw new Error('User password required and not provided')
                     }
-                    await this.authHashLogin(loginResponse, username, password)
-                    return;
+
+                    try{
+                        await this.authHashLogin(loginResponse, username, password)
+                        return;
+                    } catch(e){
+                        password = ''
+                        if (this.options.onCommandFailure) {
+                            this.options.onCommandFailure({
+                                result_code: 'auth_failed',
+                                message: chooseErrorMessage(loginResponse.loginState)
+                            });
+                        }
+                        break;
+                    }
                 case Authentication.LoginState.LOGGED_IN:
-                    await this.loginSuccess(loginResponse, null)
-                    console.log("Exiting on loginState = LOGGED_IN");
-                    return;
+                    try{
+                        await this.loginSuccess(loginResponse, null)
+                        console.log("Exiting on loginState = LOGGED_IN");
+                        return;
+                    } catch(e){
+                        console.log('Error in Authentication.LoginState.LOGGED_IN: ', e)
+                        break;
+                    }
             }
         }
     }
 
-    verifyDevice(username: string, loginToken: Uint8Array): Promise<Uint8Array> {
+    verifyDevice(username: string, loginToken: Uint8Array, isCloud: boolean = false): Promise<Uint8Array> {
         return new Promise<Uint8Array>((resolve, reject) => {
             if (!this.options.authUI3) {
                 reject(new Error('No authUI3 provided. authUI3 required to verify devices'))
@@ -381,62 +435,82 @@ export class Auth {
             let emailSent = false
             let tfaExpiration = TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
             const deviceConfig = this.options.deviceConfig
-            const channels: DeviceApprovalChannel[] = [
-                {
-                    channel: DeviceVerificationMethods.Email,
-                    sendPush: async () => {
-                        await this.executeRest(requestDeviceVerificationMessage({
-                            username: username,
-                            verificationChannel: emailSent ? 'email_resend' : 'email',
-                            encryptedDeviceToken: deviceConfig.deviceToken,
-                            clientVersion: this.endpoint.clientVersion,
-                            messageSessionUid: this.messageSessionUid
-                        }))
-                        emailSent = true
-                    },
-                    sendCode: async (code) => {
-                        await this.executeRest(validateDeviceVerificationCodeMessage({
-                            verificationCode: code,
-                            username: username
-                        }))
-                    }
-                },
-                {
-                    channel: DeviceVerificationMethods.KeeperPush,
-                    sendPush: async () => {
-                        await this.executeRest(twoFactorSend2FAPushMessage({
-                            encryptedLoginToken: loginToken,
-                            pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                        }))
-                    }
-                },
-                {
-                    channel: DeviceVerificationMethods.TFA,
-                    sendPush: async () => {
-                        await this.executeRest(twoFactorSend2FAPushMessage({
-                            encryptedLoginToken: loginToken,
-                        }))
-                    },
-                    sendCode: async (code) => {
-                        const twoFactorValidateMsg = twoFactorValidateMessage({
-                            encryptedLoginToken: loginToken,
-                            value: code,
-                            expireIn: tfaExpiration
-                        })
-                        const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
-                        if (twoFactorValidateResp.encryptedLoginToken) {
-                            const wssRs: Record<string, any> = {
-                                event: 'received_totp',
-                                encryptedLoginToken: platform.bytesToBase64(twoFactorValidateResp.encryptedLoginToken)
-                            }
-                            processPushNotification(wssRs)
+            let channels: DeviceApprovalChannel[]
+            if (!isCloud) {
+                channels = [
+                    {
+                        channel: DeviceVerificationMethods.Email,
+                        sendPush: async () => {
+                            await this.executeRest(requestDeviceVerificationMessage({
+                                username: username,
+                                verificationChannel: emailSent ? 'email_resend' : 'email',
+                                encryptedDeviceToken: deviceConfig.deviceToken,
+                                clientVersion: this.endpoint.clientVersion,
+                                messageSessionUid: this.messageSessionUid
+                            }))
+                            emailSent = true
+                        },
+                        sendCode: async (code) => {
+                            await this.executeRest(validateDeviceVerificationCodeMessage({
+                                verificationCode: code,
+                                username: username
+                            }))
+                            resumeWithToken(loginToken)
                         }
                     },
-                    setExpiration: expiration => {
-                        tfaExpiration = expiration
+                    {
+                        channel: DeviceVerificationMethods.KeeperPush,
+                        sendPush: async () => {
+                            await this.executeRest(twoFactorSend2FAPushMessage({
+                                encryptedLoginToken: loginToken,
+                                pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                            }))
+                        }
+                    },
+                    {
+                        channel: DeviceVerificationMethods.TFA,
+                        sendPush: async () => {
+                            await this.executeRest(twoFactorSend2FAPushMessage({
+                                encryptedLoginToken: loginToken,
+                            }))
+                        },
+                        sendCode: async (code) => {
+                            const twoFactorValidateMsg = twoFactorValidateMessage({
+                                encryptedLoginToken: loginToken,
+                                value: code,
+                                expireIn: tfaExpiration
+                            })
+                            const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
+                            if (twoFactorValidateResp.encryptedLoginToken) {
+                                const wssRs: Record<string, any> = {
+                                    event: 'received_totp',
+                                    encryptedLoginToken: platform.bytesToBase64(twoFactorValidateResp.encryptedLoginToken)
+                                }
+                                processPushNotification(wssRs)
+                            }
+                        },
+                        setExpiration: expiration => {
+                            tfaExpiration = expiration
+                        }
                     }
-                }
-            ];
+                ];
+            } else {
+                channels = [
+                    {
+                        channel: DeviceVerificationMethods.KeeperPush,
+                        sendPush: async () => {
+                            await this.executeRest(twoFactorSend2FAPushMessage({
+                                encryptedLoginToken: loginToken,
+                                pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
+                            }))
+                        }
+                    },
+                    {
+                        channel: DeviceVerificationMethods.AdminApproval,
+                        sendPush: async () => {}
+                    }
+                ]
+            }
 
             let done = false
             const resumeWithToken = (token: Uint8Array) => {
@@ -464,7 +538,7 @@ export class Auth {
             }
 
             // response from the client true - try again, false - cancel
-            this.options.authUI3.waitForDeviceApproval(channels)
+            this.options.authUI3.waitForDeviceApproval(channels, isCloud)
                 .then((ok) => {
                     if (ok) {
                         resumeWithToken(loginToken)
@@ -514,7 +588,7 @@ export class Auth {
                     channelUid: channelInfo ? channelInfo.channelUid : undefined,
                     encryptedLoginToken: loginToken,
                     value: code,
-                    expireIn: tfaExpiration
+                    expireIn: await this.options.authUI3?.getExpirationCode() || tfaExpiration
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
                 if (twoFactorValidateResp.encryptedLoginToken) {
@@ -527,22 +601,21 @@ export class Auth {
                 const sendPushRequest: ITwoFactorSendPushRequest = {
                     encryptedLoginToken: loginResponse.encryptedLoginToken,
                     pushType: pushType,
-                    expireIn: tfaExpiration
+                    expireIn: await this.options.authUI3?.getExpirationCode() || tfaExpiration
                 }
                 await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
                 lastPushChannel = channel
             }
 
-            const channels: TwoFactorChannelData[] = loginResponse.channels
+            const channels: TfaChannel[] = loginResponse.channels
                 .map((ch) => {
-                    const channelData: TwoFactorChannelData = {
-                        channel: ch.channelType,
-                        name: ch.channelName || '',
+                    const tfachannelData: TfaChannel = {
+                        channelData: ch as unknown as channel,
                         setExpiration: (exp) => {
                             tfaExpiration = exp
                         },
-                        sendCode: (code) => {
-                            submitCode(ch.channelType, code)
+                        sendCode: async (code) => {
+                            await submitCode(ch.channelType, code)
                         }
                     }
                     switch (ch.channelType) {
@@ -554,44 +627,24 @@ export class Auth {
                         case TwoFactorChannelType.TWO_FA_CT_RSA:
                             break
                         case TwoFactorChannelType.TWO_FA_CT_SMS:
-                            channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_SMS]
-                            break
                         case TwoFactorChannelType.TWO_FA_CT_DNA:
-                            channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_DNA]
-                            break
                         case TwoFactorChannelType.TWO_FA_CT_KEEPER:
-                            channelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_KEEPER]
-                            break;
                         case TwoFactorChannelType.TWO_FA_CT_DUO:
-                            if (ch.capabilities) {
-                                channelData.availablePushes = ch.capabilities
-                                    .map(cap => {
-                                        switch (cap) {
-                                            case 'push':
-                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH
-                                            case 'sms':
-                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
-                                            case 'phone':
-                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
-                                            default:
-                                                return undefined
-                                        }
-                                    }).filter(cap => !!cap).map(cap => cap!)
-                            }
+                            tfachannelData.pushesAvailable = true;
                             break
                     }
-                    if (channelData.availablePushes) {
-                        channelData.sendPush = (pushType: TwoFactorPushType) => {
+                    if (tfachannelData.pushesAvailable) {
+                        tfachannelData.sendPush = (pushType: TwoFactorPushType) => {
                             submitPush(ch.channelType, pushType)
                         }
                     }
-                    return channelData
-                }).filter((chd: TwoFactorChannelData | undefined) => !!chd).map(chd => chd!)
+                    return tfachannelData
+                }).filter((chd: TfaChannel | undefined) => !!chd).map(chd => chd!)
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
                     if (wssRs.encryptedLoginToken) {
-                        const token = platform.base64ToBytes(wssRs.encryptedLoginToken)
+                        const token = normal64Bytes(wssRs.encryptedLoginToken)
                         resumeWithToken(token)
                     } else if (wssRs.passcode) {
                         (async () => {

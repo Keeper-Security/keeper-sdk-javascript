@@ -4,7 +4,7 @@ import {RSAKey} from "./rsa";
 import {AES, enc, mode, pad} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
-import {normal64} from "../utils";
+import {normal64, webSafe64FromBytes} from "../utils";
 import {SocketProxy} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
@@ -133,9 +133,9 @@ export const browserPlatform: Platform = class {
 
     static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
         const privateKeyImport = await (async () => {
-            const x = this.bytesToBase64(publicKey.subarray(1, 33))
-            const y = this.bytesToBase64(publicKey.subarray(33, 65))
-            const d = this.bytesToBase64(privateKey)
+            const x = webSafe64FromBytes(publicKey.subarray(1, 33))
+            const y = webSafe64FromBytes(publicKey.subarray(33, 65))
+            const d = webSafe64FromBytes(privateKey)
 
             const jwk = {
                 'crv': 'P-256',
@@ -156,9 +156,11 @@ export const browserPlatform: Platform = class {
         const ephemeralPublicKey = data.slice(0, publicKeyLength)
         const pubCryptoKey = await crypto.subtle.importKey('raw', ephemeralPublicKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: pubCryptoKey }, privateKeyImport, 256)
-        const sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + id.byteLength)
+        let sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + (id?.byteLength ?? 0))
         sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
-        sharedSecretCombined.set(id, sharedSecret.byteLength)
+        if (id) {
+            sharedSecretCombined.set(id, sharedSecret.byteLength)
+        }
         const symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
         return await this.aesGcmDecrypt(message, new Uint8Array(symmetricKey))
     }

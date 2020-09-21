@@ -1,5 +1,6 @@
 import {platform} from "./platform";
 import {KeeperHost, TransmissionKey} from './configuration';
+import { Authentication } from "./proto";
 
 export function getKeeperUrl(host: KeeperHost, forPath: string) {
     return `https://${host}/api/rest/${forPath}`;
@@ -120,4 +121,15 @@ export async function encryptObjectForStorageGCM<T>(obj: T, key: Uint8Array, use
     return platform.aesGcmEncrypt(bytes, key)
 }
 
-
+export function chooseErrorMessage(errorNumber:number){
+    switch (errorNumber){
+        case Authentication.LoginState.ACCOUNT_LOCKED:
+            return 'account_locked'
+        case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
+            return 'device_account_locked'
+        case Authentication.LoginState.DEVICE_LOCKED:
+            return 'device_locked'
+        case Authentication.LoginState.INVALID_LOGINSTATE:
+            return 'invalid_loginstate'                
+    }
+}

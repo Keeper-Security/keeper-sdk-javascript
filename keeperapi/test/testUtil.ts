@@ -6,7 +6,7 @@ import {
     AuthUI3,
     DeviceConfig,
     DeviceVerificationMethods,
-    SessionStorage, TwoFactorChannelData
+    SessionStorage, TfaChannel, TwoFactorChannelData
 } from '../src/configuration'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
@@ -53,17 +53,17 @@ export const authUI3: AuthUI3 = {
         }
         return true
     },
-    async waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean> {
+    async waitForTwoFactorCode(channels: TfaChannel[]): Promise<boolean> {
         const channel = channels[0]
         const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
         channel.setExpiration(Number(exp))
         const pushPrefix = 'push='
-        if (channel.availablePushes) {
+        if (channel.pushesAvailable) {
             const rl = readline.createInterface({
                 input: process.stdin,
                 output: process.stdout
             })
-            console.log(pushPrefix + '<action>, where action: ' + channel.availablePushes.map(x => `${x + 1} - ${TwoFactorPushType[x]}`).join('\n'))
+            console.log(pushPrefix + '<action>, where push action is: ' + channel.pushesAvailable)
         }
         const answer = await prompt('Enter Code:')
         if (channel.sendPush && answer.startsWith(pushPrefix)) {

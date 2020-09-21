@@ -25,11 +25,12 @@ export interface ClientConfigurationInternal extends ClientConfiguration {
 }
 
 export type KeeperError = {
-    additional_info: string
-    error: string
-    location: string
-    message: string
-    path: string
+    additional_info?: string
+    error?: string
+    location?: string
+    message?: string
+    path?: string
+    result_code?: string
 }
 
 export interface DeviceConfig {
@@ -64,10 +65,12 @@ export interface AuthUI {
 }
 
 export interface AuthUI3 {
-    waitForDeviceApproval(channels: DeviceApprovalChannel[]): Promise<boolean>
-    waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean>
-    getPassword?(): Promise<string>;
-    redirectCallback?(url: string): void;
+    waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean>
+    waitForTwoFactorCode(channels: TfaChannel[]): Promise<boolean>
+    getExpirationCode?(): Promise<number>
+    getPassword?(): Promise<string>
+    getSSOToken?(redirectUrl: string): Promise<Uint8Array>
+    redirectCallback?(url: string): void
 }
 
 export type TwoFactorInput = {
@@ -79,6 +82,7 @@ export enum DeviceVerificationMethods {
     Email,
     KeeperPush,
     TFA,
+    AdminApproval,
 }
 
 export type DeviceApprovalChannel = {
@@ -89,9 +93,8 @@ export type DeviceApprovalChannel = {
 }
 
 export type TwoFactorChannelData = {
-    availablePushes?: TwoFactorPushType[],
+    pushesAvailable?: boolean,
     channel: TwoFactorChannelType
-    name: string,
     sendPush?: (type: TwoFactorPushType) => void
     sendCode: (code: string) => void
     setExpiration: (expiration: TwoFactorExpiration) => void
@@ -100,4 +103,19 @@ export type TwoFactorChannelData = {
 export type LoginError = {
     error: string;
     message: string;
+}
+
+export type TfaChannel = {
+    channelData: channel,
+    pushesAvailable?: boolean
+    sendCode: (code: string) => void;
+    setExpiration: (expiration: Authentication.TwoFactorExpiration) => void;
+    sendPush?: ((type: Authentication.TwoFactorPushType) => void) | undefined;
+}
+
+export type channel = {
+    channelType: string
+    maxExpiration: string
+    phoneNumber?: string
+    capabilities?: string[]
 }
