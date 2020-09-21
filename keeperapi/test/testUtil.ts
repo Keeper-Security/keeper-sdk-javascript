@@ -6,7 +6,7 @@ import {
     AuthUI3,
     DeviceConfig,
     DeviceVerificationMethods,
-    SessionStorage, TfaChannel, TwoFactorChannelData
+    SessionStorage, TwoFactorChannelData
 } from '../src/configuration'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
@@ -53,7 +53,7 @@ export const authUI3: AuthUI3 = {
         }
         return true
     },
-    async waitForTwoFactorCode(channels: TfaChannel[]): Promise<boolean> {
+    async waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean> {
         const channel = channels[0]
         const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
         channel.setExpiration(Number(exp))

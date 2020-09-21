@@ -1,11 +1,9 @@
 import {
-    channel,
     ClientConfiguration,
     ClientConfigurationInternal,
     DeviceApprovalChannel,
     DeviceVerificationMethods,
     LoginError,
-    TfaChannel,
     TransmissionKey,
     TwoFactorChannelData
 } from './configuration'
@@ -588,7 +586,7 @@ export class Auth {
                     channelUid: channelInfo ? channelInfo.channelUid : undefined,
                     encryptedLoginToken: loginToken,
                     value: code,
-                    expireIn: await this.options.authUI3?.getExpirationCode() || tfaExpiration
+                    expireIn: tfaExpiration
                 })
                 const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
                 if (twoFactorValidateResp.encryptedLoginToken) {
@@ -601,16 +599,16 @@ export class Auth {
                 const sendPushRequest: ITwoFactorSendPushRequest = {
                     encryptedLoginToken: loginResponse.encryptedLoginToken,
                     pushType: pushType,
-                    expireIn: await this.options.authUI3?.getExpirationCode() || tfaExpiration
+                    expireIn: tfaExpiration
                 }
                 await this.executeRest(twoFactorSend2FAPushMessage(sendPushRequest))
                 lastPushChannel = channel
             }
 
-            const channels: TfaChannel[] = loginResponse.channels
+            const channels: TwoFactorChannelData[] = loginResponse.channels
                 .map((ch) => {
-                    const tfachannelData: TfaChannel = {
-                        channelData: ch as unknown as channel,
+                    const tfachannelData: TwoFactorChannelData = {
+                        channel: ch,
                         setExpiration: (exp) => {
                             tfaExpiration = exp
                         },
@@ -639,7 +637,7 @@ export class Auth {
                         }
                     }
                     return tfachannelData
-                }).filter((chd: TfaChannel | undefined) => !!chd).map(chd => chd!)
+                }).filter((chd: TwoFactorChannelData | undefined) => !!chd).map(chd => chd!)
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
