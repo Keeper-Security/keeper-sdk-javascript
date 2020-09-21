@@ -68,6 +68,13 @@ export const approveUserDevicesMessage = (data: Enterprise.IApproveUserDevicesRe
 export const registerEncryptedDataKeyForDeviceMessage = (data: Authentication.IRegisterDeviceDataKeyRequest): RestMessage<Authentication.IRegisterDeviceDataKeyRequest, {}> =>
     createMessage(data, 'authentication/register_encrypted_data_key_for_device', Authentication.RegisterDeviceDataKeyRequest, null)
 
+export const setUserSettingMessage = (data: Authentication.IUserSettingRequest): RestMessage<Authentication.IUserSettingRequest, {}> =>
+    createMessage(data, 'setting/set_user_setting', Authentication.UserSettingRequest, null)
+
+export const requestDeviceAdminApprovalMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
+    createMessage(data, 'authentication/request_device_admin_approval', Authentication.DeviceVerificationRequest, null)
+
+
 // end new login
 
 export const deviceMessage = (data: Authentication.IDeviceRequest): RestMessage<Authentication.IDeviceRequest, Authentication.IDeviceResponse> =>

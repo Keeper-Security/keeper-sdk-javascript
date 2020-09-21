@@ -1033,6 +1033,7 @@ export interface Role {
     role_id: number;
     node_id: number;
     encrypted_data: string;
+    key_type: KeyType;
     role_type: "pool_manager" | undefined
 }
 

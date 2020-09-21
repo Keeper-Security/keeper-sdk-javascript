@@ -1327,6 +1327,9 @@ export namespace Authentication {
 
         /** StartLoginRequest cloneCode */
         cloneCode?: (Uint8Array|null);
+
+        /** StartLoginRequest v2TwoFactorToken */
+        v2TwoFactorToken?: (string|null);
     }
 
     /** Represents a StartLoginRequest. */
@@ -1367,6 +1370,9 @@ export namespace Authentication {
 
         /** StartLoginRequest cloneCode. */
         public cloneCode: Uint8Array;
+
+        /** StartLoginRequest v2TwoFactorToken. */
+        public v2TwoFactorToken: string;
 
         /**
          * Creates a new StartLoginRequest instance using the specified properties.
@@ -7161,6 +7167,114 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an ApproveDeviceInstantRequest. */
+    interface IApproveDeviceInstantRequest {
+
+        /** ApproveDeviceInstantRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** ApproveDeviceInstantRequest encryptedDeviceDataKey */
+        encryptedDeviceDataKey?: (Uint8Array|null);
+
+        /** ApproveDeviceInstantRequest linkDevice */
+        linkDevice?: (boolean|null);
+
+        /** ApproveDeviceInstantRequest clientVersion */
+        clientVersion?: (string|null);
+    }
+
+    /** Represents an ApproveDeviceInstantRequest. */
+    class ApproveDeviceInstantRequest implements IApproveDeviceInstantRequest {
+
+        /**
+         * Constructs a new ApproveDeviceInstantRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IApproveDeviceInstantRequest);
+
+        /** ApproveDeviceInstantRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** ApproveDeviceInstantRequest encryptedDeviceDataKey. */
+        public encryptedDeviceDataKey: Uint8Array;
+
+        /** ApproveDeviceInstantRequest linkDevice. */
+        public linkDevice: boolean;
+
+        /** ApproveDeviceInstantRequest clientVersion. */
+        public clientVersion: string;
+
+        /**
+         * Creates a new ApproveDeviceInstantRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveDeviceInstantRequest instance
+         */
+        public static create(properties?: Authentication.IApproveDeviceInstantRequest): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Encodes the specified ApproveDeviceInstantRequest message. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
+         * @param message ApproveDeviceInstantRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IApproveDeviceInstantRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveDeviceInstantRequest message, length delimited. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
+         * @param message ApproveDeviceInstantRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IApproveDeviceInstantRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveDeviceInstantRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveDeviceInstantRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Verifies an ApproveDeviceInstantRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveDeviceInstantRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveDeviceInstantRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Creates a plain object from an ApproveDeviceInstantRequest message. Also converts values to other types if specified.
+         * @param message ApproveDeviceInstantRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ApproveDeviceInstantRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveDeviceInstantRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an EnterpriseUserAliasRequest. */
     interface IEnterpriseUserAliasRequest {
 
@@ -10414,6 +10528,12 @@ export namespace Authentication {
 /** Namespace Enterprise. */
 export namespace Enterprise {
 
+    /** KeyType enum. */
+    enum KeyType {
+        RSA = 0,
+        ECC = 1
+    }
+
     /** Properties of an EnterpriseKeyPairRequest. */
     interface IEnterpriseKeyPairRequest {
 
@@ -10422,6 +10542,9 @@ export namespace Enterprise {
 
         /** EnterpriseKeyPairRequest encryptedEnterprisePrivateKey */
         encryptedEnterprisePrivateKey?: (Uint8Array|null);
+
+        /** EnterpriseKeyPairRequest keyType */
+        keyType?: (Enterprise.KeyType|null);
     }
 
     /** Represents an EnterpriseKeyPairRequest. */
@@ -10438,6 +10561,9 @@ export namespace Enterprise {
 
         /** EnterpriseKeyPairRequest encryptedEnterprisePrivateKey. */
         public encryptedEnterprisePrivateKey: Uint8Array;
+
+        /** EnterpriseKeyPairRequest keyType. */
+        public keyType: Enterprise.KeyType;
 
         /**
          * Creates a new EnterpriseKeyPairRequest instance using the specified properties.
@@ -11622,6 +11748,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration roleKeyEncryptedWithTreeKey */
         roleKeyEncryptedWithTreeKey?: (Uint8Array|null);
+
+        /** EnterpriseRegistration eccKeyPair */
+        eccKeyPair?: (Enterprise.IEnterpriseKeyPairRequest|null);
     }
 
     /** Represents an EnterpriseRegistration. */
@@ -11668,6 +11797,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration roleKeyEncryptedWithTreeKey. */
         public roleKeyEncryptedWithTreeKey: Uint8Array;
+
+        /** EnterpriseRegistration eccKeyPair. */
+        public eccKeyPair?: (Enterprise.IEnterpriseKeyPairRequest|null);
 
         /**
          * Creates a new EnterpriseRegistration instance using the specified properties.
@@ -12419,6 +12551,198 @@ export namespace Enterprise {
 
         /**
          * Converts this ApproveUserDevicesResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EnterpriseUserDataKey. */
+    interface IEnterpriseUserDataKey {
+
+        /** EnterpriseUserDataKey enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** EnterpriseUserDataKey userEncryptedDataKey */
+        userEncryptedDataKey?: (Uint8Array|null);
+
+        /** EnterpriseUserDataKey keyTypeId */
+        keyTypeId?: (number|null);
+    }
+
+    /** Represents an EnterpriseUserDataKey. */
+    class EnterpriseUserDataKey implements IEnterpriseUserDataKey {
+
+        /**
+         * Constructs a new EnterpriseUserDataKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserDataKey);
+
+        /** EnterpriseUserDataKey enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** EnterpriseUserDataKey userEncryptedDataKey. */
+        public userEncryptedDataKey: Uint8Array;
+
+        /** EnterpriseUserDataKey keyTypeId. */
+        public keyTypeId: number;
+
+        /**
+         * Creates a new EnterpriseUserDataKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserDataKey instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserDataKey): Enterprise.EnterpriseUserDataKey;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKey message. Does not implicitly {@link Enterprise.EnterpriseUserDataKey.verify|verify} messages.
+         * @param message EnterpriseUserDataKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKey message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserDataKey.verify|verify} messages.
+         * @param message EnterpriseUserDataKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserDataKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserDataKey;
+
+        /**
+         * Decodes an EnterpriseUserDataKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserDataKey;
+
+        /**
+         * Verifies an EnterpriseUserDataKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserDataKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserDataKey
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserDataKey;
+
+        /**
+         * Creates a plain object from an EnterpriseUserDataKey message. Also converts values to other types if specified.
+         * @param message EnterpriseUserDataKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserDataKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserDataKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EnterpriseUserDataKeys. */
+    interface IEnterpriseUserDataKeys {
+
+        /** EnterpriseUserDataKeys keys */
+        keys?: (Enterprise.IEnterpriseUserDataKey[]|null);
+    }
+
+    /** Represents an EnterpriseUserDataKeys. */
+    class EnterpriseUserDataKeys implements IEnterpriseUserDataKeys {
+
+        /**
+         * Constructs a new EnterpriseUserDataKeys.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserDataKeys);
+
+        /** EnterpriseUserDataKeys keys. */
+        public keys: Enterprise.IEnterpriseUserDataKey[];
+
+        /**
+         * Creates a new EnterpriseUserDataKeys instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserDataKeys instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserDataKeys): Enterprise.EnterpriseUserDataKeys;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeys message. Does not implicitly {@link Enterprise.EnterpriseUserDataKeys.verify|verify} messages.
+         * @param message EnterpriseUserDataKeys message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserDataKeys, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeys message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserDataKeys.verify|verify} messages.
+         * @param message EnterpriseUserDataKeys message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserDataKeys, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserDataKeys message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserDataKeys
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserDataKeys;
+
+        /**
+         * Decodes an EnterpriseUserDataKeys message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserDataKeys
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserDataKeys;
+
+        /**
+         * Verifies an EnterpriseUserDataKeys message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserDataKeys message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserDataKeys
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserDataKeys;
+
+        /**
+         * Creates a plain object from an EnterpriseUserDataKeys message. Also converts values to other types if specified.
+         * @param message EnterpriseUserDataKeys
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserDataKeys, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserDataKeys to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -13516,6 +13840,9 @@ export namespace AccountSummary {
 
         /** Settings ipDisableAutoApprove */
         ipDisableAutoApprove?: (boolean|null);
+
+        /** Settings shareDataKeyWithEccPublicKey */
+        shareDataKeyWithEccPublicKey?: (boolean|null);
     }
 
     /** Represents a Settings. */
@@ -13610,6 +13937,9 @@ export namespace AccountSummary {
 
         /** Settings ipDisableAutoApprove. */
         public ipDisableAutoApprove: boolean;
+
+        /** Settings shareDataKeyWithEccPublicKey. */
+        public shareDataKeyWithEccPublicKey: boolean;
 
         /**
          * Creates a new Settings instance using the specified properties.
@@ -14630,32 +14960,8 @@ export namespace AccountSummary {
         /** Group admin */
         admin?: (boolean|null);
 
-        /** Group groupVerificationCode */
-        groupVerificationCode?: (string|null);
-
-        /** ? */
-        groupSettings?: (AccountSummary.IKeyValue[]|null);
-
         /** Group administrator */
         administrator?: (AccountSummary.IAdministrator|null);
-
-        /** Group error */
-        error?: (AccountSummary.IResult|null);
-
-        /** Group twoFactorRequired */
-        twoFactorRequired?: (boolean|null);
-
-        /** Group restrictSharing */
-        restrictSharing?: (boolean|null);
-
-        /** Group restrictAllSharing */
-        restrictAllSharing?: (boolean|null);
-
-        /** Group autoBackupDays */
-        autoBackupDays?: (number|null);
-
-        /** Group adminAccountSharing */
-        adminAccountSharing?: (boolean|null);
     }
 
     /** Represents a Group. */
@@ -14670,32 +14976,8 @@ export namespace AccountSummary {
         /** Group admin. */
         public admin: boolean;
 
-        /** Group groupVerificationCode. */
-        public groupVerificationCode: string;
-
-        /** ? */
-        public groupSettings: AccountSummary.IKeyValue[];
-
         /** Group administrator. */
         public administrator?: (AccountSummary.IAdministrator|null);
-
-        /** Group error. */
-        public error?: (AccountSummary.IResult|null);
-
-        /** Group twoFactorRequired. */
-        public twoFactorRequired: boolean;
-
-        /** Group restrictSharing. */
-        public restrictSharing: boolean;
-
-        /** Group restrictAllSharing. */
-        public restrictAllSharing: boolean;
-
-        /** Group autoBackupDays. */
-        public autoBackupDays: number;
-
-        /** Group adminAccountSharing. */
-        public adminAccountSharing: boolean;
 
         /**
          * Creates a new Group instance using the specified properties.
@@ -14786,9 +15068,6 @@ export namespace AccountSummary {
         /** Administrator numberOfUsers */
         numberOfUsers?: (number|null);
 
-        /** Administrator numberOfDevices */
-        numberOfDevices?: (number|null);
-
         /** Administrator subscriptionCode */
         subscriptionCode?: (string|null);
 
@@ -14797,9 +15076,6 @@ export namespace AccountSummary {
 
         /** Administrator purchaseDate */
         purchaseDate?: (string|null);
-
-        /** Administrator total */
-        total?: (string|null);
     }
 
     /** Represents an Administrator. */
@@ -14826,9 +15102,6 @@ export namespace AccountSummary {
         /** Administrator numberOfUsers. */
         public numberOfUsers: number;
 
-        /** Administrator numberOfDevices. */
-        public numberOfDevices: number;
-
         /** Administrator subscriptionCode. */
         public subscriptionCode: string;
 
@@ -14837,9 +15110,6 @@ export namespace AccountSummary {
 
         /** Administrator purchaseDate. */
         public purchaseDate: string;
-
-        /** Administrator total. */
-        public total: string;
 
         /**
          * Creates a new Administrator instance using the specified properties.
@@ -16001,6 +16271,9 @@ export namespace BreachWatch {
 
         /** EnterprisePublicKeyResponse enterprisePublicKey */
         enterprisePublicKey?: (Uint8Array|null);
+
+        /** EnterprisePublicKeyResponse enterpriseECCPublicKey */
+        enterpriseECCPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an EnterprisePublicKeyResponse. */
@@ -16014,6 +16287,9 @@ export namespace BreachWatch {
 
         /** EnterprisePublicKeyResponse enterprisePublicKey. */
         public enterprisePublicKey: Uint8Array;
+
+        /** EnterprisePublicKeyResponse enterpriseECCPublicKey. */
+        public enterpriseECCPublicKey: Uint8Array;
 
         /**
          * Creates a new EnterprisePublicKeyResponse instance using the specified properties.

@@ -30,7 +30,6 @@ import {
     validateDeviceVerificationCodeMessage
 } from './restMessages'
 import {Authentication, SsoCloud} from './proto';
-import {browserPlatform} from "./browser/platform";
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import SsoCloudRequest = SsoCloud.SsoCloudRequest;
@@ -298,6 +297,10 @@ export class Auth {
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                 case Authentication.LoginState.LOGGED_OUT:
                 case Authentication.LoginState.UPGRADE:
+                case Authentication.LoginState.AFTER_CLOUD_SSO_LOGIN:
+                case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
+                case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
+                case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
                     break;
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     needUserName = true
@@ -335,12 +338,10 @@ export class Auth {
 
                     let payload = webSafe64FromBytes(requestPayload);
 
-                    if (browserPlatform != null) {
-                        let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
-                        this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
-                    } else {
-                        await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
-                    }
+                    let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
+                    this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
+                    // TODO check under node
+                    // await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
                     // await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
                     return;
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:

@@ -81,9 +81,22 @@ export class Company {
         }
 
         for (let role of this._data.roles) {
-            role.displayName = role.role_type === "pool_manager"
-                ? "License Purchaser"
-                : decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
+
+            if (role.role_type === "pool_manager") {
+                role.displayName = "License Purchaser"
+            }
+            else {
+                switch (role.key_type) {
+                    case "encrypted_by_data_key":
+                        role.displayName = decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
+                        break;
+                    case "encrypted_by_public_key":
+                        throw "Not Implemented";
+                    case "no_key":
+                        role.displayName = role.encrypted_data;
+                        break;
+                }
+            }
 
             let node = this._data.nodes.find(x => x.node_id == role.node_id);
             if (!node) {
