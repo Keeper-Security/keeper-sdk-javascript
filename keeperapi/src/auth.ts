@@ -692,10 +692,10 @@ export class Auth {
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
-        await this.loginSuccess(loginResp, password)
+        await this.loginSuccess(loginResp, password, salt)
     }
 
-    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string) {
+    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt|undefined = undefined) {
         this.options.sessionStorage.saveCloneCode(this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             return
@@ -709,8 +709,13 @@ export class Auth {
             case Authentication.EncryptedDataKeyType.BY_PASSWORD:
                 this.dataKey = await decryptEncryptionParams(password, loginResponse.encryptedDataKey);
                 break;
-            case Authentication.EncryptedDataKeyType.NO_KEY:
             case Authentication.EncryptedDataKeyType.BY_ALTERNATE:
+                if (salt) {
+                    const encKey = await platform.deriveKeyV2('data_key', password, salt.salt, salt.iterations)
+                    this.dataKey = await platform.aesGcmDecrypt(loginResponse.encryptedDataKey, encKey)
+                }
+                break;
+            case Authentication.EncryptedDataKeyType.NO_KEY:
             case Authentication.EncryptedDataKeyType.BY_BIO:
                 throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
         }
