@@ -247,7 +247,7 @@ export const browserPlatform: Platform = class {
             hash: {
                 name: "SHA-512"
             }
-        }, key, 256);
+        }, key, 512);
         return new Uint8Array(derived);
     }
 
