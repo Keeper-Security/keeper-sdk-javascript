@@ -239,7 +239,12 @@ export const browserPlatform: Platform = class {
     }
 
     static async deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        let key = await crypto.subtle.importKey("raw", browserPlatform.stringToBytes(domain + password), "PBKDF2", false, ["deriveBits"]);
+        let key = await crypto.subtle.importKey(
+            "raw",
+            browserPlatform.stringToBytes(domain + password),
+            "PBKDF2",
+            false,
+            ["deriveBits"]);
         let derived = await crypto.subtle.deriveBits({
             name: "PBKDF2",
             salt: saltBytes,
@@ -248,7 +253,19 @@ export const browserPlatform: Platform = class {
                 name: "SHA-512"
             }
         }, key, 512);
-        return new Uint8Array(derived);
+        let hmacKey = await crypto.subtle.importKey(
+            "raw",
+            browserPlatform.stringToBytes(domain),
+            {
+                name: "HMAC",
+                hash: {
+                    name: "SHA-256"
+                }
+            },
+            false,
+            ["sign", "verify"]);
+        const reduced = await crypto.subtle.sign("HMAC", hmacKey, derived);
+        return new Uint8Array(reduced);
     }
 
     static async calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
