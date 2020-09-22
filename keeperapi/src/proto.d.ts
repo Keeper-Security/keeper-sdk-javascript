@@ -7167,6 +7167,114 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an ApproveDeviceInstantRequest. */
+    interface IApproveDeviceInstantRequest {
+
+        /** ApproveDeviceInstantRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** ApproveDeviceInstantRequest encryptedDeviceDataKey */
+        encryptedDeviceDataKey?: (Uint8Array|null);
+
+        /** ApproveDeviceInstantRequest linkDevice */
+        linkDevice?: (boolean|null);
+
+        /** ApproveDeviceInstantRequest clientVersion */
+        clientVersion?: (string|null);
+    }
+
+    /** Represents an ApproveDeviceInstantRequest. */
+    class ApproveDeviceInstantRequest implements IApproveDeviceInstantRequest {
+
+        /**
+         * Constructs a new ApproveDeviceInstantRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IApproveDeviceInstantRequest);
+
+        /** ApproveDeviceInstantRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** ApproveDeviceInstantRequest encryptedDeviceDataKey. */
+        public encryptedDeviceDataKey: Uint8Array;
+
+        /** ApproveDeviceInstantRequest linkDevice. */
+        public linkDevice: boolean;
+
+        /** ApproveDeviceInstantRequest clientVersion. */
+        public clientVersion: string;
+
+        /**
+         * Creates a new ApproveDeviceInstantRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApproveDeviceInstantRequest instance
+         */
+        public static create(properties?: Authentication.IApproveDeviceInstantRequest): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Encodes the specified ApproveDeviceInstantRequest message. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
+         * @param message ApproveDeviceInstantRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IApproveDeviceInstantRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApproveDeviceInstantRequest message, length delimited. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
+         * @param message ApproveDeviceInstantRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IApproveDeviceInstantRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApproveDeviceInstantRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApproveDeviceInstantRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Verifies an ApproveDeviceInstantRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApproveDeviceInstantRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApproveDeviceInstantRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ApproveDeviceInstantRequest;
+
+        /**
+         * Creates a plain object from an ApproveDeviceInstantRequest message. Also converts values to other types if specified.
+         * @param message ApproveDeviceInstantRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ApproveDeviceInstantRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApproveDeviceInstantRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an EnterpriseUserAliasRequest. */
     interface IEnterpriseUserAliasRequest {
 
@@ -14852,32 +14960,8 @@ export namespace AccountSummary {
         /** Group admin */
         admin?: (boolean|null);
 
-        /** Group groupVerificationCode */
-        groupVerificationCode?: (string|null);
-
-        /** ? */
-        groupSettings?: (AccountSummary.IKeyValue[]|null);
-
         /** Group administrator */
         administrator?: (AccountSummary.IAdministrator|null);
-
-        /** Group error */
-        error?: (AccountSummary.IResult|null);
-
-        /** Group twoFactorRequired */
-        twoFactorRequired?: (boolean|null);
-
-        /** Group restrictSharing */
-        restrictSharing?: (boolean|null);
-
-        /** Group restrictAllSharing */
-        restrictAllSharing?: (boolean|null);
-
-        /** Group autoBackupDays */
-        autoBackupDays?: (number|null);
-
-        /** Group adminAccountSharing */
-        adminAccountSharing?: (boolean|null);
     }
 
     /** Represents a Group. */
@@ -14892,32 +14976,8 @@ export namespace AccountSummary {
         /** Group admin. */
         public admin: boolean;
 
-        /** Group groupVerificationCode. */
-        public groupVerificationCode: string;
-
-        /** ? */
-        public groupSettings: AccountSummary.IKeyValue[];
-
         /** Group administrator. */
         public administrator?: (AccountSummary.IAdministrator|null);
-
-        /** Group error. */
-        public error?: (AccountSummary.IResult|null);
-
-        /** Group twoFactorRequired. */
-        public twoFactorRequired: boolean;
-
-        /** Group restrictSharing. */
-        public restrictSharing: boolean;
-
-        /** Group restrictAllSharing. */
-        public restrictAllSharing: boolean;
-
-        /** Group autoBackupDays. */
-        public autoBackupDays: number;
-
-        /** Group adminAccountSharing. */
-        public adminAccountSharing: boolean;
 
         /**
          * Creates a new Group instance using the specified properties.
@@ -15008,9 +15068,6 @@ export namespace AccountSummary {
         /** Administrator numberOfUsers */
         numberOfUsers?: (number|null);
 
-        /** Administrator numberOfDevices */
-        numberOfDevices?: (number|null);
-
         /** Administrator subscriptionCode */
         subscriptionCode?: (string|null);
 
@@ -15019,9 +15076,6 @@ export namespace AccountSummary {
 
         /** Administrator purchaseDate */
         purchaseDate?: (string|null);
-
-        /** Administrator total */
-        total?: (string|null);
     }
 
     /** Represents an Administrator. */
@@ -15048,9 +15102,6 @@ export namespace AccountSummary {
         /** Administrator numberOfUsers. */
         public numberOfUsers: number;
 
-        /** Administrator numberOfDevices. */
-        public numberOfDevices: number;
-
         /** Administrator subscriptionCode. */
         public subscriptionCode: string;
 
@@ -15059,9 +15110,6 @@ export namespace AccountSummary {
 
         /** Administrator purchaseDate. */
         public purchaseDate: string;
-
-        /** Administrator total. */
-        public total: string;
 
         /**
          * Creates a new Administrator instance using the specified properties.

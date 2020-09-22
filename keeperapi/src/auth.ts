@@ -269,6 +269,18 @@ export class Auth {
         let needUserName: boolean
         let previousLoginState = 0;
 
+        const handleError = (resultCode: string, loginResponse: Authentication.ILoginResponse, error: any) => {
+            if (this.options.onCommandFailure) {
+                this.options.onCommandFailure({
+                    result_code: resultCode,
+                    message: chooseErrorMessage(loginResponse.loginState)
+                })
+            }
+            else {
+                throw error;
+            }
+        };
+
         while (true) {
             const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
@@ -307,16 +319,10 @@ export class Auth {
                 case Authentication.LoginState.LOGGED_OUT:
                 case Authentication.LoginState.AFTER_CLOUD_SSO_LOGIN:
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
-                case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
                     break;
                 case Authentication.LoginState.UPGRADE:
-                    if (this.options.onCommandFailure) {
-                        this.options.onCommandFailure({
-                            result_code: 'generic_error',
-                            message: chooseErrorMessage(loginResponse.loginState)
-                        })
-                    }
+                    handleError('generic_error', loginResponse, null)
                     break;
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     needUserName = true
@@ -329,12 +335,7 @@ export class Auth {
                     try {
                         loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
                     } catch (e) {
-                        if (this.options.onCommandFailure) {
-                            this.options.onCommandFailure({
-                                result_code: 'auth_failed',
-                                message: chooseErrorMessage(loginResponse.loginState)
-                            });
-                        }
+                        handleError('auth_failed', loginResponse, e)
                     }
                     break;
                 case Authentication.LoginState.LICENSE_EXPIRED:
@@ -402,12 +403,7 @@ export class Auth {
                         return;
                     } catch(e){
                         password = ''
-                        if (this.options.onCommandFailure) {
-                            this.options.onCommandFailure({
-                                result_code: 'auth_failed',
-                                message: chooseErrorMessage(loginResponse.loginState)
-                            });
-                        }
+                        handleError('auth_failed', loginResponse, e)
                         break;
                     }
                 case Authentication.LoginState.LOGGED_IN:

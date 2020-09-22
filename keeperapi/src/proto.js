@@ -18974,6 +18974,278 @@ export const Authentication = $root.Authentication = (() => {
         return ApproveDeviceRequest;
     })();
 
+    Authentication.ApproveDeviceInstantRequest = (function() {
+
+        /**
+         * Properties of an ApproveDeviceInstantRequest.
+         * @memberof Authentication
+         * @interface IApproveDeviceInstantRequest
+         * @property {Uint8Array|null} [encryptedDeviceToken] ApproveDeviceInstantRequest encryptedDeviceToken
+         * @property {Uint8Array|null} [encryptedDeviceDataKey] ApproveDeviceInstantRequest encryptedDeviceDataKey
+         * @property {boolean|null} [linkDevice] ApproveDeviceInstantRequest linkDevice
+         * @property {string|null} [clientVersion] ApproveDeviceInstantRequest clientVersion
+         */
+
+        /**
+         * Constructs a new ApproveDeviceInstantRequest.
+         * @memberof Authentication
+         * @classdesc Represents an ApproveDeviceInstantRequest.
+         * @implements IApproveDeviceInstantRequest
+         * @constructor
+         * @param {Authentication.IApproveDeviceInstantRequest=} [properties] Properties to set
+         */
+        function ApproveDeviceInstantRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ApproveDeviceInstantRequest encryptedDeviceToken.
+         * @member {Uint8Array} encryptedDeviceToken
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @instance
+         */
+        ApproveDeviceInstantRequest.prototype.encryptedDeviceToken = $util.newBuffer([]);
+
+        /**
+         * ApproveDeviceInstantRequest encryptedDeviceDataKey.
+         * @member {Uint8Array} encryptedDeviceDataKey
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @instance
+         */
+        ApproveDeviceInstantRequest.prototype.encryptedDeviceDataKey = $util.newBuffer([]);
+
+        /**
+         * ApproveDeviceInstantRequest linkDevice.
+         * @member {boolean} linkDevice
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @instance
+         */
+        ApproveDeviceInstantRequest.prototype.linkDevice = false;
+
+        /**
+         * ApproveDeviceInstantRequest clientVersion.
+         * @member {string} clientVersion
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @instance
+         */
+        ApproveDeviceInstantRequest.prototype.clientVersion = "";
+
+        /**
+         * Creates a new ApproveDeviceInstantRequest instance using the specified properties.
+         * @function create
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {Authentication.IApproveDeviceInstantRequest=} [properties] Properties to set
+         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest instance
+         */
+        ApproveDeviceInstantRequest.create = function create(properties) {
+            return new ApproveDeviceInstantRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ApproveDeviceInstantRequest message. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {Authentication.IApproveDeviceInstantRequest} message ApproveDeviceInstantRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApproveDeviceInstantRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.encryptedDeviceToken);
+            if (message.encryptedDeviceDataKey != null && message.hasOwnProperty("encryptedDeviceDataKey"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.encryptedDeviceDataKey);
+            if (message.linkDevice != null && message.hasOwnProperty("linkDevice"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.linkDevice);
+            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.clientVersion);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ApproveDeviceInstantRequest message, length delimited. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {Authentication.IApproveDeviceInstantRequest} message ApproveDeviceInstantRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ApproveDeviceInstantRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApproveDeviceInstantRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.ApproveDeviceInstantRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.encryptedDeviceToken = reader.bytes();
+                    break;
+                case 2:
+                    message.encryptedDeviceDataKey = reader.bytes();
+                    break;
+                case 3:
+                    message.linkDevice = reader.bool();
+                    break;
+                case 4:
+                    message.clientVersion = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ApproveDeviceInstantRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ApproveDeviceInstantRequest message.
+         * @function verify
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ApproveDeviceInstantRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                if (!(message.encryptedDeviceToken && typeof message.encryptedDeviceToken.length === "number" || $util.isString(message.encryptedDeviceToken)))
+                    return "encryptedDeviceToken: buffer expected";
+            if (message.encryptedDeviceDataKey != null && message.hasOwnProperty("encryptedDeviceDataKey"))
+                if (!(message.encryptedDeviceDataKey && typeof message.encryptedDeviceDataKey.length === "number" || $util.isString(message.encryptedDeviceDataKey)))
+                    return "encryptedDeviceDataKey: buffer expected";
+            if (message.linkDevice != null && message.hasOwnProperty("linkDevice"))
+                if (typeof message.linkDevice !== "boolean")
+                    return "linkDevice: boolean expected";
+            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
+                if (!$util.isString(message.clientVersion))
+                    return "clientVersion: string expected";
+            return null;
+        };
+
+        /**
+         * Creates an ApproveDeviceInstantRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest
+         */
+        ApproveDeviceInstantRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.Authentication.ApproveDeviceInstantRequest)
+                return object;
+            let message = new $root.Authentication.ApproveDeviceInstantRequest();
+            if (object.encryptedDeviceToken != null)
+                if (typeof object.encryptedDeviceToken === "string")
+                    $util.base64.decode(object.encryptedDeviceToken, message.encryptedDeviceToken = $util.newBuffer($util.base64.length(object.encryptedDeviceToken)), 0);
+                else if (object.encryptedDeviceToken.length)
+                    message.encryptedDeviceToken = object.encryptedDeviceToken;
+            if (object.encryptedDeviceDataKey != null)
+                if (typeof object.encryptedDeviceDataKey === "string")
+                    $util.base64.decode(object.encryptedDeviceDataKey, message.encryptedDeviceDataKey = $util.newBuffer($util.base64.length(object.encryptedDeviceDataKey)), 0);
+                else if (object.encryptedDeviceDataKey.length)
+                    message.encryptedDeviceDataKey = object.encryptedDeviceDataKey;
+            if (object.linkDevice != null)
+                message.linkDevice = Boolean(object.linkDevice);
+            if (object.clientVersion != null)
+                message.clientVersion = String(object.clientVersion);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ApproveDeviceInstantRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @static
+         * @param {Authentication.ApproveDeviceInstantRequest} message ApproveDeviceInstantRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ApproveDeviceInstantRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.encryptedDeviceToken = "";
+                else {
+                    object.encryptedDeviceToken = [];
+                    if (options.bytes !== Array)
+                        object.encryptedDeviceToken = $util.newBuffer(object.encryptedDeviceToken);
+                }
+                if (options.bytes === String)
+                    object.encryptedDeviceDataKey = "";
+                else {
+                    object.encryptedDeviceDataKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedDeviceDataKey = $util.newBuffer(object.encryptedDeviceDataKey);
+                }
+                object.linkDevice = false;
+                object.clientVersion = "";
+            }
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                object.encryptedDeviceToken = options.bytes === String ? $util.base64.encode(message.encryptedDeviceToken, 0, message.encryptedDeviceToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDeviceToken) : message.encryptedDeviceToken;
+            if (message.encryptedDeviceDataKey != null && message.hasOwnProperty("encryptedDeviceDataKey"))
+                object.encryptedDeviceDataKey = options.bytes === String ? $util.base64.encode(message.encryptedDeviceDataKey, 0, message.encryptedDeviceDataKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDeviceDataKey) : message.encryptedDeviceDataKey;
+            if (message.linkDevice != null && message.hasOwnProperty("linkDevice"))
+                object.linkDevice = message.linkDevice;
+            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
+                object.clientVersion = message.clientVersion;
+            return object;
+        };
+
+        /**
+         * Converts this ApproveDeviceInstantRequest to JSON.
+         * @function toJSON
+         * @memberof Authentication.ApproveDeviceInstantRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ApproveDeviceInstantRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ApproveDeviceInstantRequest;
+    })();
+
     Authentication.EnterpriseUserAliasRequest = (function() {
 
         /**
@@ -38804,15 +39076,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @memberof AccountSummary
          * @interface IGroup
          * @property {boolean|null} [admin] Group admin
-         * @property {string|null} [groupVerificationCode] Group groupVerificationCode
-         * @property {Array.<AccountSummary.IKeyValue>|null} [groupSettings] ?
          * @property {AccountSummary.IAdministrator|null} [administrator] Group administrator
-         * @property {AccountSummary.IResult|null} [error] Group error
-         * @property {boolean|null} [twoFactorRequired] Group twoFactorRequired
-         * @property {boolean|null} [restrictSharing] Group restrictSharing
-         * @property {boolean|null} [restrictAllSharing] Group restrictAllSharing
-         * @property {number|null} [autoBackupDays] Group autoBackupDays
-         * @property {boolean|null} [adminAccountSharing] Group adminAccountSharing
          */
 
         /**
@@ -38824,7 +39088,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @param {AccountSummary.IGroup=} [properties] Properties to set
          */
         function Group(properties) {
-            this.groupSettings = [];
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -38840,76 +39103,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
         Group.prototype.admin = false;
 
         /**
-         * Group groupVerificationCode.
-         * @member {string} groupVerificationCode
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.groupVerificationCode = "";
-
-        /**
-         * ?
-         * @member {Array.<AccountSummary.IKeyValue>} groupSettings
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.groupSettings = $util.emptyArray;
-
-        /**
          * Group administrator.
          * @member {AccountSummary.IAdministrator|null|undefined} administrator
          * @memberof AccountSummary.Group
          * @instance
          */
         Group.prototype.administrator = null;
-
-        /**
-         * Group error.
-         * @member {AccountSummary.IResult|null|undefined} error
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.error = null;
-
-        /**
-         * Group twoFactorRequired.
-         * @member {boolean} twoFactorRequired
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.twoFactorRequired = false;
-
-        /**
-         * Group restrictSharing.
-         * @member {boolean} restrictSharing
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.restrictSharing = false;
-
-        /**
-         * Group restrictAllSharing.
-         * @member {boolean} restrictAllSharing
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.restrictAllSharing = false;
-
-        /**
-         * Group autoBackupDays.
-         * @member {number} autoBackupDays
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.autoBackupDays = 0;
-
-        /**
-         * Group adminAccountSharing.
-         * @member {boolean} adminAccountSharing
-         * @memberof AccountSummary.Group
-         * @instance
-         */
-        Group.prototype.adminAccountSharing = false;
 
         /**
          * Creates a new Group instance using the specified properties.
@@ -38937,25 +39136,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 writer = $Writer.create();
             if (message.admin != null && message.hasOwnProperty("admin"))
                 writer.uint32(/* id 1, wireType 0 =*/8).bool(message.admin);
-            if (message.groupVerificationCode != null && message.hasOwnProperty("groupVerificationCode"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.groupVerificationCode);
-            if (message.groupSettings != null && message.groupSettings.length)
-                for (let i = 0; i < message.groupSettings.length; ++i)
-                    $root.AccountSummary.KeyValue.encode(message.groupSettings[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.administrator != null && message.hasOwnProperty("administrator"))
                 $root.AccountSummary.Administrator.encode(message.administrator, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
-            if (message.error != null && message.hasOwnProperty("error"))
-                $root.AccountSummary.Result.encode(message.error, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
-            if (message.twoFactorRequired != null && message.hasOwnProperty("twoFactorRequired"))
-                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.twoFactorRequired);
-            if (message.restrictSharing != null && message.hasOwnProperty("restrictSharing"))
-                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.restrictSharing);
-            if (message.restrictAllSharing != null && message.hasOwnProperty("restrictAllSharing"))
-                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.restrictAllSharing);
-            if (message.autoBackupDays != null && message.hasOwnProperty("autoBackupDays"))
-                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.autoBackupDays);
-            if (message.adminAccountSharing != null && message.hasOwnProperty("adminAccountSharing"))
-                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.adminAccountSharing);
             return writer;
         };
 
@@ -38993,34 +39175,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 case 1:
                     message.admin = reader.bool();
                     break;
-                case 2:
-                    message.groupVerificationCode = reader.string();
-                    break;
-                case 3:
-                    if (!(message.groupSettings && message.groupSettings.length))
-                        message.groupSettings = [];
-                    message.groupSettings.push($root.AccountSummary.KeyValue.decode(reader, reader.uint32()));
-                    break;
                 case 4:
                     message.administrator = $root.AccountSummary.Administrator.decode(reader, reader.uint32());
-                    break;
-                case 5:
-                    message.error = $root.AccountSummary.Result.decode(reader, reader.uint32());
-                    break;
-                case 6:
-                    message.twoFactorRequired = reader.bool();
-                    break;
-                case 7:
-                    message.restrictSharing = reader.bool();
-                    break;
-                case 8:
-                    message.restrictAllSharing = reader.bool();
-                    break;
-                case 9:
-                    message.autoBackupDays = reader.int32();
-                    break;
-                case 10:
-                    message.adminAccountSharing = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -39060,43 +39216,11 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.admin != null && message.hasOwnProperty("admin"))
                 if (typeof message.admin !== "boolean")
                     return "admin: boolean expected";
-            if (message.groupVerificationCode != null && message.hasOwnProperty("groupVerificationCode"))
-                if (!$util.isString(message.groupVerificationCode))
-                    return "groupVerificationCode: string expected";
-            if (message.groupSettings != null && message.hasOwnProperty("groupSettings")) {
-                if (!Array.isArray(message.groupSettings))
-                    return "groupSettings: array expected";
-                for (let i = 0; i < message.groupSettings.length; ++i) {
-                    let error = $root.AccountSummary.KeyValue.verify(message.groupSettings[i]);
-                    if (error)
-                        return "groupSettings." + error;
-                }
-            }
             if (message.administrator != null && message.hasOwnProperty("administrator")) {
                 let error = $root.AccountSummary.Administrator.verify(message.administrator);
                 if (error)
                     return "administrator." + error;
             }
-            if (message.error != null && message.hasOwnProperty("error")) {
-                let error = $root.AccountSummary.Result.verify(message.error);
-                if (error)
-                    return "error." + error;
-            }
-            if (message.twoFactorRequired != null && message.hasOwnProperty("twoFactorRequired"))
-                if (typeof message.twoFactorRequired !== "boolean")
-                    return "twoFactorRequired: boolean expected";
-            if (message.restrictSharing != null && message.hasOwnProperty("restrictSharing"))
-                if (typeof message.restrictSharing !== "boolean")
-                    return "restrictSharing: boolean expected";
-            if (message.restrictAllSharing != null && message.hasOwnProperty("restrictAllSharing"))
-                if (typeof message.restrictAllSharing !== "boolean")
-                    return "restrictAllSharing: boolean expected";
-            if (message.autoBackupDays != null && message.hasOwnProperty("autoBackupDays"))
-                if (!$util.isInteger(message.autoBackupDays))
-                    return "autoBackupDays: integer expected";
-            if (message.adminAccountSharing != null && message.hasOwnProperty("adminAccountSharing"))
-                if (typeof message.adminAccountSharing !== "boolean")
-                    return "adminAccountSharing: boolean expected";
             return null;
         };
 
@@ -39114,38 +39238,11 @@ export const AccountSummary = $root.AccountSummary = (() => {
             let message = new $root.AccountSummary.Group();
             if (object.admin != null)
                 message.admin = Boolean(object.admin);
-            if (object.groupVerificationCode != null)
-                message.groupVerificationCode = String(object.groupVerificationCode);
-            if (object.groupSettings) {
-                if (!Array.isArray(object.groupSettings))
-                    throw TypeError(".AccountSummary.Group.groupSettings: array expected");
-                message.groupSettings = [];
-                for (let i = 0; i < object.groupSettings.length; ++i) {
-                    if (typeof object.groupSettings[i] !== "object")
-                        throw TypeError(".AccountSummary.Group.groupSettings: object expected");
-                    message.groupSettings[i] = $root.AccountSummary.KeyValue.fromObject(object.groupSettings[i]);
-                }
-            }
             if (object.administrator != null) {
                 if (typeof object.administrator !== "object")
                     throw TypeError(".AccountSummary.Group.administrator: object expected");
                 message.administrator = $root.AccountSummary.Administrator.fromObject(object.administrator);
             }
-            if (object.error != null) {
-                if (typeof object.error !== "object")
-                    throw TypeError(".AccountSummary.Group.error: object expected");
-                message.error = $root.AccountSummary.Result.fromObject(object.error);
-            }
-            if (object.twoFactorRequired != null)
-                message.twoFactorRequired = Boolean(object.twoFactorRequired);
-            if (object.restrictSharing != null)
-                message.restrictSharing = Boolean(object.restrictSharing);
-            if (object.restrictAllSharing != null)
-                message.restrictAllSharing = Boolean(object.restrictAllSharing);
-            if (object.autoBackupDays != null)
-                message.autoBackupDays = object.autoBackupDays | 0;
-            if (object.adminAccountSharing != null)
-                message.adminAccountSharing = Boolean(object.adminAccountSharing);
             return message;
         };
 
@@ -39162,42 +39259,14 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (!options)
                 options = {};
             let object = {};
-            if (options.arrays || options.defaults)
-                object.groupSettings = [];
             if (options.defaults) {
                 object.admin = false;
-                object.groupVerificationCode = "";
                 object.administrator = null;
-                object.error = null;
-                object.twoFactorRequired = false;
-                object.restrictSharing = false;
-                object.restrictAllSharing = false;
-                object.autoBackupDays = 0;
-                object.adminAccountSharing = false;
             }
             if (message.admin != null && message.hasOwnProperty("admin"))
                 object.admin = message.admin;
-            if (message.groupVerificationCode != null && message.hasOwnProperty("groupVerificationCode"))
-                object.groupVerificationCode = message.groupVerificationCode;
-            if (message.groupSettings && message.groupSettings.length) {
-                object.groupSettings = [];
-                for (let j = 0; j < message.groupSettings.length; ++j)
-                    object.groupSettings[j] = $root.AccountSummary.KeyValue.toObject(message.groupSettings[j], options);
-            }
             if (message.administrator != null && message.hasOwnProperty("administrator"))
                 object.administrator = $root.AccountSummary.Administrator.toObject(message.administrator, options);
-            if (message.error != null && message.hasOwnProperty("error"))
-                object.error = $root.AccountSummary.Result.toObject(message.error, options);
-            if (message.twoFactorRequired != null && message.hasOwnProperty("twoFactorRequired"))
-                object.twoFactorRequired = message.twoFactorRequired;
-            if (message.restrictSharing != null && message.hasOwnProperty("restrictSharing"))
-                object.restrictSharing = message.restrictSharing;
-            if (message.restrictAllSharing != null && message.hasOwnProperty("restrictAllSharing"))
-                object.restrictAllSharing = message.restrictAllSharing;
-            if (message.autoBackupDays != null && message.hasOwnProperty("autoBackupDays"))
-                object.autoBackupDays = message.autoBackupDays;
-            if (message.adminAccountSharing != null && message.hasOwnProperty("adminAccountSharing"))
-                object.adminAccountSharing = message.adminAccountSharing;
             return object;
         };
 
@@ -39226,11 +39295,9 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @property {string|null} [email] Administrator email
          * @property {number|null} [currentNumberOfUsers] Administrator currentNumberOfUsers
          * @property {number|null} [numberOfUsers] Administrator numberOfUsers
-         * @property {number|null} [numberOfDevices] Administrator numberOfDevices
          * @property {string|null} [subscriptionCode] Administrator subscriptionCode
          * @property {string|null} [expirationDate] Administrator expirationDate
          * @property {string|null} [purchaseDate] Administrator purchaseDate
-         * @property {string|null} [total] Administrator total
          */
 
         /**
@@ -39289,14 +39356,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
         Administrator.prototype.numberOfUsers = 0;
 
         /**
-         * Administrator numberOfDevices.
-         * @member {number} numberOfDevices
-         * @memberof AccountSummary.Administrator
-         * @instance
-         */
-        Administrator.prototype.numberOfDevices = 0;
-
-        /**
          * Administrator subscriptionCode.
          * @member {string} subscriptionCode
          * @memberof AccountSummary.Administrator
@@ -39319,14 +39378,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @instance
          */
         Administrator.prototype.purchaseDate = "";
-
-        /**
-         * Administrator total.
-         * @member {string} total
-         * @memberof AccountSummary.Administrator
-         * @instance
-         */
-        Administrator.prototype.total = "";
 
         /**
          * Creates a new Administrator instance using the specified properties.
@@ -39362,16 +39413,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.currentNumberOfUsers);
             if (message.numberOfUsers != null && message.hasOwnProperty("numberOfUsers"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.numberOfUsers);
-            if (message.numberOfDevices != null && message.hasOwnProperty("numberOfDevices"))
-                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.numberOfDevices);
             if (message.subscriptionCode != null && message.hasOwnProperty("subscriptionCode"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.subscriptionCode);
             if (message.expirationDate != null && message.hasOwnProperty("expirationDate"))
                 writer.uint32(/* id 8, wireType 2 =*/66).string(message.expirationDate);
             if (message.purchaseDate != null && message.hasOwnProperty("purchaseDate"))
                 writer.uint32(/* id 9, wireType 2 =*/74).string(message.purchaseDate);
-            if (message.total != null && message.hasOwnProperty("total"))
-                writer.uint32(/* id 10, wireType 2 =*/82).string(message.total);
             return writer;
         };
 
@@ -39421,9 +39468,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 case 5:
                     message.numberOfUsers = reader.int32();
                     break;
-                case 6:
-                    message.numberOfDevices = reader.int32();
-                    break;
                 case 7:
                     message.subscriptionCode = reader.string();
                     break;
@@ -39432,9 +39476,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
                     break;
                 case 9:
                     message.purchaseDate = reader.string();
-                    break;
-                case 10:
-                    message.total = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -39486,9 +39527,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.numberOfUsers != null && message.hasOwnProperty("numberOfUsers"))
                 if (!$util.isInteger(message.numberOfUsers))
                     return "numberOfUsers: integer expected";
-            if (message.numberOfDevices != null && message.hasOwnProperty("numberOfDevices"))
-                if (!$util.isInteger(message.numberOfDevices))
-                    return "numberOfDevices: integer expected";
             if (message.subscriptionCode != null && message.hasOwnProperty("subscriptionCode"))
                 if (!$util.isString(message.subscriptionCode))
                     return "subscriptionCode: string expected";
@@ -39498,9 +39536,6 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.purchaseDate != null && message.hasOwnProperty("purchaseDate"))
                 if (!$util.isString(message.purchaseDate))
                     return "purchaseDate: string expected";
-            if (message.total != null && message.hasOwnProperty("total"))
-                if (!$util.isString(message.total))
-                    return "total: string expected";
             return null;
         };
 
@@ -39526,16 +39561,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 message.currentNumberOfUsers = object.currentNumberOfUsers | 0;
             if (object.numberOfUsers != null)
                 message.numberOfUsers = object.numberOfUsers | 0;
-            if (object.numberOfDevices != null)
-                message.numberOfDevices = object.numberOfDevices | 0;
             if (object.subscriptionCode != null)
                 message.subscriptionCode = String(object.subscriptionCode);
             if (object.expirationDate != null)
                 message.expirationDate = String(object.expirationDate);
             if (object.purchaseDate != null)
                 message.purchaseDate = String(object.purchaseDate);
-            if (object.total != null)
-                message.total = String(object.total);
             return message;
         };
 
@@ -39558,11 +39589,9 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.email = "";
                 object.currentNumberOfUsers = 0;
                 object.numberOfUsers = 0;
-                object.numberOfDevices = 0;
                 object.subscriptionCode = "";
                 object.expirationDate = "";
                 object.purchaseDate = "";
-                object.total = "";
             }
             if (message.firstName != null && message.hasOwnProperty("firstName"))
                 object.firstName = message.firstName;
@@ -39574,16 +39603,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.currentNumberOfUsers = message.currentNumberOfUsers;
             if (message.numberOfUsers != null && message.hasOwnProperty("numberOfUsers"))
                 object.numberOfUsers = message.numberOfUsers;
-            if (message.numberOfDevices != null && message.hasOwnProperty("numberOfDevices"))
-                object.numberOfDevices = message.numberOfDevices;
             if (message.subscriptionCode != null && message.hasOwnProperty("subscriptionCode"))
                 object.subscriptionCode = message.subscriptionCode;
             if (message.expirationDate != null && message.hasOwnProperty("expirationDate"))
                 object.expirationDate = message.expirationDate;
             if (message.purchaseDate != null && message.hasOwnProperty("purchaseDate"))
                 object.purchaseDate = message.purchaseDate;
-            if (message.total != null && message.hasOwnProperty("total"))
-                object.total = message.total;
             return object;
         };
 
