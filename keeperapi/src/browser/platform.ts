@@ -238,6 +238,19 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(derived);
     }
 
+    static async deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+        let key = await crypto.subtle.importKey("raw", browserPlatform.stringToBytes(domain + password), "PBKDF2", false, ["deriveBits"]);
+        let derived = await crypto.subtle.deriveBits({
+            name: "PBKDF2",
+            salt: saltBytes,
+            iterations: iterations,
+            hash: {
+                name: "SHA-512"
+            }
+        }, key, 256);
+        return new Uint8Array(derived);
+    }
+
     static async calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
         let digest = await crypto.subtle.digest("SHA-256", key);
         return new Uint8Array(digest);

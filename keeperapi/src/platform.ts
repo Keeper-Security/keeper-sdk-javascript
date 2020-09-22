@@ -40,6 +40,8 @@ export interface Platform {
 
     deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
 
+    deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
+
     calcAuthVerifier(key: Uint8Array): Promise<Uint8Array>;
 
     get(url: string, headers: any): Promise<KeeperHttpResponse>;
