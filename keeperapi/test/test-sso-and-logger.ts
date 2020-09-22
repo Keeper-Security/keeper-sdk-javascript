@@ -56,8 +56,6 @@ interface UserInfo {
 const userInfo: UserInfo = getCredentialsAndHost()
 const clientVersion = 'c16.0.0'
 
-// end Mike Test ------------------------------------------
-
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 
@@ -128,7 +126,7 @@ TestRegisterDevice().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
 // TestSsoUploadMetadata().finally();
-// TestSsoGetMetadata().finally();
+TestSsoGetMetadata().finally();
 // TestSsoGetSigningCertificate().finally();
 // TestSsoIdpInitiatedLogin().finally();
 // TestSsoSetCurrentConfiguration().finally();
@@ -170,17 +168,23 @@ async function TestRegisterDevice() {
         });
         let ecKeyPair = platform.generateECKeyPair();
         
-        await auth.login(userInfo.userName, userInfo.password);
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password
+        });
         console.log('Logged in...');
 
-        let request : DeviceRegistrationRequest = DeviceRegistrationRequest.create({
+
+        console.log("Calling register_device");
+        let response = await auth.executeRest(registerDeviceMessage({
             "clientVersion": clientVersion,
             "deviceName": "mike 9999",
             "devicePublicKey": ecKeyPair.publicKey
-        });
+        }));
 
-        let response = await auth.executeRest(registerDeviceMessage(request));
         console.log(response);
+        deviceConfig.deviceToken = response.encryptedDeviceToken || null;
+        console.log("encryptedDeviceToken = " + Buffer.from(deviceConfig.deviceToken).toString('hex').toUpperCase());
 
     } catch (e) {
         console.log(e);
@@ -193,7 +197,7 @@ async function TestRegisterDevice() {
 
 async function testServiceLogger() {
 
-    const deviceConfig = getDeviceConfig('test service logger', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     try {
         let auth = new Auth({
@@ -228,9 +232,9 @@ async function testServiceLogger() {
 async function TestSsoLogin() {
 
     console.log("\n*** TestSsoLogin on " + keeperHost + " ***");
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
-    const deviceConfig = getDeviceConfig('test sso', keeperHost);
 
     try {
         let auth = new Auth({
@@ -256,7 +260,7 @@ async function TestSsoLogin() {
 async function TestSsoLogin_2() {
     console.log("\n*** TestSSOLogin v2 on " + keeperHost + " ***");
     let serviceProviderId = 9710921056266; // 9710921056299;
-    const deviceConfig = getDeviceConfig('test sso 2', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/saml/';
     const configEndpoint = 'login';
 
@@ -294,7 +298,7 @@ async function TestSsoLoginWithGet() {
     console.log("\n*** TestSsoLogin with GET on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056299; // local: 9710921056266;  // local: 6219112644615
-    const deviceConfig = getDeviceConfig('test sso with get', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/saml/';
 
     try {
@@ -322,7 +326,7 @@ async function TestSsoLogout_2() {
     console.log("\n*** TestSSOLogout v2 on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056299; // 9710921056266;
-    const deviceConfig = getDeviceConfig('test sso logout v2', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/saml/';
     const loginEndpoint = 'login';
     const logoutEndpoint = 'logout';
@@ -488,7 +492,7 @@ async function TestSsoUploadMetadata() {
     const configEndpoint = 'sso_cloud_upload_idp_metadata';
 
     let filename = '/Users/mhewett/work/sw/test-files/mujina-idp-metadata.xml'; // 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
-    const deviceConfig = getDeviceConfig('test sso upload metadata', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     try {
         console.log("Uploading Service Provider Metadata from", filename);
@@ -528,9 +532,9 @@ async function TestSsoUploadMetadata() {
 async function TestSsoSetCurrentConfiguration() {
     console.log("\n*** TestSetCurrentConfiguration on " + keeperHost + " ***");
 
-    let serviceProviderId = 9710921056266; // 9710921056299;
-    let configurationId = 3121290;  // 1774455125899304 // 1284294 // 3121290
-    const deviceConfig = getDeviceConfig('test sso set current config', keeperHost);
+    let serviceProviderId = 9710921056299; // 6219112644615;
+    let configurationId = 6468304524777205; // 99837914454064896; // 3121290;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, 'sso_cloud_sp_configuration_set');
@@ -566,7 +570,7 @@ async function TestSsoGetConfigurationList() {
     console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056299; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
-    const deviceConfig = getDeviceConfig('test sso get config list', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     try {
         const url = getKeeperSsoConfigUrl(keeperHost, 'sso_cloud_sp_configuration_get');
@@ -602,7 +606,7 @@ async function TestSsoValidateConfiguration() {
 
     let serviceProviderId = 9710921056299; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
     let configurationIds = [6468304524777205, 3521244517327075, 8080545707988631, 7552260471721876, 1774455125899304, 1284294, 3121290];
-    const deviceConfig = getDeviceConfig('test sso validate config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_validate';
 
@@ -650,7 +654,7 @@ async function TestSsoAddNewConfiguration() {
 
     // let serviceProviderId = 9710921056266;
     let serviceProviderId = 9710921056266;  // "mh sso 1"
-    const deviceConfig = getDeviceConfig('test sso add new config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_add';
 
@@ -690,7 +694,7 @@ async function TestSsoGetConfiguration() {
     // let serviceProviderId = 9710921056266;
     let serviceProviderId = 9710921056299;  // "demo azure"
     let configurationId = 6468304524777205; // local 6468304524777205   // "demo azure" config 5082553809898260 // dev 1774455125899304;   // local 3121290;
-    const deviceConfig = getDeviceConfig('test sso get config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
 
@@ -741,7 +745,7 @@ async function TestSsoCopyConfiguration() {
     // let serviceProviderId = 9710921056266;
     let serviceProviderId = 9710921056299;  // "mh sso 1"
     let configurationId = 8080545707988631;
-    const deviceConfig = getDeviceConfig('test sso copy config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_copy';
 
@@ -782,7 +786,7 @@ async function TestSsoResetConfiguration() {
     // let serviceProviderId = 9710921056266;
     let serviceProviderId = 9710921056299;  // "mh sso 1"
     let configurationId = 3521244517327075;
-    const deviceConfig = getDeviceConfig('test sso reset config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_reset';
 
@@ -820,7 +824,7 @@ async function TestSsoServiceProviderAdd() {
     console.log("\n*** TestSsoServiceProviderAdd on " + keeperHost + " ***");
 
     let nodeId = 9710921056312;
-    const deviceConfig = getDeviceConfig('test sso add service provider', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso//';
     const configEndpoint = 'sso_service_provider_add';
 
@@ -861,8 +865,8 @@ async function TestSsoServiceProviderUpdate() {
 
     let serviceProviderId =  9710921056266;  // 9710921056299;
     let nodeId = 9710921056264;  // 9710921056296;
-    const deviceConfig = getDeviceConfig('test sso update service provider', keeperHost);
-    const configPrefix = 'sso//';
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'sso/';
     const configEndpoint = 'sso_cloud_configuration_update';
 
     try {
@@ -941,7 +945,7 @@ async function TestSsoDeleteConfiguration() {
     console.log("\n*** TestDeleteConfiguration on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056266; // 6219112644615;
-    const deviceConfig = getDeviceConfig('test sso delete config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const addEndpoint = 'sso_cloud_configuration_add';
     const deleteEndpoint = 'sso_cloud_configuration_delete';
@@ -1003,7 +1007,7 @@ async function TestSsoUpdateConfiguration() {
 
     let serviceProviderId = 9710921056299; // 6219112644615;
     let configurationId = 1774455125899304;
-    const deviceConfig = getDeviceConfig('test sso update config', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const endpoint = 'sso_cloud_configuration_update';
 
@@ -1069,7 +1073,7 @@ async function TestSsoSetConfigurationSettingValue() {
 
     let serviceProviderId = 9710921056266; // 6219112644615;
     let configurationId = 3121290; // 99837914454064896; // 3121290;
-    const deviceConfig = getDeviceConfig('test sso set config setting value', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_setting_set';
 
@@ -1132,7 +1136,7 @@ async function TestSsoResetConfigurationSettingValue() {
 
     let serviceProviderId = 9710921056266; // 6219112644615;
     let configurationId = 99837914454064896; // 3121290;
-    const deviceConfig = getDeviceConfig('test sso reset config setting value', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_setting_set';
 
@@ -1177,7 +1181,7 @@ async function TestSsoGetSAMLLog() {
     console.log("\n*** TestSsoGetSAMLLog on " + keeperHost + " ***");
 
     let serviceProviderId =  14955076124691;// DevCloud Azure  // 9710921056299; // 9710921056266; // 6219112644615;
-    const deviceConfig = getDeviceConfig('test sso get saml log', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_saml_get';
 
@@ -1215,7 +1219,7 @@ async function TestSsoClearSAMLLog() {
     console.log("\n*** TestSsoClearSAMLLog on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056266; // 6219112644615;
-    const deviceConfig = getDeviceConfig('test sso clear saml log', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_saml_clear';
 
@@ -1251,8 +1255,8 @@ async function TestSsoClearSAMLLog() {
 async function TestSsoGetLog() {
     console.log("\n*** TestSsoGetLog on " + keeperHost + " ***");
 
-    let serviceProviderId = 9710921056266; // 9710921056299; // 9710921056266; // 6219112644615;
-    const deviceConfig = getDeviceConfig('test sso get log', keeperHost);
+    let serviceProviderId = 9710921056299; // 9710921056299; // 9710921056266; // 6219112644615;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_get';
 
@@ -1290,7 +1294,7 @@ async function TestSsoClearLog() {
     console.log("\n*** TestSsoClearLog on " + keeperHost + " ***");
 
     let serviceProviderId = 9710921056266; // 6219112644615;
-    const deviceConfig = getDeviceConfig('test sso clear log', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_log_clear';
 
@@ -1329,7 +1333,7 @@ async function TestGetSsoServiceProvider() {
     // let domainName = "G-Suite Dev"; // "F5 Europe"; // "G-Suite Dev";    // "demo azure";    // "devgene sso 2";  // "demo azure";
     let domainName = "demo azure";  // "F5 Europe"; // "G-Suite Dev";    // "demo azure";    // "devgene sso 2";  // "demo azure";
     const locale = "en_US";
-    const deviceConfig = getDeviceConfig('test sso get service provider', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'enterprise/';
     const configEndpoint = 'get_sso_service_provider';
 
@@ -1370,7 +1374,7 @@ async function TestSetupForMujinaIdp() {
 
     let serviceProviderId = 9710921056266;
     let configurationId = 8080545707988631;
-    const deviceConfig = getDeviceConfig('test setup for mujina idp', keeperHost);
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const endpoint = 'sso_cloud_configuration_update';
 
