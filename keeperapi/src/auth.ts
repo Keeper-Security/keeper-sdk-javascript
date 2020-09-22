@@ -160,6 +160,7 @@ export type LoginPayload = {
     password?: string,
     useAlternate?: boolean,
     loginTokenFromClient?: Uint8Array
+    v2TwoFactorToken?: string
 }
 
 export enum UserType {
@@ -247,7 +248,15 @@ export class Auth {
     /**
      * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
      */
-    async loginV3({username, password = '', useAlternate = false, loginTokenFromClient = null}: LoginPayload) {
+    async loginV3(
+        {
+            username,
+            password = '',
+            useAlternate = false,
+            loginTokenFromClient = null,
+            v2TwoFactorToken = null
+        }: LoginPayload
+    ) {
         this._username = username || this.options.sessionStorage.lastUsername
 
         if (!this.options.deviceConfig.deviceToken) {
@@ -287,7 +296,8 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginType: useAlternate ? Authentication.LoginType.ALTERNATE : Authentication.LoginType.NORMAL,
-                cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0)
+                cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0),
+                v2TwoFactorToken: v2TwoFactorToken
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
