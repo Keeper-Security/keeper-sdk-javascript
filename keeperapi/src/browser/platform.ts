@@ -4,25 +4,10 @@ import {RSAKey} from "./rsa";
 import {AES, enc, mode, pad} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
-import {normal64, webSafe64FromBytes} from "../utils";
+import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
 import {SocketProxy} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
-
-type Ecies = {
-    generateKeys: () => {
-        publicKey: Uint8Array
-        privateKey: Uint8Array
-    }
-    encrypt: (message: string | Uint8Array, pubKey: Uint8Array, id?: Uint8Array) => Uint8Array
-    decrypt: (cipherText: Uint8Array, privKey: Uint8Array, id?: Uint8Array) => Uint8Array
-    derivePublicKey: (privKey: Uint8Array) => Uint8Array
-}
-
-// todo: This file was copied from the repo https://github.com/Keeper-Security/ecies
-// todo: Move the repo's full implementation into this one
-const ECIES: Ecies = require('./ecies.browserified.js')
-// const ECIES: Ecies = require('ecies/dist/browserify/ecies.js')
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
@@ -89,8 +74,11 @@ export const browserPlatform: Platform = class {
         return this.generateRSAKeyPair()
     }
 
-    static generateECKeyPair(): { privateKey: Uint8Array; publicKey: Uint8Array } {
-        return ECIES.generateKeys()
+    static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
+        const ecdh = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+        const privateKey = await crypto.subtle.exportKey('jwk', ecdh.privateKey)
+        const publicKey = await crypto.subtle.exportKey('raw', ecdh.publicKey)
+        return { publicKey: new Uint8Array(publicKey), privateKey: normal64Bytes(privateKey.d) }
     }
 
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {

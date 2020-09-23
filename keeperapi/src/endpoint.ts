@@ -104,7 +104,7 @@ export class KeeperEndpoint {
             return
         }
 
-        const ecdh = platform.generateECKeyPair()
+        const ecdh = await platform.generateECKeyPair()
         deviceConfig.publicKey = ecdh.publicKey
         deviceConfig.privateKey = ecdh.privateKey
         while (true) {
@@ -236,7 +236,7 @@ export class KeeperEndpoint {
                 const message: KeeperError = JSON.parse(errorMessage)
                 if (this.options.onCommandFailure) {
                     this.options.onCommandFailure(message)
-                }                
+                }
             }
             catch{}
             throw(new Error(errorMessage))
