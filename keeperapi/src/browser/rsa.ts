@@ -1,13 +1,9 @@
-import {BigInteger} from "./jsbn";
+import {BigInteger, parseBigInt} from "./jsbn";
 import {SecureRandom} from "./rng";
+import {_rsapem_getHexValueArrayOfChildrenFromHex} from './asn1hex';
 // Depends on jsbn.js and rng.js
 
 // Version 1.1: support utf-8 encoding in pkcs1pad2
-
-// convert a (hex) string to a bignum object
-export function parseBigInt(str,r) {
-    return new BigInteger(str,r);
-}
 
 function linebrk(s,n) {
     var ret = "";
@@ -87,6 +83,19 @@ function RSASetPublic(N,E) {
 // Perform raw public operation on "x": return x^e (mod n)
 function RSADoPublic(x) {
     return x.modPowInt(this.e, this.n);
+}
+
+function RSADoPrivate(x) {
+    if(this.p == null || this.q == null)
+        return x.modPow(this.d, this.n);
+
+    // TODO: re-calculate any missing CRT params
+    var xp = x.mod(this.p).modPow(this.dmp1, this.p);
+    var xq = x.mod(this.q).modPow(this.dmq1, this.q);
+
+    while(xp.compareTo(xq) < 0)
+        xp = xp.add(this.p);
+    return xp.subtract(xq).multiply(this.coeff).mod(this.p).multiply(this.q).add(xq);
 }
 
 // Return the PKCS#1 RSA encryption of "text" as an even-length hex string
@@ -231,8 +240,14 @@ function RSASetPrivateEx(N,E,D,P,Q,DP,DQ,C) {
         alert("Invalid RSA private key");
 }
 
+function RSASetPrivateKeyFromASN1HexString(keyHex) {
+    const a = _rsapem_getHexValueArrayOfChildrenFromHex(keyHex);
+    this.setPrivateEx(a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]);
+}
+
 // protected
 RSAKey.prototype.doPublic = RSADoPublic;
+RSAKey.prototype.doPrivate = RSADoPrivate;
 
 // public
 RSAKey.prototype.setPublic = RSASetPublic;
@@ -243,4 +258,5 @@ RSAKey.prototype.encryptBinary = RSAEncryptBinary;
 RSAKey.prototype.decryptBinary = RSADecryptBinary;
 RSAKey.prototype.toASN1HexString = RSAtoASN1Hex;
 RSAKey.prototype.setPrivateEx = RSASetPrivateEx;
+RSAKey.prototype.setPrivateKeyFromASN1HexString = RSASetPrivateKeyFromASN1HexString;
 

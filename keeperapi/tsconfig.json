@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationDir": "./dist",
     "module": "commonjs",
-    "strict": false,
+    "noEmit": true,
     "noImplicitAny": false,
-    "outDir": "./dist",
-    "target": "es6",
-    "sourceMap": true
+    "strict": false,
+    "target": "es6"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "test/**/*"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,27 +1,40 @@
-import {KeeperCommand} from './commands'
-import {Authentication} from './proto'
+import {KeeperCommand, KeeperHttpResponse} from './commands'
+import {KeeperError} from './configuration'
+import {Authentication, Push} from './proto'
 import {platform} from './platform'
-import {isTwoFactorResultCode, normal64, normal64Bytes} from './utils'
-import {deviceMessage, preLoginMessage, RestMessage} from './restMessages'
-import ApiRequestPayload = Authentication.ApiRequestPayload
-import ApiRequest = Authentication.ApiRequest
-import IDeviceResponse = Authentication.IDeviceResponse
-import IPreLoginResponse = Authentication.IPreLoginResponse
-import IApiRequestPayload = Authentication.IApiRequestPayload
+import {
+    generateTransmissionKey,
+    getKeeperUrl,
+    isTwoFactorResultCode,
+    normal64,
+    normal64Bytes,
+    webSafe64FromBytes
+} from './utils'
+import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from './restMessages'
+import {ClientConfigurationInternal, TransmissionKey} from './configuration';
+import ApiRequestPayload = Authentication.ApiRequestPayload;
+import ApiRequest = Authentication.ApiRequest;
+import IDeviceResponse = Authentication.IDeviceResponse;
+import IPreLoginResponse = Authentication.IPreLoginResponse;
+import WssClientResponse = Push.WssClientResponse;
+import WssConnectionRequest = Push.WssConnectionRequest;
 
 export class KeeperEndpoint {
-    private transmissionKey: Uint8Array
-    private publicKeyId: number
-    private encryptedTransmissionKey: Uint8Array
-    private deviceToken: Uint8Array
+    private transmissionKey: TransmissionKey
+    public deviceToken: Uint8Array
     public clientVersion
 
-    constructor(private host: KeeperEnvironment | string) {
-        this.generateTransmissionKey(1)
+    constructor(private options: ClientConfigurationInternal) {
+        if (options.deviceToken) {
+            this.deviceToken = options.deviceToken
+            this.updateTransmissionKey(1)
+        } else {
+            this.updateTransmissionKey(options.deviceConfig.transmissionKeyId || 1)
+        }
     }
 
     private getUrl(forPath: string): string {
-        return `https://${this.host}/api/rest/${forPath}`
+        return getKeeperUrl(this.options.host, forPath)
     }
 
     async getDeviceToken(): Promise<IDeviceResponse> {
@@ -35,8 +48,8 @@ export class KeeperEndpoint {
                 if (!(e instanceof Error))
                     throw(e)
                 let errorObj = JSON.parse(e.message)
-                if ((errorObj.error === 'key') && (this.publicKeyId <= 6)) {
-                    this.generateTransmissionKey(this.publicKeyId + 1)
+                if (errorObj.error === 'key') {
+                    this.updateTransmissionKey(errorObj.key_id)
                 } else {
                     throw(e)
                 }
@@ -47,31 +60,186 @@ export class KeeperEndpoint {
     async getPreLogin(username: string): Promise<IPreLoginResponse> {
 
         if (!this.deviceToken) {
+            console.log('Obtaining device token...')
             let deviceResponse = await this.getDeviceToken()
             this.deviceToken = deviceResponse.encryptedDeviceToken
+            if (this.options.onDeviceToken) {
+                this.options.onDeviceToken(this.deviceToken)
+            }
         }
 
-        return this.executeRest(preLoginMessage({
-            authRequest: {
-                clientVersion: this.clientVersion,
-                username: username,
-                encryptedDeviceToken: this.deviceToken
-            },
-            loginType: Authentication.LoginType.NORMAL
-        }))
+        while (true) {
+            try {
+                return await this.executeRest(preLoginMessage({
+                    authRequest: {
+                        clientVersion: this.clientVersion,
+                        username: username,
+                        encryptedDeviceToken: this.deviceToken
+                    },
+                    loginType: Authentication.LoginType.NORMAL
+                }))
+            }
+            catch (e) {
+                if (!(e instanceof Error))
+                    throw(e)
+                let errorObj = JSON.parse(e.message)
+                if (errorObj.error === 'region_redirect') {
+                    this.options.host = errorObj.region_host
+                    console.log(`Redirecting to ${this.options.host}`)
+                } else {
+                    throw(e)
+                }
+            }
+        }
+    }
+
+    async registerDevice() {
+        // Case 1 new device, no edt no keys - call registration with pub key
+        // Case 2 existing device on 14, edt but no keys - call device update
+        // Case 3 existing device on 15+, has edt and keys - skip registration
+
+        const deviceConfig = this.options.deviceConfig
+
+        if (deviceConfig.deviceToken && deviceConfig.privateKey && deviceConfig.publicKey) {  // Case 1
+            return
+        }
+
+        const ecdh = await platform.generateECKeyPair()
+        deviceConfig.publicKey = ecdh.publicKey
+        deviceConfig.privateKey = ecdh.privateKey
+        while (true) {
+            try {
+                if (deviceConfig.deviceToken) {
+                    const devUpdMsg = updateDeviceMessage({
+                        encryptedDeviceToken: deviceConfig.deviceToken,
+                        clientVersion: this.options.clientVersion,
+                        deviceName: deviceConfig.deviceName,
+                        devicePublicKey: deviceConfig.publicKey,
+                    })
+                    await this.executeRest(devUpdMsg)
+                } else {
+                    const devRegMsg = registerDeviceMessage({
+                        clientVersion: this.options.clientVersion,
+                        deviceName: deviceConfig.deviceName,
+                        devicePublicKey: deviceConfig.publicKey,
+                    })
+                    const devRegResp = await this.executeRest(devRegMsg)
+                    console.log(devRegResp)
+                    deviceConfig.deviceToken = devRegResp.encryptedDeviceToken || null
+                }
+                if (this.options.onDeviceConfig) {
+                    this.options.onDeviceConfig(deviceConfig, this.options.host);
+                }
+                return
+            } catch (e) {
+                if (!(e instanceof Error))
+                    throw(e)
+                let errorObj = JSON.parse(e.message)
+                if (errorObj.error === 'key') {
+                    deviceConfig.transmissionKeyId = errorObj.key_id
+                    if (this.options.onDeviceConfig) {
+                        this.options.onDeviceConfig(deviceConfig, this.options.host);
+                    }
+                    this.updateTransmissionKey(errorObj.key_id)
+                } else {
+                    throw(e)
+                }
+            }
+        }
+    }
+
+    /**
+     * Call this for REST calls expected to return HTML or a 303 redirect.
+     */
+    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams: any = {}, useGet: boolean = false): Promise<string> {
+        // let request = await this.prepareRequest(message.toBytes(), sessionToken)
+        let theUrl = message.path;
+        if (!theUrl.startsWith("http")) {
+            theUrl = this.getUrl(theUrl);
+        }
+
+        let response = null;
+        if (useGet) {
+            console.log("  using GET");
+            theUrl = theUrl + "?" + String(new URLSearchParams(formParams));
+            response = await platform.get(theUrl, {});
+        } else {
+            console.log("  using POST");
+            formParams = formParams ? String(new URLSearchParams(formParams)) : "";
+            response = await platform.post(
+              theUrl,
+              formParams,
+              {"Content-Type": "application/x-www-form-urlencoded"}
+            );
+        }
+
+        console.log("SSO response is", response.statusCode);
+
+        const possibleRedirects = [200, 303]
+
+        // Redirect?
+        if (possibleRedirects.indexOf(response.statusCode) >= 0) {
+            let redirectUrl = '';
+            if (response.statusCode == 303) {
+                redirectUrl = response.headers["location"];
+            } else if (response.statusCode == 200) {
+                redirectUrl = theUrl + '?' + (formParams as string);
+            }
+            if (redirectUrl) {
+                console.log("Redirecting to " + redirectUrl);
+                if (this.options.authUI3 && this.options.authUI3.redirectCallback) {
+                    this.options.authUI3.redirectCallback(redirectUrl)
+                } else {
+                    await platform.defaultRedirect(redirectUrl)
+                }
+            } else {
+                console.log("Expected URL with 303 status, but didn't get one");
+            }
+        }
+
+        if (response.statusCode === 404) {
+            return new Promise(resolve => {
+                resolve("404 NOT FOUND");
+            });
+        }
+
+        // Any content?
+        if (!response.data || response.data.length === 0 && response.statusCode === 200) {
+            return "No content returned\n";
+        }
+
+        // Is it HTML?
+        if (response.data[0] != "<".charCodeAt(0)) {
+            console.log("non-HTML returned from rest call");
+        }
+
+        return new Promise(resolve => {
+            resolve(platform.bytesToString(response.data));
+        });
     }
 
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
         let request = await this.prepareRequest(message.toBytes(), sessionToken)
+        console.log("Calling REST URL:", this.getUrl(message.path));
         let response = await platform.post(this.getUrl(message.path), request)
-        if (response.data.length === 0 && response.statusCode === 200) {
+        if (!response.data || response.data.length === 0 && response.statusCode === 200) {
             return
         }
+        console.log("Response code:", response.statusCode);
+
         try {
-            let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey)
+            let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
             return message.fromBytes(decrypted)
         } catch {
-            throw(new Error(platform.bytesToString(response.data)))
+            const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
+            try {
+                const message: KeeperError = JSON.parse(errorMessage)
+                if (this.options.onCommandFailure) {
+                    this.options.onCommandFailure(message)
+                }
+            }
+            catch{}
+            throw(new Error(errorMessage))
         }
     }
 
@@ -81,7 +249,7 @@ export class KeeperEndpoint {
         let response = await platform.post(this.getUrl('vault/execute_v2_command'), requestBytes)
         let decrypted
         try {
-            decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey)
+            decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
         } catch (e) {
             let error = platform.bytesToString(response.data)
             throw(`Unable to decrypt response: ${error}`)
@@ -93,78 +261,75 @@ export class KeeperEndpoint {
         return json as T
     }
 
-    async executeVendorRequest<T>(vendorPath: string, privateKey: string, payload?: any): Promise<T> {
-        let url = this.getUrl(`msp/v1/${vendorPath}`)
-        let urlBytes = platform.stringToBytes(url.slice(url.indexOf('/rest/msp/v1/')))
-        while (true) {
-            let encryptedPayloadBytes = payload
-                ? await platform.aesGcmEncrypt(Buffer.from(JSON.stringify(payload)), this.transmissionKey)
-                : new Uint8Array()
-            let signatureBase = Uint8Array.of(...urlBytes, ...this.encryptedTransmissionKey, ...encryptedPayloadBytes)
-            let signature = await platform.privateSign(signatureBase, privateKey)
-            let response
-            try {
-                let headers = {
-                    Authorization: `Signature ${platform.bytesToBase64(signature)}`,
-                    TransmissionKey: platform.bytesToBase64(this.encryptedTransmissionKey),
-                    PublicKeyId: this.publicKeyId,
-                }
-                response = payload
-                    ? await platform.post(url, encryptedPayloadBytes, headers)
-                    : await platform.get(url, headers)
-            } catch (e) {
-                console.log('ERR:' + e)
-            }
-            let decrypted
-            try {
-                decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey)
-                let json = JSON.parse(platform.bytesToString(decrypted))
-                return json as T
-            } catch (e) {
-                let error = platform.bytesToString(response.data)
-                let errorObj = JSON.parse(error)
-                if ((errorObj.error === 'key') && (this.publicKeyId <= 6)) {
-                    this.generateTransmissionKey(this.publicKeyId + 1)
-                } else {
-                    throw(`Unable to decrypt response: ${error}`)
-                }
-            }
-        }
+    async get(path: string): Promise<KeeperHttpResponse> {
+        return platform.get(this.getUrl(path), {})
     }
 
-    private generateTransmissionKey(keyNumber: number) {
-        this.publicKeyId = keyNumber
-        this.transmissionKey = platform.getRandomBytes(32)
-        let key = platform.keys[keyNumber - 1]
-        this.encryptedTransmissionKey = platform.publicEncrypt(this.transmissionKey, key)
+    private updateTransmissionKey(keyNumber: number) {
+        this.transmissionKey = generateTransmissionKey(keyNumber)
     }
 
-    private async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
-        let payloadBytes = payload instanceof Uint8Array
+    public async prepareRequest(payload: Uint8Array | KeeperCommand, sessionToken?: string): Promise<Uint8Array> {
+        return prepareApiRequest(payload, this.transmissionKey, sessionToken)
+    }
+
+    async decryptPushMessage(pushMessage: Blob): Promise<WssClientResponse> {
+        const pmArrBuff = await pushMessage.arrayBuffer()
+        const pmUint8Buff = new Uint8Array(pmArrBuff)
+        const decryptedPushMessage = await platform.aesGcmDecrypt(pmUint8Buff, this.transmissionKey.key)
+        return WssClientResponse.decode(decryptedPushMessage)
+    }
+
+    async getPushConnectionRequest(messageSessionUid: Uint8Array) {
+        return getPushConnectionRequest(messageSessionUid, this.options.deviceConfig.deviceToken, this.transmissionKey)
+    }
+
+    getTransmissionKey() : TransmissionKey {
+        return this.transmissionKey;
+    }
+}
+
+export async function getPushConnectionRequest(messageSessionUid: Uint8Array, encryptedDeviceToken: Uint8Array, transmissionKey: TransmissionKey) {
+    const connectionRequest = WssConnectionRequest.create({
+        messageSessionUid: messageSessionUid,
+        encryptedDeviceToken: encryptedDeviceToken,
+        deviceTimeStamp: new Date().getTime()
+    })
+    const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
+    const apiRequest = await prepareApiRequest(connectionRequestBytes, transmissionKey)
+    return webSafe64FromBytes(apiRequest)
+}
+
+export async function prepareApiRequest(payload: Uint8Array | KeeperCommand, transmissionKey: TransmissionKey, sessionToken?: string): Promise<Uint8Array> {
+    const requestPayload = ApiRequestPayload.create()
+    if (payload) {
+        requestPayload.payload = payload instanceof Uint8Array
             ? payload
             : Buffer.from(JSON.stringify(payload))
-        let requestPayload: IApiRequestPayload = {
-            payload: payloadBytes
-        }
-        if (sessionToken) {
-            requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
-        }
-        let requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
-        let encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, this.transmissionKey)
-        let apiRequest = ApiRequest.create({
-            encryptedTransmissionKey: this.encryptedTransmissionKey,
-            encryptedPayload: encryptedRequestPayload,
-            publicKeyId: this.publicKeyId,
-            locale: 'en_US'
-        })
-        return ApiRequest.encode(apiRequest).finish()
     }
+    if (sessionToken) {
+        requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
+    }
+    let requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
+    let encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key)
+    let apiRequest = ApiRequest.create({
+        encryptedTransmissionKey: transmissionKey.encryptedKey,
+        encryptedPayload: encryptedRequestPayload,
+        publicKeyId: transmissionKey.publicKeyId,
+        locale: 'en_US'
+    })
+    return ApiRequest.encode(apiRequest).finish()
 }
 
 export enum KeeperEnvironment {
     Prod = 'keepersecurity.com',
     QA = 'qa.keepersecurity.com',
-    DEV = 'dev.keepersecurity.com'
+    DEV = 'dev.keepersecurity.com',
+    DEV2 = 'dev2.keepersecurity.com',
+    LOCAL = 'local.keepersecurity.com',
+    Prod_EU = 'keepersecurity.eu',
+    QA_EU = 'qa.keepersecurity.eu',
+    DEV_EU = 'dev.keepersecurity.eu',
 }
 
 interface KeeperKeys {
@@ -204,3 +369,5 @@ for (let key in keys.pem) {
 }
 
 export const keeperKeys: KeeperKeys = _keeperKeys
+
+

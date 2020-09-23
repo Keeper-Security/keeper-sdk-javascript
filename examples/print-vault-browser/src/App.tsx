@@ -48,8 +48,9 @@ class App extends Component<{}, AppState> implements AuthUI {
         e.preventDefault();
         try {
             let auth = new Auth({
-                host: KeeperEnvironment.DEV
-            }, this);
+                host: KeeperEnvironment.DEV,
+                authUI: this
+            });
             let newState = {...this.state};
             newState.status.push("Logging In...");
             this.setState(newState);

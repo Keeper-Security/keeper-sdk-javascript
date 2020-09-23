@@ -1,10 +1,11 @@
-import {Platform} from "../platform";
+import {Platform} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
-import {AES, pad, enc, mode} from "crypto-js";
+import {AES, enc, mode, pad} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
-import {normal64} from "../utils";
+import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
+import {SocketProxy} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 
@@ -38,7 +39,6 @@ export const browserPlatform: Platform = class {
     }
 
     static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
-
         let keyPair = await crypto.subtle.generateKey({
             name: rsaAlgorithmName,
             modulusLength: 2048,
@@ -69,6 +69,18 @@ export const browserPlatform: Platform = class {
         };
     }
 
+    // todo: revisit
+    static async generateRSAKeyPair2(): Promise<any> {
+        return this.generateRSAKeyPair()
+    }
+
+    static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
+        const ecdh = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+        const privateKey = await crypto.subtle.exportKey('jwk', ecdh.privateKey)
+        const publicKey = await crypto.subtle.exportKey('raw', ecdh.publicKey)
+        return { publicKey: new Uint8Array(publicKey), privateKey: normal64Bytes(privateKey.d) }
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKeyHex = base64ToHex(key);
         const pos = _asnhex_getPosArrayOfChildren_AtObj(publicKeyHex, 0);
@@ -78,8 +90,67 @@ export const browserPlatform: Platform = class {
         rsa.setPublic(hN, hE);
         const hexBytes = bytesToHex(data);
         const encryptedBinary = rsa.encryptBinary(hexBytes);
-        const bytes = hexToBytes(encryptedBinary);
-        return bytes;
+        return hexToBytes(encryptedBinary);
+    }
+
+    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        const ephemeralKeyPair = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+        const ephemeralPublicKey = await crypto.subtle.exportKey('raw', ephemeralKeyPair.publicKey)
+        const recipientPublicKey = await crypto.subtle.importKey('raw', key, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
+        const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: recipientPublicKey }, ephemeralKeyPair.privateKey, 256)
+        const idBytes = id || new Uint8Array()
+        const sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + idBytes.byteLength)
+        sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
+        sharedSecretCombined.set(idBytes, sharedSecret.byteLength)
+        const symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+        const cipherText = await this.aesGcmEncrypt(data, new Uint8Array(symmetricKey))
+        const result = new Uint8Array(ephemeralPublicKey.byteLength + cipherText.byteLength)
+        result.set(new Uint8Array(ephemeralPublicKey), 0)
+        result.set(new Uint8Array(cipherText), ephemeralPublicKey.byteLength)
+        return result
+    }
+
+    static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
+        let pkh = bytesToHex(key);
+        const rsa = new RSAKey();
+        rsa.setPrivateKeyFromASN1HexString(pkh);
+        const hexBytes = bytesToHex(data);
+        const decryptedBinary = rsa.decryptBinary(hexBytes);
+        return hexToBytes(decryptedBinary);
+    }
+
+    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        const privateKeyImport = await (async () => {
+            const x = webSafe64FromBytes(publicKey.subarray(1, 33))
+            const y = webSafe64FromBytes(publicKey.subarray(33, 65))
+            const d = webSafe64FromBytes(privateKey)
+
+            const jwk = {
+                'crv': 'P-256',
+                d,
+                'ext': true,
+                'key_ops': [
+                    'deriveBits'
+                ],
+                'kty': 'EC',
+                x,
+                y
+            }
+
+            return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+        })()
+        const publicKeyLength = 65
+        const message = data.slice(publicKeyLength)
+        const ephemeralPublicKey = data.slice(0, publicKeyLength)
+        const pubCryptoKey = await crypto.subtle.importKey('raw', ephemeralPublicKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
+        const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: pubCryptoKey }, privateKeyImport, 256)
+        let sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + (id?.byteLength ?? 0))
+        sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
+        if (id) {
+            sharedSecretCombined.set(id, sharedSecret.byteLength)
+        }
+        const symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+        return await this.aesGcmDecrypt(message, new Uint8Array(symmetricKey))
     }
 
     // TODO Not tested
@@ -155,9 +226,39 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(derived);
     }
 
-    static async calcAutoResponse(key: Uint8Array): Promise<string> {
+    static async deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+        let key = await crypto.subtle.importKey(
+            "raw",
+            browserPlatform.stringToBytes(domain + password),
+            "PBKDF2",
+            false,
+            ["deriveBits"]);
+        let derived = await crypto.subtle.deriveBits({
+            name: "PBKDF2",
+            salt: saltBytes,
+            iterations: iterations,
+            hash: {
+                name: "SHA-512"
+            }
+        }, key, 512);
+        let hmacKey = await crypto.subtle.importKey(
+            "raw",
+            browserPlatform.stringToBytes(domain),
+            {
+                name: "HMAC",
+                hash: {
+                    name: "SHA-256"
+                }
+            },
+            false,
+            ["sign", "verify"]);
+        const reduced = await crypto.subtle.sign("HMAC", hmacKey, derived);
+        return new Uint8Array(reduced);
+    }
+
+    static async calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
         let digest = await crypto.subtle.digest("SHA-256", key);
-        return browserPlatform.bytesToBase64(new Uint8Array(digest));
+        return new Uint8Array(digest);
     }
 
     static async get(url: string, headers: any): Promise<KeeperHttpResponse> {
@@ -173,16 +274,19 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    static async post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse> {
-        let _headers: string[][] = headers ? Object.entries(headers) : [];
+    static async post(
+      url: string,
+      request: Uint8Array | string,
+      headers?: {[key: string]: string}
+    ): Promise<KeeperHttpResponse> {
         let resp = await fetch(url, {
             method: "POST",
-            headers: [
-                ["Content-Type", "application/octet-stream"],
-                ["Content-Length", request.length.toString()],
-                ..._headers
-            ],
-            body: request
+            headers: new Headers({
+                "Content-Type": "application/octet-stream",
+                "Content-Length": String(request.length),
+                ...headers
+            }),
+            body: request,
         });
         let body = await resp.arrayBuffer();
         return {
@@ -191,7 +295,73 @@ export const browserPlatform: Platform = class {
             data: new Uint8Array(body)
         }
     }
+
+    static fileUpload(
+      url: string,
+      uploadParameters: {[key: string]: string},
+      data: Blob
+    ): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const form = new FormData();
+
+            for (const key in uploadParameters) {
+                form.append(key, uploadParameters[key]);
+            }
+            form.append('file', data)
+
+            const fetchCfg = {
+                method: 'PUT',
+                body: form,
+            }
+
+            fetch(url, fetchCfg)
+              .then(response => response.json())
+              .then(res => {
+                  resolve({
+                      headers: res.headers,
+                      statusCode: res.statusCode,
+                      statusMessage: res.statusMessage
+                  })
+              })
+              .catch(error => {
+                  console.error('Error uploading file:', error);
+                  reject(error)
+              });
+        })
+    }
+
+    static createWebsocket(url: string): SocketProxy {
+        const socket = new WebSocket(url)
+
+        return {
+            close: () => {
+                socket.close()
+            },
+            onClose: (callback: () => void) => {
+                socket.addEventListener("close", callback)
+            },
+            onError: (callback: (e: Event) => void) => {
+                socket.addEventListener("error", callback)
+            },
+            onMessage: (callback: (e: MessageEvent) => void) => {
+                socket.onmessage = callback
+            },
+            send: (message: any) => {
+                socket.send(message)
+            }
+        }
+    }
+
+    static defaultRedirect(url: string): Promise<any> {
+        if (window && window.open) {
+            window.open(url)
+        } else {
+            console.log('Unable to redirect: window not present.')
+        }
+        return Promise.resolve()
+    }
 };
+
 
 function base64ToHex(data: string): string {
     let raw = atob(data);

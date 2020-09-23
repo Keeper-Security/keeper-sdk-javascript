@@ -5,6 +5,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 let authUI: AuthUI = {
     displayDialog(): Promise<boolean> {
+        // @ts-ignore TODO: finish implementing
         return null
     },
     getTwoFactorCode(): Promise<string> {
@@ -24,8 +25,9 @@ let authUI: AuthUI = {
 async function printVault(username: string, password: string) {
     try {
         let auth = new Auth({
-            host: KeeperEnvironment.DEV
-        }, authUI);
+            host: KeeperEnvironment.DEV,
+            authUI: authUI
+        });
         await auth.login(username, password);
         console.log("login successful");
         let vault = new Vault(auth);

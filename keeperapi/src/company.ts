@@ -18,7 +18,7 @@ import {
     decryptKey,
     generateUid,
     generateEncryptionKey,
-    webSafe64FromBytes
+    webSafe64FromBytes, normal64Bytes
 } from "./utils";
 import {platform} from "./platform";
 
@@ -37,10 +37,25 @@ export class Company {
         this._data = await this.auth.executeCommand(getEnterpriseDataCommand);
 
         if (this._data.msp_key) {
-            let key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+            let key4TreeKey
+            switch (this._data.msp_key.encrypted_msp_tree_key_type) {
+                case 'encrypted_by_data_key':
+                    key4TreeKey = decryptFromStorage(this._data.msp_key.encrypted_msp_tree_key, this.auth.dataKey);
+                    break;
+                case 'encrypted_by_public_key':
+                    key4TreeKey = platform.privateDecrypt(normal64Bytes(this._data.msp_key.encrypted_msp_tree_key), this.auth.privateKey)
+                    break;
+                case 'no_key':
+                    throw new Error('invalid value for encrypted_msp_tree_key_type')
+            }
             this.treeKey = await decryptKey(this._data.tree_key, key4TreeKey);
         } else {
-            this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+            if (this._data.key_type_id === 1) {
+                this.treeKey = decryptFromStorage(this._data.tree_key, this.auth.dataKey);
+            }
+            else {
+                this.treeKey = platform.privateDecrypt(normal64Bytes(this._data.tree_key), this.auth.privateKey)
+            }
         }
 
         if (!this._data.roles)
@@ -54,6 +69,10 @@ export class Company {
             node.displayName = decryptObjectFromStorage<EncryptedData>(node.encrypted_data, this.treeKey).displayname;
             if (node.parent_id) {
                 let parent = this._data.nodes.find(x => x.node_id == node.parent_id);
+                if (!parent) {
+                    throw new Error(`Unable to find parent for node:${node.parent_id}`)
+                }
+
                 if (!parent.nodes) {
                     parent.nodes = []
                 }
@@ -62,10 +81,28 @@ export class Company {
         }
 
         for (let role of this._data.roles) {
-            role.displayName = role.role_type === "pool_manager"
-                ? "License Purchaser"
-                : decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
+
+            if (role.role_type === "pool_manager") {
+                role.displayName = "License Purchaser"
+            }
+            else {
+                switch (role.key_type) {
+                    case "encrypted_by_data_key":
+                        role.displayName = decryptObjectFromStorage<EncryptedData>(role.encrypted_data, this.treeKey).displayname;
+                        break;
+                    case "encrypted_by_public_key":
+                        throw "Not Implemented";
+                    case "no_key":
+                        role.displayName = role.encrypted_data;
+                        break;
+                }
+            }
+
             let node = this._data.nodes.find(x => x.node_id == role.node_id);
+            if (!node) {
+                throw new Error(`Unable to find node for role:${role.node_id}`)
+            }
+
             if (!node.roles) {
                 node.roles = []
             }
@@ -74,6 +111,10 @@ export class Company {
 
         for (let team of this._data.teams) {
             let node = this._data.nodes.find(x => x.node_id == team.node_id);
+            if (!node) {
+                throw new Error(`Unable to find node for team:${team.node_id}`)
+            }
+
             if (!node.teams) {
                 node.teams = []
             }
@@ -91,16 +132,27 @@ export class Company {
                     user.displayName = user.encrypted_data;
                     break;
             }
+
             let node = this._data.nodes.find(x => x.node_id == user.node_id);
+            if (!node) {
+                throw new Error(`Unable to find node for user:${user.node_id}`)
+            }
+
             if (!node.users) {
                 node.users = []
             }
-            for (let user_role of this._data.role_users) {
+            for (let user_role of this._data.role_users || []) {
                 if (user_role.enterprise_user_id == user.enterprise_user_id) {
                     if (!user.roles) {
                         user.roles = []
                     }
-                    user.roles.push(this._data.roles.find(x => x.role_id === user_role.role_id))
+
+                    const role = this._data.roles.find(x => x.role_id === user_role.role_id)
+                    if (!role) {
+                        throw new Error(`Unable to find role for user_role:${user_role.role_id}`)
+                    }
+
+                    user.roles.push(role)
                 }
             }
             for (let user_team of this._data.team_users || []) {
@@ -108,7 +160,13 @@ export class Company {
                     if (!user.teams) {
                         user.teams = []
                     }
-                    user.teams.push(this._data.teams.find(x => x.team_uid === user_team.team_uid))
+
+                    const team = this._data.teams.find(x => x.team_uid === user_team.team_uid)
+                    if (!team) {
+                        throw new Error(`Unable to find team for user_team:${user_team.team_uid}`)
+                    }
+
+                    user.teams.push(team)
                 }
             }
             node.users.push(user);
@@ -131,6 +189,10 @@ export class Company {
 
     async encryptKey(key: Uint8Array): Promise<string> {
         return encryptKey(key, this.treeKey);
+    }
+
+    async encryptKeyAsBytes(key: Uint8Array): Promise<Uint8Array> {
+        return platform.aesGcmEncrypt(key, this.treeKey)
     }
 
     async decryptKey(encryptedKey: string): Promise<Uint8Array> {

@@ -1,6 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "es6"
-  }
+    "declaration": true,
+    "declarationDir": "./dist",
+    "module": "es6",
+    "noEmit": false,
+    "outDir": "./dist",
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

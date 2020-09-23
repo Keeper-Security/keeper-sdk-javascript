@@ -23,6 +23,24 @@ export class LoginCommand extends KeeperCommand<LoginResponse> {
     auth_response: string;
     include: AccountDataInclude[];
     enterprise_id?: number; // for logging into managed company
+    platform_device_token: string;
+    "2fa_type": "device_token" | "one_time" | "backup" | "u2f";
+    "2fa_mode": "auto" | "passcode" | "phone" | "push" | "sms";
+    "2fa_token": string;
+}
+
+export class RegisterCommand extends KeeperCommand<LoginResponse> {
+
+    constructor() {
+        super()
+        this.command = "register"
+    }
+
+    email: string;
+    auth_verifier: string;
+    encryption_params: string;
+    public_key: string;
+    encrypted_private_key: string;
 }
 
 export class AuthorizedCommand<Response extends KeeperResponse = KeeperResponse> extends KeeperCommand<Response> {
@@ -34,15 +52,16 @@ export class AccountSummaryCommand extends AuthorizedCommand<KeeperResponse> {
 
     constructor() {
         super()
-        this.command = "AccountSummary"
+        this.command = "account_summary"
     }
 
     include: AccountDataInclude[]
 }
 
 // Currently the * items are included by default. If the item explicit is included, then only the items listed will be included.
-type SyncDataInclude =
+export type SyncDataInclude =
     | "record"               //*
+    | "typed_record"
     | "shared_folder"       //*
     | "sfheaders"           //*
     | "sfusers"
@@ -118,6 +137,346 @@ export interface RecordUpdateRecord {
     client_modified_time: number;
     shared_folder_id: string;
     team_uid: string;
+}
+
+export class RequestDownloadCommand extends AuthorizedCommand<RequestDownloadResponse> {
+    constructor() {
+        super()
+        this.command = 'request_download'
+    }
+
+    record_uid: string
+    file_ids: string[]
+    shared_folder_uid: string
+    team_uid: string
+}
+
+export interface RequestDownloadResponse extends KeeperResponse {
+    downloads: {
+        success_status_code: number
+        url: string
+    }[]
+}
+
+export class RequestUploadCommand extends AuthorizedCommand<RequestUploadResponse> {
+    constructor() {
+        super()
+        this.command = 'request_upload'
+    }
+
+    file_count: number
+    thumbnail_count: number
+}
+
+export interface RequestUploadResponse extends KeeperResponse {
+    file_uploads: FileUpload[]
+    thumbnail_uploads: FileUpload[]
+}
+
+export interface FileUpload {
+    file_parameter: 'file'
+    file_id: string
+    success_status_code: number
+    parameters: {
+        signature: string
+        success_action_status: number
+        AWSAccessKeyId: string
+        acl: 'private'
+        'x-amz-security-token': string
+        key: string
+        policy: string
+    }
+    max_size: number
+    url: string
+}
+
+export class PreDeleteCommand extends AuthorizedCommand<PreDeleteResponse> {
+    constructor() {
+        super()
+        this.command = 'pre_delete'
+    }
+    objects: DeleteObject[]
+}
+
+export interface DeleteObject {
+    object_uid: string,
+    object_type: 'record' | 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    from_uid?: string,
+    from_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder',
+    delete_resolution: 'unlink'
+}
+
+export interface PreDeleteResponse extends KeeperResponse {
+    pre_delete_response: {
+        pre_delete_token: string,
+        would_delete: {
+            deletion_summary: string[]
+        }
+    }
+}
+
+export class DeleteCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'delete'
+    }
+    pre_delete_token: string
+}
+
+export class GetDeletedRecordsCommand extends AuthorizedCommand<GetDeletedRecordsResponse> {
+
+    private client_time: number;
+
+    constructor() {
+        super()
+        this.command = 'get_deleted_records'
+        this.client_time = new Date().getTime()
+    }
+}
+
+export interface DeletedRecord {
+    record_uid: string
+    revision: number
+    client_modified_time: number
+    data: string
+    record_key: string
+    record_key_type: number
+    date_deleted: number
+    breach_watch_data?: string
+}
+
+export interface GetDeletedRecordsResponse extends KeeperResponse {
+    records: DeletedRecord[]
+}
+
+export class PurgeDeletedRecordsCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = 'purge_deleted_records'
+    }
+}
+
+export class RecordShareUpdateCommand extends AuthorizedCommand<RecordShareUpdateResponse> {
+    constructor() {
+        super()
+        this.command = 'record_share_update'
+    }
+
+    pt: string
+    add_shares: ShareObject[]
+    update_shares: ShareObject[]
+    remove_shares: ShareObject[]
+}
+
+export interface ShareObject {
+    record_uid: string
+    to_username?: string
+    record_key?: string // for new shares, url safe base 64 encoded record key encrypted with the sharee's public key
+    editable?: boolean
+    shareable?: boolean
+    transfer?: boolean
+    shared_folder_uid?: string
+    team_uid?: string
+}
+
+export interface RecordShareUpdateResponse extends KeeperResponse {
+    add_statuses: ShareStatus[]
+    update_statuses: ShareStatus[]
+    remove_statuses: ShareStatus[]
+}
+
+export interface ShareStatus {
+    record_uid: string
+    status: 'success' | 'pending_accept' | 'user_not_found' | 'already_shared' | 'not_allowed_to_share' | 'access_denied' | 'not_allowed_to_set_permission'
+    message: string
+    username: string
+}
+
+export class FolderAddCommand extends AuthorizedCommand<FolderAddResponse> {
+    constructor() {
+        super()
+        this.command = 'folder_add'
+    }
+
+    folder_uid: string
+    folder_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    key: string
+    parent_uid: string
+    shared_folder_uid: string
+    name: string
+    data: string
+    manage_users: boolean
+    manage_records: boolean
+    can_edit: boolean
+    can_share: boolean
+    link: boolean
+}
+
+export interface FolderAddResponse extends KeeperResponse {
+    revision: number
+}
+
+export class SharedFolderUpdateCommand extends AuthorizedCommand<SharedFolderUpdateResponse> {
+    constructor() {
+        super()
+        this.command = 'shared_folder_update'
+    }
+
+    pt: string
+    operation: 'add' | 'delete' | 'update'
+    shared_folder_uid: string
+    from_team_uid: string
+    name: string // encrypted with the shared folder key
+    revision: number
+    add_users: UserObject[]
+    add_teams: TeamObject[]
+    add_records: RecordObject[]
+    update_users: UserObject[]
+    update_teams: TeamObject[]
+    update_records: RecordObject[]
+    remove_users: UserObject[]
+    remove_teams: TeamObject[]
+    remove_records: RecordObject[]
+    force_update: boolean
+    default_manage_users: boolean
+    default_manage_records: boolean
+    default_can_edit: boolean
+    default_can_share: boolean
+}
+
+export interface UserObject {
+    username: string
+    manage_users: boolean
+    manage_records: boolean
+    shared_folder_key: string
+}
+
+export interface TeamObject {
+    team_uid: string
+    manage_users: boolean
+    manage_records: boolean
+    shared_folder_key: string
+}
+
+export interface RecordObject {
+    record_uid: string
+    shared_folder_uid: string
+    team_uid: string
+    can_edit: boolean
+    can_share_boolean
+}
+
+export interface SharedFolderUpdateResponse extends KeeperResponse {
+    add_users: SharedFolderUpdateUserStatus[]
+    update_users: SharedFolderUpdateUserStatus[]
+    remove_users: SharedFolderUpdateUserStatus[]
+    add_records: SharedFolderUpdateRecordStatus[]
+    update_records: SharedFolderUpdateRecordStatus[]
+    remove_records: SharedFolderUpdateRecordStatus[]
+}
+
+export interface SharedFolderUpdateUserStatus {
+    username: string
+    status: 'success' | 'invited' | 'invalid_user' | 'non_group_member'
+}
+
+export interface SharedFolderUpdateRecordStatus {
+    username: string
+    status: 'success' | 'access_denied'
+}
+
+export class PublicKeysCommand extends AuthorizedCommand<PublicKeysResponse> {
+    constructor() {
+        super()
+        this.command = 'public_keys'
+    }
+
+    key_owners: string[]
+}
+
+export interface PublicKeysResponse extends KeeperResponse {
+    public_keys: {
+        key_owner: string
+        public_key: string
+        result_code?: 'bad_inputs_key_owners' | 'Email_not_valid' | 'Failed_to_find_user' | 'missing_public_key' | 'cross_region_sharing_error'
+        message: string
+    }[]
+}
+
+export class EditUserCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'edit_user'
+    }
+    email: string
+}
+
+export class ShareAccountCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'share_account'
+    }
+    to_role_id: number
+    transfer_key: string
+}
+
+export class SendKeyVerificationCodeCommand extends KeeperCommand {
+    constructor() {
+        super()
+        this.command = 'send_key_verification_code'
+    }
+    device_id: string
+    email: string;
+}
+
+export class SetTwoFactorAuthCommand extends AuthorizedCommand<SetTwoFactorAuthResponse> {
+    constructor() {
+        super()
+        this.command = 'set_two_factor_auth'
+    }
+
+    version: number;
+    channel: TwoFactorChannel;
+    channel_value: string;
+    device_token_expire_days: number
+}
+
+export interface SetTwoFactorAuthResponse extends KeeperResponse {
+    device_token: string;
+    backup_codes: string[];
+    dt_scope: string
+}
+
+export class TwoFactorSettingsCommand extends AuthorizedCommand {
+    constructor() {
+        super()
+        this.command = 'two_factor_settings'
+    }
+}
+
+export class GetPushInfoCommand extends AuthorizedCommand<GetPushInfoResponse> {
+    constructor() {
+        super()
+        this.command = 'get_push_info'
+    }
+
+    type: 'USER' | 'DNA' | 'CHAT'
+}
+
+export interface GetPushInfoResponse extends KeeperResponse {
+    urk: string;
+}
+
+export class VerifyUserCommand extends KeeperCommand {
+    constructor() {
+        super()
+        this.command = 'verify_user'
+    }
+
+    username: string
+    code: string
+    requestor: string
 }
 
 export type EnterpriseDataInclude =
@@ -310,6 +669,94 @@ export class AcceptEnterpriseInviteCommand extends AuthorizedCommand {
     verification_code: string;
 }
 
+export class ResendEnterpriseInviteCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "resend_enterprise_invite"
+    }
+
+    enterprise_user_id: number;
+}
+
+export class SsoServiceProviderAddCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "sso_service_provider_add";
+    }
+
+    sso_service_provider_id: number;
+    node_id: number;
+    sp_data_key: string;
+    name: string;
+    invite_new_users: true;
+    is_cloud: true;
+}
+
+export class SsoServiceProviderUpdateCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "sso_service_provider_update";
+    }
+
+    sso_service_provider_id: number;
+    node_id: number;
+    sp_data_key: string;
+    name: string;
+    invite_new_users: true;
+    is_cloud: true;
+}
+
+export class SsoServiceProviderDeleteCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "sso_service_provider_delete";
+    }
+
+    sso_service_provider_id: number;
+}
+
+export class GetAuditEventReportsCommand extends AuthorizedCommand<GetAuditEventReportsResponse> {
+
+    constructor() {
+        super()
+        this.command = "get_audit_event_reports";
+    }
+
+    filter: {
+        created: 'today' | 'yesterday' | 'last_7_days' | 'last_30_days' | 'month_to_date' | 'last_month' | 'year_to_date' | 'last_year'
+    }
+    limit: number
+    order: 'descending' | 'ascending'
+    report_type: 'raw' | 'hour' | 'day' | 'week' | 'month' | 'span'
+    scope: 'enterprise'
+    timezone: string
+}
+
+export interface GetAuditEventReportsResponse extends KeeperResponse {
+    timezone: string;
+    audit_event_overview_report_rows: AuditEventOverviewReportRow[];
+}
+
+interface AuditEventOverviewReportRow {
+    geo_location: string;
+    keeper_version_category: string;
+    audit_event_type: string;
+    created: number;
+    keeper_version: string;
+    id: number;
+    ip_address?: string;
+    username: string;
+    node_id: number;
+    node?: string;
+    role_id?: string;
+    enforcement?: string;
+    value?: string;
+}
+
 // *************************
 // Responses
 // *************************
@@ -406,6 +853,10 @@ export enum LoginResponseResultCode {
     // there are a few more obscure ones, see https://keeper.atlassian.net/wiki/spaces/KA/pages/8028335/login
 }
 
+type TwoFactorChannel = "two_factor_disabled" | "two_factor_channel_sms" | "two_factor_channel_voice" | "two_factor_channel_email"
+    | "two_factor_channel_google" | "two_factor_channel_rsa" | "two_factor_channel_push" | "two_factor_channel_duo"
+    | "two_factor_channel_u2f" | "two_factor_channel_security_keys"
+
 export interface LoginResponse extends KeeperResponse {
     session_token: string
     client_key: string;
@@ -416,6 +867,11 @@ export interface LoginResponse extends KeeperResponse {
     region_host?: string;
     keys: Keys;
     sync_log: SyncLog[];
+    enforcements: any;
+    capabilities: string[];
+    phone: string;
+    channel: TwoFactorChannel;
+    url: string;
     u2f_challenge?: string | U2FChallenge;
 }
 
@@ -433,11 +889,25 @@ export interface AuthenticateRequest {
 export interface SharedFolder {
     default_can_edit: boolean;
     full_sync: boolean;
+    name: string;
+    data: string;
+    key_type: number;
+    records: SharedFolderRecord[];
     default_can_share: boolean;
     default_manage_records: boolean;
     default_manage_users: boolean;
     shared_folder_uid: string;
     revision: number;
+    manage_users: boolean;
+    manage_records: boolean;
+    shared_folder_key: string;
+}
+
+export interface SharedFolderRecord {
+    record_uid: string;
+    record_key: string;
+    can_share: boolean;
+    can_edit: boolean;
 }
 
 export interface Team {
@@ -452,13 +922,17 @@ export interface Team {
     restrict_share: boolean;
 }
 
-export interface Record {
+export interface RecordData {
     record_uid: string;
-    shared: boolean;
-    data: string;
-    client_modified_time: number;
     version: number;
-    revision: number;
+    revision?: number;
+    client_modified_time?: number;
+    data?: string;
+    extra?: string;
+    udata?: { file_ids: string[] };
+    shared?: boolean;
+    owner_uid?: string;
+    link_key?: string;
 }
 
 export interface RecordMetaData {
@@ -470,14 +944,30 @@ export interface RecordMetaData {
     record_key_type: number;
 }
 
+export interface NonSharedData {
+    record_uid: string;
+    data: string;
+}
+
 export interface SyncResponse extends KeeperResponse {
     full_sync: boolean;
-    teams: Team[];
-    shared_folders: SharedFolder[];
-    records: Record[];
+    non_shared_data: NonSharedData[];
+    records: RecordData[];
     record_meta_data: RecordMetaData[];
+    removed_records: string[];
     result_code: string;
     revision: number;
+    shared_folders: SharedFolder[];
+    shared_folder_folder_records: {
+        record_uid: string,
+        shared_folder_uid: string,
+        revision: number
+    }[]
+    teams: Team[];
+    user_folder_shared_folders: {
+        shared_folder_uid: string,
+        revision: number
+    }[]
 }
 
 export interface GetEnterpriseDataResponse extends KeeperResponse {
@@ -543,6 +1033,7 @@ export interface Role {
     role_id: number;
     node_id: number;
     encrypted_data: string;
+    key_type: KeyType;
     role_type: "pool_manager" | undefined
 }
 
@@ -630,6 +1121,7 @@ export interface EnterpriseLicense {
 export interface MSPProductLicense {
     product_id: "business" | "businessPlus" | "enterprise" | "enterprisePlus";
     seats: number;
+    availableSeats: number;
 }
 
 export interface AddOn {

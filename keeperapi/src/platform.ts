@@ -1,4 +1,5 @@
 import {KeeperHttpResponse} from "./commands";
+import {SocketProxy} from './auth'
 
 export interface Platform {
     keys: string[];
@@ -15,7 +16,17 @@ export interface Platform {
 
     generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
 
+    generateRSAKeyPair2(): Promise<any>
+
+    generateECKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
+
     publicEncrypt(data: Uint8Array, key: string): Uint8Array;
+
+    publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array>
+
+    privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array;
+
+    privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array>
 
     privateSign(data: Uint8Array, key: string): Promise<Uint8Array>;
 
@@ -29,11 +40,19 @@ export interface Platform {
 
     deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
 
-    calcAutoResponse(key: Uint8Array): Promise<string>;
+    deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
+
+    calcAuthVerifier(key: Uint8Array): Promise<Uint8Array>;
 
     get(url: string, headers: any): Promise<KeeperHttpResponse>;
 
     post(url: string, request: Uint8Array, headers?: any): Promise<KeeperHttpResponse>;
+
+    fileUpload(url: string, uploadParameters: any, data: Uint8Array | Blob): Promise<any>
+
+    createWebsocket(url: string): SocketProxy
+
+    defaultRedirect(url: string): Promise<any>
 }
 
 export function connectPlatform(p: Platform) {
