@@ -179,7 +179,7 @@ async function TestRegisterDevice() {
         let response = await auth.executeRest(registerDeviceMessage({
             "clientVersion": clientVersion,
             "deviceName": "mike 9999",
-            "devicePublicKey": ecKeyPair.publicKey
+            "devicePublicKey": (await ecKeyPair).publicKey
         }));
 
         console.log(response);
@@ -313,7 +313,7 @@ async function TestSsoLoginWithGet() {
         await auth.loginV3({
             username: userInfo.userName,
             password: userInfo.password,
-            useAlternate: true,
+            loginType: 3,
         });
         console.log("Logged in via Cloud SSO Connect!");
 
