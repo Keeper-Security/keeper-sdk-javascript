@@ -158,8 +158,9 @@ export class SocketListener {
 export type LoginPayload = {
     username: string,
     password?: string,
-    useAlternate?: boolean,
-    loginTokenFromClient?: Uint8Array
+    loginToken?: Uint8Array
+    loginType?: Authentication.LoginType
+    loginMethod?: Authentication.LoginMethod,
     v2TwoFactorToken?: string
 }
 
@@ -252,9 +253,10 @@ export class Auth {
         {
             username,
             password = '',
-            useAlternate = false,
-            loginTokenFromClient = null,
-            v2TwoFactorToken = null
+            loginToken = null,
+            loginType = Authentication.LoginType.NORMAL,
+            loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
+            v2TwoFactorToken = null,
         }: LoginPayload
     ) {
         this._username = username || this.options.sessionStorage.lastUsername
@@ -267,12 +269,6 @@ export class Auth {
             const connectionRequest = await this.endpoint.getPushConnectionRequest(this.messageSessionUid)
             this.socket = new SocketListener(`wss://push.services.${this.options.host}/wss_open_connection/${connectionRequest}`)
             console.log("Socket connected")
-        }
-
-        let loginToken: Uint8Array | null = null;
-
-        if (loginTokenFromClient != null) {
-            loginToken = loginTokenFromClient;
         }
 
         let needUserName: boolean
@@ -295,7 +291,8 @@ export class Auth {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
-                loginType: useAlternate ? Authentication.LoginType.ALTERNATE : Authentication.LoginType.NORMAL,
+                loginType: loginType,
+                loginMethod: loginMethod,
                 cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0),
                 v2TwoFactorToken: v2TwoFactorToken
             }
@@ -386,13 +383,10 @@ export class Auth {
                         throw new Error('URL missing from API response')
                     }
 
-                    try{
-                        await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
-                        return;
-                    } catch(e){
-                        console.log('Error in Authentication.LoginState.REDIRECT_ONSITE_SSO: ', e)
-                        break;
-                    }
+                    let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
+                    this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
+                    return
+    
                 case Authentication.LoginState.REQUIRES_2FA:
                     try{
                         loginToken = await this.handleTwoFactor(loginResponse)
