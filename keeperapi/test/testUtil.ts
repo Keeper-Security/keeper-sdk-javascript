@@ -156,11 +156,6 @@ export function getCredentialsAndHost(): { userName: string; password: string; h
     }
 }
 
-export async function replayRest(path: string, request: string) {
-    const response = await platform.post(`https://local.keepersecurity.com/api/rest/${path}`, normal64Bytes(request))
-    console.log(response)
-}
-
 type SessionData = {
     lastUsername: string
     lastCloneCode: string

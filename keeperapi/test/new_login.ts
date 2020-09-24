@@ -11,7 +11,6 @@ import {
     authUI3,
     getCredentialsAndHost,
     getDeviceConfig,
-    replayRest,
     saveDeviceConfig,
     prompt, TestSessionStorage
 } from './testUtil';

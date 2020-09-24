@@ -23,7 +23,8 @@
     "push-agent": "ts-node test/keeperPush.ts",
     "test:2": "jest",
     "types": "tsc --watch",
-    "types:ci": "tsc"
+    "types:ci": "tsc",
+    "replay": "ts-node test/replay.ts"
   },
   "license": "ISC",
   "dependencies": {
