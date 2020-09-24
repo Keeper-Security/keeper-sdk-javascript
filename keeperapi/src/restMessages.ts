@@ -74,6 +74,7 @@ export const setUserSettingMessage = (data: Authentication.IUserSettingRequest):
 export const requestDeviceAdminApprovalMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
     createMessage(data, 'authentication/request_device_admin_approval', Authentication.DeviceVerificationRequest, null)
 
+export const keepAliveMessage = (): RestMessage< {}, {}> => createMessage({}, 'keep_alive', null, null)
 
 // end new login
 
