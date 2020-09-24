@@ -9840,6 +9840,312 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a SupportToolSearchByUsernameRequest. */
+    interface ISupportToolSearchByUsernameRequest {
+
+        /** SupportToolSearchByUsernameRequest agentUsername */
+        agentUsername?: (string|null);
+
+        /** SupportToolSearchByUsernameRequest usernameToSearch */
+        usernameToSearch?: (string|null);
+    }
+
+    /** Represents a SupportToolSearchByUsernameRequest. */
+    class SupportToolSearchByUsernameRequest implements ISupportToolSearchByUsernameRequest {
+
+        /**
+         * Constructs a new SupportToolSearchByUsernameRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolSearchByUsernameRequest);
+
+        /** SupportToolSearchByUsernameRequest agentUsername. */
+        public agentUsername: string;
+
+        /** SupportToolSearchByUsernameRequest usernameToSearch. */
+        public usernameToSearch: string;
+
+        /**
+         * Creates a new SupportToolSearchByUsernameRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolSearchByUsernameRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolSearchByUsernameRequest): Authentication.SupportToolSearchByUsernameRequest;
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameRequest message. Does not implicitly {@link Authentication.SupportToolSearchByUsernameRequest.verify|verify} messages.
+         * @param message SupportToolSearchByUsernameRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolSearchByUsernameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolSearchByUsernameRequest.verify|verify} messages.
+         * @param message SupportToolSearchByUsernameRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolSearchByUsernameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolSearchByUsernameRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolSearchByUsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolSearchByUsernameRequest;
+
+        /**
+         * Decodes a SupportToolSearchByUsernameRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolSearchByUsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolSearchByUsernameRequest;
+
+        /**
+         * Verifies a SupportToolSearchByUsernameRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolSearchByUsernameRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolSearchByUsernameRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolSearchByUsernameRequest;
+
+        /**
+         * Creates a plain object from a SupportToolSearchByUsernameRequest message. Also converts values to other types if specified.
+         * @param message SupportToolSearchByUsernameRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolSearchByUsernameRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolSearchByUsernameRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AccountUsername. */
+    interface IAccountUsername {
+
+        /** AccountUsername username */
+        username?: (string|null);
+
+        /** AccountUsername dateActive */
+        dateActive?: (string|null);
+    }
+
+    /** Represents an AccountUsername. */
+    class AccountUsername implements IAccountUsername {
+
+        /**
+         * Constructs a new AccountUsername.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IAccountUsername);
+
+        /** AccountUsername username. */
+        public username: string;
+
+        /** AccountUsername dateActive. */
+        public dateActive: string;
+
+        /**
+         * Creates a new AccountUsername instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AccountUsername instance
+         */
+        public static create(properties?: Authentication.IAccountUsername): Authentication.AccountUsername;
+
+        /**
+         * Encodes the specified AccountUsername message. Does not implicitly {@link Authentication.AccountUsername.verify|verify} messages.
+         * @param message AccountUsername message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IAccountUsername, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AccountUsername message, length delimited. Does not implicitly {@link Authentication.AccountUsername.verify|verify} messages.
+         * @param message AccountUsername message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IAccountUsername, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AccountUsername message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AccountUsername
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AccountUsername;
+
+        /**
+         * Decodes an AccountUsername message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AccountUsername
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AccountUsername;
+
+        /**
+         * Verifies an AccountUsername message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AccountUsername message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AccountUsername
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.AccountUsername;
+
+        /**
+         * Creates a plain object from an AccountUsername message. Also converts values to other types if specified.
+         * @param message AccountUsername
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.AccountUsername, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AccountUsername to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolSearchByUsernameResponse. */
+    interface ISupportToolSearchByUsernameResponse {
+
+        /** SupportToolSearchByUsernameResponse accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** SupportToolSearchByUsernameResponse regionName */
+        regionName?: (string|null);
+
+        /** SupportToolSearchByUsernameResponse userId */
+        userId?: (number|null);
+
+        /** SupportToolSearchByUsernameResponse primaryEmail */
+        primaryEmail?: (string|null);
+
+        /** SupportToolSearchByUsernameResponse accountUsername */
+        accountUsername?: (Authentication.IAccountUsername[]|null);
+    }
+
+    /** Represents a SupportToolSearchByUsernameResponse. */
+    class SupportToolSearchByUsernameResponse implements ISupportToolSearchByUsernameResponse {
+
+        /**
+         * Constructs a new SupportToolSearchByUsernameResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolSearchByUsernameResponse);
+
+        /** SupportToolSearchByUsernameResponse accountUid. */
+        public accountUid: Uint8Array;
+
+        /** SupportToolSearchByUsernameResponse regionName. */
+        public regionName: string;
+
+        /** SupportToolSearchByUsernameResponse userId. */
+        public userId: number;
+
+        /** SupportToolSearchByUsernameResponse primaryEmail. */
+        public primaryEmail: string;
+
+        /** SupportToolSearchByUsernameResponse accountUsername. */
+        public accountUsername: Authentication.IAccountUsername[];
+
+        /**
+         * Creates a new SupportToolSearchByUsernameResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolSearchByUsernameResponse instance
+         */
+        public static create(properties?: Authentication.ISupportToolSearchByUsernameResponse): Authentication.SupportToolSearchByUsernameResponse;
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameResponse message. Does not implicitly {@link Authentication.SupportToolSearchByUsernameResponse.verify|verify} messages.
+         * @param message SupportToolSearchByUsernameResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolSearchByUsernameResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameResponse message, length delimited. Does not implicitly {@link Authentication.SupportToolSearchByUsernameResponse.verify|verify} messages.
+         * @param message SupportToolSearchByUsernameResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolSearchByUsernameResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolSearchByUsernameResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolSearchByUsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolSearchByUsernameResponse;
+
+        /**
+         * Decodes a SupportToolSearchByUsernameResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolSearchByUsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolSearchByUsernameResponse;
+
+        /**
+         * Verifies a SupportToolSearchByUsernameResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolSearchByUsernameResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolSearchByUsernameResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolSearchByUsernameResponse;
+
+        /**
+         * Creates a plain object from a SupportToolSearchByUsernameResponse message. Also converts values to other types if specified.
+         * @param message SupportToolSearchByUsernameResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolSearchByUsernameResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolSearchByUsernameResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a UserDataKeyRequest. */
     interface IUserDataKeyRequest {
 
@@ -10519,6 +10825,102 @@ export namespace Authentication {
 
         /**
          * Converts this BiCheckoutSendEmail to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SupportToolChangePrimaryEmailToAliasEmailRequest. */
+    interface ISupportToolChangePrimaryEmailToAliasEmailRequest {
+
+        /** SupportToolChangePrimaryEmailToAliasEmailRequest userId */
+        userId?: (number|null);
+
+        /** SupportToolChangePrimaryEmailToAliasEmailRequest aliasEmail */
+        aliasEmail?: (string|null);
+    }
+
+    /** Represents a SupportToolChangePrimaryEmailToAliasEmailRequest. */
+    class SupportToolChangePrimaryEmailToAliasEmailRequest implements ISupportToolChangePrimaryEmailToAliasEmailRequest {
+
+        /**
+         * Constructs a new SupportToolChangePrimaryEmailToAliasEmailRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest);
+
+        /** SupportToolChangePrimaryEmailToAliasEmailRequest userId. */
+        public userId: number;
+
+        /** SupportToolChangePrimaryEmailToAliasEmailRequest aliasEmail. */
+        public aliasEmail: string;
+
+        /**
+         * Creates a new SupportToolChangePrimaryEmailToAliasEmailRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SupportToolChangePrimaryEmailToAliasEmailRequest instance
+         */
+        public static create(properties?: Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest): Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest;
+
+        /**
+         * Encodes the specified SupportToolChangePrimaryEmailToAliasEmailRequest message. Does not implicitly {@link Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest.verify|verify} messages.
+         * @param message SupportToolChangePrimaryEmailToAliasEmailRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SupportToolChangePrimaryEmailToAliasEmailRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest.verify|verify} messages.
+         * @param message SupportToolChangePrimaryEmailToAliasEmailRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SupportToolChangePrimaryEmailToAliasEmailRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest;
+
+        /**
+         * Decodes a SupportToolChangePrimaryEmailToAliasEmailRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest;
+
+        /**
+         * Verifies a SupportToolChangePrimaryEmailToAliasEmailRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SupportToolChangePrimaryEmailToAliasEmailRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SupportToolChangePrimaryEmailToAliasEmailRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest;
+
+        /**
+         * Creates a plain object from a SupportToolChangePrimaryEmailToAliasEmailRequest message. Also converts values to other types if specified.
+         * @param message SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SupportToolChangePrimaryEmailToAliasEmailRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

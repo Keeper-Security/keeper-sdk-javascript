@@ -25409,6 +25409,733 @@ export const Authentication = $root.Authentication = (() => {
         return SupportToolRestoredUser;
     })();
 
+    Authentication.SupportToolSearchByUsernameRequest = (function() {
+
+        /**
+         * Properties of a SupportToolSearchByUsernameRequest.
+         * @memberof Authentication
+         * @interface ISupportToolSearchByUsernameRequest
+         * @property {string|null} [agentUsername] SupportToolSearchByUsernameRequest agentUsername
+         * @property {string|null} [usernameToSearch] SupportToolSearchByUsernameRequest usernameToSearch
+         */
+
+        /**
+         * Constructs a new SupportToolSearchByUsernameRequest.
+         * @memberof Authentication
+         * @classdesc Represents a SupportToolSearchByUsernameRequest.
+         * @implements ISupportToolSearchByUsernameRequest
+         * @constructor
+         * @param {Authentication.ISupportToolSearchByUsernameRequest=} [properties] Properties to set
+         */
+        function SupportToolSearchByUsernameRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SupportToolSearchByUsernameRequest agentUsername.
+         * @member {string} agentUsername
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @instance
+         */
+        SupportToolSearchByUsernameRequest.prototype.agentUsername = "";
+
+        /**
+         * SupportToolSearchByUsernameRequest usernameToSearch.
+         * @member {string} usernameToSearch
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @instance
+         */
+        SupportToolSearchByUsernameRequest.prototype.usernameToSearch = "";
+
+        /**
+         * Creates a new SupportToolSearchByUsernameRequest instance using the specified properties.
+         * @function create
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {Authentication.ISupportToolSearchByUsernameRequest=} [properties] Properties to set
+         * @returns {Authentication.SupportToolSearchByUsernameRequest} SupportToolSearchByUsernameRequest instance
+         */
+        SupportToolSearchByUsernameRequest.create = function create(properties) {
+            return new SupportToolSearchByUsernameRequest(properties);
+        };
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameRequest message. Does not implicitly {@link Authentication.SupportToolSearchByUsernameRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {Authentication.ISupportToolSearchByUsernameRequest} message SupportToolSearchByUsernameRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SupportToolSearchByUsernameRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.agentUsername != null && message.hasOwnProperty("agentUsername"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.agentUsername);
+            if (message.usernameToSearch != null && message.hasOwnProperty("usernameToSearch"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.usernameToSearch);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolSearchByUsernameRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {Authentication.ISupportToolSearchByUsernameRequest} message SupportToolSearchByUsernameRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SupportToolSearchByUsernameRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SupportToolSearchByUsernameRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.SupportToolSearchByUsernameRequest} SupportToolSearchByUsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SupportToolSearchByUsernameRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.SupportToolSearchByUsernameRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.agentUsername = reader.string();
+                    break;
+                case 2:
+                    message.usernameToSearch = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SupportToolSearchByUsernameRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {Authentication.SupportToolSearchByUsernameRequest} SupportToolSearchByUsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SupportToolSearchByUsernameRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SupportToolSearchByUsernameRequest message.
+         * @function verify
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SupportToolSearchByUsernameRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.agentUsername != null && message.hasOwnProperty("agentUsername"))
+                if (!$util.isString(message.agentUsername))
+                    return "agentUsername: string expected";
+            if (message.usernameToSearch != null && message.hasOwnProperty("usernameToSearch"))
+                if (!$util.isString(message.usernameToSearch))
+                    return "usernameToSearch: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a SupportToolSearchByUsernameRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.SupportToolSearchByUsernameRequest} SupportToolSearchByUsernameRequest
+         */
+        SupportToolSearchByUsernameRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.Authentication.SupportToolSearchByUsernameRequest)
+                return object;
+            let message = new $root.Authentication.SupportToolSearchByUsernameRequest();
+            if (object.agentUsername != null)
+                message.agentUsername = String(object.agentUsername);
+            if (object.usernameToSearch != null)
+                message.usernameToSearch = String(object.usernameToSearch);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SupportToolSearchByUsernameRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @static
+         * @param {Authentication.SupportToolSearchByUsernameRequest} message SupportToolSearchByUsernameRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SupportToolSearchByUsernameRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults) {
+                object.agentUsername = "";
+                object.usernameToSearch = "";
+            }
+            if (message.agentUsername != null && message.hasOwnProperty("agentUsername"))
+                object.agentUsername = message.agentUsername;
+            if (message.usernameToSearch != null && message.hasOwnProperty("usernameToSearch"))
+                object.usernameToSearch = message.usernameToSearch;
+            return object;
+        };
+
+        /**
+         * Converts this SupportToolSearchByUsernameRequest to JSON.
+         * @function toJSON
+         * @memberof Authentication.SupportToolSearchByUsernameRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SupportToolSearchByUsernameRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SupportToolSearchByUsernameRequest;
+    })();
+
+    Authentication.AccountUsername = (function() {
+
+        /**
+         * Properties of an AccountUsername.
+         * @memberof Authentication
+         * @interface IAccountUsername
+         * @property {string|null} [username] AccountUsername username
+         * @property {string|null} [dateActive] AccountUsername dateActive
+         */
+
+        /**
+         * Constructs a new AccountUsername.
+         * @memberof Authentication
+         * @classdesc Represents an AccountUsername.
+         * @implements IAccountUsername
+         * @constructor
+         * @param {Authentication.IAccountUsername=} [properties] Properties to set
+         */
+        function AccountUsername(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AccountUsername username.
+         * @member {string} username
+         * @memberof Authentication.AccountUsername
+         * @instance
+         */
+        AccountUsername.prototype.username = "";
+
+        /**
+         * AccountUsername dateActive.
+         * @member {string} dateActive
+         * @memberof Authentication.AccountUsername
+         * @instance
+         */
+        AccountUsername.prototype.dateActive = "";
+
+        /**
+         * Creates a new AccountUsername instance using the specified properties.
+         * @function create
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {Authentication.IAccountUsername=} [properties] Properties to set
+         * @returns {Authentication.AccountUsername} AccountUsername instance
+         */
+        AccountUsername.create = function create(properties) {
+            return new AccountUsername(properties);
+        };
+
+        /**
+         * Encodes the specified AccountUsername message. Does not implicitly {@link Authentication.AccountUsername.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {Authentication.IAccountUsername} message AccountUsername message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountUsername.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.username != null && message.hasOwnProperty("username"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.username);
+            if (message.dateActive != null && message.hasOwnProperty("dateActive"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.dateActive);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AccountUsername message, length delimited. Does not implicitly {@link Authentication.AccountUsername.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {Authentication.IAccountUsername} message AccountUsername message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountUsername.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AccountUsername message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.AccountUsername} AccountUsername
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountUsername.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.AccountUsername();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.username = reader.string();
+                    break;
+                case 2:
+                    message.dateActive = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AccountUsername message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {Authentication.AccountUsername} AccountUsername
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountUsername.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AccountUsername message.
+         * @function verify
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AccountUsername.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            if (message.dateActive != null && message.hasOwnProperty("dateActive"))
+                if (!$util.isString(message.dateActive))
+                    return "dateActive: string expected";
+            return null;
+        };
+
+        /**
+         * Creates an AccountUsername message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.AccountUsername} AccountUsername
+         */
+        AccountUsername.fromObject = function fromObject(object) {
+            if (object instanceof $root.Authentication.AccountUsername)
+                return object;
+            let message = new $root.Authentication.AccountUsername();
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.dateActive != null)
+                message.dateActive = String(object.dateActive);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AccountUsername message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.AccountUsername
+         * @static
+         * @param {Authentication.AccountUsername} message AccountUsername
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccountUsername.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults) {
+                object.username = "";
+                object.dateActive = "";
+            }
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            if (message.dateActive != null && message.hasOwnProperty("dateActive"))
+                object.dateActive = message.dateActive;
+            return object;
+        };
+
+        /**
+         * Converts this AccountUsername to JSON.
+         * @function toJSON
+         * @memberof Authentication.AccountUsername
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccountUsername.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return AccountUsername;
+    })();
+
+    Authentication.SupportToolSearchByUsernameResponse = (function() {
+
+        /**
+         * Properties of a SupportToolSearchByUsernameResponse.
+         * @memberof Authentication
+         * @interface ISupportToolSearchByUsernameResponse
+         * @property {Uint8Array|null} [accountUid] SupportToolSearchByUsernameResponse accountUid
+         * @property {string|null} [regionName] SupportToolSearchByUsernameResponse regionName
+         * @property {number|null} [userId] SupportToolSearchByUsernameResponse userId
+         * @property {string|null} [primaryEmail] SupportToolSearchByUsernameResponse primaryEmail
+         * @property {Array.<Authentication.IAccountUsername>|null} [accountUsername] SupportToolSearchByUsernameResponse accountUsername
+         */
+
+        /**
+         * Constructs a new SupportToolSearchByUsernameResponse.
+         * @memberof Authentication
+         * @classdesc Represents a SupportToolSearchByUsernameResponse.
+         * @implements ISupportToolSearchByUsernameResponse
+         * @constructor
+         * @param {Authentication.ISupportToolSearchByUsernameResponse=} [properties] Properties to set
+         */
+        function SupportToolSearchByUsernameResponse(properties) {
+            this.accountUsername = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SupportToolSearchByUsernameResponse accountUid.
+         * @member {Uint8Array} accountUid
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @instance
+         */
+        SupportToolSearchByUsernameResponse.prototype.accountUid = $util.newBuffer([]);
+
+        /**
+         * SupportToolSearchByUsernameResponse regionName.
+         * @member {string} regionName
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @instance
+         */
+        SupportToolSearchByUsernameResponse.prototype.regionName = "";
+
+        /**
+         * SupportToolSearchByUsernameResponse userId.
+         * @member {number} userId
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @instance
+         */
+        SupportToolSearchByUsernameResponse.prototype.userId = 0;
+
+        /**
+         * SupportToolSearchByUsernameResponse primaryEmail.
+         * @member {string} primaryEmail
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @instance
+         */
+        SupportToolSearchByUsernameResponse.prototype.primaryEmail = "";
+
+        /**
+         * SupportToolSearchByUsernameResponse accountUsername.
+         * @member {Array.<Authentication.IAccountUsername>} accountUsername
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @instance
+         */
+        SupportToolSearchByUsernameResponse.prototype.accountUsername = $util.emptyArray;
+
+        /**
+         * Creates a new SupportToolSearchByUsernameResponse instance using the specified properties.
+         * @function create
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {Authentication.ISupportToolSearchByUsernameResponse=} [properties] Properties to set
+         * @returns {Authentication.SupportToolSearchByUsernameResponse} SupportToolSearchByUsernameResponse instance
+         */
+        SupportToolSearchByUsernameResponse.create = function create(properties) {
+            return new SupportToolSearchByUsernameResponse(properties);
+        };
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameResponse message. Does not implicitly {@link Authentication.SupportToolSearchByUsernameResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {Authentication.ISupportToolSearchByUsernameResponse} message SupportToolSearchByUsernameResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SupportToolSearchByUsernameResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.accountUid != null && message.hasOwnProperty("accountUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.accountUid);
+            if (message.regionName != null && message.hasOwnProperty("regionName"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.regionName);
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.userId);
+            if (message.primaryEmail != null && message.hasOwnProperty("primaryEmail"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.primaryEmail);
+            if (message.accountUsername != null && message.accountUsername.length)
+                for (let i = 0; i < message.accountUsername.length; ++i)
+                    $root.Authentication.AccountUsername.encode(message.accountUsername[i], writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SupportToolSearchByUsernameResponse message, length delimited. Does not implicitly {@link Authentication.SupportToolSearchByUsernameResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {Authentication.ISupportToolSearchByUsernameResponse} message SupportToolSearchByUsernameResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SupportToolSearchByUsernameResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SupportToolSearchByUsernameResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.SupportToolSearchByUsernameResponse} SupportToolSearchByUsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SupportToolSearchByUsernameResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.SupportToolSearchByUsernameResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.accountUid = reader.bytes();
+                    break;
+                case 2:
+                    message.regionName = reader.string();
+                    break;
+                case 3:
+                    message.userId = reader.int32();
+                    break;
+                case 4:
+                    message.primaryEmail = reader.string();
+                    break;
+                case 5:
+                    if (!(message.accountUsername && message.accountUsername.length))
+                        message.accountUsername = [];
+                    message.accountUsername.push($root.Authentication.AccountUsername.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SupportToolSearchByUsernameResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {Authentication.SupportToolSearchByUsernameResponse} SupportToolSearchByUsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SupportToolSearchByUsernameResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SupportToolSearchByUsernameResponse message.
+         * @function verify
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SupportToolSearchByUsernameResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.accountUid != null && message.hasOwnProperty("accountUid"))
+                if (!(message.accountUid && typeof message.accountUid.length === "number" || $util.isString(message.accountUid)))
+                    return "accountUid: buffer expected";
+            if (message.regionName != null && message.hasOwnProperty("regionName"))
+                if (!$util.isString(message.regionName))
+                    return "regionName: string expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
+            if (message.primaryEmail != null && message.hasOwnProperty("primaryEmail"))
+                if (!$util.isString(message.primaryEmail))
+                    return "primaryEmail: string expected";
+            if (message.accountUsername != null && message.hasOwnProperty("accountUsername")) {
+                if (!Array.isArray(message.accountUsername))
+                    return "accountUsername: array expected";
+                for (let i = 0; i < message.accountUsername.length; ++i) {
+                    let error = $root.Authentication.AccountUsername.verify(message.accountUsername[i]);
+                    if (error)
+                        return "accountUsername." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a SupportToolSearchByUsernameResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.SupportToolSearchByUsernameResponse} SupportToolSearchByUsernameResponse
+         */
+        SupportToolSearchByUsernameResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.Authentication.SupportToolSearchByUsernameResponse)
+                return object;
+            let message = new $root.Authentication.SupportToolSearchByUsernameResponse();
+            if (object.accountUid != null)
+                if (typeof object.accountUid === "string")
+                    $util.base64.decode(object.accountUid, message.accountUid = $util.newBuffer($util.base64.length(object.accountUid)), 0);
+                else if (object.accountUid.length)
+                    message.accountUid = object.accountUid;
+            if (object.regionName != null)
+                message.regionName = String(object.regionName);
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            if (object.primaryEmail != null)
+                message.primaryEmail = String(object.primaryEmail);
+            if (object.accountUsername) {
+                if (!Array.isArray(object.accountUsername))
+                    throw TypeError(".Authentication.SupportToolSearchByUsernameResponse.accountUsername: array expected");
+                message.accountUsername = [];
+                for (let i = 0; i < object.accountUsername.length; ++i) {
+                    if (typeof object.accountUsername[i] !== "object")
+                        throw TypeError(".Authentication.SupportToolSearchByUsernameResponse.accountUsername: object expected");
+                    message.accountUsername[i] = $root.Authentication.AccountUsername.fromObject(object.accountUsername[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SupportToolSearchByUsernameResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @static
+         * @param {Authentication.SupportToolSearchByUsernameResponse} message SupportToolSearchByUsernameResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SupportToolSearchByUsernameResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.accountUsername = [];
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.accountUid = "";
+                else {
+                    object.accountUid = [];
+                    if (options.bytes !== Array)
+                        object.accountUid = $util.newBuffer(object.accountUid);
+                }
+                object.regionName = "";
+                object.userId = 0;
+                object.primaryEmail = "";
+            }
+            if (message.accountUid != null && message.hasOwnProperty("accountUid"))
+                object.accountUid = options.bytes === String ? $util.base64.encode(message.accountUid, 0, message.accountUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accountUid) : message.accountUid;
+            if (message.regionName != null && message.hasOwnProperty("regionName"))
+                object.regionName = message.regionName;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
+            if (message.primaryEmail != null && message.hasOwnProperty("primaryEmail"))
+                object.primaryEmail = message.primaryEmail;
+            if (message.accountUsername && message.accountUsername.length) {
+                object.accountUsername = [];
+                for (let j = 0; j < message.accountUsername.length; ++j)
+                    object.accountUsername[j] = $root.Authentication.AccountUsername.toObject(message.accountUsername[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SupportToolSearchByUsernameResponse to JSON.
+         * @function toJSON
+         * @memberof Authentication.SupportToolSearchByUsernameResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SupportToolSearchByUsernameResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SupportToolSearchByUsernameResponse;
+    })();
+
     Authentication.UserDataKeyRequest = (function() {
 
         /**
@@ -27153,6 +27880,216 @@ export const Authentication = $root.Authentication = (() => {
         };
 
         return BiCheckoutSendEmail;
+    })();
+
+    Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest = (function() {
+
+        /**
+         * Properties of a SupportToolChangePrimaryEmailToAliasEmailRequest.
+         * @memberof Authentication
+         * @interface ISupportToolChangePrimaryEmailToAliasEmailRequest
+         * @property {number|null} [userId] SupportToolChangePrimaryEmailToAliasEmailRequest userId
+         * @property {string|null} [aliasEmail] SupportToolChangePrimaryEmailToAliasEmailRequest aliasEmail
+         */
+
+        /**
+         * Constructs a new SupportToolChangePrimaryEmailToAliasEmailRequest.
+         * @memberof Authentication
+         * @classdesc Represents a SupportToolChangePrimaryEmailToAliasEmailRequest.
+         * @implements ISupportToolChangePrimaryEmailToAliasEmailRequest
+         * @constructor
+         * @param {Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest=} [properties] Properties to set
+         */
+        function SupportToolChangePrimaryEmailToAliasEmailRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SupportToolChangePrimaryEmailToAliasEmailRequest userId.
+         * @member {number} userId
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @instance
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.prototype.userId = 0;
+
+        /**
+         * SupportToolChangePrimaryEmailToAliasEmailRequest aliasEmail.
+         * @member {string} aliasEmail
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @instance
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.prototype.aliasEmail = "";
+
+        /**
+         * Creates a new SupportToolChangePrimaryEmailToAliasEmailRequest instance using the specified properties.
+         * @function create
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest=} [properties] Properties to set
+         * @returns {Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest} SupportToolChangePrimaryEmailToAliasEmailRequest instance
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.create = function create(properties) {
+            return new SupportToolChangePrimaryEmailToAliasEmailRequest(properties);
+        };
+
+        /**
+         * Encodes the specified SupportToolChangePrimaryEmailToAliasEmailRequest message. Does not implicitly {@link Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest} message SupportToolChangePrimaryEmailToAliasEmailRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+            if (message.aliasEmail != null && message.hasOwnProperty("aliasEmail"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.aliasEmail);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SupportToolChangePrimaryEmailToAliasEmailRequest message, length delimited. Does not implicitly {@link Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {Authentication.ISupportToolChangePrimaryEmailToAliasEmailRequest} message SupportToolChangePrimaryEmailToAliasEmailRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SupportToolChangePrimaryEmailToAliasEmailRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest} SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.int32();
+                    break;
+                case 2:
+                    message.aliasEmail = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SupportToolChangePrimaryEmailToAliasEmailRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest} SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SupportToolChangePrimaryEmailToAliasEmailRequest message.
+         * @function verify
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
+            if (message.aliasEmail != null && message.hasOwnProperty("aliasEmail"))
+                if (!$util.isString(message.aliasEmail))
+                    return "aliasEmail: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a SupportToolChangePrimaryEmailToAliasEmailRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest} SupportToolChangePrimaryEmailToAliasEmailRequest
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest)
+                return object;
+            let message = new $root.Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest();
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            if (object.aliasEmail != null)
+                message.aliasEmail = String(object.aliasEmail);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SupportToolChangePrimaryEmailToAliasEmailRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @static
+         * @param {Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest} message SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults) {
+                object.userId = 0;
+                object.aliasEmail = "";
+            }
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
+            if (message.aliasEmail != null && message.hasOwnProperty("aliasEmail"))
+                object.aliasEmail = message.aliasEmail;
+            return object;
+        };
+
+        /**
+         * Converts this SupportToolChangePrimaryEmailToAliasEmailRequest to JSON.
+         * @function toJSON
+         * @memberof Authentication.SupportToolChangePrimaryEmailToAliasEmailRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SupportToolChangePrimaryEmailToAliasEmailRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SupportToolChangePrimaryEmailToAliasEmailRequest;
     })();
 
     return Authentication;

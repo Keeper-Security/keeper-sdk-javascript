@@ -56,6 +56,9 @@ export const twoFactorSend2FAPushMessage = (data: Authentication.ITwoFactorSendP
 export const approveDeviceMessage = (data: Authentication.IApproveDeviceRequest): RestMessage<Authentication.IApproveDeviceRequest, {}> =>
     createMessage(data, 'authentication/approve_device', Authentication.ApproveDeviceRequest, null)
 
+export const approveDeviceInstantMessage = (data: Authentication.IApproveDeviceInstantRequest): RestMessage<Authentication.IApproveDeviceInstantRequest, {}> =>
+    createMessage(data, 'authentication/approve_device_instant', Authentication.ApproveDeviceInstantRequest, null)
+
 export const validateDeviceVerificationCodeMessage = (data: Authentication.IValidateDeviceVerificationCodeRequest): RestMessage<Authentication.IValidateDeviceVerificationCodeRequest, {}> =>
     createMessage(data, 'authentication/validate_device_verification_code', Authentication.ValidateDeviceVerificationCodeRequest, null)
 
