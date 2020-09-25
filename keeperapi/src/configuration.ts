@@ -66,7 +66,7 @@ export interface AuthUI {
 
 export interface AuthUI3 {
     waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean>
-    waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean>
+    waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean>
     getPassword?(): Promise<string>
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): void
@@ -92,7 +92,7 @@ export type DeviceApprovalChannel = {
 }
 
 export type TwoFactorChannelData = {
-    pushesAvailable?: boolean,
+    availablePushes?: TwoFactorPushType[],
     channel: Authentication.ITwoFactorChannelInfo
     sendPush?: (type: TwoFactorPushType) => void
     sendCode: (code: string) => void

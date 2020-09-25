@@ -17,7 +17,7 @@ import {
     generateUidBytes,
     isTwoFactorResultCode,
     normal64,
-    normal64Bytes,
+    normal64Bytes, resolvablePromise,
     webSafe64,
     webSafe64FromBytes
 } from "./utils";
@@ -73,7 +73,7 @@ export type SocketProxy = {
     close: () => void
     onClose: (callback: () => void) => void
     onError: (callback: (e: Event | Error) => void) => void
-    onMessage: (callback: (e: MessageEvent) => void) => void
+    onMessage: (callback: (e: Uint8Array) => void) => void
     send: (message: any) => void
 }
 
@@ -120,13 +120,13 @@ export class SocketListener {
         this.socket.onError(callback)
     }
 
-    private handleMessage(msgEvent: MessageEvent): void {
+    private handleMessage(messageData: Uint8Array): void {
         for (let callback of this.messageListeners) {
-            callback(msgEvent.data)
+            callback(messageData)
         }
 
         for (let {resolve} of this.singleMessageListeners) {
-            resolve(msgEvent.data)
+            resolve(messageData)
         }
         this.singleMessageListeners.length = 0
     }
@@ -137,7 +137,6 @@ export class SocketListener {
 
     async getPushMessage(): Promise<any> {
         console.log('Awaiting web socket message...')
-
         return new Promise<any>((resolve, reject) => {
             this.singleMessageListeners.push({resolve, reject})
         })
@@ -386,7 +385,7 @@ export class Auth {
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
                     this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
                     return
-    
+
                 case Authentication.LoginState.REQUIRES_2FA:
                     try{
                         loginToken = await this.handleTwoFactor(loginResponse)
@@ -570,12 +569,15 @@ export class Auth {
             const loginToken = loginResponse.encryptedLoginToken
 
             let done = false
+            let twoFactorWaitCancel = resolvablePromise();
             const resumeWithToken = (token: Uint8Array) => {
                 done = true
+                twoFactorWaitCancel.resolve()
                 resolve(token)
             }
             const rejectWithError = (error: Error) => {
                 done = true
+                twoFactorWaitCancel.resolve()
                 reject(error)
             }
 
@@ -628,11 +630,25 @@ export class Auth {
                         case TwoFactorChannelType.TWO_FA_CT_DNA:
                         case TwoFactorChannelType.TWO_FA_CT_KEEPER:
                         case TwoFactorChannelType.TWO_FA_CT_DUO:
-                            tfachannelData.pushesAvailable = true;
+                            if (ch.capabilities) {
+                                tfachannelData.availablePushes = ch.capabilities
+                                    .map(cap => {
+                                        switch (cap) {
+                                            case 'push':
+                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH
+                                            case 'sms':
+                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_TEXT
+                                            case 'phone':
+                                                return TwoFactorPushType.TWO_FA_PUSH_DUO_CALL
+                                            default:
+                                                return undefined
+                                        }
+                                    }).filter(cap => !!cap).map(cap => cap!)
+                            }
                             break
                     }
-                    if (tfachannelData.pushesAvailable) {
-                        tfachannelData.sendPush = (pushType: TwoFactorPushType) => {
+                    if (tfachannelData.availablePushes) {
+                        tfachannelData.sendPush = async (pushType: TwoFactorPushType) => {
                             submitPush(ch.channelType, pushType)
                         }
                     }
@@ -652,7 +668,7 @@ export class Auth {
                 }
             }
 
-            this.options.authUI3.waitForTwoFactorCode(channels)
+            this.options.authUI3.waitForTwoFactorCode(channels, twoFactorWaitCancel.promise)
                 .then(ok => {
                     if (ok) {
                         resumeWithToken(loginToken)

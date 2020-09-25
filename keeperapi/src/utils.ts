@@ -130,6 +130,17 @@ export function chooseErrorMessage(errorNumber:number){
         case Authentication.LoginState.DEVICE_LOCKED:
             return 'device_locked'
         case Authentication.LoginState.INVALID_LOGINSTATE:
-            return 'invalid_loginstate'                
+            return 'invalid_loginstate'
+    }
+}
+
+export function resolvablePromise(): { promise: Promise<void>, resolve: () => void } {
+    let resolver
+    const promise = new Promise<void>((resolve) => {
+        resolver = resolve
+    })
+    return {
+        promise: promise,
+        resolve: resolver
     }
 }

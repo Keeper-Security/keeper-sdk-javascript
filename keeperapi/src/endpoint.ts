@@ -273,10 +273,8 @@ export class KeeperEndpoint {
         return prepareApiRequest(payload, this.transmissionKey, sessionToken)
     }
 
-    async decryptPushMessage(pushMessage: Blob): Promise<WssClientResponse> {
-        const pmArrBuff = await pushMessage.arrayBuffer()
-        const pmUint8Buff = new Uint8Array(pmArrBuff)
-        const decryptedPushMessage = await platform.aesGcmDecrypt(pmUint8Buff, this.transmissionKey.key)
+    async decryptPushMessage(pushMessageData: Uint8Array): Promise<WssClientResponse> {
+        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessageData, this.transmissionKey.key)
         return WssClientResponse.decode(decryptedPushMessage)
     }
 

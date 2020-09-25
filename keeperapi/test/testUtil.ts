@@ -14,11 +14,17 @@ import {Authentication} from '../src/proto';
 import {normal64Bytes} from '../src/utils';
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 
-export const prompt = async (message: string): Promise<string> => new Promise<string>((resolve) => {
+export const prompt = async (message: string, cancel?: Promise<void>): Promise<string> => new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
+    if (cancel) {
+        cancel.then(() => {
+            rl.close()
+            reject()
+        })
+    }
     rl.question(message, response => {
         resolve(response)
         rl.close()
@@ -53,26 +59,33 @@ export const authUI3: AuthUI3 = {
         }
         return true
     },
-    async waitForTwoFactorCode(channels: TwoFactorChannelData[]): Promise<boolean> {
+    async waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean> {
         const channel = channels[0]
         const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
         channel.setExpiration(Number(exp))
-        const pushPrefix = 'push='
-        if (channel.pushesAvailable) {
-            const rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            })
-            console.log(pushPrefix + '<action>, where push action is: ' + channel.pushesAvailable)
+
+        let promptMessage
+        if (channel.availablePushes) {
+            const pushActions = channel.availablePushes.map(x => `${x} - ${TwoFactorPushType[x]}`).join('\n')
+            console.log(`Push actions available:\n${pushActions}`)
+            promptMessage = 'Enter push action code or two factor code:\n'
         }
-        const answer = await prompt('Enter Code:')
-        if (channel.sendPush && answer.startsWith(pushPrefix)) {
-            const pushType = Number(answer.substr(pushPrefix.length))
-            if (!isNaN(pushType)) {
-                await channel.sendPush(pushType)
+        else {
+            promptMessage = 'Enter two factor code:\n'
+        }
+
+        while (true) {
+            const answer = await prompt(promptMessage, cancel)
+            if (answer.length === 1) {
+                const pushType = Number(answer)
+                if (!isNaN(pushType)) {
+                    await channel.sendPush(pushType)
+                }
+            }  else
+            {
+                await channel.sendCode(answer)
+                break
             }
-        } else {
-            await channel.sendCode(answer)
         }
         return true
     },

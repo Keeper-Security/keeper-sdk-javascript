@@ -250,7 +250,6 @@ export const nodePlatform: Platform = class {
 
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket.Client(url)
-
         return {
             close: () => {
                 socket.close()
@@ -261,8 +260,10 @@ export const nodePlatform: Platform = class {
             onError: (callback: (err: Error) => void) => {
                 socket.on('error', callback)
             },
-            onMessage: (callback: (e: MessageEvent) => void) => {
-                socket.on('message', callback)
+            onMessage: (callback: (e: Uint8Array) => void) => {
+                socket.on('message', (e: MessageEvent) => {
+                    callback(e.data)
+                })
             },
             send: (message => {
                 socket.send(message)

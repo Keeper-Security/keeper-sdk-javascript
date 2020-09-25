@@ -332,7 +332,6 @@ export const browserPlatform: Platform = class {
 
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket(url)
-
         return {
             close: () => {
                 socket.close()
@@ -343,8 +342,12 @@ export const browserPlatform: Platform = class {
             onError: (callback: (e: Event) => void) => {
                 socket.addEventListener("error", callback)
             },
-            onMessage: (callback: (e: MessageEvent) => void) => {
-                socket.onmessage = callback
+            onMessage: (callback: (e: Uint8Array) => void) => {
+                socket.onmessage = async (e: MessageEvent) => {
+                    const pmArrBuff = await e.data.arrayBuffer()
+                    const pmUint8Buff = new Uint8Array(pmArrBuff)
+                    callback(pmUint8Buff)
+                }
             },
             send: (message: any) => {
                 socket.send(message)
