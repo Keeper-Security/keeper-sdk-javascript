@@ -41,18 +41,18 @@ export const authUI3: AuthUI3 = {
         const channel = channels.find(x => x.channel === no - 1)
         if (!channel) return false
 
-        if (channel.sendPush) {
-            await channel.sendPush()
+        if (channel.sendApprovalRequest) {
+            await channel.sendApprovalRequest()
         }
         if (channel.setExpiration) {
             const exp = await prompt('Enter Expiration \n0 - immediately\n1 - 5 minutes\n2 - 12 hours\n3 - 24 hours\n4 - 30 days\n5 - never\n');
             channel.setExpiration(Number(exp))
         }
 
-        if (channel.sendCode) {
+        if (channel.validateCode) {
             const code = await prompt('Enter Device code or approve via email and press enter:')
             if (code) {
-                await channel.sendCode(code)
+                await channel.validateCode(code)
             }
         } else {
             await prompt('Press <Enter> to stop waiting.')
