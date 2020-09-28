@@ -31,6 +31,7 @@ export type KeeperError = {
     message?: string
     path?: string
     result_code?: string
+    key_id?: number
 }
 
 export interface DeviceConfig {
@@ -86,8 +87,8 @@ export enum DeviceVerificationMethods {
 
 export type DeviceApprovalChannel = {
     channel: DeviceVerificationMethods
-    sendPush: () => Promise<void>
-    sendCode?: (code: string) => Promise<void>
+    sendApprovalRequest: () => Promise<void>
+    validateCode?: (code: string) => Promise<void>
     setExpiration?: (expiration: TwoFactorExpiration) => void
 }
 

@@ -22,6 +22,7 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
+    requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
     ssoSamlMessage,
@@ -437,7 +438,7 @@ export class Auth {
                 channels = [
                     {
                         channel: DeviceVerificationMethods.Email,
-                        sendPush: async () => {
+                        sendApprovalRequest: async () => {
                             await this.executeRest(requestDeviceVerificationMessage({
                                 username: username,
                                 verificationChannel: emailSent ? 'email_resend' : 'email',
@@ -447,7 +448,7 @@ export class Auth {
                             }))
                             emailSent = true
                         },
-                        sendCode: async (code) => {
+                        validateCode: async (code) => {
                             await this.executeRest(validateDeviceVerificationCodeMessage({
                                 verificationCode: code,
                                 username: username
@@ -457,7 +458,7 @@ export class Auth {
                     },
                     {
                         channel: DeviceVerificationMethods.KeeperPush,
-                        sendPush: async () => {
+                        sendApprovalRequest: async () => {
                             await this.executeRest(twoFactorSend2FAPushMessage({
                                 encryptedLoginToken: loginToken,
                                 pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
@@ -466,12 +467,12 @@ export class Auth {
                     },
                     {
                         channel: DeviceVerificationMethods.TFA,
-                        sendPush: async () => {
+                        sendApprovalRequest: async () => {
                             await this.executeRest(twoFactorSend2FAPushMessage({
                                 encryptedLoginToken: loginToken,
                             }))
                         },
-                        sendCode: async (code) => {
+                        validateCode: async (code) => {
                             const twoFactorValidateMsg = twoFactorValidateMessage({
                                 encryptedLoginToken: loginToken,
                                 value: code,
@@ -495,7 +496,7 @@ export class Auth {
                 channels = [
                     {
                         channel: DeviceVerificationMethods.KeeperPush,
-                        sendPush: async () => {
+                        sendApprovalRequest: async () => {
                             await this.executeRest(twoFactorSend2FAPushMessage({
                                 encryptedLoginToken: loginToken,
                                 pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
@@ -504,7 +505,15 @@ export class Auth {
                     },
                     {
                         channel: DeviceVerificationMethods.AdminApproval,
-                        sendPush: async () => {}
+                        sendApprovalRequest: async () => {
+                            await this.executeRest(requestDeviceAdminApprovalMessage({
+                                username: username,
+                                verificationChannel: emailSent ? 'email_resend' : 'email',
+                                encryptedDeviceToken: deviceConfig.deviceToken,
+                                clientVersion: this.endpoint.clientVersion,
+                                messageSessionUid: this.messageSessionUid
+                            }))
+                        }
                     }
                 ]
             }

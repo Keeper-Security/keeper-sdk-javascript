@@ -38,23 +38,10 @@ export class KeeperEndpoint {
     }
 
     async getDeviceToken(): Promise<IDeviceResponse> {
-        while (true) {
-            try {
-                return await this.executeRest(deviceMessage({
-                    clientVersion: this.clientVersion,
-                    deviceName: 'JS Keeper API'
-                }))
-            } catch (e) {
-                if (!(e instanceof Error))
-                    throw(e)
-                let errorObj = JSON.parse(e.message)
-                if (errorObj.error === 'key') {
-                    this.updateTransmissionKey(errorObj.key_id)
-                } else {
-                    throw(e)
-                }
-            }
-        }
+        return this.executeRest(deviceMessage({
+            clientVersion: this.clientVersion,
+            deviceName: 'JS Keeper API'
+        }))
     }
 
     async getPreLogin(username: string): Promise<IPreLoginResponse> {
@@ -107,44 +94,26 @@ export class KeeperEndpoint {
         const ecdh = await platform.generateECKeyPair()
         deviceConfig.publicKey = ecdh.publicKey
         deviceConfig.privateKey = ecdh.privateKey
-        while (true) {
-            try {
-                if (deviceConfig.deviceToken) {
-                    const devUpdMsg = updateDeviceMessage({
-                        encryptedDeviceToken: deviceConfig.deviceToken,
-                        clientVersion: this.options.clientVersion,
-                        deviceName: deviceConfig.deviceName,
-                        devicePublicKey: deviceConfig.publicKey,
-                    })
-                    await this.executeRest(devUpdMsg)
-                } else {
-                    const devRegMsg = registerDeviceMessage({
-                        clientVersion: this.options.clientVersion,
-                        deviceName: deviceConfig.deviceName,
-                        devicePublicKey: deviceConfig.publicKey,
-                    })
-                    const devRegResp = await this.executeRest(devRegMsg)
-                    console.log(devRegResp)
-                    deviceConfig.deviceToken = devRegResp.encryptedDeviceToken || null
-                }
-                if (this.options.onDeviceConfig) {
-                    this.options.onDeviceConfig(deviceConfig, this.options.host);
-                }
-                return
-            } catch (e) {
-                if (!(e instanceof Error))
-                    throw(e)
-                let errorObj = JSON.parse(e.message)
-                if (errorObj.error === 'key') {
-                    deviceConfig.transmissionKeyId = errorObj.key_id
-                    if (this.options.onDeviceConfig) {
-                        this.options.onDeviceConfig(deviceConfig, this.options.host);
-                    }
-                    this.updateTransmissionKey(errorObj.key_id)
-                } else {
-                    throw(e)
-                }
-            }
+        if (deviceConfig.deviceToken) {
+            const devUpdMsg = updateDeviceMessage({
+                encryptedDeviceToken: deviceConfig.deviceToken,
+                clientVersion: this.options.clientVersion,
+                deviceName: deviceConfig.deviceName,
+                devicePublicKey: deviceConfig.publicKey,
+            })
+            await this.executeRest(devUpdMsg)
+        } else {
+            const devRegMsg = registerDeviceMessage({
+                clientVersion: this.options.clientVersion,
+                deviceName: deviceConfig.deviceName,
+                devicePublicKey: deviceConfig.publicKey,
+            })
+            const devRegResp = await this.executeRest(devRegMsg)
+            console.log(devRegResp)
+            deviceConfig.deviceToken = devRegResp.encryptedDeviceToken || null
+        }
+        if (this.options.onDeviceConfig) {
+            this.options.onDeviceConfig(deviceConfig, this.options.host);
         }
     }
 
@@ -227,19 +196,28 @@ export class KeeperEndpoint {
         }
         console.log("Response code:", response.statusCode);
 
-        try {
-            let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
-            return message.fromBytes(decrypted)
-        } catch {
-            const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
+        while (true) {
             try {
-                const message: KeeperError = JSON.parse(errorMessage)
-                if (this.options.onCommandFailure) {
-                    this.options.onCommandFailure(message)
-                }
+                let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
+                return message.fromBytes(decrypted)
+            } catch {
+                const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
+                try {
+                    const errorObj: KeeperError = JSON.parse(errorMessage)
+                    if (errorObj.error === 'key') {
+                        this.options.deviceConfig.transmissionKeyId = errorObj.key_id
+                        if (this.options.onDeviceConfig) {
+                            this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
+                        }
+                        this.updateTransmissionKey(errorObj.key_id)
+                        continue
+                    }
+                    if (this.options.onCommandFailure) {
+                        this.options.onCommandFailure(errorObj)
+                    }
+                } catch { }
+                throw(new Error(errorMessage))
             }
-            catch{}
-            throw(new Error(errorMessage))
         }
     }
 
