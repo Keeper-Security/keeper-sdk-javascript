@@ -539,6 +539,9 @@ export class Auth {
                         rejectWithError(new Error('Rejected'))
                     }
                 } else if (wssRs.command === 'device_verified') {
+                    if(this.options.onDeviceVerified){
+                        this.options.onDeviceVerified(true)
+                    }
                     resumeWithToken(loginToken)
                 }
             }

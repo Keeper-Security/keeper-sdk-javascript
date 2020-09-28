@@ -17,6 +17,7 @@ export interface ClientConfiguration {
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
     onRegionChanged?: (newRegion: string) => void,
+    onDeviceVerified?: (isDeviceVerified: boolean) => void
     sessionStorage?: SessionStorage
     useSessionResumption?: boolean
 }
