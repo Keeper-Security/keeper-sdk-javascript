@@ -639,7 +639,11 @@ export class Auth {
                         case TwoFactorChannelType.TWO_FA_CT_RSA:
                             break
                         case TwoFactorChannelType.TWO_FA_CT_SMS:
+                            tfachannelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_SMS]
+                            break
                         case TwoFactorChannelType.TWO_FA_CT_DNA:
+                            tfachannelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_DNA]
+                            break
                         case TwoFactorChannelType.TWO_FA_CT_KEEPER:
                         case TwoFactorChannelType.TWO_FA_CT_DUO:
                             if (ch.capabilities) {

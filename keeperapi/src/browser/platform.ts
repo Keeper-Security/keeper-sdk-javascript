@@ -243,7 +243,7 @@ export const browserPlatform: Platform = class {
         }, key, 512);
         let hmacKey = await crypto.subtle.importKey(
             "raw",
-            browserPlatform.stringToBytes(domain),
+            derived,
             {
                 name: "HMAC",
                 hash: {
@@ -252,7 +252,7 @@ export const browserPlatform: Platform = class {
             },
             false,
             ["sign", "verify"]);
-        const reduced = await crypto.subtle.sign("HMAC", hmacKey, derived);
+        const reduced = await crypto.subtle.sign("HMAC", hmacKey, browserPlatform.stringToBytes(domain));
         return new Uint8Array(reduced);
     }
 

@@ -152,7 +152,7 @@ export class KeeperEndpoint {
             if (response.statusCode == 303) {
                 redirectUrl = response.headers["location"];
             } else if (response.statusCode == 200) {
-                redirectUrl = theUrl + '?' + (formParams as string);
+                redirectUrl = theUrl;
             }
             if (redirectUrl) {
                 console.log("Redirecting to " + redirectUrl);

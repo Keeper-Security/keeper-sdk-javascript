@@ -155,8 +155,8 @@ export const nodePlatform: Platform = class {
     }
 
     static deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        const bytes = crypto.pbkdf2Sync(Buffer.from(domain + password, "utf8"), saltBytes, iterations, 32, 'SHA512')
-        const reducedBytes = crypto.createHmac("SHA256", Buffer.from(domain)).update(bytes).digest()
+        const bytes = crypto.pbkdf2Sync(Buffer.from(domain + password, "utf8"), saltBytes, iterations, 64, 'SHA512')
+        const reducedBytes = crypto.createHmac("SHA256", bytes).update(Buffer.from(domain)).digest()
         return Promise.resolve(reducedBytes);
     }
 
