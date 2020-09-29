@@ -188,15 +188,15 @@ export class KeeperEndpoint {
     }
 
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
-        let request = await this.prepareRequest(message.toBytes(), sessionToken)
-        console.log("Calling REST URL:", this.getUrl(message.path));
-        let response = await platform.post(this.getUrl(message.path), request)
-        if (!response.data || response.data.length === 0 && response.statusCode === 200) {
-            return
-        }
-        console.log("Response code:", response.statusCode);
-
         while (true) {
+            let request = await this.prepareRequest(message.toBytes(), sessionToken)
+            console.log("Calling REST URL:", this.getUrl(message.path));
+            let response = await platform.post(this.getUrl(message.path), request)
+            if (!response.data || response.data.length === 0 && response.statusCode === 200) {
+                return
+            }
+            console.log("Response code:", response.statusCode);
+
             try {
                 let decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
                 return message.fromBytes(decrypted)
