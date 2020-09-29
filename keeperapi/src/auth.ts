@@ -403,7 +403,7 @@ export class Auth {
                     }
 
                     try{
-                        await this.authHashLogin(loginResponse, username, password)
+                        await this.authHashLogin(loginResponse, username, password, loginType === Authentication.LoginType.ALTERNATE)
                         return;
                     } catch(e){
                         password = ''
@@ -704,13 +704,13 @@ export class Auth {
         })
     }
 
-    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
+    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string, useAlternate: boolean = false) {
         // TODO test for account transfer and account recovery
         if (!loginResponse.salt) {
             throw new Error('Salt missing from API response')
         }
 
-        const salt = loginResponse.salt[0]
+        const salt = useAlternate ? loginResponse.salt.find(s => s.name === 'alternate') : loginResponse.salt[0]
         if (!salt.salt || !salt.iterations) {
             throw new Error('Salt missing from API response')
         }
