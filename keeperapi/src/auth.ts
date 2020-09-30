@@ -530,7 +530,7 @@ export class Auth {
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
-                    const token = wssRs.encryptedLoginToken ? platform.base64ToBytes(wssRs.encryptedLoginToken) : loginToken
+                    const token = wssRs.encryptedLoginToken ? normal64Bytes(wssRs.encryptedLoginToken) : loginToken
                     resumeWithToken(token)
                 } else if (wssRs.message === 'device_approved') {
                     if (wssRs.approved) {
