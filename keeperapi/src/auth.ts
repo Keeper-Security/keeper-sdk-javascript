@@ -320,17 +320,16 @@ export class Auth {
 
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.ACCOUNT_LOCKED:
-                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
-                case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                 case Authentication.LoginState.LOGGED_OUT:
                 case Authentication.LoginState.AFTER_CLOUD_SSO_LOGIN:
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
-                    break;
+                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
+                case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.UPGRADE:
-                    handleError('generic_error', loginResponse, null)
-                    break;
+                    handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
+                    return;
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     needUserName = true
                     break;
@@ -343,6 +342,7 @@ export class Auth {
                         loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
                     } catch (e) {
                         handleError('auth_failed', loginResponse, e)
+                        return
                     }
                     break;
                 case Authentication.LoginState.LICENSE_EXPIRED:
@@ -408,7 +408,7 @@ export class Auth {
                     } catch(e){
                         password = ''
                         handleError('auth_failed', loginResponse, e)
-                        break;
+                        return;
                     }
                 case Authentication.LoginState.LOGGED_IN:
                     try{
