@@ -251,6 +251,9 @@ export const nodePlatform: Platform = class {
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket.Client(url)
         return {
+            onOpen: (callback: () => void) => {
+                socket.on('open', callback)
+            },
             close: () => {
                 socket.close()
             },

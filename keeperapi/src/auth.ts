@@ -71,6 +71,7 @@ type SocketResponseData = {
 }
 
 export type SocketProxy = {
+    onOpen: (callback: () => void) => void
     close: () => void
     onClose: (callback: () => void) => void
     onError: (callback: (e: Event | Error) => void) => void
@@ -80,6 +81,8 @@ export type SocketProxy = {
 
 export class SocketListener {
     private socket: SocketProxy | null;
+    private url: string
+    private getConnectionRequest?: () => Promise<string>
     // Listeners that receive all messages
     private messageListeners: Array<(data: any) => void>
     // Listeners that receive a single message
@@ -88,15 +91,43 @@ export class SocketListener {
         reject: (errorMessage: string) => void
     }>
 
-    constructor(url: string) {
+    private reconnectTimeout: ReturnType<typeof setTimeout>
+    private currentBackoffSeconds: number
+    private isClosedByClient: boolean
+
+    constructor(url: string, getConnectionRequest?: () => Promise<string>) {
         console.log('Connecting to ' + url)
 
+        this.url = url
         this.messageListeners = []
         this.singleMessageListeners = []
-        this.socket = platform.createWebsocket(url)
+        this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+        this.isClosedByClient = false
+        if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
+
+        this.createWebsocket()
+    }
+
+    async createWebsocket() {
+        if (this.getConnectionRequest) {
+            const connectionRequest = await this.getConnectionRequest()
+            this.socket = platform.createWebsocket(`${this.url}/${connectionRequest}`)
+        } else {
+            this.socket = platform.createWebsocket(this.url)
+        }
+
+        this.socket.onOpen(() => {
+            console.log('socket opened')
+            clearTimeout(this.reconnectTimeout)
+            this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+        })
 
         this.socket.onClose(() => {
             console.log('socket closed')
+
+            if (!this.isClosedByClient) {
+                this.reconnect()
+            }
         })
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
@@ -143,10 +174,31 @@ export class SocketListener {
         })
     }
 
+    private getBaseReconnectionInterval(): number {
+        return Math.random() * 5
+    }
+
+    private reconnect() {
+        console.log(`Reconnecting websocket in ${this.currentBackoffSeconds.toFixed(2)} seconds...`)
+
+        // schedule next reconnect attempt
+        this.reconnectTimeout = setTimeout(() => {
+            this.socket?.close()
+        }, this.currentBackoffSeconds * 1000)
+
+        this.createWebsocket()
+
+        this.currentBackoffSeconds = Math.min(this.currentBackoffSeconds * 2, 300) // Cap at 5 mins.
+    }
+
     disconnect() {
+        this.isClosedByClient = true
         this.socket?.close();
         this.socket = null
         this.messageListeners.length = 0
+
+        this.currentBackoffSeconds = Math.random() * 5
+        clearTimeout(this.reconnectTimeout)
 
         for (let {reject} of this.singleMessageListeners) {
             reject('Socket disconnected')
@@ -266,8 +318,10 @@ export class Auth {
         }
 
         if (!this.socket) {
-            const connectionRequest = await this.endpoint.getPushConnectionRequest(this.messageSessionUid)
-            this.socket = new SocketListener(`wss://push.services.${this.options.host}/wss_open_connection/${connectionRequest}`)
+            const url = `wss://push.services.${this.options.host}/wss_open_connection`
+            const getConnectionRequest = () => this.endpoint.getPushConnectionRequest(this.messageSessionUid)
+
+            this.socket = new SocketListener(url, getConnectionRequest)
             console.log("Socket connected")
         }
 

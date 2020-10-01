@@ -333,6 +333,11 @@ export const browserPlatform: Platform = class {
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket(url)
         return {
+            onOpen: (callback: () => void) => {
+                socket.onopen = (e: Event) => {
+                    callback()
+                }
+            },
             close: () => {
                 socket.close()
             },
