@@ -293,7 +293,7 @@ export class Auth {
                 messageSessionUid: this.messageSessionUid,
                 loginType: loginType,
                 loginMethod: loginMethod,
-                cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0),
+                cloneCode: this.options.sessionStorage.getCloneCode(this._username),
                 v2TwoFactorToken: v2TwoFactorToken
             }
             if (loginToken) {
@@ -388,12 +388,9 @@ export class Auth {
                     return
 
                 case Authentication.LoginState.REQUIRES_2FA:
-                    try{
-                        loginToken = await this.handleTwoFactor(loginResponse)
-                    } catch(e){
-                        console.log('Error in Authentication.LoginState.REQUIRES_2FA: ', e)
-                    }
+                    loginToken = await this.handleTwoFactor(loginResponse)
                     break
+
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
                     if (!password && this.options.authUI3?.getPassword) {
                         password = await this.options.authUI3.getPassword()
@@ -554,10 +551,11 @@ export class Auth {
                     } else {
                         rejectWithError(new Error('Canceled'))
                     }
-                });
+                })
+                .catch(reason => rejectWithError(reason))
 
             // receive push notification
-            (async () => {
+            ;(async () => {
                 while (!done) {
                     const pushMessage = await this.socket.getPushMessage()
                     const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
@@ -691,10 +689,11 @@ export class Auth {
                     } else {
                         rejectWithError(new Error('Canceled'))
                     }
-                });
+                })
+                .catch(reason => rejectWithError(reason))
 
             // receive push notification
-            (async () => {
+            ;(async () => {
                 while (!done) {
                     const pushMessage = await this.socket.getPushMessage()
                     const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
