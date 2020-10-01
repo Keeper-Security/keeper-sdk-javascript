@@ -200,9 +200,6 @@ export class SocketListener {
         this.currentBackoffSeconds = Math.random() * 5
         clearTimeout(this.reconnectTimeout)
 
-        for (let {reject} of this.singleMessageListeners) {
-            reject('Socket disconnected')
-        }
         this.singleMessageListeners.length = 0
     }
 }
