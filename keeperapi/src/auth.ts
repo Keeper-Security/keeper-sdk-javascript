@@ -443,6 +443,8 @@ export class Auth {
                     break
 
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
+                    // TODO: loop in authHashLogin until successful or get into 
+                    // some other state other than Authentication.LoginState.REQUIRES_AUTH_HASH
                     if (!password && this.options.authUI3?.getPassword) {
                         password = await this.options.authUI3.getPassword()
                     }
@@ -456,7 +458,7 @@ export class Auth {
                     } catch(e){
                         password = ''
                         handleError('auth_failed', loginResponse, e)
-                        return;
+                        break;
                     }
                 case Authentication.LoginState.LOGGED_IN:
                     try{
