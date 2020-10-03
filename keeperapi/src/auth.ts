@@ -349,11 +349,10 @@ export class Auth {
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
-            } else {
-                if (needUserName || !this.options.useSessionResumption) {
-                    startLoginRequest.username = this._username
-                    needUserName = false
-                }
+            }
+            if (needUserName || !this.options.useSessionResumption) {
+                startLoginRequest.username = this._username
+                needUserName = false
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             console.log(loginResponse)
@@ -400,6 +399,7 @@ export class Auth {
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
                     this.options.host = loginResponse.stateSpecificValue
+                    loginToken = undefined
                     if (this.options.onRegionChanged) {
                         this.options.onRegionChanged(loginResponse.stateSpecificValue)
                     }
@@ -443,7 +443,7 @@ export class Auth {
                     break
 
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
-                    // TODO: loop in authHashLogin until successful or get into 
+                    // TODO: loop in authHashLogin until successful or get into
                     // some other state other than Authentication.LoginState.REQUIRES_AUTH_HASH
                     if (!password && this.options.authUI3?.getPassword) {
                         password = await this.options.authUI3.getPassword()
