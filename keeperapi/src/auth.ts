@@ -308,19 +308,7 @@ export class Auth {
             v2TwoFactorToken = null,
         }: LoginPayload
     ) {
-        this._username = username || this.options.sessionStorage.lastUsername
-
-        if (!this.options.deviceConfig.deviceToken) {
-            await this.endpoint.registerDevice()
-        }
-
-        if (!this.socket) {
-            const url = `wss://push.services.${this.options.host}/wss_open_connection`
-            const getConnectionRequest = () => this.endpoint.getPushConnectionRequest(this.messageSessionUid)
-
-            this.socket = new SocketListener(url, getConnectionRequest)
-            console.log("Socket connected")
-        }
+        this._username = username || this.options.sessionStorage.lastUsername        
 
         let needUserName: boolean
         let previousLoginState = 0;
@@ -338,6 +326,19 @@ export class Auth {
         };
 
         while (true) {
+
+            if (!this.options.deviceConfig.deviceToken) {
+                await this.endpoint.registerDevice()
+            }
+
+            if (!this.socket) {
+                const url = `wss://push.services.${this.options.host}/wss_open_connection`
+                const getConnectionRequest = () => this.endpoint.getPushConnectionRequest(this.messageSessionUid)
+
+                this.socket = new SocketListener(url, getConnectionRequest)
+                console.log("Socket connected")
+            }
+
             const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
@@ -398,6 +399,8 @@ export class Auth {
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
+                    // TODO: put region_redirect in its own loop since
+                    // its unique to the other states.
                     this.options.host = loginResponse.stateSpecificValue
                     loginToken = undefined
                     if (this.options.onRegionChanged) {
