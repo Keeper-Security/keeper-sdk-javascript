@@ -20,6 +20,8 @@ export interface ClientConfiguration {
     onDeviceVerified?: (isDeviceVerified: boolean) => void
     sessionStorage?: SessionStorage
     useSessionResumption?: boolean
+    iterations?: number
+    salt?: Uint8Array
 }
 export interface ClientConfigurationInternal extends ClientConfiguration {
     deviceConfig: DeviceConfig // v15+ device config

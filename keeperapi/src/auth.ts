@@ -774,6 +774,9 @@ export class Auth {
             throw new Error('Salt missing from API response')
         }
 
+        this.options.salt = salt.salt
+        this.options.iterations = salt.iterations
+
         const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
         let authHash = await platform.calcAuthVerifier(authHashKey);
 
