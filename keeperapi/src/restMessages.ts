@@ -170,11 +170,11 @@ export const ssoCloudSAMLLogRequestMessage = (data: SsoCloud.ISsoCloudSAMLLogReq
 export const ssoCloudServiceProviderConfigurationListRequestMessage = (data: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest): RestMessage<SsoCloud.ISsoCloudServiceProviderConfigurationListRequest, SsoCloud.ISsoCloudServiceProviderConfigurationListResponse> =>
     createMessage(data, 'sso/config/sso_cloud_sp_configuration_get', SsoCloud.SsoCloudServiceProviderConfigurationListRequest, SsoCloud.SsoCloudServiceProviderConfigurationListResponse);
 
-export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServiceProviderRequest, url:string): RestMessage<Authentication.ISsoServiceProviderRequest, Authentication.ISsoServiceProviderResponse> =>
-    createMessage(data, url, Authentication.SsoServiceProviderRequest, Authentication.SsoServiceProviderResponse);
+export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServiceProviderRequest): RestMessage<Authentication.ISsoServiceProviderRequest, Authentication.ISsoServiceProviderResponse> =>
+    createMessage(data, 'enterprise/get_sso_service_provider', Authentication.SsoServiceProviderRequest, Authentication.SsoServiceProviderResponse);
 
-export const ssoCloudBasicRequestMessage = (data: SsoCloud.ISsoCloudRequest, url:string): RestMessage<SsoCloud.ISsoCloudRequest, SsoCloud.ISsoCloudResponse> =>
-    createMessage(data, url, SsoCloud.SsoCloudRequest, SsoCloud.SsoCloudResponse);
+export const ssoCloudRequestMessage = (data: SsoCloud.ISsoCloudRequest): RestMessage<SsoCloud.ISsoCloudRequest, null> =>
+    createMessage(data, null, SsoCloud.SsoCloudRequest, null);
 
 export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url:string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse);

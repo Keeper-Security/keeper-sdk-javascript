@@ -32441,6 +32441,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @property {boolean|null} [persistentLogin] Settings persistentLogin
          * @property {boolean|null} [ipDisableAutoApprove] Settings ipDisableAutoApprove
          * @property {boolean|null} [shareDataKeyWithEccPublicKey] Settings shareDataKeyWithEccPublicKey
+         * @property {boolean|null} [shareDataKeyWithDevicePublicKey] Settings shareDataKeyWithDevicePublicKey
+         * @property {boolean|null} [deviceDataKeyPresent] Settings deviceDataKeyPresent
          */
 
         /**
@@ -32695,6 +32697,22 @@ export const AccountSummary = $root.AccountSummary = (() => {
         Settings.prototype.shareDataKeyWithEccPublicKey = false;
 
         /**
+         * Settings shareDataKeyWithDevicePublicKey.
+         * @member {boolean} shareDataKeyWithDevicePublicKey
+         * @memberof AccountSummary.Settings
+         * @instance
+         */
+        Settings.prototype.shareDataKeyWithDevicePublicKey = false;
+
+        /**
+         * Settings deviceDataKeyPresent.
+         * @member {boolean} deviceDataKeyPresent
+         * @memberof AccountSummary.Settings
+         * @instance
+         */
+        Settings.prototype.deviceDataKeyPresent = false;
+
+        /**
          * Creates a new Settings instance using the specified properties.
          * @function create
          * @memberof AccountSummary.Settings
@@ -32780,6 +32798,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 writer.uint32(/* id 28, wireType 0 =*/224).bool(message.ipDisableAutoApprove);
             if (message.shareDataKeyWithEccPublicKey != null && message.hasOwnProperty("shareDataKeyWithEccPublicKey"))
                 writer.uint32(/* id 29, wireType 0 =*/232).bool(message.shareDataKeyWithEccPublicKey);
+            if (message.shareDataKeyWithDevicePublicKey != null && message.hasOwnProperty("shareDataKeyWithDevicePublicKey"))
+                writer.uint32(/* id 30, wireType 0 =*/240).bool(message.shareDataKeyWithDevicePublicKey);
+            if (message.deviceDataKeyPresent != null && message.hasOwnProperty("deviceDataKeyPresent"))
+                writer.uint32(/* id 31, wireType 0 =*/248).bool(message.deviceDataKeyPresent);
             return writer;
         };
 
@@ -32908,6 +32930,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
                     break;
                 case 29:
                     message.shareDataKeyWithEccPublicKey = reader.bool();
+                    break;
+                case 30:
+                    message.shareDataKeyWithDevicePublicKey = reader.bool();
+                    break;
+                case 31:
+                    message.deviceDataKeyPresent = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -33055,6 +33083,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.shareDataKeyWithEccPublicKey != null && message.hasOwnProperty("shareDataKeyWithEccPublicKey"))
                 if (typeof message.shareDataKeyWithEccPublicKey !== "boolean")
                     return "shareDataKeyWithEccPublicKey: boolean expected";
+            if (message.shareDataKeyWithDevicePublicKey != null && message.hasOwnProperty("shareDataKeyWithDevicePublicKey"))
+                if (typeof message.shareDataKeyWithDevicePublicKey !== "boolean")
+                    return "shareDataKeyWithDevicePublicKey: boolean expected";
+            if (message.deviceDataKeyPresent != null && message.hasOwnProperty("deviceDataKeyPresent"))
+                if (typeof message.deviceDataKeyPresent !== "boolean")
+                    return "deviceDataKeyPresent: boolean expected";
             return null;
         };
 
@@ -33177,6 +33211,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 message.ipDisableAutoApprove = Boolean(object.ipDisableAutoApprove);
             if (object.shareDataKeyWithEccPublicKey != null)
                 message.shareDataKeyWithEccPublicKey = Boolean(object.shareDataKeyWithEccPublicKey);
+            if (object.shareDataKeyWithDevicePublicKey != null)
+                message.shareDataKeyWithDevicePublicKey = Boolean(object.shareDataKeyWithDevicePublicKey);
+            if (object.deviceDataKeyPresent != null)
+                message.deviceDataKeyPresent = Boolean(object.deviceDataKeyPresent);
             return message;
         };
 
@@ -33239,6 +33277,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.persistentLogin = false;
                 object.ipDisableAutoApprove = false;
                 object.shareDataKeyWithEccPublicKey = false;
+                object.shareDataKeyWithDevicePublicKey = false;
+                object.deviceDataKeyPresent = false;
             }
             if (message.audit != null && message.hasOwnProperty("audit"))
                 object.audit = message.audit;
@@ -33316,6 +33356,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.ipDisableAutoApprove = message.ipDisableAutoApprove;
             if (message.shareDataKeyWithEccPublicKey != null && message.hasOwnProperty("shareDataKeyWithEccPublicKey"))
                 object.shareDataKeyWithEccPublicKey = message.shareDataKeyWithEccPublicKey;
+            if (message.shareDataKeyWithDevicePublicKey != null && message.hasOwnProperty("shareDataKeyWithDevicePublicKey"))
+                object.shareDataKeyWithDevicePublicKey = message.shareDataKeyWithDevicePublicKey;
+            if (message.deviceDataKeyPresent != null && message.hasOwnProperty("deviceDataKeyPresent"))
+                object.deviceDataKeyPresent = message.deviceDataKeyPresent;
             return object;
         };
 

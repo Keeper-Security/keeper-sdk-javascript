@@ -1,29 +1,14 @@
 import {Auth, createAuthVerifier, createEncryptionParams} from "../src/auth";
-import {
-    accountSummaryMessage, approveDeviceMessage,
-    registerEncryptedDataKeyForDeviceMessage,
-    requestCreateUserMessage
-} from '../src/restMessages';
+import {accountSummaryMessage, approveDeviceMessage, requestCreateUserMessage} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {generateEncryptionKey, generateUidBytes, webSafe64FromBytes} from '../src/utils';
-import {
-    authUI3,
-    getCredentialsAndHost,
-    getDeviceConfig,
-    saveDeviceConfig,
-    prompt, TestSessionStorage
-} from './testUtil';
+import {generateEncryptionKey, generateUidBytes} from '../src/utils';
+import {authUI3, getCredentialsAndHost, getDeviceConfig, saveDeviceConfig, TestSessionStorage} from './testUtil';
 import {createECDH} from "crypto";
 import {Vault} from '../src/vault';
-import {
-    EnterpriseDataInclude,
-    GetEnterpriseDataCommand,
-    SetTwoFactorAuthCommand,
-    VerifyUserCommand
-} from '../src/commands';
-import * as fs from 'fs'
-import {Company} from '../src/company';
+import {Authentication} from '../src/proto';
+import {ClientConfiguration} from '../src/configuration';
+import {KeeperEnvironment} from '../src/endpoint';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -120,7 +105,7 @@ async function testLogin() {
 
     const deviceConfig = getDeviceConfig(deviceName, host)
 
-    const auth = new Auth({
+    const options: ClientConfiguration = {
         host: host,
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
@@ -128,12 +113,23 @@ async function testLogin() {
         // useSessionResumption: true,
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3
-    })
+    }
+    options.onRegionChanged = newRegion => {
+        options.deviceConfig = getDeviceConfig(deviceName, newRegion as KeeperEnvironment)
+    }
+
+    const auth = new Auth(options)
     try {
-        await auth.loginV3({
-            username: userName,
-            password,
-        })
+        try {
+            await auth.loginV3({
+                username: userName,
+                password
+            })
+        }
+        catch (e) {
+            console.log(e)
+            return
+        }
         console.log(auth.dataKey)
         let vault = new Vault(auth)
 

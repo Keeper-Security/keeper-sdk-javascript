@@ -1,6 +1,6 @@
 import {KeeperCommand, KeeperHttpResponse} from './commands'
 import {KeeperError} from './configuration'
-import {Authentication, Push} from './proto'
+import {Authentication, Push, SsoCloud} from './proto'
 import {platform} from './platform'
 import {
     generateTransmissionKey,
@@ -10,7 +10,14 @@ import {
     normal64Bytes,
     webSafe64FromBytes
 } from './utils'
-import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from './restMessages'
+import {
+    deviceMessage,
+    preLoginMessage,
+    registerDeviceMessage,
+    RestMessage,
+    ssoCloudRequestMessage,
+    updateDeviceMessage
+} from './restMessages'
 import {ClientConfigurationInternal, TransmissionKey} from './configuration';
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
@@ -204,13 +211,17 @@ export class KeeperEndpoint {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
                 try {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
-                    if (errorObj.error === 'key') {
-                        this.options.deviceConfig.transmissionKeyId = errorObj.key_id
-                        if (this.options.onDeviceConfig) {
-                            this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
-                        }
-                        this.updateTransmissionKey(errorObj.key_id)
-                        continue
+                    switch (errorObj.error) {
+                        case 'key':
+                            this.options.deviceConfig.transmissionKeyId = errorObj.key_id
+                            if (this.options.onDeviceConfig) {
+                                this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
+                            }
+                            this.updateTransmissionKey(errorObj.key_id)
+                            continue
+                        case 'region_redirect':
+                            this.options.host = errorObj.region_host
+                            continue
                     }
                     if (this.options.onCommandFailure) {
                         this.options.onCommandFailure(errorObj)
@@ -262,6 +273,18 @@ export class KeeperEndpoint {
 
     getTransmissionKey() : TransmissionKey {
         return this.transmissionKey;
+    }
+
+    public async prepareSsoPayload(messageSessionUid: Uint8Array): Promise<string> {
+        const payload = ssoCloudRequestMessage({
+            "embedded": true,
+            "clientVersion": this.clientVersion,
+            "dest": "vault",
+            "forceLogin": false,
+            "messageSessionUid": messageSessionUid
+        }).toBytes()
+        const request = await prepareApiRequest(payload, this.transmissionKey)
+        return webSafe64FromBytes(request)
     }
 }
 

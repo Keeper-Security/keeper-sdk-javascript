@@ -12431,6 +12431,12 @@ export namespace AccountSummary {
 
         /** Settings shareDataKeyWithEccPublicKey */
         shareDataKeyWithEccPublicKey?: (boolean|null);
+
+        /** Settings shareDataKeyWithDevicePublicKey */
+        shareDataKeyWithDevicePublicKey?: (boolean|null);
+
+        /** Settings deviceDataKeyPresent */
+        deviceDataKeyPresent?: (boolean|null);
     }
 
     /** Represents a Settings. */
@@ -12528,6 +12534,12 @@ export namespace AccountSummary {
 
         /** Settings shareDataKeyWithEccPublicKey. */
         public shareDataKeyWithEccPublicKey: boolean;
+
+        /** Settings shareDataKeyWithDevicePublicKey. */
+        public shareDataKeyWithDevicePublicKey: boolean;
+
+        /** Settings deviceDataKeyPresent. */
+        public deviceDataKeyPresent: boolean;
 
         /**
          * Creates a new Settings instance using the specified properties.

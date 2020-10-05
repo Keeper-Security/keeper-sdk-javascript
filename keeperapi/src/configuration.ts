@@ -12,7 +12,7 @@ export interface ClientConfiguration {
     clientVersion?: string
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
-    host: KeeperHost
+    host: KeeperHost,
     onCommandFailure?: (error: KeeperError) => void,
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
@@ -35,6 +35,7 @@ export type KeeperError = {
     path?: string
     result_code?: string
     key_id?: number
+    region_host?: string
 }
 
 export interface DeviceConfig {

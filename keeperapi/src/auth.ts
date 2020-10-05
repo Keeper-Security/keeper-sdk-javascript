@@ -25,7 +25,7 @@ import {
     requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
-    ssoSamlMessage,
+    ssoSamlMessage, ssoServiceProviderRequestMessage,
     startLoginMessage,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
@@ -35,11 +35,11 @@ import {
 import {Authentication, SsoCloud} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
-import SsoCloudRequest = SsoCloud.SsoCloudRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
+import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -63,11 +63,6 @@ type SocketMessage = {
     event: 'received_totp'
     type: 'dna'
     passcode: string
-}
-
-type SocketResponseData = {
-    event: 'received_totp',
-    encryptedLoginToken: string
 }
 
 export type SocketProxy = {
@@ -308,7 +303,7 @@ export class Auth {
             v2TwoFactorToken = null,
         }: LoginPayload
     ) {
-        this._username = username || this.options.sessionStorage.lastUsername        
+        this._username = username || this.options.sessionStorage.lastUsername
 
         let needUserName: boolean
         let previousLoginState = 0;
@@ -412,20 +407,7 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
-                    let restReq = SsoCloudRequest.create({
-                        "embedded": true,
-                        "clientVersion": this._endpoint.clientVersion,
-                        "dest": "vault",
-                        "forceLogin": false,
-                        "messageSessionUid": this.messageSessionUid
-                    });
-
-                    console.log("cloud sso url: " + loginResponse.url)
-
-                    let requestPayload = await this._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish());
-
-                    let payload = webSafe64FromBytes(requestPayload);
-
+                    let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
                     let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
                     this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
                     // await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
@@ -436,7 +418,6 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
-
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
                     this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
                     return
@@ -473,6 +454,22 @@ export class Auth {
                         break;
                     }
             }
+        }
+    }
+
+    async getSsoProvider(ssoDomain: string, locale?: string) {
+        let domainRequest: ISsoServiceProviderRequest = {
+            name: ssoDomain.trim(),
+            locale: locale,
+            clientVersion: this.endpoint.clientVersion,
+        }
+        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
+        const params = domainResponse.isCloud
+            ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
+            : '?embedded'
+        return {
+            url: domainResponse.spUrl + params,
+            name: domainResponse.name,
         }
     }
 
