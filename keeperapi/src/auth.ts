@@ -85,7 +85,7 @@ export class SocketListener {
         resolve: (data: any) => void,
         reject: (errorMessage: string) => void
     }>
-    // Listers that signal a re-connected socket
+    // Listeners that signal a re-connected socket
     private onOpenListeners: Array<() => void>
 
     private reconnectTimeout: ReturnType<typeof setTimeout>
