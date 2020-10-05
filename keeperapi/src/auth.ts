@@ -85,6 +85,8 @@ export class SocketListener {
         resolve: (data: any) => void,
         reject: (errorMessage: string) => void
     }>
+    // Listeners that signal a re-connected socket
+    private onOpenListeners: Array<() => void>
 
     private reconnectTimeout: ReturnType<typeof setTimeout>
     private currentBackoffSeconds: number
@@ -96,6 +98,7 @@ export class SocketListener {
         this.url = url
         this.messageListeners = []
         this.singleMessageListeners = []
+        this.onOpenListeners = []
         this.currentBackoffSeconds = this.getBaseReconnectionInterval()
         this.isClosedByClient = false
         if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
@@ -115,6 +118,7 @@ export class SocketListener {
             console.log('socket opened')
             clearTimeout(this.reconnectTimeout)
             this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+            this.handleOnOpen()
         })
 
         this.socket.onClose(() => {
@@ -137,6 +141,10 @@ export class SocketListener {
         this.socket.send(sessionToken)
     }
 
+    onOpen(callback: () => void): void {
+        this.onOpenListeners.push(callback)
+    }
+
     onClose(callback: () => void): void {
         if (!this.socket) throw new Error('Socket not available')
         this.socket.onClose(callback)
@@ -145,6 +153,12 @@ export class SocketListener {
     onError(callback: () => void): void {
         if (!this.socket) throw new Error('Socket not available')
         this.socket.onError(callback)
+    }
+
+    private handleOnOpen() {
+        for (let callback of this.onOpenListeners) {
+            callback()
+        }
     }
 
     private handleMessage(messageData: Uint8Array): void {
@@ -183,7 +197,7 @@ export class SocketListener {
 
         this.createWebsocket()
 
-        this.currentBackoffSeconds = Math.min(this.currentBackoffSeconds * 2, 300) // Cap at 5 mins.
+        this.currentBackoffSeconds = Math.min(this.currentBackoffSeconds * 2, 60) // Cap at 1 min, as suggested by docs
     }
 
     disconnect() {
@@ -1052,6 +1066,7 @@ export class Auth {
             throw new Error('No socket available')
         }
         this.socket.registerLogin(this._sessionToken)
+        this.socket.onOpen(() => { this.socket.registerLogin(this._sessionToken) })
     }
 
     async registerDevice() {
