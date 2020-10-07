@@ -82,7 +82,7 @@ export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswo
 
 export const keepAliveMessage = (): RestMessage< {}, {}> => createMessage({}, 'keep_alive', null, null)
 
-export const logoutV3Message = (): RestMessage<{}, {}> => createMessage({}, 'logout_v3', null, null)
+export const logoutV3Message = (): RestMessage<{}, {}> => createMessage({}, 'vault/logout_v3', null, null)
 
 // end new login
 
