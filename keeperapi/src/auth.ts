@@ -22,6 +22,7 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
+    logoutV3Message,
     requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
@@ -220,6 +221,7 @@ export type LoginPayload = {
     loginType?: Authentication.LoginType
     loginMethod?: Authentication.LoginMethod,
     v2TwoFactorToken?: string
+    resumeSessionOnly?: boolean
 }
 
 export enum UserType {
@@ -296,6 +298,10 @@ export class Auth {
     getMessageSessionUid(): Uint8Array {
         return this.messageSessionUid;
     }
+        
+    logout() {
+        this.executeRest(logoutV3Message())
+    }
 
     disconnect() {
         if (this.socket) {
@@ -309,12 +315,13 @@ export class Auth {
      */
     async loginV3(
         {
-            username,
+            username = '',
             password = '',
             loginToken = null,
             loginType = Authentication.LoginType.NORMAL,
             loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
             v2TwoFactorToken = null,
+            resumeSessionOnly = false,
         }: LoginPayload
     ) {
         this._username = username || this.options.sessionStorage.lastUsername
@@ -365,6 +372,11 @@ export class Auth {
                 needUserName = false
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
+            if (resumeSessionOnly && (loginResponse && loginResponse.loginState) != Authentication.LoginState.LOGGED_IN){
+                return {
+                    result: 'notLoggedin'
+                }
+            }
             console.log(loginResponse)
             if (!loginResponse.loginState) {
                 console.log("loginState is null");
@@ -801,6 +813,7 @@ export class Auth {
     }
 
     async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt|undefined = undefined) {
+        this._username = loginResponse.primaryUsername || this._username
         this.options.sessionStorage.saveCloneCode(this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             return

@@ -82,6 +82,8 @@ export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswo
 
 export const keepAliveMessage = (): RestMessage< {}, {}> => createMessage({}, 'keep_alive', null, null)
 
+export const logoutV3Message = (): RestMessage<{}, {}> => createMessage({}, 'logout_v3', null, null)
+
 // end new login
 
 export const deviceMessage = (data: Authentication.IDeviceRequest): RestMessage<Authentication.IDeviceRequest, Authentication.IDeviceResponse> =>
