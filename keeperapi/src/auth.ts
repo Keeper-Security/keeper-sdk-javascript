@@ -1046,14 +1046,14 @@ export class Auth {
         await this.login(username, password);
     }
 
-    async decryptCloudSsoResponse(cloudResponseToken: string): Promise<SsoCloudResponse> {
+    async decryptCloudSsoResponse(cloudResponseToken: string, transmissionKey: TransmissionKey): Promise<SsoCloudResponse> {
         let tokenToBytes: Uint8Array
         try {
             tokenToBytes = platform.base64ToBytes(cloudResponseToken);
         } catch (e) {
             tokenToBytes = platform.base64ToBytes(normal64(cloudResponseToken));
         }
-        const decryptedData = await platform.aesGcmDecrypt(tokenToBytes, this._endpoint.getTransmissionKey().key);
+        const decryptedData = await platform.aesGcmDecrypt(tokenToBytes, transmissionKey.key);
         return SsoCloudResponse.decode(decryptedData);
     }
 
