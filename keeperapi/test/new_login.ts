@@ -81,7 +81,7 @@ async function testRegistration() {
         eccEncryptedPrivateKey: eccEncryptedPrivateKey,
         encryptedClientKey: encryptedClientKey,
         encryptedDeviceDataKey: encryptedDeviceDataKey
-    })
+    }, false)
 
     const regUserResp = await auth.executeRest(regUserMsg)
     console.log(regUserResp)

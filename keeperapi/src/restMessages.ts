@@ -38,8 +38,8 @@ export const updateDeviceMessage = (data: Authentication.IDeviceUpdateRequest): 
 export const requestDeviceVerificationMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
     createMessage(data, 'authentication/request_device_verification', Authentication.DeviceVerificationRequest, null)
 
-export const requestCreateUserMessage = (data: Authentication.ICreateUserRequest): RestMessage<Authentication.ICreateUserRequest, {}> =>
-    createMessage(data, 'authentication/request_create_user', Authentication.CreateUserRequest, null)
+export const requestCreateUserMessage = (data: Authentication.ICreateUserRequest, isSso: boolean): RestMessage<Authentication.ICreateUserRequest, {}> =>
+    createMessage(data, isSso ? 'authentication/create_user_sso' : 'authentication/request_create_user', Authentication.CreateUserRequest, null)
 
 export const startLoginMessage = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, Authentication.ILoginResponse> =>
     createMessage(data, 'authentication/start_login', Authentication.StartLoginRequest, Authentication.LoginResponse)

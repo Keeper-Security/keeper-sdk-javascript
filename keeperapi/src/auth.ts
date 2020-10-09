@@ -403,6 +403,10 @@ export class Auth {
                     handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
                     return;
                 case Authentication.LoginState.REQUIRES_USERNAME:
+                    if (!this._username) {
+                        handleError('generic_error', loginResponse, new Error(`No username supplied, login state = ${loginResponse.loginState}`));
+                        return
+                    }
                     needUserName = true
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
