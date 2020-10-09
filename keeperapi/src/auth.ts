@@ -7,7 +7,7 @@ import {
     TransmissionKey,
     TwoFactorChannelData
 } from './configuration'
-import {KeeperEndpoint} from "./endpoint";
+import {KeeperEndpoint, KeeperEnvironment} from "./endpoint";
 import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
@@ -368,7 +368,7 @@ export class Auth {
                 messageSessionUid: this.messageSessionUid,
                 loginType: loginType,
                 loginMethod: loginMethod,
-                cloneCode: this.options.sessionStorage.getCloneCode(this._username),
+                cloneCode: this.options.sessionStorage.getCloneCode(this.options.host as KeeperEnvironment, this._username),
                 v2TwoFactorToken: v2TwoFactorToken
             }
             if (loginToken) {
@@ -827,7 +827,7 @@ export class Auth {
 
     async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt|undefined = undefined) {
         this._username = loginResponse.primaryUsername || this._username
-        this.options.sessionStorage.saveCloneCode(this._username, loginResponse.cloneCode)
+        this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             return
         }

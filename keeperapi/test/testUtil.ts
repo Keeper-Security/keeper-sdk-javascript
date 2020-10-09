@@ -170,8 +170,10 @@ export function getCredentialsAndHost(): { userName: string; password: string; h
 }
 
 type SessionData = {
-    lastUsername: string
-    lastCloneCode: string
+    [host:string]: {
+        lastUsername: string
+        lastCloneCode: string
+    }
 }
 
 export class TestSessionStorage implements SessionStorage {
@@ -186,25 +188,30 @@ export class TestSessionStorage implements SessionStorage {
         }
         catch (e) {
             this.sessionData = {
-                lastUsername: null,
-                lastCloneCode: null
+                [environment]: {
+                    lastUsername: null,
+                    lastCloneCode: null
+                }
             }
         }
     }
 
     get lastUsername() {
-        return this.sessionData.lastUsername
+        return this.sessionData.host.lastUsername
     };
 
-    getCloneCode(username: string): Uint8Array | null {
-        return this.sessionData.lastCloneCode && this.sessionData.lastUsername === username
-            ? platform.base64ToBytes(this.sessionData.lastCloneCode)
+    getCloneCode(host: string, username: string): Uint8Array | null {
+        return this.sessionData[host].lastCloneCode && this.sessionData[host].lastUsername === username
+            ? platform.base64ToBytes(this.sessionData[host].lastCloneCode)
             : null;
     }
 
-    saveCloneCode(username: string, cloneCode: Uint8Array): void {
-        this.sessionData.lastUsername = username
-        this.sessionData.lastCloneCode = platform.bytesToBase64(cloneCode)
+    saveCloneCode(host: string, username: string, cloneCode: Uint8Array): void {
+        this.sessionData[host] = {
+            lastUsername: username,
+            lastCloneCode: platform.bytesToBase64(cloneCode),
+        }
+
         fs.writeFileSync(this.fileName, JSON.stringify(this.sessionData, null, 2))
     }
 }

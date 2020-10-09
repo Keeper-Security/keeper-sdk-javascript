@@ -1,6 +1,6 @@
 {
   "name": "keeperapi",
-  "version": "0.3.0-beta.107",
+  "version": "0.3.0-beta.117",
   "browser": "dist/index.es.js",
   "main": "dist/index.cjs.js",
   "browsertest": "dist/test.cjs.js",
