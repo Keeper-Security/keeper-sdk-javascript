@@ -14,6 +14,7 @@ import {
     deviceMessage,
     preLoginMessage,
     registerDeviceMessage,
+    registerDeviceInRegionMessage,
     RestMessage,
     ssoCloudRequestMessage,
     updateDeviceMessage
@@ -225,6 +226,17 @@ export class KeeperEndpoint {
                                 this.options.onRegionChanged(this.options.host);
                             }
                             continue
+                        case 'device_not_registered': {
+                            if (this.options.deviceConfig.deviceToken) {
+                                await this.executeRest(registerDeviceInRegionMessage({
+                                    clientVersion: this.options.clientVersion,
+                                    deviceName: this.options.deviceConfig.deviceName,
+                                    devicePublicKey: this.options.deviceConfig.publicKey,
+                                    encryptedDeviceToken: this.options.deviceConfig.deviceToken
+                                }))
+                                continue
+                            }
+                        }
                     }
                     if (this.options.onCommandFailure) {
                         this.options.onCommandFailure(errorObj)

@@ -32,6 +32,9 @@ function createMessage<TIn, TOut>(data: TIn, path: string, encoder: encoderClass
 export const registerDeviceMessage = (data: Authentication.IDeviceRegistrationRequest): RestMessage<Authentication.IDeviceRegistrationRequest, Authentication.IDevice> =>
     createMessage(data, 'authentication/register_device', Authentication.DeviceRegistrationRequest, Authentication.Device)
 
+export const registerDeviceInRegionMessage = (data: Authentication.IRegisterDeviceInRegionRequest): RestMessage<Authentication.IRegisterDeviceInRegionRequest, {}> =>
+    createMessage(data, 'authentication/register_device_in_region', Authentication.RegisterDeviceInRegionRequest, null)
+
 export const updateDeviceMessage = (data: Authentication.IDeviceUpdateRequest): RestMessage<Authentication.IDeviceUpdateRequest, {}> =>
     createMessage(data, 'authentication/update_device', Authentication.DeviceUpdateRequest, null)
 
