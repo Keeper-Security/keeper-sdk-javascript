@@ -56,10 +56,6 @@ async function testLogin() {
     const auth = new Auth(options)
 
     try {
-
-        await auth.createUser('admin+o8a@yozik.us', '111111')
-        return
-
         try {
             await auth.loginV3({
                 username: userName,
@@ -233,8 +229,8 @@ async function testECIES() {
     console.log(decData)
 }
 
-testRegistration().finally()
-// testLogin().finally()
+// testRegistration().finally()
+testLogin().finally()
 // testNewDevice().finally()
 // testApproveNewDevice().finally()
 // testLoginToLinkedDevice().finally()

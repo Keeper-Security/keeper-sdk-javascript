@@ -201,7 +201,11 @@ export class TestSessionStorage implements SessionStorage {
     };
 
     getCloneCode(host: string, username: string): Uint8Array | null {
-        return this.sessionData[host].lastCloneCode && this.sessionData[host].lastUsername === username
+        const sessionData = this.sessionData[host]
+        if (!sessionData) {
+            return null
+        }
+        return sessionData.lastCloneCode && sessionData.lastUsername === username
             ? platform.base64ToBytes(this.sessionData[host].lastCloneCode)
             : null;
     }
