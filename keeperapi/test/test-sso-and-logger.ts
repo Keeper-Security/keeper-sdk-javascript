@@ -42,7 +42,7 @@ import AuthProtocolType = SsoCloud.AuthProtocolType;
 import {serviceLoggerGetMessage, ssoCloudSAMLLogRequestMessage, ssoCloudLogRequestMessage} from '../src/restMessages';
 import {ssoLogoutMessage, ssoGetMetadataMessage, ssoUploadIdpMetadataMessage, ssoCloudServiceProviderConfigurationListRequestMessage} from '../src/restMessages';
 import {ssoCloudServiceProviderUpdateRequestMessage, ssoCloudConfigurationRequestMessage} from '../src/restMessages';
-import {ssoServiceProviderRequestMessage, ssoCloudBasicRequestMessage, ssoCloudValidationRequestMessage} from '../src/restMessages';
+import {ssoServiceProviderRequestMessage, ssoCloudValidationRequestMessage} from '../src/restMessages';
 import {getKeeperSAMLUrl, getKeeperSsoConfigUrl, getKeeperUrl} from '../src/utils';
 
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
@@ -167,7 +167,7 @@ async function TestRegisterDevice() {
             authUI3: authUI3
         });
         let ecKeyPair = platform.generateECKeyPair();
-        
+
         await auth.loginV3({
             username: userInfo.userName,
             password: userInfo.password
@@ -1334,13 +1334,8 @@ async function TestGetSsoServiceProvider() {
     let domainName = "demo azure";  // "F5 Europe"; // "G-Suite Dev";    // "demo azure";    // "devgene sso 2";  // "demo azure";
     const locale = "en_US";
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
-    const configPrefix = 'enterprise/';
-    const configEndpoint = 'get_sso_service_provider';
 
     try {
-        const url = keeperHost + "/api/rest/" + configPrefix + configEndpoint;
-        console.log("REST endpoint =", url);
-
         let auth = new Auth({
             host: keeperHost,
             clientVersion: clientVersion,
@@ -1360,7 +1355,7 @@ async function TestGetSsoServiceProvider() {
             "clientVersion": clientVersion
         });
 
-        let resp = await auth.executeRest(ssoServiceProviderRequestMessage(restReq, configPrefix + configEndpoint));
+        let resp = await auth.executeRest(ssoServiceProviderRequestMessage(restReq));
         console.log(resp);
     } catch (e) {
         console.log(e)

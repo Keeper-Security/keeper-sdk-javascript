@@ -18155,6 +18155,323 @@ export const Authentication = $root.Authentication = (() => {
         return DeviceVerificationRequest;
     })();
 
+    Authentication.DeviceVerificationResponse = (function() {
+
+        /**
+         * Properties of a DeviceVerificationResponse.
+         * @memberof Authentication
+         * @interface IDeviceVerificationResponse
+         * @property {Uint8Array|null} [encryptedDeviceToken] DeviceVerificationResponse encryptedDeviceToken
+         * @property {string|null} [username] DeviceVerificationResponse username
+         * @property {Uint8Array|null} [messageSessionUid] DeviceVerificationResponse messageSessionUid
+         * @property {string|null} [clientVersion] DeviceVerificationResponse clientVersion
+         * @property {Authentication.DeviceStatus|null} [deviceStatus] DeviceVerificationResponse deviceStatus
+         */
+
+        /**
+         * Constructs a new DeviceVerificationResponse.
+         * @memberof Authentication
+         * @classdesc Represents a DeviceVerificationResponse.
+         * @implements IDeviceVerificationResponse
+         * @constructor
+         * @param {Authentication.IDeviceVerificationResponse=} [properties] Properties to set
+         */
+        function DeviceVerificationResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DeviceVerificationResponse encryptedDeviceToken.
+         * @member {Uint8Array} encryptedDeviceToken
+         * @memberof Authentication.DeviceVerificationResponse
+         * @instance
+         */
+        DeviceVerificationResponse.prototype.encryptedDeviceToken = $util.newBuffer([]);
+
+        /**
+         * DeviceVerificationResponse username.
+         * @member {string} username
+         * @memberof Authentication.DeviceVerificationResponse
+         * @instance
+         */
+        DeviceVerificationResponse.prototype.username = "";
+
+        /**
+         * DeviceVerificationResponse messageSessionUid.
+         * @member {Uint8Array} messageSessionUid
+         * @memberof Authentication.DeviceVerificationResponse
+         * @instance
+         */
+        DeviceVerificationResponse.prototype.messageSessionUid = $util.newBuffer([]);
+
+        /**
+         * DeviceVerificationResponse clientVersion.
+         * @member {string} clientVersion
+         * @memberof Authentication.DeviceVerificationResponse
+         * @instance
+         */
+        DeviceVerificationResponse.prototype.clientVersion = "";
+
+        /**
+         * DeviceVerificationResponse deviceStatus.
+         * @member {Authentication.DeviceStatus} deviceStatus
+         * @memberof Authentication.DeviceVerificationResponse
+         * @instance
+         */
+        DeviceVerificationResponse.prototype.deviceStatus = 0;
+
+        /**
+         * Creates a new DeviceVerificationResponse instance using the specified properties.
+         * @function create
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {Authentication.IDeviceVerificationResponse=} [properties] Properties to set
+         * @returns {Authentication.DeviceVerificationResponse} DeviceVerificationResponse instance
+         */
+        DeviceVerificationResponse.create = function create(properties) {
+            return new DeviceVerificationResponse(properties);
+        };
+
+        /**
+         * Encodes the specified DeviceVerificationResponse message. Does not implicitly {@link Authentication.DeviceVerificationResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {Authentication.IDeviceVerificationResponse} message DeviceVerificationResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeviceVerificationResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.encryptedDeviceToken);
+            if (message.username != null && message.hasOwnProperty("username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            if (message.messageSessionUid != null && message.hasOwnProperty("messageSessionUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.messageSessionUid);
+            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.clientVersion);
+            if (message.deviceStatus != null && message.hasOwnProperty("deviceStatus"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.deviceStatus);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified DeviceVerificationResponse message, length delimited. Does not implicitly {@link Authentication.DeviceVerificationResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {Authentication.IDeviceVerificationResponse} message DeviceVerificationResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeviceVerificationResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a DeviceVerificationResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.DeviceVerificationResponse} DeviceVerificationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeviceVerificationResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.DeviceVerificationResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.encryptedDeviceToken = reader.bytes();
+                    break;
+                case 2:
+                    message.username = reader.string();
+                    break;
+                case 3:
+                    message.messageSessionUid = reader.bytes();
+                    break;
+                case 4:
+                    message.clientVersion = reader.string();
+                    break;
+                case 5:
+                    message.deviceStatus = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a DeviceVerificationResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {Authentication.DeviceVerificationResponse} DeviceVerificationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeviceVerificationResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a DeviceVerificationResponse message.
+         * @function verify
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        DeviceVerificationResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                if (!(message.encryptedDeviceToken && typeof message.encryptedDeviceToken.length === "number" || $util.isString(message.encryptedDeviceToken)))
+                    return "encryptedDeviceToken: buffer expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            if (message.messageSessionUid != null && message.hasOwnProperty("messageSessionUid"))
+                if (!(message.messageSessionUid && typeof message.messageSessionUid.length === "number" || $util.isString(message.messageSessionUid)))
+                    return "messageSessionUid: buffer expected";
+            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
+                if (!$util.isString(message.clientVersion))
+                    return "clientVersion: string expected";
+            if (message.deviceStatus != null && message.hasOwnProperty("deviceStatus"))
+                switch (message.deviceStatus) {
+                default:
+                    return "deviceStatus: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a DeviceVerificationResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.DeviceVerificationResponse} DeviceVerificationResponse
+         */
+        DeviceVerificationResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.Authentication.DeviceVerificationResponse)
+                return object;
+            let message = new $root.Authentication.DeviceVerificationResponse();
+            if (object.encryptedDeviceToken != null)
+                if (typeof object.encryptedDeviceToken === "string")
+                    $util.base64.decode(object.encryptedDeviceToken, message.encryptedDeviceToken = $util.newBuffer($util.base64.length(object.encryptedDeviceToken)), 0);
+                else if (object.encryptedDeviceToken.length)
+                    message.encryptedDeviceToken = object.encryptedDeviceToken;
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.messageSessionUid != null)
+                if (typeof object.messageSessionUid === "string")
+                    $util.base64.decode(object.messageSessionUid, message.messageSessionUid = $util.newBuffer($util.base64.length(object.messageSessionUid)), 0);
+                else if (object.messageSessionUid.length)
+                    message.messageSessionUid = object.messageSessionUid;
+            if (object.clientVersion != null)
+                message.clientVersion = String(object.clientVersion);
+            switch (object.deviceStatus) {
+            case "DEVICE_NEEDS_APPROVAL":
+            case 0:
+                message.deviceStatus = 0;
+                break;
+            case "DEVICE_OK":
+            case 1:
+                message.deviceStatus = 1;
+                break;
+            case "DEVICE_DISABLED_BY_USER":
+            case 2:
+                message.deviceStatus = 2;
+                break;
+            case "DEVICE_LOCKED_BY_ADMIN":
+            case 3:
+                message.deviceStatus = 3;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DeviceVerificationResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.DeviceVerificationResponse
+         * @static
+         * @param {Authentication.DeviceVerificationResponse} message DeviceVerificationResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DeviceVerificationResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.encryptedDeviceToken = "";
+                else {
+                    object.encryptedDeviceToken = [];
+                    if (options.bytes !== Array)
+                        object.encryptedDeviceToken = $util.newBuffer(object.encryptedDeviceToken);
+                }
+                object.username = "";
+                if (options.bytes === String)
+                    object.messageSessionUid = "";
+                else {
+                    object.messageSessionUid = [];
+                    if (options.bytes !== Array)
+                        object.messageSessionUid = $util.newBuffer(object.messageSessionUid);
+                }
+                object.clientVersion = "";
+                object.deviceStatus = options.enums === String ? "DEVICE_NEEDS_APPROVAL" : 0;
+            }
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                object.encryptedDeviceToken = options.bytes === String ? $util.base64.encode(message.encryptedDeviceToken, 0, message.encryptedDeviceToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDeviceToken) : message.encryptedDeviceToken;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            if (message.messageSessionUid != null && message.hasOwnProperty("messageSessionUid"))
+                object.messageSessionUid = options.bytes === String ? $util.base64.encode(message.messageSessionUid, 0, message.messageSessionUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.messageSessionUid) : message.messageSessionUid;
+            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
+                object.clientVersion = message.clientVersion;
+            if (message.deviceStatus != null && message.hasOwnProperty("deviceStatus"))
+                object.deviceStatus = options.enums === String ? $root.Authentication.DeviceStatus[message.deviceStatus] : message.deviceStatus;
+            return object;
+        };
+
+        /**
+         * Converts this DeviceVerificationResponse to JSON.
+         * @function toJSON
+         * @memberof Authentication.DeviceVerificationResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DeviceVerificationResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return DeviceVerificationResponse;
+    })();
+
     Authentication.DeviceApprovalRequest = (function() {
 
         /**
@@ -18972,278 +19289,6 @@ export const Authentication = $root.Authentication = (() => {
         };
 
         return ApproveDeviceRequest;
-    })();
-
-    Authentication.ApproveDeviceInstantRequest = (function() {
-
-        /**
-         * Properties of an ApproveDeviceInstantRequest.
-         * @memberof Authentication
-         * @interface IApproveDeviceInstantRequest
-         * @property {Uint8Array|null} [encryptedDeviceToken] ApproveDeviceInstantRequest encryptedDeviceToken
-         * @property {Uint8Array|null} [encryptedDeviceDataKey] ApproveDeviceInstantRequest encryptedDeviceDataKey
-         * @property {boolean|null} [linkDevice] ApproveDeviceInstantRequest linkDevice
-         * @property {string|null} [clientVersion] ApproveDeviceInstantRequest clientVersion
-         */
-
-        /**
-         * Constructs a new ApproveDeviceInstantRequest.
-         * @memberof Authentication
-         * @classdesc Represents an ApproveDeviceInstantRequest.
-         * @implements IApproveDeviceInstantRequest
-         * @constructor
-         * @param {Authentication.IApproveDeviceInstantRequest=} [properties] Properties to set
-         */
-        function ApproveDeviceInstantRequest(properties) {
-            if (properties)
-                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * ApproveDeviceInstantRequest encryptedDeviceToken.
-         * @member {Uint8Array} encryptedDeviceToken
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @instance
-         */
-        ApproveDeviceInstantRequest.prototype.encryptedDeviceToken = $util.newBuffer([]);
-
-        /**
-         * ApproveDeviceInstantRequest encryptedDeviceDataKey.
-         * @member {Uint8Array} encryptedDeviceDataKey
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @instance
-         */
-        ApproveDeviceInstantRequest.prototype.encryptedDeviceDataKey = $util.newBuffer([]);
-
-        /**
-         * ApproveDeviceInstantRequest linkDevice.
-         * @member {boolean} linkDevice
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @instance
-         */
-        ApproveDeviceInstantRequest.prototype.linkDevice = false;
-
-        /**
-         * ApproveDeviceInstantRequest clientVersion.
-         * @member {string} clientVersion
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @instance
-         */
-        ApproveDeviceInstantRequest.prototype.clientVersion = "";
-
-        /**
-         * Creates a new ApproveDeviceInstantRequest instance using the specified properties.
-         * @function create
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {Authentication.IApproveDeviceInstantRequest=} [properties] Properties to set
-         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest instance
-         */
-        ApproveDeviceInstantRequest.create = function create(properties) {
-            return new ApproveDeviceInstantRequest(properties);
-        };
-
-        /**
-         * Encodes the specified ApproveDeviceInstantRequest message. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
-         * @function encode
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {Authentication.IApproveDeviceInstantRequest} message ApproveDeviceInstantRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        ApproveDeviceInstantRequest.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
-                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.encryptedDeviceToken);
-            if (message.encryptedDeviceDataKey != null && message.hasOwnProperty("encryptedDeviceDataKey"))
-                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.encryptedDeviceDataKey);
-            if (message.linkDevice != null && message.hasOwnProperty("linkDevice"))
-                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.linkDevice);
-            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
-                writer.uint32(/* id 4, wireType 2 =*/34).string(message.clientVersion);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified ApproveDeviceInstantRequest message, length delimited. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {Authentication.IApproveDeviceInstantRequest} message ApproveDeviceInstantRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        ApproveDeviceInstantRequest.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer.
-         * @function decode
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        ApproveDeviceInstantRequest.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.ApproveDeviceInstantRequest();
-            while (reader.pos < end) {
-                let tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.encryptedDeviceToken = reader.bytes();
-                    break;
-                case 2:
-                    message.encryptedDeviceDataKey = reader.bytes();
-                    break;
-                case 3:
-                    message.linkDevice = reader.bool();
-                    break;
-                case 4:
-                    message.clientVersion = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        ApproveDeviceInstantRequest.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies an ApproveDeviceInstantRequest message.
-         * @function verify
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        ApproveDeviceInstantRequest.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
-                if (!(message.encryptedDeviceToken && typeof message.encryptedDeviceToken.length === "number" || $util.isString(message.encryptedDeviceToken)))
-                    return "encryptedDeviceToken: buffer expected";
-            if (message.encryptedDeviceDataKey != null && message.hasOwnProperty("encryptedDeviceDataKey"))
-                if (!(message.encryptedDeviceDataKey && typeof message.encryptedDeviceDataKey.length === "number" || $util.isString(message.encryptedDeviceDataKey)))
-                    return "encryptedDeviceDataKey: buffer expected";
-            if (message.linkDevice != null && message.hasOwnProperty("linkDevice"))
-                if (typeof message.linkDevice !== "boolean")
-                    return "linkDevice: boolean expected";
-            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
-                if (!$util.isString(message.clientVersion))
-                    return "clientVersion: string expected";
-            return null;
-        };
-
-        /**
-         * Creates an ApproveDeviceInstantRequest message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {Authentication.ApproveDeviceInstantRequest} ApproveDeviceInstantRequest
-         */
-        ApproveDeviceInstantRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.Authentication.ApproveDeviceInstantRequest)
-                return object;
-            let message = new $root.Authentication.ApproveDeviceInstantRequest();
-            if (object.encryptedDeviceToken != null)
-                if (typeof object.encryptedDeviceToken === "string")
-                    $util.base64.decode(object.encryptedDeviceToken, message.encryptedDeviceToken = $util.newBuffer($util.base64.length(object.encryptedDeviceToken)), 0);
-                else if (object.encryptedDeviceToken.length)
-                    message.encryptedDeviceToken = object.encryptedDeviceToken;
-            if (object.encryptedDeviceDataKey != null)
-                if (typeof object.encryptedDeviceDataKey === "string")
-                    $util.base64.decode(object.encryptedDeviceDataKey, message.encryptedDeviceDataKey = $util.newBuffer($util.base64.length(object.encryptedDeviceDataKey)), 0);
-                else if (object.encryptedDeviceDataKey.length)
-                    message.encryptedDeviceDataKey = object.encryptedDeviceDataKey;
-            if (object.linkDevice != null)
-                message.linkDevice = Boolean(object.linkDevice);
-            if (object.clientVersion != null)
-                message.clientVersion = String(object.clientVersion);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from an ApproveDeviceInstantRequest message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @static
-         * @param {Authentication.ApproveDeviceInstantRequest} message ApproveDeviceInstantRequest
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        ApproveDeviceInstantRequest.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            let object = {};
-            if (options.defaults) {
-                if (options.bytes === String)
-                    object.encryptedDeviceToken = "";
-                else {
-                    object.encryptedDeviceToken = [];
-                    if (options.bytes !== Array)
-                        object.encryptedDeviceToken = $util.newBuffer(object.encryptedDeviceToken);
-                }
-                if (options.bytes === String)
-                    object.encryptedDeviceDataKey = "";
-                else {
-                    object.encryptedDeviceDataKey = [];
-                    if (options.bytes !== Array)
-                        object.encryptedDeviceDataKey = $util.newBuffer(object.encryptedDeviceDataKey);
-                }
-                object.linkDevice = false;
-                object.clientVersion = "";
-            }
-            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
-                object.encryptedDeviceToken = options.bytes === String ? $util.base64.encode(message.encryptedDeviceToken, 0, message.encryptedDeviceToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDeviceToken) : message.encryptedDeviceToken;
-            if (message.encryptedDeviceDataKey != null && message.hasOwnProperty("encryptedDeviceDataKey"))
-                object.encryptedDeviceDataKey = options.bytes === String ? $util.base64.encode(message.encryptedDeviceDataKey, 0, message.encryptedDeviceDataKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDeviceDataKey) : message.encryptedDeviceDataKey;
-            if (message.linkDevice != null && message.hasOwnProperty("linkDevice"))
-                object.linkDevice = message.linkDevice;
-            if (message.clientVersion != null && message.hasOwnProperty("clientVersion"))
-                object.clientVersion = message.clientVersion;
-            return object;
-        };
-
-        /**
-         * Converts this ApproveDeviceInstantRequest to JSON.
-         * @function toJSON
-         * @memberof Authentication.ApproveDeviceInstantRequest
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        ApproveDeviceInstantRequest.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return ApproveDeviceInstantRequest;
     })();
 
     Authentication.EnterpriseUserAliasRequest = (function() {
@@ -32396,6 +32441,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @property {boolean|null} [persistentLogin] Settings persistentLogin
          * @property {boolean|null} [ipDisableAutoApprove] Settings ipDisableAutoApprove
          * @property {boolean|null} [shareDataKeyWithEccPublicKey] Settings shareDataKeyWithEccPublicKey
+         * @property {boolean|null} [shareDataKeyWithDevicePublicKey] Settings shareDataKeyWithDevicePublicKey
+         * @property {boolean|null} [deviceDataKeyPresent] Settings deviceDataKeyPresent
          */
 
         /**
@@ -32650,6 +32697,22 @@ export const AccountSummary = $root.AccountSummary = (() => {
         Settings.prototype.shareDataKeyWithEccPublicKey = false;
 
         /**
+         * Settings shareDataKeyWithDevicePublicKey.
+         * @member {boolean} shareDataKeyWithDevicePublicKey
+         * @memberof AccountSummary.Settings
+         * @instance
+         */
+        Settings.prototype.shareDataKeyWithDevicePublicKey = false;
+
+        /**
+         * Settings deviceDataKeyPresent.
+         * @member {boolean} deviceDataKeyPresent
+         * @memberof AccountSummary.Settings
+         * @instance
+         */
+        Settings.prototype.deviceDataKeyPresent = false;
+
+        /**
          * Creates a new Settings instance using the specified properties.
          * @function create
          * @memberof AccountSummary.Settings
@@ -32735,6 +32798,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 writer.uint32(/* id 28, wireType 0 =*/224).bool(message.ipDisableAutoApprove);
             if (message.shareDataKeyWithEccPublicKey != null && message.hasOwnProperty("shareDataKeyWithEccPublicKey"))
                 writer.uint32(/* id 29, wireType 0 =*/232).bool(message.shareDataKeyWithEccPublicKey);
+            if (message.shareDataKeyWithDevicePublicKey != null && message.hasOwnProperty("shareDataKeyWithDevicePublicKey"))
+                writer.uint32(/* id 30, wireType 0 =*/240).bool(message.shareDataKeyWithDevicePublicKey);
+            if (message.deviceDataKeyPresent != null && message.hasOwnProperty("deviceDataKeyPresent"))
+                writer.uint32(/* id 31, wireType 0 =*/248).bool(message.deviceDataKeyPresent);
             return writer;
         };
 
@@ -32863,6 +32930,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
                     break;
                 case 29:
                     message.shareDataKeyWithEccPublicKey = reader.bool();
+                    break;
+                case 30:
+                    message.shareDataKeyWithDevicePublicKey = reader.bool();
+                    break;
+                case 31:
+                    message.deviceDataKeyPresent = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -33010,6 +33083,12 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.shareDataKeyWithEccPublicKey != null && message.hasOwnProperty("shareDataKeyWithEccPublicKey"))
                 if (typeof message.shareDataKeyWithEccPublicKey !== "boolean")
                     return "shareDataKeyWithEccPublicKey: boolean expected";
+            if (message.shareDataKeyWithDevicePublicKey != null && message.hasOwnProperty("shareDataKeyWithDevicePublicKey"))
+                if (typeof message.shareDataKeyWithDevicePublicKey !== "boolean")
+                    return "shareDataKeyWithDevicePublicKey: boolean expected";
+            if (message.deviceDataKeyPresent != null && message.hasOwnProperty("deviceDataKeyPresent"))
+                if (typeof message.deviceDataKeyPresent !== "boolean")
+                    return "deviceDataKeyPresent: boolean expected";
             return null;
         };
 
@@ -33132,6 +33211,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 message.ipDisableAutoApprove = Boolean(object.ipDisableAutoApprove);
             if (object.shareDataKeyWithEccPublicKey != null)
                 message.shareDataKeyWithEccPublicKey = Boolean(object.shareDataKeyWithEccPublicKey);
+            if (object.shareDataKeyWithDevicePublicKey != null)
+                message.shareDataKeyWithDevicePublicKey = Boolean(object.shareDataKeyWithDevicePublicKey);
+            if (object.deviceDataKeyPresent != null)
+                message.deviceDataKeyPresent = Boolean(object.deviceDataKeyPresent);
             return message;
         };
 
@@ -33194,6 +33277,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.persistentLogin = false;
                 object.ipDisableAutoApprove = false;
                 object.shareDataKeyWithEccPublicKey = false;
+                object.shareDataKeyWithDevicePublicKey = false;
+                object.deviceDataKeyPresent = false;
             }
             if (message.audit != null && message.hasOwnProperty("audit"))
                 object.audit = message.audit;
@@ -33271,6 +33356,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.ipDisableAutoApprove = message.ipDisableAutoApprove;
             if (message.shareDataKeyWithEccPublicKey != null && message.hasOwnProperty("shareDataKeyWithEccPublicKey"))
                 object.shareDataKeyWithEccPublicKey = message.shareDataKeyWithEccPublicKey;
+            if (message.shareDataKeyWithDevicePublicKey != null && message.hasOwnProperty("shareDataKeyWithDevicePublicKey"))
+                object.shareDataKeyWithDevicePublicKey = message.shareDataKeyWithDevicePublicKey;
+            if (message.deviceDataKeyPresent != null && message.hasOwnProperty("deviceDataKeyPresent"))
+                object.deviceDataKeyPresent = message.deviceDataKeyPresent;
             return object;
         };
 

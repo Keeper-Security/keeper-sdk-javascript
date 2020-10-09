@@ -6837,6 +6837,120 @@ export namespace Authentication {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a DeviceVerificationResponse. */
+    interface IDeviceVerificationResponse {
+
+        /** DeviceVerificationResponse encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** DeviceVerificationResponse username */
+        username?: (string|null);
+
+        /** DeviceVerificationResponse messageSessionUid */
+        messageSessionUid?: (Uint8Array|null);
+
+        /** DeviceVerificationResponse clientVersion */
+        clientVersion?: (string|null);
+
+        /** DeviceVerificationResponse deviceStatus */
+        deviceStatus?: (Authentication.DeviceStatus|null);
+    }
+
+    /** Represents a DeviceVerificationResponse. */
+    class DeviceVerificationResponse implements IDeviceVerificationResponse {
+
+        /**
+         * Constructs a new DeviceVerificationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IDeviceVerificationResponse);
+
+        /** DeviceVerificationResponse encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** DeviceVerificationResponse username. */
+        public username: string;
+
+        /** DeviceVerificationResponse messageSessionUid. */
+        public messageSessionUid: Uint8Array;
+
+        /** DeviceVerificationResponse clientVersion. */
+        public clientVersion: string;
+
+        /** DeviceVerificationResponse deviceStatus. */
+        public deviceStatus: Authentication.DeviceStatus;
+
+        /**
+         * Creates a new DeviceVerificationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeviceVerificationResponse instance
+         */
+        public static create(properties?: Authentication.IDeviceVerificationResponse): Authentication.DeviceVerificationResponse;
+
+        /**
+         * Encodes the specified DeviceVerificationResponse message. Does not implicitly {@link Authentication.DeviceVerificationResponse.verify|verify} messages.
+         * @param message DeviceVerificationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IDeviceVerificationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeviceVerificationResponse message, length delimited. Does not implicitly {@link Authentication.DeviceVerificationResponse.verify|verify} messages.
+         * @param message DeviceVerificationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IDeviceVerificationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeviceVerificationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeviceVerificationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.DeviceVerificationResponse;
+
+        /**
+         * Decodes a DeviceVerificationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeviceVerificationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.DeviceVerificationResponse;
+
+        /**
+         * Verifies a DeviceVerificationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeviceVerificationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeviceVerificationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.DeviceVerificationResponse;
+
+        /**
+         * Creates a plain object from a DeviceVerificationResponse message. Also converts values to other types if specified.
+         * @param message DeviceVerificationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.DeviceVerificationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeviceVerificationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a DeviceApprovalRequest. */
     interface IDeviceApprovalRequest {
 
@@ -7162,114 +7276,6 @@ export namespace Authentication {
 
         /**
          * Converts this ApproveDeviceRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an ApproveDeviceInstantRequest. */
-    interface IApproveDeviceInstantRequest {
-
-        /** ApproveDeviceInstantRequest encryptedDeviceToken */
-        encryptedDeviceToken?: (Uint8Array|null);
-
-        /** ApproveDeviceInstantRequest encryptedDeviceDataKey */
-        encryptedDeviceDataKey?: (Uint8Array|null);
-
-        /** ApproveDeviceInstantRequest linkDevice */
-        linkDevice?: (boolean|null);
-
-        /** ApproveDeviceInstantRequest clientVersion */
-        clientVersion?: (string|null);
-    }
-
-    /** Represents an ApproveDeviceInstantRequest. */
-    class ApproveDeviceInstantRequest implements IApproveDeviceInstantRequest {
-
-        /**
-         * Constructs a new ApproveDeviceInstantRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Authentication.IApproveDeviceInstantRequest);
-
-        /** ApproveDeviceInstantRequest encryptedDeviceToken. */
-        public encryptedDeviceToken: Uint8Array;
-
-        /** ApproveDeviceInstantRequest encryptedDeviceDataKey. */
-        public encryptedDeviceDataKey: Uint8Array;
-
-        /** ApproveDeviceInstantRequest linkDevice. */
-        public linkDevice: boolean;
-
-        /** ApproveDeviceInstantRequest clientVersion. */
-        public clientVersion: string;
-
-        /**
-         * Creates a new ApproveDeviceInstantRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ApproveDeviceInstantRequest instance
-         */
-        public static create(properties?: Authentication.IApproveDeviceInstantRequest): Authentication.ApproveDeviceInstantRequest;
-
-        /**
-         * Encodes the specified ApproveDeviceInstantRequest message. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
-         * @param message ApproveDeviceInstantRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Authentication.IApproveDeviceInstantRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ApproveDeviceInstantRequest message, length delimited. Does not implicitly {@link Authentication.ApproveDeviceInstantRequest.verify|verify} messages.
-         * @param message ApproveDeviceInstantRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Authentication.IApproveDeviceInstantRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ApproveDeviceInstantRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ApproveDeviceInstantRequest;
-
-        /**
-         * Decodes an ApproveDeviceInstantRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ApproveDeviceInstantRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ApproveDeviceInstantRequest;
-
-        /**
-         * Verifies an ApproveDeviceInstantRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an ApproveDeviceInstantRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ApproveDeviceInstantRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Authentication.ApproveDeviceInstantRequest;
-
-        /**
-         * Creates a plain object from an ApproveDeviceInstantRequest message. Also converts values to other types if specified.
-         * @param message ApproveDeviceInstantRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Authentication.ApproveDeviceInstantRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ApproveDeviceInstantRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -12425,6 +12431,12 @@ export namespace AccountSummary {
 
         /** Settings shareDataKeyWithEccPublicKey */
         shareDataKeyWithEccPublicKey?: (boolean|null);
+
+        /** Settings shareDataKeyWithDevicePublicKey */
+        shareDataKeyWithDevicePublicKey?: (boolean|null);
+
+        /** Settings deviceDataKeyPresent */
+        deviceDataKeyPresent?: (boolean|null);
     }
 
     /** Represents a Settings. */
@@ -12522,6 +12534,12 @@ export namespace AccountSummary {
 
         /** Settings shareDataKeyWithEccPublicKey. */
         public shareDataKeyWithEccPublicKey: boolean;
+
+        /** Settings shareDataKeyWithDevicePublicKey. */
+        public shareDataKeyWithDevicePublicKey: boolean;
+
+        /** Settings deviceDataKeyPresent. */
+        public deviceDataKeyPresent: boolean;
 
         /**
          * Creates a new Settings instance using the specified properties.

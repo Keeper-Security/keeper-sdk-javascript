@@ -69,11 +69,6 @@ export const browserPlatform: Platform = class {
         };
     }
 
-    // todo: revisit
-    static async generateRSAKeyPair2(): Promise<any> {
-        return this.generateRSAKeyPair()
-    }
-
     static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
         const ecdh = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
         const privateKey = await crypto.subtle.exportKey('jwk', ecdh.privateKey)
@@ -243,7 +238,7 @@ export const browserPlatform: Platform = class {
         }, key, 512);
         let hmacKey = await crypto.subtle.importKey(
             "raw",
-            browserPlatform.stringToBytes(domain),
+            derived,
             {
                 name: "HMAC",
                 hash: {
@@ -252,7 +247,7 @@ export const browserPlatform: Platform = class {
             },
             false,
             ["sign", "verify"]);
-        const reduced = await crypto.subtle.sign("HMAC", hmacKey, derived);
+        const reduced = await crypto.subtle.sign("HMAC", hmacKey, browserPlatform.stringToBytes(domain));
         return new Uint8Array(reduced);
     }
 
@@ -333,6 +328,11 @@ export const browserPlatform: Platform = class {
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket(url)
         return {
+            onOpen: (callback: () => void) => {
+                socket.onopen = (e: Event) => {
+                    callback()
+                }
+            },
             close: () => {
                 socket.close()
             },

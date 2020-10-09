@@ -40,14 +40,13 @@ export const nodePlatform: Platform = class {
      * Returns the keys as Uint8Arrays.
      */
     static async generateRSAKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array}> {
-        throw "Not yet implemented";
-    }
-
-    /**
-     * Returns the keys as an object created by the NodeRSA library.
-     */
-    static async generateRSAKeyPair2(): Promise<any> {
-        return new NodeRSA({b: 2048});
+        const rsaKeys = new NodeRSA({b: 2048});
+        const rsaPublicKey: Buffer = rsaKeys.exportKey('public-der');
+        const rsaPrivateKey: Buffer = rsaKeys.exportKey('private-der');
+        return Promise.resolve({
+            privateKey: rsaPrivateKey,
+            publicKey: rsaPublicKey
+        })
     }
 
     static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
@@ -155,8 +154,8 @@ export const nodePlatform: Platform = class {
     }
 
     static deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        const bytes = crypto.pbkdf2Sync(Buffer.from(domain + password, "utf8"), saltBytes, iterations, 32, 'SHA512')
-        const reducedBytes = crypto.createHmac("SHA256", Buffer.from(domain)).update(bytes).digest()
+        const bytes = crypto.pbkdf2Sync(Buffer.from(domain + password, "utf8"), saltBytes, iterations, 64, 'SHA512')
+        const reducedBytes = crypto.createHmac("SHA256", bytes).update(Buffer.from(domain)).digest()
         return Promise.resolve(reducedBytes);
     }
 
@@ -251,6 +250,9 @@ export const nodePlatform: Platform = class {
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket.Client(url)
         return {
+            onOpen: (callback: () => void) => {
+                socket.on('open', callback)
+            },
             close: () => {
                 socket.close()
             },

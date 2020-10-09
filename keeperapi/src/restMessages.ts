@@ -32,14 +32,17 @@ function createMessage<TIn, TOut>(data: TIn, path: string, encoder: encoderClass
 export const registerDeviceMessage = (data: Authentication.IDeviceRegistrationRequest): RestMessage<Authentication.IDeviceRegistrationRequest, Authentication.IDevice> =>
     createMessage(data, 'authentication/register_device', Authentication.DeviceRegistrationRequest, Authentication.Device)
 
+export const registerDeviceInRegionMessage = (data: Authentication.IRegisterDeviceInRegionRequest): RestMessage<Authentication.IRegisterDeviceInRegionRequest, {}> =>
+    createMessage(data, 'authentication/register_device_in_region', Authentication.RegisterDeviceInRegionRequest, null)
+
 export const updateDeviceMessage = (data: Authentication.IDeviceUpdateRequest): RestMessage<Authentication.IDeviceUpdateRequest, {}> =>
     createMessage(data, 'authentication/update_device', Authentication.DeviceUpdateRequest, null)
 
 export const requestDeviceVerificationMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
     createMessage(data, 'authentication/request_device_verification', Authentication.DeviceVerificationRequest, null)
 
-export const requestCreateUserMessage = (data: Authentication.ICreateUserRequest): RestMessage<Authentication.ICreateUserRequest, {}> =>
-    createMessage(data, 'authentication/request_create_user', Authentication.CreateUserRequest, null)
+export const requestCreateUserMessage = (data: Authentication.ICreateUserRequest, isSso: boolean): RestMessage<Authentication.ICreateUserRequest, {}> =>
+    createMessage(data, isSso ? 'authentication/create_user_sso' : 'authentication/request_create_user', Authentication.CreateUserRequest, null)
 
 export const startLoginMessage = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, Authentication.ILoginResponse> =>
     createMessage(data, 'authentication/start_login', Authentication.StartLoginRequest, Authentication.LoginResponse)
@@ -56,8 +59,8 @@ export const twoFactorSend2FAPushMessage = (data: Authentication.ITwoFactorSendP
 export const approveDeviceMessage = (data: Authentication.IApproveDeviceRequest): RestMessage<Authentication.IApproveDeviceRequest, {}> =>
     createMessage(data, 'authentication/approve_device', Authentication.ApproveDeviceRequest, null)
 
-export const approveDeviceInstantMessage = (data: Authentication.IApproveDeviceInstantRequest): RestMessage<Authentication.IApproveDeviceInstantRequest, {}> =>
-    createMessage(data, 'authentication/approve_device_instant', Authentication.ApproveDeviceInstantRequest, null)
+export const approveDeviceInstantMessage = (data: Authentication.IApproveDeviceRequest): RestMessage<Authentication.IApproveDeviceRequest, {}> =>
+    createMessage(data, 'authentication/approve_device_instant', Authentication.ApproveDeviceRequest, null)
 
 export const validateDeviceVerificationCodeMessage = (data: Authentication.IValidateDeviceVerificationCodeRequest): RestMessage<Authentication.IValidateDeviceVerificationCodeRequest, {}> =>
     createMessage(data, 'authentication/validate_device_verification_code', Authentication.ValidateDeviceVerificationCodeRequest, null)
@@ -77,7 +80,12 @@ export const setUserSettingMessage = (data: Authentication.IUserSettingRequest):
 export const requestDeviceAdminApprovalMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
     createMessage(data, 'authentication/request_device_admin_approval', Authentication.DeviceVerificationRequest, null)
 
+export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswordReentryRequest): RestMessage<Authentication.IMasterPasswordReentryRequest, {}> =>
+    createMessage(data, 'authentication/validate_master_password', Authentication.MasterPasswordReentryRequest, null)
+
 export const keepAliveMessage = (): RestMessage< {}, {}> => createMessage({}, 'keep_alive', null, null)
+
+export const logoutV3Message = (): RestMessage<{}, {}> => createMessage({}, 'vault/logout_v3', null, null)
 
 // end new login
 
@@ -167,11 +175,11 @@ export const ssoCloudSAMLLogRequestMessage = (data: SsoCloud.ISsoCloudSAMLLogReq
 export const ssoCloudServiceProviderConfigurationListRequestMessage = (data: SsoCloud.ISsoCloudServiceProviderConfigurationListRequest): RestMessage<SsoCloud.ISsoCloudServiceProviderConfigurationListRequest, SsoCloud.ISsoCloudServiceProviderConfigurationListResponse> =>
     createMessage(data, 'sso/config/sso_cloud_sp_configuration_get', SsoCloud.SsoCloudServiceProviderConfigurationListRequest, SsoCloud.SsoCloudServiceProviderConfigurationListResponse);
 
-export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServiceProviderRequest, url:string): RestMessage<Authentication.ISsoServiceProviderRequest, Authentication.ISsoServiceProviderResponse> =>
-    createMessage(data, url, Authentication.SsoServiceProviderRequest, Authentication.SsoServiceProviderResponse);
+export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServiceProviderRequest): RestMessage<Authentication.ISsoServiceProviderRequest, Authentication.ISsoServiceProviderResponse> =>
+    createMessage(data, 'enterprise/get_sso_service_provider', Authentication.SsoServiceProviderRequest, Authentication.SsoServiceProviderResponse);
 
-export const ssoCloudBasicRequestMessage = (data: SsoCloud.ISsoCloudRequest, url:string): RestMessage<SsoCloud.ISsoCloudRequest, SsoCloud.ISsoCloudResponse> =>
-    createMessage(data, url, SsoCloud.SsoCloudRequest, SsoCloud.SsoCloudResponse);
+export const ssoCloudRequestMessage = (data: SsoCloud.ISsoCloudRequest): RestMessage<SsoCloud.ISsoCloudRequest, null> =>
+    createMessage(data, null, SsoCloud.SsoCloudRequest, null);
 
 export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url:string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse);

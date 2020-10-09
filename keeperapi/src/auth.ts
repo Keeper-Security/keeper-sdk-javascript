@@ -12,7 +12,7 @@ import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
     chooseErrorMessage,
-    decryptFromStorage,
+    decryptFromStorage, generateEncryptionKey,
     generateTransmissionKey,
     generateUidBytes,
     isTwoFactorResultCode,
@@ -22,10 +22,11 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
+    logoutV3Message, requestCreateUserMessage,
     requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
-    ssoSamlMessage,
+    ssoSamlMessage, ssoServiceProviderRequestMessage,
     startLoginMessage,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
@@ -35,11 +36,12 @@ import {
 import {Authentication, SsoCloud} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
-import SsoCloudRequest = SsoCloud.SsoCloudRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
+import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
+import ICreateUserRequest = Authentication.ICreateUserRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -65,12 +67,8 @@ type SocketMessage = {
     passcode: string
 }
 
-type SocketResponseData = {
-    event: 'received_totp',
-    encryptedLoginToken: string
-}
-
 export type SocketProxy = {
+    onOpen: (callback: () => void) => void
     close: () => void
     onClose: (callback: () => void) => void
     onError: (callback: (e: Event | Error) => void) => void
@@ -80,6 +78,8 @@ export type SocketProxy = {
 
 export class SocketListener {
     private socket: SocketProxy | null;
+    private url: string
+    private getConnectionRequest?: () => Promise<string>
     // Listeners that receive all messages
     private messageListeners: Array<(data: any) => void>
     // Listeners that receive a single message
@@ -87,16 +87,48 @@ export class SocketListener {
         resolve: (data: any) => void,
         reject: (errorMessage: string) => void
     }>
+    // Listeners that signal a re-connected socket
+    private onOpenListeners: Array<() => void>
 
-    constructor(url: string) {
+    private reconnectTimeout: ReturnType<typeof setTimeout>
+    private currentBackoffSeconds: number
+    private isClosedByClient: boolean
+
+    constructor(url: string, getConnectionRequest?: () => Promise<string>) {
         console.log('Connecting to ' + url)
 
+        this.url = url
         this.messageListeners = []
         this.singleMessageListeners = []
-        this.socket = platform.createWebsocket(url)
+        this.onOpenListeners = []
+        this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+        this.isClosedByClient = false
+        if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
+
+        this.createWebsocket()
+    }
+
+    async createWebsocket() {
+        if (this.getConnectionRequest) {
+            const connectionRequest = await this.getConnectionRequest()
+            this.socket = platform.createWebsocket(`${this.url}/${connectionRequest}`)
+        } else {
+            this.socket = platform.createWebsocket(this.url)
+        }
+
+        this.socket.onOpen(() => {
+            console.log('socket opened')
+            clearTimeout(this.reconnectTimeout)
+            this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+            this.handleOnOpen()
+        })
 
         this.socket.onClose(() => {
             console.log('socket closed')
+
+            if (!this.isClosedByClient) {
+                this.reconnect()
+            }
         })
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
@@ -111,6 +143,10 @@ export class SocketListener {
         this.socket.send(sessionToken)
     }
 
+    onOpen(callback: () => void): void {
+        this.onOpenListeners.push(callback)
+    }
+
     onClose(callback: () => void): void {
         if (!this.socket) throw new Error('Socket not available')
         this.socket.onClose(callback)
@@ -119,6 +155,12 @@ export class SocketListener {
     onError(callback: () => void): void {
         if (!this.socket) throw new Error('Socket not available')
         this.socket.onError(callback)
+    }
+
+    private handleOnOpen() {
+        for (let callback of this.onOpenListeners) {
+            callback()
+        }
     }
 
     private handleMessage(messageData: Uint8Array): void {
@@ -143,14 +185,32 @@ export class SocketListener {
         })
     }
 
+    private getBaseReconnectionInterval(): number {
+        return Math.random() * 5
+    }
+
+    private reconnect() {
+        console.log(`Reconnecting websocket in ${this.currentBackoffSeconds.toFixed(2)} seconds...`)
+
+        // schedule next reconnect attempt
+        this.reconnectTimeout = setTimeout(() => {
+            this.socket?.close()
+        }, this.currentBackoffSeconds * 1000)
+
+        this.createWebsocket()
+
+        this.currentBackoffSeconds = Math.min(this.currentBackoffSeconds * 2, 60) // Cap at 1 min, as suggested by docs
+    }
+
     disconnect() {
+        this.isClosedByClient = true
         this.socket?.close();
         this.socket = null
         this.messageListeners.length = 0
 
-        for (let {reject} of this.singleMessageListeners) {
-            reject('Socket disconnected')
-        }
+        this.currentBackoffSeconds = Math.random() * 5
+        clearTimeout(this.reconnectTimeout)
+
         this.singleMessageListeners.length = 0
     }
 }
@@ -162,6 +222,7 @@ export type LoginPayload = {
     loginType?: Authentication.LoginType
     loginMethod?: Authentication.LoginMethod,
     v2TwoFactorToken?: string
+    resumeSessionOnly?: boolean
 }
 
 export enum UserType {
@@ -178,12 +239,14 @@ export class Auth {
     privateKey: Uint8Array;
     private _accountUid: Uint8Array;
     private _sessionToken: string = '';
+    private _sessionTokenType: Authentication.SessionTokenType|null;
     private _username: string = '';
     private endpoint: KeeperEndpoint;
     private managedCompanyId?: number;
     private messageSessionUid: Uint8Array;
     options: ClientConfigurationInternal;
     private socket: SocketListener | undefined;
+    public clientKey: Uint8Array;
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -231,12 +294,20 @@ export class Auth {
         return this._sessionToken;
     }
 
+    get sessionTokenType(): Authentication.SessionTokenType|null {
+        return this._sessionTokenType
+    }
+
     get username(): string {
         return this._username;
     }
 
     getMessageSessionUid(): Uint8Array {
         return this.messageSessionUid;
+    }
+
+    logout() {
+        this.executeRest(logoutV3Message())
     }
 
     disconnect() {
@@ -251,25 +322,16 @@ export class Auth {
      */
     async loginV3(
         {
-            username,
+            username = '',
             password = '',
             loginToken = null,
             loginType = Authentication.LoginType.NORMAL,
             loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
             v2TwoFactorToken = null,
+            resumeSessionOnly = false,
         }: LoginPayload
     ) {
         this._username = username || this.options.sessionStorage.lastUsername
-
-        if (!this.options.deviceConfig.deviceToken) {
-            await this.endpoint.registerDevice()
-        }
-
-        if (!this.socket) {
-            const connectionRequest = await this.endpoint.getPushConnectionRequest(this.messageSessionUid)
-            this.socket = new SocketListener(`wss://push.services.${this.options.host}/wss_open_connection/${connectionRequest}`)
-            console.log("Socket connected")
-        }
 
         let needUserName: boolean
         let previousLoginState = 0;
@@ -287,24 +349,41 @@ export class Auth {
         };
 
         while (true) {
+
+            if (!this.options.deviceConfig.deviceToken) {
+                await this.endpoint.registerDevice()
+            }
+
+            if (!this.socket) {
+                const url = `wss://push.services.${this.options.host}/wss_open_connection`
+                const getConnectionRequest = () => this.endpoint.getPushConnectionRequest(this.messageSessionUid)
+
+                this.socket = new SocketListener(url, getConnectionRequest)
+                console.log("Socket connected")
+            }
+
             const startLoginRequest: IStartLoginRequest = {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginType: loginType,
                 loginMethod: loginMethod,
-                cloneCode: this.options.sessionStorage.getCloneCode(this._username) || Uint8Array.of(0),
+                cloneCode: this.options.sessionStorage.getCloneCode(this._username),
                 v2TwoFactorToken: v2TwoFactorToken
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
-            } else {
-                if (needUserName || !this.options.useSessionResumption) {
-                    startLoginRequest.username = this._username
-                    needUserName = false
-                }
+            }
+            if (needUserName || !this.options.useSessionResumption) {
+                startLoginRequest.username = this._username
+                needUserName = false
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
+            if (resumeSessionOnly && (loginResponse && loginResponse.loginState) != Authentication.LoginState.LOGGED_IN){
+                return {
+                    result: 'notLoggedin'
+                }
+            }
             console.log(loginResponse)
             if (!loginResponse.loginState) {
                 console.log("loginState is null");
@@ -320,18 +399,23 @@ export class Auth {
 
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.ACCOUNT_LOCKED:
-                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
-                case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                 case Authentication.LoginState.LOGGED_OUT:
                 case Authentication.LoginState.AFTER_CLOUD_SSO_LOGIN:
-                case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
+                case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
+                case Authentication.LoginState.DEVICE_LOCKED:
+                case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
+                    await this.createSsoUser(loginToken)
                     break;
                 case Authentication.LoginState.UPGRADE:
-                    handleError('generic_error', loginResponse, null)
-                    break;
+                    handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
+                    return;
                 case Authentication.LoginState.REQUIRES_USERNAME:
+                    if (!this._username) {
+                        handleError('generic_error', loginResponse, new Error(`No username supplied, login state = ${loginResponse.loginState}`));
+                        return
+                    }
                     needUserName = true
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
@@ -343,12 +427,16 @@ export class Auth {
                         loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
                     } catch (e) {
                         handleError('auth_failed', loginResponse, e)
+                        return
                     }
                     break;
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     throw new Error('License expired')
                 case Authentication.LoginState.REGION_REDIRECT:
+                    // TODO: put region_redirect in its own loop since
+                    // its unique to the other states.
                     this.options.host = loginResponse.stateSpecificValue
+                    loginToken = undefined
                     if (this.options.onRegionChanged) {
                         this.options.onRegionChanged(loginResponse.stateSpecificValue)
                     }
@@ -358,20 +446,7 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
-                    let restReq = SsoCloudRequest.create({
-                        "embedded": true,
-                        "clientVersion": this._endpoint.clientVersion,
-                        "dest": "vault",
-                        "forceLogin": false,
-                        "messageSessionUid": this.messageSessionUid
-                    });
-
-                    console.log("cloud sso url: " + loginResponse.url)
-
-                    let requestPayload = await this._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish());
-
-                    let payload = webSafe64FromBytes(requestPayload);
-
+                    let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
                     let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
                     this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
                     // await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
@@ -382,19 +457,17 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
-
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
                     this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
                     return
 
                 case Authentication.LoginState.REQUIRES_2FA:
-                    try{
-                        loginToken = await this.handleTwoFactor(loginResponse)
-                    } catch(e){
-                        console.log('Error in Authentication.LoginState.REQUIRES_2FA: ', e)
-                    }
+                    loginToken = await this.handleTwoFactor(loginResponse)
                     break
+
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
+                    // TODO: loop in authHashLogin until successful or get into
+                    // some other state other than Authentication.LoginState.REQUIRES_AUTH_HASH
                     if (!password && this.options.authUI3?.getPassword) {
                         password = await this.options.authUI3.getPassword()
                     }
@@ -403,7 +476,7 @@ export class Auth {
                     }
 
                     try{
-                        await this.authHashLogin(loginResponse, username, password)
+                        await this.authHashLogin(loginResponse, username, password, loginType === Authentication.LoginType.ALTERNATE)
                         return;
                     } catch(e){
                         password = ''
@@ -420,6 +493,22 @@ export class Auth {
                         break;
                     }
             }
+        }
+    }
+
+    async getSsoProvider(ssoDomain: string, locale?: string) {
+        let domainRequest: ISsoServiceProviderRequest = {
+            name: ssoDomain.trim(),
+            locale: locale,
+            clientVersion: this.endpoint.clientVersion,
+        }
+        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
+        const params = domainResponse.isCloud
+            ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
+            : '?embedded'
+        return {
+            url: domainResponse.spUrl + params,
+            name: domainResponse.name,
         }
     }
 
@@ -530,7 +619,7 @@ export class Auth {
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
-                    const token = wssRs.encryptedLoginToken ? platform.base64ToBytes(wssRs.encryptedLoginToken) : loginToken
+                    const token = wssRs.encryptedLoginToken ? normal64Bytes(wssRs.encryptedLoginToken) : loginToken
                     resumeWithToken(token)
                 } else if (wssRs.message === 'device_approved') {
                     if (wssRs.approved) {
@@ -554,10 +643,11 @@ export class Auth {
                     } else {
                         rejectWithError(new Error('Canceled'))
                     }
-                });
+                })
+                .catch(reason => rejectWithError(reason))
 
             // receive push notification
-            (async () => {
+            ;(async () => {
                 while (!done) {
                     const pushMessage = await this.socket.getPushMessage()
                     const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
@@ -639,7 +729,11 @@ export class Auth {
                         case TwoFactorChannelType.TWO_FA_CT_RSA:
                             break
                         case TwoFactorChannelType.TWO_FA_CT_SMS:
+                            tfachannelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_SMS]
+                            break
                         case TwoFactorChannelType.TWO_FA_CT_DNA:
+                            tfachannelData.availablePushes = [TwoFactorPushType.TWO_FA_PUSH_DNA]
+                            break
                         case TwoFactorChannelType.TWO_FA_CT_KEEPER:
                         case TwoFactorChannelType.TWO_FA_CT_DUO:
                             if (ch.capabilities) {
@@ -687,10 +781,11 @@ export class Auth {
                     } else {
                         rejectWithError(new Error('Canceled'))
                     }
-                });
+                })
+                .catch(reason => rejectWithError(reason))
 
             // receive push notification
-            (async () => {
+            ;(async () => {
                 while (!done) {
                     const pushMessage = await this.socket.getPushMessage()
                     const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
@@ -704,16 +799,19 @@ export class Auth {
         })
     }
 
-    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string) {
+    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string, useAlternate: boolean = false) {
         // TODO test for account transfer and account recovery
         if (!loginResponse.salt) {
             throw new Error('Salt missing from API response')
         }
 
-        const salt = loginResponse.salt[0]
+        const salt = useAlternate ? loginResponse.salt.find(s => s.name === 'alternate') : loginResponse.salt[0]
         if (!salt.salt || !salt.iterations) {
             throw new Error('Salt missing from API response')
         }
+
+        this.options.salt = salt.salt
+        this.options.iterations = salt.iterations
 
         const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
         let authHash = await platform.calcAuthVerifier(authHashKey);
@@ -728,12 +826,13 @@ export class Auth {
     }
 
     async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt|undefined = undefined) {
+        this._username = loginResponse.primaryUsername || this._username
         this.options.sessionStorage.saveCloneCode(this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             return
         }
 
-        this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
+        this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.sessionTokenType, loginResponse.accountUid)
         switch (loginResponse.encryptedDataKeyType) {
             case Authentication.EncryptedDataKeyType.BY_DEVICE_PUBLIC_KEY:
                 this.dataKey = await platform.privateDecryptEC(loginResponse.encryptedDataKey, this.options.deviceConfig.privateKey, this.options.deviceConfig.publicKey)
@@ -811,7 +910,7 @@ export class Auth {
     }
 
     async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
-        let keyPair: any = await platform.generateRSAKeyPair2();
+        let keyPair: any = await platform.generateRSAKeyPair();
         let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
@@ -845,7 +944,7 @@ export class Auth {
     async cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
         const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
         const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair: any = await platform.generateRSAKeyPair2();
+        let keyPair: any = await platform.generateRSAKeyPair();
         let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
@@ -952,14 +1051,14 @@ export class Auth {
         await this.login(username, password);
     }
 
-    async decryptCloudSsoResponse(cloudResponseToken: string): Promise<SsoCloudResponse> {
+    async decryptCloudSsoResponse(cloudResponseToken: string, transmissionKey: TransmissionKey): Promise<SsoCloudResponse> {
         let tokenToBytes: Uint8Array
         try {
             tokenToBytes = platform.base64ToBytes(cloudResponseToken);
         } catch (e) {
             tokenToBytes = platform.base64ToBytes(normal64(cloudResponseToken));
         }
-        const decryptedData = await platform.aesGcmDecrypt(tokenToBytes, this._endpoint.getTransmissionKey().key);
+        const decryptedData = await platform.aesGcmDecrypt(tokenToBytes, transmissionKey.key);
         return SsoCloudResponse.decode(decryptedData);
     }
 
@@ -986,13 +1085,15 @@ export class Auth {
         return this.endpoint.get(path)
     }
 
-    setLoginParameters(sessionToken: string, accountUid: Uint8Array) {
+    setLoginParameters(sessionToken: string, sessionTokenType: Authentication.SessionTokenType, accountUid: Uint8Array) {
         this._sessionToken = sessionToken;
+        this._sessionTokenType = sessionTokenType
         this._accountUid = accountUid;
         if (!this.socket) {
             throw new Error('No socket available')
         }
         this.socket.registerLogin(this._sessionToken)
+        this.socket.onOpen(() => { this.socket.registerLogin(this._sessionToken) })
     }
 
     async registerDevice() {
@@ -1028,6 +1129,54 @@ export class Auth {
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
         console.log(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
+    }
+
+    private async createUserRequest(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
+        const rsaKeys = await platform.generateRSAKeyPair()
+        const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaKeys.privateKey, dataKey, true)
+
+        const ecKeys = await platform.generateECKeyPair()
+        const eccEncryptedPrivateKey = await platform.aesGcmEncrypt(ecKeys.privateKey, dataKey)
+
+        const encryptedClientKey = await platform.aesCbcEncrypt(generateEncryptionKey(), dataKey, true)
+
+        return {
+            rsaPublicKey: rsaKeys.publicKey,
+            rsaEncryptedPrivateKey: rsaEncryptedPrivateKey,
+            eccPublicKey: ecKeys.publicKey,
+            eccEncryptedPrivateKey: eccEncryptedPrivateKey,
+            encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+            encryptedClientKey: encryptedClientKey,
+            clientVersion: this.options.clientVersion,
+        }
+    }
+
+    public async createUser(username: string, password: string) {
+        const iterations = 100000
+        const dataKey = generateEncryptionKey()
+        const authVerifier = await createAuthVerifier(password, iterations)
+        const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
+        const request = await this.createUserRequest(dataKey)
+        const regUserMsg = requestCreateUserMessage({
+            ...request,
+            username: username,
+            authVerifier: authVerifier,
+            encryptionParams: encryptionParams,
+        }, false)
+        await this.executeRest(regUserMsg)
+    }
+
+    private async createSsoUser(loginToken: Uint8Array) {
+        const dataKey = generateEncryptionKey()
+        const encryptedDeviceDataKey = await platform.publicEncryptEC(dataKey, this.options.deviceConfig.publicKey)
+        const request = await this.createUserRequest(dataKey)
+        const regUserMsg = requestCreateUserMessage({
+            ...request,
+            username: this._username,
+            encryptedLoginToken: loginToken,
+            encryptedDeviceDataKey: encryptedDeviceDataKey
+        }, true)
+        await this.executeRest(regUserMsg)
     }
 }
 
