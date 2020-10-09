@@ -16,8 +16,6 @@ export interface Platform {
 
     generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
 
-    generateRSAKeyPair2(): Promise<any>
-
     generateECKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
 
     publicEncrypt(data: Uint8Array, key: string): Uint8Array;

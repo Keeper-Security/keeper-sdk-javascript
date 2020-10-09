@@ -69,11 +69,6 @@ export const browserPlatform: Platform = class {
         };
     }
 
-    // todo: revisit
-    static async generateRSAKeyPair2(): Promise<any> {
-        return this.generateRSAKeyPair()
-    }
-
     static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
         const ecdh = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
         const privateKey = await crypto.subtle.exportKey('jwk', ecdh.privateKey)

@@ -41,6 +41,7 @@ import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
 import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
+import ICreateUserRequest = Authentication.ICreateUserRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -400,7 +401,7 @@ export class Auth {
                 case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
                 case Authentication.LoginState.DEVICE_LOCKED:
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
-                    await this.createUser(loginToken, true)
+                    await this.createSsoUser(loginToken)
                     break;
                 case Authentication.LoginState.UPGRADE:
                     handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
@@ -904,7 +905,7 @@ export class Auth {
     }
 
     async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
-        let keyPair: any = await platform.generateRSAKeyPair2();
+        let keyPair: any = await platform.generateRSAKeyPair();
         let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
@@ -938,7 +939,7 @@ export class Auth {
     async cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
         const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
         const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair: any = await platform.generateRSAKeyPair2();
+        let keyPair: any = await platform.generateRSAKeyPair();
         let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
         let encodedPublicKey: string = webSafe64FromBytes(publicKey);
 
@@ -1124,23 +1125,16 @@ export class Auth {
         return JSON.parse(wssClientResponse.message)
     }
 
-    private async createUser(loginToken: Uint8Array, isSso: boolean) {
-        if (!isSso) {
-            throw new Error('Not implemented')
-        }
-        const dataKey = generateEncryptionKey()
-
+    private async createUserRequest(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
         const rsaKeys = await platform.generateRSAKeyPair()
         const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaKeys.privateKey, dataKey, true)
 
         const ecKeys = await platform.generateECKeyPair()
         const eccEncryptedPrivateKey = await platform.aesGcmEncrypt(ecKeys.privateKey, dataKey)
-        const encryptedDeviceDataKey = await platform.publicEncryptEC(dataKey, ecKeys.publicKey)
 
         const encryptedClientKey = await platform.aesCbcEncrypt(generateEncryptionKey(), dataKey, true)
 
-        const regUserMsg = requestCreateUserMessage({
-            username: this._username,
+        return {
             rsaPublicKey: rsaKeys.publicKey,
             rsaEncryptedPrivateKey: rsaEncryptedPrivateKey,
             eccPublicKey: ecKeys.publicKey,
@@ -1148,10 +1142,34 @@ export class Auth {
             encryptedDeviceToken: this.options.deviceConfig.deviceToken,
             encryptedClientKey: encryptedClientKey,
             clientVersion: this.options.clientVersion,
+        }
+    }
+
+    public async createUser(username: string, password: string) {
+        const iterations = 100000
+        const dataKey = generateEncryptionKey()
+        const authVerifier = await createAuthVerifier(password, iterations)
+        const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
+        const request = await this.createUserRequest(dataKey)
+        const regUserMsg = requestCreateUserMessage({
+            ...request,
+            username: username,
+            authVerifier: authVerifier,
+            encryptionParams: encryptionParams,
+        }, false)
+        await this.executeRest(regUserMsg)
+    }
+
+    private async createSsoUser(loginToken: Uint8Array) {
+        const dataKey = generateEncryptionKey()
+        const encryptedDeviceDataKey = await platform.publicEncryptEC(dataKey, this.options.deviceConfig.publicKey)
+        const request = await this.createUserRequest(dataKey)
+        const regUserMsg = requestCreateUserMessage({
+            ...request,
+            username: this._username,
             encryptedLoginToken: loginToken,
             encryptedDeviceDataKey: encryptedDeviceDataKey
         }, true)
-
         await this.executeRest(regUserMsg)
     }
 }

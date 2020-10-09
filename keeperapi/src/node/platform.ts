@@ -40,14 +40,13 @@ export const nodePlatform: Platform = class {
      * Returns the keys as Uint8Arrays.
      */
     static async generateRSAKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array}> {
-        throw "Not yet implemented";
-    }
-
-    /**
-     * Returns the keys as an object created by the NodeRSA library.
-     */
-    static async generateRSAKeyPair2(): Promise<any> {
-        return new NodeRSA({b: 2048});
+        const rsaKeys = new NodeRSA({b: 2048});
+        const rsaPublicKey: Buffer = rsaKeys.exportKey('public-der');
+        const rsaPrivateKey: Buffer = rsaKeys.exportKey('private-der');
+        return Promise.resolve({
+            privateKey: rsaPrivateKey,
+            publicKey: rsaPublicKey
+        })
     }
 
     static async generateECKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array }> {
