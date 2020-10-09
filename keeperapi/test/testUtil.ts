@@ -151,9 +151,9 @@ const configNames = {
     'dev2.keepersecurity.com': 'device-config-dev2.json',
     'qa.keepersecurity.com': 'device-config-qa.json',
     'keepersecurity.com': 'device-config.json',
-    'dev.keepersecurity.eu': 'device-config-dev-eu.json',
-    'qa.keepersecurity.eu': 'device-config-qa-eu.json',
-    'keepersecurity.eu': 'device-config-eu.json',
+    'dev.keepersecurity.eu': 'device-config-dev.json',
+    'qa.keepersecurity.eu': 'device-config-qa.json',
+    'keepersecurity.eu': 'device-config.json',
 }
 
 export function getCredentialsAndHost(): { userName: string; password: string; host: KeeperEnvironment  } {

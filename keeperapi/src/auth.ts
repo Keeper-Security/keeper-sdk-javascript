@@ -12,7 +12,7 @@ import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
     chooseErrorMessage,
-    decryptFromStorage,
+    decryptFromStorage, generateEncryptionKey,
     generateTransmissionKey,
     generateUidBytes,
     isTwoFactorResultCode,
@@ -22,7 +22,7 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
-    logoutV3Message,
+    logoutV3Message, requestCreateUserMessage,
     requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
@@ -244,6 +244,7 @@ export class Auth {
     private messageSessionUid: Uint8Array;
     options: ClientConfigurationInternal;
     private socket: SocketListener | undefined;
+    public clientKey: Uint8Array;
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -298,7 +299,7 @@ export class Auth {
     getMessageSessionUid(): Uint8Array {
         return this.messageSessionUid;
     }
-        
+
     logout() {
         this.executeRest(logoutV3Message())
     }
@@ -395,10 +396,12 @@ export class Auth {
                 case Authentication.LoginState.INVALID_LOGINSTATE:
                 case Authentication.LoginState.LOGGED_OUT:
                 case Authentication.LoginState.AFTER_CLOUD_SSO_LOGIN:
-                case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
                 case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
                 case Authentication.LoginState.DEVICE_LOCKED:
+                case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
+                    await this.createUser(loginToken, true)
+                    break;
                 case Authentication.LoginState.UPGRADE:
                     handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
                     return;
@@ -1119,6 +1122,37 @@ export class Auth {
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
         console.log(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
+    }
+
+    private async createUser(loginToken: Uint8Array, isSso: boolean) {
+        if (!isSso) {
+            throw new Error('Not implemented')
+        }
+        const dataKey = generateEncryptionKey()
+
+        const rsaKeys = await platform.generateRSAKeyPair()
+        const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaKeys.privateKey, dataKey, true)
+
+        const ecKeys = await platform.generateECKeyPair()
+        const eccEncryptedPrivateKey = await platform.aesGcmEncrypt(ecKeys.privateKey, dataKey)
+        const encryptedDeviceDataKey = await platform.publicEncryptEC(dataKey, ecKeys.publicKey)
+
+        const encryptedClientKey = await platform.aesCbcEncrypt(generateEncryptionKey(), dataKey, true)
+
+        const regUserMsg = requestCreateUserMessage({
+            username: this._username,
+            rsaPublicKey: rsaKeys.publicKey,
+            rsaEncryptedPrivateKey: rsaEncryptedPrivateKey,
+            eccPublicKey: ecKeys.publicKey,
+            eccEncryptedPrivateKey: eccEncryptedPrivateKey,
+            encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+            encryptedClientKey: encryptedClientKey,
+            clientVersion: this.options.clientVersion,
+            encryptedLoginToken: loginToken,
+            encryptedDeviceDataKey: encryptedDeviceDataKey
+        }, true)
+
+        await this.executeRest(regUserMsg)
     }
 }
 
