@@ -239,6 +239,7 @@ export class Auth {
     privateKey: Uint8Array;
     private _accountUid: Uint8Array;
     private _sessionToken: string = '';
+    private _sessionTokenType: Authentication.SessionTokenType|null;
     private _username: string = '';
     private endpoint: KeeperEndpoint;
     private managedCompanyId?: number;
@@ -291,6 +292,10 @@ export class Auth {
 
     get sessionToken(): string {
         return this._sessionToken;
+    }
+
+    get sessionTokenType(): Authentication.SessionTokenType|null {
+        return this._sessionTokenType
     }
 
     get username(): string {
@@ -827,7 +832,7 @@ export class Auth {
             return
         }
 
-        this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.accountUid)
+        this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.sessionTokenType, loginResponse.accountUid)
         switch (loginResponse.encryptedDataKeyType) {
             case Authentication.EncryptedDataKeyType.BY_DEVICE_PUBLIC_KEY:
                 this.dataKey = await platform.privateDecryptEC(loginResponse.encryptedDataKey, this.options.deviceConfig.privateKey, this.options.deviceConfig.publicKey)
@@ -1080,8 +1085,9 @@ export class Auth {
         return this.endpoint.get(path)
     }
 
-    setLoginParameters(sessionToken: string, accountUid: Uint8Array) {
+    setLoginParameters(sessionToken: string, sessionTokenType: Authentication.SessionTokenType, accountUid: Uint8Array) {
         this._sessionToken = sessionToken;
+        this._sessionTokenType = sessionTokenType
         this._accountUid = accountUid;
         if (!this.socket) {
             throw new Error('No socket available')
