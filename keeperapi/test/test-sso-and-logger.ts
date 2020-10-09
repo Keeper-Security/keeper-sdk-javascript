@@ -126,11 +126,11 @@ TestRegisterDevice().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
 // TestSsoUploadMetadata().finally();
-TestSsoGetMetadata().finally();
+// TestSsoGetMetadata().finally();
 // TestSsoGetSigningCertificate().finally();
 // TestSsoIdpInitiatedLogin().finally();
 // TestSsoSetCurrentConfiguration().finally();
-// TestSsoGetConfigurationList().finally();
+TestSsoGetConfigurationList().finally();
 // TestSsoAddNewConfiguration().finally();
 // TestSsoCopyConfiguration().finally();
 // TestSsoResetConfiguration().finally();
@@ -259,7 +259,7 @@ async function TestSsoLogin() {
 // GET, ENCRYPTED, login
 async function TestSsoLogin_2() {
     console.log("\n*** TestSSOLogin v2 on " + keeperHost + " ***");
-    let serviceProviderId = 9710921056266; // 9710921056299;
+    let serviceProviderId = 9710921056299; // 9710921056299;
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/saml/';
     const configEndpoint = 'login';
@@ -491,7 +491,7 @@ async function TestSsoUploadMetadata() {
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_upload_idp_metadata';
 
-    let filename = '/Users/mhewett/work/sw/test-files/mujina-idp-metadata.xml'; // 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
+    let filename = '/Users/mhewett/work/sw/test-files/sp-azure-dev-metadata.xml'; // 'Keeper Dev Login_v3.xml';  // 'idp_metadata.xml';
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     try {
