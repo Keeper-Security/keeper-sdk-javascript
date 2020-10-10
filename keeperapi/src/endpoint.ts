@@ -26,6 +26,7 @@ import IDeviceResponse = Authentication.IDeviceResponse;
 import IPreLoginResponse = Authentication.IPreLoginResponse;
 import WssClientResponse = Push.WssClientResponse;
 import WssConnectionRequest = Push.WssConnectionRequest;
+import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 
 export class KeeperEndpoint {
     private transmissionKey: TransmissionKey
@@ -73,8 +74,7 @@ export class KeeperEndpoint {
                     },
                     loginType: Authentication.LoginType.NORMAL
                 }))
-            }
-            catch (e) {
+            } catch (e) {
                 if (!(e instanceof Error))
                     throw(e)
                 let errorObj = JSON.parse(e.message)
@@ -125,78 +125,6 @@ export class KeeperEndpoint {
         }
     }
 
-    /**
-     * Call this for REST calls expected to return HTML or a 303 redirect.
-     */
-    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams: any = {}, useGet: boolean = false): Promise<string> {
-        // let request = await this.prepareRequest(message.toBytes(), sessionToken)
-        let theUrl = message.path;
-        if (!theUrl.startsWith("http")) {
-            theUrl = this.getUrl(theUrl);
-        }
-
-        let response = null;
-        if (useGet) {
-            console.log("  using GET");
-            theUrl = theUrl + "?" + String(new URLSearchParams(formParams));
-            response = await platform.get(theUrl, {});
-        } else {
-            console.log("  using POST");
-            formParams = formParams ? String(new URLSearchParams(formParams)) : "";
-            response = await platform.post(
-              theUrl,
-              formParams,
-              {"Content-Type": "application/x-www-form-urlencoded"}
-            );
-        }
-
-        console.log("SSO response is", response.statusCode);
-
-        const possibleRedirects = [200, 303]
-
-        // Redirect?
-        if (possibleRedirects.indexOf(response.statusCode) >= 0) {
-            let redirectUrl = '';
-            if (response.statusCode == 303) {
-                redirectUrl = response.headers["location"];
-            } else if (response.statusCode == 200) {
-                redirectUrl = theUrl;
-            }
-            if (redirectUrl) {
-                console.log("Redirecting to " + redirectUrl);
-                if (this.options.authUI3 && this.options.authUI3.redirectCallback) {
-                    console.log("this.options.authUI3.redirectCallback = " + this.options.authUI3.redirectCallback);
-                    await this.options.authUI3.redirectCallback(redirectUrl)
-                } else {
-                    console.log("Calling default redirect");
-                    await platform.defaultRedirect(redirectUrl)
-                }
-            } else {
-                console.log("Expected URL with 303 status, but didn't get one");
-            }
-        }
-
-        if (response.statusCode === 404) {
-            return new Promise(resolve => {
-                resolve("404 NOT FOUND");
-            });
-        }
-
-        // Any content?
-        if (!response.data || response.data.length === 0 && response.statusCode === 200) {
-            return "No content returned\n";
-        }
-
-        // Is it HTML?
-        if (response.data[0] != "<".charCodeAt(0)) {
-            console.log("non-HTML returned from rest call");
-        }
-
-        return new Promise(resolve => {
-            resolve(platform.bytesToString(response.data));
-        });
-    }
-
     async executeRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
         while (true) {
             let request = await this.prepareRequest(message.toBytes(), sessionToken)
@@ -243,7 +171,8 @@ export class KeeperEndpoint {
                     if (this.options.onCommandFailure) {
                         this.options.onCommandFailure(errorObj)
                     }
-                } catch { }
+                } catch {
+                }
                 throw(new Error(errorMessage))
             }
         }
@@ -288,7 +217,7 @@ export class KeeperEndpoint {
         return getPushConnectionRequest(messageSessionUid, this.options.deviceConfig.deviceToken, this.transmissionKey)
     }
 
-    getTransmissionKey() : TransmissionKey {
+    getTransmissionKey(): TransmissionKey {
         return this.transmissionKey;
     }
 
@@ -302,6 +231,10 @@ export class KeeperEndpoint {
         }).toBytes()
         const request = await prepareApiRequest(payload, this.transmissionKey)
         return webSafe64FromBytes(request)
+    }
+
+    public async decryptCloudSsoResponse(token: string): Promise<SsoCloudResponse> {
+        return decryptCloudSsoResponse(token, this.getTransmissionKey().key)
     }
 }
 
@@ -335,6 +268,11 @@ export async function prepareApiRequest(payload: Uint8Array | KeeperCommand, tra
         locale: 'en_US'
     })
     return ApiRequest.encode(apiRequest).finish()
+}
+
+export async function decryptCloudSsoResponse(cloudResponseToken: string, key: Uint8Array): Promise<SsoCloudResponse> {
+    const decryptedData = await platform.aesGcmDecrypt(normal64Bytes(cloudResponseToken), key);
+    return SsoCloudResponse.decode(decryptedData);
 }
 
 export enum KeeperEnvironment {

@@ -6,13 +6,15 @@ import {
     AuthUI3,
     DeviceConfig,
     DeviceVerificationMethods,
-    SessionStorage, TwoFactorChannelData
+    SessionStorage, TransmissionKey, TwoFactorChannelData
 } from '../src/configuration'
 import {platform} from '../src/platform';
 import {KeeperEnvironment} from '../src/endpoint';
 import {Authentication} from '../src/proto';
-import {normal64Bytes} from '../src/utils';
+import {generateTransmissionKey, webSafe64FromBytes} from '../src/utils';
 import TwoFactorPushType = Authentication.TwoFactorPushType;
+import {RestMessage, ssoSamlMessage} from '../src/restMessages';
+import {launch} from 'puppeteer';
 
 export const prompt = async (message: string, cancel?: Promise<void>): Promise<string> => new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
@@ -30,6 +32,16 @@ export const prompt = async (message: string, cancel?: Promise<void>): Promise<s
         rl.close()
     });
 })
+
+export async function openBrowser(url: string) {
+    const browser = await launch({
+        headless: false,
+        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    })
+    const pages = await browser.pages()
+    const page = pages[0]
+    await page.goto(url);
+}
 
 export const authUI3: AuthUI3 = {
     async waitForDeviceApproval(channels): Promise<boolean> {
@@ -219,3 +231,192 @@ export class TestSessionStorage implements SessionStorage {
         fs.writeFileSync(this.fileName, JSON.stringify(this.sessionData, null, 2))
     }
 }
+
+export async function cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
+    let {privateKey, publicKey} = await platform.generateRSAKeyPair();
+    let encodedPublicKey: string = webSafe64FromBytes(publicKey);
+
+    console.log("public key length is " + encodedPublicKey.length);
+
+    try {
+        console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
+
+        // We have full URL but the library wants to recreate it so we let it.
+        let pos = ssoLoginUrl.indexOf("login");
+        ssoLoginUrl = ssoLoginUrl.substring(pos);
+
+        // This should return HTML
+        let ssoLoginResp = await executeRestToHTML(ssoSamlMessage(ssoLoginUrl),
+            {
+                "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                "key": encodedPublicKey,
+                "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
+            }, useGet);
+
+        console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
+        return ssoLoginResp;
+
+    } catch (e) {
+        console.log(e)
+    }
+    return {};
+}
+
+/**
+ * This is the more secure version of login that uses an encrypted protobuf.
+ * July 2020
+ */
+export async function cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
+    try {
+        console.log("\n*** cloudSsoLogin2 at " + ssoLoginUrl + " ***");
+
+        // We have full URL but the library wants to recreate it so we let it.
+        let pos = ssoLoginUrl.indexOf("login");
+        ssoLoginUrl = ssoLoginUrl.substring(pos);
+
+        // This should return HTML
+        let ssoLoginResp = await executeRestToHTML(ssoSamlMessage(ssoLoginUrl),
+            {
+                "payload": encodedPayload
+            }, useGet);
+
+        console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
+        return ssoLoginResp;
+
+    } catch (e) {
+        console.log(e)
+    }
+    return {};
+}
+
+export async function cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
+    let keyPair: any = await platform.generateRSAKeyPair();
+    let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+    let encodedPublicKey: string = webSafe64FromBytes(publicKey);
+
+    try {
+        console.log("\n*** cloudSsoLogout at " + ssoLogoutUrl + " ***");
+
+        // We have full URL but the library wants to recreate it so we let it.
+        let pos = ssoLogoutUrl.indexOf("logout");
+        ssoLogoutUrl = ssoLogoutUrl.substring(pos);
+
+        // This should return HTML
+        let ssoLogoutResp = await executeRestToHTML(ssoSamlMessage(ssoLogoutUrl),
+            {
+                "message_session_uid": webSafe64FromBytes(messageSessionUid),
+                "key": encodedPublicKey
+            }, useGet);
+
+        console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
+        return ssoLogoutResp;
+
+    } catch (e) {
+        console.log(e)
+    }
+    return {};
+}
+
+/**
+ * This is the more secure version of logout that uses an encrypted protobuf.
+ * July 2020
+ */
+export async function cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
+    const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
+    const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
+    let keyPair: any = await platform.generateRSAKeyPair();
+    let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
+    let encodedPublicKey: string = webSafe64FromBytes(publicKey);
+
+    console.log("encodedEncryptionKey = " + encodedEncryptionKey);
+
+    try {
+        console.log("\n*** cloudSsoLogout2 at " + ssoLogoutUrl + " ***");
+
+        // We have full URL but the library wants to recreate it so we let it.
+        let pos = ssoLogoutUrl.indexOf("logout");
+        ssoLogoutUrl = ssoLogoutUrl.substring(pos);
+
+        // This should return HTML
+        let ssoLogoutResp = await executeRestToHTML(ssoSamlMessage(ssoLogoutUrl),
+            {
+                "key": encodedEncryptionKey,
+                "payload": encodedPayload
+            }, useGet);
+
+        console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
+        return ssoLogoutResp;
+
+    } catch (e) {
+        console.log(e)
+    }
+    return {};
+}
+
+/**
+ * Call this for REST calls expected to return HTML or a 303 redirect.
+ */
+export async function executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, formParams: any = {}, useGet: boolean = false): Promise<string> {
+    // let request = await this.prepareRequest(message.toBytes(), sessionToken)
+    let theUrl = message.path;
+    if (!theUrl.startsWith("http")) {
+        theUrl = this.getUrl(theUrl);
+    }
+
+    let response = null;
+    if (useGet) {
+        console.log("  using GET");
+        theUrl = theUrl + "?" + String(new URLSearchParams(formParams));
+        response = await platform.get(theUrl, {});
+    } else {
+        console.log("  using POST");
+        formParams = formParams ? String(new URLSearchParams(formParams)) : "";
+        response = await platform.post(
+            theUrl,
+            formParams,
+            {"Content-Type": "application/x-www-form-urlencoded"}
+        );
+    }
+
+    console.log("SSO response is", response.statusCode);
+
+    const possibleRedirects = [200, 303]
+
+// Redirect?
+    if (possibleRedirects.indexOf(response.statusCode) >= 0) {
+        let redirectUrl = '';
+        if (response.statusCode == 303) {
+            redirectUrl = response.headers["location"];
+        } else if (response.statusCode == 200) {
+            redirectUrl = theUrl;
+        }
+        if (redirectUrl) {
+            console.log("Redirecting to " + redirectUrl);
+            console.log("Calling default redirect");
+            await openBrowser(redirectUrl)
+        } else {
+            console.log("Expected URL with 303 status, but didn't get one");
+        }
+    }
+
+    if (response.statusCode === 404) {
+        return new Promise(resolve => {
+            resolve("404 NOT FOUND");
+        });
+    }
+
+// Any content?
+    if (!response.data || response.data.length === 0 && response.statusCode === 200) {
+        return "No content returned\n";
+    }
+
+// Is it HTML?
+    if (response.data[0] != "<".charCodeAt(0)) {
+        console.log("non-HTML returned from rest call");
+    }
+
+    return new Promise(resolve => {
+        resolve(platform.bytesToString(response.data));
+    });
+}
+

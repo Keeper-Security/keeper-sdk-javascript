@@ -4,7 +4,6 @@ import {
     DeviceApprovalChannel,
     DeviceVerificationMethods,
     LoginError,
-    TransmissionKey,
     TwoFactorChannelData
 } from './configuration'
 import {KeeperEndpoint, KeeperEnvironment} from "./endpoint";
@@ -13,7 +12,6 @@ import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResp
 import {
     chooseErrorMessage,
     decryptFromStorage, generateEncryptionKey,
-    generateTransmissionKey,
     generateUidBytes,
     isTwoFactorResultCode,
     normal64,
@@ -26,22 +24,20 @@ import {
     requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
-    ssoSamlMessage, ssoServiceProviderRequestMessage,
+    ssoServiceProviderRequestMessage,
     startLoginMessage,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     validateAuthHashMessage,
     validateDeviceVerificationCodeMessage
 } from './restMessages'
-import {Authentication, SsoCloud} from './proto';
+import {Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
-import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
 import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
-import ICreateUserRequest = Authentication.ICreateUserRequest;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -101,7 +97,7 @@ export class SocketListener {
         this.messageListeners = []
         this.singleMessageListeners = []
         this.onOpenListeners = []
-        this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+        this.currentBackoffSeconds = SocketListener.getBaseReconnectionInterval()
         this.isClosedByClient = false
         if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
 
@@ -119,7 +115,7 @@ export class SocketListener {
         this.socket.onOpen(() => {
             console.log('socket opened')
             clearTimeout(this.reconnectTimeout)
-            this.currentBackoffSeconds = this.getBaseReconnectionInterval()
+            this.currentBackoffSeconds = SocketListener.getBaseReconnectionInterval()
             this.handleOnOpen()
         })
 
@@ -185,7 +181,7 @@ export class SocketListener {
         })
     }
 
-    private getBaseReconnectionInterval(): number {
+    private static getBaseReconnectionInterval(): number {
         return Math.random() * 5
     }
 
@@ -239,7 +235,7 @@ export class Auth {
     privateKey: Uint8Array;
     private _accountUid: Uint8Array;
     private _sessionToken: string = '';
-    private _sessionTokenType: Authentication.SessionTokenType|null;
+    private _sessionTokenType: Authentication.SessionTokenType | null;
     private _username: string = '';
     private endpoint: KeeperEndpoint;
     private managedCompanyId?: number;
@@ -269,7 +265,8 @@ export class Auth {
             this.options.sessionStorage = {
                 lastUsername: null,
                 getCloneCode: () => null,
-                saveCloneCode: () => {}
+                saveCloneCode: () => {
+                }
             }
         }
 
@@ -294,7 +291,7 @@ export class Auth {
         return this._sessionToken;
     }
 
-    get sessionTokenType(): Authentication.SessionTokenType|null {
+    get sessionTokenType(): Authentication.SessionTokenType | null {
         return this._sessionTokenType
     }
 
@@ -342,8 +339,7 @@ export class Auth {
                     result_code: resultCode,
                     message: chooseErrorMessage(loginResponse.loginState)
                 })
-            }
-            else {
+            } else {
                 throw error;
             }
         };
@@ -379,7 +375,7 @@ export class Auth {
                 needUserName = false
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
-            if (resumeSessionOnly && (loginResponse && loginResponse.loginState) != Authentication.LoginState.LOGGED_IN){
+            if (resumeSessionOnly && (loginResponse && loginResponse.loginState) != Authentication.LoginState.LOGGED_IN) {
                 return {
                     result: 'notLoggedin'
                 }
@@ -392,9 +388,9 @@ export class Auth {
             console.log("login state =", loginResponse.loginState);
 
             // time to see what the infinite loop looks like
-                // if (previousLoginState === 13) {
-                //     return; // hack to stop infinite loop
-                // }
+            // if (previousLoginState === 13) {
+            //     return; // hack to stop infinite loop
+            // }
             previousLoginState = loginResponse.loginState;
 
             switch (loginResponse.loginState) {
@@ -448,10 +444,17 @@ export class Auth {
                     }
                     let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
                     let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
-                    this.options.authUI3.redirectCallback(cloudSsoLoginUrl);
-                    // await this.cloudSsoLogin2(loginResponse.url, payload, useAlternate);
-                    // await this.cloudSsoLogin(loginResponse.url, this.messageSessionUid, useAlternate);
-                    return;
+                    if (this.options.authUI3.redirectCallback) {
+                        this.options.authUI3.redirectCallback(cloudSsoLoginUrl)
+                        return
+                    } else {
+                        const token = await platform.ssoLogin(cloudSsoLoginUrl)
+                        const cloudResp = await this.endpoint.decryptCloudSsoResponse(token)
+                        console.log(cloudResp)
+                        this._username = cloudResp.email
+                        loginToken = cloudResp.encryptedLoginToken
+                        break;
+                    }
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
                     console.log("SSO Connect login");
                     if (!loginResponse.url) {
@@ -475,20 +478,20 @@ export class Auth {
                         throw new Error('User password required and not provided')
                     }
 
-                    try{
+                    try {
                         await this.authHashLogin(loginResponse, username, password, loginType === Authentication.LoginType.ALTERNATE)
                         return;
-                    } catch(e){
+                    } catch (e) {
                         password = ''
                         handleError('auth_failed', loginResponse, e)
                         break;
                     }
                 case Authentication.LoginState.LOGGED_IN:
-                    try{
+                    try {
                         await this.loginSuccess(loginResponse, null)
                         console.log("Exiting on loginState = LOGGED_IN");
                         return;
-                    } catch(e){
+                    } catch (e) {
                         console.log('Error in Authentication.LoginState.LOGGED_IN: ', e)
                         break;
                     }
@@ -628,7 +631,7 @@ export class Auth {
                         rejectWithError(new Error('Rejected'))
                     }
                 } else if (wssRs.command === 'device_verified') {
-                    if(this.options.onDeviceVerified){
+                    if (this.options.onDeviceVerified) {
                         this.options.onDeviceVerified(true)
                     }
                     resumeWithToken(loginToken)
@@ -825,7 +828,7 @@ export class Auth {
         await this.loginSuccess(loginResp, password, salt)
     }
 
-    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt|undefined = undefined) {
+    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt | undefined = undefined) {
         this._username = loginResponse.primaryUsername || this._username
         this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
@@ -850,127 +853,6 @@ export class Auth {
             case Authentication.EncryptedDataKeyType.BY_BIO:
                 throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
         }
-    }
-
-    async cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
-        let {privateKey, publicKey} = await platform.generateRSAKeyPair();
-        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
-
-        console.log("public key length is " + encodedPublicKey.length);
-
-        try {
-            console.log("\n*** cloudSsoLogin at " + ssoLoginUrl + " ***");
-
-            // We have full URL but the library wants to recreate it so we let it.
-            let pos = ssoLoginUrl.indexOf("login");
-            ssoLoginUrl = ssoLoginUrl.substring(pos);
-
-            // This should return HTML
-            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                {
-                    "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                    "key": encodedPublicKey,
-                    "device_id": 2141430350,  //"TarD2lczSTI4ZJx1bG0F8aAc0HrK5JoLpOqH53sRFg0=",
-                }, useGet);
-
-            console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
-            return ssoLoginResp;
-
-        } catch (e) {
-            console.log(e)
-        }
-        return {};
-    }
-
-    /**
-     * This is the more secure version of login that uses an encrypted protobuf.
-     * July 2020
-     */
-    async cloudSsoLogin2(ssoLoginUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
-        try {
-            console.log("\n*** cloudSsoLogin2 at " + ssoLoginUrl + " ***");
-
-            // We have full URL but the library wants to recreate it so we let it.
-            let pos = ssoLoginUrl.indexOf("login");
-            ssoLoginUrl = ssoLoginUrl.substring(pos);
-
-            // This should return HTML
-            let ssoLoginResp = await this.executeRestToHTML(ssoSamlMessage(ssoLoginUrl), this._sessionToken,
-                {
-                    "payload": encodedPayload
-                }, useGet);
-
-            console.log("\n---------- HTML ---------------\n" + ssoLoginResp + "-----------------------------------\n");
-            return ssoLoginResp;
-
-        } catch (e) {
-            console.log(e)
-        }
-        return {};
-    }
-
-    async cloudSsoLogout(ssoLogoutUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {
-        let keyPair: any = await platform.generateRSAKeyPair();
-        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
-
-        try {
-            console.log("\n*** cloudSsoLogout at " + ssoLogoutUrl + " ***");
-
-            // We have full URL but the library wants to recreate it so we let it.
-            let pos = ssoLogoutUrl.indexOf("logout");
-            ssoLogoutUrl = ssoLogoutUrl.substring(pos);
-
-            // This should return HTML
-            let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
-                {
-                    "message_session_uid": webSafe64FromBytes(messageSessionUid),
-                    "key": encodedPublicKey
-                }, useGet);
-
-            console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
-            return ssoLogoutResp;
-
-        } catch (e) {
-            console.log(e)
-        }
-        return {};
-    }
-
-    /**
-     * This is the more secure version of logout that uses an encrypted protobuf.
-     * July 2020
-     */
-    async cloudSsoLogout2(ssoLogoutUrl: string, encodedPayload: string, useGet: boolean = false): Promise<any> {
-        const encryptionKey: TransmissionKey = generateTransmissionKey(this.endpoint.getTransmissionKey().publicKeyId);
-        const encodedEncryptionKey: string = webSafe64FromBytes(encryptionKey.encryptedKey);
-        let keyPair: any = await platform.generateRSAKeyPair();
-        let publicKey: Buffer = keyPair.exportKey('pkcs1-public-der');
-        let encodedPublicKey: string = webSafe64FromBytes(publicKey);
-
-        console.log("encodedEncryptionKey = " + encodedEncryptionKey);
-
-        try {
-            console.log("\n*** cloudSsoLogout2 at " + ssoLogoutUrl + " ***");
-
-            // We have full URL but the library wants to recreate it so we let it.
-            let pos = ssoLogoutUrl.indexOf("logout");
-            ssoLogoutUrl = ssoLogoutUrl.substring(pos);
-
-            // This should return HTML
-            let ssoLogoutResp = await this.executeRestToHTML(ssoSamlMessage(ssoLogoutUrl), this._sessionToken,
-                {
-                    "key": encodedEncryptionKey,
-                    "payload": encodedPayload
-                }, useGet);
-
-            console.log("\n---------- HTML ---------------\n" + ssoLogoutResp + "-----------------------------------\n");
-            return ssoLogoutResp;
-
-        } catch (e) {
-            console.log(e)
-        }
-        return {};
     }
 
     async login(username: string, password: string) {
@@ -1051,17 +933,6 @@ export class Auth {
         await this.login(username, password);
     }
 
-    async decryptCloudSsoResponse(cloudResponseToken: string, transmissionKey: TransmissionKey): Promise<SsoCloudResponse> {
-        let tokenToBytes: Uint8Array
-        try {
-            tokenToBytes = platform.base64ToBytes(cloudResponseToken);
-        } catch (e) {
-            tokenToBytes = platform.base64ToBytes(normal64(cloudResponseToken));
-        }
-        const decryptedData = await platform.aesGcmDecrypt(tokenToBytes, transmissionKey.key);
-        return SsoCloudResponse.decode(decryptedData);
-    }
-
     async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
         if (!command.username) {
             command.username = this._username;
@@ -1077,10 +948,6 @@ export class Auth {
         return this.endpoint.executeRest(message, this._sessionToken);
     }
 
-    async executeRestToHTML<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken?: string, formParams?: any, useGet?: boolean): Promise<string> {
-        return this.endpoint.executeRestToHTML(message, sessionToken, formParams, useGet);
-    }
-
     async get(path: string) {
         return this.endpoint.get(path)
     }
@@ -1093,7 +960,9 @@ export class Auth {
             throw new Error('No socket available')
         }
         this.socket.registerLogin(this._sessionToken)
-        this.socket.onOpen(() => { this.socket.registerLogin(this._sessionToken) })
+        this.socket.onOpen(() => {
+            this.socket.registerLogin(this._sessionToken)
+        })
     }
 
     async registerDevice() {

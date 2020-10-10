@@ -50,7 +50,7 @@ export interface Platform {
 
     createWebsocket(url: string): SocketProxy
 
-    defaultRedirect(url: string): Promise<any>
+    ssoLogin(url: string): Promise<string>
 }
 
 export function connectPlatform(p: Platform) {

@@ -68,7 +68,8 @@ export namespace Authentication {
         RESTRICT = 4,
         ACCEPT_INVITE = 5,
         SUPPORT_SERVER = 6,
-        ENTERPRISE_CREATION = 7
+        ENTERPRISE_CREATION = 7,
+        EXPIRED_BUT_ALLOWED_TO_SYNC = 8
     }
 
     /** Version enum. */
@@ -11607,8 +11608,8 @@ export namespace AccountSummary {
         /** DeviceInfo devicePublicKey */
         devicePublicKey?: (Uint8Array|null);
 
-        /** DeviceInfo encryptedDataKey */
-        encryptedDataKey?: (Uint8Array|null);
+        /** DeviceInfo encryptedDataKeyDoNotUse */
+        encryptedDataKeyDoNotUse?: (Uint8Array|null);
 
         /** DeviceInfo clientVersion */
         clientVersion?: (string|null);
@@ -11621,6 +11622,12 @@ export namespace AccountSummary {
 
         /** DeviceInfo approveRequestTime */
         approveRequestTime?: (number|Long|null);
+
+        /** DeviceInfo encryptedDataKeyPresent */
+        encryptedDataKeyPresent?: (boolean|null);
+
+        /** DeviceInfo groupId */
+        groupId?: (number|Long|null);
     }
 
     /** Represents a DeviceInfo. */
@@ -11644,8 +11651,8 @@ export namespace AccountSummary {
         /** DeviceInfo devicePublicKey. */
         public devicePublicKey: Uint8Array;
 
-        /** DeviceInfo encryptedDataKey. */
-        public encryptedDataKey: Uint8Array;
+        /** DeviceInfo encryptedDataKeyDoNotUse. */
+        public encryptedDataKeyDoNotUse: Uint8Array;
 
         /** DeviceInfo clientVersion. */
         public clientVersion: string;
@@ -11658,6 +11665,12 @@ export namespace AccountSummary {
 
         /** DeviceInfo approveRequestTime. */
         public approveRequestTime: (number|Long);
+
+        /** DeviceInfo encryptedDataKeyPresent. */
+        public encryptedDataKeyPresent: boolean;
+
+        /** DeviceInfo groupId. */
+        public groupId: (number|Long);
 
         /**
          * Creates a new DeviceInfo instance using the specified properties.
@@ -12434,9 +12447,6 @@ export namespace AccountSummary {
 
         /** Settings shareDataKeyWithDevicePublicKey */
         shareDataKeyWithDevicePublicKey?: (boolean|null);
-
-        /** Settings deviceDataKeyPresent */
-        deviceDataKeyPresent?: (boolean|null);
     }
 
     /** Represents a Settings. */
@@ -12537,9 +12547,6 @@ export namespace AccountSummary {
 
         /** Settings shareDataKeyWithDevicePublicKey. */
         public shareDataKeyWithDevicePublicKey: boolean;
-
-        /** Settings deviceDataKeyPresent. */
-        public deviceDataKeyPresent: boolean;
 
         /**
          * Creates a new Settings instance using the specified properties.
