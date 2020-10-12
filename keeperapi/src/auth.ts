@@ -375,7 +375,7 @@ export class Auth {
                 needUserName = false
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
-            if (resumeSessionOnly && (loginResponse && loginResponse.loginState) != Authentication.LoginState.LOGGED_IN) {
+            if (resumeSessionOnly && loginResponse && (loginResponse.loginState != Authentication.LoginState.LOGGED_IN) {
                 return {
                     result: 'notLoggedin'
                 }
