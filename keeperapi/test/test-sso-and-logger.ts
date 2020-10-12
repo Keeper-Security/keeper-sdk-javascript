@@ -114,7 +114,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // TESTING
 // ****************************************************
 
-TestRegisterDevice().finally();
+// TestRegisterDevice().finally();
 
 
 // ServiceLogger and Cloud SSO Connect ---------------
@@ -130,11 +130,11 @@ TestRegisterDevice().finally();
 // TestSsoGetSigningCertificate().finally();
 // TestSsoIdpInitiatedLogin().finally();
 // TestSsoSetCurrentConfiguration().finally();
-TestSsoGetConfigurationList().finally();
+// TestSsoGetConfigurationList().finally();
 // TestSsoAddNewConfiguration().finally();
 // TestSsoCopyConfiguration().finally();
 // TestSsoResetConfiguration().finally();
-// TestSsoGetConfiguration().finally();
+TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
 // TestSsoUpdateConfiguration().finally();
