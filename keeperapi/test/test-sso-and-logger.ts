@@ -6,7 +6,15 @@ import * as fs from 'fs'
 import {AuthUI, AuthUI3, DeviceConfig, TwoFactorInput} from '../src/configuration';
 import {Authentication, ServiceLogger, SsoCloud} from '../src/proto'
 import {KeeperEnvironment, KeeperEndpoint} from '../src/endpoint'
-import {authUI3, getDeviceConfig, readDeviceConfig, prompt, saveDeviceConfig, getCredentialsAndHost} from './testUtil'
+import {
+    authUI3,
+    getDeviceConfig,
+    readDeviceConfig,
+    prompt,
+    saveDeviceConfig,
+    getCredentialsAndHost,
+    cloudSsoLogin2, cloudSsoLogout2, openBrowser
+} from './testUtil'
 import {SsoServiceProviderAddCommand, SsoServiceProviderUpdateCommand, SsoServiceProviderDeleteCommand} from '../src/commands';
 import {webSafe64, webSafe64FromBytes} from '../src/utils';
 import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from '../src/restMessages';
@@ -284,7 +292,7 @@ async function TestSsoLogin_2() {
         });
 
         let payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
-        let resp = await auth.cloudSsoLogin2(url,  payload, false);
+        let resp = await cloudSsoLogin2(url,  payload, false);
 
         console.log(resp);
      } catch (e) {
@@ -353,7 +361,7 @@ async function TestSsoLogout_2() {
         });
 
         let payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
-        let resp = await auth.cloudSsoLogin2(loginUrl,  payload, false);
+        let resp = await cloudSsoLogin2(loginUrl,  payload, false);
         console.log("Logged in via SSO");
         console.log(resp);
 
@@ -371,7 +379,7 @@ async function TestSsoLogout_2() {
         });
 
         payload = webSafe64FromBytes(await auth._endpoint.prepareRequest(SsoCloudRequest.encode(restReq).finish()));
-        resp = await auth.cloudSsoLogout2(logoutUrl, payload, false);
+        resp = await cloudSsoLogout2(logoutUrl, payload, false);
         console.log(resp);
      } catch (e) {
         console.log(e)
@@ -454,7 +462,7 @@ async function TestSsoIdpInitiatedLogin() {
             let redirectUrl = response.headers["location"];
             if (redirectUrl) {
                 console.log("Redirecting to " + redirectUrl);
-                await platform.defaultRedirect(redirectUrl);
+                await openBrowser(redirectUrl);
             } else {
                 console.log("Expected URL with 303 status, but didn't get one");
             }

@@ -355,13 +355,8 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    static defaultRedirect(url: string): Promise<any> {
-        if (window && window.open) {
-            window.open(url)
-        } else {
-            console.log('Unable to redirect: window not present.')
-        }
-        return Promise.resolve()
+    static ssoLogin(url: string): Promise<string> {
+        throw new Error('Not Implemented')
     }
 };
 

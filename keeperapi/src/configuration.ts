@@ -48,8 +48,8 @@ export interface DeviceConfig {
 
 export interface SessionStorage {
     lastUsername: string;
-    getCloneCode(username: string): Uint8Array | null;
-    saveCloneCode(username: string, cloneCode: Uint8Array): void;
+    getCloneCode(host: KeeperEnvironment, username: string): Uint8Array | null;
+    saveCloneCode(host: KeeperEnvironment, username: string, cloneCode: Uint8Array): void;
 }
 
 export interface VendorConfiguration {
