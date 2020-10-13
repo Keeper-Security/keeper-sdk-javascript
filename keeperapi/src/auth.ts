@@ -379,6 +379,9 @@ export class Auth {
                 needUserName = false
             }
             const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
+            if (loginResponse.cloneCode && loginResponse.cloneCode.length > 0) {
+                this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
+            }
             if (resumeSessionOnly && loginResponse && (loginResponse.loginState != Authentication.LoginState.LOGGED_IN)) {
                 return {
                     result: 'notLoggedin'
@@ -386,9 +389,6 @@ export class Auth {
             }
             console.log(loginResponse)
             console.log("login state =", loginResponse.loginState);
-            if (loginResponse.cloneCode && loginResponse.cloneCode.length > 0) {
-                this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
-            }
 
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.ACCOUNT_LOCKED:
