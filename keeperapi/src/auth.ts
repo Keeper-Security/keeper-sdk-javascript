@@ -336,7 +336,6 @@ export class Auth {
         this._username = username || this.options.sessionStorage.lastUsername
 
         let needUserName: boolean
-        let previousLoginState = 0;
 
         const handleError = (resultCode: string, loginResponse: Authentication.ILoginResponse, error: any) => {
             if (this.options.onCommandFailure) {
@@ -386,17 +385,10 @@ export class Auth {
                 }
             }
             console.log(loginResponse)
-            if (!loginResponse.loginState) {
-                console.log("loginState is null");
-                loginResponse.loginState = 99;
-            }
             console.log("login state =", loginResponse.loginState);
-
-            // time to see what the infinite loop looks like
-            // if (previousLoginState === 13) {
-            //     return; // hack to stop infinite loop
-            // }
-            previousLoginState = loginResponse.loginState;
+            if (loginResponse.cloneCode && loginResponse.cloneCode.length > 0) {
+                this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
+            }
 
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.ACCOUNT_LOCKED:
@@ -839,16 +831,17 @@ export class Auth {
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
+        if (loginResp.cloneCode && loginResp.cloneCode.length > 0) {
+            this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResp.cloneCode)
+        }
         await this.loginSuccess(loginResp, password, salt)
     }
 
     async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt | undefined = undefined) {
         this._username = loginResponse.primaryUsername || this._username
-        this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             return
         }
-
         this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.sessionTokenType, loginResponse.accountUid)
         switch (loginResponse.encryptedDataKeyType) {
             case Authentication.EncryptedDataKeyType.BY_DEVICE_PUBLIC_KEY:
