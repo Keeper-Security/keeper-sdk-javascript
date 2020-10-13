@@ -433,6 +433,9 @@ export class Auth {
                     if (this.options.onRegionChanged) {
                         this.options.onRegionChanged(loginResponse.stateSpecificValue)
                     }
+                    // Current socket no longer pointing to the right region
+                    this.socket.disconnect()
+                    this.socket = null
                     break;
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
                     console.log("Cloud SSO Connect login");
