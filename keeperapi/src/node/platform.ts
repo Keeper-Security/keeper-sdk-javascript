@@ -272,19 +272,22 @@ export const nodePlatform: Platform = class {
         }
     }
 
-    static async ssoLogin(url: string): Promise<string> {
+    static async ssoLogin(url: string): Promise<any> {
         const browser = await launch({
             headless: false,
             executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         })
-        const pages = await browser.pages()
-        const page = pages[0]
+        let pages = await browser.pages()
+        let page = pages[0]
         await page.goto(url);
-        await browser.waitForTarget(target => target.url().startsWith(url.substring(0, url.indexOf('/login')) + '/sso'), {
+        await browser.waitForTarget(target => target.url().includes('/saml/sso'), {
             timeout: 180000
         })
+        try {
+            await page.waitForNavigation({timeout: 1000})
+        } catch {
+        }
         const token = await page.evaluate(() => window['token'])
-        console.log(`SSO Token: ${token}`)
         await browser.close();
         return token
     }

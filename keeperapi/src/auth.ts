@@ -11,16 +11,19 @@ import {platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
     chooseErrorMessage,
-    decryptFromStorage, generateEncryptionKey,
+    decryptFromStorage,
+    generateEncryptionKey,
     generateUidBytes,
     isTwoFactorResultCode,
     normal64,
-    normal64Bytes, resolvablePromise,
+    normal64Bytes,
+    resolvablePromise,
     webSafe64,
     webSafe64FromBytes
 } from "./utils";
 import {
-    logoutV3Message, requestCreateUserMessage,
+    logoutV3Message,
+    requestCreateUserMessage,
     requestDeviceAdminApprovalMessage,
     requestDeviceVerificationMessage,
     RestMessage,
@@ -38,6 +41,8 @@ import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
 import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
+import LoginType = Authentication.LoginType;
+import LoginMethod = Authentication.LoginMethod;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -461,9 +466,18 @@ export class Auth {
                         throw new Error('URL missing from API response')
                     }
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
-                    this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
-                    return
-
+                    if (this.options.authUI3.redirectCallback) {
+                        this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
+                        return
+                    } else {
+                        const onsiteResp = await platform.ssoLogin(onsiteSsoLoginUrl)
+                        console.log(onsiteResp)
+                        this._username = onsiteResp.email
+                        password = onsiteResp.password
+                        loginType = LoginType.SSO
+                        loginMethod = LoginMethod.AFTER_SSO
+                        break;
+                    }
                 case Authentication.LoginState.REQUIRES_2FA:
                     loginToken = await this.handleTwoFactor(loginResponse)
                     break

@@ -355,7 +355,7 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    static ssoLogin(url: string): Promise<string> {
+    static ssoLogin(url: string): Promise<any> {
         throw new Error('Not Implemented')
     }
 };

@@ -50,7 +50,7 @@ export interface Platform {
 
     createWebsocket(url: string): SocketProxy
 
-    ssoLogin(url: string): Promise<string>
+    ssoLogin(url: string): Promise<any>
 }
 
 export function connectPlatform(p: Platform) {
