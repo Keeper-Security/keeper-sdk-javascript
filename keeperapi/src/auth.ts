@@ -75,6 +75,7 @@ export type SocketProxy = {
     onError: (callback: (e: Event | Error) => void) => void
     onMessage: (callback: (e: Uint8Array) => void) => void
     send: (message: any) => void
+    messageQueue: any[] // Since messages are type any here, make this an any array
 }
 
 export class SocketListener {
@@ -213,6 +214,30 @@ export class SocketListener {
         clearTimeout(this.reconnectTimeout)
 
         this.singleMessageListeners.length = 0
+    }
+}
+
+export function socketSendMessage(message: any, socket: WebSocket, createdSocket:any){
+    switch (socket.readyState) {
+        case 0:// CONNECTING
+            if (createdSocket.messageQueue.indexOf(message) === -1) createdSocket.messageQueue.push(message)
+            break;
+        case 1:// OPEN
+            if (createdSocket.messageQueue.indexOf(message) === -1) createdSocket.messageQueue.push(message)
+
+            if (createdSocket.messageQueue.length > 0) {
+                for (let counter = 0; counter < createdSocket.messageQueue.length; counter++) {
+                    socket.send(createdSocket.messageQueue[counter])
+                }
+            }
+
+            createdSocket.messageQueue.length = 0
+            break;
+        case 2:// CLOSING
+        case 3:// CLOSED
+            createdSocket.messageQueue.length = 0
+            console.error('Trying to send a message while in the CLOSING or CLOSED state')
+            break;
     }
 }
 

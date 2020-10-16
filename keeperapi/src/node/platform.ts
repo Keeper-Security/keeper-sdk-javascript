@@ -9,7 +9,7 @@ import {Platform} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
-import {SocketProxy} from '../auth'
+import {SocketProxy, socketSendMessage} from '../auth'
 import {launch} from 'puppeteer'
 
 export const nodePlatform: Platform = class {
@@ -248,7 +248,8 @@ export const nodePlatform: Platform = class {
 
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket.Client(url)
-        return {
+        let createdSocket;
+        return createdSocket = {
             onOpen: (callback: () => void) => {
                 socket.on('open', callback)
             },
@@ -267,8 +268,9 @@ export const nodePlatform: Platform = class {
                 })
             },
             send: (message => {
-                socket.send(message)
-            })
+                socketSendMessage(message, socket, createdSocket)  
+            }),
+            messageQueue: [],
         }
     }
 

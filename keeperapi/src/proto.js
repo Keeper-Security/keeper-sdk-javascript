@@ -35780,6 +35780,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @memberof AccountSummary
          * @interface IGroup
          * @property {boolean|null} [admin] Group admin
+         * @property {string|null} [groupVerificationCode] Group groupVerificationCode
          * @property {AccountSummary.IAdministrator|null} [administrator] Group administrator
          */
 
@@ -35805,6 +35806,14 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @instance
          */
         Group.prototype.admin = false;
+
+        /**
+         * Group groupVerificationCode.
+         * @member {string} groupVerificationCode
+         * @memberof AccountSummary.Group
+         * @instance
+         */
+        Group.prototype.groupVerificationCode = "";
 
         /**
          * Group administrator.
@@ -35840,6 +35849,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 writer = $Writer.create();
             if (message.admin != null && message.hasOwnProperty("admin"))
                 writer.uint32(/* id 1, wireType 0 =*/8).bool(message.admin);
+            if (message.groupVerificationCode != null && message.hasOwnProperty("groupVerificationCode"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.groupVerificationCode);
             if (message.administrator != null && message.hasOwnProperty("administrator"))
                 $root.AccountSummary.Administrator.encode(message.administrator, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             return writer;
@@ -35878,6 +35889,9 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 switch (tag >>> 3) {
                 case 1:
                     message.admin = reader.bool();
+                    break;
+                case 2:
+                    message.groupVerificationCode = reader.string();
                     break;
                 case 4:
                     message.administrator = $root.AccountSummary.Administrator.decode(reader, reader.uint32());
@@ -35920,6 +35934,9 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.admin != null && message.hasOwnProperty("admin"))
                 if (typeof message.admin !== "boolean")
                     return "admin: boolean expected";
+            if (message.groupVerificationCode != null && message.hasOwnProperty("groupVerificationCode"))
+                if (!$util.isString(message.groupVerificationCode))
+                    return "groupVerificationCode: string expected";
             if (message.administrator != null && message.hasOwnProperty("administrator")) {
                 let error = $root.AccountSummary.Administrator.verify(message.administrator);
                 if (error)
@@ -35942,6 +35959,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
             let message = new $root.AccountSummary.Group();
             if (object.admin != null)
                 message.admin = Boolean(object.admin);
+            if (object.groupVerificationCode != null)
+                message.groupVerificationCode = String(object.groupVerificationCode);
             if (object.administrator != null) {
                 if (typeof object.administrator !== "object")
                     throw TypeError(".AccountSummary.Group.administrator: object expected");
@@ -35965,10 +35984,13 @@ export const AccountSummary = $root.AccountSummary = (() => {
             let object = {};
             if (options.defaults) {
                 object.admin = false;
+                object.groupVerificationCode = "";
                 object.administrator = null;
             }
             if (message.admin != null && message.hasOwnProperty("admin"))
                 object.admin = message.admin;
+            if (message.groupVerificationCode != null && message.hasOwnProperty("groupVerificationCode"))
+                object.groupVerificationCode = message.groupVerificationCode;
             if (message.administrator != null && message.hasOwnProperty("administrator"))
                 object.administrator = $root.AccountSummary.Administrator.toObject(message.administrator, options);
             return object;

@@ -13567,6 +13567,9 @@ export namespace AccountSummary {
         /** Group admin */
         admin?: (boolean|null);
 
+        /** Group groupVerificationCode */
+        groupVerificationCode?: (string|null);
+
         /** Group administrator */
         administrator?: (AccountSummary.IAdministrator|null);
     }
@@ -13582,6 +13585,9 @@ export namespace AccountSummary {
 
         /** Group admin. */
         public admin: boolean;
+
+        /** Group groupVerificationCode. */
+        public groupVerificationCode: string;
 
         /** Group administrator. */
         public administrator?: (AccountSummary.IAdministrator|null);

@@ -5,7 +5,7 @@ import {AES, enc, mode, pad} from "crypto-js";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
 import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
-import {SocketProxy} from '../auth'
+import {SocketProxy, socketSendMessage} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 
@@ -327,7 +327,8 @@ export const browserPlatform: Platform = class {
 
     static createWebsocket(url: string): SocketProxy {
         const socket = new WebSocket(url)
-        return {
+        let createdSocket;
+        return createdSocket = {
             onOpen: (callback: () => void) => {
                 socket.onopen = (e: Event) => {
                     callback()
@@ -350,8 +351,9 @@ export const browserPlatform: Platform = class {
                 }
             },
             send: (message: any) => {
-                socket.send(message)
-            }
+                socketSendMessage(message, socket, createdSocket)                
+            },
+            messageQueue: [],
         }
     }
 
