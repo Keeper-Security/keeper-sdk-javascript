@@ -1,5 +1,10 @@
 import {Auth} from "../src/auth";
-import {accountSummaryMessage, approveDeviceMessage, requestCreateUserMessage} from '../src/restMessages';
+import {
+    accountSummaryMessage,
+    approveDeviceMessage, registerEncryptedDataKeyForDeviceMessage,
+    requestCreateUserMessage,
+    setUserSettingMessage
+} from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
 import {generateUidBytes} from '../src/utils';
@@ -131,6 +136,18 @@ async function testLogin() {
     } finally {
         auth.disconnect()
     }
+}
+
+async function enablePersistentLogin(auth: Auth) {
+    await auth.executeRest(setUserSettingMessage({
+        setting: "persistent_login",
+        value: "1"
+    }))
+    const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, auth.options.deviceConfig.publicKey)
+    await auth.executeRest(registerEncryptedDataKeyForDeviceMessage({
+        encryptedDeviceToken: auth.options.deviceConfig.deviceToken,
+        encryptedDeviceDataKey
+    }))
 }
 
 async function testNewDevice() {

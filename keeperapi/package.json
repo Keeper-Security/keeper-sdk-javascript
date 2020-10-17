@@ -18,6 +18,7 @@
     "publish:beta": "node ./scripts/verifyBetaVersion.js && npm publish --tag beta",
     "test": "ts-node test/test.ts",
     "test-new-login": "ts-node test/new_login.ts",
+    "test-record-types": "ts-node test/record_types.ts",
     "test-ws_push": "ts-node test/ws_push.ts",
     "test-sso": "ts-node test/test-sso-and-logger.ts",
     "push-agent": "ts-node test/keeperPush.ts",
