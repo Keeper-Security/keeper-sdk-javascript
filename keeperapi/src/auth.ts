@@ -22,6 +22,7 @@ import {
     webSafe64FromBytes
 } from "./utils";
 import {
+    accountSummaryMessage,
     logoutV3Message,
     requestCreateUserMessage,
     requestDeviceAdminApprovalMessage,
@@ -34,7 +35,7 @@ import {
     validateAuthHashMessage,
     validateDeviceVerificationCodeMessage
 } from './restMessages'
-import {Authentication} from './proto';
+import {AccountSummary, Authentication} from './proto';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
@@ -43,6 +44,7 @@ import TwoFactorChannelType = Authentication.TwoFactorChannelType;
 import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
 import LoginType = Authentication.LoginType;
 import LoginMethod = Authentication.LoginMethod;
+import IAccountSummaryElements = AccountSummary.IAccountSummaryElements;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -273,6 +275,7 @@ export class Auth {
     options: ClientConfigurationInternal;
     private socket: SocketListener | undefined;
     public clientKey: Uint8Array;
+    private accountSummary: IAccountSummaryElements;
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -888,6 +891,27 @@ export class Auth {
             case Authentication.EncryptedDataKeyType.BY_BIO:
                 throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
         }
+        let encryptedPrivateKey: Uint8Array
+        if (this.options.kvs) {
+            const encryptedPrivateKeyString = this.options.kvs.getValue(`${this._username}/private_key`)
+            if (encryptedPrivateKeyString) {
+                encryptedPrivateKey = platform.base64ToBytes(encryptedPrivateKeyString)
+            }
+        }
+        if (!encryptedPrivateKey) {
+            await this.loadAccountSummary()
+            encryptedPrivateKey = this.accountSummary.keysInfo.encryptedPrivateKey
+            if (this.options.kvs) {
+                this.options.kvs.saveValue(`${this._username}/private_key`, platform.bytesToBase64(encryptedPrivateKey))
+            }
+        }
+        this.privateKey = platform.aesCbcDecrypt(encryptedPrivateKey, this.dataKey, true)
+    }
+
+    async loadAccountSummary() {
+        this.accountSummary = await this.executeRest(accountSummaryMessage({
+            summaryVersion: 1
+        }));
     }
 
     async login(username: string, password: string) {

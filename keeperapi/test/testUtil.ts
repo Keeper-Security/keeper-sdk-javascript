@@ -5,7 +5,7 @@ import * as path from 'path'
 import {
     AuthUI3,
     DeviceConfig,
-    DeviceVerificationMethods,
+    DeviceVerificationMethods, KeyValueStorage,
     SessionStorage, TransmissionKey, TwoFactorChannelData
 } from '../src/configuration'
 import {platform} from '../src/platform';
@@ -13,8 +13,14 @@ import {KeeperEnvironment} from '../src/endpoint';
 import {Authentication} from '../src/proto';
 import {generateTransmissionKey, webSafe64FromBytes} from '../src/utils';
 import TwoFactorPushType = Authentication.TwoFactorPushType;
-import {RestMessage, ssoSamlMessage} from '../src/restMessages';
+import {
+    registerEncryptedDataKeyForDeviceMessage,
+    RestMessage,
+    setUserSettingMessage,
+    ssoSamlMessage
+} from '../src/restMessages';
 import {launch} from 'puppeteer';
+import {Auth} from '../src/auth';
 
 export const prompt = async (message: string, cancel?: Promise<void>): Promise<string> => new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
@@ -31,6 +37,13 @@ export const prompt = async (message: string, cancel?: Promise<void>): Promise<s
         resolve(response)
         rl.close()
     });
+})
+
+export const timeout = async (ms: number): Promise<void> => new Promise((resolve) => {
+    let id = setTimeout(() => {
+        clearTimeout(id);
+        resolve();
+    }, ms)
 })
 
 export async function openBrowser(url: string) {
@@ -188,6 +201,54 @@ type SessionData = {
     }
 }
 
+export class TestKeyValueStorage implements KeyValueStorage {
+
+    fileName(): string {
+        return path.resolve(`${__dirname}/config/kvs.json`)
+    }
+
+    readStorage(): any {
+        try {
+            return  JSON.parse(fs.readFileSync(this.fileName()).toString())
+        }
+        catch (e) {
+            return {}
+        }
+    }
+
+    saveStorage(storage: any) {
+        fs.writeFileSync(this.fileName(), JSON.stringify(storage, null, 2))
+    }
+
+    getValue(key: string): string | null {
+        const storage = this.readStorage()
+        const keyParts = key.split('/')
+        let obj = storage
+        for (const part of keyParts) {
+            obj = obj[part]
+            if (!obj) {
+                return null
+            }
+        }
+        return obj.toString();
+    }
+
+    saveValue(key: string, value: string): void {
+        const storage = this.readStorage()
+        const keyParts = key.split('/')
+        let obj = storage
+        for (const part of keyParts.slice(0, -1)) {
+            if (!obj[part]) {
+                obj[part] = {}
+            }
+            obj = obj[part]
+        }
+        obj[keyParts.slice(-1)[0]] = value
+        this.saveStorage(storage)
+    }
+
+}
+
 export class TestSessionStorage implements SessionStorage {
 
     private sessionData: SessionData
@@ -230,6 +291,18 @@ export class TestSessionStorage implements SessionStorage {
 
         fs.writeFileSync(this.fileName, JSON.stringify(this.sessionData, null, 2))
     }
+}
+
+export async function enablePersistentLogin(auth: Auth) {
+    await auth.executeRest(setUserSettingMessage({
+        setting: "persistent_login",
+        value: "1"
+    }))
+    const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, auth.options.deviceConfig.publicKey)
+    await auth.executeRest(registerEncryptedDataKeyForDeviceMessage({
+        encryptedDeviceToken: auth.options.deviceConfig.deviceToken,
+        encryptedDeviceDataKey
+    }))
 }
 
 export async function cloudSsoLogin(ssoLoginUrl: string, messageSessionUid: Uint8Array, useGet: boolean = false): Promise<any> {

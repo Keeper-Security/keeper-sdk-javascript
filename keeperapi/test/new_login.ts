@@ -138,18 +138,6 @@ async function testLogin() {
     }
 }
 
-async function enablePersistentLogin(auth: Auth) {
-    await auth.executeRest(setUserSettingMessage({
-        setting: "persistent_login",
-        value: "1"
-    }))
-    const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, auth.options.deviceConfig.publicKey)
-    await auth.executeRest(registerEncryptedDataKeyForDeviceMessage({
-        encryptedDeviceToken: auth.options.deviceConfig.deviceToken,
-        encryptedDeviceDataKey
-    }))
-}
-
 async function testNewDevice() {
     const {userName, password, host} = getCredentialsAndHost()
 

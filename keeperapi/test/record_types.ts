@@ -6,7 +6,15 @@ import * as fs from 'fs'
 import {webSafe64FromBytes} from '../src/utils'
 import {Records} from '../src/proto'
 import RecordModifyResult = Records.RecordModifyResult;
-import {authUI3, prompt, getCredentialsAndHost, getDeviceConfig, saveDeviceConfig, TestSessionStorage} from './testUtil';
+import {
+    authUI3,
+    prompt,
+    getCredentialsAndHost,
+    getDeviceConfig,
+    saveDeviceConfig,
+    TestSessionStorage,
+    timeout, enablePersistentLogin, TestKeyValueStorage
+} from './testUtil';
 import {ClientConfiguration} from '../src/configuration';
 import {
     recordTypesGetMessage,
@@ -20,10 +28,10 @@ connectPlatform(nodePlatform)
 
 const clientVersion = 'w15.0.0'
 
-async function login(): Promise<Auth> {
+async function login(withDeviceName?: string): Promise<Auth> {
     const {userName, password, host} = getCredentialsAndHost()
 
-    const deviceName = 'test device'
+    const deviceName = withDeviceName || 'test device'
 
     const deviceConfig = getDeviceConfig(deviceName, host)
 
@@ -32,6 +40,7 @@ async function login(): Promise<Auth> {
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         sessionStorage: new TestSessionStorage(deviceName, host),
+        kvs: new TestKeyValueStorage(),
         useSessionResumption: true,
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3
@@ -53,7 +62,8 @@ async function login(): Promise<Auth> {
 }
 
 async function printVault() {
-    let auth = await login()
+    let auth = await login('device1')
+    // let auth = await login()
     try {
         let vault = new Vault(auth)
         // vault.noTypedRecords = true;
@@ -189,10 +199,10 @@ async function testRecordUpdateForLegacy() {
     }
 }
 
-async function cleanVault() {
+async function cleanVault(withDeviceName?: string) {
+    let auth = await login(withDeviceName)
     try {
         let cleanTrash = false
-        let auth = await login()
         let vault = new Vault(auth)
         await vault.syncDown()
         let records = vault.records
@@ -219,8 +229,8 @@ async function cleanVault() {
         if (cleanTrash) {
             await vault.cleanTrash()
         }
-    } catch (e) {
-        console.log(e)
+    } finally {
+        auth.disconnect()
     }
 }
 
@@ -297,13 +307,15 @@ async function testAttachmentsE2E() {
         console.log(recordUid)
 
         await vault.syncDown()
-        const rec = vault.recordByUid(recordUid)
+        const rec = vault.records.find(x => x.metaData.record_uid === recordUid)
         console.log(rec)
 
-        const file1 = await vault.downloadFile(recordUid, false);
+        await timeout(10000)
+
+        const file1 = await vault.downloadFile(rec.metaData.record_uid, false);
         fs.writeFileSync('picture.jpg', file1)
 
-        const file2 = await vault.downloadFile(recordUid, true);
+        const file2 = await vault.downloadFile(rec.metaData.record_uid, true);
         fs.writeFileSync('picture_tn.jpg', file2)
     } catch (e) {
         console.log(e)
@@ -325,7 +337,7 @@ const uploadFiles = async (vault: Vault) => {
 };
 
 const downloadSharedFiles = async (fileRecordUid1: string, fileRecordUid2: string) => {
-    let auth = await login()
+    let auth = await login('device1')
     let vault = new Vault(auth)
     await vault.syncDown()
 
@@ -366,7 +378,7 @@ async function testRecordShareViaRecord() {
         console.log("Sharing record with links...")
         await vault.shareRecords([
             recordUid
-        ], 'saldoukhov@gmail.com')
+        ], 'admin+rt1@yozik.us')
 
         await downloadSharedFiles(fileRecordUid1, fileRecordUid2)
     } catch (e) {
@@ -388,7 +400,7 @@ async function testRecordShareViaFolder() {
         const folderUid = await vault.createSharedFolder('sftest')
 
         console.log('Adding user to shared folder...')
-        await vault.addUserToSharedFolder(folderUid,  'saldoukhov@gmail.com')
+        await vault.addUserToSharedFolder(folderUid,  'admin+rt1@yozik.us')
 
         // await vault.syncDown(true)
         console.log('Adding record to shared folder...')
@@ -505,17 +517,18 @@ async function testSharedLinkedRecordUpdateExisting() {
     }
 }
 
-printVault().finally();
+// cleanVault('device1').finally();
+
+// printVault().finally();
 // printRecordTypes().finally()
 // testAddRecordNew().finally();
 // testRecordUpdate().finally();
-// testRecordUpdateForLegacy().finally();
-// testRecordShareViaRecord().finally();
-// testRecordShareViaFolder().finally();
-// testSharedLinkedRecordUpdate().finally();
-// cleanVault().finally();
-// cleanVault('saldoukhov@gmail.com').finally();
 // testAttachmentsE2E().finally();
+// testRecordShareViaRecord().finally();
+testRecordShareViaFolder().finally();
+
+// testRecordUpdateForLegacy().finally();
+// testSharedLinkedRecordUpdate().finally();
 // testAttachmentsDownload().finally();
 // testAttachmentsUpload().finally();
 

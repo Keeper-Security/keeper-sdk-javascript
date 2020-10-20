@@ -19,6 +19,7 @@ export interface ClientConfiguration {
     onRegionChanged?: (newRegion: string) => void,
     onDeviceVerified?: (isDeviceVerified: boolean) => void
     sessionStorage?: SessionStorage
+    kvs?: KeyValueStorage;
     useSessionResumption?: boolean
     iterations?: number
     salt?: Uint8Array
@@ -50,6 +51,11 @@ export interface SessionStorage {
     lastUsername: string;
     getCloneCode(host: KeeperEnvironment, username: string): Uint8Array | null;
     saveCloneCode(host: KeeperEnvironment, username: string, cloneCode: Uint8Array): void;
+}
+
+export interface KeyValueStorage {
+    getValue(key: string): string | null;
+    saveValue(key: string, value: string): void;
 }
 
 export interface VendorConfiguration {
