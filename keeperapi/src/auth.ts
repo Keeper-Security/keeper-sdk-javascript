@@ -426,8 +426,10 @@ export class Auth {
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
                 case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
                 case Authentication.LoginState.DEVICE_LOCKED:
+                    handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
+                    return
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
-                    await this.createSsoUser(loginToken)
+                    await this.createSsoUser(loginResponse.encryptedLoginToken)
                     break;
                 case Authentication.LoginState.UPGRADE:
                     handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
