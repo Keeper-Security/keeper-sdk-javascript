@@ -221,13 +221,15 @@ export class KeeperEndpoint {
         return this.transmissionKey;
     }
 
-    public async prepareSsoPayload(messageSessionUid: Uint8Array): Promise<string> {
+    public async prepareSsoPayload(messageSessionUid: Uint8Array, username: string = '', idpSessionId = ''): Promise<string> {
         const payload = ssoCloudRequestMessage({
             "embedded": true,
             "clientVersion": this.clientVersion,
             "dest": "vault",
             "forceLogin": false,
-            "messageSessionUid": messageSessionUid
+            "messageSessionUid": messageSessionUid,
+            "idpSessionId": idpSessionId,
+            "username": username
         }).toBytes()
         const request = await prepareApiRequest(payload, this.transmissionKey)
         return webSafe64FromBytes(request)

@@ -336,8 +336,30 @@ export class Auth {
         return this.messageSessionUid;
     }
 
-    logout() {
-        this.executeRest(logoutV3Message())
+    async logout() {
+        await this.executeRest(logoutV3Message())
+
+        if (this.userType == UserType.cloudSso) {
+            const payload = await this.endpoint.prepareSsoPayload(this.messageSessionUid, this.username, this.ssoSessionId)
+
+            const params = new URLSearchParams({
+                'payload': payload,
+            })
+
+            const url = `${this.ssoLogoutUrl}?${String(params)}`
+            this.options.authUI3.redirectCallback(url);
+        
+        } else if (this.userType == UserType.onsiteSso) {
+            const params = new URLSearchParams({
+                'embedded': 'true',
+                'email': this.username,
+                'session_id': this.ssoSessionId,
+                'dest': 'vault'
+            })
+
+            const url = `${this.ssoLogoutUrl}?${String(params)}`
+            this.options.authUI3.redirectCallback(url)
+        }
     }
 
     disconnect() {
@@ -472,6 +494,8 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
+                    this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
+                    this.userType = UserType.cloudSso
                     let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
                     let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
                     if (this.options.authUI3.redirectCallback) {
@@ -490,6 +514,8 @@ export class Auth {
                     if (!loginResponse.url) {
                         throw new Error('URL missing from API response')
                     }
+                    this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
+                    this.userType = UserType.onsiteSso
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
                     if (this.options.authUI3.redirectCallback) {
                         this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
@@ -548,6 +574,10 @@ export class Auth {
         const params = domainResponse.isCloud
             ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
             : '?embedded'
+
+        this.userType = domainResponse.isCloud ? UserType.cloudSso : UserType.onsiteSso
+        this.ssoLogoutUrl = domainResponse.spUrl.replace('login', 'logout')
+
         return {
             url: domainResponse.spUrl + params,
             name: domainResponse.name,
