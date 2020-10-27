@@ -7680,6 +7680,9 @@ export namespace Authentication {
 
         /** ValidateDeviceVerificationCodeRequest messageSessionUid */
         messageSessionUid?: (Uint8Array|null);
+
+        /** ValidateDeviceVerificationCodeRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
     }
 
     /** Represents a ValidateDeviceVerificationCodeRequest. */
@@ -7702,6 +7705,9 @@ export namespace Authentication {
 
         /** ValidateDeviceVerificationCodeRequest messageSessionUid. */
         public messageSessionUid: Uint8Array;
+
+        /** ValidateDeviceVerificationCodeRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
 
         /**
          * Creates a new ValidateDeviceVerificationCodeRequest instance using the specified properties.

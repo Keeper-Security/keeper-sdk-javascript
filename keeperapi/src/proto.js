@@ -20188,6 +20188,7 @@ export const Authentication = $root.Authentication = (() => {
          * @property {string|null} [clientVersion] ValidateDeviceVerificationCodeRequest clientVersion
          * @property {string|null} [verificationCode] ValidateDeviceVerificationCodeRequest verificationCode
          * @property {Uint8Array|null} [messageSessionUid] ValidateDeviceVerificationCodeRequest messageSessionUid
+         * @property {Uint8Array|null} [encryptedDeviceToken] ValidateDeviceVerificationCodeRequest encryptedDeviceToken
          */
 
         /**
@@ -20238,6 +20239,14 @@ export const Authentication = $root.Authentication = (() => {
         ValidateDeviceVerificationCodeRequest.prototype.messageSessionUid = $util.newBuffer([]);
 
         /**
+         * ValidateDeviceVerificationCodeRequest encryptedDeviceToken.
+         * @member {Uint8Array} encryptedDeviceToken
+         * @memberof Authentication.ValidateDeviceVerificationCodeRequest
+         * @instance
+         */
+        ValidateDeviceVerificationCodeRequest.prototype.encryptedDeviceToken = $util.newBuffer([]);
+
+        /**
          * Creates a new ValidateDeviceVerificationCodeRequest instance using the specified properties.
          * @function create
          * @memberof Authentication.ValidateDeviceVerificationCodeRequest
@@ -20269,6 +20278,8 @@ export const Authentication = $root.Authentication = (() => {
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.verificationCode);
             if (message.messageSessionUid != null && message.hasOwnProperty("messageSessionUid"))
                 writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.messageSessionUid);
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.encryptedDeviceToken);
             return writer;
         };
 
@@ -20314,6 +20325,9 @@ export const Authentication = $root.Authentication = (() => {
                     break;
                 case 4:
                     message.messageSessionUid = reader.bytes();
+                    break;
+                case 5:
+                    message.encryptedDeviceToken = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -20362,6 +20376,9 @@ export const Authentication = $root.Authentication = (() => {
             if (message.messageSessionUid != null && message.hasOwnProperty("messageSessionUid"))
                 if (!(message.messageSessionUid && typeof message.messageSessionUid.length === "number" || $util.isString(message.messageSessionUid)))
                     return "messageSessionUid: buffer expected";
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                if (!(message.encryptedDeviceToken && typeof message.encryptedDeviceToken.length === "number" || $util.isString(message.encryptedDeviceToken)))
+                    return "encryptedDeviceToken: buffer expected";
             return null;
         };
 
@@ -20388,6 +20405,11 @@ export const Authentication = $root.Authentication = (() => {
                     $util.base64.decode(object.messageSessionUid, message.messageSessionUid = $util.newBuffer($util.base64.length(object.messageSessionUid)), 0);
                 else if (object.messageSessionUid.length)
                     message.messageSessionUid = object.messageSessionUid;
+            if (object.encryptedDeviceToken != null)
+                if (typeof object.encryptedDeviceToken === "string")
+                    $util.base64.decode(object.encryptedDeviceToken, message.encryptedDeviceToken = $util.newBuffer($util.base64.length(object.encryptedDeviceToken)), 0);
+                else if (object.encryptedDeviceToken.length)
+                    message.encryptedDeviceToken = object.encryptedDeviceToken;
             return message;
         };
 
@@ -20415,6 +20437,13 @@ export const Authentication = $root.Authentication = (() => {
                     if (options.bytes !== Array)
                         object.messageSessionUid = $util.newBuffer(object.messageSessionUid);
                 }
+                if (options.bytes === String)
+                    object.encryptedDeviceToken = "";
+                else {
+                    object.encryptedDeviceToken = [];
+                    if (options.bytes !== Array)
+                        object.encryptedDeviceToken = $util.newBuffer(object.encryptedDeviceToken);
+                }
             }
             if (message.username != null && message.hasOwnProperty("username"))
                 object.username = message.username;
@@ -20424,6 +20453,8 @@ export const Authentication = $root.Authentication = (() => {
                 object.verificationCode = message.verificationCode;
             if (message.messageSessionUid != null && message.hasOwnProperty("messageSessionUid"))
                 object.messageSessionUid = options.bytes === String ? $util.base64.encode(message.messageSessionUid, 0, message.messageSessionUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.messageSessionUid) : message.messageSessionUid;
+            if (message.encryptedDeviceToken != null && message.hasOwnProperty("encryptedDeviceToken"))
+                object.encryptedDeviceToken = options.bytes === String ? $util.base64.encode(message.encryptedDeviceToken, 0, message.encryptedDeviceToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDeviceToken) : message.encryptedDeviceToken;
             return object;
         };
 

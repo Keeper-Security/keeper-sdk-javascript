@@ -612,7 +612,10 @@ export class Auth {
                         validateCode: async (code) => {
                             await this.executeRest(validateDeviceVerificationCodeMessage({
                                 verificationCode: code,
-                                username: username
+                                username: username,
+                                encryptedDeviceToken: deviceConfig.deviceToken,
+                                clientVersion: this.endpoint.clientVersion,
+                                messageSessionUid: this.messageSessionUid,
                             }))
                             resumeWithToken(loginToken)
                         }
