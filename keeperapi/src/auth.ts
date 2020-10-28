@@ -845,6 +845,8 @@ export class Auth {
                         (async () => {
                             await submitCode(lastPushChannel, wssRs.passcode)
                         })()
+                    } else {
+                        rejectWithError(new Error('push_declined'))
                     }
                 }
             }
