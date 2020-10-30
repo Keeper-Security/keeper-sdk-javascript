@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {AccountSummary, Authentication, Enterprise, Records, ServiceLogger, SsoCloud} from './proto'
+import {AccountSummary, Authentication, BreachWatch, Enterprise, Records, ServiceLogger, SsoCloud} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -183,3 +183,11 @@ export const ssoCloudRequestMessage = (data: SsoCloud.ISsoCloudRequest): RestMes
 
 export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url:string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse);
+
+/* -- Account Summary --*/
+
+export const asSetEnterpriseUserDataKeyMessage = (data: Enterprise.IEnterpriseUserDataKey): RestMessage<Enterprise.IEnterpriseUserDataKey, null> =>
+    createMessage(data, 'enterprise/set_enterprise_user_data_key', Enterprise.EnterpriseUserDataKey, null);
+
+export const getEnterprisePublicKeyMessage = (): RestMessage<null, BreachWatch.EnterprisePublicKeyResponse> =>
+    createMessage(null, 'breachwatch/get_enterprise_public_key', null, BreachWatch.EnterprisePublicKeyResponse);
