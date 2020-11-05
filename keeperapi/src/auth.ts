@@ -336,9 +336,7 @@ export class Auth {
         return this.messageSessionUid;
     }
 
-    async logout() {
-        await this.executeRest(logoutV3Message())
-
+    async idpLogout() {
         if (this.userType == UserType.cloudSso) {
             const payload = await this.endpoint.prepareSsoPayload(this.messageSessionUid, this.username, this.ssoSessionId)
 
@@ -348,7 +346,7 @@ export class Auth {
 
             const url = `${this.ssoLogoutUrl}?${String(params)}`
             this.options.authUI3.redirectCallback(url);
-        
+
         } else if (this.userType == UserType.onsiteSso) {
             const params = new URLSearchParams({
                 'embedded': 'true',
@@ -360,6 +358,11 @@ export class Auth {
             const url = `${this.ssoLogoutUrl}?${String(params)}`
             this.options.authUI3.redirectCallback(url)
         }
+    }
+
+    async logout() {
+        await this.executeRest(logoutV3Message())
+        await this.idpLogout()
     }
 
     disconnect() {
