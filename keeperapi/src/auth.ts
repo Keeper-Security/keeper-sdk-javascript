@@ -465,7 +465,11 @@ export class Auth {
                     handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
                     return
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
-                    await this.createSsoUser(loginResponse.encryptedLoginToken)
+                    if (this.userType === UserType.cloudSso) {
+                        await this.createSsoUser(loginResponse.encryptedLoginToken)
+                    } else {
+                        await this.createUser(this._username, password)
+                    }
                     break;
                 case Authentication.LoginState.UPGRADE:
                     handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
