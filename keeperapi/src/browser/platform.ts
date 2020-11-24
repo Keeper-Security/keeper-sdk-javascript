@@ -8,6 +8,7 @@ import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
 import {SocketProxy, socketSendMessage} from '../auth'
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
+let socket: WebSocket | null = null
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
@@ -326,7 +327,7 @@ export const browserPlatform: Platform = class {
     }
 
     static createWebsocket(url: string): SocketProxy {
-        const socket = new WebSocket(url)
+        socket = new WebSocket(url)
         let createdSocket;
         return createdSocket = {
             onOpen: (callback: () => void) => {
@@ -394,3 +395,11 @@ function bytesToWordArray(data: Uint8Array): any {
     let dataHex = bytesToHex(data);
     return enc.Hex.parse(dataHex);
 }
+
+const OPCODE_PING = new Uint8Array([0x9])
+
+const heartbeat = window.setInterval(() => {
+    if (!socket) return
+    if (socket.readyState !== WebSocket.OPEN) return
+    socket.send(OPCODE_PING)
+}, 10000)

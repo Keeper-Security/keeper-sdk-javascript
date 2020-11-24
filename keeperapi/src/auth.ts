@@ -30,6 +30,7 @@ import {
     RestMessage,
     ssoServiceProviderRequestMessage,
     startLoginMessage,
+    startLoginMessageFromSessionToken,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     validateAuthHashMessage,
@@ -251,6 +252,7 @@ export type LoginPayload = {
     loginMethod?: Authentication.LoginMethod,
     v2TwoFactorToken?: string
     resumeSessionOnly?: boolean
+    givenSessionToken?: string
 }
 
 export enum UserType {
@@ -384,6 +386,7 @@ export class Auth {
             loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
             v2TwoFactorToken = null,
             resumeSessionOnly = false,
+            givenSessionToken = null,
         }: LoginPayload
     ) {
         this._username = username || this.options.sessionStorage.lastUsername
@@ -411,7 +414,7 @@ export class Auth {
                 const url = `wss://push.services.${this.options.host}/wss_open_connection`
                 const getConnectionRequest = () => this.endpoint.getPushConnectionRequest(this.messageSessionUid)
 
-                this.socket = new SocketListener(url, getConnectionRequest)
+                this.socket = new SocketListener(url, getConnectionRequest)             
                 console.log("Socket connected")
             }
 
@@ -431,7 +434,15 @@ export class Auth {
                 startLoginRequest.username = this._username
                 needUserName = false
             }
-            const loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
+
+            var loginResponse;
+            if (givenSessionToken){
+                this._sessionToken = givenSessionToken
+                loginResponse = await this.executeRest(startLoginMessageFromSessionToken(startLoginRequest))
+            } else {
+                loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
+            }            
+
             if (loginResponse.cloneCode && loginResponse.cloneCode.length > 0) {
                 this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
             }
@@ -471,6 +482,7 @@ export class Auth {
                     if (!loginResponse.encryptedLoginToken) {
                         throw new Error('Login token missing from API response')
                     }
+                    if (givenSessionToken) return { result: 'notLoggedin' }
                     try {
                         loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
                     } catch (e) {
@@ -561,7 +573,7 @@ export class Auth {
                         return;
                     } catch (e) {
                         console.log('Error in Authentication.LoginState.LOGGED_IN: ', e)
-                        break;
+                        return;
                     }
             }
         }

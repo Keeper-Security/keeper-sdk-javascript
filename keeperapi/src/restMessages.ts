@@ -83,6 +83,9 @@ export const requestDeviceAdminApprovalMessage = (data: Authentication.IDeviceVe
 export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswordReentryRequest): RestMessage<Authentication.IMasterPasswordReentryRequest, {}> =>
     createMessage(data, 'authentication/validate_master_password', Authentication.MasterPasswordReentryRequest, null)
 
+export const startLoginMessageFromSessionToken = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, Authentication.ILoginResponse> =>
+    createMessage(data, 'authentication/login_from_existing_session_token', Authentication.StartLoginRequest, Authentication.LoginResponse)
+
 export const keepAliveMessage = (): RestMessage< {}, {}> => createMessage({}, 'keep_alive', null, null)
 
 export const logoutV3Message = (): RestMessage<{}, {}> => createMessage({}, 'vault/logout_v3', null, null)
