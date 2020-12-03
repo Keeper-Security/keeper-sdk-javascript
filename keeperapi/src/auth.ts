@@ -535,7 +535,10 @@ export class Auth {
                     }
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.onsiteSso
-                    let onsiteSsoLoginUrl = loginResponse.url + '?embedded'
+                    
+                    let onsitePublicKey = await this._endpoint.getOnsitePublicKey()
+                    let onsiteSsoLoginUrl = loginResponse.url + '?embedded&key=' + onsitePublicKey
+                    
                     if (this.options.authUI3.redirectCallback) {
                         this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
                         return
@@ -592,7 +595,7 @@ export class Auth {
         const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
         const params = domainResponse.isCloud
             ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
-            : '?embedded'
+            : '?embedded&key=' + await this._endpoint.getOnsitePublicKey()
 
         this.userType = domainResponse.isCloud ? UserType.cloudSso : UserType.onsiteSso
         this.ssoLogoutUrl = domainResponse.spUrl.replace('login', 'logout')

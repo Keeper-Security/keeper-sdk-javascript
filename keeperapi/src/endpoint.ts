@@ -33,6 +33,9 @@ export class KeeperEndpoint {
     public deviceToken: Uint8Array
     public clientVersion
 
+    private onsitePrivateKey: Uint8Array | null = null
+    private onsitePublicKey: Uint8Array | null = null
+
     constructor(private options: ClientConfigurationInternal) {
         if (options.deviceToken) {
             this.deviceToken = options.deviceToken
@@ -237,6 +240,23 @@ export class KeeperEndpoint {
 
     public async decryptCloudSsoResponse(token: string): Promise<SsoCloudResponse> {
         return decryptCloudSsoResponse(token, this.getTransmissionKey().key)
+    }
+
+    public async getOnsitePublicKey(): Promise<string> {
+        if (!this.onsitePublicKey || !this.onsitePrivateKey) {
+            const {privateKey, publicKey} = await platform.generateRSAKeyPair()
+            
+            this.onsitePrivateKey = privateKey
+            this.onsitePublicKey = publicKey
+        }
+
+        return webSafe64FromBytes(this.onsitePublicKey)
+    }
+
+    public decryptOnsiteSsoPassword(password: string): string {
+        const encryptedPasswordBytes = normal64Bytes(password)
+        const decryptedPassword = platform.privateDecrypt(encryptedPasswordBytes, this.onsitePrivateKey)
+        return platform.bytesToString(decryptedPassword)
     }
 }
 
