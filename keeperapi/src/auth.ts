@@ -198,6 +198,7 @@ export class SocketListener {
         console.log(`Reconnecting websocket in ${this.currentBackoffSeconds.toFixed(2)} seconds...`)
 
         // schedule next reconnect attempt
+        clearTimeout(this.reconnectTimeout)
         this.reconnectTimeout = setTimeout(() => {
             this.socket?.close()
         }, this.currentBackoffSeconds * 1000)
