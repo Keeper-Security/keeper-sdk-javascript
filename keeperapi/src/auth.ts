@@ -65,6 +65,23 @@ function unifyLoginError(e: any): LoginError {
     }
 }
 
+type CloseReason = { 
+    code: number, 
+    reason: CloseReasonMessage
+}
+
+enum CloseReasonCode {
+    CANNOT_ACCEPT = 1003,
+    NOT_CONSISTENT = 1007,
+    VIOLATED_POLICY = 1008,
+    TRY_AGAIN_LATER = 1013,
+}
+
+type CloseReasonMessage = {
+    close_reason:string
+    key_id?:number
+}
+
 type SocketMessage = {
     event: 'received_totp'
     type: 'dna'
@@ -74,7 +91,7 @@ type SocketMessage = {
 export type SocketProxy = {
     onOpen: (callback: () => void) => void
     close: () => void
-    onClose: (callback: () => void) => void
+    onClose: (callback: (e:Event) => void) => void
     onError: (callback: (e: Event | Error) => void) => void
     onMessage: (callback: (e: Uint8Array) => void) => void
     send: (message: any) => void
@@ -84,7 +101,7 @@ export type SocketProxy = {
 export class SocketListener {
     private socket: SocketProxy | null;
     private url: string
-    private getConnectionRequest?: () => Promise<string>
+    private getConnectionRequest?: (Uint8Array) => Promise<string>
     // Listeners that receive all messages
     private messageListeners: Array<(data: any) => void>
     // Listeners that receive a single message
@@ -92,30 +109,48 @@ export class SocketListener {
         resolve: (data: any) => void,
         reject: (errorMessage: string) => void
     }>
+    // Listeners that receive all messages
+    private closeListeners: Array<(data: any) => void>
+    // Listeners that receive a single message
+    private singleCloseListeners: Array<{
+        resolve: (data: any) => void,
+        reject: (errorMessage: string) => void
+    }>
     // Listeners that signal a re-connected socket
     private onOpenListeners: Array<() => void>
+    // The messageSessionUid
+    private messageSessionUid: Uint8Array
 
+    private isConnected: boolean
     private reconnectTimeout: ReturnType<typeof setTimeout>
     private currentBackoffSeconds: number
     private isClosedByClient: boolean
 
-    constructor(url: string, getConnectionRequest?: () => Promise<string>) {
+    constructor(url: string, messageSessionUid?: Uint8Array, getConnectionRequest?: (messageSessionUid:Uint8Array) => Promise<string>) {
         console.log('Connecting to ' + url)
 
         this.url = url
+        this.closeListeners = []
+        this.singleCloseListeners = []
         this.messageListeners = []
         this.singleMessageListeners = []
         this.onOpenListeners = []
         this.currentBackoffSeconds = SocketListener.getBaseReconnectionInterval()
         this.isClosedByClient = false
+        this.isConnected = false
         if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
-
-        this.createWebsocket()
+        
+        if (messageSessionUid){
+            this.messageSessionUid = messageSessionUid
+            this.createWebsocket(this.messageSessionUid)
+        } else {
+            this.createWebsocket()
+        }
     }
 
-    async createWebsocket() {
-        if (this.getConnectionRequest) {
-            const connectionRequest = await this.getConnectionRequest()
+    async createWebsocket(messageSessionUid?:Uint8Array) {
+        if (this.getConnectionRequest && messageSessionUid) {
+            const connectionRequest = await this.getConnectionRequest(messageSessionUid)
             this.socket = platform.createWebsocket(`${this.url}/${connectionRequest}`)
         } else {
             this.socket = platform.createWebsocket(this.url)
@@ -128,12 +163,60 @@ export class SocketListener {
             this.handleOnOpen()
         })
 
-        this.socket.onClose(() => {
-            console.log('socket closed')
+        this.socket.onClose(async (event: Event & {reason:string, code:number}) => {
+            console.log('socket closed because: ', event)
 
-            if (!this.isClosedByClient) {
-                this.reconnect()
+            let reason
+            this.isConnected = false
+
+            try{
+                reason = JSON.parse(event.reason)
+            } catch(error){
+                console.log('No close reason. Error message is: ', error)
+
+                if (!this.isClosedByClient) {
+                    this.reconnect()
+                }    
+
+                return
             }
+
+            switch (event.code){
+                case CloseReasonCode.CANNOT_ACCEPT:
+                    // Exact messages that can come from CANNOT_ACCEPT:
+                    // - Push server is in progress of shutting down
+                    // - Push server is not registered with KA
+                    // - Cannot process encrypted message.xxxx
+
+                    if(reason && reason.close_reason.includes('Push server')){
+                        // Tell User to try again  
+                        this.handleClose({code:event.code, reason})
+                    } else {
+                        // this would be an internal error and shouldnt reach here in production
+                        console.error('Incorrect internal error: ', reason.close_reason)
+                    }
+                    break
+                case CloseReasonCode.NOT_CONSISTENT:
+                    // Error Message: device timestamp: {time} is off by {off_time}
+                    //Tell User to adjust their system clock
+                    this.handleClose({ code: event.code, reason })
+                    break
+                case CloseReasonCode.VIOLATED_POLICY:  
+                    // Error Message: duplicate messageSessionUid=${messageSessionUid}
+                    //Create a new message session uid and try again
+                    this.messageSessionUid = generateUidBytes()
+                    await this.createWebsocket(this.messageSessionUid)
+                    break
+                case CloseReasonCode.TRY_AGAIN_LATER:
+                    // Error Message: throttled messageSessionUid=${messageSessionUid}
+                    //Tell User to try again in 1 minute                        
+                    this.handleClose({ code: event.code, reason })
+                    break
+                default:
+                    if (!this.isClosedByClient) {                            
+                        this.reconnect()
+                    }                        
+            }                      
         })
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
@@ -141,6 +224,8 @@ export class SocketListener {
         this.socket.onMessage(e => {
             this.handleMessage(e)
         })
+
+        this.isConnected = true
     }
 
     registerLogin(sessionToken: string) {
@@ -179,8 +264,23 @@ export class SocketListener {
         this.singleMessageListeners.length = 0
     }
 
+    private handleClose(messageData: {code: number, reason:CloseReasonMessage}): void {
+        for (let callback of this.closeListeners) {
+            callback(messageData)
+        }
+
+        for (let { resolve } of this.singleCloseListeners) {
+            resolve(messageData)
+        }
+        this.singleCloseListeners.length = 0
+    }
+
     onPushMessage(callback: (data: any) => void): void {
         this.messageListeners.push(callback)
+    }
+
+    onCloseMessage(callback: (data: any) => void): void {
+        this.closeListeners.push(callback)
     }
 
     async getPushMessage(): Promise<any> {
@@ -200,10 +300,8 @@ export class SocketListener {
         // schedule next reconnect attempt
         clearTimeout(this.reconnectTimeout)
         this.reconnectTimeout = setTimeout(() => {
-            this.socket?.close()
+            this.createWebsocket(this.messageSessionUid)            
         }, this.currentBackoffSeconds * 1000)
-
-        this.createWebsocket()
 
         this.currentBackoffSeconds = Math.min(this.currentBackoffSeconds * 2, 60) // Cap at 1 min, as suggested by docs
     }
@@ -218,6 +316,10 @@ export class SocketListener {
         clearTimeout(this.reconnectTimeout)
 
         this.singleMessageListeners.length = 0
+    }
+
+    getIsConnected(){
+        return this.isConnected
     }
 }
 
@@ -411,12 +513,20 @@ export class Auth {
                 await this.endpoint.registerDevice()
             }
 
-            if (!this.socket) {
+            if (!this.socket || !this.socket.getIsConnected()) {
                 const url = `wss://push.services.${this.options.host}/wss_open_connection`
-                const getConnectionRequest = () => this.endpoint.getPushConnectionRequest(this.messageSessionUid)
+                const getConnectionRequest = (messageSessionUid) => this.endpoint.getPushConnectionRequest(messageSessionUid)
 
-                this.socket = new SocketListener(url, getConnectionRequest)             
+                this.socket = new SocketListener(url, this.messageSessionUid, getConnectionRequest)             
                 console.log("Socket connected")
+                this.onCloseMessage((closeReason: CloseReason) => {
+                    if (this.options.onCommandFailure) {
+                        this.options.onCommandFailure({
+                            result_code: closeReason.code.toString(),
+                            message: closeReason.reason.close_reason
+                        })
+                    }
+                })
             }
 
             const startLoginRequest: IStartLoginRequest = {
@@ -1104,6 +1214,13 @@ export class Auth {
             throw new Error('No socket available')
         }
         this.socket.onPushMessage(callback)
+    }
+
+    onCloseMessage(callback: (data:any) => void): void {
+        if (!this.socket) {
+            throw new Error('No socket available')
+        }
+        this.socket.onCloseMessage(callback)
     }
 
     async getPushMessage(): Promise<any> {

@@ -256,7 +256,7 @@ export const nodePlatform: Platform = class {
             close: () => {
                 socket.close()
             },
-            onClose: (callback: () => void) => {
+            onClose: (callback: (e:Event) => void) => {
                 socket.on('close', callback)
             },
             onError: (callback: (err: Error) => void) => {
