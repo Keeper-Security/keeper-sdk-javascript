@@ -300,6 +300,7 @@ export class SocketListener {
         // schedule next reconnect attempt
         clearTimeout(this.reconnectTimeout)
         this.reconnectTimeout = setTimeout(() => {
+            this.messageSessionUid = generateUidBytes()
             this.createWebsocket(this.messageSessionUid)            
         }, this.currentBackoffSeconds * 1000)
 
