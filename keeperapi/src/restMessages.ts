@@ -132,10 +132,25 @@ export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryReques
     createMessage(data, 'login/account_summary', AccountSummary.AccountSummaryRequest, AccountSummary.AccountSummaryElements)
 
 export const sendSessionMessage = (data: Authentication.ISendSessionMessageRequest): RestMessage<Authentication.ISendSessionMessageRequest, {}> =>
-    createMessage(data, '/pushserver/send_session_message', Authentication.SendSessionMessageRequest, null)
+    createMessage(data, 'pushserver/send_session_message', Authentication.SendSessionMessageRequest, null)
 
 export const setEncryptedTeamKeyMessage = (data: Enterprise.IEncryptedTeamKeyRequest): RestMessage<Enterprise.IEncryptedTeamKeyRequest, {}> =>
-    createMessage(data, '/enterprise/set_encrypted_team_key', Enterprise.EncryptedTeamKeyRequest, null)
+    createMessage(data, 'enterprise/set_encrypted_team_key', Enterprise.EncryptedTeamKeyRequest, null)
+
+export const getBackupMessage = (data: Enterprise.IBackupRequest): RestMessage<Enterprise.IBackupRequest, Enterprise.IBackupResponse> =>
+    createMessage(data, 'enterprise/get_backup', Enterprise.BackupRequest, Enterprise.BackupResponse)
+
+export const getEnterprisePublicKeyMessage = (): RestMessage< {}, BreachWatch.IEnterprisePublicKeyResponse> =>
+    createMessage({}, 'breachwatch/get_enterprise_public_key', null, BreachWatch.EnterprisePublicKeyResponse)
+
+export const setEnterpriseDataKeyMessage = (data: Enterprise.IEnterpriseUserDataKey): RestMessage<Enterprise.IEnterpriseUserDataKey, {}> =>
+    createMessage(data, 'enterprise/set_enterprise_user_data_key', Enterprise.EnterpriseUserDataKey, null)
+
+export const setV2AlternatePasswordMessage = (data: Authentication.IUserAuthRequest): RestMessage<Authentication.IUserAuthRequest, {}> =>
+    createMessage(data, 'authentication/set_v2_alternate_password', Authentication.UserAuthRequest, null)
+
+export const getMasterPasswordSaltMessage = (): RestMessage<{}, Authentication.ISalt> =>
+    createMessage({}, 'setting/get_master_password_salt', null, Authentication.Salt)
 
 /* -- SERVICE LOGGER -- */
 
@@ -186,11 +201,3 @@ export const ssoCloudRequestMessage = (data: SsoCloud.ISsoCloudRequest): RestMes
 
 export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url:string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse);
-
-/* -- Account Summary --*/
-
-export const asSetEnterpriseUserDataKeyMessage = (data: Enterprise.IEnterpriseUserDataKey): RestMessage<Enterprise.IEnterpriseUserDataKey, null> =>
-    createMessage(data, 'enterprise/set_enterprise_user_data_key', Enterprise.EnterpriseUserDataKey, null);
-
-export const getEnterprisePublicKeyMessage = (): RestMessage<null, BreachWatch.EnterprisePublicKeyResponse> =>
-    createMessage(null, 'breachwatch/get_enterprise_public_key', null, BreachWatch.EnterprisePublicKeyResponse);

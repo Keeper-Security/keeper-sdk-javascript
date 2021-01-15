@@ -513,6 +513,46 @@ export class GetEnterpriseDataCommand extends AuthorizedCommand<GetEnterpriseDat
     include: EnterpriseDataInclude[];
 }
 
+export type EnterpriseSettingInclude =
+    | "AuditSyncConfig"
+    | "AuditSyncContext"
+    | "AuditAlertsConfig"
+    | "BackupConfig"
+    | "AuditReportFilter"
+    | "AuditAlertFilter"
+    | "AuditAlertContext"
+
+export class GetEnterpriseSettingCommand extends AuthorizedCommand<GetEnterpriseSettingsResponse> {
+
+    constructor() {
+        super()
+        this.command = "get_enterprise_setting"
+    }
+
+    include: EnterpriseSettingInclude[];
+}
+
+export interface GetEnterpriseSettingsResponse extends KeeperResponse {
+    AuditSyncConfig: any[]
+    AuditSyncContext: any[]
+    AuditAlertsConfig: any[]
+    BackupConfig: any[]
+    AuditReportFilter: any[]
+    AuditAlertFilter: any[]
+    AuditAlertContext: any[]
+}
+
+export class PutEnterpriseSettingCommand extends AuthorizedCommand {
+
+    constructor() {
+        super()
+        this.command = "put_enterprise_setting"
+    }
+
+    type: EnterpriseSettingInclude
+    settings: any
+}
+
 export class EnterpriseUserLockCommand extends AuthorizedCommand {
 
     constructor() {
@@ -637,6 +677,49 @@ export class EnterpriseUserAddCommand extends AuthorizedCommand<EnterpriseUserAd
 
 export interface EnterpriseUserAddResponse extends KeeperResponse {
     verification_code: string;
+}
+
+export class TeamEnterpriseUserAddCommand extends AuthorizedCommand {
+
+    constructor(user_type: number, enterprise_user_id: number, team_uid: string, team_key: string) {
+        super();
+        this.command = "team_enterprise_user_add"
+        this.user_type = user_type;
+        this.enterprise_user_id = enterprise_user_id;
+        this.team_uid = team_uid;
+        this.team_key = team_key;
+    }
+
+    private user_type: number;
+    private enterprise_user_id: number;
+    private team_uid: string;
+    private team_key: string;
+}
+
+export class TeamEnterpriseUserRemoveCommand extends AuthorizedCommand {
+
+    constructor(enterprise_user_id: number, team_uid: string) {
+        super();
+        this.command = "team_enterprise_user_remove"
+        this.enterprise_user_id = enterprise_user_id;
+        this.team_uid = team_uid;
+    }
+
+    private enterprise_user_id: number;
+    private team_uid: string;
+}
+
+export class TeamQueueUserCommand extends AuthorizedCommand {
+
+    constructor(enterprise_user_id: number, team_uid: string) {
+        super();
+        this.command = "team_queue_user"
+        this.enterprise_user_id = enterprise_user_id;
+        this.team_uid = team_uid;
+    }
+
+    private enterprise_user_id: number;
+    private team_uid: string;
 }
 
 export class EnterpriseRegistrationByMspCommand extends AuthorizedCommand<EnterpriseRegistrationByMspResponse> {

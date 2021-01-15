@@ -65,8 +65,8 @@ function unifyLoginError(e: any): LoginError {
     }
 }
 
-type CloseReason = { 
-    code: number, 
+type CloseReason = {
+    code: number,
     reason: CloseReasonMessage
 }
 
@@ -139,7 +139,7 @@ export class SocketListener {
         this.isClosedByClient = false
         this.isConnected = false
         if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
-        
+
         if (messageSessionUid){
             this.messageSessionUid = messageSessionUid
             this.createWebsocket(this.messageSessionUid)
@@ -176,7 +176,7 @@ export class SocketListener {
 
                 if (!this.isClosedByClient) {
                     this.reconnect()
-                }    
+                }
 
                 return
             }
@@ -189,7 +189,7 @@ export class SocketListener {
                     // - Cannot process encrypted message.xxxx
 
                     if(reason && reason.close_reason.includes('Push server')){
-                        // Tell User to try again  
+                        // Tell User to try again
                         this.handleClose({code:event.code, reason})
                     } else {
                         // this would be an internal error and shouldnt reach here in production
@@ -201,7 +201,7 @@ export class SocketListener {
                     //Tell User to adjust their system clock
                     this.handleClose({ code: event.code, reason })
                     break
-                case CloseReasonCode.VIOLATED_POLICY:  
+                case CloseReasonCode.VIOLATED_POLICY:
                     // Error Message: duplicate messageSessionUid=${messageSessionUid}
                     //Create a new message session uid and try again
                     this.messageSessionUid = generateUidBytes()
@@ -209,14 +209,14 @@ export class SocketListener {
                     break
                 case CloseReasonCode.TRY_AGAIN_LATER:
                     // Error Message: throttled messageSessionUid=${messageSessionUid}
-                    //Tell User to try again in 1 minute                        
+                    //Tell User to try again in 1 minute
                     this.handleClose({ code: event.code, reason })
                     break
                 default:
-                    if (!this.isClosedByClient) {                            
+                    if (!this.isClosedByClient) {
                         this.reconnect()
-                    }                        
-            }                      
+                    }
+            }
         })
         this.socket.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
@@ -301,7 +301,7 @@ export class SocketListener {
         clearTimeout(this.reconnectTimeout)
         this.reconnectTimeout = setTimeout(() => {
             this.messageSessionUid = generateUidBytes()
-            this.createWebsocket(this.messageSessionUid)            
+            this.createWebsocket(this.messageSessionUid)
         }, this.currentBackoffSeconds * 1000)
 
         this.currentBackoffSeconds = Math.min(this.currentBackoffSeconds * 2, 60) // Cap at 1 min, as suggested by docs
@@ -518,7 +518,7 @@ export class Auth {
                 const url = `wss://push.services.${this.options.host}/wss_open_connection`
                 const getConnectionRequest = (messageSessionUid) => this.endpoint.getPushConnectionRequest(messageSessionUid)
 
-                this.socket = new SocketListener(url, this.messageSessionUid, getConnectionRequest)             
+                this.socket = new SocketListener(url, this.messageSessionUid, getConnectionRequest)
                 console.log("Socket connected")
                 this.onCloseMessage((closeReason: CloseReason) => {
                     if (this.options.onCommandFailure) {
@@ -534,10 +534,13 @@ export class Auth {
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
-                loginType: loginType,
                 loginMethod: loginMethod,
                 cloneCode: this.options.sessionStorage.getCloneCode(this.options.host as KeeperEnvironment, this._username),
                 v2TwoFactorToken: v2TwoFactorToken
+            }
+            if (loginType !== LoginType.NORMAL && !!loginType) {
+                startLoginRequest.loginType = loginType
+                loginType = undefined
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
@@ -553,7 +556,7 @@ export class Auth {
                 loginResponse = await this.executeRest(startLoginMessageFromSessionToken(startLoginRequest))
             } else {
                 loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
-            }            
+            }
 
             if (loginResponse.cloneCode && loginResponse.cloneCode.length > 0) {
                 this.options.sessionStorage.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
@@ -647,10 +650,10 @@ export class Auth {
                     }
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.onsiteSso
-                    
+
                     let onsitePublicKey = await this._endpoint.getOnsitePublicKey()
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded&key=' + onsitePublicKey
-                    
+
                     if (this.options.authUI3.redirectCallback) {
                         this.options.authUI3.redirectCallback(onsiteSsoLoginUrl)
                         return

@@ -14,8 +14,9 @@ import {Authentication} from '../src/proto';
 import {generateTransmissionKey, webSafe64FromBytes} from '../src/utils';
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import {
+    getEnterprisePublicKeyMessage,
     registerEncryptedDataKeyForDeviceMessage,
-    RestMessage,
+    RestMessage, setEnterpriseDataKeyMessage,
     setUserSettingMessage,
     ssoSamlMessage
 } from '../src/restMessages';
@@ -181,6 +182,17 @@ const configNames = {
     'keepersecurity.eu': 'device-config.json',
 }
 
+const storageNames = {
+    'local.keepersecurity.com': 'kvs-dev.json',
+    'dev.keepersecurity.com': 'kvs-dev.json',
+    'dev2.keepersecurity.com': 'kvs-dev2.json',
+    'qa.keepersecurity.com': 'kvs-qa.json',
+    'keepersecurity.com': 'kvs-prod.json',
+    'dev.keepersecurity.eu': 'kvs-dev-eu.json',
+    'qa.keepersecurity.eu': 'kvs-qa-eu.json',
+    'keepersecurity.eu': 'kvs-prod-eu.json',
+}
+
 export function getCredentialsAndHost(): { userName: string; password: string; host: KeeperEnvironment  } {
     try {
         const fileContent = fs.readFileSync(path.resolve(`${__dirname}/../credentials.config`)).toString()
@@ -203,8 +215,11 @@ type SessionData = {
 
 export class TestKeyValueStorage implements KeyValueStorage {
 
+    constructor(private environment: KeeperEnvironment) {
+    }
+
     fileName(): string {
-        return path.resolve(`${__dirname}/config/kvs.json`)
+        return path.resolve(`${__dirname}/config/${storageNames[this.environment]}`)
     }
 
     readStorage(): any {
@@ -302,6 +317,14 @@ export async function enablePersistentLogin(auth: Auth) {
     await auth.executeRest(registerEncryptedDataKeyForDeviceMessage({
         encryptedDeviceToken: auth.options.deviceConfig.deviceToken,
         encryptedDeviceDataKey
+    }))
+}
+
+export async function shareDataKeyWithEnterprise(auth: Auth) {
+    const pubKeyResponse = await auth.executeRest(getEnterprisePublicKeyMessage())
+    const encrypted = await platform.publicEncryptEC(auth.dataKey, pubKeyResponse.enterpriseECCPublicKey)
+    await auth.executeRest(setEnterpriseDataKeyMessage({
+        userEncryptedDataKey: encrypted
     }))
 }
 
