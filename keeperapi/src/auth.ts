@@ -667,7 +667,13 @@ export class Auth {
                         break;
                     }
                 case Authentication.LoginState.REQUIRES_2FA:
-                    loginToken = await this.handleTwoFactor(loginResponse)
+                    try{
+                        loginToken = await this.handleTwoFactor(loginResponse)
+                    } catch(e){
+                        if (e?.message && e.message == 'push_declined'){
+                            handleError(e.message, loginResponse, e)
+                        }
+                    }
                     break
 
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
