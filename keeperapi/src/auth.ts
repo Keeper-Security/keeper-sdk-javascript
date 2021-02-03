@@ -203,9 +203,8 @@ export class SocketListener {
                     break
                 case CloseReasonCode.VIOLATED_POLICY:
                     // Error Message: duplicate messageSessionUid=${messageSessionUid}
-                    //Create a new message session uid and try again
-                    this.messageSessionUid = generateUidBytes()
-                    await this.createWebsocket(this.messageSessionUid)
+                    // Relogin if this happens
+                    this.handleClose({ code: event.code, reason })
                     break
                 case CloseReasonCode.TRY_AGAIN_LATER:
                     // Error Message: throttled messageSessionUid=${messageSessionUid}
@@ -300,7 +299,6 @@ export class SocketListener {
         // schedule next reconnect attempt
         clearTimeout(this.reconnectTimeout)
         this.reconnectTimeout = setTimeout(() => {
-            this.messageSessionUid = generateUidBytes()
             this.createWebsocket(this.messageSessionUid)
         }, this.currentBackoffSeconds * 1000)
 
@@ -309,7 +307,6 @@ export class SocketListener {
 
     disconnect() {
         this.isClosedByClient = true
-        this.socket?.close();
         this.socket = null
         this.messageListeners.length = 0
 
