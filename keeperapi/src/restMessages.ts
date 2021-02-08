@@ -152,6 +152,9 @@ export const setV2AlternatePasswordMessage = (data: Authentication.IUserAuthRequ
 export const getMasterPasswordSaltMessage = (): RestMessage<{}, Authentication.ISalt> =>
     createMessage({}, 'setting/get_master_password_salt', null, Authentication.Salt)
 
+export const updateSecurityData = (data: Authentication.ISecurityDataRequest): RestMessage<Authentication.ISecurityDataRequest, Authentication.RevisionResponse> => 
+    createMessage(data, 'enterprise/update_security_data', Authentication.SecurityDataRequest, Authentication.RevisionResponse)
+
 /* -- SERVICE LOGGER -- */
 
 export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>
