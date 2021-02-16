@@ -3,6 +3,7 @@ import {Authentication} from './proto';
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
+import {KeyWrapper} from './platform';
 
 export type KeeperHost = KeeperEnvironment | string
 
@@ -78,7 +79,7 @@ export interface AuthUI {
 export interface AuthUI3 {
     waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean>
     waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean>
-    getPassword?(): Promise<string>
+    getPassword?(): Promise<string | KeyWrapper>
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): void
 }

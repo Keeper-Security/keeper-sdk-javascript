@@ -7,7 +7,7 @@ import {
 } from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {generateUidBytes, normal64Bytes, webSafe64FromBytes} from '../src/utils';
+import {generateUidBytes, normal64Bytes, webSafe64FromBytes, wrapPassword} from '../src/utils';
 import {
     authUI3, enablePersistentLogin,
     getCredentialsAndHost,
@@ -48,7 +48,7 @@ async function testRegistration() {
 
     await auth.registerDevice()
 
-    await auth.createUser(userName, password)
+    await auth.createUser(userName, wrapPassword(password))
 }
 
 type BackupRecord = {
@@ -68,7 +68,7 @@ async function decryptUsers(
     encryptedUsers: Enterprise.IBackupUser[], encryptedRecords: Enterprise.IBackupRecord[],
     enterpriseEccPrivateKey: Uint8Array, userName: string, password: string): Promise<BackupUser[]> {
     const thisAdmin = encryptedUsers.find(x => x.userName === userName)
-    const dataKey = await decryptEncryptionParams(password, thisAdmin.dataKey);
+    const dataKey = await decryptEncryptionParams(wrapPassword(password), thisAdmin.dataKey);
     const privateKey = platform.aesCbcDecrypt(thisAdmin.privateKey, dataKey, true)
     const treeKey = (thisAdmin.treeKeyType === Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY)
         ? platform.aesCbcDecrypt(thisAdmin.treeKey, dataKey, true)
@@ -158,7 +158,7 @@ async function testLogin() {
             await auth.loginV3({
                 username: userName,
                 // loginType: LoginType.ALTERNATE,
-                password
+                password: wrapPassword(password)
             })
         } catch (e) {
             console.log(e)
@@ -289,7 +289,7 @@ async function testLoginToLinkedDevice() {
     try {
         await auth.loginV3({
             username: userName,
-            password: '',
+            password: null,
         })
         console.log(auth.dataKey)
     } finally {

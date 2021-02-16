@@ -1,4 +1,4 @@
-import {Platform} from '../platform'
+import {KeyWrapper, Platform} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
 import {AES, enc, mode, pad} from "crypto-js";
@@ -37,6 +37,16 @@ export const browserPlatform: Platform = class {
 
     static stringToBytes(data: string): Uint8Array {
         return new TextEncoder().encode(data);
+    }
+
+    static wrapPassword(password: Uint8Array): KeyWrapper {
+        return KeyWrapper.create(password)
+        // TODO const wrappedPassword = await crypto.subtle.importKey("raw", password.asBytes(), "PBKDF2", false, ["deriveBits"]);
+        // return KeyWrapper.create(wrappedPassword)
+    }
+
+    static unWrapPassword(password: KeyWrapper): Uint8Array {
+        return password.getKey()
     }
 
     static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
@@ -209,8 +219,8 @@ export const browserPlatform: Platform = class {
         return hexToBytes(decrypted.toString());
     }
 
-    static async deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        let key = await crypto.subtle.importKey("raw", browserPlatform.stringToBytes(password), "PBKDF2", false, ["deriveBits"]);
+    static async deriveKey(password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+        let key = await crypto.subtle.importKey("raw", password.getKey(), "PBKDF2", false, ["deriveBits"]);
         let derived = await crypto.subtle.deriveBits({
             name: "PBKDF2",
             salt: saltBytes,
@@ -222,10 +232,11 @@ export const browserPlatform: Platform = class {
         return new Uint8Array(derived);
     }
 
-    static async deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+    static async deriveKeyV2(domain: string, password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+
         let key = await crypto.subtle.importKey(
             "raw",
-            browserPlatform.stringToBytes(domain + password),
+            Uint8Array.of(...browserPlatform.stringToBytes(domain), ...browserPlatform.unWrapPassword(password.getKey())),
             "PBKDF2",
             false,
             ["deriveBits"]);

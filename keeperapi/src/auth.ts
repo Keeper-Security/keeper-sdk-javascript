@@ -7,12 +7,12 @@ import {
     TwoFactorChannelData
 } from './configuration'
 import {KeeperEndpoint, KeeperEnvironment} from "./endpoint";
-import {platform} from "./platform";
+import {KeyWrapper, platform} from "./platform";
 import {AuthorizedCommand, KeeperCommand, LoginCommand, LoginResponse, LoginResponseResultCode} from "./commands";
 import {
     chooseErrorMessage,
     decryptFromStorage,
-    generateEncryptionKey,
+    generateEncryptionKey, wrapPassword,
     generateUidBytes,
     isTwoFactorResultCode,
     normal64,
@@ -347,7 +347,7 @@ export function socketSendMessage(message: any, socket: WebSocket, createdSocket
 
 export type LoginPayload = {
     username: string,
-    password?: string,
+    password?: string | KeyWrapper,
     loginToken?: Uint8Array
     loginType?: Authentication.LoginType
     loginMethod?: Authentication.LoginMethod,
@@ -481,7 +481,7 @@ export class Auth {
     async loginV3(
         {
             username = '',
-            password = '',
+            password = null,
             loginToken = null,
             loginType = Authentication.LoginType.NORMAL,
             loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
@@ -491,6 +491,16 @@ export class Auth {
         }: LoginPayload
     ) {
         this._username = username || this.options.sessionStorage.lastUsername
+
+        let wrappedPassword: KeyWrapper;
+
+        if (password) {
+            if (typeof password === 'string') {
+                wrappedPassword = wrapPassword(password)
+            }
+            else
+                wrappedPassword = password
+        }
 
         let needUserName: boolean
 
@@ -580,7 +590,7 @@ export class Auth {
                     if (this.userType === UserType.cloudSso) {
                         await this.createSsoUser(loginResponse.encryptedLoginToken)
                     } else {
-                        await this.createUser(this._username, password)
+                        await this.createUser(this._username, wrappedPassword)
                     }
                     break;
                 case Authentication.LoginState.UPGRADE:
@@ -658,7 +668,7 @@ export class Auth {
                         const onsiteResp = await platform.ssoLogin(onsiteSsoLoginUrl)
                         console.log(onsiteResp)
                         this._username = onsiteResp.email
-                        password = onsiteResp.password
+                        wrappedPassword = wrapPassword(onsiteResp.password)
                         loginType = LoginType.SSO
                         loginMethod = LoginMethod.AFTER_SSO
                         break;
@@ -676,18 +686,25 @@ export class Auth {
                 case Authentication.LoginState.REQUIRES_AUTH_HASH:
                     // TODO: loop in authHashLogin until successful or get into
                     // some other state other than Authentication.LoginState.REQUIRES_AUTH_HASH
-                    if (!password && this.options.authUI3?.getPassword) {
+                    if (!wrappedPassword && this.options.authUI3?.getPassword) {
                         password = await this.options.authUI3.getPassword()
+                        if (password) {
+                            if (typeof password === 'string') {
+                                wrappedPassword = wrapPassword(password)
+                            }
+                            else
+                                wrappedPassword = password
+                        }
                     }
-                    if (!password) {
+                    if (!wrappedPassword) {
                         throw new Error('User password required and not provided')
                     }
 
                     try {
-                        await this.authHashLogin(loginResponse, username, password, loginType === Authentication.LoginType.ALTERNATE)
+                        await this.authHashLogin(loginResponse, username, wrappedPassword, loginType === Authentication.LoginType.ALTERNATE)
                         return;
                     } catch (e) {
-                        password = ''
+                        wrappedPassword = null
                         handleError('auth_failed', loginResponse, e)
                         break;
                     }
@@ -1013,7 +1030,7 @@ export class Auth {
         })
     }
 
-    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: string, useAlternate: boolean = false) {
+    async authHashLogin(loginResponse: Authentication.ILoginResponse, username: string, password: KeyWrapper, useAlternate: boolean = false) {
         // TODO test for account transfer and account recovery
         if (!loginResponse.salt) {
             throw new Error('Salt missing from API response')
@@ -1042,7 +1059,7 @@ export class Auth {
         await this.loginSuccess(loginResp, password, salt)
     }
 
-    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: string, salt: Authentication.ISalt | undefined = undefined) {
+    async loginSuccess(loginResponse: Authentication.ILoginResponse, password: KeyWrapper, salt: Authentication.ISalt | undefined = undefined) {
         this._username = loginResponse.primaryUsername || this._username
         if (!loginResponse.encryptedSessionToken || !loginResponse.encryptedDataKey || !loginResponse.accountUid) {
             return
@@ -1088,7 +1105,7 @@ export class Auth {
         }));
     }
 
-    async login(username: string, password: string) {
+    async login(username: string, password: KeyWrapper) {
         try {
             let preLoginResponse = await this.endpoint.getPreLogin(username);
             if (!preLoginResponse.salt) {
@@ -1161,7 +1178,7 @@ export class Auth {
         }
     }
 
-    async managedCompanyLogin(username: string, password: string, companyId: number) {
+    async managedCompanyLogin(username: string, password: KeyWrapper, companyId: number) {
         this.managedCompanyId = companyId;
         await this.login(username, password);
     }
@@ -1260,7 +1277,7 @@ export class Auth {
         }
     }
 
-    public async createUser(username: string, password: string) {
+    public async createUser(username: string, password: KeyWrapper) {
         const iterations = 100000
         const dataKey = generateEncryptionKey()
         const authVerifier = await createAuthVerifier(password, iterations)
@@ -1297,13 +1314,13 @@ const iterationsToBytes = (iterations: number): Uint8Array => {
     return bytes
 };
 
-export async function createAuthVerifier(password: string, iterations: number): Promise<Uint8Array> {
+export async function createAuthVerifier(password: KeyWrapper, iterations: number): Promise<Uint8Array> {
     const salt = platform.getRandomBytes(16);
     const authHashKey = await platform.deriveKey(password, salt, iterations);
     return Uint8Array.of(...iterationsToBytes(iterations), ...salt, ...authHashKey)
 }
 
-export async function createEncryptionParams(password: string, dataKey: Uint8Array, iterations: number): Promise<Uint8Array> {
+export async function createEncryptionParams(password: KeyWrapper, dataKey: Uint8Array, iterations: number): Promise<Uint8Array> {
     const salt = platform.getRandomBytes(16);
     const authHashKey = await platform.deriveKey(password, salt, iterations);
     const doubledDataKey = Uint8Array.of(...dataKey, ...dataKey)
@@ -1311,11 +1328,11 @@ export async function createEncryptionParams(password: string, dataKey: Uint8Arr
     return Uint8Array.of(...iterationsToBytes(iterations), ...salt, ...encryptedDoubledKey)
 }
 
-async function decryptEncryptionParamsString(password: string, encryptionParams: string): Promise<Uint8Array> {
+async function decryptEncryptionParamsString(password: KeyWrapper, encryptionParams: string): Promise<Uint8Array> {
     return decryptEncryptionParams(password, platform.base64ToBytes(normal64(encryptionParams)))
 }
 
-export async function decryptEncryptionParams(password: string, encryptionParams: Uint8Array): Promise<Uint8Array> {
+export async function decryptEncryptionParams(password: KeyWrapper, encryptionParams: Uint8Array): Promise<Uint8Array> {
     let corruptedEncryptionParametersMessage = "Corrupted encryption parameters";
     if (encryptionParams[0] !== 1)
         throw new Error(corruptedEncryptionParametersMessage);
