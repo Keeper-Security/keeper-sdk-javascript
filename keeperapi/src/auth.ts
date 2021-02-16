@@ -453,7 +453,7 @@ export class Auth {
         } else if (this.userType == UserType.onsiteSso) {
             const params = new URLSearchParams({
                 'embedded': 'true',
-                'email': this.username,
+                'username': this.username,
                 'session_id': this.ssoSessionId,
                 'dest': 'vault'
             })
