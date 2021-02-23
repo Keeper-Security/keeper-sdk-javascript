@@ -40,7 +40,7 @@ async function login(withDeviceName?: string): Promise<Auth> {
         clientVersion: clientVersion,
         deviceConfig: deviceConfig,
         sessionStorage: new TestSessionStorage(deviceName, host),
-        kvs: new TestKeyValueStorage(),
+        kvs: new TestKeyValueStorage(host),
         useSessionResumption: true,
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3

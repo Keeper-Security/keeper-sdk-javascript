@@ -14,6 +14,10 @@ export interface Platform {
 
     stringToBytes(data: string): Uint8Array;
 
+    wrapPassword(password: Uint8Array): KeyWrapper;
+
+    unWrapPassword(password: KeyWrapper): Uint8Array;
+
     generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
 
     generateECKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
@@ -36,9 +40,9 @@ export interface Platform {
 
     aesCbcDecrypt(data: Uint8Array, key: Uint8Array, usePadding: boolean): Uint8Array;
 
-    deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
+    deriveKey(password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
 
-    deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
+    deriveKeyV2(domain: string, password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
 
     calcAuthVerifier(key: Uint8Array): Promise<Uint8Array>;
 
@@ -51,6 +55,20 @@ export interface Platform {
     createWebsocket(url: string): SocketProxy
 
     ssoLogin(url: string): Promise<any>
+}
+
+export class KeyWrapper {
+    private key: any
+
+    static create(key: Uint8Array | any): KeyWrapper {
+        const wrapper = new KeyWrapper()
+        wrapper.key = key
+        return wrapper
+    }
+
+    public getKey() {
+        return this.key
+    }
 }
 
 export function connectPlatform(p: Platform) {

@@ -18,7 +18,7 @@ import {
 } from '../src/commands'
 import {KeeperEnvironment} from '../src/endpoint'
 import {accountSummaryMessage, recordTypesGetMessage} from '../src/restMessages'
-import {generateEncryptionKey, normal64Bytes, webSafe64FromBytes} from '../src/utils'
+import {generateEncryptionKey, normal64Bytes, webSafe64FromBytes, wrapPassword} from '../src/utils'
 import {Records} from '../src/proto'
 import {generateKeyPairSync} from 'crypto';
 import {getCredentialsAndHost, prompt} from './testUtil'
@@ -206,7 +206,7 @@ async function testAttachmentsDownload() {
             host: KeeperEnvironment.DEV,
             authUI: authUI
         })
-        await auth.login('saldoukhov@gmail.com', '111111')
+        await auth.login('saldoukhov@gmail.com', wrapPassword('111111'))
         console.log('login successful')
         let vault = new Vault(auth)
         await vault.syncDown()
@@ -265,10 +265,10 @@ async function printMSPVault() {
             host: "local.keepersecurity.com",
             authUI: authUI
         })
-        // await auth.login('admin+msp@yozik.us', '111111')
-        // await auth.managedCompanyLogin('admin+msp@yozik.us', '111111', 2858)
-        await auth.managedCompanyLogin('admin+mspn1@yozik.us', '111111', 2858)
-        // await auth.managedCompanyLogin('admin+msp@yozik.us', '111111', 2906)
+        // await auth.login('admin+msp@yozik.us', wrapPassword('111111'))
+        // await auth.managedCompanyLogin('admin+msp@yozik.us', wrapPassword('111111'), 2858)
+        await auth.managedCompanyLogin('admin+mspn1@yozik.us', wrapPassword('111111'), 2858)
+        // await auth.managedCompanyLogin('admin+msp@yozik.us', wrapPassword('111111'), 2906)
         console.log('login successful')
         let cmd = new GetEnterpriseDataCommand()
         let entData = await auth.executeCommand(cmd)
@@ -290,9 +290,9 @@ async function printRecordTypes() {
             host: KeeperEnvironment.DEV,
             authUI: authUI
         })
-        await auth.login('saldoukhov@gmail.com', '111111')
+        await auth.login('saldoukhov@gmail.com', wrapPassword('111111'))
         console.log("Logged in...")
-        // await auth.login('saldoukhov@keepersecurity.eu', 'keeper')
+        // await auth.login('saldoukhov@keepersecurity.eu', wrapPassword('keeper'))
 
 
         // let accountSummary = new AccountSummaryCommand()
@@ -689,10 +689,13 @@ async function login(user?: string, managedCompanyId?: number): Promise<Auth> {
         authUI: authUI,
         clientVersion: 'zt14.0.2'
     })
+
+    const wrappedPassword = wrapPassword(password)
+
     if (managedCompanyId)
-        await auth.managedCompanyLogin(user || userName, password, managedCompanyId)
+        await auth.managedCompanyLogin(user || userName, wrappedPassword, managedCompanyId)
     else
-        await auth.login(user || userName, password)
+        await auth.login(user || userName, wrappedPassword)
     console.log(`login to ${userName} successful`)
     return auth;
 }
@@ -726,8 +729,8 @@ async function testKeys() {
 async function testEncryptionParams() {
     const dataKey = generateEncryptionKey();
     console.log(dataKey)
-    const encParams = await createEncryptionParams('111111', dataKey, 1000)
-    const dataKey1 = await decryptEncryptionParams('111111', encParams);
+    const encParams = await createEncryptionParams(wrapPassword('111111'), dataKey, 1000)
+    const dataKey1 = await decryptEncryptionParams(wrapPassword('111111'), encParams);
     console.log(dataKey1)
 }
 
@@ -737,7 +740,7 @@ async function testRegistration() {
         // host: KeeperEnvironment.DEV
     })
 
-    const password = '111111'
+    const password = wrapPassword('111111')
     const iterations = 1000
     const dataKey = generateEncryptionKey()
 

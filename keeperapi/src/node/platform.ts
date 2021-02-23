@@ -5,7 +5,7 @@ import * as FormData from "form-data"
 import * as NodeRSA from 'node-rsa';
 import * as WebSocket from 'faye-websocket'
 
-import {Platform} from "../platform";
+import {KeyWrapper, Platform} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
 import {KeeperHttpResponse} from "../commands";
 import {keeperKeys} from "../endpoint";
@@ -35,9 +35,14 @@ export const nodePlatform: Platform = class {
         return Buffer.from(data);
     }
 
-    /**
-     * Returns the keys as Uint8Arrays.
-     */
+    static wrapPassword(password: Uint8Array): KeyWrapper {
+        return KeyWrapper.create(password)
+    }
+
+    static unWrapPassword(password: KeyWrapper): Uint8Array {
+        return password.getKey()
+    }
+
     static async generateRSAKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array}> {
         const rsaKeys = new NodeRSA({b: 2048});
         const rsaPublicKey: Buffer = rsaKeys.exportKey('public-der');
@@ -148,12 +153,12 @@ export const nodePlatform: Platform = class {
         return Buffer.concat([cipher.update(encrypted), cipher.final()]);
     }
 
-    static deriveKey(password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        return Promise.resolve(crypto.pbkdf2Sync(Buffer.from(password, "utf8"), saltBytes, iterations, 32, 'SHA256'));
+    static deriveKey(password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+        return Promise.resolve(crypto.pbkdf2Sync(password.getKey(), saltBytes, iterations, 32, 'SHA256'));
     }
 
-    static deriveKeyV2(domain: string, password: string, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
-        const bytes = crypto.pbkdf2Sync(Buffer.from(domain + password, "utf8"), saltBytes, iterations, 64, 'SHA512')
+    static deriveKeyV2(domain: string, password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array> {
+        const bytes = crypto.pbkdf2Sync(Buffer.of(...Buffer.from(domain), ...nodePlatform.unWrapPassword(password.getKey())), saltBytes, iterations, 64, 'SHA512')
         const reducedBytes = crypto.createHmac("SHA256", bytes).update(Buffer.from(domain)).digest()
         return Promise.resolve(reducedBytes);
     }
@@ -256,7 +261,7 @@ export const nodePlatform: Platform = class {
             close: () => {
                 socket.close()
             },
-            onClose: (callback: () => void) => {
+            onClose: (callback: (e:Event) => void) => {
                 socket.on('close', callback)
             },
             onError: (callback: (err: Error) => void) => {

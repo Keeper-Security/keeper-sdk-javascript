@@ -1,23 +1,37 @@
-import {Auth} from "../src/auth";
+import {Auth, decryptEncryptionParams} from "../src/auth";
 import {
     accountSummaryMessage,
-    approveDeviceMessage, registerEncryptedDataKeyForDeviceMessage,
-    requestCreateUserMessage,
-    setUserSettingMessage
+    approveDeviceMessage,
+    getMasterPasswordSaltMessage,
+    setV2AlternatePasswordMessage
 } from '../src/restMessages';
 import {connectPlatform, platform} from '../src/platform';
 import {nodePlatform} from '../src/node/platform';
-import {generateUidBytes} from '../src/utils';
-import {authUI3, getCredentialsAndHost, getDeviceConfig, saveDeviceConfig, TestSessionStorage} from './testUtil';
+import {generateUidBytes, normal64Bytes, webSafe64FromBytes, wrapPassword} from '../src/utils';
+import {
+    authUI3, enablePersistentLogin,
+    getCredentialsAndHost,
+    getDeviceConfig,
+    saveDeviceConfig,
+    TestKeyValueStorage,
+    TestSessionStorage
+} from './testUtil';
 import {createECDH} from "crypto";
 import {ClientConfiguration} from '../src/configuration';
 import {KeeperEnvironment} from '../src/endpoint';
+import {Authentication, Enterprise} from '../src/proto';
+import * as tls from "tls";
+import * as net from "net";
+import {Vault} from '../src/vault';
+import {post, CoreOptions} from 'request';
+import {TeamEnterpriseUserRemoveCommand} from '../src/commands';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 connectPlatform(nodePlatform)
 
 const clientVersion = 'w15.0.0'
+// const clientVersion = 'i15.0.0'
 
 async function testRegistration() {
 
@@ -34,7 +48,85 @@ async function testRegistration() {
 
     await auth.registerDevice()
 
-    await auth.createUser(userName, password)
+    await auth.createUser(userName, wrapPassword(password))
+}
+
+type BackupRecord = {
+    recordUid: string,
+    data: string
+}
+
+type BackupUser = {
+    id: number,
+    userName: string,
+    dataKey: string,
+    privateKey: string,
+    records: BackupRecord[]
+}
+
+async function decryptUsers(
+    encryptedUsers: Enterprise.IBackupUser[], encryptedRecords: Enterprise.IBackupRecord[],
+    enterpriseEccPrivateKey: Uint8Array, userName: string, password: string): Promise<BackupUser[]> {
+    const thisAdmin = encryptedUsers.find(x => x.userName === userName)
+    const dataKey = await decryptEncryptionParams(wrapPassword(password), thisAdmin.dataKey);
+    const privateKey = platform.aesCbcDecrypt(thisAdmin.privateKey, dataKey, true)
+    const treeKey = (thisAdmin.treeKeyType === Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY)
+        ? platform.aesCbcDecrypt(thisAdmin.treeKey, dataKey, true)
+        : platform.privateDecrypt(thisAdmin.treeKey, privateKey)
+    const eccPrivateKey = await platform.aesGcmDecrypt(enterpriseEccPrivateKey, treeKey)
+    const users: BackupUser[] = []
+    for (const user of encryptedUsers) {
+        let userDataKey
+        switch (user.dataKeyType) {
+            case Enterprise.BackupUserDataKeyType.OWN:
+                userDataKey = user.userName === userName ? dataKey : null
+                break;
+            case Enterprise.BackupUserDataKeyType.SHARED_TO_ENTERPRISE:
+                userDataKey = await platform.privateDecryptEC(user.dataKey, eccPrivateKey)
+                break;
+        }
+        let userPrivateKey
+        if (userDataKey) {
+            userPrivateKey = platform.aesCbcDecrypt(user.privateKey, userDataKey, true)
+            if (user.backupKey.length > 0) {
+                const backupKey = platform.privateDecrypt(user.backupKey, userPrivateKey)
+                console.log('BACKUP KEY', backupKey)
+            }
+        }
+        const userRecords: BackupRecord[] = []
+        for (const record of encryptedRecords.filter(x => x.userId === user.userId)) {
+            let recordData
+            if (userDataKey) {
+                let recordKey
+                switch (record.keyType) {
+                    case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY:
+                        recordKey = platform.aesCbcDecrypt(record.key, userDataKey, true)
+                        break;
+                    case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY:
+                        recordKey = platform.privateDecrypt(record.key, userPrivateKey)
+                        break;
+                }
+                const dataBytes = record.version < 3
+                    ? platform.aesCbcDecrypt(record.data, recordKey, true)
+                    : await platform.aesGcmDecrypt(record.data, recordKey)
+                recordData = platform.bytesToString(dataBytes)
+            } else {
+                recordData = 'unable to decrypt, keys are missing'
+            }
+            userRecords.push({
+                recordUid: platform.bytesToBase64(record.recordUid),
+                data: recordData
+            })
+        }
+        users.push({
+            id: user.userId,
+            userName: user.userName,
+            dataKey: userDataKey && platform.bytesToBase64(userDataKey),
+            privateKey: userPrivateKey && platform.bytesToBase64(userPrivateKey),
+            records: userRecords
+        })
+    }
+    return users
 }
 
 async function testLogin() {
@@ -51,6 +143,7 @@ async function testLogin() {
         deviceConfig: deviceConfig,
         sessionStorage: new TestSessionStorage(deviceName, host),
         // useSessionResumption: true,
+        kvs: new TestKeyValueStorage(host),
         onDeviceConfig: saveDeviceConfig,
         authUI3: authUI3
     }
@@ -64,75 +157,90 @@ async function testLogin() {
         try {
             await auth.loginV3({
                 username: userName,
-                password
+                // loginType: LoginType.ALTERNATE,
+                password: wrapPassword(password)
             })
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
             return
         }
         console.log(auth.dataKey)
+
+        // const getCmd = new GetEnterpriseSettingCommand()
+        // getCmd.include = ['AuditAlertFilter']
+        // let resp = await auth.executeCommand(getCmd)
+        // let slack = resp.AuditAlertFilter[1]
+        // console.log(slack)
+        // let r0 = slack.recipients[0]
+        // delete r0.url
+        // delete r0.template
+        // r0.webhook = {
+        //     url: 'https://hooks.slack.com/services/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',
+        //     template: '{ "text": "*Item1*\nOne\n*Item2*\nTwo"}',
+        //     token: '123'
+        // }
+
+        // const putCmd = new PutEnterpriseSettingCommand()
+        // putCmd.type = 'AuditAlertFilter'
+        // putCmd.settings = slack
+        // const resp2 = await auth.executeCommand(putCmd)
+        // console.log(resp2)
+
+        // const encryptedUsers: Enterprise.IBackupUser[] = []
+        // const encryptedRecords: Enterprise.IBackupRecord[] = []
+        // let enterpriseEccPrivateKey: Uint8Array
+        // let request: any = {}
+        // let count = 0
+        // while (true) {
+        //     // if (count++ > 1) {
+        //     //     break
+        //     // }
+        //     const msg = getBackupMessage(request)
+        //     const resp = await auth.executeRest(msg)
+        //     console.log(resp)
+        //     if (resp.enterpriseEccPrivateKey.length > 0) {
+        //         enterpriseEccPrivateKey = resp.enterpriseEccPrivateKey
+        //     }
+        //     encryptedUsers.push(...resp.users)
+        //     encryptedRecords.push(...resp.records)
+        //     if (resp.continuationToken.length > 0) {
+        //         request.continuationToken = resp.continuationToken
+        //     } else {
+        //         break
+        //     }
+        // }
+        // const users = await decryptUsers(encryptedUsers, encryptedRecords, enterpriseEccPrivateKey, userName, password)
+        // console.log(JSON.stringify(users, null, 2))
+
+        // await shareDataKeyWithEnterprise(auth)
+        // await enablePersistentLogin(auth)
+
         // let vault = new Vault(auth)
-        //
         // vault.noTypedRecords = true;
-        // await vault.syncDown(0, true)
+        // try {
+        //     await vault.syncDown(0)
+        //     const recordUid = vault.recordUids[0]
+        //     console.log(recordUid)
+        //     const resp = await vault.shareRecords([
+        //         recordUid
+        //     ], 'admin+3596@yozik.us')
+        //     console.log(resp)
+        // }
+        // catch (e) {
+        //     console.error(e)
+        // }
+
+        // let vault = new Vault(auth)
+        // vault.noTypedRecords = true;
+        // // await vault.syncDown(0, true)
+        // await vault.syncDown(997905, true)
         // for (let record of vault.records) {
         //     console.log(record.data)
         //     console.log(record.recordData.udata)
         //     console.log(record.nonSharedData)
         // }
 
-        // const encryptedDeviceDataKey = await platform.publicEncryptEC(auth.dataKey, deviceConfig.publicKey)
-        // const regEncDataKeyMsg = registerEncryptedDataKeyForDeviceMessage({
-        //     encryptedDeviceToken: deviceConfig.deviceToken,
-        //     encryptedDeviceDataKey: encryptedDeviceDataKey
-        // })
-        // let resp = await auth.executeRest(regEncDataKeyMsg);
-        // console.log(resp)
-
-        // const cmd = new GetEnterpriseDataCommand()
-        // cmd.include = ['role_keys2']
-        // const resp = await auth.executeCommand(cmd)
-        // console.log(resp)
-
-        let resp = await auth.executeRest(accountSummaryMessage({
-            summaryVersion: 1
-        }));
-        console.log(resp)
-
-        // let company = new Company(auth)
-        // let allIncludes: EnterpriseDataInclude[] = [
-        //     'nodes',
-        //     'users',
-        //     'roles',
-        //     'role_enforcements',
-        //     'role_privileges',
-        //     'role_users',
-        //     'managed_nodes',
-        //     'licenses',
-        //     'team_users',
-        //     'teams',
-        //     'role_keys',
-        //     'role_keys2',
-        //     'queued_teams',
-        //     'queued_team_users',
-        //     'bridges',
-        //     'scims',
-        //     'email_provision',
-        //     'sso_services',
-        //     'user_privileges'
-        // ]
-        // await company.load(allIncludes)
-        // for (let node of company.data.nodes) {
-        //     console.log(node.displayName)
-        // }
-        // for (let role of company.data.roles) {
-        //     console.log(role.displayName)
-        // }
-        // for (let user of company.data.users) {
-        //     console.log(user.displayName)
-        // }
-
+        // await auth.logout()
     } finally {
         auth.disconnect()
     }
@@ -181,7 +289,7 @@ async function testLoginToLinkedDevice() {
     try {
         await auth.loginV3({
             username: userName,
-            password : '',
+            password: null,
         })
         console.log(auth.dataKey)
     } finally {
@@ -233,6 +341,68 @@ async function testECIES() {
     const decData = await platform.privateDecryptEC(endData, ecdh.getPrivateKey())
     console.log(decData)
 }
+
+export async function withTimeout<T>(promise: Promise<T>, ms: number, processName: string = ""): Promise<T> {
+
+    let timeout = new Promise<T>((resolve, reject) => {
+        let id = setTimeout(() => {
+            clearTimeout(id);
+            reject(`${processName} timed out after ${ms} milliseconds`);
+        }, ms)
+    });
+
+    return Promise.race([promise, timeout]);
+}
+
+export async function syslogExport(host: string, useTLS: boolean, port?: number) {
+    const connect = new Promise((resolve, reject) => {
+        let connectListener = () => {
+            console.log('connected to ' + host)
+            // let eventStr = 'hello';
+            // client.write(eventStr);
+            // client.end();
+            resolve();
+        };
+        let client = useTLS
+            ? tls.connect(port || 6514, host, {
+                // enableTrace: true,
+                // rejectUnauthorized: false,
+                //  requestCert: true
+            }, connectListener)
+            : net.connect(port || 514, host, connectListener);
+        client.on("error", (err) => {
+            console.log('error connecting to ' + host, err)
+            client.end();
+            reject(err);
+        });
+    });
+    return withTimeout(connect, 2000, 'syslog connection')
+}
+
+export async function webhook() {
+    const options: CoreOptions = {}
+    // if (body.token) {
+    //     options.headers = {
+    //         "Authorization": `Bearer ${body.token}`
+    //     }
+    // }
+    options.body = '{ "text": "*Item1*\\nOne\\n*Item2*\\nTwo"}'
+    // const resp = await post('https://adminautoapprove.azurewebsites.net/api/ApprovePendingRequestsByWebHook?code=t7ZNiK4INuSFCJixd70x3aau07Kv6ZK0cqL2D4aCd4I8ry0HbGuAsQ==', options)
+    const resp = await post('https://hooks.slack.com/services/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', options)
+    console.log(resp.response)
+}
+
+// syslogExport('badssl.com', true, 443).finally()
+
+// syslogExport('self-signed.badssl.com', true, 443).finally()
+
+// syslogExport('www.keepersecurity.com', true, 443).finally()
+
+// syslogExport('splunk.lurey.com', true).finally()
+
+// syslogExport('splunk.connect.abnamro.com', true).finally()
+
+// webhook().finally()
 
 // testRegistration().finally()
 testLogin().finally()

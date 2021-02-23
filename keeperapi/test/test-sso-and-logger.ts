@@ -18,7 +18,7 @@ import {
     TestSessionStorage
 } from './testUtil'
 import {SsoServiceProviderAddCommand, SsoServiceProviderUpdateCommand, SsoServiceProviderDeleteCommand} from '../src/commands';
-import {webSafe64, webSafe64FromBytes} from '../src/utils';
+import {webSafe64, webSafe64FromBytes, wrapPassword} from '../src/utils';
 import {deviceMessage, preLoginMessage, registerDeviceMessage, RestMessage, updateDeviceMessage} from '../src/restMessages';
 
 // Mike Test -------------------------------------
@@ -118,7 +118,10 @@ async function login(user?: UserInfo): Promise<Auth> {
         host: keeperHost,
         authUI: authUI
     })
-    await auth.login(userInfo.userName, userInfo.password);
+
+    const password = wrapPassword(userInfo.password)
+
+    await auth.login(userInfo.userName, password);
     console.log(`login to ${userInfo.userName} successful`)
     return auth;
 }
@@ -227,7 +230,10 @@ async function testServiceLogger() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
        });
-        await auth.login(userInfo.userName, userInfo.password);
+
+        const password = wrapPassword(userInfo.password)
+        
+        await auth.login(userInfo.userName, password);
         console.log('Logged in...');
 
         let entries = [{

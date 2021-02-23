@@ -510,6 +510,9 @@ export class Vault {
         const publicKeysCommand = new PublicKeysCommand()
         publicKeysCommand.key_owners = [user]
         const publicKeys = await this.auth.executeCommand(publicKeysCommand)
+        if (!publicKeys.public_keys[0].public_key) {
+            throw new Error(publicKeys.public_keys[0].message)
+        }
         return normal64(publicKeys.public_keys[0].public_key)
     }
 

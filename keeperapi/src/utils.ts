@@ -1,4 +1,4 @@
-import {platform} from "./platform";
+import {KeyWrapper, platform} from "./platform";
 import {KeeperHost, TransmissionKey} from './configuration';
 import { Authentication } from "./proto";
 
@@ -61,6 +61,16 @@ export function generateUidBytes(): Uint8Array {
 
 export function generateUid(): string {
     return webSafe64FromBytes(generateUidBytes());
+}
+
+export function wrapPassword(key: string | Uint8Array): KeyWrapper {
+    if (typeof key === 'string') {
+        return platform.wrapPassword(platform.stringToBytes(key))
+    }
+    if (key instanceof Uint8Array) {
+        return platform.wrapPassword(key)
+    }
+    throw new Error('Error wrapping the password')
 }
 
 export async function encryptKey(key: Uint8Array, withKey: Uint8Array): Promise<string> {
