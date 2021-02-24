@@ -368,6 +368,7 @@ export class Auth {
     ssoSessionId: string = ''
     dataKey: Uint8Array;
     privateKey: Uint8Array;
+    eccPrivateKey: Uint8Array;
     private _accountUid: Uint8Array;
     private _sessionToken: string = '';
     private _sessionTokenType: Authentication.SessionTokenType | null;
@@ -1083,20 +1084,33 @@ export class Auth {
                 throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
         }
         let encryptedPrivateKey: Uint8Array
+        let encryptedEccPrivateKey: Uint8Array | undefined
         if (this.options.kvs) {
             const encryptedPrivateKeyString = this.options.kvs.getValue(`${this._username}/private_key`)
             if (encryptedPrivateKeyString) {
                 encryptedPrivateKey = platform.base64ToBytes(encryptedPrivateKeyString)
             }
+            const encryptedEccPrivateKeyString = this.options.kvs.getValue(`${this._username}/ecc_private_key`)
+            if (encryptedEccPrivateKey) {
+                encryptedEccPrivateKey = platform.base64ToBytes(encryptedEccPrivateKeyString)
+            }
         }
-        if (!encryptedPrivateKey) {
+        if (!encryptedPrivateKey || !encryptedEccPrivateKey) {
             await this.loadAccountSummary()
             encryptedPrivateKey = this.accountSummary.keysInfo.encryptedPrivateKey
+            encryptedEccPrivateKey = this.accountSummary.keysInfo.encryptedEccPrivateKey
             if (this.options.kvs) {
                 this.options.kvs.saveValue(`${this._username}/private_key`, platform.bytesToBase64(encryptedPrivateKey))
+                if (encryptedEccPrivateKey) {
+                    this.options.kvs.saveValue(`${this._username}/ecc_private_key`, platform.bytesToBase64(encryptedEccPrivateKey))
+                }
             }
         }
         this.privateKey = platform.aesCbcDecrypt(encryptedPrivateKey, this.dataKey, true)
+
+        if (encryptedEccPrivateKey) {
+            this.eccPrivateKey = await platform.aesGcmDecrypt(encryptedEccPrivateKey, this.dataKey)
+        }
     }
 
     async loadAccountSummary() {
