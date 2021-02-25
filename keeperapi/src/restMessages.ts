@@ -128,6 +128,8 @@ export const fileDownloadMessage = (data: Records.IFilesGetRequest): RestMessage
 export const fileAddMessage = (data: Records.IFilesAddRequest): RestMessage<Records.IFilesAddRequest, Records.IFilesAddResponse> =>
     createMessage(data, 'vault/files_add', Records.FilesAddRequest, Records.FilesAddResponse)
 
+export const setEccKeyPairMessage = (data: Authentication.ISetEccKeyPairRequest): RestMessage<Authentication.ISetEccKeyPairRequest, {}> => createMessage(data, 'vault/set_ecc_key_pair', Authentication.SetEccKeyPairRequest, null)
+
 export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryRequest): RestMessage<AccountSummary.IAccountSummaryRequest, AccountSummary.IAccountSummaryElements> =>
     createMessage(data, 'login/account_summary', AccountSummary.AccountSummaryRequest, AccountSummary.AccountSummaryElements)
 
