@@ -1084,7 +1084,7 @@ export class Auth {
                 throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
         }
         let encryptedPrivateKey: Uint8Array
-        let encryptedEccPrivateKey: Uint8Array | undefined
+        let encryptedEccPrivateKey: Uint8Array
         if (this.options.kvs) {
             const encryptedPrivateKeyString = this.options.kvs.getValue(`${this._username}/private_key`)
             if (encryptedPrivateKeyString) {
@@ -1108,7 +1108,7 @@ export class Auth {
         }
         this.privateKey = platform.aesCbcDecrypt(encryptedPrivateKey, this.dataKey, true)
 
-        if (encryptedEccPrivateKey) {
+        if (encryptedEccPrivateKey?.length) {
             this.eccPrivateKey = await platform.aesGcmDecrypt(encryptedEccPrivateKey, this.dataKey)
         }
     }
