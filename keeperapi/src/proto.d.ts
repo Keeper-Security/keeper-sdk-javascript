@@ -12710,6 +12710,9 @@ export namespace Enterprise {
 
         /** Node ssoServiceProviderId */
         ssoServiceProviderId?: (number|Long|null);
+
+        /** Node restrictVisibility */
+        restrictVisibility?: (boolean|null);
     }
 
     /** Represents a Node. */
@@ -12747,6 +12750,9 @@ export namespace Enterprise {
 
         /** Node ssoServiceProviderId. */
         public ssoServiceProviderId: (number|Long);
+
+        /** Node restrictVisibility. */
+        public restrictVisibility: boolean;
 
         /**
          * Creates a new Node instance using the specified properties.
@@ -30221,6 +30227,102 @@ export namespace Records {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a RecordAudit. */
+    interface IRecordAudit {
+
+        /** RecordAudit version */
+        version?: (number|null);
+
+        /** RecordAudit data */
+        data?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordAudit. */
+    class RecordAudit implements IRecordAudit {
+
+        /**
+         * Constructs a new RecordAudit.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordAudit);
+
+        /** RecordAudit version. */
+        public version: number;
+
+        /** RecordAudit data. */
+        public data: Uint8Array;
+
+        /**
+         * Creates a new RecordAudit instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordAudit instance
+         */
+        public static create(properties?: Records.IRecordAudit): Records.RecordAudit;
+
+        /**
+         * Encodes the specified RecordAudit message. Does not implicitly {@link Records.RecordAudit.verify|verify} messages.
+         * @param message RecordAudit message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordAudit, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordAudit message, length delimited. Does not implicitly {@link Records.RecordAudit.verify|verify} messages.
+         * @param message RecordAudit message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordAudit, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordAudit message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordAudit
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordAudit;
+
+        /**
+         * Decodes a RecordAudit message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordAudit
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordAudit;
+
+        /**
+         * Verifies a RecordAudit message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordAudit message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordAudit
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordAudit;
+
+        /**
+         * Creates a plain object from a RecordAudit message. Also converts values to other types if specified.
+         * @param message RecordAudit
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordAudit, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordAudit to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a RecordAdd. */
     interface IRecordAdd {
 
@@ -30250,6 +30352,9 @@ export namespace Records {
 
         /** RecordAdd recordLinks */
         recordLinks?: (Records.IRecordLink[]|null);
+
+        /** RecordAdd audit */
+        audit?: (Records.IRecordAudit|null);
     }
 
     /** Represents a RecordAdd. */
@@ -30287,6 +30392,9 @@ export namespace Records {
 
         /** RecordAdd recordLinks. */
         public recordLinks: Records.IRecordLink[];
+
+        /** RecordAdd audit. */
+        public audit?: (Records.IRecordAudit|null);
 
         /**
          * Creates a new RecordAdd instance using the specified properties.
@@ -30473,8 +30581,14 @@ export namespace Records {
         /** RecordUpdate nonSharedData */
         nonSharedData?: (Uint8Array|null);
 
-        /** RecordUpdate recordLinks */
-        recordLinks?: (Records.IRecordLink[]|null);
+        /** RecordUpdate recordLinksAdd */
+        recordLinksAdd?: (Records.IRecordLink[]|null);
+
+        /** RecordUpdate recordLinksRemove */
+        recordLinksRemove?: (Uint8Array[]|null);
+
+        /** RecordUpdate audit */
+        audit?: (Records.IRecordAudit|null);
     }
 
     /** Represents a RecordUpdate. */
@@ -30501,8 +30615,14 @@ export namespace Records {
         /** RecordUpdate nonSharedData. */
         public nonSharedData: Uint8Array;
 
-        /** RecordUpdate recordLinks. */
-        public recordLinks: Records.IRecordLink[];
+        /** RecordUpdate recordLinksAdd. */
+        public recordLinksAdd: Records.IRecordLink[];
+
+        /** RecordUpdate recordLinksRemove. */
+        public recordLinksRemove: Uint8Array[];
+
+        /** RecordUpdate audit. */
+        public audit?: (Records.IRecordAudit|null);
 
         /**
          * Creates a new RecordUpdate instance using the specified properties.
