@@ -142,8 +142,8 @@ export const setEncryptedTeamKeyMessage = (data: Enterprise.IEncryptedTeamKeyReq
 export const getBackupMessage = (data: Enterprise.IBackupRequest): RestMessage<Enterprise.IBackupRequest, Enterprise.IBackupResponse> =>
     createMessage(data, 'enterprise/get_backup', Enterprise.BackupRequest, Enterprise.BackupResponse)
 
-export const getEnterprisePublicKeyMessage = (): RestMessage< {}, BreachWatch.IEnterprisePublicKeyResponse> =>
-    createMessage({}, 'breachwatch/get_enterprise_public_key', null, BreachWatch.EnterprisePublicKeyResponse)
+export const getEnterprisePublicKeyMessage = (): RestMessage<{}, BreachWatch.IEnterprisePublicKeyResponse> =>
+    createMessage({}, 'enterprise/get_enterprise_public_key', null, BreachWatch.EnterprisePublicKeyResponse)
 
 export const setEnterpriseDataKeyMessage = (data: Enterprise.IEnterpriseUserDataKey): RestMessage<Enterprise.IEnterpriseUserDataKey, {}> =>
     createMessage(data, 'enterprise/set_enterprise_user_data_key', Enterprise.EnterpriseUserDataKey, null)

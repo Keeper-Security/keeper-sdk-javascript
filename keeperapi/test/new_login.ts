@@ -88,8 +88,9 @@ async function decryptUsers(
         let userPrivateKey
         if (userDataKey) {
             userPrivateKey = platform.aesCbcDecrypt(user.privateKey, userDataKey, true)
-            if (user.backupKey.length > 0) {
-                const backupKey = platform.privateDecrypt(user.backupKey, userPrivateKey)
+            // user.backupKeys is type Enterprise.IBackupKey[] which is assumed as Uint8Array|null
+            if (user.backupKeys?.length > 0) {
+                const backupKey = platform.privateDecrypt(user.backupKeys as unknown as Uint8Array, userPrivateKey)
                 console.log('BACKUP KEY', backupKey)
             }
         }
@@ -355,7 +356,7 @@ export async function withTimeout<T>(promise: Promise<T>, ms: number, processNam
 }
 
 export async function syslogExport(host: string, useTLS: boolean, port?: number) {
-    const connect = new Promise((resolve, reject) => {
+    const connect = new Promise<void>((resolve, reject) => {
         let connectListener = () => {
             console.log('connected to ' + host)
             // let eventStr = 'hello';
