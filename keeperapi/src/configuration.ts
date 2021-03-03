@@ -82,6 +82,7 @@ export interface AuthUI3 {
     getPassword?(): Promise<string | KeyWrapper>
     getSSOToken?(redirectUrl: string): Promise<Uint8Array>
     redirectCallback?(url: string): void
+    idpLogout?(url: string): Promise<void>
 }
 
 export type TwoFactorInput = {

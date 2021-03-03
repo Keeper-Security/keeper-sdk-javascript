@@ -449,7 +449,12 @@ export class Auth {
             })
 
             const url = `${this.ssoLogoutUrl}?${String(params)}`
-            this.options.authUI3.redirectCallback(url);
+
+            try {
+                await this.options.authUI3.idpLogout(url);
+            } catch (e) {
+                console.log('Logout errored out: ' + e)
+            }
 
         } else if (this.userType == UserType.onsiteSso) {
             const params = new URLSearchParams({
@@ -460,7 +465,12 @@ export class Auth {
             })
 
             const url = `${this.ssoLogoutUrl}?${String(params)}`
-            this.options.authUI3.redirectCallback(url)
+
+            try {
+                await this.options.authUI3.idpLogout(url);
+            } catch (e) {
+                console.log('Logout errored out: ' + e)
+            }
         }
     }
 
