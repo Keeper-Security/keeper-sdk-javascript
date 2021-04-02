@@ -514,6 +514,7 @@ export class Auth {
         }
 
         let needUserName: boolean
+        let isAlternate = false
 
         const handleError = (resultCode: string, loginResponse: Authentication.ILoginResponse, error: any) => {
             if (this.options.onCommandFailure) {
@@ -559,6 +560,7 @@ export class Auth {
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
                 loginType = undefined
+                isAlternate = true
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
@@ -571,7 +573,16 @@ export class Auth {
             var loginResponse;
             if (givenSessionToken){
                 this._sessionToken = givenSessionToken
-                loginResponse = await this.executeRest(startLoginMessageFromSessionToken(startLoginRequest))
+                try{
+                    loginResponse = await this.executeRest(startLoginMessageFromSessionToken(startLoginRequest))
+                } catch(e){
+                    if(this.options.onCommandFailure){
+                        this.options.onCommandFailure({
+                            result_code: 'failed_login_from_existing_session_token',
+                            message: e.message,
+                        })
+                    }
+                }
             } else {
                 loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             }
@@ -712,7 +723,7 @@ export class Auth {
                     }
 
                     try {
-                        await this.authHashLogin(loginResponse, username, wrappedPassword, loginType === Authentication.LoginType.ALTERNATE)
+                        await this.authHashLogin(loginResponse, username, wrappedPassword, isAlternate)
                         return;
                     } catch (e) {
                         wrappedPassword = null

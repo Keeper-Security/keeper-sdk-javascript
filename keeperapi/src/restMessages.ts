@@ -80,6 +80,9 @@ export const setUserSettingMessage = (data: Authentication.IUserSettingRequest):
 export const requestDeviceAdminApprovalMessage = (data: Authentication.IDeviceVerificationRequest): RestMessage<Authentication.IDeviceVerificationRequest, {}> =>
     createMessage(data, 'authentication/request_device_admin_approval', Authentication.DeviceVerificationRequest, null)
 
+export const requestSaltAndIterations = (): RestMessage<{}, Authentication.Salt> =>
+    createMessage({}, 'authentication/get_salt_and_iterations', null, Authentication.Salt)
+
 export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswordReentryRequest): RestMessage<Authentication.IMasterPasswordReentryRequest, {}> =>
     createMessage(data, 'authentication/validate_master_password', Authentication.MasterPasswordReentryRequest, null)
 

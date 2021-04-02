@@ -236,7 +236,7 @@ export const browserPlatform: Platform = class {
 
         let key = await crypto.subtle.importKey(
             "raw",
-            Uint8Array.of(...browserPlatform.stringToBytes(domain), ...browserPlatform.unWrapPassword(password.getKey())),
+            Uint8Array.of(...browserPlatform.stringToBytes(domain), ...browserPlatform.unWrapPassword(password)),
             "PBKDF2",
             false,
             ["deriveBits"]);
