@@ -172,7 +172,7 @@ export class KeeperEndpoint {
                         }
                     }
                     if (this.options.onCommandFailure) {
-                        this.options.onCommandFailure(errorObj)
+                        this.options.onCommandFailure({ ...errorObj, ...{ path: message.path } })
                     }
                 } catch {
                 }
