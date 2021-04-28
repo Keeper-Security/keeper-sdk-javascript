@@ -3,6 +3,7 @@ import {
     ClientConfigurationInternal,
     DeviceApprovalChannel,
     DeviceVerificationMethods,
+    KeeperError,
     LoginError,
     TwoFactorChannelData
 } from './configuration'
@@ -516,11 +517,13 @@ export class Auth {
         let needUserName: boolean
         let isAlternate = false
 
-        const handleError = (resultCode: string, loginResponse: Authentication.ILoginResponse, error: any) => {
+        const handleError = (resultCode: string, loginResponse: Authentication.ILoginResponse, error: KeeperError) => {
+            const errorMessage = chooseErrorMessage(loginResponse.loginState)
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
                     result_code: resultCode,
-                    message: chooseErrorMessage(loginResponse.loginState)
+                    message: errorMessage,
+                    error: error.message,
                 })
             } else {
                 throw error;
