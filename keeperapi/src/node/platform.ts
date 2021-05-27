@@ -171,7 +171,7 @@ export const nodePlatform: Platform = class {
       url: string,
       headers?: {[key: string]: string}
     ): Promise<KeeperHttpResponse> {
-        return new Promise<KeeperHttpResponse>((resolve) => {
+        return new Promise<KeeperHttpResponse>((resolve, reject) => {
             let get = https.request(url, {
                 method: "get",
                 headers: {
@@ -181,6 +181,7 @@ export const nodePlatform: Platform = class {
             }, (res) => {
                 this.fetchData(res, resolve);
             });
+            get.on('error', reject)
             get.end();
         })
     }
@@ -190,7 +191,7 @@ export const nodePlatform: Platform = class {
       request: Uint8Array | string,
       headers?: {[key: string]: string}
     ): Promise<KeeperHttpResponse> {
-        return new Promise<KeeperHttpResponse>((resolve) => {
+        return new Promise<KeeperHttpResponse>((resolve, reject) => {
             let post = https.request(url, {
                 method: "post",
                 headers: {
@@ -202,6 +203,7 @@ export const nodePlatform: Platform = class {
             }, (res) => {
                 this.fetchData(res, resolve)
             });
+            post.on('error', reject)
             post.write(request);
             post.end();
         })
@@ -212,7 +214,7 @@ export const nodePlatform: Platform = class {
       uploadParameters: {[key: string]: string},
       data: Uint8Array
     ): Promise<any> {
-        return new Promise<any>((resolve) => {
+        return new Promise<any>((resolve, reject) => {
             const form = new FormData()
 
             for (const key in uploadParameters) {
@@ -225,6 +227,7 @@ export const nodePlatform: Platform = class {
                 headers: form.getHeaders()
             });
             form.pipe(post)
+            post.on('error', reject)
             post.on('response', function (res: any) {
                 resolve({
                     headers: res.headers,
