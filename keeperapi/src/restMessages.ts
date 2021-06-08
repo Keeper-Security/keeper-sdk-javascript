@@ -160,6 +160,9 @@ export const getMasterPasswordSaltMessage = (): RestMessage<{}, Authentication.I
 export const updateSecurityData = (data: Authentication.ISecurityDataRequest): RestMessage<Authentication.ISecurityDataRequest, Authentication.RevisionResponse> => 
     createMessage(data, 'enterprise/update_security_data', Authentication.SecurityDataRequest, Authentication.RevisionResponse)
 
+export const setReusedPasswords = (data: Authentication.IReusedPasswordsRequest): RestMessage<Authentication.IReusedPasswordsRequest, {}> => 
+    createMessage(data, 'enterprise/set_reused_passwords', Authentication.ReusedPasswordsRequest, null)
+
 /* -- SERVICE LOGGER -- */
 
 export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>
