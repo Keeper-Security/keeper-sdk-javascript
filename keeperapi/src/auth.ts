@@ -563,14 +563,14 @@ export class Auth {
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
                 loginType = undefined
-                if (loginType == LoginType.ALTERNATE) {
+                if (startLoginRequest.loginType == LoginType.ALTERNATE) {
                     isAlternate = true
                 }
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             }
-            if (needUserName || !this.options.useSessionResumption) {
+            if (needUserName || !this.options.useSessionResumption || isAlternate) {
                 startLoginRequest.username = this._username
                 needUserName = false
             }
@@ -644,7 +644,8 @@ export class Auth {
                     }
                     break;
                 case Authentication.LoginState.LICENSE_EXPIRED:
-                    throw new Error('License expired')
+                    handleError('license_expired', loginResponse, new Error(loginResponse.message))
+                    return;
                 case Authentication.LoginState.REGION_REDIRECT:
                     // TODO: put region_redirect in its own loop since
                     // its unique to the other states.
