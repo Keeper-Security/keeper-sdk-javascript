@@ -1,5 +1,5 @@
 import {Writer} from 'protobufjs'
-import {AccountSummary, Authentication, BreachWatch, Enterprise, Records, ServiceLogger, SsoCloud} from './proto'
+import {AccountSummary, Authentication, Automator, BreachWatch, Enterprise, Records, ServiceLogger, SsoCloud} from './proto'
 
 export interface RestMessage<TIn, TOut> {
     path: string
@@ -212,3 +212,31 @@ export const ssoCloudRequestMessage = (data: SsoCloud.ISsoCloudRequest): RestMes
 
 export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url:string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse);
+
+
+/* -- Keeper Automator -- */
+
+
+export const automatorApproveDeviceMessage = (data: Automator.ApproveDeviceRequest, url:string): RestMessage<Automator.IApproveDeviceRequest, Automator.IAutomatorResponse> =>
+    createMessage(data, url, Automator.ApproveDeviceRequest, Automator.AutomatorResponse);
+
+export const automatorAdminCreateMessage = (data: Automator.AdminCreateAutomatorRequest, url:string): RestMessage<Automator.IAdminCreateAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminCreateAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminDeleteMessage = (data: Automator.AdminDeleteAutomatorRequest, url:string): RestMessage<Automator.IAdminDeleteAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminDeleteAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminEditMessage = (data: Automator.AdminEditAutomatorRequest, url:string): RestMessage<Automator.IAdminEditAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminEditAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminEnableMessage = (data: Automator.AdminEnableAutomatorRequest, url:string): RestMessage<Automator.IAdminEnableAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminEnableAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminGetMessage = (data: Automator.AdminGetAutomatorRequest, url:string): RestMessage<Automator.IAdminGetAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminGetAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeAutomatorRequest, url:string): RestMessage<Automator.IAdminInitializeAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminInitializeAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminResetMessage = (data: Automator.AdminResetAutomatorRequest, url:string): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse);

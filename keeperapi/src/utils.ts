@@ -22,6 +22,14 @@ export function getKeeperSsoConfigUrl(host: KeeperHost, forPath: string, service
     }
 }
 
+export function getKeeperAutomatorAdminUrl(host: KeeperHost, forPath: string, automatorId: number = null) {
+    if (automatorId) {
+        return getKeeperUrl(host, `automator/${forPath}/${automatorId}`);
+    } else {
+        return getKeeperUrl(host, `automator/${forPath}`);
+    }
+}
+
 export function generateTransmissionKey(keyNumber: number): TransmissionKey {
     const transmissionKey = platform.getRandomBytes(32)
     return {

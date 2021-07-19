@@ -8,18 +8,19 @@
   "files": [
     "dist"
   ],
-  "protobufFiles": "../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto",
+  "protobufFiles": "../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/automator.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto",
   "scripts": {
     "start": "rollup -cw",
     "build": "node ./scripts/cleanDistFolder.js && rollup -c && cp src/proto.d.ts dist",
     "update-proto:es6": "pbjs -t static-module -w es6 -o src/proto.js $npm_package_protobufFiles && pbts -o src/proto.d.ts src/proto.js",
-    "update-proto:cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto | pbts -o src/proto.d.ts -",
+    "update-proto:cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/automator.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/automator.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto | pbts -o src/proto.d.ts -",
     "link-local": "yarn link",
     "publish:beta": "node ./scripts/verifyBetaVersion.js && npm publish --tag beta",
     "test": "ts-node test/test.ts",
     "test-new-login": "ts-node test/new_login.ts",
     "test-record-types": "ts-node test/record_types.ts",
     "test-ws_push": "ts-node test/ws_push.ts",
+    "test-automator": "ts-node test/test-automator.ts",
     "test-sso": "ts-node test/test-sso-and-logger.ts",
     "push-agent": "ts-node test/keeperPush.ts",
     "test:2": "jest",
