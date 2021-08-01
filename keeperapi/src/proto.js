@@ -3918,6 +3918,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           lastModified: {
             type: "int64",
             id: 6
+          },
+          nodeEncryptedData: {
+            type: "bytes",
+            id: 7
           }
         }
       },
@@ -4029,6 +4033,11 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "AuditTeamUser",
             id: 13
+          },
+          auditRoles: {
+            rule: "repeated",
+            type: "AuditRole",
+            id: 14
           }
         }
       },
@@ -4042,9 +4051,37 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 2
           },
-          hasAttachements: {
+          hasAttachments: {
             type: "bool",
             id: 3
+          }
+        }
+      },
+      AuditRole: {
+        fields: {
+          roleId: {
+            type: "int64",
+            id: 1
+          },
+          encryptedData: {
+            type: "bytes",
+            id: 2
+          },
+          restrictShareOutsideEnterprise: {
+            type: "bool",
+            id: 3
+          },
+          restrictShareAll: {
+            type: "bool",
+            id: 4
+          },
+          restrictShareOfAttachments: {
+            type: "bool",
+            id: 5
+          },
+          restrictMaskPasswordsWhileEditing: {
+            type: "bool",
+            id: 6
           }
         }
       },
@@ -4066,21 +4103,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           },
-          restrictShareOutsideEnterprise: {
-            type: "bool",
+          roleIds: {
+            rule: "repeated",
+            type: "int64",
             id: 5
-          },
-          restrictShareAll: {
-            type: "bool",
-            id: 6
-          },
-          restrictShareOfAttachments: {
-            type: "bool",
-            id: 7
-          },
-          restrictMaskPasswordsWhileEditing: {
-            type: "bool",
-            id: 8
           }
         }
       },
@@ -4198,6 +4224,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
         }
       },
       ComplianceReportCriteriaRequest: {
+        fields: {
+          criteriaUid: {
+            type: "bytes",
+            id: 1
+          }
+        }
+      },
+      SaveComplianceReportCriteriaResponse: {
         fields: {
           criteriaUid: {
             type: "bytes",
@@ -5226,36 +5260,40 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 1
           },
+          nodeId: {
+            type: "int64",
+            id: 2
+          },
           name: {
             type: "string",
-            id: 2
+            id: 3
           },
           enabled: {
             type: "bool",
-            id: 3
+            id: 4
           },
           url: {
             type: "string",
-            id: 4
+            id: 5
           },
           automatorSkills: {
             rule: "repeated",
             type: "AutomatorSkill",
-            id: 5
+            id: 6
           },
           automatorSettingValues: {
             rule: "repeated",
             type: "AutomatorSettingValue",
-            id: 6
+            id: 7
           },
           status: {
             type: "StatusResponse",
-            id: 7
+            id: 8
           },
           logEntries: {
             rule: "repeated",
             type: "LogEntry",
-            id: 8
+            id: 9
           }
         }
       },
@@ -5283,6 +5321,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
         fields: {
           nodeId: {
             type: "int64",
+            id: 1
+          }
+        }
+      },
+      AdminGetAutomatorsForEnterpriseRequest: {
+        fields: {
+          enterpriseId: {
+            type: "int32",
             id: 1
           }
         }
@@ -5363,10 +5409,18 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       AdminAutomatorSkillsResponse: {
         fields: {
+          success: {
+            type: "bool",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
           automatorSkills: {
             rule: "repeated",
             type: "AutomatorSkill",
-            id: 1
+            id: 3
           }
         }
       },

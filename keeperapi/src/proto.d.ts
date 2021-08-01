@@ -19773,6 +19773,9 @@ export namespace Enterprise {
 
         /** ComplianceReportCriteriaAndFilter lastModified */
         lastModified?: (number|Long|null);
+
+        /** ComplianceReportCriteriaAndFilter nodeEncryptedData */
+        nodeEncryptedData?: (Uint8Array|null);
     }
 
     /** Represents a ComplianceReportCriteriaAndFilter. */
@@ -19801,6 +19804,9 @@ export namespace Enterprise {
 
         /** ComplianceReportCriteriaAndFilter lastModified. */
         public lastModified: (number|Long);
+
+        /** ComplianceReportCriteriaAndFilter nodeEncryptedData. */
+        public nodeEncryptedData: Uint8Array;
 
         /**
          * Creates a new ComplianceReportCriteriaAndFilter instance using the specified properties.
@@ -20130,6 +20136,9 @@ export namespace Enterprise {
 
         /** ComplianceReportResponse auditTeamUsers */
         auditTeamUsers?: (Enterprise.IAuditTeamUser[]|null);
+
+        /** ComplianceReportResponse auditRoles */
+        auditRoles?: (Enterprise.IAuditRole[]|null);
     }
 
     /** Represents a ComplianceReportResponse. */
@@ -20179,6 +20188,9 @@ export namespace Enterprise {
 
         /** ComplianceReportResponse auditTeamUsers. */
         public auditTeamUsers: Enterprise.IAuditTeamUser[];
+
+        /** ComplianceReportResponse auditRoles. */
+        public auditRoles: Enterprise.IAuditRole[];
 
         /**
          * Creates a new ComplianceReportResponse instance using the specified properties.
@@ -20260,8 +20272,8 @@ export namespace Enterprise {
         /** AuditRecord auditData */
         auditData?: (Uint8Array|null);
 
-        /** AuditRecord hasAttachements */
-        hasAttachements?: (boolean|null);
+        /** AuditRecord hasAttachments */
+        hasAttachments?: (boolean|null);
     }
 
     /** Represents an AuditRecord. */
@@ -20279,8 +20291,8 @@ export namespace Enterprise {
         /** AuditRecord auditData. */
         public auditData: Uint8Array;
 
-        /** AuditRecord hasAttachements. */
-        public hasAttachements: boolean;
+        /** AuditRecord hasAttachments. */
+        public hasAttachments: boolean;
 
         /**
          * Creates a new AuditRecord instance using the specified properties.
@@ -20353,6 +20365,126 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an AuditRole. */
+    interface IAuditRole {
+
+        /** AuditRole roleId */
+        roleId?: (number|Long|null);
+
+        /** AuditRole encryptedData */
+        encryptedData?: (Uint8Array|null);
+
+        /** AuditRole restrictShareOutsideEnterprise */
+        restrictShareOutsideEnterprise?: (boolean|null);
+
+        /** AuditRole restrictShareAll */
+        restrictShareAll?: (boolean|null);
+
+        /** AuditRole restrictShareOfAttachments */
+        restrictShareOfAttachments?: (boolean|null);
+
+        /** AuditRole restrictMaskPasswordsWhileEditing */
+        restrictMaskPasswordsWhileEditing?: (boolean|null);
+    }
+
+    /** Represents an AuditRole. */
+    class AuditRole implements IAuditRole {
+
+        /**
+         * Constructs a new AuditRole.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IAuditRole);
+
+        /** AuditRole roleId. */
+        public roleId: (number|Long);
+
+        /** AuditRole encryptedData. */
+        public encryptedData: Uint8Array;
+
+        /** AuditRole restrictShareOutsideEnterprise. */
+        public restrictShareOutsideEnterprise: boolean;
+
+        /** AuditRole restrictShareAll. */
+        public restrictShareAll: boolean;
+
+        /** AuditRole restrictShareOfAttachments. */
+        public restrictShareOfAttachments: boolean;
+
+        /** AuditRole restrictMaskPasswordsWhileEditing. */
+        public restrictMaskPasswordsWhileEditing: boolean;
+
+        /**
+         * Creates a new AuditRole instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AuditRole instance
+         */
+        public static create(properties?: Enterprise.IAuditRole): Enterprise.AuditRole;
+
+        /**
+         * Encodes the specified AuditRole message. Does not implicitly {@link Enterprise.AuditRole.verify|verify} messages.
+         * @param message AuditRole message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IAuditRole, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AuditRole message, length delimited. Does not implicitly {@link Enterprise.AuditRole.verify|verify} messages.
+         * @param message AuditRole message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IAuditRole, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AuditRole message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AuditRole
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.AuditRole;
+
+        /**
+         * Decodes an AuditRole message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AuditRole
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.AuditRole;
+
+        /**
+         * Verifies an AuditRole message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AuditRole message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AuditRole
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.AuditRole;
+
+        /**
+         * Creates a plain object from an AuditRole message. Also converts values to other types if specified.
+         * @param message AuditRole
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.AuditRole, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AuditRole to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a UserProfile. */
     interface IUserProfile {
 
@@ -20368,17 +20500,8 @@ export namespace Enterprise {
         /** UserProfile email */
         email?: (string|null);
 
-        /** UserProfile restrictShareOutsideEnterprise */
-        restrictShareOutsideEnterprise?: (boolean|null);
-
-        /** UserProfile restrictShareAll */
-        restrictShareAll?: (boolean|null);
-
-        /** UserProfile restrictShareOfAttachments */
-        restrictShareOfAttachments?: (boolean|null);
-
-        /** UserProfile restrictMaskPasswordsWhileEditing */
-        restrictMaskPasswordsWhileEditing?: (boolean|null);
+        /** UserProfile roleIds */
+        roleIds?: ((number|Long)[]|null);
     }
 
     /** Represents a UserProfile. */
@@ -20402,17 +20525,8 @@ export namespace Enterprise {
         /** UserProfile email. */
         public email: string;
 
-        /** UserProfile restrictShareOutsideEnterprise. */
-        public restrictShareOutsideEnterprise: boolean;
-
-        /** UserProfile restrictShareAll. */
-        public restrictShareAll: boolean;
-
-        /** UserProfile restrictShareOfAttachments. */
-        public restrictShareOfAttachments: boolean;
-
-        /** UserProfile restrictMaskPasswordsWhileEditing. */
-        public restrictMaskPasswordsWhileEditing: boolean;
+        /** UserProfile roleIds. */
+        public roleIds: (number|Long)[];
 
         /**
          * Creates a new UserProfile instance using the specified properties.
@@ -21434,6 +21548,96 @@ export namespace Enterprise {
 
         /**
          * Converts this ComplianceReportCriteriaRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SaveComplianceReportCriteriaResponse. */
+    interface ISaveComplianceReportCriteriaResponse {
+
+        /** SaveComplianceReportCriteriaResponse criteriaUid */
+        criteriaUid?: (Uint8Array|null);
+    }
+
+    /** Represents a SaveComplianceReportCriteriaResponse. */
+    class SaveComplianceReportCriteriaResponse implements ISaveComplianceReportCriteriaResponse {
+
+        /**
+         * Constructs a new SaveComplianceReportCriteriaResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ISaveComplianceReportCriteriaResponse);
+
+        /** SaveComplianceReportCriteriaResponse criteriaUid. */
+        public criteriaUid: Uint8Array;
+
+        /**
+         * Creates a new SaveComplianceReportCriteriaResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SaveComplianceReportCriteriaResponse instance
+         */
+        public static create(properties?: Enterprise.ISaveComplianceReportCriteriaResponse): Enterprise.SaveComplianceReportCriteriaResponse;
+
+        /**
+         * Encodes the specified SaveComplianceReportCriteriaResponse message. Does not implicitly {@link Enterprise.SaveComplianceReportCriteriaResponse.verify|verify} messages.
+         * @param message SaveComplianceReportCriteriaResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ISaveComplianceReportCriteriaResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SaveComplianceReportCriteriaResponse message, length delimited. Does not implicitly {@link Enterprise.SaveComplianceReportCriteriaResponse.verify|verify} messages.
+         * @param message SaveComplianceReportCriteriaResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ISaveComplianceReportCriteriaResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SaveComplianceReportCriteriaResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SaveComplianceReportCriteriaResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.SaveComplianceReportCriteriaResponse;
+
+        /**
+         * Decodes a SaveComplianceReportCriteriaResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SaveComplianceReportCriteriaResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.SaveComplianceReportCriteriaResponse;
+
+        /**
+         * Verifies a SaveComplianceReportCriteriaResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SaveComplianceReportCriteriaResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SaveComplianceReportCriteriaResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.SaveComplianceReportCriteriaResponse;
+
+        /**
+         * Creates a plain object from a SaveComplianceReportCriteriaResponse message. Also converts values to other types if specified.
+         * @param message SaveComplianceReportCriteriaResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.SaveComplianceReportCriteriaResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SaveComplianceReportCriteriaResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -24391,8 +24595,7 @@ export namespace Automator {
 
     /**
      * InitializeRequest
-     * This is used to Initialize the Automator instance via an authenticated REST call. It can only be fully initialized once.
-     * After that, only a few fields can be updated, such as the signing certificate and the enabled/disabled status.
+     * This is used to Initialize the Automator instance via an authenticated REST call.
      *
      */
     class InitializeRequest implements IInitializeRequest {
@@ -25304,6 +25507,9 @@ export namespace Automator {
         /** AutomatorInfo automatorId */
         automatorId?: (number|Long|null);
 
+        /** AutomatorInfo nodeId */
+        nodeId?: (number|Long|null);
+
         /** AutomatorInfo name */
         name?: (string|null);
 
@@ -25337,6 +25543,9 @@ export namespace Automator {
 
         /** AutomatorInfo automatorId. */
         public automatorId: (number|Long);
+
+        /** AutomatorInfo nodeId. */
+        public nodeId: (number|Long);
 
         /** AutomatorInfo name. */
         public name: string;
@@ -25719,6 +25928,103 @@ export namespace Automator {
 
         /**
          * Converts this AdminGetAutomatorsOnNodeRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AdminGetAutomatorsForEnterpriseRequest. */
+    interface IAdminGetAutomatorsForEnterpriseRequest {
+
+        /** AdminGetAutomatorsForEnterpriseRequest enterpriseId */
+        enterpriseId?: (number|null);
+    }
+
+    /**
+     * Retrieve automators in an enterprise.
+     * The info should also be in enterprise_summary or whatever it is called.
+     *
+     * If you want info on a particular automator, use automator_get.
+     * If you want a list of automators on a node, use automator_get_on_node
+     * Returns AdminResponse
+     */
+    class AdminGetAutomatorsForEnterpriseRequest implements IAdminGetAutomatorsForEnterpriseRequest {
+
+        /**
+         * Constructs a new AdminGetAutomatorsForEnterpriseRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Automator.IAdminGetAutomatorsForEnterpriseRequest);
+
+        /** AdminGetAutomatorsForEnterpriseRequest enterpriseId. */
+        public enterpriseId: number;
+
+        /**
+         * Creates a new AdminGetAutomatorsForEnterpriseRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AdminGetAutomatorsForEnterpriseRequest instance
+         */
+        public static create(properties?: Automator.IAdminGetAutomatorsForEnterpriseRequest): Automator.AdminGetAutomatorsForEnterpriseRequest;
+
+        /**
+         * Encodes the specified AdminGetAutomatorsForEnterpriseRequest message. Does not implicitly {@link Automator.AdminGetAutomatorsForEnterpriseRequest.verify|verify} messages.
+         * @param message AdminGetAutomatorsForEnterpriseRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Automator.IAdminGetAutomatorsForEnterpriseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AdminGetAutomatorsForEnterpriseRequest message, length delimited. Does not implicitly {@link Automator.AdminGetAutomatorsForEnterpriseRequest.verify|verify} messages.
+         * @param message AdminGetAutomatorsForEnterpriseRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Automator.IAdminGetAutomatorsForEnterpriseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AdminGetAutomatorsForEnterpriseRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AdminGetAutomatorsForEnterpriseRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Automator.AdminGetAutomatorsForEnterpriseRequest;
+
+        /**
+         * Decodes an AdminGetAutomatorsForEnterpriseRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AdminGetAutomatorsForEnterpriseRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Automator.AdminGetAutomatorsForEnterpriseRequest;
+
+        /**
+         * Verifies an AdminGetAutomatorsForEnterpriseRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AdminGetAutomatorsForEnterpriseRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AdminGetAutomatorsForEnterpriseRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Automator.AdminGetAutomatorsForEnterpriseRequest;
+
+        /**
+         * Creates a plain object from an AdminGetAutomatorsForEnterpriseRequest message. Also converts values to other types if specified.
+         * @param message AdminGetAutomatorsForEnterpriseRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Automator.AdminGetAutomatorsForEnterpriseRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AdminGetAutomatorsForEnterpriseRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -26244,6 +26550,12 @@ export namespace Automator {
     /** Properties of an AdminAutomatorSkillsResponse. */
     interface IAdminAutomatorSkillsResponse {
 
+        /** AdminAutomatorSkillsResponse success */
+        success?: (boolean|null);
+
+        /** AdminAutomatorSkillsResponse message */
+        message?: (string|null);
+
         /** AdminAutomatorSkillsResponse automatorSkills */
         automatorSkills?: (Automator.IAutomatorSkill[]|null);
     }
@@ -26256,6 +26568,12 @@ export namespace Automator {
          * @param [properties] Properties to set
          */
         constructor(properties?: Automator.IAdminAutomatorSkillsResponse);
+
+        /** AdminAutomatorSkillsResponse success. */
+        public success: boolean;
+
+        /** AdminAutomatorSkillsResponse message. */
+        public message: string;
 
         /** AdminAutomatorSkillsResponse automatorSkills. */
         public automatorSkills: Automator.IAutomatorSkill[];
@@ -26438,8 +26756,6 @@ export namespace Automator {
      * Sends configuration settings to an Automator.
      * Call this after AdminAutomatorEdit to send the new settings to the Automator.
      *
-     * WARNING: After initializing once, only a few settings can be changed, unless a full_reset is performed.
-     *
      * Returns AdminResponse
      */
     class AdminInitializeAutomatorRequest implements IAdminInitializeAutomatorRequest {
@@ -26534,7 +26850,8 @@ export namespace Automator {
     /**
      * AdminAutomatorLogRequest
      *
-     * Retrieves the internal log entries of the Automator instance running remotely at the client site.
+     * Retrieves the internal log entries of Keeper that relate to the given Automator instance.
+     * It does not contact the remote Automator.
      *
      * Returns AdminResponse
      */
@@ -26630,7 +26947,8 @@ export namespace Automator {
     /**
      * AdminAutomatorLogClearRequest
      *
-     * Clears the internal log entries of the Automator instance running remotely at the client site.
+     * Clears the internal log entries of Keeper that relate to the given Automator instance.
+     * It does not contact the remote Automator.
      *
      * Returns AdminResponse
      */

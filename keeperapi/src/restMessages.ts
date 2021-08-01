@@ -235,6 +235,12 @@ export const automatorAdminEnableMessage = (data: Automator.AdminEnableAutomator
 export const automatorAdminGetMessage = (data: Automator.AdminGetAutomatorRequest, url:string): RestMessage<Automator.IAdminGetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminGetAutomatorRequest, Automator.AdminResponse);
 
+export const automatorAdminGetAllOnNodeMessage = (data: Automator.AdminGetAutomatorsOnNodeRequest, url:string): RestMessage<Automator.IAdminGetAutomatorsOnNodeRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminGetAutomatorsOnNodeRequest, Automator.AdminResponse);
+
+export const automatorAdminGetAllForEnterpriseMessage = (data: Automator.AdminGetAutomatorsForEnterpriseRequest, url:string): RestMessage<Automator.IAdminGetAutomatorsForEnterpriseRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminGetAutomatorsForEnterpriseRequest, Automator.AdminResponse);
+
 export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeAutomatorRequest, url:string): RestMessage<Automator.IAdminInitializeAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminInitializeAutomatorRequest, Automator.AdminResponse);
 

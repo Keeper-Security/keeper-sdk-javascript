@@ -36,12 +36,14 @@ import AdminDeleteAutomatorRequest = Automator.AdminDeleteAutomatorRequest;
 import AdminEditAutomatorRequest = Automator.AdminEditAutomatorRequest;
 import AdminEnableAutomatorRequest = Automator.AdminEnableAutomatorRequest;
 import AdminGetAutomatorRequest = Automator.AdminGetAutomatorRequest;
+import AdminGetAutomatorsOnNodeRequest = Automator.AdminGetAutomatorsOnNodeRequest;
+import AdminGetAutomatorsForEnterpriseRequest = Automator.AdminGetAutomatorsForEnterpriseRequest;
 import AdminInitializeAutomatorRequest = Automator.AdminInitializeAutomatorRequest;
 import AdminResetAutomatorRequest = Automator.AdminResetAutomatorRequest;
 import AdminResponse = Automator.AdminResponse;
 import IAdminResponse = Automator.IAdminResponse;
 
-import {automatorAdminCreateMessage, automatorAdminDeleteMessage, automatorAdminEditMessage, automatorAdminEnableMessage, automatorAdminGetMessage, automatorAdminInitializeMessage, automatorAdminResetMessage, serviceLoggerGetMessage} from '../src/restMessages';
+import {automatorAdminCreateMessage, automatorAdminDeleteMessage, automatorAdminEditMessage, automatorAdminEnableMessage, automatorAdminGetMessage, automatorAdminGetAllForEnterpriseMessage, automatorAdminGetAllOnNodeMessage, automatorAdminInitializeMessage, automatorAdminResetMessage, serviceLoggerGetMessage} from '../src/restMessages';
 
 import {getKeeperAutomatorAdminUrl, getKeeperUrl} from '../src/utils';
 
@@ -111,7 +113,9 @@ async function login(user?: UserInfo): Promise<Auth> {
 // TestAutomatorDeleteRest().finally();
 // TestAutomatorEditRest().finally();
 // TestAutomatorEnableRest().finally();
-TestAutomatorGetRest().finally();
+// TestAutomatorGetRest().finally();
+// TestAutomatorGetAllOnNodeRest().finally();
+TestAutomatorGetAllForEnterpriseRest().finally();
 // TestAutomatorInitializeRest().finally();
 // TestAutomatorResetRest().finally();
 
@@ -357,7 +361,94 @@ async function TestAutomatorGetRest() {
         let resp = await auth.executeRest(automatorAdminGetMessage(restReq, configPrefix + configEndpoint));
 
         console.log(resp);
-        console.log(resp.automatorInfo[0].status);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+     } catch (e) {
+        console.log(e)
+     }
+}
+
+// POST, ENCRYPTED, automator/automator_get_all_for_enterprise
+async function TestAutomatorGetAllForEnterpriseRest() {
+    console.log("\n*** TestAutomatorGetAllForEnterpriseRest on " + keeperHost + " ***");
+
+    let enterpriseId = 2261; // This is Mike's enterprise on dev with admin mhewett+sso42@keepersecurity.com
+    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
+    let automatorId = 9710921056484;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_get_all_for_enterprise';
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        let restReq = AdminGetAutomatorsForEnterpriseRequest.create({
+            "enterpriseId": enterpriseId
+        });
+
+        let resp = await auth.executeRest(automatorAdminGetAllForEnterpriseMessage(restReq, configPrefix + configEndpoint));
+
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+     } catch (e) {
+        console.log(e)
+     }
+}
+
+// POST, ENCRYPTED, automator/automator_get_on_node
+async function TestAutomatorGetAllOnNodeRest() {
+    console.log("\n*** TestAutomatorGetAllOnNodeRest on " + keeperHost + " ***");
+
+    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
+    let automatorId = 9710921056484;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_get_on_node';
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        let restReq = AdminGetAutomatorsOnNodeRequest.create({
+            "nodeId": nodeId
+        });
+
+        let resp = await auth.executeRest(automatorAdminGetAllOnNodeMessage(restReq, configPrefix + configEndpoint));
+
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
      } catch (e) {
         console.log(e)
      }
