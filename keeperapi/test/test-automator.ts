@@ -123,9 +123,8 @@ let automatorTestData = {
         "nodeId": 14955076124677,
         "sso_service_provider_id": 14955076124680,
         "automatorName": "f5 test automator",
-        "automatorUrl": "https://automator.kepr.co:8089/",
-        "sslCertificateFile": "personal/kepr_2022_nopass.pfx",
-        "automatorId": 14955076124993  // Created 08/02/2021
+        "automatorUrl": "https://dev-automator.kepr.co:8089",
+        "automatorId": 14955076124998  // Created 08/04/2021 
     }
 }
 
@@ -134,18 +133,18 @@ let automatorTestData = {
 // -----------------------------------------------------------------------------------------------
 // Which test to run?
 // TestAutomatorCreateRest(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
-// TestAutomatorDeleteRest().finally();
+TestAutomatorDeleteRest(automatorTestData["dev-rainerkec-f5-sso-cloud"], false).finally();
 // TestAutomatorEditRest().finally();
 // TestAutomatorEnableRest().finally();
 // TestAutomatorGetRest().finally();
 // TestAutomatorGetAllOnNodeRest().finally();
 // TestAutomatorGetAllForEnterpriseRest().finally();
-TestAutomatorInitializeRest(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
+// TestAutomatorInitializeRest(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
 // TestAutomatorResetRest().finally();
 
 // TestAutomatorFullSetup(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
 
-
+// NYI -- TestAutomatorApproveDevice(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
 
 // -----------------------------------------------------------------------------------------------
 // Automator tests
@@ -212,17 +211,11 @@ async function TestAutomatorFullSetup(config) {
 
 
         // Edit the settings of the Automator  --------------------------------------------------------
-
-        let automatorSettings = [
-            AutomatorSettingValue.create({
-                "settingTag": "ssl_certificate",
-                "settingValue": webSafe64FromBytes(fs.readFileSync(config.sslCertificateFile))
-            })];
         let restReq3 = AdminEditAutomatorRequest.create({
             "automatorId": config.automatorId,
             "url": config.automatorUrl,
             "enabled": true,
-            "automatorSettingValues": automatorSettings
+            // "automatorSettingValues": automatorSettings
         });
 
         let resp3 = await auth.executeRest(automatorAdminEditMessage(restReq3, automatorPrefix + editEndpoint));
@@ -302,12 +295,11 @@ async function TestAutomatorCreateRest() {
 }
 
 // POST, ENCRYPTED, automator/automator_delete
-async function TestAutomatorDeleteRest() {
+async function TestAutomatorDeleteRest(config, do_create) {
     console.log("\n*** TestAutomatorDelete on " + keeperHost + " ***");
 
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
-    const configPrefix = 'automator/';
+    const automatorPrefix = 'automator/';
     const createEndpoint = 'automator_create';
     const deleteEndpoint = 'automator_delete';
     const getEndpoint = 'automator_get';
@@ -329,28 +321,30 @@ async function TestAutomatorDeleteRest() {
         });
         console.log("Logged in...");
 
-        // Create an automator
-        let restReq = AdminCreateAutomatorRequest.create({
-            "nodeId": nodeId,
-            "name": "Automator Test 1"
-        });
-        let resp: IAdminResponse = await auth.executeRest(automatorAdminCreateMessage(restReq, configPrefix + createEndpoint));
-        let automatorId = resp.automatorInfo[0].automatorId;
-        console.log(resp);
-        console.log("Created automator", automatorId);
-
-        // Retrieve the automator
-        let restReq2 = AdminGetAutomatorRequest.create({
-            "automatorId": automatorId
-        });
-        resp = await auth.executeRest(automatorAdminGetMessage(restReq2, configPrefix + getEndpoint));
-        console.log(resp);
+        if (do_create) {
+            // Create an automator
+            let restReq = AdminCreateAutomatorRequest.create({
+              "nodeId": config.nodeId,
+              "name": "Automator Test 1"
+          });
+          let resp: IAdminResponse = await auth.executeRest(automatorAdminCreateMessage(restReq, automatorPrefix + createEndpoint));
+          config.automatorId = resp.automatorInfo[0].automatorId;
+          console.log(resp);
+          console.log("Created automator", config.automatorId);
+ 
+          // Retrieve the automator
+          let restReq2 = AdminGetAutomatorRequest.create({
+              "automatorId": config.automatorId
+          });
+          resp = await auth.executeRest(automatorAdminGetMessage(restReq2, automatorPrefix + getEndpoint));
+            console.log(resp);
+        }
 
         // Delete the automator
         let restReq3 = AdminDeleteAutomatorRequest.create({
-            "automatorId": automatorId
+            "automatorId": config.automatorId
         });
-        resp = await auth.executeRest(automatorAdminDeleteMessage(restReq3, configPrefix + deleteEndpoint));
+        let resp = await auth.executeRest(automatorAdminDeleteMessage(restReq3, automatorPrefix + deleteEndpoint));
         console.log(resp);
 
      } catch (e) {

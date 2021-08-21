@@ -144,7 +144,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // --> then do:
 // TestSsoLogin().finally();
 // TestSsoLogin_2().finally();
-TestSsoLogin_3().finally();   // works 11-2020
+// TestSsoLogin_3().finally();   // works 11-2020
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -157,7 +157,7 @@ TestSsoLogin_3().finally();   // works 11-2020
 // TestSsoAddNewConfiguration().finally();
 // TestSsoCopyConfiguration().finally();
 // TestSsoResetConfiguration().finally();
-// TestSsoGetConfiguration().finally();
+TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
 // TestSsoUpdateConfiguration().finally();
@@ -786,9 +786,19 @@ async function TestSsoAddNewConfiguration() {
 async function TestSsoGetConfiguration() {
     console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
 
-    // let serviceProviderId = 9710921056266;  // local
-    let serviceProviderId = 9710921056299;  // "demo azure"
-    let configurationId = 6468304524777205; // local 6468304524777205   // "demo azure" config 5082553809898260 // dev 1774455125899304;   // local 3121290;
+    // Local
+    let serviceProviderId = 9710921056299;  // local demo azure
+    let configurationId = 5082553809898260; // local demo azure
+
+    // Demo Azure
+    // let serviceProviderId = 9710921056299;  // "demo azure"
+    // let configurationId = 5082553809898260; // dev 1774455125899304;   // local 3121290;
+
+    //  dev F5 Networks with Cloud SSO
+    // let serviceProviderId = 14955076124680; // dev F5 Networks with Cloud SSO
+    // let configurationId = 2627336084936766; // dev F5 Networks with Cloud SSO
+    
+    //let configurationId = 6468304524777205; // local 6468304524777205   // "demo azure" config 5082553809898260 // dev 1774455125899304;   // local 3121290;
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'sso/config/';
     const configEndpoint = 'sso_cloud_configuration_get';
