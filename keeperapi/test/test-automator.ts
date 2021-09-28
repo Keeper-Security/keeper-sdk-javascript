@@ -41,10 +41,14 @@ import AdminGetAutomatorsForEnterpriseRequest = Automator.AdminGetAutomatorsForE
 import AdminInitializeAutomatorRequest = Automator.AdminInitializeAutomatorRequest;
 import AdminResetAutomatorRequest = Automator.AdminResetAutomatorRequest;
 import AdminResponse = Automator.AdminResponse;
+import AdminSetupAutomatorRequest = Automator.AdminSetupAutomatorRequest;
+import AdminSetupAutomatorResponse = Automator.AdminSetupAutomatorResponse;
+import AdminAutomatorSkillsRequest = Automator.AdminAutomatorSkillsRequest;
 import IAdminResponse = Automator.IAdminResponse;
 import AutomatorSettingValue = Automator.AutomatorSettingValue;
+import AutomatorState = Automator.AutomatorState;
 
-import {automatorAdminCreateMessage, automatorAdminDeleteMessage, automatorAdminEditMessage, automatorAdminEnableMessage, automatorAdminGetMessage, automatorAdminGetAllForEnterpriseMessage, automatorAdminGetAllOnNodeMessage, automatorAdminInitializeMessage, automatorAdminResetMessage, serviceLoggerGetMessage} from '../src/restMessages';
+import {automatorAdminCreateMessage, automatorAdminDeleteMessage, automatorAdminEditMessage, automatorAdminEnableMessage, automatorAdminGetMessage, automatorAdminGetAllForEnterpriseMessage, automatorAdminGetAllOnNodeMessage, automatorAdminInitializeMessage, automatorAdminResetMessage, automatorAdminSetupMessage, automatorAdminSkillsMessage, serviceLoggerGetMessage} from '../src/restMessages';
 
 import {getKeeperAutomatorAdminUrl, getKeeperUrl} from '../src/utils';
 
@@ -111,10 +115,61 @@ async function login(user?: UserInfo): Promise<Auth> {
 // ------------- TEST DATA ----------------------------------------------------------------
 
 let automatorTestData = {
+
+    "dev-rainerkec-automator-1": {
+        "enterpriseId": 3482,
+        "nodeId": 14955076125000,
+        "sso_service_provider_id": 14955076125006,
+        "sso_sp_configuration_id": 5270385085362253,
+        "automatorName": "Azure test automator",
+        "automatorUrl": "https://dev-automator.kepr.co:8089",
+        "automatorId": 14955076125010  // Created 08/23/2021 
+    },
+
+    "dev-rainerkec-automator-2": {
+        "enterpriseId": 3482,
+        "nodeId": 14955076125000,
+        "sso_service_provider_id": 14955076125006,
+        "sso_sp_configuration_id": 5270385085362253,
+        "automatorName": "Azure test automator",
+        "automatorUrl": "https://dev-automator.kepr.co:8088",
+        "automatorId": 14955076125010 
+    },
+
+    "dev-rainerkec-automator-3": {
+        "enterpriseId": 3482,
+        "nodeId": 14955076125000,
+        "sso_service_provider_id": 14955076125006,
+        "sso_sp_configuration_id": 5270385085362253,
+        "automatorName": "Azure test automator",
+        "automatorUrl": "https://dev-automator.kepr.co:8092",
+        "automatorId": 14955076125010 
+    },
+
+    "dev-rainerkec-automator-4": {
+        "enterpriseId": 3482,
+        "nodeId": 14955076125000,
+        "sso_service_provider_id": 14955076125006,
+        "sso_sp_configuration_id": 5270385085362253,
+        "automatorName": "Azure test automator",
+        "automatorUrl": "https://dev-automator.kepr.co:8094",
+        "automatorId": 14955076125010 
+    },
+
+    "dev-rainerkec-automator-5": {
+        "enterpriseId": 3482,
+        "nodeId": 14955076125000,
+        "sso_service_provider_id": 14955076125006,
+        "sso_sp_configuration_id": 5270385085362253,
+        "automatorName": "Azure test automator",
+        "automatorUrl": "https://dev-automator.kepr.co:8096",
+        "automatorId": 14955076125010 
+    },
+
     "dev-mhewett-azure-sso-cloud": {
         "enterpriseId": 2261,
         "nodeId": 9710921056296,
-        "automatorName": "automator-2",  // Local automator "automator-2"
+        "automatorName": "automator-extra",  // Local automator "automator-2"
         "automatorId": 9710921056485  
     },
 
@@ -125,33 +180,139 @@ let automatorTestData = {
         "automatorName": "f5 test automator",
         "automatorUrl": "https://dev-automator.kepr.co:8089",
         "automatorId": 14955076124998  // Created 08/04/2021 
-    }
-}
+    },
+    
+    "local-mhewett42-azure-sso-cloud": {
+        "enterpriseId": 2261,
+        "nodeId": 9710921056296,
+        "sso_service_provider_id": 9710921056299,
+        "automatorName": "Azure test automator",
+        "automatorUrl": "https://local-automator.kepr.co:8090",
+        "automatorId": 9710921056490  // Created 09/01/2021 
+    },
 
+    // DEV AUTOMATOR 1
+    "dev-rainerkec-automator-test-1": {
+        "enterpriseId": 0,
+        "nodeId": 0,
+        "sso_service_provider_id": 0,
+        "automatorName": "G-Suite automator",
+        "automatorUrl": "https://dev-automator.kepr.co:8089",
+        "automatorId": 14955076125018  
+    },
+
+    // DEV AUTOMATOR 2
+    "dev-rainerkec-automator-test-2": {
+        "enterpriseId": 0,
+        "nodeId": 0,
+        "sso_service_provider_id": 0,
+        "automatorName": "automator test 8090",
+        "automatorUrl": "https://dev-automator.kepr.co:8090",
+        "automatorId": 14955076125019
+    },
+
+    // DEV AUTOMATOR 3
+    "dev-rainerkec-automator-test-3": {
+        "enterpriseId": 0,
+        "nodeId": 0,
+        "sso_service_provider_id": 0,
+        "automatorName": "automator test 8091",
+        "automatorUrl": "https://dev-automator.kepr.co:8091",
+        "automatorId": 14955076125020
+    },
+
+    // DEV AUTOMATOR 4
+    "dev-rainerkec-automator-test-4": {
+        "enterpriseId": 0,
+        "nodeId": 0,
+        "sso_service_provider_id": 0,
+        "automatorName": "automator test 8092",
+        "automatorUrl": "https://dev-automator.kepr.co:8092",
+        "automatorId": 14955076125021
+    },
+
+    // DEV AUTOMATOR 5
+    "dev-rainerkec-automator-test-5": {
+        "enterpriseId": 0,
+        "nodeId": 0,
+        "sso_service_provider_id": 0,
+        "automatorName": "automator test 8093",
+        "automatorUrl": "https://dev-automator.kepr.co:8093",
+        "automatorId": 14955076125022
+    },
+
+    // TESTING
+    // Don't allow creating an Automator if no SSO Connect Cloud instance
+    "local-mhewett-onelogin-illegal-automator": {
+        "enterpriseId": 2261,
+        "nodeId": 9710921056462,
+        "automatorName": "automator-illegal",
+        "automatorId": 0  
+    },
+
+    // TESTING
+    // Make a second automator on a node - verify that create is working correctly
+    "dev-mhewett-azure-sso-cloud-2": {
+        "enterpriseId": 2261,
+        "nodeId": 9710921056296,
+        "automatorName": "automator-extra",
+        "automatorId": 0  
+    },
+
+}
 
 
 // -----------------------------------------------------------------------------------------------
 // Which test to run?
-// TestAutomatorCreateRest(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
-TestAutomatorDeleteRest(automatorTestData["dev-rainerkec-f5-sso-cloud"], false).finally();
-// TestAutomatorEditRest().finally();
-// TestAutomatorEnableRest().finally();
-// TestAutomatorGetRest().finally();
-// TestAutomatorGetAllOnNodeRest().finally();
-// TestAutomatorGetAllForEnterpriseRest().finally();
-// TestAutomatorInitializeRest(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
-// TestAutomatorResetRest().finally();
 
-// TestAutomatorFullSetup(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
+// dev azure
+// let testData = automatorTestData["dev-mhewett-azure-sso-cloud-2"];
 
-// NYI -- TestAutomatorApproveDevice(automatorTestData["dev-rainerkec-f5-sso-cloud"]).finally();
+// local azure
+let testData = automatorTestData["local-mhewett42-azure-sso-cloud"];
+// TestAutomatorFullSetup(testData, false).finally();
+
+// dev Rainer
+// let testData = automatorTestData["dev-rainerkec-automator-1"];
+
+
+// TestAutomatorCreateRest(testData).finally();
+// TestAutomatorDeleteRest(testData, false).finally();
+// TestAutomatorEditRest(testData).finally();
+// TestAutomatorEnableRest(testData).finally();
+// TestAutomatorGetRest(testData).finally();
+// TestAutomatorGetAllOnNodeRest(testData).finally();
+// TestAutomatorGetAllForEnterpriseRest(testData).finally();
+// TestAutomatorInitializeRest(testData).finally();
+// TestAutomatorResetRest(testData).finally();
+// TestAutomatorSetupRest(testData).finally();
+// TestAutomatorSkillsRest(testData).finally();
+// TestAutomatorLogGetRest(testData).finally();
+// TestAutomatorLogClearRest(testData).finally();
+
+
+// Test on dev, don't create an Automator
+// TestAutomatorFullSetup(testData, false).finally();
+
+// Test on local, create an Automator
+// TestAutomatorFullSetup(testData, true).finally();
+
+// Test on local, delete automator, optionally creating one first
+// TestAutomatorDeleteRest(testData, false).finally();
+
+// Test on local, don't create an Automator
+// TestAutomatorFullSetup(testData, false).finally();
+
+// Use this to test connectivity.  We had a problem where every other request was rejected by the server.
+// TestAutomatorGetMultipleRest(testData).finally();
+
 
 // -----------------------------------------------------------------------------------------------
 // Automator tests
 // -----------------------------------------------------------------------------------------------
 
 // POST, ENCRYPTED, automator/automator_create
-async function TestAutomatorFullSetup(config) {
+async function TestAutomatorFullSetup(config, doCreate) {
     console.log("\n*** TestAutomatorCreateRest on " + keeperHost + " ***");
 
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
@@ -160,6 +321,9 @@ async function TestAutomatorFullSetup(config) {
     const getEndpoint = 'automator_get';
     const editEndpoint = 'automator_edit';
     const initializeEndpoint = 'automator_initialize';
+    const setupEndpoint = 'automator_setup';
+
+    const devAutomatorTestPrivateKey = hexToBytes("0587ec9a62fbc3b8dbb2d292a6a860acc6eab6af4480f7beaf0f86fa7f52104d");
 
     try {
         const url = getKeeperAutomatorAdminUrl(keeperHost, createEndpoint);
@@ -178,20 +342,24 @@ async function TestAutomatorFullSetup(config) {
         });
         console.log("Logged in...");
 
-        // Create a new Automator  --------------------------------------------------------
-        let restReq1 = AdminCreateAutomatorRequest.create({
-            "nodeId": config.nodeId,
-            "name": config.automatorName
-        });
+        console.log("auth.eccPrivateKey =", bytesToHex(auth.eccPrivateKey));
 
-        let resp1 = await auth.executeRest(automatorAdminCreateMessage(restReq1, automatorPrefix + createEndpoint));
-        if (resp1.automatorInfo.length > 0) {
-            config.automatorId = resp1.automatorInfo[0].automatorId;
-            config.automatorName = resp1.automatorInfo[0].name;  // The name may have been changed because it was a duplicate
-            console.log("Created automator", config.automatorName, "id:", config.automatorId);
-        } else {
-            console.log("Unable to create automator", config.automatorName, ":", resp1.message);
-            return;
+        // Optionally: Create a new Automator  --------------------------------------------------------
+        if (doCreate) {
+            let restReq1 = AdminCreateAutomatorRequest.create({
+                "nodeId": config.nodeId,
+                "name": config.automatorName
+            });
+            
+            let resp1 = await auth.executeRest(automatorAdminCreateMessage(restReq1, automatorPrefix + createEndpoint));
+            if (resp1.automatorInfo.length > 0) {
+                config.automatorId = resp1.automatorInfo[0].automatorId;
+                config.automatorName = resp1.automatorInfo[0].name;  // The name may have been changed because it was a duplicate
+                console.log("Created automator", config.automatorName, "id:", config.automatorId);
+            } else {
+                console.log("Unable to create automator", config.automatorName, ":", resp1.message);
+                return;
+            }
         }
 
         // Retrieve the new Automator  --------------------------------------------------------
@@ -209,41 +377,65 @@ async function TestAutomatorFullSetup(config) {
         // Check result (not needed except during testing)
         console.log("confirm: nodeId", resp2.automatorInfo[0].nodeId, "=", config.nodeId);
 
-
         // Edit the settings of the Automator  --------------------------------------------------------
-        let restReq3 = AdminEditAutomatorRequest.create({
+        let restReq5 = AdminEditAutomatorRequest.create({
             "automatorId": config.automatorId,
             "url": config.automatorUrl,
             "enabled": true,
-            // "automatorSettingValues": automatorSettings
         });
 
-        let resp3 = await auth.executeRest(automatorAdminEditMessage(restReq3, automatorPrefix + editEndpoint));
-        if (resp3.automatorInfo.length > 0) {
-            console.log("Automator settings (new)", resp3.automatorInfo[0]);
+        let resp5 = await auth.executeRest(automatorAdminEditMessage(restReq5, automatorPrefix + editEndpoint));
+        if (resp5.automatorInfo.length > 0) {
+            console.log("Automator settings (new)", resp5.automatorInfo[0]);
         } else {
-            console.log("Unable to edit automator:", resp3.message);
+            console.log("Unable to edit automator:", resp5.message);
             return;
         }
 
         // Check the value of the URL (not needed except during testing)
-        let newUrl = resp3.automatorInfo[0].url;
+        let newUrl = resp5.automatorInfo[0].url;
         if (newUrl === config.automatorUrl) {
             console.log("  url matches!");
         } else {
             console.log("  url not correct: [" + newUrl + "] should be [" + config.automatorUrl + "]");
         }
 
+        // SETUP (exchange keys) with the Automator  ------------------------------------------------
+        console.log("Calling setup Step 1");
+        let restReq3 = AdminSetupAutomatorRequest.create({
+            "automatorId": config.automatorId,
+            "automatorState": AutomatorState.NEEDS_CRYPTO_STEP_1
+        });
+
+        // Get the Automator's public key
+        let resp3 = await auth.executeRest(automatorAdminSetupMessage(restReq3, automatorPrefix + setupEndpoint));
+        // console.log(resp3);
+        console.log("public key has length", resp3.automatorEcPublicKey.length);
+
+        console.log("Calling setup Step 2");
+        // Send the enterprise data key encrypted with the automator public key
+        let restReq4 = AdminSetupAutomatorRequest.create({
+            "automatorId": config.automatorId,
+            "automatorState": resp3.automatorState,
+            "encryptedEcEnterprisePrivateKey": await platform.publicEncryptEC(devAutomatorTestPrivateKey, resp3.automatorEcPublicKey),
+            "encryptedRsaEnterprisePrivateKey": await platform.publicEncryptEC(auth.privateKey, resp3.automatorEcPublicKey)
+        });
+
+        let resp4 = await auth.executeRest(automatorAdminSetupMessage(restReq4, automatorPrefix + setupEndpoint));
+        console.log(resp4);
+
+        console.log("After setup step 2, automator state is", resp4.automatorState);
+
         // Send the settings to the Automator  ---------------------------------------------------
-        let restReq4 = AdminInitializeAutomatorRequest.create({
+        let restReq6 = AdminInitializeAutomatorRequest.create({
             "automatorId": config.automatorId
         });
 
-        let resp4 = await auth.executeRest(automatorAdminInitializeMessage(restReq4, automatorPrefix + initializeEndpoint));
-        if (resp4.success) {
+        let resp6 = await auth.executeRest(automatorAdminInitializeMessage(restReq6, automatorPrefix + initializeEndpoint));
+        if (resp6.success) {
             console.log("Automator", config.automatorId, " successfully initialized");
         } else {
-            console.log("Initialization unsuccessful:", resp4.message);
+            console.log("Initialization unsuccessful:", resp6.message);
         }
 
      } catch (e) {
@@ -253,13 +445,11 @@ async function TestAutomatorFullSetup(config) {
 
 
 
-
-
 // POST, ENCRYPTED, automator/automator_create
-async function TestAutomatorCreateRest() {
+async function TestAutomatorCreateRest(config) {
     console.log("\n*** TestAutomatorCreateRest on " + keeperHost + " ***");
 
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
+    let nodeId = config.nodeId; // This is the Azure Cloud SSO node on dev
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'automator/';
     const configEndpoint = 'automator_create';
@@ -283,7 +473,7 @@ async function TestAutomatorCreateRest() {
 
         let restReq = AdminCreateAutomatorRequest.create({
             "nodeId": nodeId,
-            "name": "Automator Test 1"
+            "name": config.automatorName
         });
 
         let resp = await auth.executeRest(automatorAdminCreateMessage(restReq, configPrefix + configEndpoint));
@@ -353,7 +543,7 @@ async function TestAutomatorDeleteRest(config, do_create) {
 }
 
 // POST, ENCRYPTED, automator/automator_edit
-async function TestAutomatorEditRest() {
+async function TestAutomatorEditRest(config) {
     console.log("\n*** TestAutomatorEditRest on " + keeperHost + " ***");
 
     let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
@@ -405,11 +595,11 @@ async function TestAutomatorEditRest() {
 }
 
 // POST, ENCRYPTED, automator/automator_enable
-async function TestAutomatorEnableRest() {
+async function TestAutomatorEnableRest(config) {
     console.log("\n*** TestAutomatorEnableRest on " + keeperHost + " ***");
 
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev and local
-    let automatorId = 9710921056485; // Local automator "automator-2"
+    let nodeId = config.nodeId; 
+    let automatorId = config.automatorId; // Local automator "automator-2"
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'automator/';
     const configEndpoint = 'automator_enable';
@@ -460,11 +650,11 @@ async function TestAutomatorEnableRest() {
 }
 
 // POST, ENCRYPTED, automator/automator_get
-async function TestAutomatorGetRest() {
+async function TestAutomatorGetRest(config) {
     console.log("\n*** TestAutomatorGetRest on " + keeperHost + " ***");
 
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
-    let automatorId = 9710921056484;
+    let nodeId = config.nodeId;
+    let automatorId = config.automatorId;
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'automator/';
     const configEndpoint = 'automator_get';
@@ -501,13 +691,83 @@ async function TestAutomatorGetRest() {
      }
 }
 
+
+// POST, ENCRYPTED, automator/automator_get
+async function TestAutomatorGetMultipleRest(config) {
+    console.log("\n*** TestAutomatorGetMultipleRest on " + keeperHost + " ***");
+
+    let nodeId = config.nodeId;
+    let automatorId = config.automatorId;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_get';
+    const SLEEP_TIME_MS = 1000;
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        let restReq = AdminGetAutomatorRequest.create({
+            "automatorId": automatorId
+        });
+
+        console.log("Try #1");
+        let resp = await auth.executeRest(automatorAdminGetMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+
+        await sleep(SLEEP_TIME_MS);
+
+        console.log("Try #2");
+        resp = await auth.executeRest(automatorAdminGetMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+
+        await sleep(SLEEP_TIME_MS);
+
+        console.log("Try #3");
+        resp = await auth.executeRest(automatorAdminGetMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+
+        await sleep(SLEEP_TIME_MS);
+
+        console.log("Try #4");
+        resp = await auth.executeRest(automatorAdminGetMessage(restReq, configPrefix + configEndpoint));
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+        
+     } catch (e) {
+        console.log(e)
+     }
+}
+
 // POST, ENCRYPTED, automator/automator_get_all_for_enterprise
-async function TestAutomatorGetAllForEnterpriseRest() {
+async function TestAutomatorGetAllForEnterpriseRest(config) {
     console.log("\n*** TestAutomatorGetAllForEnterpriseRest on " + keeperHost + " ***");
 
-    let enterpriseId = 2261; // This is Mike's enterprise on dev with admin mhewett+sso42@keepersecurity.com
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
-    let automatorId = 9710921056484;
+    let enterpriseId = config.enterpriseId;
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'automator/';
     const configEndpoint = 'automator_get_all_for_enterprise';
@@ -545,11 +805,10 @@ async function TestAutomatorGetAllForEnterpriseRest() {
 }
 
 // POST, ENCRYPTED, automator/automator_get_on_node
-async function TestAutomatorGetAllOnNodeRest() {
+async function TestAutomatorGetAllOnNodeRest(config) {
     console.log("\n*** TestAutomatorGetAllOnNodeRest on " + keeperHost + " ***");
 
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
-    let automatorId = 9710921056484;
+    let nodeId = config.nodeId; // This is the Azure Cloud SSO node on dev
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'automator/';
     const configEndpoint = 'automator_get_on_node';
@@ -629,11 +888,11 @@ async function TestAutomatorInitializeRest(config) {
 }
     
 // POST, ENCRYPTED, automator/automator_full_reset
-async function TestAutomatorResetRest() {
+async function TestAutomatorResetRest(config) {
     console.log("\n*** TestAutomatorResetRest on " + keeperHost + " ***");
 
-    let nodeId = 9710921056296; // This is the Azure Cloud SSO node on dev
-    let automatorId = 9710921056484;
+    let nodeId = config.nodeId;
+    let automatorId = config.automatorId;
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
     const configPrefix = 'automator/';
     const configEndpoint = 'automator_full_reset';
@@ -662,6 +921,103 @@ async function TestAutomatorResetRest() {
         let resp = await auth.executeRest(automatorAdminResetMessage(restReq, configPrefix + configEndpoint));
 
         console.log(resp);
+     } catch (e) {
+        console.log(e)
+     }
+}
+     
+// POST, ENCRYPTED, automator/automator_skills_get
+async function TestAutomatorSkillsRest(config) {
+    console.log("\n*** TestAutomatorSkillsRest on " + keeperHost + " ***");
+
+    let automatorId = config.automatorId;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_skills_get';
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        let restReq = AdminAutomatorSkillsRequest.create({
+            "automatorId": automatorId
+        });
+
+        let resp = await auth.executeRest(automatorAdminSkillsMessage(restReq, configPrefix + configEndpoint));
+
+        console.log(resp);
+     } catch (e) {
+        console.log(e)
+     }
+}
+   
+// POST, ENCRYPTED, automator/automator_setup
+async function TestAutomatorSetupRest(config) {
+    console.log("\n*** TestAutomatorSetupRest on " + keeperHost + " ***");
+
+    let nodeId = config.nodeId;
+    let automatorId = config.automatorId;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_setup';
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        console.log("Calling setup Step 1");
+        let rest1Req = AdminSetupAutomatorRequest.create({
+            "automatorId": automatorId,
+            "automatorState": AutomatorState.NEEDS_CRYPTO_STEP_1
+        });
+
+        // Get the Automator's public key
+        let resp1 = await auth.executeRest(automatorAdminSetupMessage(rest1Req, configPrefix + configEndpoint));
+        console.log(resp1);
+        console.log("public key has length", resp1.automatorEcPublicKey.length);
+
+        console.log("Calling setup Step 2");
+        
+        // Send the enterprise data key encrypted with the automator public key
+        let rest2Req = AdminSetupAutomatorRequest.create({
+            "automatorId": automatorId,
+            "automatorState": resp1.automatorState,
+            "encryptedEcEnterprisePrivateKey": await platform.publicEncryptEC(auth.eccPrivateKey, resp1.automatorEcPublicKey),
+            "encryptedRsaEnterprisePrivateKey": await platform.publicEncryptEC(auth.privateKey, resp1.automatorEcPublicKey)
+        });
+
+        console.log("auth.eccPrivateKey =", bytesToHex(auth.eccPrivateKey));
+
+        let resp2 = await auth.executeRest(automatorAdminSetupMessage(rest2Req, configPrefix + configEndpoint));
+        console.log(resp2);
+
+        console.log("After setup step 2, automator state is", resp2.automatorState);
      } catch (e) {
         console.log(e)
      }
@@ -703,4 +1059,26 @@ async function testServiceLogger() {
     }
 }
 
+function bytesToHex(data: Uint8Array): string {
+    let hex = [];
+    for (let i = 0; i < data.length; i++) {
+        let current = data[i] < 0 ? data[i] + 256 : data[i];
+        hex.push((current >>> 4).toString(16));
+        hex.push((current & 0xF).toString(16));
+    }
+    return hex.join("");
+}
 
+
+function hexToBytes(data: string): Uint8Array {
+    let bytes = [];
+    for (let c = 0; c < data.length; c += 2)
+        bytes.push(parseInt(data.substr(c, 2), 16));
+    return Uint8Array.from(bytes);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

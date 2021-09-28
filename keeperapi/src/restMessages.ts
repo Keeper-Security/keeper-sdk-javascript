@@ -246,3 +246,9 @@ export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeA
 
 export const automatorAdminResetMessage = (data: Automator.AdminResetAutomatorRequest, url:string): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse);
+
+export const automatorAdminSetupMessage = (data: Automator.AdminSetupAutomatorRequest, url:string): RestMessage<Automator.IAdminSetupAutomatorRequest, Automator.IAdminSetupAutomatorResponse> =>
+    createMessage(data, url, Automator.AdminSetupAutomatorRequest, Automator.AdminSetupAutomatorResponse);
+
+export const automatorAdminSkillsMessage = (data: Automator.AdminAutomatorSkillsRequest, url:string): RestMessage<Automator.IAdminAutomatorSkillsRequest, Automator.IAdminAutomatorSkillsResponse> =>
+    createMessage(data, url, Automator.AdminAutomatorSkillsRequest, Automator.AdminAutomatorSkillsResponse);

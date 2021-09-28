@@ -787,8 +787,8 @@ async function TestSsoGetConfiguration() {
     console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
 
     // Local
-    let serviceProviderId = 9710921056299;  // local demo azure
-    let configurationId = 5082553809898260; // local demo azure
+    let serviceProviderId = 9710921056444; // local demo google  // 9710921056299;  // local demo azure
+    let configurationId = 64667965091557; // 5082553809898260; // local demo azure
 
     // Demo Azure
     // let serviceProviderId = 9710921056299;  // "demo azure"
