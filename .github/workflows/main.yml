@@ -1,0 +1,55 @@
+name: Audit
+
+on: [push]
+
+jobs:
+  audit:
+    name: Audit Project
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Lib - Install
+        run: npm i
+        working-directory: ./keeperapi
+        env:
+          NPM_TOKEN: ""
+
+      - name: Lib - Build
+        run: npm run build
+        working-directory: ./keeperapi
+        env:
+          NPM_TOKEN: ""
+
+      - name: Lib - Check Types
+        run: npm run types:ci
+        working-directory: ./keeperapi
+        env:
+          NPM_TOKEN: ""
+
+#      - name: Lib - Run Tests
+#        run: npm run test:ci
+#        working-directory: ./keeperapi
+
+      - name: Examples (node) - Installation
+        run: npm run link-local
+        working-directory: ./examples/print-vault-node
+
+      - name: Examples (node) - Check Types
+        run: npm run types:ci
+        working-directory: ./examples/print-vault-node
+
+      - name: Examples (browser) - Installation
+        run: npm run link-local
+        working-directory: ./examples/print-vault-browser
+
+      - name: Examples (browser) - Check Types
+        run: npm run types:ci
+        working-directory: ./examples/print-vault-browser

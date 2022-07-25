@@ -1,0 +1,39 @@
+{
+  "name": "@keeper-security/keeperapi",
+  "description": "Keeper API Javascript SDK",
+  "version": "16.0.19",
+  "browser": "dist/index.es.js",
+  "main": "dist/index.cjs.js",
+  "types": "dist/node/index.d.ts",
+  "repository": "https://github.com/Keeper-Security/keeper-sdk-javascript",
+  "license": "ISC",
+  "scripts": {
+    "start": "rollup -cw",
+    "build": "node ./scripts/cleanDistFolder.js && rollup -c && cp src/proto.d.ts dist",
+    "update-proto:es6": "pbjs -t static-module -w es6 -o src/proto.js ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/automator.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto ../../keeperapp-protobuf/SyncDown.proto && pbts -o src/proto.d.ts src/proto.js",
+    "update-proto:cjs": "pbjs -t json-module -w commonjs -o src/proto.js ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/automator.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto ../../keeperapp-protobuf/SyncDown.proto && pbjs -t static-module -w commonjs ../../keeperapp-protobuf/APIRequest.proto ../../keeperapp-protobuf/AccountSummary.proto ../../keeperapp-protobuf/automator.proto ../../keeperapp-protobuf/breachwatch.proto ../../keeperapp-protobuf/client.proto ../../keeperapp-protobuf/externalservice.proto ../../keeperapp-protobuf/folder.proto ../../keeperapp-protobuf/push.proto ../../keeperapp-protobuf/record.proto ../../keeperapp-protobuf/servicelogger.proto ../../keeperapp-protobuf/ssocloud.proto ../../keeperapp-protobuf/token.proto ../../keeperapp-protobuf/upsell.proto ../../keeperapp-protobuf/SyncDown.proto | pbts -o src/proto.d.ts -",
+    "test:2": "jest",
+    "types": "tsc --watch",
+    "types:ci": "tsc",
+    "prepublishOnly": "rollup -c && cp src/proto.d.ts dist",
+    "publish-to-npm": "npm publish"
+  },
+  "dependencies": {
+    "asmcrypto.js": "^2.3.2",
+    "faye-websocket": "^0.11.3",
+    "form-data": "^3.0.0",
+    "node-rsa": "^1.0.8",
+    "protobufjs": "^6.11.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.12.31",
+    "jest": "^24.8.0",
+    "rollup": "^1.16.1",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.21.2",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.0.1"
+  }
+}

@@ -1,0 +1,16 @@
+.idea
+.rpt2_cache
+.DS_Store
+*.jpg
+*.png
+keeperapi/sp-metadata.xml
+keeperapi/test/config
+keeperapi/device-token.dat
+credentials.config
+node_modules
+dist
+personal
+yarn-error.log
+.vscode
+.secrets
+
