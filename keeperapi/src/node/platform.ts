@@ -7,9 +7,9 @@ import * as WebSocket from 'faye-websocket'
 
 import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
-import {keeperKeys} from "../endpoint";
-import {SocketProxy, socketSendMessage} from '../auth'
-import {KeeperHttpResponse} from "../commands";
+import {keeperKeys} from "../transmissionKeys";
+import {SocketProxy, socketSendMessage} from '../socket'
+import type {KeeperHttpResponse} from "../commands";
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;

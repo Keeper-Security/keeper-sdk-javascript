@@ -1,11 +1,11 @@
 import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
-import {keeperKeys} from "../endpoint";
-import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
-import {SocketProxy, socketSendMessage} from '../auth'
+import {keeperKeys} from "../transmissionKeys";
+import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils"; // Next issue
+import {SocketProxy, socketSendMessage} from '../socket'
 import * as asmCrypto from 'asmcrypto.js'
-import {KeeperHttpResponse} from "../commands";
+import type {KeeperHttpResponse} from "../commands";
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 const CBC_IV_LENGTH = 16

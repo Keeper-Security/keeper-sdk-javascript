@@ -18,7 +18,6 @@ import {
     decryptKey,
     generateUid,
     generateEncryptionKey,
-    webSafe64FromBytes, normal64Bytes
 } from "./utils";
 import {platform} from "./platform";
 
