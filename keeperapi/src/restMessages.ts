@@ -217,6 +217,9 @@ export const getBackupMessage = (data: Enterprise.IBackupRequest): RestMessage<E
 export const getEnterprisePublicKeyMessage = (): RestOutMessage<BreachWatch.IEnterprisePublicKeyResponse> =>
     createOutMessage('enterprise/get_enterprise_public_key', BreachWatch.EnterprisePublicKeyResponse)
 
+export const getEnterpriseDataKeysMessage = (): RestOutMessage<Enterprise.IGetEnterpriseDataKeysResponse> =>
+    createOutMessage('enterprise/get_enterprise_data_keys', Enterprise.GetEnterpriseDataKeysResponse)
+
 export const getEnterpriseDataForUserMessage = (data: Enterprise.IEnterpriseDataRequest): RestMessage<Enterprise.IEnterpriseDataRequest, Enterprise.IEnterpriseDataResponse> =>
     createMessage(data, 'enterprise/get_enterprise_data_for_user', Enterprise.EnterpriseDataRequest, Enterprise.EnterpriseDataResponse)
 
