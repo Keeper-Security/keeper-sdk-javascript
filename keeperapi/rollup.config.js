@@ -1,6 +1,8 @@
 import typescript from "rollup-plugin-typescript2"
 import pkg from './package.json'
 import sourcemaps from "rollup-plugin-sourcemaps";
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
 
 export default [
     {
@@ -24,6 +26,22 @@ export default [
             typescript({
                 tsconfig: "tsconfig.rollup.json"
             }),
+            sourcemaps()
+        ]
+    },
+    {
+        input: 'src/browser/browserWorker.ts',
+        output: [{
+            file: 'dist/worker/browserWorker.js',
+            format: 'iife',
+            sourcemap: true
+        }],
+        plugins: [
+            typescript({
+                tsconfig: "tsconfig.rollup.json"
+            }),
+            resolve(),
+            commonjs(),
             sourcemaps()
         ]
     },

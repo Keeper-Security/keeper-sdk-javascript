@@ -26,6 +26,8 @@
     "protobufjs": "^6.11.2"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.12.31",
     "jest": "^24.8.0",

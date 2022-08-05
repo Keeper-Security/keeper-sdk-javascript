@@ -1,20 +1,24 @@
-import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType} from '../platform'
+import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, CryptoWorkerOptions, UnwrapKeyMap} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
 import {keeperKeys} from "../transmissionKeys";
-import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils"; // Next issue
+import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
 import {SocketProxy, socketSendMessage} from '../socket'
 import * as asmCrypto from 'asmcrypto.js'
 import type {KeeperHttpResponse} from "../commands";
+import {CryptoWorker, CryptoWorkerMessage, CryptoWorkerPool, CryptoWorkerPoolConfig, CryptoResults } from '../cryptoWorker';
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 const CBC_IV_LENGTH = 16
 const GCM_IV_LENGTH = 12
 const ECC_PUB_KEY_LENGTH = 65
 let socket: WebSocket | null = null
+let workerPool: CryptoWorkerPool | null = null
 
 export const browserPlatform: Platform = class {
     static keys = keeperKeys.der;
+
+    static supportsConcurrency: boolean = true
 
     static getRandomBytes(length: number): Uint8Array {
         let data = new Uint8Array(length);
@@ -85,8 +89,9 @@ export const browserPlatform: Platform = class {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'ecc'), key)
             } else {
-                await storage.saveKeyBytes(keyId, privateKey)
-                await storage.saveKeyBytes(keyId + '_pub', publicKey)
+                const jwk = await crypto.subtle.exportKey('jwk', key)
+                const keyBytes = this.stringToBytes(JSON.stringify(jwk))
+                await storage.saveKeyBytes(keyId, keyBytes)
             }
         }
     }
@@ -133,11 +138,8 @@ export const browserPlatform: Platform = class {
             case 'gcm':
                 return this.aesGcmImportKey(keyBytes, true)
             case 'ecc':
-                const publicKeyBytes = await this.loadKeyBytes(keyId + '_pub')
-                if (!publicKeyBytes) { 
-                    throw Error('Public key is required for EC decryption')
-                }
-                return this.importPrivateKeyEC(keyBytes, publicKeyBytes)
+                const jwk: JsonWebKey = JSON.parse(this.bytesToString(keyBytes))
+                return this.importECCJsonWebKey(jwk) 
             default:
                 throw new Error('Unsupported keyType: ' + keyType)
         }
@@ -167,6 +169,48 @@ export const browserPlatform: Platform = class {
         const key = await this.loadCryptoKey(keyId, keyType, storage)
         cryptoKeysCache[keyType][keyId] = key
         return key
+    }
+
+    static async unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void> {
+        if (workerPool) {
+            try {
+                const unwrappedKeys = await workerPool.runTasks(Object.values(keys))
+
+                // Import keys
+                await Promise.all(Object.entries(unwrappedKeys).map(async ([keyId, keyBytes]) => {
+                    try {
+                        const {unwrappedType} = keys[keyId]
+                        switch (unwrappedType) {
+                            case 'aes':
+                                await this.importKey(keyId, keyBytes, storage, true)
+                                break
+                            case 'rsa':
+                                await this.importKeyRSA(keyId, keyBytes, storage)
+                                break
+                            default:
+                                throw new Error(`unable to import ${unwrappedType} key`)
+                        }
+                    } catch (e) {
+                        console.error(`Import key error: ${e}`)
+                    }
+                }))
+                
+                return // no error, exit
+
+            } catch (e) {
+                console.error(`Crypto worker failed: ${e}`)
+            }
+        }
+
+        // Default to main thread decryption
+        await Promise.all(Object.values(keys).map(async task => {
+            const {data, dataId, keyId, encryptionType, unwrappedType} = task
+            try {
+                await this.unwrapKey(data, dataId, keyId, encryptionType, unwrappedType, storage)
+            } catch (e: any) {
+                console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
+            }
+        }))
     }
 
     static async unwrapKey(key: Uint8Array, keyId: string, unwrappingKeyId: string, encryptionType: EncryptionType, unwrappedKeyType: UnwrappedKeyType, storage?: KeyStorage, canExport?: boolean): Promise<void> {
@@ -386,7 +430,11 @@ export const browserPlatform: Platform = class {
             y
         }
 
-        return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveBits'])
+        return this.importECCJsonWebKey(jwk)
+    }
+
+    static async importECCJsonWebKey(jwk: JsonWebKey): Promise<CryptoKey> {
+        return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
     }
 
     static async deriveSharedSecretKey(ephemeralPublicKey: Uint8Array, privateKey: CryptoKey, id?: Uint8Array): Promise<CryptoKey> {
@@ -709,6 +757,47 @@ export const browserPlatform: Platform = class {
         })
     }
 
+    static async createCryptoWorker(keyStorage: KeyStorage, options: CryptoWorkerOptions): Promise<CryptoWorkerPool> {
+        const config: CryptoWorkerPoolConfig = {
+            createWorker: async () => new BrowserCryptoWorker(),
+            numThreads: navigator.hardwareConcurrency || 2,
+            getKey: async (keyId, type) => {
+                switch (type) {
+                    case 'cbc':
+                    case 'gcm': {
+                        const key = await this.loadKey(keyId, type, keyStorage)
+                        const buffer = await crypto.subtle.exportKey('raw', key)
+                        return new Uint8Array(buffer)
+                    }
+                    case 'ecc': {
+                        const key = await this.loadKey(keyId, type, keyStorage)
+                        const jwk = await crypto.subtle.exportKey('jwk', key)
+                        return this.stringToBytes(JSON.stringify(jwk))
+                    }
+                    default:
+                        return this.loadKeyBytes(keyId, keyStorage)
+                }
+            },
+            ...options
+        }
+
+        workerPool = new CryptoWorkerPool(config)
+        await workerPool!.open()
+
+        return workerPool
+    }
+
+    static async closeCryptoWorker(): Promise<void> {
+        if (!workerPool) return
+
+        try {
+            await workerPool.close()
+            workerPool = null
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     static createWebsocket(url: string): SocketProxy {
         socket = new WebSocket(url)
         let createdSocket;
@@ -797,5 +886,33 @@ const cryptoKeysCache: CryptoKeyCache = {
     cbc: {},
     gcm: {},
     ecc: {},
+}
+
+class BrowserCryptoWorker implements CryptoWorker {
+
+    private worker: Worker
+
+    constructor() {
+        const url = location.origin + '/worker/browserWorker.js'
+        this.worker = new Worker(url)
+    }
+
+    sendMessage(message: CryptoWorkerMessage): Promise<CryptoResults> {
+        return new Promise((resolve, reject) => {
+            this.worker.onmessage = function onWorkerMessage(e: MessageEvent<CryptoResults>) {
+                resolve(e.data)
+            }
+
+            this.worker.onerror = function onWorkerError(e) {
+                reject(`Worker error: ${e.message}`)
+            }
+
+            this.worker.postMessage(message)
+        })
+    }
+
+    async terminate() {
+        this.worker.terminate()
+    }
 }
 

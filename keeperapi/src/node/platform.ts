@@ -5,7 +5,7 @@ import * as FormData from "form-data"
 import * as NodeRSA from 'node-rsa';
 import * as WebSocket from 'faye-websocket'
 
-import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType} from "../platform";
+import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, UnwrapKeyMap} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
 import {keeperKeys} from "../transmissionKeys";
 import {SocketProxy, socketSendMessage} from '../socket'
@@ -13,6 +13,9 @@ import type {KeeperHttpResponse} from "../commands";
 
 export const nodePlatform: Platform = class {
     static keys = keeperKeys.pem;
+
+    // Unimplemented in NodeJS, worker threads did not appear to improve performance 
+    static supportsConcurrency: boolean = false
 
     static getRandomBytes(length: number): Uint8Array {
         return crypto.randomBytes(length);
@@ -59,6 +62,16 @@ export const nodePlatform: Platform = class {
 
     static unloadKeys() {
         keyCache = {}
+    }
+
+    static async unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void> {
+        for (const task of Object.values(keys)) {
+            try {
+                await this.unwrapKey(task.data, task.dataId, task.keyId, task.encryptionType, task.unwrappedType, storage)
+            } catch (e: any) {
+                console.error(`The key ${task.dataId} cannot be decrypted (${e.message})`)
+            }
+        }
     }
 
     static async unwrapKey(key: Uint8Array, keyId: string, unwrappingKeyId: string, encryptionType: EncryptionType, keyType: UnwrappedKeyType, storage?: KeyStorage): Promise<void> {
@@ -378,6 +391,14 @@ export const nodePlatform: Platform = class {
             }),
             messageQueue: [],
         }
+    }
+
+    static async createCryptoWorker(): Promise<null> {
+        return null
+    }
+
+    static async closeCryptoWorker(): Promise<void> {
+        // do nothing
     }
 
     static log(message: string, options: LogOptions): void {
