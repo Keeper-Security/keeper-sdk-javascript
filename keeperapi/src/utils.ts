@@ -1,6 +1,5 @@
 import {KeyWrapper, LogOptions, platform} from "./platform";
-import {KeeperHost, TransmissionKey} from './configuration';
-import { Authentication } from "./proto";
+import type {KeeperHost, TransmissionKey} from './configuration';
 
 export const log = (message: string, options: LogOptions = 'default') => {
     platform.log(message, options)
@@ -155,19 +154,6 @@ export async function encryptObjectForStorageGCM<T>(obj: T, key: Uint8Array, use
         bytes = Uint8Array.of(...bytes, ...Array(paddedSize - bytes.length).fill(0x20))
     }
     return platform.aesGcmEncrypt(bytes, key)
-}
-
-export function chooseErrorMessage(loginState: Authentication.LoginState){
-    switch (loginState){
-        case Authentication.LoginState.ACCOUNT_LOCKED:
-            return 'account_locked'
-        case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
-            return 'device_account_locked'
-        case Authentication.LoginState.DEVICE_LOCKED:
-            return 'device_locked'
-        case Authentication.LoginState.INVALID_LOGINSTATE:
-            return 'invalid_loginstate'
-    }
 }
 
 export function resolvablePromise(): { promise: Promise<void>, resolve: () => void } {

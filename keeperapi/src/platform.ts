@@ -1,5 +1,5 @@
-import {SocketProxy} from './auth'
-import {KeeperHttpResponse} from "./commands";
+import type {SocketProxy} from './socket'
+import type {KeeperHttpResponse} from "./commands";
 
 export interface Platform {
     keys: string[];
