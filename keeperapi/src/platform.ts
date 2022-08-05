@@ -1,8 +1,11 @@
 import type {SocketProxy} from './socket'
 import type {KeeperHttpResponse} from "./commands";
+import type {CryptoWorkerPool, CryptoWorkerPoolConfig} from './cryptoWorker';
 
 export interface Platform {
     keys: string[];
+
+    supportsConcurrency: boolean
 
     getRandomBytes(length: number): Uint8Array;
 
@@ -27,6 +30,8 @@ export interface Platform {
     unloadKeys(): void
 
     unwrapKey(key: Uint8Array, keyId: string, unwrappingKeyId: string, encryptionType: EncryptionType, unwrappedType: UnwrappedKeyType, storage?: KeyStorage, canExport?: boolean): Promise<void>
+
+    unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void>
 
     decrypt(data: Uint8Array, keyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<Uint8Array>
 
@@ -68,10 +73,29 @@ export interface Platform {
 
     fileUpload(url: string, uploadParameters: any, data: Uint8Array | Blob): Promise<any>
 
+    createCryptoWorker(keyStorage: KeyStorage, options: CryptoWorkerOptions): Promise<CryptoWorkerPool | null>
+
+    closeCryptoWorker(): Promise<void>
+
     createWebsocket(url: string): SocketProxy
 
     log(message: string, options: LogOptions): void;
 }
+
+export interface CryptoTask {
+    data: Uint8Array,
+    dataId: string,
+    keyId: string,
+    encryptionType: EncryptionType,
+}
+
+export interface UnwrapKey extends CryptoTask {
+    unwrappedType: UnwrappedKeyType,
+}
+
+export type UnwrapKeyMap = Record<string, UnwrapKey>
+
+export type CryptoWorkerOptions = Partial<CryptoWorkerPoolConfig>
 
 export class KeyWrapper {
     private key: any

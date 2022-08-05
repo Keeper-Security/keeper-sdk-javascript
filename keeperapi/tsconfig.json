@@ -4,7 +4,11 @@
     "noEmit": true,
     "noImplicitAny": false,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "lib": [
+        "dom",
+        "esnext"
+    ]
   },
   "include": [
     "src/**/*",
