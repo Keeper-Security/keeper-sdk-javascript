@@ -979,7 +979,7 @@ export class Auth {
         if (encryptedPrivateKey) {
             this.privateKey = await platform.aesCbcDecrypt(encryptedPrivateKey, this.dataKey, true)
         }
-        if (encryptedEccPrivateKey) {
+        if (encryptedEccPrivateKey?.length) {
             this.eccPrivateKey = await platform.aesGcmDecrypt(encryptedEccPrivateKey, this.dataKey)
             this.eccPublicKey = this.accountSummary?.keysInfo?.eccPublicKey || undefined
         }
