@@ -126,7 +126,7 @@ export class Auth {
     options: ClientConfigurationInternal;
     private socket?: SocketListener;
     public clientKey?: Uint8Array;
-    private accountSummary?: IAccountSummaryElements;
+    private _accountSummary?: IAccountSummaryElements;
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -180,6 +180,10 @@ export class Auth {
 
     getMessageSessionUid(): Uint8Array {
         return this.messageSessionUid;
+    }
+
+    get accountSummary(): IAccountSummaryElements | null {
+        return this._accountSummary || null
     }
 
     async idpLogout() {
@@ -975,7 +979,7 @@ export class Auth {
         if (encryptedPrivateKey) {
             this.privateKey = await platform.aesCbcDecrypt(encryptedPrivateKey, this.dataKey, true)
         }
-        if (encryptedEccPrivateKey) {
+        if (encryptedEccPrivateKey?.length) {
             this.eccPrivateKey = await platform.aesGcmDecrypt(encryptedEccPrivateKey, this.dataKey)
             this.eccPublicKey = this.accountSummary?.keysInfo?.eccPublicKey || undefined
         }
@@ -990,7 +994,7 @@ export class Auth {
     }
 
     async loadAccountSummary() {
-        this.accountSummary = await this.executeRest(accountSummaryMessage({
+        this._accountSummary = await this.executeRest(accountSummaryMessage({
             summaryVersion: 1
         }));
     }
