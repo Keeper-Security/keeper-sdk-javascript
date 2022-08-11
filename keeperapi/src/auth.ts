@@ -126,7 +126,7 @@ export class Auth {
     options: ClientConfigurationInternal;
     private socket?: SocketListener;
     public clientKey?: Uint8Array;
-    private accountSummary?: IAccountSummaryElements;
+    private _accountSummary?: IAccountSummaryElements;
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -180,6 +180,10 @@ export class Auth {
 
     getMessageSessionUid(): Uint8Array {
         return this.messageSessionUid;
+    }
+
+    get accountSummary(): IAccountSummaryElements | null {
+        return this._accountSummary || null
     }
 
     async idpLogout() {
@@ -990,7 +994,7 @@ export class Auth {
     }
 
     async loadAccountSummary() {
-        this.accountSummary = await this.executeRest(accountSummaryMessage({
+        this._accountSummary = await this.executeRest(accountSummaryMessage({
             summaryVersion: 1
         }));
     }
