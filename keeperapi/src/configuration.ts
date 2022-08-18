@@ -18,7 +18,7 @@ export interface ClientConfiguration {
     onCommandFailure?: (error: KeeperError) => void,
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => void // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
-    onRegionChanged?: (newRegion: string) => void,
+    onRegionChanged?: (newRegion: string) => Promise<void>,
     onDeviceVerified?: (isDeviceVerified: boolean) => void
     sessionStorage?: SessionStorage
     kvs?: KeyValueStorage;

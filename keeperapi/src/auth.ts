@@ -402,7 +402,7 @@ export class Auth {
                     this.options.host = loginResponse.stateSpecificValue
                     loginToken = undefined
                     if (this.options.onRegionChanged) {
-                        this.options.onRegionChanged(loginResponse.stateSpecificValue)
+                        await this.options.onRegionChanged(loginResponse.stateSpecificValue)
                     }
                     // Current socket no longer pointing to the right region
                     this.disconnect()
