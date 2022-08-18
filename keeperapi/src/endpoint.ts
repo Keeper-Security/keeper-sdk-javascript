@@ -173,7 +173,7 @@ export class KeeperEndpoint {
                         case 'region_redirect':
                             this.options.host = errorObj.region_host!
                             if (this.options.onRegionChanged) {
-                                this.options.onRegionChanged(this.options.host);
+                                await this.options.onRegionChanged(this.options.host);
                             }
                             continue
                         case 'device_not_registered': {
