@@ -190,6 +190,9 @@ export const recordsAddMessage = (data: Records.IRecordsAddRequest): RestMessage
 export const recordsUpdateMessage = (data: Records.IRecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records_update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
+export const recordsRevertMessage = (data: Records.IRecordsRevertRequest): RestMessage<Records.IRecordsRevertRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records_revert', Records.RecordsRevertRequest, Records.RecordsModifyResponse)
+
 export const fileDownloadMessage = (data: Records.IFilesGetRequest): RestMessage<Records.IFilesGetRequest, Records.IFilesGetResponse> =>
     createMessage(data, 'vault/files_download', Records.FilesGetRequest, Records.FilesGetResponse)
 
