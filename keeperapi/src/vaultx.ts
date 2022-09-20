@@ -26,12 +26,12 @@ import type {UnwrapKeyMap} from './platform'
 
 export type VaultStorage = KeyStorage & {
     put(data: VaultStorageData): Promise<void>
-    getDependencies(uid: string): Dependency[] | undefined
-    addDependencies(dependencies: Dependencies): void
-    removeDependencies(dependencies: RemovedDependencies): void
-    clear(): void
-    get<T extends VaultStorageKind>(kind: T, uid?: string): VaultStorageResult<T>
-    delete(kind: VaultStorageKind, uid: string): void
+    getDependencies(uid: string): Promise<Dependency[] | undefined>
+    addDependencies(dependencies: Dependencies): Promise<void>
+    removeDependencies(dependencies: RemovedDependencies): Promise<void>
+    clear(): Promise<void>
+    get<T extends VaultStorageKind>(kind: T, uid?: string): Promise<VaultStorageResult<T>>
+    delete(kind: VaultStorageKind, uid: string): Promise<void>
 }
 
 export type VaultStorageData = DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords 
@@ -196,15 +196,16 @@ const addRemovedDependencies = (dependencies: RemovedDependencies, parentUid: st
     children.add(childUid)
 }
 
-const getDependencies = (folderUid: string, storage: VaultStorage, results: Dependency[]) => {
-    for (const dependency of storage.getDependencies(folderUid) || []) {
+const getDependencies = async (folderUid: string, storage: VaultStorage, results: Dependency[]) => {
+    const storageGetDependencies = await storage.getDependencies(folderUid)
+    for await (const dependency of storageGetDependencies || []) {
         switch (dependency.kind) {
             case "record":
                 results.push(dependency)
                 break;
             case "user_folder":
                 results.push(dependency)
-                getDependencies(dependency.uid, storage, results)
+                await getDependencies(dependency.uid, storage, results)
                 break;
             default:
                 throw Error('Unexpected dependency: ' + dependency.kind)
@@ -549,7 +550,7 @@ const processNonSharedData = async (nonSharedData: INonSharedData[], storage: Va
                 continue
             }
 
-            const rec = storage.get('record', recUid)
+            const rec = await storage.get('record', recUid)
             if (!rec) throw new Error('Missing record in storage')
 
             // While generally v3 nsData will be gcm encrypted, and v2 will be cbc encrypted, there's a case
@@ -654,7 +655,7 @@ const processRemovedSharedFolderFolders = async (folders: Vault.ISharedFolderFol
     for (const folder of folders as NN<ISharedFolderFolder>[]) {
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
         const folderUid = webSafe64FromBytes(folder.folderUid)
-        storage.delete('user_folder', folderUid)
+        await storage.delete('user_folder', folderUid)
         dependencies[folderUid] = '*'
         addRemovedDependencies(dependencies, sharedFolderUid, folderUid)
         if (folder.parentUid.length > 0) {
@@ -793,7 +794,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
     let networkTime = 0
 
     try {
-        const dToken = storage.get('continuationToken')
+        const dToken = await storage.get('continuationToken')
         let continuationToken = dToken ? platform.base64ToBytes(dToken.token) : undefined
 
         await platform.importKey('data', auth.dataKey!, undefined, true)
@@ -811,7 +812,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             addCounts(totalCounts, counts)
             logProtobuf(resp, options.logFormat || '!', result.pageCount, counts)
             if (resp.cacheStatus == CacheStatus.CLEAR) {
-                storage.clear()
+                await storage.clear()
                 result.fullSync = true
             }
             if (result.pageCount === 0 && useWorkers && platform.supportsConcurrency && resp.hasMore) {
@@ -890,24 +891,24 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processProfile(resp.profile, storage)
             profiler?.timeEnd('processProfile')
 
-            storage.addDependencies(dependencies)
+            await storage.addDependencies(dependencies)
 
             const removedDependencies = {}
-            for (let teamUid of resp.removedTeams) {
-                storage.delete('team', webSafe64FromBytes(teamUid))
+            for await (let teamUid of resp.removedTeams) {
+                await storage.delete('team', webSafe64FromBytes(teamUid))
             }
-            for (const recUid of resp.removedRecords) {
-                storage.delete('record', webSafe64FromBytes(recUid))
+            for await (const recUid of resp.removedRecords) {
+                await storage.delete('record', webSafe64FromBytes(recUid))
             }
             for (const recordLink of resp.removedRecordLinks as Vault.RecordLink[]) {
                 const parentUid = webSafe64FromBytes(recordLink.parentRecordUid)
                 const childUid = webSafe64FromBytes(recordLink.childRecordUid)
                 addRemovedDependencies(removedDependencies, parentUid, childUid)
             }
-            for (const folder of resp.removedUserFolders) {
+            for await (const folder of resp.removedUserFolders) {
                 const folderUid = webSafe64FromBytes(folder)
                 removedDependencies[folderUid] = '*'
-                storage.delete('user_folder', folderUid)
+                await storage.delete('user_folder', folderUid)
             }
             processRemovedUserFolderRecords(resp.removedUserFolderRecords, removedDependencies)
             await processRemovedSharedFolderFolders(resp.removedSharedFolderFolders, storage, removedDependencies)
@@ -916,30 +917,31 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRemovedSharedFolderRecords(resp.removedSharedFolderRecords, storage, removedDependencies)
 
             const removedSFDependencies: Dependency[] = []
-            for (const folder of resp.removedSharedFolders) {
+            for await (const folder of resp.removedSharedFolders) {
                 const folderUid = webSafe64FromBytes(folder)
-                getDependencies(folderUid, storage, removedSFDependencies)
+                await getDependencies(folderUid, storage, removedSFDependencies)
                 removedDependencies[folderUid] = '*'
-                storage.delete('shared_folder', folderUid)
+                await storage.delete('shared_folder', folderUid)
             }
             for (const removedSFDependency of removedSFDependencies) {
                 switch (removedSFDependency.kind) {
                     case "record":
-                        storage.delete('record', removedSFDependency.uid)
+                        await storage.delete('record', removedSFDependency.uid)
                         break;
                     case "user_folder":
                         removedDependencies[removedSFDependency.uid] = '*'
-                        storage.delete('user_folder', removedSFDependency.uid)
+                        await storage.delete('user_folder', removedSFDependency.uid)
                         break;
                 }
             }
-            storage.removeDependencies(removedDependencies)
+            await storage.removeDependencies(removedDependencies)
 
             continuationToken = resp.continuationToken || undefined
-            result.continuationToken = platform.bytesToBase64(continuationToken)
+            const respContinuationToken = platform.bytesToBase64(continuationToken)
+            result.continuationToken = respContinuationToken
             await storage.put({
                 kind: 'continuationToken',
-                token: platform.bytesToBase64(resp.continuationToken)
+                token: respContinuationToken
             })
             if (!resp.hasMore || (options.maxCalls && result.pageCount >= options.maxCalls)) {
                 break
