@@ -208,6 +208,7 @@ export const browserPlatform: Platform = class {
             try {
                 await this.unwrapKey(data, dataId, keyId, encryptionType, unwrappedType, storage)
             } catch (e: any) {
+                if (e instanceof Error && e.message === 'sync_aborted') throw e
                 console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
             }
         }))
