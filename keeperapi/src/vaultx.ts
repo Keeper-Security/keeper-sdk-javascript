@@ -780,10 +780,35 @@ export type SyncDownOptions = {
      */
     useWorkers?: boolean
     workerOptions?: CryptoWorkerOptions
+    controller?: SyncController
+}
+
+export class SyncController {
+    aborted: boolean = false
+
+    abort() {
+        this.aborted = true
+    }
+
+    throwIfAborted() {
+        if (this.aborted) {
+            throw new Error('sync_aborted')
+        }
+    }
+}
+
+// Intercepts all property access to given object abort execution if needed
+function wrapObjWithProxy<T extends object> (obj: T, controller?: SyncController): T {
+    return new Proxy(obj, {
+        get(target, prop, receiver) {
+            controller?.throwIfAborted()
+            return Reflect.get(target, prop, receiver)
+        }
+    })
 }
 
 export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> => {
-    const {auth, storage, profiler, useWorkers} = options
+    const {auth, profiler, useWorkers, controller} = options
     const totalCounts = {}
     let result: SyncResult = {
         started: new Date(),
@@ -794,6 +819,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
     let networkTime = 0
 
     try {
+        const storage = wrapObjWithProxy(options.storage, controller)
         const dToken = await storage.get('continuationToken')
         let continuationToken = dToken ? platform.base64ToBytes(dToken.token) : undefined
 
@@ -806,7 +832,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                 continuationToken
             })
             let requestTime = Date.now()
-            const resp = await auth.executeRest(msg)
+            const resp = wrapObjWithProxy(await auth.executeRest(msg), controller)
             requestTime = Date.now() - requestTime
             const counts = getCounts(resp)
             addCounts(totalCounts, counts)
