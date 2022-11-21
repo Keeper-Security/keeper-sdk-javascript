@@ -1,7 +1,7 @@
 import {Auth} from './auth'
 import {NN, syncDownMessage} from './restMessages'
 import {CryptoWorkerOptions, EncryptionType, KeyStorage, platform} from './platform'
-import {Records, Vault} from './proto'
+import {Records, Tokens, Vault} from './proto'
 import {formatTimeDiff, webSafe64FromBytes} from './utils'
 import CacheStatus = Vault.CacheStatus
 import RecordKeyType = Records.RecordKeyType
@@ -22,6 +22,8 @@ import ISharedFolderFolderRecord = Vault.ISharedFolderFolderRecord;
 import IUserFolderSharedFolder = Vault.IUserFolderSharedFolder
 import IReusedPasswords = Vault.IReusedPasswords
 import IProfile = Vault.IProfile
+import IBreachWatchRecord = Vault.IBreachWatchRecord
+import IBreachWatchSecurityData = Vault.IBreachWatchSecurityData
 import type {UnwrapKeyMap} from './platform'
 
 export type VaultStorage = KeyStorage & {
@@ -34,9 +36,9 @@ export type VaultStorage = KeyStorage & {
     delete(kind: VaultStorageKind, uid: string): Promise<void>
 }
 
-export type VaultStorageData = DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords 
+export type VaultStorageData = DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData
 
-export type VaultStorageKind = 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords'
+export type VaultStorageKind = 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data'
 
 export type VaultStorageResult<T extends VaultStorageKind> = (
     T extends 'continuationToken' ? DContinuationToken :
@@ -157,6 +159,21 @@ export type DProfile = {
     kind: 'profile'
     profileName: string
     data: any
+    revision: number
+}
+
+export type DBWRecord = {
+    kind: 'bw_record'
+    uid: string
+    data: any
+    scannedBy: string
+    type: string
+    revision: number
+}
+
+export type DBWSecurityData = {
+    kind: 'bw_security_data'
+    uid: string
     revision: number
 }
 
@@ -717,6 +734,47 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
     await platform.unwrapKeys(recordKeys, storage)
 }
 
+const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storage: VaultStorage) => {
+    for (const bwRecord of bwRecords as NN<IBreachWatchRecord>[]) {
+        if (!bwRecord.recordUid) continue
+
+        const recUid = webSafe64FromBytes(bwRecord.recordUid)
+        try {
+            const {data} = bwRecord
+            const decrypted = await platform.decrypt(data, recUid, 'gcm', storage)
+            const decoded = Tokens.BreachWatchData.decode(decrypted)
+            const obj = Tokens.BreachWatchData.toObject(decoded)
+
+            await storage.put({
+              kind: 'bw_record',
+              uid: recUid,
+              data: obj,
+              scannedBy: bwRecord.scannedBy,
+              type: 'RECORD',
+              revision: bwRecord.revision as number
+            })
+        } catch (e: any) {
+          console.error(`Breach watch record ${recUid} cannot be decrypted (${e.message})`)
+        }
+    }
+}
+
+const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurityData[], storage: VaultStorage) => {
+    for (const bwSecurityData of securityData as NN<IBreachWatchSecurityData>[]) {
+        const uid = webSafe64FromBytes(bwSecurityData.recordUid)
+
+        try {
+            await storage.put({
+              kind: 'bw_security_data',
+              uid,
+              revision: bwSecurityData.revision as number
+            })
+        } catch (e: any) {
+            console.error(`Breach watch security data ${uid} cannot be processed (${e.message})`)
+        }
+    }
+}
+
 export type SyncLogFormat = '!' | 'raw' | 'obj' | 'str' | 'cnt' | 'cnt_t'
 
 const logProtobuf = (data: any, format: SyncLogFormat, seqNo: number, counts: any) => {
@@ -916,6 +974,14 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             profiler?.time('processProfile')
             await processProfile(resp.profile, storage)
             profiler?.timeEnd('processProfile')
+
+            profiler?.time('processBreachWatchRecords')
+            await processBreachWatchRecords(resp.breachWatchRecords, storage)
+            profiler?.timeEnd('processBreachWatchRecords')
+
+            profiler?.time('processBreachWatchSecurityData')
+            await processBreachWatchSecurityData(resp.breachWatchSecurityData, storage)
+            profiler?.timeEnd('processBreachWatchSecurityData')
 
             await storage.addDependencies(dependencies)
 
