@@ -112,7 +112,7 @@ export type DSharedFolder = {
 export type DSharedFolderUser = {
     kind: 'shared_folder_user'
     sharedFolderUid: string
-    username: string
+    accountUid: string
     manageRecords: boolean
     manageUsers: boolean
 }
@@ -130,6 +130,7 @@ export type DSharedFolderRecord = {
     kind: 'shared_folder_record'
     sharedFolderUid: string
     recordUid: string
+    ownerUid: string
     canShare: boolean
     canEdit: boolean
 }
@@ -437,7 +438,7 @@ const processSharedFolderUsers = async (users: ISharedFolderUser[], storage: Vau
         await storage.put({
             kind: 'shared_folder_user',
             sharedFolderUid: webSafe64FromBytes(user.sharedFolderUid),
-            username: user.username,
+            accountUid: webSafe64FromBytes(user.accountUid),
             manageRecords: user.manageRecords,
             manageUsers: user.manageUsers,
         })
@@ -482,6 +483,7 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 kind: 'shared_folder_record',
                 recordUid: recUid,
                 sharedFolderUid,
+                ownerUid: webSafe64FromBytes(rec.ownerAccountUid),
                 canEdit: rec.canEdit,
                 canShare: rec.canShare,
             })
@@ -692,7 +694,7 @@ const processRemovedSharedFolderTeams = async (sharedFolderTeams: ISharedFolderT
 const processRemovedSharedFolderUsers = (users: ISharedFolderUser[], dependencies: RemovedDependencies) => {
     for (const user of users as NN<ISharedFolderUser>[]) {
         const sharedFolderUid = webSafe64FromBytes(user.sharedFolderUid)
-        addRemovedDependencies(dependencies, sharedFolderUid, user.username)
+        addRemovedDependencies(dependencies, sharedFolderUid, webSafe64FromBytes(user.accountUid))
     }
 }
 
