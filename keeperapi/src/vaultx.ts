@@ -479,13 +479,14 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
             const sharedFolderUid = webSafe64FromBytes(rec.sharedFolderUid)
             await platform.unwrapKey(rec.recordKey, recUid, sharedFolderUid, encryptionType, 'aes', storage)
 
+            const ownerUid = webSafe64FromBytes(rec.ownerAccountUid)
             await storage.put({
                 kind: 'shared_folder_record',
                 recordUid: recUid,
                 sharedFolderUid,
-                ownerUid: webSafe64FromBytes(rec.ownerAccountUid),
-                canEdit: rec.canEdit,
-                canShare: rec.canShare,
+                ownerUid,
+                canEdit: !ownerUid ? true : rec.canEdit,
+                canShare: !ownerUid ? true : rec.canShare,
             })
         } catch (e: any) {
             console.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
