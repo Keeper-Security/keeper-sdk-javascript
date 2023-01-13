@@ -2,6 +2,7 @@ import {MSPEnterprise, EnterpriseBase, LicenseAdjustment} from "./vendorModel";
 import {TransmissionKey, VendorConfiguration} from "./configuration";
 import {platform} from './platform';
 import {generateTransmissionKey, getKeeperUrl} from './utils';
+import { isAllowedNumber } from "./transmissionKeys";
 
 export class VendorContext {
 
@@ -64,7 +65,11 @@ export class VendorContext {
                 let error = platform.bytesToString(response.data)
                 let errorObj = JSON.parse(error)
                 if (errorObj.error === 'key') {
-                    this._transmissionKey = await generateTransmissionKey(errorObj.key_id)
+                    if(isAllowedNumber(errorObj.key_id)){
+                        this._transmissionKey = await generateTransmissionKey(errorObj.key_id)
+                    } else {
+                        throw new Error('Incorrect Transmission Key ID being used.')
+                    }
                 } else {
                     throw(`Unable to decrypt response: ${error}`)
                 }

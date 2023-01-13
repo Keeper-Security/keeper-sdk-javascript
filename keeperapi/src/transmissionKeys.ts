@@ -1,5 +1,22 @@
 import { normal64Bytes } from "./utils"
 
+export type AllowedNumbers = 
+| 7
+| 8
+| 9
+| 10
+| 11
+| 12
+| 13
+| 14
+| 15
+| 16
+| 17
+
+export function isAllowedNumber(num:number):num is AllowedNumbers {
+    return num >= 7 && num <= 17
+}
+
 let keyNumber = 7
 const eccKeys = [
     'BK9w6TZFxE6nFNbMfIpULCup2a8xc6w2tUTABjxny7yFmxW0dAEojwC6j6zb5nTlmb1dAx8nwo3qF7RPYGmloRM',

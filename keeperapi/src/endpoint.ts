@@ -26,6 +26,7 @@ import WssClientResponse = Push.WssClientResponse;
 import WssConnectionRequest = Push.WssConnectionRequest;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import {KeeperHttpResponse, RestCommand} from './commands'
+import { AllowedNumbers, isAllowedNumber } from './transmissionKeys'
 
 export class KeeperEndpoint {
     private _transmissionKey?: TransmissionKey
@@ -174,7 +175,11 @@ export class KeeperEndpoint {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
                         case 'key':
-                            this.updateTransmissionKey(errorObj.key_id!)
+                            if(isAllowedNumber(errorObj.key_id!)){
+                                this.updateTransmissionKey(errorObj.key_id!)
+                            } else {
+                                throw new Error('Incorrect Transmission Key ID being used.')
+                            }
                             continue
                         case 'region_redirect':
                             this.options.host = errorObj.region_host!
@@ -232,7 +237,7 @@ export class KeeperEndpoint {
         return platform.get(this.getUrl(path), {})
     }
 
-    public async updateTransmissionKey(keyNumber: number) {
+    public async updateTransmissionKey(keyNumber: AllowedNumbers) {
         this._transmissionKey = await generateTransmissionKey(keyNumber)
 
         this.options.deviceConfig.transmissionKeyId = keyNumber
