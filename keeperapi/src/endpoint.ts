@@ -26,22 +26,28 @@ import WssClientResponse = Push.WssClientResponse;
 import WssConnectionRequest = Push.WssConnectionRequest;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import {KeeperHttpResponse, RestCommand} from './commands'
+import { AllowedNumbers, isAllowedNumber } from './transmissionKeys'
 
 export class KeeperEndpoint {
-    private transmissionKey: TransmissionKey
+    private _transmissionKey?: TransmissionKey
     public deviceToken?: Uint8Array | null
     public clientVersion
 
     private onsitePrivateKey: Uint8Array | null = null
     private onsitePublicKey: Uint8Array | null = null
 
-    constructor(private options: ClientConfigurationInternal) {
+    constructor(private options: ClientConfigurationInternal) {       
         if (options.deviceToken) {
             this.deviceToken = options.deviceToken
-            this.transmissionKey = generateTransmissionKey(1)
-        } else {
-            this.transmissionKey = generateTransmissionKey(options.deviceConfig.transmissionKeyId || 1)
+        } 
+    }
+
+    async getTransmissionKey():Promise<TransmissionKey> {
+        if(!this._transmissionKey){
+            this._transmissionKey = await generateTransmissionKey(7)
         }
+
+        return this._transmissionKey
     }
 
     getUrl(forPath: string): string {
@@ -142,6 +148,7 @@ export class KeeperEndpoint {
     }
 
     private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string): Promise<TOut | void> {
+        this._transmissionKey = await this.getTransmissionKey()
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
             const request = await this.prepareRequest(payload, sessionToken)
@@ -159,7 +166,7 @@ export class KeeperEndpoint {
                 console.log("Response code:", response.statusCode);
             }
             try {
-                const decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
+                const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
                 if ('fromBytes' in message) return message.fromBytes(decrypted)
                 return
             } catch {
@@ -168,7 +175,11 @@ export class KeeperEndpoint {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
                         case 'key':
-                            this.updateTransmissionKey(errorObj.key_id!)
+                            if(isAllowedNumber(errorObj.key_id!)){
+                                this.updateTransmissionKey(errorObj.key_id!)
+                            } else {
+                                throw new Error('Incorrect Transmission Key ID being used.')
+                            }
                             continue
                         case 'region_redirect':
                             this.options.host = errorObj.region_host!
@@ -199,6 +210,7 @@ export class KeeperEndpoint {
     }
 
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
+        this._transmissionKey = await this.getTransmissionKey()
         command.baseRequest.client_version = this.clientVersion
         const payload = {
             ...command.baseRequest,
@@ -209,7 +221,7 @@ export class KeeperEndpoint {
         const response = await platform.post(this.getUrl('vault/execute_v2_command'), requestBytes)
         let decrypted
         try {
-            decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
+            decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
         } catch (e) {
             const error = platform.bytesToString(response.data)
             throw(`Unable to decrypt response: ${error}`)
@@ -225,8 +237,8 @@ export class KeeperEndpoint {
         return platform.get(this.getUrl(path), {})
     }
 
-    public updateTransmissionKey(keyNumber: number) {
-        this.transmissionKey = generateTransmissionKey(keyNumber)
+    public async updateTransmissionKey(keyNumber: AllowedNumbers) {
+        this._transmissionKey = await generateTransmissionKey(keyNumber)
 
         this.options.deviceConfig.transmissionKeyId = keyNumber
         if (this.options.onDeviceConfig) {
@@ -235,23 +247,23 @@ export class KeeperEndpoint {
     }
 
     public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string): Promise<Uint8Array> {
-        return prepareApiRequest(payload, this.transmissionKey, sessionToken)
+        this._transmissionKey = await this.getTransmissionKey()
+        return prepareApiRequest(payload, this._transmissionKey, sessionToken)
     }
 
     async decryptPushMessage(pushMessageData: Uint8Array): Promise<WssClientResponse> {
-        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessageData, this.transmissionKey.key)
+        this._transmissionKey = await this.getTransmissionKey()
+        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessageData, this._transmissionKey.key)
         return WssClientResponse.decode(decryptedPushMessage)
     }
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
-        return getPushConnectionRequest(messageSessionUid, this.transmissionKey, this.options.deviceConfig.deviceToken)
-    }
-
-    getTransmissionKey(): TransmissionKey {
-        return this.transmissionKey;
+        this._transmissionKey = await this.getTransmissionKey()
+        return getPushConnectionRequest(messageSessionUid, this._transmissionKey, this.options.deviceConfig.deviceToken)
     }
 
     public async prepareSsoPayload(messageSessionUid: Uint8Array, username: string = '', idpSessionId = ''): Promise<string> {
+        this._transmissionKey = await this.getTransmissionKey()
         const payload: SsoCloud.ISsoCloudRequest = {
             "embedded": true,
             "clientVersion": this.clientVersion,
@@ -261,12 +273,13 @@ export class KeeperEndpoint {
             "idpSessionId": idpSessionId,
             "username": username
         }
-        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this.transmissionKey)
+        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this._transmissionKey)
         return webSafe64FromBytes(request)
     }
 
     public async decryptCloudSsoResponse(token: string): Promise<SsoCloudResponse> {
-        return decryptCloudSsoResponse(token, this.getTransmissionKey().key)
+        this._transmissionKey = await this.getTransmissionKey()
+        return decryptCloudSsoResponse(token, this._transmissionKey.key)
     }
 
     public async getOnsitePublicKey(): Promise<string> {

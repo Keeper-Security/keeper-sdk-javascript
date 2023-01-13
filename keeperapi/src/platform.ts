@@ -3,7 +3,7 @@ import type {KeeperHttpResponse} from "./commands";
 import type {CryptoWorkerPool, CryptoWorkerPoolConfig} from './cryptoWorker';
 
 export interface Platform {
-    keys: string[];
+    keys: Uint8Array[];
 
     supportsConcurrency: boolean
 

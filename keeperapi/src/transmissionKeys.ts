@@ -1,38 +1,39 @@
-interface KeeperKeys {
-    der: string[],
-    pem: string[]
+import { normal64Bytes } from "./utils"
+
+export type AllowedNumbers = 
+| 7
+| 8
+| 9
+| 10
+| 11
+| 12
+| 13
+| 14
+| 15
+| 16
+| 17
+
+export function isAllowedNumber(num:number):num is AllowedNumbers {
+    return num >= 7 && num <= 17
 }
 
-let keys =
-    {
-        der: {
-            key1: 'MIIBCgKCAQEA9Z/CZzxiNUz8+npqI4V10+zW3AL7+M4UQDdd/17759Xzm0MOEfHOOsOgZxxNK1DEsbyCTCE05fd3Hz1mn1uGjXvm5HnN2mL/3TOVxyLU6VwH9EDInnj4DNMFifs69il3KlviT3llRgPCcjF4xrF8d4SR0/N3eqS1f9CBJPNEKEH+am5Xb/FqAlOUoXkILF0UYxA/jNLoWBSq+1W58e4xDI0p0GuP0lN8f97HBtfB7ijbtF+VxIXtxRy+4jA49zK+CQrGmWqIm5DzZcBvUtVGZ3UXd6LeMXMJOifvuCneGC2T2uB6G2g5yD54+onmKIETyNX0LtpR1MsZmKLgru5ugwIDAQAB',
-            key2: 'MIIBCgKCAQEAkOpym7xC3sSysw5DAidLoVF7JUgnvXejbieDWmEiD+DQOKxzfQqYHoFfeeix//bx3wMW3I8cAc8zwZ1JO8hyB2ON732JE2Zp301GAUMnAK/rBhQWmYKP/+uXSKeTJPiuaW9PVG0oRJ4MEdS+t1vIA4eDPhI1EexHaY3P2wHKoV8twcGvdWUZB5gxEpMbx5CuvEXptnXEJlxKou3TZu9uwJIo0pgqVLUgRpW1RSRipgutpUslBnQ72Bdbsry0KKVTlcPsudAnnWUtsMJNgmyQbESPm+aVv+GzdVUFvWKpKkAxDpNArPMf0xt8VL2frw2LDe5/n9IMFogUiSYt156/mQIDAQAB',
-            key3: 'MIIBCgKCAQEAyvxCWbLvtMRmq57oFg3mY4DWfkb1dir7b29E8UcwcKDcCsGTqoIhubU2pO46TVUXmFgC4E+Zlxt+9F+YA+MY7i/5GrDvySwAy4nbDhRL6Z0kz+rqUirgm9WWsP9v+X/BwzARqq83HNBuzAjf3UHgYDsKmCCarVAzRplZdT3Q5rnNiYPYSHzwfUhKEAyXk71UdtleD+bsMAmwnuYHLhDHiT279An/Ta93c9MTqa/Tq2Eirl/NXn1RdtbNohmMXldAH+C8uIh3Sz8erS4hZFSdUG1WlDsKpyRouNPQ3diorbO88wEAgpHjXkOLj63d1fYJBFG0yfu73U80aEZehQkSawIDAQAB',
-            key4: 'MIIBCgKCAQEA0TVoXLpgluaqw3P011zFPSIzWhUMBqXT+Ocjy8NKjJbdrbs53eRFKk1waeB3hNn5JEKNVSNbUIe+MjacB9P34iCfKtdnrdDB8JXx0nIbIPzLtcJC4HCYASpjX/TVXrU9BgeCE3NUtnIxjHDy8PCbJyAS/Pv299Q/wpLWnkkjq70ZJ2/fX+ObbQaZHwsWKbRZ/5sD6rLfxNACTGI/jo9+vVug6AdNq96J7nUdYV1cG+INQwJJKMcAbKQcLrml8CMPc2mmf0KQ5MbS/KSbLXHUF+81AsZVHfQRSuigOStQKxgSGL5osY4NrEcODbEXtkuDrKNMsZYhijKiUHBj9vvgKwIDAQAB',
-            key5: 'MIIBCgKCAQEAueOWC26w+HlOLW7s88WeWkXpjxK4mkjqngIzwbjnsU9145R51HvsILvjXJNdAuueVDHj3OOtQjfUM6eMMLr+3kaPv68y4FNusvB49uKc5ETI0HtHmHFSn9qAZvC7dQHSpYqC2TeCus+xKeUciQ5AmSfwpNtwzM6Oh2TO45zAqSA+QBSk/uv9TJu0e1W1AlNmizQtHX6je+mvqZCVHkzGFSQWQ8DBL9dHjviI2mmWfL/egAVVhBgTFXRHg5OmJbbPoHj217Yh+kHYA8IWEAHylboH6CVBdrNL4Na0fracQVTm+nOWdM95dKk3fH+KJYk/SmwB47ndWACLLi5epLl9vwIDAQAB',
-            key6: 'MIIBCgKCAQEA2PJRM7+4R97rHwY/zCkFA8B3llawb6gF7oAZCpxprl6KB5z2cqLAvUfEOBtnr7RIturX04p3ThnwaFnAR7ADVZWBGOYuAyaLzGHDI5mvs8D+NewG9vw8qRkTT7Mb8fuOHC6+/lTp9AF2OA2H4QYiT1vt43KbuD0Y2CCVrOTKzDMXG8msl/JvAKt4axY9RGUtBbv0NmpkBCjLZri5AaTMgjLdu8XBXCqoLx7qZL+Bwiv4njw+ZAI4jIszJTdGzMtoQ0zL7LBj_TDUBI4Qhf2bZTZlUSL3xeDWOKmd8Frksw3oKyJ17oCQK+EGau6EaJRGyasBXl8uOEWmYYgqOWirNwIDAQAB'
-        },
-        pem: {
-            key1: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9Z/CZzxiNUz8+npqI4V1\n0+zW3AL7+M4UQDdd/17759Xzm0MOEfHOOsOgZxxNK1DEsbyCTCE05fd3Hz1mn1uG\njXvm5HnN2mL/3TOVxyLU6VwH9EDInnj4DNMFifs69il3KlviT3llRgPCcjF4xrF8\nd4SR0/N3eqS1f9CBJPNEKEH+am5Xb/FqAlOUoXkILF0UYxA/jNLoWBSq+1W58e4x\nDI0p0GuP0lN8f97HBtfB7ijbtF+VxIXtxRy+4jA49zK+CQrGmWqIm5DzZcBvUtVG\nZ3UXd6LeMXMJOifvuCneGC2T2uB6G2g5yD54+onmKIETyNX0LtpR1MsZmKLgru5u\ngwIDAQAB\n-----END PUBLIC KEY-----\n',
-            key2: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkOpym7xC3sSysw5DAidL\noVF7JUgnvXejbieDWmEiD+DQOKxzfQqYHoFfeeix//bx3wMW3I8cAc8zwZ1JO8hy\nB2ON732JE2Zp301GAUMnAK/rBhQWmYKP/+uXSKeTJPiuaW9PVG0oRJ4MEdS+t1vI\nA4eDPhI1EexHaY3P2wHKoV8twcGvdWUZB5gxEpMbx5CuvEXptnXEJlxKou3TZu9u\nwJIo0pgqVLUgRpW1RSRipgutpUslBnQ72Bdbsry0KKVTlcPsudAnnWUtsMJNgmyQ\nbESPm+aVv+GzdVUFvWKpKkAxDpNArPMf0xt8VL2frw2LDe5/n9IMFogUiSYt156/\nmQIDAQAB\n-----END PUBLIC KEY-----\n',
-            key3: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyvxCWbLvtMRmq57oFg3m\nY4DWfkb1dir7b29E8UcwcKDcCsGTqoIhubU2pO46TVUXmFgC4E+Zlxt+9F+YA+MY\n7i/5GrDvySwAy4nbDhRL6Z0kz+rqUirgm9WWsP9v+X/BwzARqq83HNBuzAjf3UHg\nYDsKmCCarVAzRplZdT3Q5rnNiYPYSHzwfUhKEAyXk71UdtleD+bsMAmwnuYHLhDH\niT279An/Ta93c9MTqa/Tq2Eirl/NXn1RdtbNohmMXldAH+C8uIh3Sz8erS4hZFSd\nUG1WlDsKpyRouNPQ3diorbO88wEAgpHjXkOLj63d1fYJBFG0yfu73U80aEZehQkS\nawIDAQAB\n-----END PUBLIC KEY-----\n',
-            key4: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0TVoXLpgluaqw3P011zF\nPSIzWhUMBqXT+Ocjy8NKjJbdrbs53eRFKk1waeB3hNn5JEKNVSNbUIe+MjacB9P3\n4iCfKtdnrdDB8JXx0nIbIPzLtcJC4HCYASpjX/TVXrU9BgeCE3NUtnIxjHDy8PCb\nJyAS/Pv299Q/wpLWnkkjq70ZJ2/fX+ObbQaZHwsWKbRZ/5sD6rLfxNACTGI/jo9+\nvVug6AdNq96J7nUdYV1cG+INQwJJKMcAbKQcLrml8CMPc2mmf0KQ5MbS/KSbLXHU\nF+81AsZVHfQRSuigOStQKxgSGL5osY4NrEcODbEXtkuDrKNMsZYhijKiUHBj9vvg\nKwIDAQAB\n-----END PUBLIC KEY-----\n',
-            key5: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAueOWC26w+HlOLW7s88We\nWkXpjxK4mkjqngIzwbjnsU9145R51HvsILvjXJNdAuueVDHj3OOtQjfUM6eMMLr+\n3kaPv68y4FNusvB49uKc5ETI0HtHmHFSn9qAZvC7dQHSpYqC2TeCus+xKeUciQ5A\nmSfwpNtwzM6Oh2TO45zAqSA+QBSk/uv9TJu0e1W1AlNmizQtHX6je+mvqZCVHkzG\nFSQWQ8DBL9dHjviI2mmWfL/egAVVhBgTFXRHg5OmJbbPoHj217Yh+kHYA8IWEAHy\nlboH6CVBdrNL4Na0fracQVTm+nOWdM95dKk3fH+KJYk/SmwB47ndWACLLi5epLl9\nvwIDAQAB\n-----END PUBLIC KEY-----\n',
-            key6: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2PJRM7+4R97rHwY/zCkF\nA8B3llawb6gF7oAZCpxprl6KB5z2cqLAvUfEOBtnr7RIturX04p3ThnwaFnAR7AD\nVZWBGOYuAyaLzGHDI5mvs8D+NewG9vw8qRkTT7Mb8fuOHC6+/lTp9AF2OA2H4QYi\nT1vt43KbuD0Y2CCVrOTKzDMXG8msl/JvAKt4axY9RGUtBbv0NmpkBCjLZri5AaTM\ngjLdu8XBXCqoLx7qZL+Bwiv4njw+ZAI4jIszJTdGzMtoQ0zL7LBj/TDUBI4Qhf2b\nZTZlUSL3xeDWOKmd8Frksw3oKyJ17oCQK+EGau6EaJRGyasBXl8uOEWmYYgqOWir\nNwIDAQAB\n-----END PUBLIC KEY-----\n'
-        }
-    }
+let keyNumber = 7
+const eccKeys = [
+    'BK9w6TZFxE6nFNbMfIpULCup2a8xc6w2tUTABjxny7yFmxW0dAEojwC6j6zb5nTlmb1dAx8nwo3qF7RPYGmloRM',
+    'BKnhy0obglZJK-igwthNLdknoSXRrGB-mvFRzyb_L-DKKefWjYdFD2888qN1ROczz4n3keYSfKz9Koj90Z6w_tQ',
+    'BAsPQdCpLIGXdWNLdAwx-3J5lNqUtKbaOMV56hUj8VzxE2USLHuHHuKDeno0ymJt-acxWV1xPlBfNUShhRTR77g',
+    'BNYIh_Sv03nRZUUJveE8d2mxKLIDXv654UbshaItHrCJhd6cT7pdZ_XwbdyxAOCWMkBb9AZ4t1XRCsM8-wkEBRg',
+    'BA6uNfeYSvqagwu4TOY6wFK4JyU5C200vJna0lH4PJ-SzGVXej8l9dElyQ58_ljfPs5Rq6zVVXpdDe8A7Y3WRhk',
+    'BMjTIlXfohI8TDymsHxo0DqYysCy7yZGJ80WhgOBR4QUd6LBDA6-_318a-jCGW96zxXKMm8clDTKpE8w75KG-FY',
+    'BJBDU1P1H21IwIdT2brKkPqbQR0Zl0TIHf7Bz_OO9jaNgIwydMkxt4GpBmkYoprZ_DHUGOrno2faB7pmTR7HhuI',
+    'BJFF8j-dH7pDEw_U347w2CBM6xYM8Dk5fPPAktjib-opOqzvvbsER-WDHM4ONCSBf9O_obAHzCyygxmtpktDuiE',
+    'BDKyWBvLbyZ-jMueORl3JwJnnEpCiZdN7yUvT0vOyjwpPBCDf6zfL4RWzvSkhAAFnwOni_1tQSl8dfXHbXqXsQ8',
+    'BDXyZZnrl0tc2jdC5I61JjwkjK2kr7uet9tZjt8StTiJTAQQmnVOYBgbtP08PWDbecxnHghx3kJ8QXq1XE68y8c',
+    'BFX68cb97m9_sweGdOVavFM3j5ot6gveg6xT4BtGahfGhKib-zdZyO9pwvv1cBda9ahkSzo1BQ4NVXp9qRyqVGU'
+].reduce((keys:Uint8Array[], key) => {
+    keys[keyNumber++] = normal64Bytes(key)
+    return keys
+}, [])
 
-let _keeperKeys: KeeperKeys = {
-    der: [], pem: []
-}
-
-for (let key in keys.der) {
-    _keeperKeys.der.push(keys.der[key])
-}
-for (let key in keys.pem) {
-    _keeperKeys.pem.push(keys.pem[key])
-}
-
-export const keeperKeys: KeeperKeys = _keeperKeys
+export const keeperKeys: Uint8Array[] = eccKeys
 

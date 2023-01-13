@@ -1,5 +1,6 @@
 import {KeyWrapper, LogOptions, platform} from "./platform";
 import type {KeeperHost, TransmissionKey} from './configuration';
+import { AllowedNumbers } from "./transmissionKeys";
 
 export const log = (message: string, options: LogOptions = 'default') => {
     platform.log(message, options)
@@ -42,12 +43,12 @@ export function getKeeperAutomatorAdminUrl(host: KeeperHost, forPath: string, au
     }
 }
 
-export function generateTransmissionKey(keyNumber: number): TransmissionKey {
+export async function generateTransmissionKey(keyNumber: AllowedNumbers): Promise<TransmissionKey> {
     const transmissionKey = platform.getRandomBytes(32)
     return {
         publicKeyId: keyNumber,
         key: transmissionKey,
-        encryptedKey: platform.publicEncrypt(transmissionKey, platform.keys[keyNumber - 1])
+        encryptedKey: await platform.publicEncryptEC(transmissionKey, platform.keys[keyNumber])
     }
 }
 

@@ -1,6 +1,5 @@
 export * from "../endpoint";
 export * from "../auth";
-export * from "../vendorContext";
 export * from "../vendorModel";
 export * from "../vault";
 export * from "../vaultx";
