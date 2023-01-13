@@ -1,7 +1,7 @@
 import {Auth} from './auth'
 import {NN, syncDownMessage} from './restMessages'
 import {CryptoWorkerOptions, EncryptionType, KeyStorage, platform} from './platform'
-import {Records, Vault} from './proto'
+import {Records, Tokens, Vault} from './proto'
 import {formatTimeDiff, webSafe64FromBytes} from './utils'
 import CacheStatus = Vault.CacheStatus
 import RecordKeyType = Records.RecordKeyType
@@ -22,6 +22,8 @@ import ISharedFolderFolderRecord = Vault.ISharedFolderFolderRecord;
 import IUserFolderSharedFolder = Vault.IUserFolderSharedFolder
 import IReusedPasswords = Vault.IReusedPasswords
 import IProfile = Vault.IProfile
+import IBreachWatchRecord = Vault.IBreachWatchRecord
+import IBreachWatchSecurityData = Vault.IBreachWatchSecurityData
 import type {UnwrapKeyMap} from './platform'
 
 export type VaultStorage = KeyStorage & {
@@ -34,9 +36,9 @@ export type VaultStorage = KeyStorage & {
     delete(kind: VaultStorageKind, uid: string): Promise<void>
 }
 
-export type VaultStorageData = DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords 
+export type VaultStorageData = DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData
 
-export type VaultStorageKind = 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords'
+export type VaultStorageKind = 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data'
 
 export type VaultStorageResult<T extends VaultStorageKind> = (
     T extends 'continuationToken' ? DContinuationToken :
@@ -110,7 +112,7 @@ export type DSharedFolder = {
 export type DSharedFolderUser = {
     kind: 'shared_folder_user'
     sharedFolderUid: string
-    username: string
+    accountUid: string
     manageRecords: boolean
     manageUsers: boolean
 }
@@ -128,6 +130,7 @@ export type DSharedFolderRecord = {
     kind: 'shared_folder_record'
     sharedFolderUid: string
     recordUid: string
+    ownerUid: string
     canShare: boolean
     canEdit: boolean
 }
@@ -157,6 +160,21 @@ export type DProfile = {
     kind: 'profile'
     profileName: string
     data: any
+    revision: number
+}
+
+export type DBWRecord = {
+    kind: 'bw_record'
+    uid: string
+    data: any
+    scannedBy: string
+    type: string
+    revision: number
+}
+
+export type DBWSecurityData = {
+    kind: 'bw_security_data'
+    uid: string
     revision: number
 }
 
@@ -420,7 +438,7 @@ const processSharedFolderUsers = async (users: ISharedFolderUser[], storage: Vau
         await storage.put({
             kind: 'shared_folder_user',
             sharedFolderUid: webSafe64FromBytes(user.sharedFolderUid),
-            username: user.username,
+            accountUid: webSafe64FromBytes(user.accountUid),
             manageRecords: user.manageRecords,
             manageUsers: user.manageUsers,
         })
@@ -461,12 +479,14 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
             const sharedFolderUid = webSafe64FromBytes(rec.sharedFolderUid)
             await platform.unwrapKey(rec.recordKey, recUid, sharedFolderUid, encryptionType, 'aes', storage)
 
+            const ownerUid = webSafe64FromBytes(rec.ownerAccountUid)
             await storage.put({
                 kind: 'shared_folder_record',
                 recordUid: recUid,
                 sharedFolderUid,
-                canEdit: rec.canEdit,
-                canShare: rec.canShare,
+                ownerUid,
+                canEdit: !ownerUid ? true : rec.canEdit,
+                canShare: !ownerUid ? true : rec.canShare,
             })
         } catch (e: any) {
             console.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
@@ -675,7 +695,7 @@ const processRemovedSharedFolderTeams = async (sharedFolderTeams: ISharedFolderT
 const processRemovedSharedFolderUsers = (users: ISharedFolderUser[], dependencies: RemovedDependencies) => {
     for (const user of users as NN<ISharedFolderUser>[]) {
         const sharedFolderUid = webSafe64FromBytes(user.sharedFolderUid)
-        addRemovedDependencies(dependencies, sharedFolderUid, user.username)
+        addRemovedDependencies(dependencies, sharedFolderUid, webSafe64FromBytes(user.accountUid))
     }
 }
 
@@ -715,6 +735,47 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
     }
 
     await platform.unwrapKeys(recordKeys, storage)
+}
+
+const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storage: VaultStorage) => {
+    for (const bwRecord of bwRecords as NN<IBreachWatchRecord>[]) {
+        if (!bwRecord.recordUid) continue
+
+        const recUid = webSafe64FromBytes(bwRecord.recordUid)
+        try {
+            const {data} = bwRecord
+            const decrypted = await platform.decrypt(data, recUid, 'gcm', storage)
+            const decoded = Tokens.BreachWatchData.decode(decrypted)
+            const obj = Tokens.BreachWatchData.toObject(decoded)
+
+            await storage.put({
+              kind: 'bw_record',
+              uid: recUid,
+              data: obj,
+              scannedBy: bwRecord.scannedBy,
+              type: 'RECORD',
+              revision: bwRecord.revision as number
+            })
+        } catch (e: any) {
+          console.error(`Breach watch record ${recUid} cannot be decrypted (${e.message})`)
+        }
+    }
+}
+
+const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurityData[], storage: VaultStorage) => {
+    for (const bwSecurityData of securityData as NN<IBreachWatchSecurityData>[]) {
+        const uid = webSafe64FromBytes(bwSecurityData.recordUid)
+
+        try {
+            await storage.put({
+              kind: 'bw_security_data',
+              uid,
+              revision: bwSecurityData.revision as number
+            })
+        } catch (e: any) {
+            console.error(`Breach watch security data ${uid} cannot be processed (${e.message})`)
+        }
+    }
 }
 
 export type SyncLogFormat = '!' | 'raw' | 'obj' | 'str' | 'cnt' | 'cnt_t'
@@ -780,10 +841,35 @@ export type SyncDownOptions = {
      */
     useWorkers?: boolean
     workerOptions?: CryptoWorkerOptions
+    controller?: SyncController
+}
+
+export class SyncController {
+    aborted: boolean = false
+
+    abort() {
+        this.aborted = true
+    }
+
+    throwIfAborted() {
+        if (this.aborted) {
+            throw new Error('sync_aborted')
+        }
+    }
+}
+
+// Intercepts all property access to given object abort execution if needed
+function wrapObjWithProxy<T extends object> (obj: T, controller?: SyncController): T {
+    return new Proxy(obj, {
+        get(target, prop, receiver) {
+            controller?.throwIfAborted()
+            return Reflect.get(target, prop, receiver)
+        }
+    })
 }
 
 export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> => {
-    const {auth, storage, profiler, useWorkers} = options
+    const {auth, profiler, useWorkers, controller} = options
     const totalCounts = {}
     let result: SyncResult = {
         started: new Date(),
@@ -794,6 +880,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
     let networkTime = 0
 
     try {
+        const storage = wrapObjWithProxy(options.storage, controller)
         const dToken = await storage.get('continuationToken')
         let continuationToken = dToken ? platform.base64ToBytes(dToken.token) : undefined
 
@@ -806,7 +893,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                 continuationToken
             })
             let requestTime = Date.now()
-            const resp = await auth.executeRest(msg)
+            const resp = wrapObjWithProxy(await auth.executeRest(msg), controller)
             requestTime = Date.now() - requestTime
             const counts = getCounts(resp)
             addCounts(totalCounts, counts)
@@ -890,6 +977,14 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             profiler?.time('processProfile')
             await processProfile(resp.profile, storage)
             profiler?.timeEnd('processProfile')
+
+            profiler?.time('processBreachWatchRecords')
+            await processBreachWatchRecords(resp.breachWatchRecords, storage)
+            profiler?.timeEnd('processBreachWatchRecords')
+
+            profiler?.time('processBreachWatchSecurityData')
+            await processBreachWatchSecurityData(resp.breachWatchSecurityData, storage)
+            profiler?.timeEnd('processBreachWatchSecurityData')
 
             await storage.addDependencies(dependencies)
 

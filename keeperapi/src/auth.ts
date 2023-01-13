@@ -458,7 +458,7 @@ export class Auth {
                     // TODO: loop in authHashLogin until successful or get into
                     // some other state other than Authentication.LoginState.REQUIRES_AUTH_HASH
                     if (!wrappedPassword && this.options.authUI3?.getPassword) {
-                        password = await this.options.authUI3.getPassword()
+                        password = await this.options.authUI3.getPassword(isAlternate)
                         if (password) {
                             if (typeof password === 'string') {
                                 wrappedPassword = wrapPassword(password)
@@ -477,6 +477,10 @@ export class Auth {
                     } catch (e: any) {
                         wrappedPassword = undefined
                         handleError('auth_failed', loginResponse, e)
+                        const error = e as Error
+                        if (error.cause?.message === 'No alternate master password found') {
+                            return;
+                        }
                         break;
                     }
                 case Authentication.LoginState.LOGGED_IN:
@@ -896,7 +900,11 @@ export class Auth {
         // TODO test for account transfer and account recovery
         const salt = useAlternate ? loginResponse.salt.find(s => s.name === 'alternate') : loginResponse.salt[0]
         if (!salt?.salt || !salt?.iterations) {
-            throw new Error('Salt missing from API response')
+            const error = new Error('Salt missing from API response')
+            if (useAlternate && !salt) {
+                error.cause = Error('No alternate master password found')
+            }
+            throw error
         }
 
         this.options.salt = salt.salt

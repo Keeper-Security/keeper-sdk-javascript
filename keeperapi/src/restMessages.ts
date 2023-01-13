@@ -151,6 +151,9 @@ export const startLoginMessageFromSessionToken = (data: Authentication.IStartLog
 export const syncDownMessage = (data: Vault.ISyncDownRequest): RestMessage<Vault.ISyncDownRequest, NN<Vault.ISyncDownResponse>> =>
     createMessage(data, 'vault/sync_down', Vault.SyncDownRequest, Vault.SyncDownResponse)
 
+export const getSyncData = (data: Vault.IBreachWatchGetSyncDataRequest): RestMessage<Vault.IBreachWatchGetSyncDataRequest, Vault.IBreachWatchGetSyncDataResponse> => 
+    createMessage(data, 'breachwatch/get_sync_data', Vault.BreachWatchGetSyncDataRequest, Vault.BreachWatchGetSyncDataResponse)
+
 export const keepAliveMessage = (): RestActionMessage => createActionMessage('keep_alive')
 
 export const logoutV3Message = (): RestActionMessage => createActionMessage('vault/logout_v3')
