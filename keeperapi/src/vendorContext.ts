@@ -1,4 +1,3 @@
-import {KeeperEndpoint} from "./endpoint";
 import {MSPEnterprise, EnterpriseBase, LicenseAdjustment} from "./vendorModel";
 import {TransmissionKey, VendorConfiguration} from "./configuration";
 import {platform} from './platform';
@@ -6,10 +5,19 @@ import {generateTransmissionKey, getKeeperUrl} from './utils';
 
 export class VendorContext {
 
-    private transmissionKey: TransmissionKey
+    private configuration: VendorConfiguration
+    private _transmissionKey?:TransmissionKey
 
-    constructor(private configuration: VendorConfiguration) {
-        this.transmissionKey = generateTransmissionKey(1)
+    constructor(configuration: VendorConfiguration) {
+        this.configuration = configuration
+    }
+
+    async getTransmissionKey():Promise<TransmissionKey> {
+        if(!this._transmissionKey){
+            this._transmissionKey = await generateTransmissionKey(7)
+        }
+
+        return this._transmissionKey
     }
 
     async getEnterprise(enterpriseID: number): Promise<MSPEnterprise> {
@@ -25,20 +33,21 @@ export class VendorContext {
     }
 
     async executeVendorRequest<T>(vendorPath: string, privateKey: string, payload?: any): Promise<T> {
+        this._transmissionKey = await this.getTransmissionKey()        
         let url = getKeeperUrl(this.configuration.host, `msp/v1/${vendorPath}`)
         let urlBytes = platform.stringToBytes(url.slice(url.indexOf('/rest/msp/v1/')))
         while (true) {
             let encryptedPayloadBytes = payload
-                ? await platform.aesGcmEncrypt(Buffer.from(JSON.stringify(payload)), this.transmissionKey.key)
+                ? await platform.aesGcmEncrypt(Buffer.from(JSON.stringify(payload)), this._transmissionKey.key)
                 : new Uint8Array()
-            let signatureBase = Uint8Array.of(...urlBytes, ...this.transmissionKey.encryptedKey, ...encryptedPayloadBytes)
+            let signatureBase = Uint8Array.of(...urlBytes, ...this._transmissionKey.encryptedKey, ...encryptedPayloadBytes)
             let signature = await platform.privateSign(signatureBase, privateKey)
             let response
             try {
                 let headers = {
                     Authorization: `Signature ${platform.bytesToBase64(signature)}`,
-                    TransmissionKey: platform.bytesToBase64(this.transmissionKey.encryptedKey),
-                    PublicKeyId: this.transmissionKey.publicKeyId,
+                    TransmissionKey: platform.bytesToBase64(this._transmissionKey.encryptedKey),
+                    PublicKeyId: this._transmissionKey.publicKeyId,
                 }
                 response = payload
                     ? await platform.post(url, encryptedPayloadBytes, headers)
@@ -48,14 +57,14 @@ export class VendorContext {
             }
             let decrypted
             try {
-                decrypted = await platform.aesGcmDecrypt(response.data, this.transmissionKey.key)
+                decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
                 let json = JSON.parse(platform.bytesToString(decrypted))
                 return json as T
             } catch (e) {
                 let error = platform.bytesToString(response.data)
                 let errorObj = JSON.parse(error)
                 if (errorObj.error === 'key') {
-                    this.transmissionKey = generateTransmissionKey(errorObj.key_id)
+                    this._transmissionKey = await generateTransmissionKey(errorObj.key_id)
                 } else {
                     throw(`Unable to decrypt response: ${error}`)
                 }

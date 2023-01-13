@@ -12,7 +12,7 @@ import {SocketProxy, socketSendMessage} from '../socket'
 import type {KeeperHttpResponse} from "../commands";
 
 export const nodePlatform: Platform = class {
-    static keys = keeperKeys.pem;
+    static keys = keeperKeys;
 
     // Unimplemented in NodeJS, worker threads did not appear to improve performance 
     static supportsConcurrency: boolean = false

@@ -16,7 +16,7 @@ let socket: WebSocket | null = null
 let workerPool: CryptoWorkerPool | null = null
 
 export const browserPlatform: Platform = class {
-    static keys = keeperKeys.der;
+    static keys = keeperKeys;
 
     static supportsConcurrency: boolean = true
 
