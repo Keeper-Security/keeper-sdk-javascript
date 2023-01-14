@@ -7,16 +7,21 @@ import * as WebSocket from 'faye-websocket'
 
 import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, UnwrapKeyMap} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
-import {keeperKeys} from "../transmissionKeys";
+import {getKeeperKeys} from "../transmissionKeys";
 import {SocketProxy, socketSendMessage} from '../socket'
+import { normal64 } from "../utils";
 import type {KeeperHttpResponse} from "../commands";
 
 export const nodePlatform: Platform = class {
-    static keys = keeperKeys;
-
     // Unimplemented in NodeJS, worker threads did not appear to improve performance 
     static supportsConcurrency: boolean = false
 
+    static normal64Bytes(source: string): Uint8Array {
+        return this.base64ToBytes(normal64(source));
+    }
+    
+    static keys = getKeeperKeys(this.normal64Bytes);
+    
     static getRandomBytes(length: number): Uint8Array {
         return crypto.randomBytes(length);
     }
@@ -44,7 +49,7 @@ export const nodePlatform: Platform = class {
     static unWrapPassword(password: KeyWrapper): Uint8Array {
         return password.getKey()
     }
-
+    
     static async importKey(keyId: string, key: Uint8Array, storage?: KeyStorage): Promise<void> {
         keyCache[keyId] = key
         if (storage) {
@@ -63,7 +68,7 @@ export const nodePlatform: Platform = class {
     static unloadKeys() {
         keyCache = {}
     }
-
+    
     static async unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void> {
         for (const task of Object.values(keys)) {
             try {
@@ -112,15 +117,15 @@ export const nodePlatform: Platform = class {
             case 'gcm':
                 decrypted = await nodePlatform.aesGcmDecrypt(data, key)
                 break;
-            case 'rsa':
-                decrypted = await nodePlatform.privateDecrypt(data, key)
+                case 'rsa':
+                    decrypted = await nodePlatform.privateDecrypt(data, key)
                 break;
             case 'ecc':
                 decrypted = await nodePlatform.privateDecryptEC(data, key)
                 break;
             default:
                 throw Error('Unknown encryption type: ' + encryptionType)
-        }
+            }
         return decrypted
     }
 

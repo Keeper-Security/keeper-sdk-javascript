@@ -1,7 +1,7 @@
 import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, CryptoWorkerOptions, UnwrapKeyMap} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
-import {keeperKeys} from "../transmissionKeys";
+import {getKeeperKeys} from "../transmissionKeys";
 import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
 import {SocketProxy, socketSendMessage} from '../socket'
 import * as asmCrypto from 'asmcrypto.js'
@@ -16,9 +16,14 @@ let socket: WebSocket | null = null
 let workerPool: CryptoWorkerPool | null = null
 
 export const browserPlatform: Platform = class {
-    static keys = keeperKeys;
-
+    
     static supportsConcurrency: boolean = true
+    
+    static normal64Bytes(source: string): Uint8Array {
+        return this.base64ToBytes(normal64(source));
+    }
+
+    static keys = getKeeperKeys(this.normal64Bytes);
 
     static getRandomBytes(length: number): Uint8Array {
         let data = new Uint8Array(length);
