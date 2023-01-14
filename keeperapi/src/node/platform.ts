@@ -7,16 +7,21 @@ import * as WebSocket from 'faye-websocket'
 
 import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, UnwrapKeyMap} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
-import {keeperKeys} from "../transmissionKeys";
+import {getKeeperKeys} from "../transmissionKeys";
 import {SocketProxy, socketSendMessage} from '../socket'
+import { normal64 } from "../utils";
 import type {KeeperHttpResponse} from "../commands";
 
 export const nodePlatform: Platform = class {
-    static keys = keeperKeys;
-
     // Unimplemented in NodeJS, worker threads did not appear to improve performance 
     static supportsConcurrency: boolean = false
 
+    static normal64Bytes(source: string): Uint8Array {
+        return this.base64ToBytes(normal64(source));
+    }
+    
+    static keys = getKeeperKeys(this.normal64Bytes);
+    
     static getRandomBytes(length: number): Uint8Array {
         return crypto.randomBytes(length);
     }
