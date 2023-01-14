@@ -16,6 +16,10 @@ export const nodePlatform: Platform = class {
     // Unimplemented in NodeJS, worker threads did not appear to improve performance 
     static supportsConcurrency: boolean = false
 
+    static base64ToBytes(data: string): Uint8Array {
+        return Buffer.from(data, "base64");
+    }
+
     static normal64Bytes(source: string): Uint8Array {
         return this.base64ToBytes(normal64(source));
     }
@@ -28,11 +32,7 @@ export const nodePlatform: Platform = class {
 
     static bytesToBase64(data: Uint8Array): string {
         return Buffer.from(data).toString("base64");
-    }
-
-    static base64ToBytes(data: string): Uint8Array {
-        return Buffer.from(data, "base64");
-    }
+    }    
 
     static bytesToString(data: Uint8Array): string {
         return Buffer.from(data).toString();
