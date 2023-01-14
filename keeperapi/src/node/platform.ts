@@ -49,7 +49,7 @@ export const nodePlatform: Platform = class {
     static unWrapPassword(password: KeyWrapper): Uint8Array {
         return password.getKey()
     }
-    
+
     static async importKey(keyId: string, key: Uint8Array, storage?: KeyStorage): Promise<void> {
         keyCache[keyId] = key
         if (storage) {
@@ -68,7 +68,7 @@ export const nodePlatform: Platform = class {
     static unloadKeys() {
         keyCache = {}
     }
-    
+
     static async unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void> {
         for (const task of Object.values(keys)) {
             try {
@@ -117,15 +117,15 @@ export const nodePlatform: Platform = class {
             case 'gcm':
                 decrypted = await nodePlatform.aesGcmDecrypt(data, key)
                 break;
-                case 'rsa':
-                    decrypted = await nodePlatform.privateDecrypt(data, key)
+            case 'rsa':
+                decrypted = await nodePlatform.privateDecrypt(data, key)
                 break;
             case 'ecc':
                 decrypted = await nodePlatform.privateDecryptEC(data, key)
                 break;
             default:
                 throw Error('Unknown encryption type: ' + encryptionType)
-            }
+        }
         return decrypted
     }
 
