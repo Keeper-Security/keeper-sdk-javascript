@@ -12,16 +12,18 @@ import {SocketProxy, socketSendMessage} from '../socket'
 import { normal64 } from "../utils";
 import type {KeeperHttpResponse} from "../commands";
 
+const base64ToBytes = (data: string): Uint8Array => {
+    return Buffer.from(data, "base64");
+}
+
 export const nodePlatform: Platform = class {
     // Unimplemented in NodeJS, worker threads did not appear to improve performance 
     static supportsConcurrency: boolean = false
 
-    static base64ToBytes(data: string): Uint8Array {
-        return Buffer.from(data, "base64");
-    }
+    static base64ToBytes = base64ToBytes
 
     static normal64Bytes(source: string): Uint8Array {
-        return this.base64ToBytes(normal64(source));
+        return base64ToBytes(normal64(source));
     }
     
     static keys = getKeeperKeys(this.normal64Bytes);

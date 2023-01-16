@@ -15,16 +15,18 @@ const ECC_PUB_KEY_LENGTH = 65
 let socket: WebSocket | null = null
 let workerPool: CryptoWorkerPool | null = null
 
+const base64ToBytes = (data: string): Uint8Array => {
+    return Uint8Array.from(atob(data), c => c.charCodeAt(0))
+}
+
 export const browserPlatform: Platform = class {
     
     static supportsConcurrency: boolean = true
 
-    static base64ToBytes(data: string): Uint8Array {
-        return Uint8Array.from(atob(data), c => c.charCodeAt(0))
-    }
+    static base64ToBytes = base64ToBytes
     
     static normal64Bytes(source: string): Uint8Array {
-        return this.base64ToBytes(normal64(source));
+        return base64ToBytes(normal64(source));
     }
 
     static keys = getKeeperKeys(this.normal64Bytes);
