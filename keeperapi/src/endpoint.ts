@@ -176,7 +176,7 @@ export class KeeperEndpoint {
                     switch (errorObj.error) {
                         case 'key':
                             if(isAllowedNumber(errorObj.key_id!)){
-                                this.updateTransmissionKey(errorObj.key_id!)
+                                await this.updateTransmissionKey(errorObj.key_id!)
                             } else {
                                 throw new Error('Incorrect Transmission Key ID being used.')
                             }
