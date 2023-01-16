@@ -18,6 +18,10 @@ let workerPool: CryptoWorkerPool | null = null
 export const browserPlatform: Platform = class {
     
     static supportsConcurrency: boolean = true
+
+    static base64ToBytes(data: string): Uint8Array {
+        return Uint8Array.from(atob(data), c => c.charCodeAt(0))
+    }
     
     static normal64Bytes(source: string): Uint8Array {
         return this.base64ToBytes(normal64(source));
@@ -43,11 +47,7 @@ export const browserPlatform: Platform = class {
             chunks = chunks + String.fromCharCode(...data.slice(i, i + chunkSize))
         }
         return btoa(chunks)
-    }
-
-    static base64ToBytes(data: string): Uint8Array {
-        return Uint8Array.from(atob(data), c => c.charCodeAt(0))
-    }
+    }    
 
     static bytesToString(data: Uint8Array): string {
         return new TextDecoder().decode(data)
