@@ -206,6 +206,8 @@ export const browserPlatform: Platform = class {
 
             } catch (e) {
                 console.error(`Crypto worker failed: ${e}`)
+                await workerPool?.close()
+                workerPool = null
             }
         }
 
@@ -213,7 +215,7 @@ export const browserPlatform: Platform = class {
         await Promise.all(Object.values(keys).map(async task => {
             const {data, dataId, keyId, encryptionType, unwrappedType} = task
             try {
-                await this.unwrapKey(data, dataId, keyId, encryptionType, unwrappedType, storage)
+                await this.unwrapKey(data, dataId, keyId, encryptionType, unwrappedType, storage, true)
             } catch (e: any) {
                 if (e instanceof Error && e.message === 'sync_aborted') throw e
                 console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
