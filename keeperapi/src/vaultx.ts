@@ -102,6 +102,7 @@ export type DSharedFolder = {
     kind: 'shared_folder'
     uid: string
     data: any
+    name?: string
     revision: number
     defaultCanEdit: boolean
     defaultCanShare: boolean
@@ -338,7 +339,7 @@ const processFolder = async (folderUid: string, fData: Uint8Array, shared: boole
         const decryptedData = await platform.decrypt(fData, folderUid, 'cbc', storage)
         return JSON.parse(platform.bytesToString(decryptedData))
     } catch (e: any) {
-        console.error(`The ${shared ? 'shared ' : ''}folder ${folderUid} cannot be decrypted (${e.message})`)
+        console.error(`The ${shared ? 'shared ' : ''}folder ${folderUid} data cannot be decrypted (${e.message})`)
     }
 }
 
@@ -416,14 +417,28 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
 
     for (const folder of folders as NN<ISharedFolder>[]) {
         const folderUid = webSafe64FromBytes(folder.sharedFolderUid)
-        const folderData = await processFolder(folderUid, folder.data, true, storage)
-        if (!folderData) {
+
+        // name
+        let folderName: string | undefined
+        if (folder.name.length) {
+            try {
+                const folderNameBytes = await platform.decrypt(folder.name, folderUid, 'cbc', storage)
+                folderName = platform.bytesToString(folderNameBytes)
+            } catch (e: any) {
+                console.error(`The shared folder ${folderUid} name cannot be decrypted (${e.message})`)
+            }
+        }
+
+        // data
+        let folderData = await processFolder(folderUid, folder.data, true, storage)
+        if (!folderName || !folderData) {
             continue
         }
         await storage.put({
             kind: 'shared_folder',
             uid: folderUid,
             data: folderData,
+            name: folderName,
             revision: <number>folder.revision,
             defaultCanEdit: folder.defaultCanEdit,
             defaultCanShare: folder.defaultCanReshare,
