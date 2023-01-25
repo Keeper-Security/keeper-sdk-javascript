@@ -1501,8 +1501,8 @@ export namespace Authentication {
         /** LoginResponse ssoClientVersion */
         ssoClientVersion?: (string|null);
 
-        /** LoginResponse sessionTokeTypeModifier */
-        sessionTokeTypeModifier?: (string|null);
+        /** LoginResponse sessionTokenTypeModifier */
+        sessionTokenTypeModifier?: (string|null);
     }
 
     /** Represents a LoginResponse. */
@@ -1559,8 +1559,8 @@ export namespace Authentication {
         /** LoginResponse ssoClientVersion. */
         public ssoClientVersion: string;
 
-        /** LoginResponse sessionTokeTypeModifier. */
-        public sessionTokeTypeModifier: string;
+        /** LoginResponse sessionTokenTypeModifier. */
+        public sessionTokenTypeModifier: string;
 
         /**
          * Creates a new LoginResponse instance using the specified properties.
@@ -6782,32 +6782,17 @@ export namespace Authentication {
     /** Properties of an ApiRequestByKAtoKAKey. */
     interface IApiRequestByKAtoKAKey {
 
-        /** ApiRequestByKAtoKAKey sourceRegionGroupId */
-        sourceRegionGroupId?: (number|null);
-
-        /** ApiRequestByKAtoKAKey destinationRegionGroupId */
-        destinationRegionGroupId?: (number|null);
-
-        /** ApiRequestByKAtoKAKey sourceRegionName */
-        sourceRegionName?: (string|null);
-
-        /** ApiRequestByKAtoKAKey destinationRegionName */
-        destinationRegionName?: (string|null);
+        /** ApiRequestByKAtoKAKey sourceRegion */
+        sourceRegion?: (Authentication.Region|null);
 
         /** ApiRequestByKAtoKAKey payload */
         payload?: (Uint8Array|null);
 
-        /** ApiRequestByKAtoKAKey username */
-        username?: (string|null);
-
-        /** ApiRequestByKAtoKAKey locale */
-        locale?: (string|null);
-
         /** ApiRequestByKAtoKAKey supportedLanguage */
         supportedLanguage?: (Authentication.SupportedLanguage|null);
 
-        /** ApiRequestByKAtoKAKey type */
-        type?: (number|null);
+        /** ApiRequestByKAtoKAKey destinationRegion */
+        destinationRegion?: (Authentication.Region|null);
     }
 
     /** Represents an ApiRequestByKAtoKAKey. */
@@ -6819,32 +6804,17 @@ export namespace Authentication {
          */
         constructor(properties?: Authentication.IApiRequestByKAtoKAKey);
 
-        /** ApiRequestByKAtoKAKey sourceRegionGroupId. */
-        public sourceRegionGroupId: number;
-
-        /** ApiRequestByKAtoKAKey destinationRegionGroupId. */
-        public destinationRegionGroupId: number;
-
-        /** ApiRequestByKAtoKAKey sourceRegionName. */
-        public sourceRegionName: string;
-
-        /** ApiRequestByKAtoKAKey destinationRegionName. */
-        public destinationRegionName: string;
+        /** ApiRequestByKAtoKAKey sourceRegion. */
+        public sourceRegion: Authentication.Region;
 
         /** ApiRequestByKAtoKAKey payload. */
         public payload: Uint8Array;
 
-        /** ApiRequestByKAtoKAKey username. */
-        public username: string;
-
-        /** ApiRequestByKAtoKAKey locale. */
-        public locale: string;
-
         /** ApiRequestByKAtoKAKey supportedLanguage. */
         public supportedLanguage: Authentication.SupportedLanguage;
 
-        /** ApiRequestByKAtoKAKey type. */
-        public type: number;
+        /** ApiRequestByKAtoKAKey destinationRegion. */
+        public destinationRegion: Authentication.Region;
 
         /**
          * Creates a new ApiRequestByKAtoKAKey instance using the specified properties.
@@ -10986,7 +10956,9 @@ export namespace Authentication {
         eu = 1,
         us = 2,
         usgov = 3,
-        au = 4
+        au = 4,
+        jp = 5,
+        ca = 6
     }
 
     /** ApplicationShareType enum. */
@@ -13380,6 +13352,204 @@ export namespace Authentication {
 
         /**
          * Converts this DeleteUserRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ChangeMasterPasswordRequest. */
+    interface IChangeMasterPasswordRequest {
+
+        /** ChangeMasterPasswordRequest authVerifier */
+        authVerifier?: (Uint8Array|null);
+
+        /** ChangeMasterPasswordRequest encryptionParams */
+        encryptionParams?: (Uint8Array|null);
+
+        /** ChangeMasterPasswordRequest fromServiceProvider */
+        fromServiceProvider?: (boolean|null);
+
+        /** ChangeMasterPasswordRequest iterationsChange */
+        iterationsChange?: (boolean|null);
+    }
+
+    /** Represents a ChangeMasterPasswordRequest. */
+    class ChangeMasterPasswordRequest implements IChangeMasterPasswordRequest {
+
+        /**
+         * Constructs a new ChangeMasterPasswordRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IChangeMasterPasswordRequest);
+
+        /** ChangeMasterPasswordRequest authVerifier. */
+        public authVerifier: Uint8Array;
+
+        /** ChangeMasterPasswordRequest encryptionParams. */
+        public encryptionParams: Uint8Array;
+
+        /** ChangeMasterPasswordRequest fromServiceProvider. */
+        public fromServiceProvider: boolean;
+
+        /** ChangeMasterPasswordRequest iterationsChange. */
+        public iterationsChange: boolean;
+
+        /**
+         * Creates a new ChangeMasterPasswordRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ChangeMasterPasswordRequest instance
+         */
+        public static create(properties?: Authentication.IChangeMasterPasswordRequest): Authentication.ChangeMasterPasswordRequest;
+
+        /**
+         * Encodes the specified ChangeMasterPasswordRequest message. Does not implicitly {@link Authentication.ChangeMasterPasswordRequest.verify|verify} messages.
+         * @param message ChangeMasterPasswordRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IChangeMasterPasswordRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ChangeMasterPasswordRequest message, length delimited. Does not implicitly {@link Authentication.ChangeMasterPasswordRequest.verify|verify} messages.
+         * @param message ChangeMasterPasswordRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IChangeMasterPasswordRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ChangeMasterPasswordRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ChangeMasterPasswordRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ChangeMasterPasswordRequest;
+
+        /**
+         * Decodes a ChangeMasterPasswordRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ChangeMasterPasswordRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ChangeMasterPasswordRequest;
+
+        /**
+         * Verifies a ChangeMasterPasswordRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ChangeMasterPasswordRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ChangeMasterPasswordRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ChangeMasterPasswordRequest;
+
+        /**
+         * Creates a plain object from a ChangeMasterPasswordRequest message. Also converts values to other types if specified.
+         * @param message ChangeMasterPasswordRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ChangeMasterPasswordRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ChangeMasterPasswordRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ChangeMasterPasswordResponse. */
+    interface IChangeMasterPasswordResponse {
+
+        /** ChangeMasterPasswordResponse encryptedSessionToken */
+        encryptedSessionToken?: (Uint8Array|null);
+    }
+
+    /** Represents a ChangeMasterPasswordResponse. */
+    class ChangeMasterPasswordResponse implements IChangeMasterPasswordResponse {
+
+        /**
+         * Constructs a new ChangeMasterPasswordResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IChangeMasterPasswordResponse);
+
+        /** ChangeMasterPasswordResponse encryptedSessionToken. */
+        public encryptedSessionToken: Uint8Array;
+
+        /**
+         * Creates a new ChangeMasterPasswordResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ChangeMasterPasswordResponse instance
+         */
+        public static create(properties?: Authentication.IChangeMasterPasswordResponse): Authentication.ChangeMasterPasswordResponse;
+
+        /**
+         * Encodes the specified ChangeMasterPasswordResponse message. Does not implicitly {@link Authentication.ChangeMasterPasswordResponse.verify|verify} messages.
+         * @param message ChangeMasterPasswordResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IChangeMasterPasswordResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ChangeMasterPasswordResponse message, length delimited. Does not implicitly {@link Authentication.ChangeMasterPasswordResponse.verify|verify} messages.
+         * @param message ChangeMasterPasswordResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IChangeMasterPasswordResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ChangeMasterPasswordResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ChangeMasterPasswordResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ChangeMasterPasswordResponse;
+
+        /**
+         * Decodes a ChangeMasterPasswordResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ChangeMasterPasswordResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ChangeMasterPasswordResponse;
+
+        /**
+         * Verifies a ChangeMasterPasswordResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ChangeMasterPasswordResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ChangeMasterPasswordResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ChangeMasterPasswordResponse;
+
+        /**
+         * Creates a plain object from a ChangeMasterPasswordResponse message. Also converts values to other types if specified.
+         * @param message ChangeMasterPasswordResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ChangeMasterPasswordResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ChangeMasterPasswordResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -16383,6 +16553,15 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
+    /** TransferAcceptanceStatus enum. */
+    enum TransferAcceptanceStatus {
+        UNDEFINED = 0,
+        NOT_REQUIRED = 1,
+        NOT_ACCEPTED = 2,
+        PARTIALLY_ACCEPTED = 3,
+        ACCEPTED = 4
+    }
+
     /** Properties of a User. */
     interface IUser {
 
@@ -16418,6 +16597,12 @@ export namespace Enterprise {
 
         /** User jobTitle */
         jobTitle?: (string|null);
+
+        /** User tfaEnabled */
+        tfaEnabled?: (boolean|null);
+
+        /** User transferAcceptanceStatus */
+        transferAcceptanceStatus?: (Enterprise.TransferAcceptanceStatus|null);
     }
 
     /** Represents a User. */
@@ -16461,6 +16646,12 @@ export namespace Enterprise {
 
         /** User jobTitle. */
         public jobTitle: string;
+
+        /** User tfaEnabled. */
+        public tfaEnabled: boolean;
+
+        /** User transferAcceptanceStatus. */
+        public transferAcceptanceStatus: Enterprise.TransferAcceptanceStatus;
 
         /**
          * Creates a new User instance using the specified properties.
@@ -18410,6 +18601,12 @@ export namespace Enterprise {
 
         /** MCDefault filePlanType */
         filePlanType?: (string|null);
+
+        /** MCDefault maxLicenses */
+        maxLicenses?: (number|null);
+
+        /** MCDefault fixedMaxLicenses */
+        fixedMaxLicenses?: (boolean|null);
     }
 
     /** Represents a MCDefault. */
@@ -18429,6 +18626,12 @@ export namespace Enterprise {
 
         /** MCDefault filePlanType. */
         public filePlanType: string;
+
+        /** MCDefault maxLicenses. */
+        public maxLicenses: number;
+
+        /** MCDefault fixedMaxLicenses. */
+        public fixedMaxLicenses: boolean;
 
         /**
          * Creates a new MCDefault instance using the specified properties.
@@ -27339,6 +27542,9 @@ export namespace Enterprise {
 
         /** EnterpriseUsersAdd move */
         move?: (boolean|null);
+
+        /** EnterpriseUsersAdd roleId */
+        roleId?: (number|Long|null);
     }
 
     /** Represents an EnterpriseUsersAdd. */
@@ -27379,6 +27585,9 @@ export namespace Enterprise {
 
         /** EnterpriseUsersAdd move. */
         public move: boolean;
+
+        /** EnterpriseUsersAdd roleId. */
+        public roleId: (number|Long);
 
         /**
          * Creates a new EnterpriseUsersAdd instance using the specified properties.
@@ -27685,1680 +27894,6 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a PAMController. */
-    interface IPAMController {
-
-        /** PAMController controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** PAMController controllerName */
-        controllerName?: (string|null);
-
-        /** PAMController deviceToken */
-        deviceToken?: (string|null);
-
-        /** PAMController deviceName */
-        deviceName?: (string|null);
-
-        /** PAMController nodeId */
-        nodeId?: (number|Long|null);
-
-        /** PAMController created */
-        created?: (number|Long|null);
-
-        /** PAMController lastModified */
-        lastModified?: (number|Long|null);
-
-        /** PAMController applicationUid */
-        applicationUid?: (Uint8Array|null);
-
-        /** PAMController appClientType */
-        appClientType?: (Enterprise.AppClientType|null);
-    }
-
-    /** Represents a PAMController. */
-    class PAMController implements IPAMController {
-
-        /**
-         * Constructs a new PAMController.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMController);
-
-        /** PAMController controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** PAMController controllerName. */
-        public controllerName: string;
-
-        /** PAMController deviceToken. */
-        public deviceToken: string;
-
-        /** PAMController deviceName. */
-        public deviceName: string;
-
-        /** PAMController nodeId. */
-        public nodeId: (number|Long);
-
-        /** PAMController created. */
-        public created: (number|Long);
-
-        /** PAMController lastModified. */
-        public lastModified: (number|Long);
-
-        /** PAMController applicationUid. */
-        public applicationUid: Uint8Array;
-
-        /** PAMController appClientType. */
-        public appClientType: Enterprise.AppClientType;
-
-        /**
-         * Creates a new PAMController instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMController instance
-         */
-        public static create(properties?: Enterprise.IPAMController): Enterprise.PAMController;
-
-        /**
-         * Encodes the specified PAMController message. Does not implicitly {@link Enterprise.PAMController.verify|verify} messages.
-         * @param message PAMController message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMController message, length delimited. Does not implicitly {@link Enterprise.PAMController.verify|verify} messages.
-         * @param message PAMController message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMController message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMController
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMController;
-
-        /**
-         * Decodes a PAMController message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMController
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMController;
-
-        /**
-         * Verifies a PAMController message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMController message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMController
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMController;
-
-        /**
-         * Creates a plain object from a PAMController message. Also converts values to other types if specified.
-         * @param message PAMController
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMController, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMController to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** AppClientType enum. */
-    enum AppClientType {
-        NOT_USED = 0,
-        GENERAL = 1,
-        DISCOVERY_AND_ROTATION_CONTROLLER = 2,
-        KCM_CONTROLLER = 3
-    }
-
-    /** Properties of a PAMControllersResponse. */
-    interface IPAMControllersResponse {
-
-        /** PAMControllersResponse controllers */
-        controllers?: (Enterprise.IPAMController[]|null);
-    }
-
-    /** Represents a PAMControllersResponse. */
-    class PAMControllersResponse implements IPAMControllersResponse {
-
-        /**
-         * Constructs a new PAMControllersResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMControllersResponse);
-
-        /** PAMControllersResponse controllers. */
-        public controllers: Enterprise.IPAMController[];
-
-        /**
-         * Creates a new PAMControllersResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMControllersResponse instance
-         */
-        public static create(properties?: Enterprise.IPAMControllersResponse): Enterprise.PAMControllersResponse;
-
-        /**
-         * Encodes the specified PAMControllersResponse message. Does not implicitly {@link Enterprise.PAMControllersResponse.verify|verify} messages.
-         * @param message PAMControllersResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMControllersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMControllersResponse message, length delimited. Does not implicitly {@link Enterprise.PAMControllersResponse.verify|verify} messages.
-         * @param message PAMControllersResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMControllersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMControllersResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMControllersResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMControllersResponse;
-
-        /**
-         * Decodes a PAMControllersResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMControllersResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMControllersResponse;
-
-        /**
-         * Verifies a PAMControllersResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMControllersResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMControllersResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMControllersResponse;
-
-        /**
-         * Creates a plain object from a PAMControllersResponse message. Also converts values to other types if specified.
-         * @param message PAMControllersResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMControllersResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMControllersResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMRemoveController. */
-    interface IPAMRemoveController {
-
-        /** PAMRemoveController controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** PAMRemoveController message */
-        message?: (string|null);
-    }
-
-    /** Represents a PAMRemoveController. */
-    class PAMRemoveController implements IPAMRemoveController {
-
-        /**
-         * Constructs a new PAMRemoveController.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMRemoveController);
-
-        /** PAMRemoveController controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** PAMRemoveController message. */
-        public message: string;
-
-        /**
-         * Creates a new PAMRemoveController instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMRemoveController instance
-         */
-        public static create(properties?: Enterprise.IPAMRemoveController): Enterprise.PAMRemoveController;
-
-        /**
-         * Encodes the specified PAMRemoveController message. Does not implicitly {@link Enterprise.PAMRemoveController.verify|verify} messages.
-         * @param message PAMRemoveController message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMRemoveController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMRemoveController message, length delimited. Does not implicitly {@link Enterprise.PAMRemoveController.verify|verify} messages.
-         * @param message PAMRemoveController message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMRemoveController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMRemoveController message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMRemoveController
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMRemoveController;
-
-        /**
-         * Decodes a PAMRemoveController message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMRemoveController
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMRemoveController;
-
-        /**
-         * Verifies a PAMRemoveController message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMRemoveController message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMRemoveController
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMRemoveController;
-
-        /**
-         * Creates a plain object from a PAMRemoveController message. Also converts values to other types if specified.
-         * @param message PAMRemoveController
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMRemoveController, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMRemoveController to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMRemoveControllerResponse. */
-    interface IPAMRemoveControllerResponse {
-
-        /** PAMRemoveControllerResponse controllers */
-        controllers?: (Enterprise.IPAMRemoveController[]|null);
-    }
-
-    /** Represents a PAMRemoveControllerResponse. */
-    class PAMRemoveControllerResponse implements IPAMRemoveControllerResponse {
-
-        /**
-         * Constructs a new PAMRemoveControllerResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMRemoveControllerResponse);
-
-        /** PAMRemoveControllerResponse controllers. */
-        public controllers: Enterprise.IPAMRemoveController[];
-
-        /**
-         * Creates a new PAMRemoveControllerResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMRemoveControllerResponse instance
-         */
-        public static create(properties?: Enterprise.IPAMRemoveControllerResponse): Enterprise.PAMRemoveControllerResponse;
-
-        /**
-         * Encodes the specified PAMRemoveControllerResponse message. Does not implicitly {@link Enterprise.PAMRemoveControllerResponse.verify|verify} messages.
-         * @param message PAMRemoveControllerResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMRemoveControllerResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMRemoveControllerResponse message, length delimited. Does not implicitly {@link Enterprise.PAMRemoveControllerResponse.verify|verify} messages.
-         * @param message PAMRemoveControllerResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMRemoveControllerResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMRemoveControllerResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMRemoveControllerResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMRemoveControllerResponse;
-
-        /**
-         * Decodes a PAMRemoveControllerResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMRemoveControllerResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMRemoveControllerResponse;
-
-        /**
-         * Verifies a PAMRemoveControllerResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMRemoveControllerResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMRemoveControllerResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMRemoveControllerResponse;
-
-        /**
-         * Creates a plain object from a PAMRemoveControllerResponse message. Also converts values to other types if specified.
-         * @param message PAMRemoveControllerResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMRemoveControllerResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMRemoveControllerResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMModifyRequest. */
-    interface IPAMModifyRequest {
-
-        /** PAMModifyRequest operations */
-        operations?: (Enterprise.IPAMDataOperation[]|null);
-    }
-
-    /** Represents a PAMModifyRequest. */
-    class PAMModifyRequest implements IPAMModifyRequest {
-
-        /**
-         * Constructs a new PAMModifyRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMModifyRequest);
-
-        /** PAMModifyRequest operations. */
-        public operations: Enterprise.IPAMDataOperation[];
-
-        /**
-         * Creates a new PAMModifyRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMModifyRequest instance
-         */
-        public static create(properties?: Enterprise.IPAMModifyRequest): Enterprise.PAMModifyRequest;
-
-        /**
-         * Encodes the specified PAMModifyRequest message. Does not implicitly {@link Enterprise.PAMModifyRequest.verify|verify} messages.
-         * @param message PAMModifyRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMModifyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMModifyRequest message, length delimited. Does not implicitly {@link Enterprise.PAMModifyRequest.verify|verify} messages.
-         * @param message PAMModifyRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMModifyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMModifyRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMModifyRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMModifyRequest;
-
-        /**
-         * Decodes a PAMModifyRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMModifyRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMModifyRequest;
-
-        /**
-         * Verifies a PAMModifyRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMModifyRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMModifyRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMModifyRequest;
-
-        /**
-         * Creates a plain object from a PAMModifyRequest message. Also converts values to other types if specified.
-         * @param message PAMModifyRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMModifyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMModifyRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMDataOperation. */
-    interface IPAMDataOperation {
-
-        /** PAMDataOperation operationType */
-        operationType?: (Enterprise.PAMOperationType|null);
-
-        /** PAMDataOperation configuration */
-        configuration?: (Enterprise.IPAMConfigurationData|null);
-
-        /** PAMDataOperation element */
-        element?: (Enterprise.IPAMElementData|null);
-    }
-
-    /** Represents a PAMDataOperation. */
-    class PAMDataOperation implements IPAMDataOperation {
-
-        /**
-         * Constructs a new PAMDataOperation.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMDataOperation);
-
-        /** PAMDataOperation operationType. */
-        public operationType: Enterprise.PAMOperationType;
-
-        /** PAMDataOperation configuration. */
-        public configuration?: (Enterprise.IPAMConfigurationData|null);
-
-        /** PAMDataOperation element. */
-        public element?: (Enterprise.IPAMElementData|null);
-
-        /**
-         * Creates a new PAMDataOperation instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMDataOperation instance
-         */
-        public static create(properties?: Enterprise.IPAMDataOperation): Enterprise.PAMDataOperation;
-
-        /**
-         * Encodes the specified PAMDataOperation message. Does not implicitly {@link Enterprise.PAMDataOperation.verify|verify} messages.
-         * @param message PAMDataOperation message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMDataOperation, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMDataOperation message, length delimited. Does not implicitly {@link Enterprise.PAMDataOperation.verify|verify} messages.
-         * @param message PAMDataOperation message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMDataOperation, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMDataOperation message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMDataOperation
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMDataOperation;
-
-        /**
-         * Decodes a PAMDataOperation message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMDataOperation
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMDataOperation;
-
-        /**
-         * Verifies a PAMDataOperation message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMDataOperation message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMDataOperation
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMDataOperation;
-
-        /**
-         * Creates a plain object from a PAMDataOperation message. Also converts values to other types if specified.
-         * @param message PAMDataOperation
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMDataOperation, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMDataOperation to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** PAMOperationType enum. */
-    enum PAMOperationType {
-        ADD = 0,
-        UPDATE = 1,
-        REPLACE = 2,
-        DELETE = 3
-    }
-
-    /** Properties of a PAMConfigurationData. */
-    interface IPAMConfigurationData {
-
-        /** PAMConfigurationData configurationUid */
-        configurationUid?: (Uint8Array|null);
-
-        /** PAMConfigurationData nodeId */
-        nodeId?: (number|Long|null);
-
-        /** PAMConfigurationData controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** PAMConfigurationData data */
-        data?: (Uint8Array|null);
-    }
-
-    /** Represents a PAMConfigurationData. */
-    class PAMConfigurationData implements IPAMConfigurationData {
-
-        /**
-         * Constructs a new PAMConfigurationData.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMConfigurationData);
-
-        /** PAMConfigurationData configurationUid. */
-        public configurationUid: Uint8Array;
-
-        /** PAMConfigurationData nodeId. */
-        public nodeId: (number|Long);
-
-        /** PAMConfigurationData controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** PAMConfigurationData data. */
-        public data: Uint8Array;
-
-        /**
-         * Creates a new PAMConfigurationData instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMConfigurationData instance
-         */
-        public static create(properties?: Enterprise.IPAMConfigurationData): Enterprise.PAMConfigurationData;
-
-        /**
-         * Encodes the specified PAMConfigurationData message. Does not implicitly {@link Enterprise.PAMConfigurationData.verify|verify} messages.
-         * @param message PAMConfigurationData message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMConfigurationData, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMConfigurationData message, length delimited. Does not implicitly {@link Enterprise.PAMConfigurationData.verify|verify} messages.
-         * @param message PAMConfigurationData message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMConfigurationData, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMConfigurationData message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMConfigurationData
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMConfigurationData;
-
-        /**
-         * Decodes a PAMConfigurationData message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMConfigurationData
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMConfigurationData;
-
-        /**
-         * Verifies a PAMConfigurationData message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMConfigurationData message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMConfigurationData
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMConfigurationData;
-
-        /**
-         * Creates a plain object from a PAMConfigurationData message. Also converts values to other types if specified.
-         * @param message PAMConfigurationData
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMConfigurationData, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMConfigurationData to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMElementData. */
-    interface IPAMElementData {
-
-        /** PAMElementData elementUid */
-        elementUid?: (Uint8Array|null);
-
-        /** PAMElementData parentUid */
-        parentUid?: (Uint8Array|null);
-
-        /** PAMElementData data */
-        data?: (Uint8Array|null);
-    }
-
-    /** Represents a PAMElementData. */
-    class PAMElementData implements IPAMElementData {
-
-        /**
-         * Constructs a new PAMElementData.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMElementData);
-
-        /** PAMElementData elementUid. */
-        public elementUid: Uint8Array;
-
-        /** PAMElementData parentUid. */
-        public parentUid: Uint8Array;
-
-        /** PAMElementData data. */
-        public data: Uint8Array;
-
-        /**
-         * Creates a new PAMElementData instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMElementData instance
-         */
-        public static create(properties?: Enterprise.IPAMElementData): Enterprise.PAMElementData;
-
-        /**
-         * Encodes the specified PAMElementData message. Does not implicitly {@link Enterprise.PAMElementData.verify|verify} messages.
-         * @param message PAMElementData message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMElementData, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMElementData message, length delimited. Does not implicitly {@link Enterprise.PAMElementData.verify|verify} messages.
-         * @param message PAMElementData message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMElementData, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMElementData message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMElementData
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMElementData;
-
-        /**
-         * Decodes a PAMElementData message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMElementData
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMElementData;
-
-        /**
-         * Verifies a PAMElementData message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMElementData message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMElementData
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMElementData;
-
-        /**
-         * Creates a plain object from a PAMElementData message. Also converts values to other types if specified.
-         * @param message PAMElementData
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMElementData, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMElementData to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** PAMOperationResultType enum. */
-    enum PAMOperationResultType {
-        POT_SUCCESS = 0,
-        POT_UNKNOWN_ERROR = 1,
-        POT_ALREADY_EXISTS = 2,
-        POT_DOES_NOT_EXIST = 3
-    }
-
-    /** Properties of a PAMElementOperationResult. */
-    interface IPAMElementOperationResult {
-
-        /** PAMElementOperationResult elementUid */
-        elementUid?: (Uint8Array|null);
-
-        /** PAMElementOperationResult result */
-        result?: (Enterprise.PAMOperationResultType|null);
-
-        /** PAMElementOperationResult message */
-        message?: (string|null);
-    }
-
-    /** Represents a PAMElementOperationResult. */
-    class PAMElementOperationResult implements IPAMElementOperationResult {
-
-        /**
-         * Constructs a new PAMElementOperationResult.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMElementOperationResult);
-
-        /** PAMElementOperationResult elementUid. */
-        public elementUid: Uint8Array;
-
-        /** PAMElementOperationResult result. */
-        public result: Enterprise.PAMOperationResultType;
-
-        /** PAMElementOperationResult message. */
-        public message: string;
-
-        /**
-         * Creates a new PAMElementOperationResult instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMElementOperationResult instance
-         */
-        public static create(properties?: Enterprise.IPAMElementOperationResult): Enterprise.PAMElementOperationResult;
-
-        /**
-         * Encodes the specified PAMElementOperationResult message. Does not implicitly {@link Enterprise.PAMElementOperationResult.verify|verify} messages.
-         * @param message PAMElementOperationResult message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMElementOperationResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMElementOperationResult message, length delimited. Does not implicitly {@link Enterprise.PAMElementOperationResult.verify|verify} messages.
-         * @param message PAMElementOperationResult message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMElementOperationResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMElementOperationResult message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMElementOperationResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMElementOperationResult;
-
-        /**
-         * Decodes a PAMElementOperationResult message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMElementOperationResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMElementOperationResult;
-
-        /**
-         * Verifies a PAMElementOperationResult message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMElementOperationResult message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMElementOperationResult
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMElementOperationResult;
-
-        /**
-         * Creates a plain object from a PAMElementOperationResult message. Also converts values to other types if specified.
-         * @param message PAMElementOperationResult
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMElementOperationResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMElementOperationResult to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMModifyResult. */
-    interface IPAMModifyResult {
-
-        /** PAMModifyResult results */
-        results?: (Enterprise.IPAMElementOperationResult[]|null);
-    }
-
-    /** Represents a PAMModifyResult. */
-    class PAMModifyResult implements IPAMModifyResult {
-
-        /**
-         * Constructs a new PAMModifyResult.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMModifyResult);
-
-        /** PAMModifyResult results. */
-        public results: Enterprise.IPAMElementOperationResult[];
-
-        /**
-         * Creates a new PAMModifyResult instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMModifyResult instance
-         */
-        public static create(properties?: Enterprise.IPAMModifyResult): Enterprise.PAMModifyResult;
-
-        /**
-         * Encodes the specified PAMModifyResult message. Does not implicitly {@link Enterprise.PAMModifyResult.verify|verify} messages.
-         * @param message PAMModifyResult message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMModifyResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMModifyResult message, length delimited. Does not implicitly {@link Enterprise.PAMModifyResult.verify|verify} messages.
-         * @param message PAMModifyResult message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMModifyResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMModifyResult message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMModifyResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMModifyResult;
-
-        /**
-         * Decodes a PAMModifyResult message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMModifyResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMModifyResult;
-
-        /**
-         * Verifies a PAMModifyResult message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMModifyResult message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMModifyResult
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMModifyResult;
-
-        /**
-         * Creates a plain object from a PAMModifyResult message. Also converts values to other types if specified.
-         * @param message PAMModifyResult
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMModifyResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMModifyResult to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMElement. */
-    interface IPAMElement {
-
-        /** PAMElement elementUid */
-        elementUid?: (Uint8Array|null);
-
-        /** PAMElement data */
-        data?: (Uint8Array|null);
-
-        /** PAMElement created */
-        created?: (number|Long|null);
-
-        /** PAMElement lastModified */
-        lastModified?: (number|Long|null);
-
-        /** PAMElement children */
-        children?: (Enterprise.IPAMElement[]|null);
-    }
-
-    /** Represents a PAMElement. */
-    class PAMElement implements IPAMElement {
-
-        /**
-         * Constructs a new PAMElement.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMElement);
-
-        /** PAMElement elementUid. */
-        public elementUid: Uint8Array;
-
-        /** PAMElement data. */
-        public data: Uint8Array;
-
-        /** PAMElement created. */
-        public created: (number|Long);
-
-        /** PAMElement lastModified. */
-        public lastModified: (number|Long);
-
-        /** PAMElement children. */
-        public children: Enterprise.IPAMElement[];
-
-        /**
-         * Creates a new PAMElement instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMElement instance
-         */
-        public static create(properties?: Enterprise.IPAMElement): Enterprise.PAMElement;
-
-        /**
-         * Encodes the specified PAMElement message. Does not implicitly {@link Enterprise.PAMElement.verify|verify} messages.
-         * @param message PAMElement message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMElement, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMElement message, length delimited. Does not implicitly {@link Enterprise.PAMElement.verify|verify} messages.
-         * @param message PAMElement message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMElement, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMElement message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMElement
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMElement;
-
-        /**
-         * Decodes a PAMElement message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMElement
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMElement;
-
-        /**
-         * Verifies a PAMElement message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMElement message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMElement
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMElement;
-
-        /**
-         * Creates a plain object from a PAMElement message. Also converts values to other types if specified.
-         * @param message PAMElement
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMElement, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMElement to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMGenericUidRequest. */
-    interface IPAMGenericUidRequest {
-
-        /** PAMGenericUidRequest uid */
-        uid?: (Uint8Array|null);
-    }
-
-    /** Represents a PAMGenericUidRequest. */
-    class PAMGenericUidRequest implements IPAMGenericUidRequest {
-
-        /**
-         * Constructs a new PAMGenericUidRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMGenericUidRequest);
-
-        /** PAMGenericUidRequest uid. */
-        public uid: Uint8Array;
-
-        /**
-         * Creates a new PAMGenericUidRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMGenericUidRequest instance
-         */
-        public static create(properties?: Enterprise.IPAMGenericUidRequest): Enterprise.PAMGenericUidRequest;
-
-        /**
-         * Encodes the specified PAMGenericUidRequest message. Does not implicitly {@link Enterprise.PAMGenericUidRequest.verify|verify} messages.
-         * @param message PAMGenericUidRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMGenericUidRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMGenericUidRequest message, length delimited. Does not implicitly {@link Enterprise.PAMGenericUidRequest.verify|verify} messages.
-         * @param message PAMGenericUidRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMGenericUidRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMGenericUidRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMGenericUidRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMGenericUidRequest;
-
-        /**
-         * Decodes a PAMGenericUidRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMGenericUidRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMGenericUidRequest;
-
-        /**
-         * Verifies a PAMGenericUidRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMGenericUidRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMGenericUidRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMGenericUidRequest;
-
-        /**
-         * Creates a plain object from a PAMGenericUidRequest message. Also converts values to other types if specified.
-         * @param message PAMGenericUidRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMGenericUidRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMGenericUidRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMGenericUidsRequest. */
-    interface IPAMGenericUidsRequest {
-
-        /** PAMGenericUidsRequest uids */
-        uids?: (Uint8Array[]|null);
-    }
-
-    /** Represents a PAMGenericUidsRequest. */
-    class PAMGenericUidsRequest implements IPAMGenericUidsRequest {
-
-        /**
-         * Constructs a new PAMGenericUidsRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMGenericUidsRequest);
-
-        /** PAMGenericUidsRequest uids. */
-        public uids: Uint8Array[];
-
-        /**
-         * Creates a new PAMGenericUidsRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMGenericUidsRequest instance
-         */
-        public static create(properties?: Enterprise.IPAMGenericUidsRequest): Enterprise.PAMGenericUidsRequest;
-
-        /**
-         * Encodes the specified PAMGenericUidsRequest message. Does not implicitly {@link Enterprise.PAMGenericUidsRequest.verify|verify} messages.
-         * @param message PAMGenericUidsRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMGenericUidsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMGenericUidsRequest message, length delimited. Does not implicitly {@link Enterprise.PAMGenericUidsRequest.verify|verify} messages.
-         * @param message PAMGenericUidsRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMGenericUidsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMGenericUidsRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMGenericUidsRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMGenericUidsRequest;
-
-        /**
-         * Decodes a PAMGenericUidsRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMGenericUidsRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMGenericUidsRequest;
-
-        /**
-         * Verifies a PAMGenericUidsRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMGenericUidsRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMGenericUidsRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMGenericUidsRequest;
-
-        /**
-         * Creates a plain object from a PAMGenericUidsRequest message. Also converts values to other types if specified.
-         * @param message PAMGenericUidsRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMGenericUidsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMGenericUidsRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMConfiguration. */
-    interface IPAMConfiguration {
-
-        /** PAMConfiguration configurationUid */
-        configurationUid?: (Uint8Array|null);
-
-        /** PAMConfiguration nodeId */
-        nodeId?: (number|Long|null);
-
-        /** PAMConfiguration controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** PAMConfiguration data */
-        data?: (Uint8Array|null);
-
-        /** PAMConfiguration created */
-        created?: (number|Long|null);
-
-        /** PAMConfiguration lastModified */
-        lastModified?: (number|Long|null);
-
-        /** PAMConfiguration children */
-        children?: (Enterprise.IPAMElement[]|null);
-    }
-
-    /** Represents a PAMConfiguration. */
-    class PAMConfiguration implements IPAMConfiguration {
-
-        /**
-         * Constructs a new PAMConfiguration.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMConfiguration);
-
-        /** PAMConfiguration configurationUid. */
-        public configurationUid: Uint8Array;
-
-        /** PAMConfiguration nodeId. */
-        public nodeId: (number|Long);
-
-        /** PAMConfiguration controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** PAMConfiguration data. */
-        public data: Uint8Array;
-
-        /** PAMConfiguration created. */
-        public created: (number|Long);
-
-        /** PAMConfiguration lastModified. */
-        public lastModified: (number|Long);
-
-        /** PAMConfiguration children. */
-        public children: Enterprise.IPAMElement[];
-
-        /**
-         * Creates a new PAMConfiguration instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMConfiguration instance
-         */
-        public static create(properties?: Enterprise.IPAMConfiguration): Enterprise.PAMConfiguration;
-
-        /**
-         * Encodes the specified PAMConfiguration message. Does not implicitly {@link Enterprise.PAMConfiguration.verify|verify} messages.
-         * @param message PAMConfiguration message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMConfiguration, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMConfiguration message, length delimited. Does not implicitly {@link Enterprise.PAMConfiguration.verify|verify} messages.
-         * @param message PAMConfiguration message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMConfiguration, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMConfiguration message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMConfiguration
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMConfiguration;
-
-        /**
-         * Decodes a PAMConfiguration message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMConfiguration
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMConfiguration;
-
-        /**
-         * Verifies a PAMConfiguration message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMConfiguration message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMConfiguration
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMConfiguration;
-
-        /**
-         * Creates a plain object from a PAMConfiguration message. Also converts values to other types if specified.
-         * @param message PAMConfiguration
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMConfiguration, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMConfiguration to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMConfigurations. */
-    interface IPAMConfigurations {
-
-        /** PAMConfigurations configurations */
-        configurations?: (Enterprise.IPAMConfiguration[]|null);
-    }
-
-    /** Represents a PAMConfigurations. */
-    class PAMConfigurations implements IPAMConfigurations {
-
-        /**
-         * Constructs a new PAMConfigurations.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMConfigurations);
-
-        /** PAMConfigurations configurations. */
-        public configurations: Enterprise.IPAMConfiguration[];
-
-        /**
-         * Creates a new PAMConfigurations instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMConfigurations instance
-         */
-        public static create(properties?: Enterprise.IPAMConfigurations): Enterprise.PAMConfigurations;
-
-        /**
-         * Encodes the specified PAMConfigurations message. Does not implicitly {@link Enterprise.PAMConfigurations.verify|verify} messages.
-         * @param message PAMConfigurations message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMConfigurations, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMConfigurations message, length delimited. Does not implicitly {@link Enterprise.PAMConfigurations.verify|verify} messages.
-         * @param message PAMConfigurations message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMConfigurations, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMConfigurations message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMConfigurations
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMConfigurations;
-
-        /**
-         * Decodes a PAMConfigurations message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMConfigurations
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMConfigurations;
-
-        /**
-         * Verifies a PAMConfigurations message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMConfigurations message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMConfigurations
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMConfigurations;
-
-        /**
-         * Creates a plain object from a PAMConfigurations message. Also converts values to other types if specified.
-         * @param message PAMConfigurations
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMConfigurations, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMConfigurations to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterRecordRotationRequest. */
-    interface IRouterRecordRotationRequest {
-
-        /** RouterRecordRotationRequest recordUid */
-        recordUid?: (Uint8Array|null);
-
-        /** RouterRecordRotationRequest revision */
-        revision?: (number|Long|null);
-
-        /** RouterRecordRotationRequest configurationUid */
-        configurationUid?: (Uint8Array|null);
-
-        /** RouterRecordRotationRequest schedule */
-        schedule?: (string|null);
-
-        /** RouterRecordRotationRequest enterpriseUserId */
-        enterpriseUserId?: (number|Long|null);
-
-        /** RouterRecordRotationRequest scriptName */
-        scriptName?: (string|null);
-
-        /** RouterRecordRotationRequest pwdComplexity */
-        pwdComplexity?: (string|null);
-
-        /** RouterRecordRotationRequest disabled */
-        disabled?: (boolean|null);
-    }
-
-    /** Represents a RouterRecordRotationRequest. */
-    class RouterRecordRotationRequest implements IRouterRecordRotationRequest {
-
-        /**
-         * Constructs a new RouterRecordRotationRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterRecordRotationRequest);
-
-        /** RouterRecordRotationRequest recordUid. */
-        public recordUid: Uint8Array;
-
-        /** RouterRecordRotationRequest revision. */
-        public revision: (number|Long);
-
-        /** RouterRecordRotationRequest configurationUid. */
-        public configurationUid: Uint8Array;
-
-        /** RouterRecordRotationRequest schedule. */
-        public schedule: string;
-
-        /** RouterRecordRotationRequest enterpriseUserId. */
-        public enterpriseUserId: (number|Long);
-
-        /** RouterRecordRotationRequest scriptName. */
-        public scriptName: string;
-
-        /** RouterRecordRotationRequest pwdComplexity. */
-        public pwdComplexity: string;
-
-        /** RouterRecordRotationRequest disabled. */
-        public disabled: boolean;
-
-        /**
-         * Creates a new RouterRecordRotationRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterRecordRotationRequest instance
-         */
-        public static create(properties?: Enterprise.IRouterRecordRotationRequest): Enterprise.RouterRecordRotationRequest;
-
-        /**
-         * Encodes the specified RouterRecordRotationRequest message. Does not implicitly {@link Enterprise.RouterRecordRotationRequest.verify|verify} messages.
-         * @param message RouterRecordRotationRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterRecordRotationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterRecordRotationRequest message, length delimited. Does not implicitly {@link Enterprise.RouterRecordRotationRequest.verify|verify} messages.
-         * @param message RouterRecordRotationRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterRecordRotationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterRecordRotationRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterRecordRotationRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterRecordRotationRequest;
-
-        /**
-         * Decodes a RouterRecordRotationRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterRecordRotationRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterRecordRotationRequest;
-
-        /**
-         * Verifies a RouterRecordRotationRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterRecordRotationRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterRecordRotationRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterRecordRotationRequest;
-
-        /**
-         * Creates a plain object from a RouterRecordRotationRequest message. Also converts values to other types if specified.
-         * @param message RouterRecordRotationRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterRecordRotationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterRecordRotationRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
     /** Properties of an UpdateMSPPermitsRequest. */
     interface IUpdateMSPPermitsRequest {
 
@@ -29479,1482 +28014,12 @@ export namespace Enterprise {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a PAMRotateRequest. */
-    interface IPAMRotateRequest {
-
-        /** PAMRotateRequest requestUid */
-        requestUid?: (Uint8Array|null);
-
-        /** PAMRotateRequest recordUid */
-        recordUid?: (Uint8Array|null);
-    }
-
-    /** Represents a PAMRotateRequest. */
-    class PAMRotateRequest implements IPAMRotateRequest {
-
-        /**
-         * Constructs a new PAMRotateRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMRotateRequest);
-
-        /** PAMRotateRequest requestUid. */
-        public requestUid: Uint8Array;
-
-        /** PAMRotateRequest recordUid. */
-        public recordUid: Uint8Array;
-
-        /**
-         * Creates a new PAMRotateRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMRotateRequest instance
-         */
-        public static create(properties?: Enterprise.IPAMRotateRequest): Enterprise.PAMRotateRequest;
-
-        /**
-         * Encodes the specified PAMRotateRequest message. Does not implicitly {@link Enterprise.PAMRotateRequest.verify|verify} messages.
-         * @param message PAMRotateRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMRotateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMRotateRequest message, length delimited. Does not implicitly {@link Enterprise.PAMRotateRequest.verify|verify} messages.
-         * @param message PAMRotateRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMRotateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMRotateRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMRotateRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMRotateRequest;
-
-        /**
-         * Decodes a PAMRotateRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMRotateRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMRotateRequest;
-
-        /**
-         * Verifies a PAMRotateRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMRotateRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMRotateRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMRotateRequest;
-
-        /**
-         * Creates a plain object from a PAMRotateRequest message. Also converts values to other types if specified.
-         * @param message PAMRotateRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMRotateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMRotateRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** RouterRotationStatus enum. */
-    enum RouterRotationStatus {
-        RRS_ONLINE = 0,
-        RRS_NO_ROTATION = 1,
-        RRS_NO_CONTROLLER = 2,
-        RRS_CONTROLLER_DOWN = 3
-    }
-
-    /** Properties of a RouterRotationInfo. */
-    interface IRouterRotationInfo {
-
-        /** RouterRotationInfo status */
-        status?: (Enterprise.RouterRotationStatus|null);
-
-        /** RouterRotationInfo configurationUid */
-        configurationUid?: (Uint8Array|null);
-
-        /** RouterRotationInfo controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** RouterRotationInfo controllerName */
-        controllerName?: (string|null);
-
-        /** RouterRotationInfo cookie */
-        cookie?: (string|null);
-
-        /** RouterRotationInfo scriptName */
-        scriptName?: (string|null);
-
-        /** RouterRotationInfo pwdComplexity */
-        pwdComplexity?: (string|null);
-
-        /** RouterRotationInfo disabled */
-        disabled?: (boolean|null);
-    }
-
-    /** Represents a RouterRotationInfo. */
-    class RouterRotationInfo implements IRouterRotationInfo {
-
-        /**
-         * Constructs a new RouterRotationInfo.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterRotationInfo);
-
-        /** RouterRotationInfo status. */
-        public status: Enterprise.RouterRotationStatus;
-
-        /** RouterRotationInfo configurationUid. */
-        public configurationUid: Uint8Array;
-
-        /** RouterRotationInfo controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** RouterRotationInfo controllerName. */
-        public controllerName: string;
-
-        /** RouterRotationInfo cookie. */
-        public cookie: string;
-
-        /** RouterRotationInfo scriptName. */
-        public scriptName: string;
-
-        /** RouterRotationInfo pwdComplexity. */
-        public pwdComplexity: string;
-
-        /** RouterRotationInfo disabled. */
-        public disabled: boolean;
-
-        /**
-         * Creates a new RouterRotationInfo instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterRotationInfo instance
-         */
-        public static create(properties?: Enterprise.IRouterRotationInfo): Enterprise.RouterRotationInfo;
-
-        /**
-         * Encodes the specified RouterRotationInfo message. Does not implicitly {@link Enterprise.RouterRotationInfo.verify|verify} messages.
-         * @param message RouterRotationInfo message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterRotationInfo, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterRotationInfo message, length delimited. Does not implicitly {@link Enterprise.RouterRotationInfo.verify|verify} messages.
-         * @param message RouterRotationInfo message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterRotationInfo, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterRotationInfo message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterRotationInfo
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterRotationInfo;
-
-        /**
-         * Decodes a RouterRotationInfo message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterRotationInfo
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterRotationInfo;
-
-        /**
-         * Verifies a RouterRotationInfo message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterRotationInfo message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterRotationInfo
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterRotationInfo;
-
-        /**
-         * Creates a plain object from a RouterRotationInfo message. Also converts values to other types if specified.
-         * @param message RouterRotationInfo
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterRotationInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterRotationInfo to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterControllerMessage. */
-    interface IRouterControllerMessage {
-
-        /** RouterControllerMessage messageUid */
-        messageUid?: (Uint8Array|null);
-
-        /** RouterControllerMessage controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** RouterControllerMessage stream */
-        stream?: (boolean|null);
-
-        /** RouterControllerMessage payload */
-        payload?: (Uint8Array|null);
-    }
-
-    /** Represents a RouterControllerMessage. */
-    class RouterControllerMessage implements IRouterControllerMessage {
-
-        /**
-         * Constructs a new RouterControllerMessage.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterControllerMessage);
-
-        /** RouterControllerMessage messageUid. */
-        public messageUid: Uint8Array;
-
-        /** RouterControllerMessage controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** RouterControllerMessage stream. */
-        public stream: boolean;
-
-        /** RouterControllerMessage payload. */
-        public payload: Uint8Array;
-
-        /**
-         * Creates a new RouterControllerMessage instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterControllerMessage instance
-         */
-        public static create(properties?: Enterprise.IRouterControllerMessage): Enterprise.RouterControllerMessage;
-
-        /**
-         * Encodes the specified RouterControllerMessage message. Does not implicitly {@link Enterprise.RouterControllerMessage.verify|verify} messages.
-         * @param message RouterControllerMessage message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterControllerMessage, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterControllerMessage message, length delimited. Does not implicitly {@link Enterprise.RouterControllerMessage.verify|verify} messages.
-         * @param message RouterControllerMessage message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterControllerMessage, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterControllerMessage message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterControllerMessage
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterControllerMessage;
-
-        /**
-         * Decodes a RouterControllerMessage message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterControllerMessage
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterControllerMessage;
-
-        /**
-         * Verifies a RouterControllerMessage message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterControllerMessage message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterControllerMessage
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterControllerMessage;
-
-        /**
-         * Creates a plain object from a RouterControllerMessage message. Also converts values to other types if specified.
-         * @param message RouterControllerMessage
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterControllerMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterControllerMessage to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterUserAuth. */
-    interface IRouterUserAuth {
-
-        /** RouterUserAuth transmissionKey */
-        transmissionKey?: (Uint8Array|null);
-
-        /** RouterUserAuth sessionToken */
-        sessionToken?: (Uint8Array|null);
-
-        /** RouterUserAuth enterpriseUserId */
-        enterpriseUserId?: (number|Long|null);
-
-        /** RouterUserAuth deviceName */
-        deviceName?: (string|null);
-
-        /** RouterUserAuth deviceToken */
-        deviceToken?: (Uint8Array|null);
-    }
-
-    /** Represents a RouterUserAuth. */
-    class RouterUserAuth implements IRouterUserAuth {
-
-        /**
-         * Constructs a new RouterUserAuth.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterUserAuth);
-
-        /** RouterUserAuth transmissionKey. */
-        public transmissionKey: Uint8Array;
-
-        /** RouterUserAuth sessionToken. */
-        public sessionToken: Uint8Array;
-
-        /** RouterUserAuth enterpriseUserId. */
-        public enterpriseUserId: (number|Long);
-
-        /** RouterUserAuth deviceName. */
-        public deviceName: string;
-
-        /** RouterUserAuth deviceToken. */
-        public deviceToken: Uint8Array;
-
-        /**
-         * Creates a new RouterUserAuth instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterUserAuth instance
-         */
-        public static create(properties?: Enterprise.IRouterUserAuth): Enterprise.RouterUserAuth;
-
-        /**
-         * Encodes the specified RouterUserAuth message. Does not implicitly {@link Enterprise.RouterUserAuth.verify|verify} messages.
-         * @param message RouterUserAuth message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterUserAuth, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterUserAuth message, length delimited. Does not implicitly {@link Enterprise.RouterUserAuth.verify|verify} messages.
-         * @param message RouterUserAuth message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterUserAuth, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterUserAuth message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterUserAuth
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterUserAuth;
-
-        /**
-         * Decodes a RouterUserAuth message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterUserAuth
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterUserAuth;
-
-        /**
-         * Verifies a RouterUserAuth message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterUserAuth message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterUserAuth
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterUserAuth;
-
-        /**
-         * Creates a plain object from a RouterUserAuth message. Also converts values to other types if specified.
-         * @param message RouterUserAuth
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterUserAuth, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterUserAuth to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterDeviceAuth. */
-    interface IRouterDeviceAuth {
-
-        /** RouterDeviceAuth clientId */
-        clientId?: (string|null);
-
-        /** RouterDeviceAuth clientVersion */
-        clientVersion?: (string|null);
-
-        /** RouterDeviceAuth enterpriseId */
-        enterpriseId?: (number|null);
-
-        /** RouterDeviceAuth deviceName */
-        deviceName?: (string|null);
-
-        /** RouterDeviceAuth deviceToken */
-        deviceToken?: (Uint8Array|null);
-
-        /** RouterDeviceAuth controllerName */
-        controllerName?: (string|null);
-
-        /** RouterDeviceAuth controllerUid */
-        controllerUid?: (Uint8Array|null);
-    }
-
-    /** Represents a RouterDeviceAuth. */
-    class RouterDeviceAuth implements IRouterDeviceAuth {
-
-        /**
-         * Constructs a new RouterDeviceAuth.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterDeviceAuth);
-
-        /** RouterDeviceAuth clientId. */
-        public clientId: string;
-
-        /** RouterDeviceAuth clientVersion. */
-        public clientVersion: string;
-
-        /** RouterDeviceAuth enterpriseId. */
-        public enterpriseId: number;
-
-        /** RouterDeviceAuth deviceName. */
-        public deviceName: string;
-
-        /** RouterDeviceAuth deviceToken. */
-        public deviceToken: Uint8Array;
-
-        /** RouterDeviceAuth controllerName. */
-        public controllerName: string;
-
-        /** RouterDeviceAuth controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /**
-         * Creates a new RouterDeviceAuth instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterDeviceAuth instance
-         */
-        public static create(properties?: Enterprise.IRouterDeviceAuth): Enterprise.RouterDeviceAuth;
-
-        /**
-         * Encodes the specified RouterDeviceAuth message. Does not implicitly {@link Enterprise.RouterDeviceAuth.verify|verify} messages.
-         * @param message RouterDeviceAuth message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterDeviceAuth, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterDeviceAuth message, length delimited. Does not implicitly {@link Enterprise.RouterDeviceAuth.verify|verify} messages.
-         * @param message RouterDeviceAuth message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterDeviceAuth, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterDeviceAuth message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterDeviceAuth
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterDeviceAuth;
-
-        /**
-         * Decodes a RouterDeviceAuth message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterDeviceAuth
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterDeviceAuth;
-
-        /**
-         * Verifies a RouterDeviceAuth message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterDeviceAuth message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterDeviceAuth
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterDeviceAuth;
-
-        /**
-         * Creates a plain object from a RouterDeviceAuth message. Also converts values to other types if specified.
-         * @param message RouterDeviceAuth
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterDeviceAuth, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterDeviceAuth to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterRecordRotation. */
-    interface IRouterRecordRotation {
-
-        /** RouterRecordRotation recordUid */
-        recordUid?: (Uint8Array|null);
-
-        /** RouterRecordRotation configurationUid */
-        configurationUid?: (Uint8Array|null);
-
-        /** RouterRecordRotation controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** RouterRecordRotation noSchedule */
-        noSchedule?: (boolean|null);
-    }
-
-    /** Represents a RouterRecordRotation. */
-    class RouterRecordRotation implements IRouterRecordRotation {
-
-        /**
-         * Constructs a new RouterRecordRotation.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterRecordRotation);
-
-        /** RouterRecordRotation recordUid. */
-        public recordUid: Uint8Array;
-
-        /** RouterRecordRotation configurationUid. */
-        public configurationUid: Uint8Array;
-
-        /** RouterRecordRotation controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** RouterRecordRotation noSchedule. */
-        public noSchedule: boolean;
-
-        /**
-         * Creates a new RouterRecordRotation instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterRecordRotation instance
-         */
-        public static create(properties?: Enterprise.IRouterRecordRotation): Enterprise.RouterRecordRotation;
-
-        /**
-         * Encodes the specified RouterRecordRotation message. Does not implicitly {@link Enterprise.RouterRecordRotation.verify|verify} messages.
-         * @param message RouterRecordRotation message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterRecordRotation, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterRecordRotation message, length delimited. Does not implicitly {@link Enterprise.RouterRecordRotation.verify|verify} messages.
-         * @param message RouterRecordRotation message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterRecordRotation, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterRecordRotation message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterRecordRotation
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterRecordRotation;
-
-        /**
-         * Decodes a RouterRecordRotation message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterRecordRotation
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterRecordRotation;
-
-        /**
-         * Verifies a RouterRecordRotation message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterRecordRotation message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterRecordRotation
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterRecordRotation;
-
-        /**
-         * Creates a plain object from a RouterRecordRotation message. Also converts values to other types if specified.
-         * @param message RouterRecordRotation
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterRecordRotation, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterRecordRotation to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterRecordRotationsRequest. */
-    interface IRouterRecordRotationsRequest {
-
-        /** RouterRecordRotationsRequest enterpriseId */
-        enterpriseId?: (number|null);
-
-        /** RouterRecordRotationsRequest records */
-        records?: (Uint8Array[]|null);
-    }
-
-    /** Represents a RouterRecordRotationsRequest. */
-    class RouterRecordRotationsRequest implements IRouterRecordRotationsRequest {
-
-        /**
-         * Constructs a new RouterRecordRotationsRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterRecordRotationsRequest);
-
-        /** RouterRecordRotationsRequest enterpriseId. */
-        public enterpriseId: number;
-
-        /** RouterRecordRotationsRequest records. */
-        public records: Uint8Array[];
-
-        /**
-         * Creates a new RouterRecordRotationsRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterRecordRotationsRequest instance
-         */
-        public static create(properties?: Enterprise.IRouterRecordRotationsRequest): Enterprise.RouterRecordRotationsRequest;
-
-        /**
-         * Encodes the specified RouterRecordRotationsRequest message. Does not implicitly {@link Enterprise.RouterRecordRotationsRequest.verify|verify} messages.
-         * @param message RouterRecordRotationsRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterRecordRotationsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterRecordRotationsRequest message, length delimited. Does not implicitly {@link Enterprise.RouterRecordRotationsRequest.verify|verify} messages.
-         * @param message RouterRecordRotationsRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterRecordRotationsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterRecordRotationsRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterRecordRotationsRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterRecordRotationsRequest;
-
-        /**
-         * Decodes a RouterRecordRotationsRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterRecordRotationsRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterRecordRotationsRequest;
-
-        /**
-         * Verifies a RouterRecordRotationsRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterRecordRotationsRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterRecordRotationsRequest
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterRecordRotationsRequest;
-
-        /**
-         * Creates a plain object from a RouterRecordRotationsRequest message. Also converts values to other types if specified.
-         * @param message RouterRecordRotationsRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterRecordRotationsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterRecordRotationsRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a RouterRecordRotationsResponse. */
-    interface IRouterRecordRotationsResponse {
-
-        /** RouterRecordRotationsResponse rotations */
-        rotations?: (Enterprise.IRouterRecordRotation[]|null);
-
-        /** RouterRecordRotationsResponse hasMore */
-        hasMore?: (boolean|null);
-    }
-
-    /** Represents a RouterRecordRotationsResponse. */
-    class RouterRecordRotationsResponse implements IRouterRecordRotationsResponse {
-
-        /**
-         * Constructs a new RouterRecordRotationsResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterRecordRotationsResponse);
-
-        /** RouterRecordRotationsResponse rotations. */
-        public rotations: Enterprise.IRouterRecordRotation[];
-
-        /** RouterRecordRotationsResponse hasMore. */
-        public hasMore: boolean;
-
-        /**
-         * Creates a new RouterRecordRotationsResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterRecordRotationsResponse instance
-         */
-        public static create(properties?: Enterprise.IRouterRecordRotationsResponse): Enterprise.RouterRecordRotationsResponse;
-
-        /**
-         * Encodes the specified RouterRecordRotationsResponse message. Does not implicitly {@link Enterprise.RouterRecordRotationsResponse.verify|verify} messages.
-         * @param message RouterRecordRotationsResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterRecordRotationsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterRecordRotationsResponse message, length delimited. Does not implicitly {@link Enterprise.RouterRecordRotationsResponse.verify|verify} messages.
-         * @param message RouterRecordRotationsResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterRecordRotationsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterRecordRotationsResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterRecordRotationsResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterRecordRotationsResponse;
-
-        /**
-         * Decodes a RouterRecordRotationsResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterRecordRotationsResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterRecordRotationsResponse;
-
-        /**
-         * Verifies a RouterRecordRotationsResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterRecordRotationsResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterRecordRotationsResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterRecordRotationsResponse;
-
-        /**
-         * Creates a plain object from a RouterRecordRotationsResponse message. Also converts values to other types if specified.
-         * @param message RouterRecordRotationsResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterRecordRotationsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterRecordRotationsResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMRotationSchedule. */
-    interface IPAMRotationSchedule {
-
-        /** PAMRotationSchedule recordUid */
-        recordUid?: (Uint8Array|null);
-
-        /** PAMRotationSchedule configurationUid */
-        configurationUid?: (Uint8Array|null);
-
-        /** PAMRotationSchedule controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** PAMRotationSchedule scheduleData */
-        scheduleData?: (string|null);
-
-        /** PAMRotationSchedule noSchedule */
-        noSchedule?: (boolean|null);
-    }
-
-    /** Represents a PAMRotationSchedule. */
-    class PAMRotationSchedule implements IPAMRotationSchedule {
-
-        /**
-         * Constructs a new PAMRotationSchedule.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMRotationSchedule);
-
-        /** PAMRotationSchedule recordUid. */
-        public recordUid: Uint8Array;
-
-        /** PAMRotationSchedule configurationUid. */
-        public configurationUid: Uint8Array;
-
-        /** PAMRotationSchedule controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** PAMRotationSchedule scheduleData. */
-        public scheduleData: string;
-
-        /** PAMRotationSchedule noSchedule. */
-        public noSchedule: boolean;
-
-        /**
-         * Creates a new PAMRotationSchedule instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMRotationSchedule instance
-         */
-        public static create(properties?: Enterprise.IPAMRotationSchedule): Enterprise.PAMRotationSchedule;
-
-        /**
-         * Encodes the specified PAMRotationSchedule message. Does not implicitly {@link Enterprise.PAMRotationSchedule.verify|verify} messages.
-         * @param message PAMRotationSchedule message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMRotationSchedule, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMRotationSchedule message, length delimited. Does not implicitly {@link Enterprise.PAMRotationSchedule.verify|verify} messages.
-         * @param message PAMRotationSchedule message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMRotationSchedule, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMRotationSchedule message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMRotationSchedule
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMRotationSchedule;
-
-        /**
-         * Decodes a PAMRotationSchedule message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMRotationSchedule
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMRotationSchedule;
-
-        /**
-         * Verifies a PAMRotationSchedule message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMRotationSchedule message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMRotationSchedule
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMRotationSchedule;
-
-        /**
-         * Creates a plain object from a PAMRotationSchedule message. Also converts values to other types if specified.
-         * @param message PAMRotationSchedule
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMRotationSchedule, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMRotationSchedule to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMRotationSchedulesResponse. */
-    interface IPAMRotationSchedulesResponse {
-
-        /** PAMRotationSchedulesResponse schedules */
-        schedules?: (Enterprise.IPAMRotationSchedule[]|null);
-    }
-
-    /** Represents a PAMRotationSchedulesResponse. */
-    class PAMRotationSchedulesResponse implements IPAMRotationSchedulesResponse {
-
-        /**
-         * Constructs a new PAMRotationSchedulesResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMRotationSchedulesResponse);
-
-        /** PAMRotationSchedulesResponse schedules. */
-        public schedules: Enterprise.IPAMRotationSchedule[];
-
-        /**
-         * Creates a new PAMRotationSchedulesResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMRotationSchedulesResponse instance
-         */
-        public static create(properties?: Enterprise.IPAMRotationSchedulesResponse): Enterprise.PAMRotationSchedulesResponse;
-
-        /**
-         * Encodes the specified PAMRotationSchedulesResponse message. Does not implicitly {@link Enterprise.PAMRotationSchedulesResponse.verify|verify} messages.
-         * @param message PAMRotationSchedulesResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMRotationSchedulesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMRotationSchedulesResponse message, length delimited. Does not implicitly {@link Enterprise.PAMRotationSchedulesResponse.verify|verify} messages.
-         * @param message PAMRotationSchedulesResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMRotationSchedulesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMRotationSchedulesResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMRotationSchedulesResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMRotationSchedulesResponse;
-
-        /**
-         * Decodes a PAMRotationSchedulesResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMRotationSchedulesResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMRotationSchedulesResponse;
-
-        /**
-         * Verifies a PAMRotationSchedulesResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMRotationSchedulesResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMRotationSchedulesResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMRotationSchedulesResponse;
-
-        /**
-         * Creates a plain object from a PAMRotationSchedulesResponse message. Also converts values to other types if specified.
-         * @param message PAMRotationSchedulesResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMRotationSchedulesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMRotationSchedulesResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMOnlineController. */
-    interface IPAMOnlineController {
-
-        /** PAMOnlineController controllerUid */
-        controllerUid?: (Uint8Array|null);
-
-        /** PAMOnlineController cookie */
-        cookie?: (string|null);
-    }
-
-    /** Represents a PAMOnlineController. */
-    class PAMOnlineController implements IPAMOnlineController {
-
-        /**
-         * Constructs a new PAMOnlineController.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMOnlineController);
-
-        /** PAMOnlineController controllerUid. */
-        public controllerUid: Uint8Array;
-
-        /** PAMOnlineController cookie. */
-        public cookie: string;
-
-        /**
-         * Creates a new PAMOnlineController instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMOnlineController instance
-         */
-        public static create(properties?: Enterprise.IPAMOnlineController): Enterprise.PAMOnlineController;
-
-        /**
-         * Encodes the specified PAMOnlineController message. Does not implicitly {@link Enterprise.PAMOnlineController.verify|verify} messages.
-         * @param message PAMOnlineController message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMOnlineController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMOnlineController message, length delimited. Does not implicitly {@link Enterprise.PAMOnlineController.verify|verify} messages.
-         * @param message PAMOnlineController message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMOnlineController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMOnlineController message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMOnlineController
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMOnlineController;
-
-        /**
-         * Decodes a PAMOnlineController message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMOnlineController
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMOnlineController;
-
-        /**
-         * Verifies a PAMOnlineController message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMOnlineController message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMOnlineController
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMOnlineController;
-
-        /**
-         * Creates a plain object from a PAMOnlineController message. Also converts values to other types if specified.
-         * @param message PAMOnlineController
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMOnlineController, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMOnlineController to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a PAMOnlineControllers. */
-    interface IPAMOnlineControllers {
-
-        /** PAMOnlineControllers controllers */
-        controllers?: (Enterprise.IPAMOnlineController[]|null);
-    }
-
-    /** Represents a PAMOnlineControllers. */
-    class PAMOnlineControllers implements IPAMOnlineControllers {
-
-        /**
-         * Constructs a new PAMOnlineControllers.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IPAMOnlineControllers);
-
-        /** PAMOnlineControllers controllers. */
-        public controllers: Enterprise.IPAMOnlineController[];
-
-        /**
-         * Creates a new PAMOnlineControllers instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PAMOnlineControllers instance
-         */
-        public static create(properties?: Enterprise.IPAMOnlineControllers): Enterprise.PAMOnlineControllers;
-
-        /**
-         * Encodes the specified PAMOnlineControllers message. Does not implicitly {@link Enterprise.PAMOnlineControllers.verify|verify} messages.
-         * @param message PAMOnlineControllers message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IPAMOnlineControllers, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PAMOnlineControllers message, length delimited. Does not implicitly {@link Enterprise.PAMOnlineControllers.verify|verify} messages.
-         * @param message PAMOnlineControllers message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IPAMOnlineControllers, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PAMOnlineControllers message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PAMOnlineControllers
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.PAMOnlineControllers;
-
-        /**
-         * Decodes a PAMOnlineControllers message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PAMOnlineControllers
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.PAMOnlineControllers;
-
-        /**
-         * Verifies a PAMOnlineControllers message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PAMOnlineControllers message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PAMOnlineControllers
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.PAMOnlineControllers;
-
-        /**
-         * Creates a plain object from a PAMOnlineControllers message. Also converts values to other types if specified.
-         * @param message PAMOnlineControllers
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.PAMOnlineControllers, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PAMOnlineControllers to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** RouterResponseCode enum. */
-    enum RouterResponseCode {
-        RRC_OK = 0,
-        RRC_GENERAL_ERROR = 1,
-        RRC_NOT_ALLOWED = 2,
-        RRC_BAD_REQUEST = 3,
-        RRC_TIMEOUT = 4,
-        RRC_BAD_STATE = 5,
-        RRC_CONTROLLER_DOWN = 6,
-        RRC_WRONG_INSTANCE = 7
-    }
-
-    /** Properties of a RouterResponse. */
-    interface IRouterResponse {
-
-        /** RouterResponse responseCode */
-        responseCode?: (Enterprise.RouterResponseCode|null);
-
-        /** RouterResponse errorMessage */
-        errorMessage?: (string|null);
-
-        /** RouterResponse encryptedPayload */
-        encryptedPayload?: (Uint8Array|null);
-    }
-
-    /** Represents a RouterResponse. */
-    class RouterResponse implements IRouterResponse {
-
-        /**
-         * Constructs a new RouterResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IRouterResponse);
-
-        /** RouterResponse responseCode. */
-        public responseCode: Enterprise.RouterResponseCode;
-
-        /** RouterResponse errorMessage. */
-        public errorMessage: string;
-
-        /** RouterResponse encryptedPayload. */
-        public encryptedPayload: Uint8Array;
-
-        /**
-         * Creates a new RouterResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns RouterResponse instance
-         */
-        public static create(properties?: Enterprise.IRouterResponse): Enterprise.RouterResponse;
-
-        /**
-         * Encodes the specified RouterResponse message. Does not implicitly {@link Enterprise.RouterResponse.verify|verify} messages.
-         * @param message RouterResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IRouterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified RouterResponse message, length delimited. Does not implicitly {@link Enterprise.RouterResponse.verify|verify} messages.
-         * @param message RouterResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IRouterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a RouterResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns RouterResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RouterResponse;
-
-        /**
-         * Decodes a RouterResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns RouterResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RouterResponse;
-
-        /**
-         * Verifies a RouterResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a RouterResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns RouterResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.RouterResponse;
-
-        /**
-         * Creates a plain object from a RouterResponse message. Also converts values to other types if specified.
-         * @param message RouterResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.RouterResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this RouterResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of a ControllerResponse. */
-    interface IControllerResponse {
-
-        /** ControllerResponse payload */
-        payload?: (string|null);
-    }
-
-    /** Represents a ControllerResponse. */
-    class ControllerResponse implements IControllerResponse {
-
-        /**
-         * Constructs a new ControllerResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: Enterprise.IControllerResponse);
-
-        /** ControllerResponse payload. */
-        public payload: string;
-
-        /**
-         * Creates a new ControllerResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ControllerResponse instance
-         */
-        public static create(properties?: Enterprise.IControllerResponse): Enterprise.ControllerResponse;
-
-        /**
-         * Encodes the specified ControllerResponse message. Does not implicitly {@link Enterprise.ControllerResponse.verify|verify} messages.
-         * @param message ControllerResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: Enterprise.IControllerResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ControllerResponse message, length delimited. Does not implicitly {@link Enterprise.ControllerResponse.verify|verify} messages.
-         * @param message ControllerResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: Enterprise.IControllerResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ControllerResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ControllerResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ControllerResponse;
-
-        /**
-         * Decodes a ControllerResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ControllerResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ControllerResponse;
-
-        /**
-         * Verifies a ControllerResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ControllerResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ControllerResponse
-         */
-        public static fromObject(object: { [k: string]: any }): Enterprise.ControllerResponse;
-
-        /**
-         * Creates a plain object from a ControllerResponse message. Also converts values to other types if specified.
-         * @param message ControllerResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: Enterprise.ControllerResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ControllerResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
+    /** AppClientType enum. */
+    enum AppClientType {
+        NOT_USED = 0,
+        GENERAL = 1,
+        DISCOVERY_AND_ROTATION_CONTROLLER = 2,
+        KCM_CONTROLLER = 3
     }
 }
 
@@ -45084,7 +42149,7 @@ export namespace Tokens {
         NOT_SHARED_DATA = 31,
         SHARING_CHANGE = 32,
         USER_FOLDER_RECORD1 = 33,
-        USER_FOLDER_RECORD2 = 34,
+        USER_FOLDER_RECORD2_DEPRECATED = 34,
         USER_FOLDER_RECORD_REMOVED = 35,
         BREACH_WATCH_RECORD1 = 36,
         BREACH_WATCH_RECORD2 = 37,
@@ -45102,7 +42167,9 @@ export namespace Tokens {
         USER1 = 49,
         USER2 = 50,
         USER3 = 51,
-        USER_REMOVED = 52
+        USER4 = 52,
+        USER5 = 53,
+        USER_REMOVED = 54
     }
 
     /** Properties of a Position. */
@@ -52059,7 +49126,8 @@ export namespace Records {
     enum RecordTypeScope {
         RT_STANDARD = 0,
         RT_USER = 1,
-        RT_ENTERPRISE = 2
+        RT_ENTERPRISE = 2,
+        RT_PAM = 3
     }
 
     /** Properties of a RecordType. */
@@ -52175,6 +49243,9 @@ export namespace Records {
 
         /** RecordTypesRequest enterprise */
         enterprise?: (boolean|null);
+
+        /** RecordTypesRequest pam */
+        pam?: (boolean|null);
     }
 
     /** Represents a RecordTypesRequest. */
@@ -52194,6 +49265,9 @@ export namespace Records {
 
         /** RecordTypesRequest enterprise. */
         public enterprise: boolean;
+
+        /** RecordTypesRequest pam. */
+        public pam: boolean;
 
         /**
          * Creates a new RecordTypesRequest instance using the specified properties.
@@ -52280,6 +49354,9 @@ export namespace Records {
 
         /** RecordTypesResponse enterpriseCounter */
         enterpriseCounter?: (number|null);
+
+        /** RecordTypesResponse pamCounter */
+        pamCounter?: (number|null);
     }
 
     /** Represents a RecordTypesResponse. */
@@ -52302,6 +49379,9 @@ export namespace Records {
 
         /** RecordTypesResponse enterpriseCounter. */
         public enterpriseCounter: number;
+
+        /** RecordTypesResponse pamCounter. */
+        public pamCounter: number;
 
         /**
          * Creates a new RecordTypesResponse instance using the specified properties.
@@ -56967,6 +54047,9 @@ export namespace Records {
 
         /** SharedRecord removeVaultData */
         removeVaultData?: (boolean|null);
+
+        /** SharedRecord expiration */
+        expiration?: (number|Long|null);
     }
 
     /** Represents a SharedRecord. */
@@ -57007,6 +54090,9 @@ export namespace Records {
 
         /** SharedRecord removeVaultData. */
         public removeVaultData: boolean;
+
+        /** SharedRecord expiration. */
+        public expiration: (number|Long);
 
         /**
          * Creates a new SharedRecord instance using the specified properties.
@@ -61644,6 +58730,9 @@ export namespace Vault {
 
         /** SharedFolder ownerAccountUid */
         ownerAccountUid?: (Uint8Array|null);
+
+        /** SharedFolder name */
+        name?: (Uint8Array|null);
     }
 
     /** Represents a SharedFolder. */
@@ -61690,6 +58779,9 @@ export namespace Vault {
 
         /** SharedFolder ownerAccountUid. */
         public ownerAccountUid: Uint8Array;
+
+        /** SharedFolder name. */
+        public name: Uint8Array;
 
         /**
          * Creates a new SharedFolder instance using the specified properties.
@@ -62811,6 +59903,9 @@ export namespace Vault {
 
         /** RecordMetaData ownerAccountUid */
         ownerAccountUid?: (Uint8Array|null);
+
+        /** RecordMetaData expiration */
+        expiration?: (number|Long|null);
     }
 
     /** Represents a RecordMetaData. */
@@ -62842,6 +59937,9 @@ export namespace Vault {
 
         /** RecordMetaData ownerAccountUid. */
         public ownerAccountUid: Uint8Array;
+
+        /** RecordMetaData expiration. */
+        public expiration: (number|Long);
 
         /**
          * Creates a new RecordMetaData instance using the specified properties.
@@ -63327,6 +60425,9 @@ export namespace Vault {
 
         /** BreachWatchRecord revision */
         revision?: (number|Long|null);
+
+        /** BreachWatchRecord scannedByAccountUid */
+        scannedByAccountUid?: (Uint8Array|null);
     }
 
     /** Represents a BreachWatchRecord. */
@@ -63352,6 +60453,9 @@ export namespace Vault {
 
         /** BreachWatchRecord revision. */
         public revision: (number|Long);
+
+        /** BreachWatchRecord scannedByAccountUid. */
+        public scannedByAccountUid: Uint8Array;
 
         /**
          * Creates a new BreachWatchRecord instance using the specified properties.
@@ -63768,6 +60872,12 @@ export namespace Vault {
 
         /** SharedFolderRecord ownerAccountUid */
         ownerAccountUid?: (Uint8Array|null);
+
+        /** SharedFolderRecord expiration */
+        expiration?: (number|Long|null);
+
+        /** SharedFolderRecord owner */
+        owner?: (boolean|null);
     }
 
     /** Represents a SharedFolderRecord. */
@@ -63796,6 +60906,12 @@ export namespace Vault {
 
         /** SharedFolderRecord ownerAccountUid. */
         public ownerAccountUid: Uint8Array;
+
+        /** SharedFolderRecord expiration. */
+        public expiration: (number|Long);
+
+        /** SharedFolderRecord owner. */
+        public owner: boolean;
 
         /**
          * Creates a new SharedFolderRecord instance using the specified properties.
@@ -63885,6 +61001,9 @@ export namespace Vault {
 
         /** SharedFolderUser accountUid */
         accountUid?: (Uint8Array|null);
+
+        /** SharedFolderUser expiration */
+        expiration?: (number|Long|null);
     }
 
     /** Represents a SharedFolderUser. */
@@ -63910,6 +61029,9 @@ export namespace Vault {
 
         /** SharedFolderUser accountUid. */
         public accountUid: Uint8Array;
+
+        /** SharedFolderUser expiration. */
+        public expiration: (number|Long);
 
         /**
          * Creates a new SharedFolderUser instance using the specified properties.
@@ -63999,6 +61121,9 @@ export namespace Vault {
 
         /** SharedFolderTeam manageUsers */
         manageUsers?: (boolean|null);
+
+        /** SharedFolderTeam expiration */
+        expiration?: (number|Long|null);
     }
 
     /** Represents a SharedFolderTeam. */
@@ -64024,6 +61149,9 @@ export namespace Vault {
 
         /** SharedFolderTeam manageUsers. */
         public manageUsers: boolean;
+
+        /** SharedFolderTeam expiration. */
+        public expiration: (number|Long);
 
         /**
          * Creates a new SharedFolderTeam instance using the specified properties.
@@ -64513,17 +61641,11 @@ export namespace Vault {
         /** RecordRotation schedule */
         schedule?: (string|null);
 
-        /** RecordRotation scriptName */
-        scriptName?: (string|null);
-
         /** RecordRotation pwdComplexity */
-        pwdComplexity?: (string|null);
+        pwdComplexity?: (Uint8Array|null);
 
         /** RecordRotation disabled */
         disabled?: (boolean|null);
-
-        /** RecordRotation parentUid */
-        parentUid?: (Uint8Array|null);
     }
 
     /** Represents a RecordRotation. */
@@ -64547,17 +61669,11 @@ export namespace Vault {
         /** RecordRotation schedule. */
         public schedule: string;
 
-        /** RecordRotation scriptName. */
-        public scriptName: string;
-
         /** RecordRotation pwdComplexity. */
-        public pwdComplexity: string;
+        public pwdComplexity: Uint8Array;
 
         /** RecordRotation disabled. */
         public disabled: boolean;
-
-        /** RecordRotation parentUid. */
-        public parentUid: Uint8Array;
 
         /**
          * Creates a new RecordRotation instance using the specified properties.
@@ -64728,6 +61844,9 @@ export namespace Vault {
 
         /** BreachWatchGetSyncDataResponse breachWatchSecurityData */
         breachWatchSecurityData?: (Vault.IBreachWatchSecurityData[]|null);
+
+        /** BreachWatchGetSyncDataResponse users */
+        users?: (Vault.IUser[]|null);
     }
 
     /** Represents a BreachWatchGetSyncDataResponse. */
@@ -64744,6 +61863,9 @@ export namespace Vault {
 
         /** BreachWatchGetSyncDataResponse breachWatchSecurityData. */
         public breachWatchSecurityData: Vault.IBreachWatchSecurityData[];
+
+        /** BreachWatchGetSyncDataResponse users. */
+        public users: Vault.IUser[];
 
         /**
          * Creates a new BreachWatchGetSyncDataResponse instance using the specified properties.
