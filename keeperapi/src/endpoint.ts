@@ -134,7 +134,7 @@ export class KeeperEndpoint {
             deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
         }
         if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(deviceConfig, this.options.host);
+            await this.options.onDeviceConfig(deviceConfig, this.options.host);
         }
     }
 
@@ -242,7 +242,7 @@ export class KeeperEndpoint {
 
         this.options.deviceConfig.transmissionKeyId = keyNumber
         if (this.options.onDeviceConfig) {
-            this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
+            await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
         }
     }
 
