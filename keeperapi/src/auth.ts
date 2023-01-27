@@ -47,7 +47,7 @@ import LoginType = Authentication.LoginType;
 import LoginMethod = Authentication.LoginMethod;
 import IAccountSummaryElements = AccountSummary.IAccountSummaryElements;
 import {RestCommand} from './commands'
-import {CloseReason, SocketListener} from './socket';
+import {CloseReason, createAsyncSocket, SocketListener} from './socket';
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -229,12 +229,12 @@ export class Auth {
         await this.idpLogout()
     }
 
-    connect() {
+    async connect() {
         // When connecting to govcloud, remove the govcloud subdomain. There is no list of urls that do/don't require the govcloud subdomain, so for now do this.
         const url = `wss://push.services.${this.options.host.replace('govcloud.', '')}/wss_open_connection`
         const getConnectionRequest = (messageSessionUid) => this.endpoint.getPushConnectionRequest(messageSessionUid)
 
-        this.socket = new SocketListener(url, this.messageSessionUid, getConnectionRequest)
+        this.socket = await createAsyncSocket(url, this.messageSessionUid, getConnectionRequest)
         console.log("Socket connected")
         this.onCloseMessage((closeReason: CloseReason) => {
             if (this.options.onCommandFailure) {
@@ -303,7 +303,7 @@ export class Auth {
             }
 
             if (!this.socket || !this.socket.getIsConnected()) {
-                this.connect()
+                await this.connect()
             }
 
             const startLoginRequest: IStartLoginRequest = {
@@ -523,7 +523,7 @@ export class Auth {
         this.userType = sessionParams.userType
 
         if (!this.socket || !this.socket.getIsConnected()) {
-            this.connect()
+            await this.connect()
         }
 
         this.setLoginParameters(sessionParams.sessionToken, sessionParams.sessionTokenType, sessionParams.accountUid)
