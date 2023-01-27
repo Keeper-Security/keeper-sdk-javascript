@@ -77,9 +77,6 @@ export class SocketListener {
 
         if (messageSessionUid){
             this.messageSessionUid = messageSessionUid
-            this.createWebsocket(this.messageSessionUid)
-        } else {
-            this.createWebsocket()
         }
     }
 
@@ -259,6 +256,15 @@ export class SocketListener {
     getIsConnected(){
         return this.isConnected
     }
+}
+
+// Use this to create a websocket. Our way of creating transmission keys is asynchronous and the constructor of the socket required
+// these transmission keys to be made before operating on the socket. Instead use a helper to still create the object from the 
+// class and also create the necessary websocket before allowing other functions to operate on this.
+export async function createAsyncSocket(url: string, messageSessionUid?: Uint8Array, getConnectionRequest?: (messageSessionUid:Uint8Array) => Promise<string>):Promise<SocketListener | undefined>{
+    const socket = new SocketListener(url, messageSessionUid, getConnectionRequest)
+    await socket.createWebsocket(messageSessionUid)
+    return socket
 }
 
 export function socketSendMessage(message: any, socket: WebSocket, createdSocket:any){
