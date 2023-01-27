@@ -431,7 +431,7 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
 
         // data
         let folderData = await processFolder(folderUid, folder.data, true, storage)
-        if (!folderName || !folderData) {
+        if (!folderName && !folderData) {
             continue
         }
         await storage.put({
