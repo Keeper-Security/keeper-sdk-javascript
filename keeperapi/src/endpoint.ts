@@ -43,7 +43,10 @@ export class KeeperEndpoint {
     }
 
     async getTransmissionKey():Promise<TransmissionKey> {
-        if(!this._transmissionKey){
+        const deviceConfigTransmissionKeyId = this.options.deviceConfig.transmissionKeyId || 7
+        if(!this._transmissionKey && isAllowedNumber(deviceConfigTransmissionKeyId)){
+            this._transmissionKey = await generateTransmissionKey(deviceConfigTransmissionKeyId)
+        } else if(!this._transmissionKey){
             this._transmissionKey = await generateTransmissionKey(7)
         }
 
