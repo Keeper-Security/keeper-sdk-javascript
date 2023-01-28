@@ -726,15 +726,17 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
     const recordKeys: UnwrapKeyMap = {}
 
     for (const mData of recordMetaData as NN<IRecordMetaData>[]) {
-        const {keyId, encryptionType} = mapKeyType(mData.recordKeyType)
         const recUid = webSafe64FromBytes(mData.recordUid)
         try {
-            recordKeys[recUid] = {
-                data: mData.recordKey,
-                dataId: recUid,
-                keyId,
-                encryptionType,
-                unwrappedType: 'aes'
+            if (mData.recordKeyType !== RecordKeyType.NO_KEY) {
+                const {keyId, encryptionType} = mapKeyType(mData.recordKeyType)
+                recordKeys[recUid] = {
+                    data: mData.recordKey,
+                    dataId: recUid,
+                    keyId,
+                    encryptionType,
+                    unwrappedType: 'aes'
+                }
             }
 
             await storage.put({
