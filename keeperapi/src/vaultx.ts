@@ -266,13 +266,15 @@ const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependenc
     for (const team of Object.values(teams)) {
         const teamUid = webSafe64FromBytes(team.teamUid)
 
-        const {keyId, encryptionType} = mapKeyType(team.teamKeyType)
-        teamKeys[teamUid] = {
-            data: team.teamKey,
-            dataId: teamUid,
-            keyId,
-            encryptionType,
-            unwrappedType: 'aes',
+        if (team.teamKeyType !== RecordKeyType.NO_KEY) {
+            const {keyId, encryptionType} = mapKeyType(team.teamKeyType)
+            teamKeys[teamUid] = {
+                data: team.teamKey,
+                dataId: teamUid,
+                keyId,
+                encryptionType,
+                unwrappedType: 'aes',
+            }
         }
 
         teamPrivateKeys[teamUid + '_priv'] = {
@@ -653,8 +655,8 @@ const processSharedFolderFolders = async (folders: ISharedFolderFolder[], storag
     for (const folder of folders as NN<ISharedFolderFolder>[]) {
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
         const folderUid = webSafe64FromBytes(folder.folderUid)
-        const {encryptionType} = mapKeyType(folder.keyType)
         try {
+            const {encryptionType} = mapKeyType(folder.keyType)
             await platform.unwrapKey(folder.sharedFolderFolderKey, folderUid, sharedFolderUid, encryptionType, 'aes', storage)
         } catch (e: any) {
             console.error(`The shared folder folder key for ${folderUid} cannot be decrypted (${e.message})`)
