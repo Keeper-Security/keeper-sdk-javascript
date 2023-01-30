@@ -232,10 +232,12 @@ const getDependencies = async (folderUid: string, storage: VaultStorage, results
     }
 }
 
-const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryptionType: EncryptionType } => {
-    let keyId
-    let encryptionType
+const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryptionType: EncryptionType } | null => {
+    let keyId: string
+    let encryptionType: EncryptionType
     switch (keyType) {
+        case RecordKeyType.NO_KEY:
+            return null
         case RecordKeyType.ENCRYPTED_BY_DATA_KEY:
             keyId = 'data'
             encryptionType = 'cbc'
@@ -253,7 +255,8 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
             encryptionType = 'ecc'
             break
         default:
-            throw Error('Unknown record key type: ' + keyType)
+            console.error('Unknown record key type: ' + keyType)
+            return null
     }
     return {keyId, encryptionType}
 }
@@ -266,8 +269,9 @@ const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependenc
     for (const team of Object.values(teams)) {
         const teamUid = webSafe64FromBytes(team.teamUid)
 
-        if (team.teamKeyType !== RecordKeyType.NO_KEY) {
-            const {keyId, encryptionType} = mapKeyType(team.teamKeyType)
+        const keyInfo = mapKeyType(team.teamKeyType)
+        if (keyInfo) {
+            const {keyId, encryptionType} = keyInfo
             teamKeys[teamUid] = {
                 data: team.teamKey,
                 dataId: teamUid,
@@ -352,8 +356,9 @@ const processUserFolders = async (folders: IUserFolder[], storage: VaultStorage,
         const {userFolderKey, keyType} = folder
         const folderUid = webSafe64FromBytes(folder.folderUid)
 
-        if (keyType !== RecordKeyType.NO_KEY) {
-            const {keyId, encryptionType} = mapKeyType(keyType)
+        const keyInfo = mapKeyType(keyType)
+        if (keyInfo) {
+            const {keyId, encryptionType} = keyInfo
             folderKeys[folderUid] = {
                 data: userFolderKey,
                 dataId: folderUid,
@@ -403,8 +408,9 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
         const {sharedFolderKey, keyType} = folder
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
 
-        if (keyType !== RecordKeyType.NO_KEY) {
-            const {keyId, encryptionType} = mapKeyType(keyType)
+        const keyInfo = mapKeyType(keyType)
+        if (keyInfo) {
+            const {keyId, encryptionType} = keyInfo
             sharedFolderKeys[sharedFolderUid] = {
                 data: sharedFolderKey,
                 dataId: sharedFolderUid,
@@ -655,8 +661,12 @@ const processSharedFolderFolders = async (folders: ISharedFolderFolder[], storag
     for (const folder of folders as NN<ISharedFolderFolder>[]) {
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
         const folderUid = webSafe64FromBytes(folder.folderUid)
+
+        const keyInfo = mapKeyType(folder.keyType)
+        if (!keyInfo) continue
+
         try {
-            const {encryptionType} = mapKeyType(folder.keyType)
+            const {encryptionType} = keyInfo
             await platform.unwrapKey(folder.sharedFolderFolderKey, folderUid, sharedFolderUid, encryptionType, 'aes', storage)
         } catch (e: any) {
             console.error(`The shared folder folder key for ${folderUid} cannot be decrypted (${e.message})`)
@@ -730,8 +740,9 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
     for (const mData of recordMetaData as NN<IRecordMetaData>[]) {
         const recUid = webSafe64FromBytes(mData.recordUid)
         try {
-            if (mData.recordKeyType !== RecordKeyType.NO_KEY) {
-                const {keyId, encryptionType} = mapKeyType(mData.recordKeyType)
+            const keyInfo = mapKeyType(mData.recordKeyType)
+            if (keyInfo) {
+                const {keyId, encryptionType} = keyInfo
                 recordKeys[recUid] = {
                     data: mData.recordKey,
                     dataId: recUid,
