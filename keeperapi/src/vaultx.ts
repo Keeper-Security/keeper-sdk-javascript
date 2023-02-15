@@ -487,7 +487,8 @@ const processSharedFolderTeams = async (sharedFolderTeams: ISharedFolderTeam[], 
 const processSharedFolderRecords = async (records: ISharedFolderRecord[], storage: VaultStorage) => {
     for (const rec of records as NN<ISharedFolderRecord>[]) {
         const recUid = webSafe64FromBytes(rec.recordUid)
-        let encryptionType
+
+        let encryptionType: EncryptionType | undefined
         switch (rec.recordKey.length) {
             case 60:
                 encryptionType = 'gcm'
@@ -496,11 +497,14 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 encryptionType = 'cbc'
                 break
             default:
-                throw Error('Unable to detect the shared folder key encryption type')
+                console.error('Unable to detect the shared folder key encryption type')
         }
         try {
             const sharedFolderUid = webSafe64FromBytes(rec.sharedFolderUid)
-            await platform.unwrapKey(rec.recordKey, recUid, sharedFolderUid, encryptionType, 'aes', storage)
+
+            if (encryptionType) {
+                await platform.unwrapKey(rec.recordKey, recUid, sharedFolderUid, encryptionType, 'aes', storage)
+            }
 
             const ownerUid = webSafe64FromBytes(rec.ownerAccountUid)
             await storage.put({
