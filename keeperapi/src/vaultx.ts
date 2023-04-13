@@ -81,6 +81,7 @@ export type DRecordMetadata = {
     owner: boolean
     canShare: boolean
     canEdit: boolean
+    recordKeyType: Records.RecordKeyType
 }
 
 export type DTeam = {
@@ -762,6 +763,7 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
               canEdit: mData.canEdit,
               canShare: mData.canShare,
               owner: mData.owner,
+              recordKeyType: mData.recordKeyType
             })
         } catch (e: any) {
             console.error(`The record metadata ${recUid} cannot be decrypted (${e.message})`)
