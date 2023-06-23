@@ -93,6 +93,7 @@ export type SessionParams = {
     privateKey: Uint8Array
     eccPrivateKey?: Uint8Array
     eccPublicKey?: Uint8Array
+    enterprisePublicKey?: Uint8Array
     enterpriseEccPublicKey?: Uint8Array
     clientKey: Uint8Array
     userType: UserType
@@ -518,6 +519,7 @@ export class Auth {
         this.privateKey = sessionParams.privateKey
         this.eccPrivateKey = sessionParams.eccPrivateKey
         this.eccPublicKey = sessionParams.eccPublicKey
+        this.enterprisePublicKey = sessionParams.enterprisePublicKey
         this.enterpriseEccPublicKey = sessionParams.enterpriseEccPublicKey
         this.ssoLogoutUrl = sessionParams.ssoLogoutUrl
         this.ssoSessionId = sessionParams.ssoSessionId
@@ -540,6 +542,7 @@ export class Auth {
             privateKey: this.privateKey,
             eccPrivateKey: this.eccPrivateKey,
             eccPublicKey: this.eccPublicKey,
+            enterprisePublicKey: this.enterprisePublicKey,
             enterpriseEccPublicKey: this.enterpriseEccPublicKey,
             clientKey: this.clientKey,
             userType: this.userType,
