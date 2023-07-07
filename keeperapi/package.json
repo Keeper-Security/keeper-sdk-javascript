@@ -23,7 +23,7 @@
     "faye-websocket": "^0.11.3",
     "form-data": "^3.0.0",
     "node-rsa": "^1.0.8",
-    "protobufjs": "^6.11.2"
+    "protobufjs": "^7.2.4"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.1",
