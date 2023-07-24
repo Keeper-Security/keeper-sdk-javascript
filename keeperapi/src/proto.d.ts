@@ -1,4 +1,5 @@
 import * as $protobuf from "protobufjs";
+import Long = require("long");
 /** Namespace Authentication. */
 export namespace Authentication {
 
@@ -210,6 +211,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApiRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApiRequestPayload. */
@@ -318,6 +326,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApiRequestPayload
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Transform. */
@@ -414,6 +429,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Transform
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceRequest. */
@@ -510,6 +532,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AuthRequest. */
@@ -612,6 +641,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuthRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NewUserMinimumParams. */
@@ -720,6 +756,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NewUserMinimumParams
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PreLoginRequest. */
@@ -822,6 +865,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PreLoginRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginRequest. */
@@ -954,6 +1004,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceResponse. */
@@ -1050,6 +1107,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Salt. */
@@ -1164,6 +1228,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Salt
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorChannel. */
@@ -1254,6 +1325,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorChannel
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** LoginMethod enum. */
@@ -1451,6 +1529,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StartLoginRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginResponse. */
@@ -1631,6 +1716,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoUserInfo. */
@@ -1751,6 +1843,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoUserInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PreLoginResponse. */
@@ -1859,6 +1958,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PreLoginResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginAsUserRequest. */
@@ -1949,6 +2055,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginAsUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginAsUserResponse. */
@@ -2045,6 +2158,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginAsUserResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** PasswordMethod enum. */
@@ -2153,6 +2273,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ValidateAuthHashRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** TwoFactorPushType enum. */
@@ -2322,6 +2449,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorChannelInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** TwoFactorExpiration enum. */
@@ -2440,6 +2574,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorDuoStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorAddRequest. */
@@ -2554,6 +2695,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorRenameRequest. */
@@ -2650,6 +2798,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorRenameRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorAddResponse. */
@@ -2746,6 +2901,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorAddResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorDeleteRequest. */
@@ -2836,6 +2998,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorDeleteRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorListResponse. */
@@ -2932,6 +3101,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorListResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorUpdateExpirationRequest. */
@@ -3022,6 +3198,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorUpdateExpirationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorValidateRequest. */
@@ -3136,6 +3319,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorValidateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorValidateResponse. */
@@ -3226,6 +3416,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorValidateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorSendPushRequest. */
@@ -3334,6 +3531,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorSendPushRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a License. */
@@ -3448,6 +3652,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for License
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** LicenseType enum. */
@@ -3558,6 +3769,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for OwnerlessRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an OwnerlessRecords. */
@@ -3648,6 +3866,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for OwnerlessRecords
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserAuthRequest. */
@@ -3786,6 +4011,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserAuthRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an UidRequest. */
@@ -3876,6 +4108,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UidRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceUpdateRequest. */
@@ -3990,6 +4229,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RegisterDeviceInRegionRequest. */
@@ -4098,6 +4344,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RegisterDeviceInRegionRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RegistrationRequest. */
@@ -4242,6 +4495,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RegistrationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ConvertUserToV3Request. */
@@ -4356,6 +4616,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ConvertUserToV3Request
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RevisionResponse. */
@@ -4446,6 +4713,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RevisionResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeEmailRequest. */
@@ -4536,6 +4810,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeEmailRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeEmailResponse. */
@@ -4626,6 +4907,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeEmailResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EmailVerificationLinkResponse. */
@@ -4716,6 +5004,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EmailVerificationLinkResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityData. */
@@ -4812,6 +5107,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityDataRequest. */
@@ -4908,6 +5210,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityReportIncrementalData. */
@@ -5022,6 +5331,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityReportIncrementalData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityReport. */
@@ -5154,6 +5470,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityReport
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityReportSaveRequest. */
@@ -5244,6 +5567,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityReportSaveRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityReportRequest. */
@@ -5334,6 +5664,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityReportRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityReportResponse. */
@@ -5454,6 +5791,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityReportResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ReusedPasswordsRequest. */
@@ -5544,6 +5888,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReusedPasswordsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SummaryConsoleReport. */
@@ -5640,6 +5991,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SummaryConsoleReport
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** ObjectTypes enum. */
@@ -5757,6 +6115,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeToKeyTypeOne
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeToKeyTypeOneRequest. */
@@ -5847,6 +6212,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeToKeyTypeOneRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeToKeyTypeOneStatus. */
@@ -5955,6 +6327,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeToKeyTypeOneStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeToKeyTypeOneResponse. */
@@ -6045,6 +6424,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeToKeyTypeOneResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SetKey. */
@@ -6141,6 +6527,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SetKeyRequest. */
@@ -6231,6 +6624,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetKeyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a CreateUserRequest. */
@@ -6459,6 +6859,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for CreateUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NodeEnforcementAddOrUpdateRequest. */
@@ -6561,6 +6968,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NodeEnforcementAddOrUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NodeEnforcementRemoveRequest. */
@@ -6657,6 +7071,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NodeEnforcementRemoveRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApiRequestByKey. */
@@ -6777,6 +7198,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApiRequestByKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApiRequestByKAtoKAKey. */
@@ -6885,6 +7313,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApiRequestByKAtoKAKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MemcacheRequest. */
@@ -6981,6 +7416,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MemcacheRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MemcacheResponse. */
@@ -7077,6 +7519,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MemcacheResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MasterPasswordReentryRequest. */
@@ -7173,6 +7622,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MasterPasswordReentryRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceRegistrationRequest. */
@@ -7275,6 +7731,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceRegistrationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceVerificationRequest. */
@@ -7389,6 +7852,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceVerificationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceVerificationResponse. */
@@ -7503,6 +7973,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceVerificationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceApprovalRequest. */
@@ -7635,6 +8112,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceApprovalRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceApprovalResponse. */
@@ -7725,6 +8209,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceApprovalResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveDeviceRequest. */
@@ -7833,6 +8324,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveDeviceRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUserAliasRequest. */
@@ -7929,6 +8427,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserAliasRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUserAddAliasRequest. */
@@ -8031,6 +8536,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserAddAliasRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Device. */
@@ -8121,6 +8633,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Device
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RegisterDeviceDataKeyRequest. */
@@ -8217,6 +8736,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RegisterDeviceDataKeyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ValidateCreateUserVerificationCodeRequest. */
@@ -8319,6 +8845,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ValidateCreateUserVerificationCodeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ValidateDeviceVerificationCodeRequest. */
@@ -8433,6 +8966,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ValidateDeviceVerificationCodeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SendSessionMessageRequest. */
@@ -8535,6 +9075,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SendSessionMessageRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GlobalUserAccount. */
@@ -8637,6 +9184,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GlobalUserAccount
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AccountUsername. */
@@ -8733,6 +9287,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AccountUsername
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoServiceProviderRequest. */
@@ -8835,6 +9396,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoServiceProviderRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoServiceProviderResponse. */
@@ -8943,6 +9511,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoServiceProviderResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserSettingRequest. */
@@ -9039,6 +9614,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserSettingRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** AlternateAuthenticationType enum. */
@@ -9166,6 +9748,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ThrottleState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ThrottleState2. */
@@ -9298,6 +9887,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ThrottleState2
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceInformation. */
@@ -9412,6 +10008,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceInformation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserSetting. */
@@ -9508,6 +10111,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserSetting
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserDataKeyRequest. */
@@ -9598,6 +10208,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserDataKeyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUserIdDataKeyPair. */
@@ -9694,6 +10311,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserIdDataKeyPair
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserDataKey. */
@@ -9802,6 +10426,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserDataKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserDataKeyResponse. */
@@ -9904,6 +10535,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserDataKeyResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MasterPasswordRecoveryVerificationRequest. */
@@ -9994,6 +10632,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MasterPasswordRecoveryVerificationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetSecurityQuestionV3Request. */
@@ -10090,6 +10735,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetSecurityQuestionV3Request
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetSecurityQuestionV3Response. */
@@ -10198,6 +10850,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetSecurityQuestionV3Response
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetDataKeyBackupV3Request. */
@@ -10300,6 +10959,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetDataKeyBackupV3Request
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PasswordRules. */
@@ -10420,6 +11086,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasswordRules
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetDataKeyBackupV3Response. */
@@ -10558,6 +11231,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetDataKeyBackupV3Response
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetPublicKeysRequest. */
@@ -10648,6 +11328,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetPublicKeysRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PublicKeyResponse. */
@@ -10762,6 +11449,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PublicKeyResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetPublicKeysResponse. */
@@ -10852,6 +11546,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetPublicKeysResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SetEccKeyPairRequest. */
@@ -10948,6 +11649,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetEccKeyPairRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** The names and IDs in this class correspond to the Kinfo database entries and to the Region class in Keeperpap. */
@@ -10956,9 +11664,7 @@ export namespace Authentication {
         eu = 1,
         us = 2,
         usgov = 3,
-        au = 4,
-        jp = 5,
-        ca = 6
+        au = 4
     }
 
     /** ApplicationShareType enum. */
@@ -11061,6 +11767,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddAppSharesRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RemoveAppSharesRequest. */
@@ -11157,6 +11870,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RemoveAppSharesRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AppShareAdd. */
@@ -11265,6 +11985,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AppShareAdd
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AppShare. */
@@ -11373,6 +12100,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AppShare
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AddAppClientRequest. */
@@ -11505,6 +12239,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddAppClientRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RemoveAppClientsRequest. */
@@ -11601,6 +12342,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RemoveAppClientsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AddExternalShareRequest. */
@@ -11715,6 +12463,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddExternalShareRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AppClient. */
@@ -11865,6 +12620,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AppClient
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetAppInfoRequest. */
@@ -11955,6 +12717,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetAppInfoRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AppInfo. */
@@ -12063,6 +12832,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AppInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetAppInfoResponse. */
@@ -12153,6 +12929,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetAppInfoResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApplicationSummary. */
@@ -12279,6 +13062,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApplicationSummary
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetApplicationsSummaryResponse. */
@@ -12369,6 +13159,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetApplicationsSummaryResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetVerificationTokenRequest. */
@@ -12459,6 +13256,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetVerificationTokenRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetVerificationTokenResponse. */
@@ -12549,6 +13353,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetVerificationTokenResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SendShareInviteRequest. */
@@ -12639,6 +13450,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SendShareInviteRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** TimeLimitedAccessType enum. */
@@ -12767,6 +13585,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeLimitedAccessRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TimeLimitedAccessStatus. */
@@ -12863,6 +13688,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeLimitedAccessStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TimeLimitedAccessResponse. */
@@ -12971,6 +13803,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeLimitedAccessResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RequestDownloadRequest. */
@@ -13061,6 +13900,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RequestDownloadRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RequestDownloadResponse. */
@@ -13163,6 +14009,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RequestDownloadResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Download. */
@@ -13265,6 +14118,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Download
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeleteUserRequest. */
@@ -13355,6 +14215,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeleteUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeMasterPasswordRequest. */
@@ -13463,6 +14330,13 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeMasterPasswordRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeMasterPasswordResponse. */
@@ -13553,6 +14427,243 @@ export namespace Authentication {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeMasterPasswordResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AccountRecoverySetupRequest. */
+    interface IAccountRecoverySetupRequest {
+
+        /** AccountRecoverySetupRequest recoveryEncryptedDataKey */
+        recoveryEncryptedDataKey?: (Uint8Array|null);
+
+        /** AccountRecoverySetupRequest recoveryAuthHash */
+        recoveryAuthHash?: (Uint8Array|null);
+    }
+
+    /** Represents an AccountRecoverySetupRequest. */
+    class AccountRecoverySetupRequest implements IAccountRecoverySetupRequest {
+
+        /**
+         * Constructs a new AccountRecoverySetupRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IAccountRecoverySetupRequest);
+
+        /** AccountRecoverySetupRequest recoveryEncryptedDataKey. */
+        public recoveryEncryptedDataKey: Uint8Array;
+
+        /** AccountRecoverySetupRequest recoveryAuthHash. */
+        public recoveryAuthHash: Uint8Array;
+
+        /**
+         * Creates a new AccountRecoverySetupRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AccountRecoverySetupRequest instance
+         */
+        public static create(properties?: Authentication.IAccountRecoverySetupRequest): Authentication.AccountRecoverySetupRequest;
+
+        /**
+         * Encodes the specified AccountRecoverySetupRequest message. Does not implicitly {@link Authentication.AccountRecoverySetupRequest.verify|verify} messages.
+         * @param message AccountRecoverySetupRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IAccountRecoverySetupRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AccountRecoverySetupRequest message, length delimited. Does not implicitly {@link Authentication.AccountRecoverySetupRequest.verify|verify} messages.
+         * @param message AccountRecoverySetupRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IAccountRecoverySetupRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AccountRecoverySetupRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AccountRecoverySetupRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AccountRecoverySetupRequest;
+
+        /**
+         * Decodes an AccountRecoverySetupRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AccountRecoverySetupRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AccountRecoverySetupRequest;
+
+        /**
+         * Verifies an AccountRecoverySetupRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AccountRecoverySetupRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AccountRecoverySetupRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.AccountRecoverySetupRequest;
+
+        /**
+         * Creates a plain object from an AccountRecoverySetupRequest message. Also converts values to other types if specified.
+         * @param message AccountRecoverySetupRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.AccountRecoverySetupRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AccountRecoverySetupRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AccountRecoverySetupRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** BackupKeyType enum. */
+    enum BackupKeyType {
+        BKT_SEC_ANSWER = 0,
+        BKT_PASSPHRASE_HASH = 1
+    }
+
+    /** Properties of an AccountRecoveryVerifyCodeResponse. */
+    interface IAccountRecoveryVerifyCodeResponse {
+
+        /** AccountRecoveryVerifyCodeResponse backupKeyType */
+        backupKeyType?: (Authentication.BackupKeyType|null);
+
+        /** AccountRecoveryVerifyCodeResponse backupKeyDate */
+        backupKeyDate?: (number|Long|null);
+
+        /** AccountRecoveryVerifyCodeResponse securityQuestion */
+        securityQuestion?: (string|null);
+
+        /** AccountRecoveryVerifyCodeResponse salt */
+        salt?: (Uint8Array|null);
+
+        /** AccountRecoveryVerifyCodeResponse iterations */
+        iterations?: (number|null);
+    }
+
+    /** Represents an AccountRecoveryVerifyCodeResponse. */
+    class AccountRecoveryVerifyCodeResponse implements IAccountRecoveryVerifyCodeResponse {
+
+        /**
+         * Constructs a new AccountRecoveryVerifyCodeResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IAccountRecoveryVerifyCodeResponse);
+
+        /** AccountRecoveryVerifyCodeResponse backupKeyType. */
+        public backupKeyType: Authentication.BackupKeyType;
+
+        /** AccountRecoveryVerifyCodeResponse backupKeyDate. */
+        public backupKeyDate: (number|Long);
+
+        /** AccountRecoveryVerifyCodeResponse securityQuestion. */
+        public securityQuestion: string;
+
+        /** AccountRecoveryVerifyCodeResponse salt. */
+        public salt: Uint8Array;
+
+        /** AccountRecoveryVerifyCodeResponse iterations. */
+        public iterations: number;
+
+        /**
+         * Creates a new AccountRecoveryVerifyCodeResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AccountRecoveryVerifyCodeResponse instance
+         */
+        public static create(properties?: Authentication.IAccountRecoveryVerifyCodeResponse): Authentication.AccountRecoveryVerifyCodeResponse;
+
+        /**
+         * Encodes the specified AccountRecoveryVerifyCodeResponse message. Does not implicitly {@link Authentication.AccountRecoveryVerifyCodeResponse.verify|verify} messages.
+         * @param message AccountRecoveryVerifyCodeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IAccountRecoveryVerifyCodeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AccountRecoveryVerifyCodeResponse message, length delimited. Does not implicitly {@link Authentication.AccountRecoveryVerifyCodeResponse.verify|verify} messages.
+         * @param message AccountRecoveryVerifyCodeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IAccountRecoveryVerifyCodeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AccountRecoveryVerifyCodeResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AccountRecoveryVerifyCodeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AccountRecoveryVerifyCodeResponse;
+
+        /**
+         * Decodes an AccountRecoveryVerifyCodeResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AccountRecoveryVerifyCodeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AccountRecoveryVerifyCodeResponse;
+
+        /**
+         * Verifies an AccountRecoveryVerifyCodeResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AccountRecoveryVerifyCodeResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AccountRecoveryVerifyCodeResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.AccountRecoveryVerifyCodeResponse;
+
+        /**
+         * Creates a plain object from an AccountRecoveryVerifyCodeResponse message. Also converts values to other types if specified.
+         * @param message AccountRecoveryVerifyCodeResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.AccountRecoveryVerifyCodeResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AccountRecoveryVerifyCodeResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AccountRecoveryVerifyCodeResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -13665,6 +14776,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseKeyPairRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetTeamMemberRequest. */
@@ -13755,6 +14873,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetTeamMemberRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUser. */
@@ -13863,6 +14988,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetTeamMemberResponse. */
@@ -13953,6 +15085,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetTeamMemberResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUserIds. */
@@ -14043,6 +15182,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserIds
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterprisePersonalAccount. */
@@ -14139,6 +15285,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterprisePersonalAccount
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EncryptedTeamKeyRequest. */
@@ -14241,6 +15394,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EncryptedTeamKeyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ReEncryptedData. */
@@ -14337,6 +15497,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReEncryptedData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ReEncryptedRoleKey. */
@@ -14433,6 +15600,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReEncryptedRoleKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NodeToManagedCompanyRequest. */
@@ -14553,6 +15727,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NodeToManagedCompanyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RoleTeam. */
@@ -14649,6 +15830,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RoleTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RoleTeams. */
@@ -14739,6 +15927,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RoleTeams
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** EnterpriseType enum. */
@@ -14907,6 +16102,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseRegistration
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DomainPasswordRulesRequest. */
@@ -14997,6 +16199,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DomainPasswordRulesRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DomainPasswordRulesFields. */
@@ -15105,6 +16314,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DomainPasswordRulesFields
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginToMcRequest. */
@@ -15201,6 +16417,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginToMcRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginToMcResponse. */
@@ -15297,6 +16520,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginToMcResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DomainPasswordRulesResponse. */
@@ -15387,6 +16617,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DomainPasswordRulesResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveUserDeviceRequest. */
@@ -15495,6 +16732,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveUserDeviceRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveUserDeviceResponse. */
@@ -15603,6 +16847,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveUserDeviceResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveUserDevicesRequest. */
@@ -15693,6 +16944,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveUserDevicesRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveUserDevicesResponse. */
@@ -15783,6 +17041,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveUserDevicesResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUserDataKey. */
@@ -15885,6 +17150,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserDataKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUserDataKeys. */
@@ -15975,6 +17247,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserDataKeys
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseDataRequest. */
@@ -16065,6 +17344,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SpecialProvisioning. */
@@ -16161,6 +17447,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SpecialProvisioning
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GeneralDataEntity. */
@@ -16275,6 +17568,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GeneralDataEntity
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Node. */
@@ -16425,6 +17725,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Node
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Role. */
@@ -16551,6 +17858,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Role
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** TransferAcceptanceStatus enum. */
@@ -16722,6 +18036,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for User
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserAlias. */
@@ -16818,6 +18139,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserAlias
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportMetaData. */
@@ -16944,6 +18272,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportMetaData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ManagedNode. */
@@ -17046,6 +18381,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ManagedNode
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserManagedNode. */
@@ -17148,6 +18490,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserManagedNode
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserPrivilege. */
@@ -17250,6 +18599,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserPrivilege
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RoleUser. */
@@ -17346,6 +18702,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RoleUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RolePrivilege. */
@@ -17448,6 +18811,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RolePrivilege
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RoleEnforcement. */
@@ -17550,6 +18920,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RoleEnforcement
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Team. */
@@ -17682,6 +19059,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Team
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamUser. */
@@ -17784,6 +19168,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetDistributorInfoResponse. */
@@ -17874,6 +19265,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetDistributorInfoResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Distributor. */
@@ -17970,6 +19368,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Distributor
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MspInfo. */
@@ -18102,6 +19507,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MspInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ManagedCompany. */
@@ -18252,6 +19664,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ManagedCompany
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MSPPool. */
@@ -18360,6 +19779,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MSPPool
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MSPContact. */
@@ -18456,6 +19882,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MSPContact
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LicenseAddOn. */
@@ -18588,6 +20021,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LicenseAddOn
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MCDefault. */
@@ -18702,6 +20142,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MCDefault
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MSPPermits. */
@@ -18828,6 +20275,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MSPPermits
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a License. */
@@ -19038,6 +20492,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for License
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Bridge. */
@@ -19152,6 +20613,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Bridge
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Scim. */
@@ -19272,6 +20740,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Scim
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EmailProvision. */
@@ -19380,6 +20855,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EmailProvision
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a QueuedTeam. */
@@ -19488,6 +20970,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for QueuedTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a QueuedTeamUser. */
@@ -19584,6 +21073,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for QueuedTeamUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoService. */
@@ -19710,6 +21206,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoService
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ReportFilterUser. */
@@ -19806,6 +21309,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReportFilterUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceRequestForAdminApproval. */
@@ -19962,6 +21472,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceRequestForAdminApproval
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** EnterpriseDataEntity enum. */
@@ -20098,6 +21615,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseDataResponse. */
@@ -20212,6 +21736,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseDataResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BackupRequest. */
@@ -20302,6 +21833,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** BackupKeyType enum. */
@@ -20443,6 +21981,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BackupKey. */
@@ -20539,6 +22084,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BackupUser. */
@@ -20677,6 +22229,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BackupResponse. */
@@ -20785,6 +22344,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BackupFile. */
@@ -20899,6 +22465,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupFile
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BackupsResponse. */
@@ -20989,6 +22562,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BackupsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetEnterpriseDataKeysRequest. */
@@ -21079,6 +22659,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetEnterpriseDataKeysRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetEnterpriseDataKeysResponse. */
@@ -21193,6 +22780,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetEnterpriseDataKeysResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RoleKey. */
@@ -21295,6 +22889,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RoleKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MspKey. */
@@ -21391,6 +22992,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MspKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** EncryptedKeyType enum. */
@@ -21508,6 +23116,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseKeys
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TreeKey. */
@@ -21604,6 +23219,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TreeKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedRecordResponse. */
@@ -21694,6 +23316,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedRecordResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedRecordEvent. */
@@ -21808,6 +23437,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedRecordEvent
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** EnterpriseFlagType enum. */
@@ -21908,6 +23544,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetRestrictVisibilityRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserAddRequest. */
@@ -22040,6 +23683,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserUpdateRequest. */
@@ -22130,6 +23780,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserUpdate. */
@@ -22256,6 +23913,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserUpdate
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserUpdateResponse. */
@@ -22346,6 +24010,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserUpdateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserUpdateResult. */
@@ -22442,6 +24113,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserUpdateResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** UserUpdateStatus enum. */
@@ -22544,6 +24222,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceRecordOwnersRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceRecordOwnersResponse. */
@@ -22634,6 +24319,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceRecordOwnersResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordOwner. */
@@ -22730,6 +24422,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordOwner
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PreliminaryComplianceDataRequest. */
@@ -22838,6 +24537,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PreliminaryComplianceDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PreliminaryComplianceDataResponse. */
@@ -22946,6 +24652,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PreliminaryComplianceDataResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AuditUserRecord. */
@@ -23048,6 +24761,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditUserRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** AuditUserStatus enum. */
@@ -23157,6 +24877,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditUserData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportFilters. */
@@ -23271,6 +24998,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportFilters
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportRequest. */
@@ -23373,6 +25107,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportRun. */
@@ -23475,6 +25216,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportRun
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportCriteriaAndFilter. */
@@ -23601,6 +25349,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportCriteriaAndFilter
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportCriteria. */
@@ -23703,6 +25458,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportCriteria
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportFilter. */
@@ -23817,6 +25579,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportFilter
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportResponse. */
@@ -23991,6 +25760,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AuditRecord. */
@@ -24111,6 +25887,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AuditRole. */
@@ -24237,6 +26020,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditRole
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RoleNodeManagement. */
@@ -24345,6 +26135,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RoleNodeManagement
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserProfile. */
@@ -24459,6 +26256,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserProfile
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordPermission. */
@@ -24555,6 +26359,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordPermission
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserRecord. */
@@ -24651,6 +26462,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AuditTeam. */
@@ -24759,6 +26577,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AuditTeamUser. */
@@ -24855,6 +26680,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditTeamUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecord. */
@@ -24957,6 +26789,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ShareAdminRecord. */
@@ -25053,6 +26892,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ShareAdminRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUser. */
@@ -25149,6 +26995,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderTeam. */
@@ -25245,6 +27098,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetComplianceReportRequest. */
@@ -25335,6 +27195,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetComplianceReportRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetComplianceReportResponse. */
@@ -25425,6 +27292,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetComplianceReportResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceReportCriteriaRequest. */
@@ -25515,6 +27389,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceReportCriteriaRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SaveComplianceReportCriteriaResponse. */
@@ -25605,6 +27486,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SaveComplianceReportCriteriaResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LinkedRecord. */
@@ -25701,6 +27589,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LinkedRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetSharingAdminsRequest. */
@@ -25803,6 +27698,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetSharingAdminsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserProfileExt. */
@@ -25828,6 +27730,9 @@ export namespace Enterprise {
 
         /** UserProfileExt isShareAdminForSharedFolderOwner */
         isShareAdminForSharedFolderOwner?: (boolean|null);
+
+        /** UserProfileExt hasAccessToObject */
+        hasAccessToObject?: (boolean|null);
     }
 
     /** Represents a UserProfileExt. */
@@ -25859,6 +27764,9 @@ export namespace Enterprise {
 
         /** UserProfileExt isShareAdminForSharedFolderOwner. */
         public isShareAdminForSharedFolderOwner: boolean;
+
+        /** UserProfileExt hasAccessToObject. */
+        public hasAccessToObject: boolean;
 
         /**
          * Creates a new UserProfileExt instance using the specified properties.
@@ -25929,6 +27837,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserProfileExt
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetSharingAdminsResponse. */
@@ -26019,6 +27934,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetSharingAdminsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamsEnterpriseUsersAddRequest. */
@@ -26109,6 +28031,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamsEnterpriseUsersAddTeamRequest. */
@@ -26205,6 +28134,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersAddTeamRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamsEnterpriseUsersAddUserRequest. */
@@ -26307,6 +28243,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersAddUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** TeamUserType enum. */
@@ -26410,6 +28353,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersAddResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamsEnterpriseUsersAddTeamResponse. */
@@ -26530,6 +28480,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersAddTeamResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamsEnterpriseUsersAddUserResponse. */
@@ -26650,6 +28607,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersAddUserResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DomainAlias. */
@@ -26758,6 +28722,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DomainAlias
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DomainAliasRequest. */
@@ -26848,6 +28819,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DomainAliasRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DomainAliasResponse. */
@@ -26938,6 +28916,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DomainAliasResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersProvisionRequest. */
@@ -27034,6 +29019,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersProvisionRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersProvision. */
@@ -27214,6 +29206,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersProvision
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersProvisionResponse. */
@@ -27304,6 +29303,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersProvisionResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersProvisionResult. */
@@ -27412,6 +29418,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersProvisionResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersAddRequest. */
@@ -27508,6 +29521,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersAdd. */
@@ -27658,6 +29678,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersAdd
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersAddResponse. */
@@ -27772,6 +29799,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersAddResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseUsersAddResult. */
@@ -27892,6 +29926,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUsersAddResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an UpdateMSPPermitsRequest. */
@@ -28012,6 +30053,13 @@ export namespace Enterprise {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpdateMSPPermitsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** AppClientType enum. */
@@ -28020,6 +30068,428 @@ export namespace Enterprise {
         GENERAL = 1,
         DISCOVERY_AND_ROTATION_CONTROLLER = 2,
         KCM_CONTROLLER = 3
+    }
+
+    /** Properties of a DeleteEnterpriseUsersRequest. */
+    interface IDeleteEnterpriseUsersRequest {
+
+        /** DeleteEnterpriseUsersRequest enterpriseUserIds */
+        enterpriseUserIds?: ((number|Long)[]|null);
+    }
+
+    /** Represents a DeleteEnterpriseUsersRequest. */
+    class DeleteEnterpriseUsersRequest implements IDeleteEnterpriseUsersRequest {
+
+        /**
+         * Constructs a new DeleteEnterpriseUsersRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IDeleteEnterpriseUsersRequest);
+
+        /** DeleteEnterpriseUsersRequest enterpriseUserIds. */
+        public enterpriseUserIds: (number|Long)[];
+
+        /**
+         * Creates a new DeleteEnterpriseUsersRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteEnterpriseUsersRequest instance
+         */
+        public static create(properties?: Enterprise.IDeleteEnterpriseUsersRequest): Enterprise.DeleteEnterpriseUsersRequest;
+
+        /**
+         * Encodes the specified DeleteEnterpriseUsersRequest message. Does not implicitly {@link Enterprise.DeleteEnterpriseUsersRequest.verify|verify} messages.
+         * @param message DeleteEnterpriseUsersRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IDeleteEnterpriseUsersRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteEnterpriseUsersRequest message, length delimited. Does not implicitly {@link Enterprise.DeleteEnterpriseUsersRequest.verify|verify} messages.
+         * @param message DeleteEnterpriseUsersRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IDeleteEnterpriseUsersRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteEnterpriseUsersRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteEnterpriseUsersRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.DeleteEnterpriseUsersRequest;
+
+        /**
+         * Decodes a DeleteEnterpriseUsersRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteEnterpriseUsersRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.DeleteEnterpriseUsersRequest;
+
+        /**
+         * Verifies a DeleteEnterpriseUsersRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteEnterpriseUsersRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteEnterpriseUsersRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.DeleteEnterpriseUsersRequest;
+
+        /**
+         * Creates a plain object from a DeleteEnterpriseUsersRequest message. Also converts values to other types if specified.
+         * @param message DeleteEnterpriseUsersRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.DeleteEnterpriseUsersRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteEnterpriseUsersRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeleteEnterpriseUsersRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** DeleteEnterpriseUsersResult enum. */
+    enum DeleteEnterpriseUsersResult {
+        SUCCESS = 0,
+        NOT_AN_ENTERPRISE_USER = 1,
+        CANNOT_DELETE_SELF = 2,
+        BRIDGE_CANNOT_DELETE_ACTIVE_USER = 3,
+        ERROR = 4
+    }
+
+    /** Properties of a DeleteEnterpriseUserStatus. */
+    interface IDeleteEnterpriseUserStatus {
+
+        /** DeleteEnterpriseUserStatus enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** DeleteEnterpriseUserStatus status */
+        status?: (Enterprise.DeleteEnterpriseUsersResult|null);
+    }
+
+    /** Represents a DeleteEnterpriseUserStatus. */
+    class DeleteEnterpriseUserStatus implements IDeleteEnterpriseUserStatus {
+
+        /**
+         * Constructs a new DeleteEnterpriseUserStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IDeleteEnterpriseUserStatus);
+
+        /** DeleteEnterpriseUserStatus enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** DeleteEnterpriseUserStatus status. */
+        public status: Enterprise.DeleteEnterpriseUsersResult;
+
+        /**
+         * Creates a new DeleteEnterpriseUserStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteEnterpriseUserStatus instance
+         */
+        public static create(properties?: Enterprise.IDeleteEnterpriseUserStatus): Enterprise.DeleteEnterpriseUserStatus;
+
+        /**
+         * Encodes the specified DeleteEnterpriseUserStatus message. Does not implicitly {@link Enterprise.DeleteEnterpriseUserStatus.verify|verify} messages.
+         * @param message DeleteEnterpriseUserStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IDeleteEnterpriseUserStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteEnterpriseUserStatus message, length delimited. Does not implicitly {@link Enterprise.DeleteEnterpriseUserStatus.verify|verify} messages.
+         * @param message DeleteEnterpriseUserStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IDeleteEnterpriseUserStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteEnterpriseUserStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteEnterpriseUserStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.DeleteEnterpriseUserStatus;
+
+        /**
+         * Decodes a DeleteEnterpriseUserStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteEnterpriseUserStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.DeleteEnterpriseUserStatus;
+
+        /**
+         * Verifies a DeleteEnterpriseUserStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteEnterpriseUserStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteEnterpriseUserStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.DeleteEnterpriseUserStatus;
+
+        /**
+         * Creates a plain object from a DeleteEnterpriseUserStatus message. Also converts values to other types if specified.
+         * @param message DeleteEnterpriseUserStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.DeleteEnterpriseUserStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteEnterpriseUserStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeleteEnterpriseUserStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a DeleteEnterpriseUsersResponse. */
+    interface IDeleteEnterpriseUsersResponse {
+
+        /** DeleteEnterpriseUsersResponse deleteStatus */
+        deleteStatus?: (Enterprise.IDeleteEnterpriseUserStatus[]|null);
+    }
+
+    /** Represents a DeleteEnterpriseUsersResponse. */
+    class DeleteEnterpriseUsersResponse implements IDeleteEnterpriseUsersResponse {
+
+        /**
+         * Constructs a new DeleteEnterpriseUsersResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IDeleteEnterpriseUsersResponse);
+
+        /** DeleteEnterpriseUsersResponse deleteStatus. */
+        public deleteStatus: Enterprise.IDeleteEnterpriseUserStatus[];
+
+        /**
+         * Creates a new DeleteEnterpriseUsersResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteEnterpriseUsersResponse instance
+         */
+        public static create(properties?: Enterprise.IDeleteEnterpriseUsersResponse): Enterprise.DeleteEnterpriseUsersResponse;
+
+        /**
+         * Encodes the specified DeleteEnterpriseUsersResponse message. Does not implicitly {@link Enterprise.DeleteEnterpriseUsersResponse.verify|verify} messages.
+         * @param message DeleteEnterpriseUsersResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IDeleteEnterpriseUsersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteEnterpriseUsersResponse message, length delimited. Does not implicitly {@link Enterprise.DeleteEnterpriseUsersResponse.verify|verify} messages.
+         * @param message DeleteEnterpriseUsersResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IDeleteEnterpriseUsersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteEnterpriseUsersResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteEnterpriseUsersResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.DeleteEnterpriseUsersResponse;
+
+        /**
+         * Decodes a DeleteEnterpriseUsersResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteEnterpriseUsersResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.DeleteEnterpriseUsersResponse;
+
+        /**
+         * Verifies a DeleteEnterpriseUsersResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteEnterpriseUsersResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteEnterpriseUsersResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.DeleteEnterpriseUsersResponse;
+
+        /**
+         * Creates a plain object from a DeleteEnterpriseUsersResponse message. Also converts values to other types if specified.
+         * @param message DeleteEnterpriseUsersResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.DeleteEnterpriseUsersResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteEnterpriseUsersResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeleteEnterpriseUsersResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** ClearSecurityDataType enum. */
+    enum ClearSecurityDataType {
+        RECALCULATE_SUMMARY_REPORT = 0,
+        FORCE_CLIENT_CHECK_FOR_MISSING_DATA = 1,
+        FORCE_CLIENT_RESEND_SECURITY_DATA = 2
+    }
+
+    /** Properties of a ClearSecurityDataRequest. */
+    interface IClearSecurityDataRequest {
+
+        /** ClearSecurityDataRequest enterpriseUserId */
+        enterpriseUserId?: ((number|Long)[]|null);
+
+        /** ClearSecurityDataRequest allUsers */
+        allUsers?: (boolean|null);
+
+        /** ClearSecurityDataRequest type */
+        type?: (Enterprise.ClearSecurityDataType|null);
+    }
+
+    /** Represents a ClearSecurityDataRequest. */
+    class ClearSecurityDataRequest implements IClearSecurityDataRequest {
+
+        /**
+         * Constructs a new ClearSecurityDataRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IClearSecurityDataRequest);
+
+        /** ClearSecurityDataRequest enterpriseUserId. */
+        public enterpriseUserId: (number|Long)[];
+
+        /** ClearSecurityDataRequest allUsers. */
+        public allUsers: boolean;
+
+        /** ClearSecurityDataRequest type. */
+        public type: Enterprise.ClearSecurityDataType;
+
+        /**
+         * Creates a new ClearSecurityDataRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ClearSecurityDataRequest instance
+         */
+        public static create(properties?: Enterprise.IClearSecurityDataRequest): Enterprise.ClearSecurityDataRequest;
+
+        /**
+         * Encodes the specified ClearSecurityDataRequest message. Does not implicitly {@link Enterprise.ClearSecurityDataRequest.verify|verify} messages.
+         * @param message ClearSecurityDataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IClearSecurityDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ClearSecurityDataRequest message, length delimited. Does not implicitly {@link Enterprise.ClearSecurityDataRequest.verify|verify} messages.
+         * @param message ClearSecurityDataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IClearSecurityDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ClearSecurityDataRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ClearSecurityDataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ClearSecurityDataRequest;
+
+        /**
+         * Decodes a ClearSecurityDataRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ClearSecurityDataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ClearSecurityDataRequest;
+
+        /**
+         * Verifies a ClearSecurityDataRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ClearSecurityDataRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ClearSecurityDataRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ClearSecurityDataRequest;
+
+        /**
+         * Creates a plain object from a ClearSecurityDataRequest message. Also converts values to other types if specified.
+         * @param message ClearSecurityDataRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ClearSecurityDataRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ClearSecurityDataRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ClearSecurityDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -28114,6 +30584,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AccountSummaryRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AccountSummaryElements. */
@@ -28160,6 +30637,15 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements isShareAdmin */
         isShareAdmin?: (boolean|null);
+
+        /** AccountSummaryElements accountRecovery */
+        accountRecovery?: (boolean|null);
+
+        /** AccountSummaryElements accountRecoveryPrompt */
+        accountRecoveryPrompt?: (boolean|null);
+
+        /** AccountSummaryElements minMasterPasswordLengthNoPrompt */
+        minMasterPasswordLengthNoPrompt?: (number|null);
     }
 
     /** Represents an AccountSummaryElements. */
@@ -28212,6 +30698,15 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements isShareAdmin. */
         public isShareAdmin: boolean;
+
+        /** AccountSummaryElements accountRecovery. */
+        public accountRecovery: boolean;
+
+        /** AccountSummaryElements accountRecoveryPrompt. */
+        public accountRecoveryPrompt: boolean;
+
+        /** AccountSummaryElements minMasterPasswordLengthNoPrompt. */
+        public minMasterPasswordLengthNoPrompt: number;
 
         /**
          * Creates a new AccountSummaryElements instance using the specified properties.
@@ -28282,6 +30777,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AccountSummaryElements
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceInfo. */
@@ -28432,6 +30934,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a KeysInfo. */
@@ -28558,6 +31067,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KeysInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SyncLog. */
@@ -28678,6 +31194,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SyncLog
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a License. */
@@ -28924,6 +31447,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for License
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AddOn. */
@@ -29056,6 +31586,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddOn
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Settings. */
@@ -29162,6 +31699,12 @@ export namespace AccountSummary {
 
         /** Settings canManageRecordTypes */
         canManageRecordTypes?: (boolean|null);
+
+        /** Settings recordTypesPAMCounter */
+        recordTypesPAMCounter?: (number|null);
+
+        /** Settings logoutTimerMinutes */
+        logoutTimerMinutes?: (number|null);
     }
 
     /** Represents a Settings. */
@@ -29275,6 +31818,12 @@ export namespace AccountSummary {
         /** Settings canManageRecordTypes. */
         public canManageRecordTypes: boolean;
 
+        /** Settings recordTypesPAMCounter. */
+        public recordTypesPAMCounter: number;
+
+        /** Settings logoutTimerMinutes. */
+        public logoutTimerMinutes: number;
+
         /**
          * Creates a new Settings instance using the specified properties.
          * @param [properties] Properties to set
@@ -29344,6 +31893,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Settings
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a KeyValue. */
@@ -29440,6 +31996,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KeyValue
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a KeyValueBoolean. */
@@ -29536,6 +32099,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KeyValueBoolean
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a KeyValueLong. */
@@ -29632,6 +32202,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KeyValueLong
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Result. */
@@ -29734,6 +32311,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Result
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an Enforcements. */
@@ -29842,6 +32426,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Enforcements
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MissingAccountShareKey. */
@@ -29938,6 +32529,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MissingAccountShareKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PasswordRule. */
@@ -30058,6 +32656,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasswordRule
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SecurityKey. */
@@ -30172,6 +32777,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceRegistration. */
@@ -30286,6 +32898,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceRegistration
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Group. */
@@ -30388,6 +33007,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Group
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an Administrator. */
@@ -30520,6 +33146,13 @@ export namespace AccountSummary {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Administrator
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -30713,6 +33346,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AutomatorSettingValue
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveDeviceRequest. */
@@ -30856,6 +33496,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveDeviceRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SetupRequest. */
@@ -30977,6 +33624,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetupRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a StatusRequest. */
@@ -31076,6 +33730,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StatusRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an InitializeRequest. */
@@ -31292,6 +33953,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for InitializeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NotInitializedResponse. */
@@ -31432,6 +34100,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotInitializedResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AutomatorResponse. */
@@ -31577,6 +34252,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AutomatorResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApproveDeviceResponse. */
@@ -31683,6 +34365,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApproveDeviceResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a StatusResponse. */
@@ -31833,6 +34522,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StatusResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ErrorResponse. */
@@ -31926,6 +34622,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ErrorResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** These are the known skill types. */
@@ -32046,6 +34749,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LogEntry
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /**
@@ -32167,6 +34877,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AutomatorInfo. */
@@ -32311,6 +35028,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AutomatorInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminCreateAutomatorRequest. */
@@ -32418,6 +35142,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminCreateAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminDeleteAutomatorRequest. */
@@ -32515,6 +35246,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminDeleteAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminGetAutomatorsOnNodeRequest. */
@@ -32611,6 +35349,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminGetAutomatorsOnNodeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminGetAutomatorsForEnterpriseRequest. */
@@ -32708,6 +35453,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminGetAutomatorsForEnterpriseRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminGetAutomatorRequest. */
@@ -32802,6 +35554,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminGetAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminEnableAutomatorRequest. */
@@ -32902,6 +35661,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminEnableAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminEditAutomatorRequest. */
@@ -33028,6 +35794,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminEditAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminSetupAutomatorRequest. */
@@ -33142,6 +35915,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminSetupAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminSetupAutomatorResponse. */
@@ -33259,6 +36039,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminSetupAutomatorResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminAutomatorSkillsRequest. */
@@ -33354,6 +36141,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminAutomatorSkillsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AutomatorSkill. */
@@ -33456,6 +36250,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AutomatorSkill
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminAutomatorSkillsResponse. */
@@ -33558,6 +36359,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminAutomatorSkillsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminResetAutomatorRequest. */
@@ -33654,6 +36462,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminResetAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminInitializeAutomatorRequest. */
@@ -33749,6 +36564,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminInitializeAutomatorRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminAutomatorLogRequest. */
@@ -33846,6 +36668,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminAutomatorLogRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AdminAutomatorLogClearRequest. */
@@ -33943,6 +36772,13 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AdminAutomatorLogClearRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -33987,8 +36823,26 @@ export namespace SsoCloud {
         ADFS = 5,
         AZURE = 6,
         ONELOGIN = 7,
-        PING = 8,
-        JUMPCLOUD = 9
+        AWS = 8,
+        CENTRIFY = 9,
+        DUO = 10,
+        IBM = 11,
+        JUMPCLOUD = 12,
+        PING = 13,
+        PINGONE = 14,
+        RSA = 15,
+        SECUREAUTH = 16,
+        THALES = 17,
+        AUTH0 = 18,
+        BEYOND = 19,
+        HYPR = 20,
+        PUREID = 21,
+        SDO = 22,
+        TRAIT = 23,
+        TRANSMIT = 24,
+        TRUSONA = 25,
+        VERIDIUM = 26,
+        CAS = 27
     }
 
     /** Properties of a SsoCloudSettingValue. */
@@ -34127,6 +36981,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudSettingValue
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudSettingAction. */
@@ -34235,6 +37096,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudSettingAction
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudConfigurationRequest. */
@@ -34349,6 +37217,122 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudConfigurationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SsoSharedConfigItem. */
+    interface ISsoSharedConfigItem {
+
+        /** SsoSharedConfigItem ssoSpConfigurationId */
+        ssoSpConfigurationId?: (number|Long|null);
+
+        /** SsoSharedConfigItem ssoServiceProviderId */
+        ssoServiceProviderId?: (number|Long|null);
+
+        /** SsoSharedConfigItem ssoNodeId */
+        ssoNodeId?: (number|Long|null);
+    }
+
+    /** This represents the providers that share a given configuration */
+    class SsoSharedConfigItem implements ISsoSharedConfigItem {
+
+        /**
+         * Constructs a new SsoSharedConfigItem.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: SsoCloud.ISsoSharedConfigItem);
+
+        /** SsoSharedConfigItem ssoSpConfigurationId. */
+        public ssoSpConfigurationId: (number|Long);
+
+        /** SsoSharedConfigItem ssoServiceProviderId. */
+        public ssoServiceProviderId: (number|Long);
+
+        /** SsoSharedConfigItem ssoNodeId. */
+        public ssoNodeId: (number|Long);
+
+        /**
+         * Creates a new SsoSharedConfigItem instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SsoSharedConfigItem instance
+         */
+        public static create(properties?: SsoCloud.ISsoSharedConfigItem): SsoCloud.SsoSharedConfigItem;
+
+        /**
+         * Encodes the specified SsoSharedConfigItem message. Does not implicitly {@link SsoCloud.SsoSharedConfigItem.verify|verify} messages.
+         * @param message SsoSharedConfigItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: SsoCloud.ISsoSharedConfigItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SsoSharedConfigItem message, length delimited. Does not implicitly {@link SsoCloud.SsoSharedConfigItem.verify|verify} messages.
+         * @param message SsoSharedConfigItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: SsoCloud.ISsoSharedConfigItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SsoSharedConfigItem message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SsoSharedConfigItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): SsoCloud.SsoSharedConfigItem;
+
+        /**
+         * Decodes a SsoSharedConfigItem message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SsoSharedConfigItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): SsoCloud.SsoSharedConfigItem;
+
+        /**
+         * Verifies a SsoSharedConfigItem message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SsoSharedConfigItem message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SsoSharedConfigItem
+         */
+        public static fromObject(object: { [k: string]: any }): SsoCloud.SsoSharedConfigItem;
+
+        /**
+         * Creates a plain object from a SsoSharedConfigItem message. Also converts values to other types if specified.
+         * @param message SsoSharedConfigItem
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: SsoCloud.SsoSharedConfigItem, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SsoSharedConfigItem to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoSharedConfigItem
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudConfigurationResponse. */
@@ -34374,6 +37358,12 @@ export namespace SsoCloud {
 
         /** SsoCloudConfigurationResponse ssoCloudSettingValue */
         ssoCloudSettingValue?: (SsoCloud.ISsoCloudSettingValue[]|null);
+
+        /** SsoCloudConfigurationResponse isShared */
+        isShared?: (boolean|null);
+
+        /** SsoCloudConfigurationResponse sharedConfigs */
+        sharedConfigs?: (SsoCloud.ISsoSharedConfigItem[]|null);
     }
 
     /** This is the response to an SsoConfigurationRequest */
@@ -34405,6 +37395,12 @@ export namespace SsoCloud {
 
         /** SsoCloudConfigurationResponse ssoCloudSettingValue. */
         public ssoCloudSettingValue: SsoCloud.ISsoCloudSettingValue[];
+
+        /** SsoCloudConfigurationResponse isShared. */
+        public isShared: boolean;
+
+        /** SsoCloudConfigurationResponse sharedConfigs. */
+        public sharedConfigs: SsoCloud.ISsoSharedConfigItem[];
 
         /**
          * Creates a new SsoCloudConfigurationResponse instance using the specified properties.
@@ -34475,6 +37471,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudConfigurationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoIdpTypeRequest. */
@@ -34577,6 +37580,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoIdpTypeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoIdpTypeResponse. */
@@ -34679,6 +37689,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoIdpTypeResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudSAMLLogRequest. */
@@ -34769,6 +37786,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudSAMLLogRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudSAMLLogEntry. */
@@ -34913,6 +37937,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudSAMLLogEntry
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudSAMLLogResponse. */
@@ -35009,6 +38040,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudSAMLLogResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudServiceProviderUpdateRequest. */
@@ -35108,6 +38146,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudServiceProviderUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudIdpMetadataRequest. */
@@ -35213,6 +38258,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudIdpMetadataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudConfigurationValidationRequest. */
@@ -35306,6 +38358,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudConfigurationValidationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ValidationContent. */
@@ -35408,6 +38467,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ValidationContent
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudConfigurationValidationResponse. */
@@ -35498,6 +38564,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudConfigurationValidationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudServiceProviderConfigurationListRequest. */
@@ -35588,6 +38661,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudServiceProviderConfigurationListRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ConfigurationListItem. */
@@ -35699,6 +38779,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ConfigurationListItem
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudServiceProviderConfigurationListResponse. */
@@ -35789,6 +38876,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudServiceProviderConfigurationListResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudRequest. */
@@ -35930,6 +39024,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudResponse. */
@@ -36065,6 +39166,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudLogRequest. */
@@ -36167,6 +39275,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudLogRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SamlRelayState. */
@@ -36317,6 +39432,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SamlRelayState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudMigrationStatusRequest. */
@@ -36440,6 +39562,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudMigrationStatusRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudMigrationStatusResponse. */
@@ -36596,6 +39725,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudMigrationStatusResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SsoCloudMigrationUserInfo. */
@@ -36704,6 +39840,13 @@ export namespace SsoCloud {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SsoCloudMigrationUserInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -36822,6 +39965,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchRecordRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchUpdateRequest. */
@@ -36918,6 +40068,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchRecordStatus. */
@@ -37020,6 +40177,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchRecordStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchUpdateResponse. */
@@ -37110,6 +40274,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchUpdateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchTokenRequest. */
@@ -37200,6 +40371,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchTokenRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchTokenResponse. */
@@ -37296,6 +40474,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchTokenResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AnonymizedTokenResponse. */
@@ -37398,6 +40583,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AnonymizedTokenResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HashCheck. */
@@ -37494,6 +40686,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HashCheck
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchStatusRequest. */
@@ -37596,6 +40795,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchStatusRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HashStatus. */
@@ -37698,6 +40904,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HashStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchStatusResponse. */
@@ -37788,6 +41001,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchStatusResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterprisePublicKeyResponse. */
@@ -37884,6 +41104,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterprisePublicKeyResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FreeScanRequest. */
@@ -37974,6 +41201,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FreeScanRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FreeScanResponse. */
@@ -38070,6 +41304,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FreeScanResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PaidUserRequest. */
@@ -38160,6 +41401,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PaidUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PaidUserResponse. */
@@ -38250,6 +41498,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PaidUserResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DetailedScanRequest. */
@@ -38340,6 +41595,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DetailedScanRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UseOneTimeTokenRequest. */
@@ -38430,6 +41692,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UseOneTimeTokenRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachEvent. */
@@ -38544,6 +41813,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachEvent
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UseOneTimeTokenResponse. */
@@ -38652,6 +41928,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UseOneTimeTokenResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an OneTimeUseToken. */
@@ -38748,6 +42031,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for OneTimeUseToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FreePasswordScanRequest. */
@@ -38838,6 +42128,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FreePasswordScanRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FreePasswordScanResponse. */
@@ -38928,6 +42225,13 @@ export namespace BreachWatch {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FreePasswordScanResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -39028,6 +42332,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchRecordRequest. */
@@ -39136,6 +42447,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchRecordRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** BreachWatchInfoType enum. */
@@ -39244,6 +42562,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BWPassword. */
@@ -39352,6 +42677,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BWPassword
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** BWStatus enum. */
@@ -39457,6 +42789,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SSOLoginToken. */
@@ -39565,6 +42904,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SSOLoginToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LoginToken. */
@@ -39739,6 +43085,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LoginToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceApprovalToken. */
@@ -39847,6 +43200,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceApprovalToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TwoFactorToken. */
@@ -39955,6 +43315,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TwoFactorToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchToken. */
@@ -40063,6 +43430,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** AnonymizedTokenType enum. */
@@ -40178,6 +43552,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AnonymizedToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LicenseToken. */
@@ -40274,6 +43655,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LicenseToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** AccessType enum. */
@@ -40342,6 +43730,9 @@ export namespace Tokens {
 
         /** SessionToken loginSessionId */
         loginSessionId?: (number|Long|null);
+
+        /** SessionToken clientTypeId */
+        clientTypeId?: (number|null);
     }
 
     /** Represents a SessionToken. */
@@ -40409,6 +43800,9 @@ export namespace Tokens {
 
         /** SessionToken loginSessionId. */
         public loginSessionId: (number|Long);
+
+        /** SessionToken clientTypeId. */
+        public clientTypeId: number;
 
         /**
          * Creates a new SessionToken instance using the specified properties.
@@ -40479,6 +43873,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SessionToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserLicenseStatus. */
@@ -40575,6 +43976,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserLicenseStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a CheckOutTokenResponse. */
@@ -40665,6 +44073,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for CheckOutTokenResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ImporterToken. */
@@ -40767,6 +44182,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ImporterToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApiDecryptedRequest. */
@@ -40887,6 +44309,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApiDecryptedRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ChangeEmailToken. */
@@ -41007,6 +44436,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeEmailToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EmailVerificationToken. */
@@ -41121,6 +44557,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EmailVerificationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an IpAddressVerificationToken. */
@@ -41253,6 +44696,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IpAddressVerificationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterprisePersonalAccountToken. */
@@ -41373,6 +44823,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterprisePersonalAccountToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UsernameVerificationToken. */
@@ -41499,6 +44956,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UsernameVerificationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeviceVerificationToken. */
@@ -41631,6 +45095,140 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeviceVerificationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a ReActivateDeviceApprovalRequestToken. */
+    interface IReActivateDeviceApprovalRequestToken {
+
+        /** ReActivateDeviceApprovalRequestToken deviceId */
+        deviceId?: (number|Long|null);
+
+        /** ReActivateDeviceApprovalRequestToken fromUsername */
+        fromUsername?: (string|null);
+
+        /** ReActivateDeviceApprovalRequestToken forUsername */
+        forUsername?: (string|null);
+
+        /** ReActivateDeviceApprovalRequestToken accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** ReActivateDeviceApprovalRequestToken requestTimeStamp */
+        requestTimeStamp?: (number|Long|null);
+
+        /** ReActivateDeviceApprovalRequestToken supportedLanguage */
+        supportedLanguage?: (Authentication.SupportedLanguage|null);
+    }
+
+    /** Represents a ReActivateDeviceApprovalRequestToken. */
+    class ReActivateDeviceApprovalRequestToken implements IReActivateDeviceApprovalRequestToken {
+
+        /**
+         * Constructs a new ReActivateDeviceApprovalRequestToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IReActivateDeviceApprovalRequestToken);
+
+        /** ReActivateDeviceApprovalRequestToken deviceId. */
+        public deviceId: (number|Long);
+
+        /** ReActivateDeviceApprovalRequestToken fromUsername. */
+        public fromUsername: string;
+
+        /** ReActivateDeviceApprovalRequestToken forUsername. */
+        public forUsername: string;
+
+        /** ReActivateDeviceApprovalRequestToken accountUid. */
+        public accountUid: Uint8Array;
+
+        /** ReActivateDeviceApprovalRequestToken requestTimeStamp. */
+        public requestTimeStamp: (number|Long);
+
+        /** ReActivateDeviceApprovalRequestToken supportedLanguage. */
+        public supportedLanguage: Authentication.SupportedLanguage;
+
+        /**
+         * Creates a new ReActivateDeviceApprovalRequestToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReActivateDeviceApprovalRequestToken instance
+         */
+        public static create(properties?: Tokens.IReActivateDeviceApprovalRequestToken): Tokens.ReActivateDeviceApprovalRequestToken;
+
+        /**
+         * Encodes the specified ReActivateDeviceApprovalRequestToken message. Does not implicitly {@link Tokens.ReActivateDeviceApprovalRequestToken.verify|verify} messages.
+         * @param message ReActivateDeviceApprovalRequestToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IReActivateDeviceApprovalRequestToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReActivateDeviceApprovalRequestToken message, length delimited. Does not implicitly {@link Tokens.ReActivateDeviceApprovalRequestToken.verify|verify} messages.
+         * @param message ReActivateDeviceApprovalRequestToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IReActivateDeviceApprovalRequestToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReActivateDeviceApprovalRequestToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReActivateDeviceApprovalRequestToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.ReActivateDeviceApprovalRequestToken;
+
+        /**
+         * Decodes a ReActivateDeviceApprovalRequestToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReActivateDeviceApprovalRequestToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.ReActivateDeviceApprovalRequestToken;
+
+        /**
+         * Verifies a ReActivateDeviceApprovalRequestToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReActivateDeviceApprovalRequestToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReActivateDeviceApprovalRequestToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.ReActivateDeviceApprovalRequestToken;
+
+        /**
+         * Creates a plain object from a ReActivateDeviceApprovalRequestToken message. Also converts values to other types if specified.
+         * @param message ReActivateDeviceApprovalRequestToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.ReActivateDeviceApprovalRequestToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReActivateDeviceApprovalRequestToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReActivateDeviceApprovalRequestToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a CreateUserToken. */
@@ -41757,6 +45355,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for CreateUserToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeleteUserToken. */
@@ -41871,6 +45476,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeleteUserToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** ProcessTokenType enum. */
@@ -41882,7 +45494,8 @@ export namespace Tokens {
         DEVICE_VERIFICATION = 4,
         CREATE_ACCOUNT_VERIFICATION = 5,
         REDEEM_PERSONAL_LICENSE = 6,
-        DELETE_ACCOUNT_VERIFICATION = 7
+        DELETE_ACCOUNT_VERIFICATION = 7,
+        REACTIVATE_DEVICE_APPROVAL_REQUEST = 8
     }
 
     /** Properties of a ProcessToken. */
@@ -41997,6 +45610,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ProcessToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** PageTokenType enum. */
@@ -42111,6 +45731,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseDataContinuationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** VaultDataEntity enum. */
@@ -42272,6 +45899,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Position
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationL. */
@@ -42362,6 +45996,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationL
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationLL. */
@@ -42458,6 +46099,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationLL
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationLI. */
@@ -42554,6 +46202,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationLI
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationII. */
@@ -42650,6 +46305,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationII
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationB. */
@@ -42740,6 +46402,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationB
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationLB. */
@@ -42836,6 +46505,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationLB
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationBI. */
@@ -42932,6 +46608,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationBI
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a LocationLS. */
@@ -43028,6 +46711,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LocationLS
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseDataRoleTeamsPageToken. */
@@ -43130,6 +46820,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseDataRoleTeamsPageToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseDataTeamsPageToken. */
@@ -43226,6 +46923,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseDataTeamsPageToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseDataTeamUsersPageToken. */
@@ -43328,6 +47032,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseDataTeamUsersPageToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** EnterpriseBackupStage enum. */
@@ -43444,6 +47155,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseBackupUnlockPair
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EnterpriseBackupContinuationToken. */
@@ -43558,6 +47276,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseBackupContinuationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a VerificationToken. */
@@ -43666,6 +47391,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VerificationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ComplianceDataContinuationToken. */
@@ -43762,6 +47494,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ComplianceDataContinuationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a VaultSyncDownContinuationToken. */
@@ -43787,6 +47526,12 @@ export namespace Tokens {
 
         /** VaultSyncDownContinuationToken checkForAuditData */
         checkForAuditData?: (boolean|null);
+
+        /** VaultSyncDownContinuationToken clientVersion */
+        clientVersion?: (number|null);
+
+        /** VaultSyncDownContinuationToken clientDataVersion */
+        clientDataVersion?: (number|null);
     }
 
     /** Represents a VaultSyncDownContinuationToken. */
@@ -43818,6 +47563,12 @@ export namespace Tokens {
 
         /** VaultSyncDownContinuationToken checkForAuditData. */
         public checkForAuditData: boolean;
+
+        /** VaultSyncDownContinuationToken clientVersion. */
+        public clientVersion: number;
+
+        /** VaultSyncDownContinuationToken clientDataVersion. */
+        public clientDataVersion: number;
 
         /**
          * Creates a new VaultSyncDownContinuationToken instance using the specified properties.
@@ -43888,6 +47639,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultSyncDownContinuationToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a VaultSyncDownLocations. */
@@ -44068,6 +47826,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultSyncDownLocations
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordLocation. */
@@ -44164,6 +47929,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FolderLocation. */
@@ -44260,6 +48032,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderLocation. */
@@ -44356,6 +48135,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUserLocation. */
@@ -44464,6 +48250,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUserLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderTeamLocation. */
@@ -44566,6 +48359,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderTeamLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecordLocation. */
@@ -44668,6 +48468,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecordLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderFolderRecordLocation. */
@@ -44770,6 +48577,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderFolderRecordLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TeamLocation. */
@@ -44866,6 +48680,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserAuthHashLocation. */
@@ -44962,6 +48783,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserAuthHashLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FolderRecordLocation. */
@@ -45064,6 +48892,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRecordLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordLinkLocation. */
@@ -45166,6 +49001,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordLinkLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a KsmLocation. */
@@ -45268,6 +49110,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KsmLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FolderSharedFolderLocation. */
@@ -45370,6 +49219,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderSharedFolderLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ShareInvitationLocation. */
@@ -45460,6 +49316,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ShareInvitationLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserLocation. */
@@ -45550,6 +49413,13 @@ export namespace Tokens {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -45662,6 +49532,13 @@ export namespace ExternalService {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SaveSettingsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetUsersRequest. */
@@ -45758,6 +49635,13 @@ export namespace ExternalService {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetUsersRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** UserStatus enum. */
@@ -45881,6 +49765,13 @@ export namespace ExternalService {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for User
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetUsersResponse. */
@@ -45971,6 +49862,13 @@ export namespace ExternalService {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetUsersResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -46091,6 +49989,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EncryptedDataKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecordData. */
@@ -46199,6 +50104,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecordData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecordDataList. */
@@ -46289,6 +50201,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecordDataList
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecordFix. */
@@ -46391,6 +50310,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecordFix
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecordFixList. */
@@ -46481,6 +50407,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecordFixList
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordRequest. */
@@ -46631,6 +50564,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordResponse. */
@@ -46733,6 +50673,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderFields. */
@@ -46847,6 +50794,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderFields
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderFolderFields. */
@@ -46937,6 +50891,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderFolderFields
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FolderRequest. */
@@ -47063,6 +51024,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FolderResponse. */
@@ -47165,6 +51133,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ImportFolderRecordRequest. */
@@ -47261,6 +51236,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ImportFolderRecordRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ImportFolderRecordResponse. */
@@ -47357,6 +51339,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ImportFolderRecordResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** SetBooleanValue enum. */
@@ -47496,6 +51485,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateUser. */
@@ -47610,6 +51606,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateTeam. */
@@ -47724,6 +51727,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateV3Request. */
@@ -47928,6 +51938,110 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3Request
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SharedFolderUpdateV3RequestV2. */
+    interface ISharedFolderUpdateV3RequestV2 {
+
+        /** SharedFolderUpdateV3RequestV2 sharedFoldersUpdateV3 */
+        sharedFoldersUpdateV3?: (Folder.ISharedFolderUpdateV3Request[]|null);
+    }
+
+    /** Represents a SharedFolderUpdateV3RequestV2. */
+    class SharedFolderUpdateV3RequestV2 implements ISharedFolderUpdateV3RequestV2 {
+
+        /**
+         * Constructs a new SharedFolderUpdateV3RequestV2.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.ISharedFolderUpdateV3RequestV2);
+
+        /** SharedFolderUpdateV3RequestV2 sharedFoldersUpdateV3. */
+        public sharedFoldersUpdateV3: Folder.ISharedFolderUpdateV3Request[];
+
+        /**
+         * Creates a new SharedFolderUpdateV3RequestV2 instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SharedFolderUpdateV3RequestV2 instance
+         */
+        public static create(properties?: Folder.ISharedFolderUpdateV3RequestV2): Folder.SharedFolderUpdateV3RequestV2;
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3RequestV2 message. Does not implicitly {@link Folder.SharedFolderUpdateV3RequestV2.verify|verify} messages.
+         * @param message SharedFolderUpdateV3RequestV2 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.ISharedFolderUpdateV3RequestV2, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3RequestV2 message, length delimited. Does not implicitly {@link Folder.SharedFolderUpdateV3RequestV2.verify|verify} messages.
+         * @param message SharedFolderUpdateV3RequestV2 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.ISharedFolderUpdateV3RequestV2, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SharedFolderUpdateV3RequestV2 message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SharedFolderUpdateV3RequestV2
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.SharedFolderUpdateV3RequestV2;
+
+        /**
+         * Decodes a SharedFolderUpdateV3RequestV2 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SharedFolderUpdateV3RequestV2
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.SharedFolderUpdateV3RequestV2;
+
+        /**
+         * Verifies a SharedFolderUpdateV3RequestV2 message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SharedFolderUpdateV3RequestV2 message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SharedFolderUpdateV3RequestV2
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.SharedFolderUpdateV3RequestV2;
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateV3RequestV2 message. Also converts values to other types if specified.
+         * @param message SharedFolderUpdateV3RequestV2
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.SharedFolderUpdateV3RequestV2, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SharedFolderUpdateV3RequestV2 to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3RequestV2
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateRecordStatus. */
@@ -48024,6 +52138,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateRecordStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateUserStatus. */
@@ -48120,6 +52241,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateUserStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateTeamStatus. */
@@ -48216,6 +52344,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateTeamStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUpdateV3Response. */
@@ -48250,6 +52385,12 @@ export namespace Folder {
 
         /** SharedFolderUpdateV3Response sharedFolderRemoveTeamStatus */
         sharedFolderRemoveTeamStatus?: (Folder.ISharedFolderUpdateTeamStatus[]|null);
+
+        /** SharedFolderUpdateV3Response sharedFolderUid */
+        sharedFolderUid?: (Uint8Array|null);
+
+        /** SharedFolderUpdateV3Response status */
+        status?: (string|null);
     }
 
     /** Represents a SharedFolderUpdateV3Response. */
@@ -48290,6 +52431,12 @@ export namespace Folder {
 
         /** SharedFolderUpdateV3Response sharedFolderRemoveTeamStatus. */
         public sharedFolderRemoveTeamStatus: Folder.ISharedFolderUpdateTeamStatus[];
+
+        /** SharedFolderUpdateV3Response sharedFolderUid. */
+        public sharedFolderUid: Uint8Array;
+
+        /** SharedFolderUpdateV3Response status. */
+        public status: string;
 
         /**
          * Creates a new SharedFolderUpdateV3Response instance using the specified properties.
@@ -48360,6 +52507,110 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3Response
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SharedFolderUpdateV3ResponseV2. */
+    interface ISharedFolderUpdateV3ResponseV2 {
+
+        /** SharedFolderUpdateV3ResponseV2 sharedFoldersUpdateV3Response */
+        sharedFoldersUpdateV3Response?: (Folder.ISharedFolderUpdateV3Response[]|null);
+    }
+
+    /** Represents a SharedFolderUpdateV3ResponseV2. */
+    class SharedFolderUpdateV3ResponseV2 implements ISharedFolderUpdateV3ResponseV2 {
+
+        /**
+         * Constructs a new SharedFolderUpdateV3ResponseV2.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.ISharedFolderUpdateV3ResponseV2);
+
+        /** SharedFolderUpdateV3ResponseV2 sharedFoldersUpdateV3Response. */
+        public sharedFoldersUpdateV3Response: Folder.ISharedFolderUpdateV3Response[];
+
+        /**
+         * Creates a new SharedFolderUpdateV3ResponseV2 instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SharedFolderUpdateV3ResponseV2 instance
+         */
+        public static create(properties?: Folder.ISharedFolderUpdateV3ResponseV2): Folder.SharedFolderUpdateV3ResponseV2;
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3ResponseV2 message. Does not implicitly {@link Folder.SharedFolderUpdateV3ResponseV2.verify|verify} messages.
+         * @param message SharedFolderUpdateV3ResponseV2 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.ISharedFolderUpdateV3ResponseV2, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3ResponseV2 message, length delimited. Does not implicitly {@link Folder.SharedFolderUpdateV3ResponseV2.verify|verify} messages.
+         * @param message SharedFolderUpdateV3ResponseV2 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.ISharedFolderUpdateV3ResponseV2, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SharedFolderUpdateV3ResponseV2 message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SharedFolderUpdateV3ResponseV2
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.SharedFolderUpdateV3ResponseV2;
+
+        /**
+         * Decodes a SharedFolderUpdateV3ResponseV2 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SharedFolderUpdateV3ResponseV2
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.SharedFolderUpdateV3ResponseV2;
+
+        /**
+         * Verifies a SharedFolderUpdateV3ResponseV2 message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SharedFolderUpdateV3ResponseV2 message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SharedFolderUpdateV3ResponseV2
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.SharedFolderUpdateV3ResponseV2;
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateV3ResponseV2 message. Also converts values to other types if specified.
+         * @param message SharedFolderUpdateV3ResponseV2
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.SharedFolderUpdateV3ResponseV2, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SharedFolderUpdateV3ResponseV2 to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3ResponseV2
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetDeletedSharedFoldersAndRecordsResponse. */
@@ -48468,6 +52719,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetDeletedSharedFoldersAndRecordsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeletedSharedFolder. */
@@ -48600,6 +52858,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeletedSharedFolder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeletedSharedFolderRecord. */
@@ -48714,6 +52979,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeletedSharedFolderRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DeletedRecordData. */
@@ -48828,6 +53100,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DeletedRecordData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Username. */
@@ -48924,6 +53203,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Username
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RestoreDeletedSharedFoldersAndRecordsRequest. */
@@ -49020,6 +53306,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RestoreDeletedSharedFoldersAndRecordsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RestoreSharedObject. */
@@ -49116,6 +53409,13 @@ export namespace Folder {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RestoreSharedObject
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -49127,7 +53427,8 @@ export namespace Records {
         RT_STANDARD = 0,
         RT_USER = 1,
         RT_ENTERPRISE = 2,
-        RT_PAM = 3
+        RT_PAM = 3,
+        RT_PAM_CONFIGURATION = 4
     }
 
     /** Properties of a RecordType. */
@@ -49230,6 +53531,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordType
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordTypesRequest. */
@@ -49338,6 +53646,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordTypesRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordTypesResponse. */
@@ -49452,6 +53767,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordTypesResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordTypeModifyResponse. */
@@ -49548,6 +53870,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordTypeModifyResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsGetRequest. */
@@ -49644,6 +53973,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsGetRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Record. */
@@ -49782,6 +54118,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Record
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** RecordKeyType enum. */
@@ -49895,6 +54238,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRecordKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Folder. */
@@ -49997,6 +54347,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Folder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Team. */
@@ -50111,6 +54468,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Team
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsGetResponse. */
@@ -50219,6 +54583,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsGetResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** RecordFolderType enum. */
@@ -50322,6 +54693,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordLink
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordAudit. */
@@ -50418,6 +54796,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordAudit
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordAdd. */
@@ -50562,6 +54947,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordAdd
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsAddRequest. */
@@ -50658,6 +55050,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordUpdate. */
@@ -50790,6 +55189,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordUpdate
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsUpdateRequest. */
@@ -50886,6 +55292,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordFileForConversion. */
@@ -51006,6 +55419,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordFileForConversion
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordFolderForConversion. */
@@ -51102,6 +55522,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordFolderForConversion
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordConvertToV3. */
@@ -51234,6 +55661,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordConvertToV3
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsConvertToV3Request. */
@@ -51330,6 +55764,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsConvertToV3Request
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsRemoveRequest. */
@@ -51420,6 +55861,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsRemoveRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordRevert. */
@@ -51516,6 +55964,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordRevert
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsRevertRequest. */
@@ -51606,6 +56061,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsRevertRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** RecordModifyResult enum. */
@@ -51621,7 +56083,8 @@ export namespace Records {
         RS_RECORD_NOT_SHAREABLE = 8,
         RS_ATTACHMENT_NOT_SHAREABLE = 9,
         RS_FILE_LIMIT_REACHED = 10,
-        RS_SIZE_EXCEEDED_LIMIT = 11
+        RS_SIZE_EXCEEDED_LIMIT = 11,
+        RS_ONLY_OWNER_CAN_MODIFY_SCRIPTS = 12
     }
 
     /** Properties of a RecordLinkError. */
@@ -51724,6 +56187,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordLinkError
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordModifyStatus. */
@@ -51832,6 +56302,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordModifyStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsModifyResponse. */
@@ -51928,6 +56405,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsModifyResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordAddAuditData. */
@@ -52036,6 +56520,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordAddAuditData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AddAuditDataRequest. */
@@ -52126,6 +56617,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddAuditDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a File. */
@@ -52145,6 +56643,9 @@ export namespace Records {
 
         /** File thumbSize */
         thumbSize?: (number|null);
+
+        /** File isScript */
+        isScript?: (boolean|null);
     }
 
     /** Represents a File. */
@@ -52170,6 +56671,9 @@ export namespace Records {
 
         /** File thumbSize. */
         public thumbSize: number;
+
+        /** File isScript. */
+        public isScript: boolean;
 
         /**
          * Creates a new File instance using the specified properties.
@@ -52240,6 +56744,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for File
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FilesAddRequest. */
@@ -52336,6 +56847,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FilesAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** FileAddResult enum. */
@@ -52462,6 +56980,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FileAddStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FilesAddResponse. */
@@ -52558,6 +57083,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FilesAddResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FilesGetRequest. */
@@ -52660,6 +57192,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FilesGetRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** FileGetResult enum. */
@@ -52781,6 +57320,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FileGetStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a FilesGetResponse. */
@@ -52871,6 +57417,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FilesGetResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an ApplicationAddRequest. */
@@ -52979,6 +57532,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApplicationAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** RecordDetailsInclude enum. */
@@ -53088,6 +57648,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetRecordDataWithAccessInfoRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserPermission. */
@@ -53220,6 +57787,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserPermission
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderPermission. */
@@ -53334,6 +57908,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderPermission
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordData. */
@@ -53502,6 +58083,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordDataWithAccessInfo. */
@@ -53610,6 +58198,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordDataWithAccessInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetRecordDataWithAccessInfoResponse. */
@@ -53706,6 +58301,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetRecordDataWithAccessInfoResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** CheckShareAdminObjectType enum. */
@@ -53815,6 +58417,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IsObjectShareAdmin
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AmIShareAdmin. */
@@ -53905,6 +58514,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AmIShareAdmin
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordShareUpdateRequest. */
@@ -54013,6 +58629,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordShareUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedRecord. */
@@ -54163,6 +58786,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordShareUpdateResponse. */
@@ -54265,6 +58895,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordShareUpdateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedRecordStatus. */
@@ -54373,6 +59010,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedRecordStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetRecordPermissionsRequest. */
@@ -54469,6 +59113,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetRecordPermissionsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetRecordPermissionsResponse. */
@@ -54559,6 +59210,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetRecordPermissionsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordPermission. */
@@ -54673,6 +59331,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordPermission
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetShareObjectsRequest. */
@@ -54781,6 +59446,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetShareObjectsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetShareObjectsResponse. */
@@ -54907,6 +59579,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetShareObjectsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ShareUser. */
@@ -55027,6 +59706,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ShareUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ShareTeam. */
@@ -55129,6 +59815,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ShareTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ShareEnterprise. */
@@ -55225,6 +59918,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ShareEnterprise
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** ShareStatus enum. */
@@ -55322,6 +60022,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsOnwershipTransferRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TransferRecord. */
@@ -55430,6 +60137,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TransferRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordsOnwershipTransferResponse. */
@@ -55520,6 +60234,13 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsOnwershipTransferResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TransferRecordStatus. */
@@ -55628,6 +60349,637 @@ export namespace Records {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TransferRecordStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordsUnshareRequest. */
+    interface IRecordsUnshareRequest {
+
+        /** RecordsUnshareRequest sharedFolders */
+        sharedFolders?: (Records.IRecordsUnshareFolder[]|null);
+
+        /** RecordsUnshareRequest users */
+        users?: (Records.IRecordsUnshareUser[]|null);
+    }
+
+    /** Represents a RecordsUnshareRequest. */
+    class RecordsUnshareRequest implements IRecordsUnshareRequest {
+
+        /**
+         * Constructs a new RecordsUnshareRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUnshareRequest);
+
+        /** RecordsUnshareRequest sharedFolders. */
+        public sharedFolders: Records.IRecordsUnshareFolder[];
+
+        /** RecordsUnshareRequest users. */
+        public users: Records.IRecordsUnshareUser[];
+
+        /**
+         * Creates a new RecordsUnshareRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUnshareRequest instance
+         */
+        public static create(properties?: Records.IRecordsUnshareRequest): Records.RecordsUnshareRequest;
+
+        /**
+         * Encodes the specified RecordsUnshareRequest message. Does not implicitly {@link Records.RecordsUnshareRequest.verify|verify} messages.
+         * @param message RecordsUnshareRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUnshareRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUnshareRequest message, length delimited. Does not implicitly {@link Records.RecordsUnshareRequest.verify|verify} messages.
+         * @param message RecordsUnshareRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUnshareRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUnshareRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUnshareRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUnshareRequest;
+
+        /**
+         * Decodes a RecordsUnshareRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUnshareRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUnshareRequest;
+
+        /**
+         * Verifies a RecordsUnshareRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUnshareRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUnshareRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUnshareRequest;
+
+        /**
+         * Creates a plain object from a RecordsUnshareRequest message. Also converts values to other types if specified.
+         * @param message RecordsUnshareRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUnshareRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUnshareRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUnshareRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordsUnshareResponse. */
+    interface IRecordsUnshareResponse {
+
+        /** RecordsUnshareResponse sharedFolders */
+        sharedFolders?: (Records.IRecordsUnshareFolderStatus[]|null);
+
+        /** RecordsUnshareResponse users */
+        users?: (Records.IRecordsUnshareUserStatus[]|null);
+    }
+
+    /** Represents a RecordsUnshareResponse. */
+    class RecordsUnshareResponse implements IRecordsUnshareResponse {
+
+        /**
+         * Constructs a new RecordsUnshareResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUnshareResponse);
+
+        /** RecordsUnshareResponse sharedFolders. */
+        public sharedFolders: Records.IRecordsUnshareFolderStatus[];
+
+        /** RecordsUnshareResponse users. */
+        public users: Records.IRecordsUnshareUserStatus[];
+
+        /**
+         * Creates a new RecordsUnshareResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUnshareResponse instance
+         */
+        public static create(properties?: Records.IRecordsUnshareResponse): Records.RecordsUnshareResponse;
+
+        /**
+         * Encodes the specified RecordsUnshareResponse message. Does not implicitly {@link Records.RecordsUnshareResponse.verify|verify} messages.
+         * @param message RecordsUnshareResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUnshareResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUnshareResponse message, length delimited. Does not implicitly {@link Records.RecordsUnshareResponse.verify|verify} messages.
+         * @param message RecordsUnshareResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUnshareResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUnshareResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUnshareResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUnshareResponse;
+
+        /**
+         * Decodes a RecordsUnshareResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUnshareResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUnshareResponse;
+
+        /**
+         * Verifies a RecordsUnshareResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUnshareResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUnshareResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUnshareResponse;
+
+        /**
+         * Creates a plain object from a RecordsUnshareResponse message. Also converts values to other types if specified.
+         * @param message RecordsUnshareResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUnshareResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUnshareResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUnshareResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordsUnshareFolder. */
+    interface IRecordsUnshareFolder {
+
+        /** RecordsUnshareFolder recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordsUnshareFolder sharedFolderUid */
+        sharedFolderUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordsUnshareFolder. */
+    class RecordsUnshareFolder implements IRecordsUnshareFolder {
+
+        /**
+         * Constructs a new RecordsUnshareFolder.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUnshareFolder);
+
+        /** RecordsUnshareFolder recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordsUnshareFolder sharedFolderUid. */
+        public sharedFolderUid: Uint8Array;
+
+        /**
+         * Creates a new RecordsUnshareFolder instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUnshareFolder instance
+         */
+        public static create(properties?: Records.IRecordsUnshareFolder): Records.RecordsUnshareFolder;
+
+        /**
+         * Encodes the specified RecordsUnshareFolder message. Does not implicitly {@link Records.RecordsUnshareFolder.verify|verify} messages.
+         * @param message RecordsUnshareFolder message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUnshareFolder, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUnshareFolder message, length delimited. Does not implicitly {@link Records.RecordsUnshareFolder.verify|verify} messages.
+         * @param message RecordsUnshareFolder message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUnshareFolder, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUnshareFolder message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUnshareFolder
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUnshareFolder;
+
+        /**
+         * Decodes a RecordsUnshareFolder message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUnshareFolder
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUnshareFolder;
+
+        /**
+         * Verifies a RecordsUnshareFolder message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUnshareFolder message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUnshareFolder
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUnshareFolder;
+
+        /**
+         * Creates a plain object from a RecordsUnshareFolder message. Also converts values to other types if specified.
+         * @param message RecordsUnshareFolder
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUnshareFolder, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUnshareFolder to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUnshareFolder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordsUnshareUser. */
+    interface IRecordsUnshareUser {
+
+        /** RecordsUnshareUser recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordsUnshareUser accountUid */
+        accountUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordsUnshareUser. */
+    class RecordsUnshareUser implements IRecordsUnshareUser {
+
+        /**
+         * Constructs a new RecordsUnshareUser.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUnshareUser);
+
+        /** RecordsUnshareUser recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordsUnshareUser accountUid. */
+        public accountUid: Uint8Array;
+
+        /**
+         * Creates a new RecordsUnshareUser instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUnshareUser instance
+         */
+        public static create(properties?: Records.IRecordsUnshareUser): Records.RecordsUnshareUser;
+
+        /**
+         * Encodes the specified RecordsUnshareUser message. Does not implicitly {@link Records.RecordsUnshareUser.verify|verify} messages.
+         * @param message RecordsUnshareUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUnshareUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUnshareUser message, length delimited. Does not implicitly {@link Records.RecordsUnshareUser.verify|verify} messages.
+         * @param message RecordsUnshareUser message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUnshareUser, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUnshareUser message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUnshareUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUnshareUser;
+
+        /**
+         * Decodes a RecordsUnshareUser message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUnshareUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUnshareUser;
+
+        /**
+         * Verifies a RecordsUnshareUser message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUnshareUser message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUnshareUser
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUnshareUser;
+
+        /**
+         * Creates a plain object from a RecordsUnshareUser message. Also converts values to other types if specified.
+         * @param message RecordsUnshareUser
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUnshareUser, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUnshareUser to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUnshareUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordsUnshareFolderStatus. */
+    interface IRecordsUnshareFolderStatus {
+
+        /** RecordsUnshareFolderStatus recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordsUnshareFolderStatus sharedFolderUid */
+        sharedFolderUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordsUnshareFolderStatus. */
+    class RecordsUnshareFolderStatus implements IRecordsUnshareFolderStatus {
+
+        /**
+         * Constructs a new RecordsUnshareFolderStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUnshareFolderStatus);
+
+        /** RecordsUnshareFolderStatus recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordsUnshareFolderStatus sharedFolderUid. */
+        public sharedFolderUid: Uint8Array;
+
+        /**
+         * Creates a new RecordsUnshareFolderStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUnshareFolderStatus instance
+         */
+        public static create(properties?: Records.IRecordsUnshareFolderStatus): Records.RecordsUnshareFolderStatus;
+
+        /**
+         * Encodes the specified RecordsUnshareFolderStatus message. Does not implicitly {@link Records.RecordsUnshareFolderStatus.verify|verify} messages.
+         * @param message RecordsUnshareFolderStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUnshareFolderStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUnshareFolderStatus message, length delimited. Does not implicitly {@link Records.RecordsUnshareFolderStatus.verify|verify} messages.
+         * @param message RecordsUnshareFolderStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUnshareFolderStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUnshareFolderStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUnshareFolderStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUnshareFolderStatus;
+
+        /**
+         * Decodes a RecordsUnshareFolderStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUnshareFolderStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUnshareFolderStatus;
+
+        /**
+         * Verifies a RecordsUnshareFolderStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUnshareFolderStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUnshareFolderStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUnshareFolderStatus;
+
+        /**
+         * Creates a plain object from a RecordsUnshareFolderStatus message. Also converts values to other types if specified.
+         * @param message RecordsUnshareFolderStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUnshareFolderStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUnshareFolderStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUnshareFolderStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordsUnshareUserStatus. */
+    interface IRecordsUnshareUserStatus {
+
+        /** RecordsUnshareUserStatus recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordsUnshareUserStatus accountUid */
+        accountUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordsUnshareUserStatus. */
+    class RecordsUnshareUserStatus implements IRecordsUnshareUserStatus {
+
+        /**
+         * Constructs a new RecordsUnshareUserStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordsUnshareUserStatus);
+
+        /** RecordsUnshareUserStatus recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordsUnshareUserStatus accountUid. */
+        public accountUid: Uint8Array;
+
+        /**
+         * Creates a new RecordsUnshareUserStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsUnshareUserStatus instance
+         */
+        public static create(properties?: Records.IRecordsUnshareUserStatus): Records.RecordsUnshareUserStatus;
+
+        /**
+         * Encodes the specified RecordsUnshareUserStatus message. Does not implicitly {@link Records.RecordsUnshareUserStatus.verify|verify} messages.
+         * @param message RecordsUnshareUserStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordsUnshareUserStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordsUnshareUserStatus message, length delimited. Does not implicitly {@link Records.RecordsUnshareUserStatus.verify|verify} messages.
+         * @param message RecordsUnshareUserStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordsUnshareUserStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsUnshareUserStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsUnshareUserStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordsUnshareUserStatus;
+
+        /**
+         * Decodes a RecordsUnshareUserStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordsUnshareUserStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordsUnshareUserStatus;
+
+        /**
+         * Verifies a RecordsUnshareUserStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordsUnshareUserStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsUnshareUserStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordsUnshareUserStatus;
+
+        /**
+         * Creates a plain object from a RecordsUnshareUserStatus message. Also converts values to other types if specified.
+         * @param message RecordsUnshareUserStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordsUnshareUserStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsUnshareUserStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsUnshareUserStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** RecordTransactionType enum. */
+    enum RecordTransactionType {
+        RTT_GENERAL = 0,
+        RTT_ROTATION = 1
     }
 }
 
@@ -55734,6 +61086,13 @@ export namespace Push {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserRegistrationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** MessageType enum. */
@@ -55868,6 +61227,13 @@ export namespace Push {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KAToPushServerRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a WssConnectionRequest. */
@@ -55970,6 +61336,13 @@ export namespace Push {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WssConnectionRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a WssClientResponse. */
@@ -56066,6 +61439,13 @@ export namespace Push {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WssClientResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PushServerDeviceRegistrationRequest. */
@@ -56174,6 +61554,13 @@ export namespace Push {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PushServerDeviceRegistrationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SnsMessage. */
@@ -56270,6 +61657,13 @@ export namespace Push {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SnsMessage
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -56370,6 +61764,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IdRange
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceInfoSpecifier. */
@@ -56472,6 +61873,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceInfoSpecifier
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceInfoRequest. */
@@ -56562,6 +61970,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceInfoRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceInfoRecord. */
@@ -56676,6 +62091,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceInfoRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceInfoResponse. */
@@ -56766,6 +62188,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceInfoResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceInfoUpdateRequest. */
@@ -56856,6 +62285,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceInfoUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceRuleSpecifier. */
@@ -56964,6 +62400,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceRuleSpecifier
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceRuleRequest. */
@@ -57054,6 +62497,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceRuleRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceRuleRecord. */
@@ -57186,6 +62636,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceRuleRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceRuleResponse. */
@@ -57276,6 +62733,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceRuleResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceRuleUpdateRequest. */
@@ -57366,6 +62830,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceRuleUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogSpecifier. */
@@ -57486,6 +62957,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogSpecifier
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogGetRequest. */
@@ -57576,6 +63054,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogGetRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogRecord. */
@@ -57708,6 +63193,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogAddRequest. */
@@ -57798,6 +63290,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogResponse. */
@@ -57888,6 +63387,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogClearRequest. */
@@ -58002,6 +63508,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogClearRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ServiceLogClearResponse. */
@@ -58116,6 +63629,13 @@ export namespace ServiceLogger {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ServiceLogClearResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -58133,6 +63653,9 @@ export namespace Vault {
 
         /** SyncDownRequest continuationToken */
         continuationToken?: (Uint8Array|null);
+
+        /** SyncDownRequest dataVersion */
+        dataVersion?: (number|null);
     }
 
     /** Represents a SyncDownRequest. */
@@ -58146,6 +63669,9 @@ export namespace Vault {
 
         /** SyncDownRequest continuationToken. */
         public continuationToken: Uint8Array;
+
+        /** SyncDownRequest dataVersion. */
+        public dataVersion: number;
 
         /**
          * Creates a new SyncDownRequest instance using the specified properties.
@@ -58216,6 +63742,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SyncDownRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SyncDownResponse. */
@@ -58570,6 +64103,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SyncDownResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserFolder. */
@@ -58690,6 +64230,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserFolder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolder. */
@@ -58852,6 +64399,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserFolderSharedFolder. */
@@ -58954,6 +64508,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserFolderSharedFolder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderFolder. */
@@ -59080,6 +64641,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderFolder
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderKey. */
@@ -59182,6 +64750,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Team. */
@@ -59326,6 +64901,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Team
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Record. */
@@ -59470,6 +65052,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Record
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordLink. */
@@ -59578,6 +65167,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordLink
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserFolderRecord. */
@@ -59680,6 +65276,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserFolderRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderFolderRecord. */
@@ -59782,6 +65385,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderFolderRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NonSharedData. */
@@ -59878,6 +65488,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NonSharedData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a RecordMetaData. */
@@ -60010,6 +65627,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordMetaData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharingChange. */
@@ -60106,6 +65730,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharingChange
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Profile. */
@@ -60208,6 +65839,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Profile
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ProfilePic. */
@@ -60304,6 +65942,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ProfilePic
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a PendingTeamMember. */
@@ -60406,6 +66051,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PendingTeamMember
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchRecord. */
@@ -60526,6 +66178,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a UserAuth. */
@@ -60658,6 +66317,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserAuth
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchSecurityData. */
@@ -60754,6 +66420,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchSecurityData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ReusedPasswords. */
@@ -60850,6 +66523,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReusedPasswords
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderRecord. */
@@ -60982,6 +66662,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderUser. */
@@ -61102,6 +66789,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderUser
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SharedFolderTeam. */
@@ -61222,6 +66916,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SharedFolderTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a KsmChange. */
@@ -61324,6 +67025,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KsmChange
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ShareInvitation. */
@@ -61414,6 +67122,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ShareInvitation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a User. */
@@ -61510,6 +67225,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for User
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SyncDiagnostics. */
@@ -61624,6 +67346,21 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SyncDiagnostics
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** RecordRotationStatus enum. */
+    enum RecordRotationStatus {
+        RRST_NOT_ROTATED = 0,
+        RRST_IN_PROGRESS = 1,
+        RRST_SUCCESS = 2,
+        RRST_FAILURE = 3
     }
 
     /** Properties of a RecordRotation. */
@@ -61646,6 +67383,15 @@ export namespace Vault {
 
         /** RecordRotation disabled */
         disabled?: (boolean|null);
+
+        /** RecordRotation resourceUid */
+        resourceUid?: (Uint8Array|null);
+
+        /** RecordRotation lastRotation */
+        lastRotation?: (number|Long|null);
+
+        /** RecordRotation lastRotationStatus */
+        lastRotationStatus?: (Vault.RecordRotationStatus|null);
     }
 
     /** Represents a RecordRotation. */
@@ -61674,6 +67420,15 @@ export namespace Vault {
 
         /** RecordRotation disabled. */
         public disabled: boolean;
+
+        /** RecordRotation resourceUid. */
+        public resourceUid: Uint8Array;
+
+        /** RecordRotation lastRotation. */
+        public lastRotation: (number|Long);
+
+        /** RecordRotation lastRotationStatus. */
+        public lastRotationStatus: Vault.RecordRotationStatus;
 
         /**
          * Creates a new RecordRotation instance using the specified properties.
@@ -61744,6 +67499,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordRotation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchGetSyncDataRequest. */
@@ -61834,6 +67596,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchGetSyncDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BreachWatchGetSyncDataResponse. */
@@ -61936,6 +67705,13 @@ export namespace Vault {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BreachWatchGetSyncDataResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -62048,6 +67824,13 @@ export namespace Upsell {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpsellRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an UpsellResponse. */
@@ -62138,6 +67921,13 @@ export namespace Upsell {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpsellResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an UpsellBanner. */
@@ -62264,6 +68054,13 @@ export namespace Upsell {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpsellBanner
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** ClientType enum. */
