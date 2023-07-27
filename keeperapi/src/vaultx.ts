@@ -133,6 +133,7 @@ export type DSharedFolderRecord = {
     sharedFolderUid: string
     recordUid: string
     ownerUid: string
+    owner: boolean
     canShare: boolean
     canEdit: boolean
 }
@@ -512,9 +513,10 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 kind: 'shared_folder_record',
                 recordUid: recUid,
                 sharedFolderUid,
+                owner: rec.owner,
                 ownerUid,
-                canEdit: !ownerUid ? true : rec.canEdit,
-                canShare: !ownerUid ? true : rec.canShare,
+                canEdit: rec.owner ? true : rec.canEdit,
+                canShare: rec.owner ? true : rec.canShare,
             })
         } catch (e: any) {
             console.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
