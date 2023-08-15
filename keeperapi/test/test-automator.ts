@@ -44,11 +44,13 @@ import AdminResponse = Automator.AdminResponse;
 import AdminSetupAutomatorRequest = Automator.AdminSetupAutomatorRequest;
 import AdminSetupAutomatorResponse = Automator.AdminSetupAutomatorResponse;
 import AdminAutomatorSkillsRequest = Automator.AdminAutomatorSkillsRequest;
+import AdminAutomatorLogRequest = Automator.AdminAutomatorLogRequest;
+import AdminAutomatorLogClearRequest = Automator.AdminAutomatorLogClearRequest;
 import IAdminResponse = Automator.IAdminResponse;
 import AutomatorSettingValue = Automator.AutomatorSettingValue;
 import AutomatorState = Automator.AutomatorState;
 
-import {automatorAdminCreateMessage, automatorAdminDeleteMessage, automatorAdminEditMessage, automatorAdminEnableMessage, automatorAdminGetMessage, automatorAdminGetAllForEnterpriseMessage, automatorAdminGetAllOnNodeMessage, automatorAdminInitializeMessage, automatorAdminResetMessage, automatorAdminSetupMessage, automatorAdminSkillsMessage, serviceLoggerGetMessage} from '../src/restMessages';
+import {automatorAdminCreateMessage, automatorAdminDeleteMessage, automatorAdminEditMessage, automatorAdminEnableMessage, automatorAdminGetMessage, automatorAdminGetAllForEnterpriseMessage, automatorAdminGetAllOnNodeMessage, automatorAdminInitializeMessage, automatorAdminResetMessage, automatorAdminSetupMessage, automatorAdminSkillsMessage, automatorAdminLogGetMessage, automatorAdminLogClearMessage, serviceLoggerGetMessage} from '../src/restMessages';
 
 import {getKeeperAutomatorAdminUrl, getKeeperUrl} from '../src/utils';
 
@@ -188,7 +190,7 @@ let automatorTestData = {
         "sso_service_provider_id": 9710921056299,
         "automatorName": "Azure test automator",
         "automatorUrl": "https://local-automator.kepr.co:8090",
-        "automatorId": 9710921056490  // Created 09/01/2021 
+        "automatorId": 9710921056492  // Created 10/01/2021 
     },
 
     // DEV AUTOMATOR 1
@@ -1018,6 +1020,90 @@ async function TestAutomatorSetupRest(config) {
         console.log(resp2);
 
         console.log("After setup step 2, automator state is", resp2.automatorState);
+     } catch (e) {
+        console.log(e)
+     }
+}
+
+// POST, ENCRYPTED, automator/automator_log_get
+async function TestAutomatorLogGetRest(config) {
+    console.log("\n*** TestAutomatorLogGetRest on " + keeperHost + " ***");
+
+    let nodeId = config.nodeId;
+    let automatorId = config.automatorId;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_log_get';
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        let restReq = AdminAutomatorLogRequest.create({
+            "automatorId": automatorId
+        });
+
+        let resp = await auth.executeRest(automatorAdminLogGetMessage(restReq, configPrefix + configEndpoint));
+
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
+     } catch (e) {
+        console.log(e)
+     }
+}
+
+// POST, ENCRYPTED, automator/automator_log_clear
+async function TestAutomatorLogClearRest(config) {
+    console.log("\n*** TestAutomatorLogClearRest on " + keeperHost + " ***");
+
+    let nodeId = config.nodeId;
+    let automatorId = config.automatorId;
+    const deviceConfig = getDeviceConfig(deviceName, keeperHost);
+    const configPrefix = 'automator/';
+    const configEndpoint = 'automator_log_clear';
+
+    try {
+        const url = getKeeperAutomatorAdminUrl(keeperHost, configEndpoint);
+        console.log("REST endpoint =", url);
+
+        let auth = new Auth({
+            host: keeperHost,
+            clientVersion: clientVersion,
+            deviceConfig: deviceConfig,
+            onDeviceConfig: saveDeviceConfig,
+            authUI3: authUI3
+        });
+        await auth.loginV3({
+            username: userInfo.userName,
+            password: userInfo.password,
+        });
+        console.log("Logged in...");
+
+        let restReq = AdminAutomatorLogClearRequest.create({
+            "automatorId": automatorId
+        });
+
+        let resp = await auth.executeRest(automatorAdminLogClearMessage(restReq, configPrefix + configEndpoint));
+
+        console.log(resp);
+        if (resp.automatorInfo.length > 0) {
+            console.log(resp.automatorInfo[0].status);
+        }
      } catch (e) {
         console.log(e)
      }

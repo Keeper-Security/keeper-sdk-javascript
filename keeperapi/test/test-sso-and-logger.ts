@@ -144,7 +144,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // --> then do:
 // TestSsoLogin().finally();
 // TestSsoLogin_2().finally();
-// TestSsoLogin_3().finally();   // works 11-2020
+TestSsoLogin_3().finally();   // works 11-2020
 // TestSsoLogout().finally();
 // TestSsoLogout_2().finally();
 // TestSsoLoginWithGet().finally();
@@ -157,7 +157,7 @@ async function login(user?: UserInfo): Promise<Auth> {
 // TestSsoAddNewConfiguration().finally();
 // TestSsoCopyConfiguration().finally();
 // TestSsoResetConfiguration().finally();
-TestSsoGetConfiguration().finally();
+// TestSsoGetConfiguration().finally();
 // TestSsoSetConfigurationSettingValue().finally();
 // TestSsoDeleteConfiguration().finally();  // Tests add, get, and delete
 // TestSsoUpdateConfiguration().finally();
@@ -663,6 +663,7 @@ async function TestSsoSetCurrentConfiguration() {
 async function TestSsoGetConfigurationList() {
     console.log("\n*** TestGetConfigurationList on " + keeperHost + " ***");
     let serviceProviderId = 9710921056299; // dev 9710921056299     // local: 9710921056266; // 6219112644615;
+    let badServiceProviderId = 1103806603720;  // not owned by login user.  Should get access_not_allowed
     const deviceConfig = getDeviceConfig(deviceName, keeperHost);
 
     try {
@@ -676,12 +677,12 @@ async function TestSsoGetConfigurationList() {
             onDeviceConfig: saveDeviceConfig,
             authUI3: authUI3
         });
-/*
+
         await auth.loginV3({
             username: userInfo.userName,
             password: userInfo.password,
         });
-*/
+
         console.log("Logged in...");
 
         let restReq = SsoCloudServiceProviderConfigurationListRequest.create({
@@ -787,8 +788,11 @@ async function TestSsoGetConfiguration() {
     console.log("\n*** TestGetConfiguration on " + keeperHost + " ***");
 
     // Local
-    let serviceProviderId = 9710921056444; // local demo google  // 9710921056299;  // local demo azure
+    let serviceProviderId = 9710921056299;  // local demo azure
     let configurationId = 64667965091557; // 5082553809898260; // local demo azure
+
+    let badServiceProviderId = 7589207212039; // not owned by login user.  Should get access_not_allowed
+    let badConfigurationId = 844632339309625; // not owned by login user.  Should get access_not_allowed
 
     // Demo Azure
     // let serviceProviderId = 9710921056299;  // "demo azure"
@@ -821,8 +825,8 @@ async function TestSsoGetConfiguration() {
         console.log("Logged in...");
 
         let restReq = SsoCloudConfigurationRequest.create({
-            "ssoServiceProviderId": serviceProviderId,
-            "ssoSpConfigurationId": configurationId
+            "ssoServiceProviderId": badServiceProviderId,
+            "ssoSpConfigurationId": badConfigurationId
         });
 
         try {

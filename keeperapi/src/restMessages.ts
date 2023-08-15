@@ -252,3 +252,9 @@ export const automatorAdminSetupMessage = (data: Automator.AdminSetupAutomatorRe
 
 export const automatorAdminSkillsMessage = (data: Automator.AdminAutomatorSkillsRequest, url:string): RestMessage<Automator.IAdminAutomatorSkillsRequest, Automator.IAdminAutomatorSkillsResponse> =>
     createMessage(data, url, Automator.AdminAutomatorSkillsRequest, Automator.AdminAutomatorSkillsResponse);
+
+export const automatorAdminLogGetMessage = (data: Automator.AdminAutomatorLogRequest, url:string): RestMessage<Automator.IAdminAutomatorLogRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminAutomatorLogRequest, Automator.AdminResponse);
+
+export const automatorAdminLogClearMessage = (data: Automator.AdminAutomatorLogClearRequest, url:string): RestMessage<Automator.IAdminAutomatorLogClearRequest, Automator.IAdminResponse> =>
+    createMessage(data, url, Automator.AdminAutomatorLogClearRequest, Automator.AdminResponse);

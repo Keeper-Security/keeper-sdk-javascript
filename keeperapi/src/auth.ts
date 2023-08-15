@@ -165,21 +165,23 @@ export class SocketListener {
         })
 
         this.socket.onClose(async (event: Event & {reason:string, code:number}) => {
-            console.log('socket closed because: ', event)
+            console.log('socket closed because: ', event.code)
 
             let reason
             this.isConnected = false
 
-            try{
-                reason = JSON.parse(event.reason)
-            } catch(error){
-                console.log('No close reason. Error message is: ', error)
+            if (event.reason && (event.reason.length > 0)) {
+                try{
+                    reason = JSON.parse(event.reason)
+                } catch(error) {
+                    console.log('No close reason. Error message is: ', error)
 
-                if (!this.isClosedByClient) {
-                    this.reconnect()
+                    if (!this.isClosedByClient) {
+                        this.reconnect()
+                    }
+
+                    return
                 }
-
-                return
             }
 
             switch (event.code){

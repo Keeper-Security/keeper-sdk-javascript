@@ -10133,119 +10133,305 @@ export namespace Authentication {
 
     /** ApplicationShareType enum. */
     enum ApplicationShareType {
-        SHT_RECORD = 0,
-        SHT_FOLDER = 1
+        SHARE_TYPE_RECORD = 0,
+        SHARE_TYPE_FOLDER = 1
     }
 
-    /** Properties of an AddAppShareRequest. */
-    interface IAddAppShareRequest {
+    /** Properties of an AddAppSharesRequest. */
+    interface IAddAppSharesRequest {
 
-        /** AddAppShareRequest appRecordUid */
+        /** AddAppSharesRequest appRecordUid */
         appRecordUid?: (Uint8Array|null);
 
-        /** AddAppShareRequest secretUid */
-        secretUid?: (Uint8Array|null);
-
-        /** AddAppShareRequest shareType */
-        shareType?: (Authentication.ApplicationShareType|null);
-
-        /** AddAppShareRequest encryptedSecretKey */
-        encryptedSecretKey?: (Uint8Array|null);
-
-        /** AddAppShareRequest editable */
-        editable?: (boolean|null);
+        /** AddAppSharesRequest shares */
+        shares?: (Authentication.IAppShareAdd[]|null);
     }
 
-    /** Represents an AddAppShareRequest. */
-    class AddAppShareRequest implements IAddAppShareRequest {
+    /** Represents an AddAppSharesRequest. */
+    class AddAppSharesRequest implements IAddAppSharesRequest {
 
         /**
-         * Constructs a new AddAppShareRequest.
+         * Constructs a new AddAppSharesRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: Authentication.IAddAppShareRequest);
+        constructor(properties?: Authentication.IAddAppSharesRequest);
 
-        /** AddAppShareRequest appRecordUid. */
+        /** AddAppSharesRequest appRecordUid. */
         public appRecordUid: Uint8Array;
 
-        /** AddAppShareRequest secretUid. */
-        public secretUid: Uint8Array;
-
-        /** AddAppShareRequest shareType. */
-        public shareType: Authentication.ApplicationShareType;
-
-        /** AddAppShareRequest encryptedSecretKey. */
-        public encryptedSecretKey: Uint8Array;
-
-        /** AddAppShareRequest editable. */
-        public editable: boolean;
+        /** AddAppSharesRequest shares. */
+        public shares: Authentication.IAppShareAdd[];
 
         /**
-         * Creates a new AddAppShareRequest instance using the specified properties.
+         * Creates a new AddAppSharesRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns AddAppShareRequest instance
+         * @returns AddAppSharesRequest instance
          */
-        public static create(properties?: Authentication.IAddAppShareRequest): Authentication.AddAppShareRequest;
+        public static create(properties?: Authentication.IAddAppSharesRequest): Authentication.AddAppSharesRequest;
 
         /**
-         * Encodes the specified AddAppShareRequest message. Does not implicitly {@link Authentication.AddAppShareRequest.verify|verify} messages.
-         * @param message AddAppShareRequest message or plain object to encode
+         * Encodes the specified AddAppSharesRequest message. Does not implicitly {@link Authentication.AddAppSharesRequest.verify|verify} messages.
+         * @param message AddAppSharesRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: Authentication.IAddAppShareRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: Authentication.IAddAppSharesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified AddAppShareRequest message, length delimited. Does not implicitly {@link Authentication.AddAppShareRequest.verify|verify} messages.
-         * @param message AddAppShareRequest message or plain object to encode
+         * Encodes the specified AddAppSharesRequest message, length delimited. Does not implicitly {@link Authentication.AddAppSharesRequest.verify|verify} messages.
+         * @param message AddAppSharesRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: Authentication.IAddAppShareRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: Authentication.IAddAppSharesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an AddAppShareRequest message from the specified reader or buffer.
+         * Decodes an AddAppSharesRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns AddAppShareRequest
+         * @returns AddAppSharesRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AddAppShareRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AddAppSharesRequest;
 
         /**
-         * Decodes an AddAppShareRequest message from the specified reader or buffer, length delimited.
+         * Decodes an AddAppSharesRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns AddAppShareRequest
+         * @returns AddAppSharesRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AddAppShareRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AddAppSharesRequest;
 
         /**
-         * Verifies an AddAppShareRequest message.
+         * Verifies an AddAppSharesRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an AddAppShareRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates an AddAppSharesRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns AddAppShareRequest
+         * @returns AddAppSharesRequest
          */
-        public static fromObject(object: { [k: string]: any }): Authentication.AddAppShareRequest;
+        public static fromObject(object: { [k: string]: any }): Authentication.AddAppSharesRequest;
 
         /**
-         * Creates a plain object from an AddAppShareRequest message. Also converts values to other types if specified.
-         * @param message AddAppShareRequest
+         * Creates a plain object from an AddAppSharesRequest message. Also converts values to other types if specified.
+         * @param message AddAppSharesRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: Authentication.AddAppShareRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: Authentication.AddAppSharesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this AddAppShareRequest to JSON.
+         * Converts this AddAppSharesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RemoveAppSharesRequest. */
+    interface IRemoveAppSharesRequest {
+
+        /** RemoveAppSharesRequest appRecordUid */
+        appRecordUid?: (Uint8Array|null);
+
+        /** RemoveAppSharesRequest shares */
+        shares?: (Uint8Array[]|null);
+    }
+
+    /** Represents a RemoveAppSharesRequest. */
+    class RemoveAppSharesRequest implements IRemoveAppSharesRequest {
+
+        /**
+         * Constructs a new RemoveAppSharesRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IRemoveAppSharesRequest);
+
+        /** RemoveAppSharesRequest appRecordUid. */
+        public appRecordUid: Uint8Array;
+
+        /** RemoveAppSharesRequest shares. */
+        public shares: Uint8Array[];
+
+        /**
+         * Creates a new RemoveAppSharesRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RemoveAppSharesRequest instance
+         */
+        public static create(properties?: Authentication.IRemoveAppSharesRequest): Authentication.RemoveAppSharesRequest;
+
+        /**
+         * Encodes the specified RemoveAppSharesRequest message. Does not implicitly {@link Authentication.RemoveAppSharesRequest.verify|verify} messages.
+         * @param message RemoveAppSharesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IRemoveAppSharesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RemoveAppSharesRequest message, length delimited. Does not implicitly {@link Authentication.RemoveAppSharesRequest.verify|verify} messages.
+         * @param message RemoveAppSharesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IRemoveAppSharesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RemoveAppSharesRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RemoveAppSharesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RemoveAppSharesRequest;
+
+        /**
+         * Decodes a RemoveAppSharesRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RemoveAppSharesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RemoveAppSharesRequest;
+
+        /**
+         * Verifies a RemoveAppSharesRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RemoveAppSharesRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RemoveAppSharesRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.RemoveAppSharesRequest;
+
+        /**
+         * Creates a plain object from a RemoveAppSharesRequest message. Also converts values to other types if specified.
+         * @param message RemoveAppSharesRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.RemoveAppSharesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RemoveAppSharesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AppShareAdd. */
+    interface IAppShareAdd {
+
+        /** AppShareAdd secretUid */
+        secretUid?: (Uint8Array|null);
+
+        /** AppShareAdd shareType */
+        shareType?: (Authentication.ApplicationShareType|null);
+
+        /** AppShareAdd encryptedSecretKey */
+        encryptedSecretKey?: (Uint8Array|null);
+
+        /** AppShareAdd editable */
+        editable?: (boolean|null);
+    }
+
+    /** Represents an AppShareAdd. */
+    class AppShareAdd implements IAppShareAdd {
+
+        /**
+         * Constructs a new AppShareAdd.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IAppShareAdd);
+
+        /** AppShareAdd secretUid. */
+        public secretUid: Uint8Array;
+
+        /** AppShareAdd shareType. */
+        public shareType: Authentication.ApplicationShareType;
+
+        /** AppShareAdd encryptedSecretKey. */
+        public encryptedSecretKey: Uint8Array;
+
+        /** AppShareAdd editable. */
+        public editable: boolean;
+
+        /**
+         * Creates a new AppShareAdd instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AppShareAdd instance
+         */
+        public static create(properties?: Authentication.IAppShareAdd): Authentication.AppShareAdd;
+
+        /**
+         * Encodes the specified AppShareAdd message. Does not implicitly {@link Authentication.AppShareAdd.verify|verify} messages.
+         * @param message AppShareAdd message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IAppShareAdd, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AppShareAdd message, length delimited. Does not implicitly {@link Authentication.AppShareAdd.verify|verify} messages.
+         * @param message AppShareAdd message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IAppShareAdd, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AppShareAdd message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AppShareAdd
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AppShareAdd;
+
+        /**
+         * Decodes an AppShareAdd message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AppShareAdd
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AppShareAdd;
+
+        /**
+         * Verifies an AppShareAdd message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AppShareAdd message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AppShareAdd
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.AppShareAdd;
+
+        /**
+         * Creates a plain object from an AppShareAdd message. Also converts values to other types if specified.
+         * @param message AppShareAdd
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.AppShareAdd, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AppShareAdd to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -10379,6 +10565,9 @@ export namespace Authentication {
 
         /** AddAppClientRequest accessExpireOn */
         accessExpireOn?: (number|Long|null);
+
+        /** AddAppClientRequest id */
+        id?: (string|null);
     }
 
     /** Represents an AddAppClientRequest. */
@@ -10407,6 +10596,9 @@ export namespace Authentication {
 
         /** AddAppClientRequest accessExpireOn. */
         public accessExpireOn: (number|Long);
+
+        /** AddAppClientRequest id. */
+        public id: string;
 
         /**
          * Creates a new AddAppClientRequest instance using the specified properties.
@@ -10474,6 +10666,102 @@ export namespace Authentication {
 
         /**
          * Converts this AddAppClientRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RemoveAppClientsRequest. */
+    interface IRemoveAppClientsRequest {
+
+        /** RemoveAppClientsRequest appRecordUid */
+        appRecordUid?: (Uint8Array|null);
+
+        /** RemoveAppClientsRequest clients */
+        clients?: (Uint8Array[]|null);
+    }
+
+    /** Represents a RemoveAppClientsRequest. */
+    class RemoveAppClientsRequest implements IRemoveAppClientsRequest {
+
+        /**
+         * Constructs a new RemoveAppClientsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IRemoveAppClientsRequest);
+
+        /** RemoveAppClientsRequest appRecordUid. */
+        public appRecordUid: Uint8Array;
+
+        /** RemoveAppClientsRequest clients. */
+        public clients: Uint8Array[];
+
+        /**
+         * Creates a new RemoveAppClientsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RemoveAppClientsRequest instance
+         */
+        public static create(properties?: Authentication.IRemoveAppClientsRequest): Authentication.RemoveAppClientsRequest;
+
+        /**
+         * Encodes the specified RemoveAppClientsRequest message. Does not implicitly {@link Authentication.RemoveAppClientsRequest.verify|verify} messages.
+         * @param message RemoveAppClientsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IRemoveAppClientsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RemoveAppClientsRequest message, length delimited. Does not implicitly {@link Authentication.RemoveAppClientsRequest.verify|verify} messages.
+         * @param message RemoveAppClientsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IRemoveAppClientsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RemoveAppClientsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RemoveAppClientsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.RemoveAppClientsRequest;
+
+        /**
+         * Decodes a RemoveAppClientsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RemoveAppClientsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.RemoveAppClientsRequest;
+
+        /**
+         * Verifies a RemoveAppClientsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RemoveAppClientsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RemoveAppClientsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.RemoveAppClientsRequest;
+
+        /**
+         * Creates a plain object from a RemoveAppClientsRequest message. Also converts values to other types if specified.
+         * @param message RemoveAppClientsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.RemoveAppClientsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RemoveAppClientsRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -10922,6 +11210,12 @@ export namespace Authentication {
 
         /** ApplicationSummary folderRecords */
         folderRecords?: (number|null);
+
+        /** ApplicationSummary clientCount */
+        clientCount?: (number|null);
+
+        /** ApplicationSummary expiredClientCount */
+        expiredClientCount?: (number|null);
     }
 
     /** Represents an ApplicationSummary. */
@@ -10947,6 +11241,12 @@ export namespace Authentication {
 
         /** ApplicationSummary folderRecords. */
         public folderRecords: number;
+
+        /** ApplicationSummary clientCount. */
+        public clientCount: number;
+
+        /** ApplicationSummary expiredClientCount. */
+        public expiredClientCount: number;
 
         /**
          * Creates a new ApplicationSummary instance using the specified properties.
@@ -11374,6 +11674,224 @@ export namespace Authentication {
 
         /**
          * Converts this SendShareInviteRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** TimeLimitedAccessType enum. */
+    enum TimeLimitedAccessType {
+        INVALID_TIME_LIMITED_ACCESS_TYPE = 0,
+        USER_ACCESS_TO_RECORD = 1,
+        USER_OR_TEAM_ACCESS_TO_SHAREDFOLDER = 2,
+        RECORD_ACCESS_TO_SHAREDFOLDER = 3
+    }
+
+    /** Properties of a TimeLimitedAccessRequest. */
+    interface ITimeLimitedAccessRequest {
+
+        /** TimeLimitedAccessRequest accountUid */
+        accountUid?: (Uint8Array[]|null);
+
+        /** TimeLimitedAccessRequest teamUid */
+        teamUid?: (Uint8Array[]|null);
+
+        /** TimeLimitedAccessRequest recordUid */
+        recordUid?: (Uint8Array[]|null);
+
+        /** TimeLimitedAccessRequest sharedObjectUid */
+        sharedObjectUid?: (Uint8Array|null);
+
+        /** TimeLimitedAccessRequest timeLimitedAccessType */
+        timeLimitedAccessType?: (Authentication.TimeLimitedAccessType|null);
+
+        /** TimeLimitedAccessRequest expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a TimeLimitedAccessRequest. */
+    class TimeLimitedAccessRequest implements ITimeLimitedAccessRequest {
+
+        /**
+         * Constructs a new TimeLimitedAccessRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITimeLimitedAccessRequest);
+
+        /** TimeLimitedAccessRequest accountUid. */
+        public accountUid: Uint8Array[];
+
+        /** TimeLimitedAccessRequest teamUid. */
+        public teamUid: Uint8Array[];
+
+        /** TimeLimitedAccessRequest recordUid. */
+        public recordUid: Uint8Array[];
+
+        /** TimeLimitedAccessRequest sharedObjectUid. */
+        public sharedObjectUid: Uint8Array;
+
+        /** TimeLimitedAccessRequest timeLimitedAccessType. */
+        public timeLimitedAccessType: Authentication.TimeLimitedAccessType;
+
+        /** TimeLimitedAccessRequest expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new TimeLimitedAccessRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeLimitedAccessRequest instance
+         */
+        public static create(properties?: Authentication.ITimeLimitedAccessRequest): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Encodes the specified TimeLimitedAccessRequest message. Does not implicitly {@link Authentication.TimeLimitedAccessRequest.verify|verify} messages.
+         * @param message TimeLimitedAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITimeLimitedAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TimeLimitedAccessRequest message, length delimited. Does not implicitly {@link Authentication.TimeLimitedAccessRequest.verify|verify} messages.
+         * @param message TimeLimitedAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITimeLimitedAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeLimitedAccessRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeLimitedAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Decodes a TimeLimitedAccessRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TimeLimitedAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Verifies a TimeLimitedAccessRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TimeLimitedAccessRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeLimitedAccessRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Creates a plain object from a TimeLimitedAccessRequest message. Also converts values to other types if specified.
+         * @param message TimeLimitedAccessRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TimeLimitedAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeLimitedAccessRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a TimeLimitedAccessResponse. */
+    interface ITimeLimitedAccessResponse {
+
+        /** TimeLimitedAccessResponse revision */
+        revision?: (number|Long|null);
+    }
+
+    /** Represents a TimeLimitedAccessResponse. */
+    class TimeLimitedAccessResponse implements ITimeLimitedAccessResponse {
+
+        /**
+         * Constructs a new TimeLimitedAccessResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITimeLimitedAccessResponse);
+
+        /** TimeLimitedAccessResponse revision. */
+        public revision: (number|Long);
+
+        /**
+         * Creates a new TimeLimitedAccessResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeLimitedAccessResponse instance
+         */
+        public static create(properties?: Authentication.ITimeLimitedAccessResponse): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Encodes the specified TimeLimitedAccessResponse message. Does not implicitly {@link Authentication.TimeLimitedAccessResponse.verify|verify} messages.
+         * @param message TimeLimitedAccessResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITimeLimitedAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TimeLimitedAccessResponse message, length delimited. Does not implicitly {@link Authentication.TimeLimitedAccessResponse.verify|verify} messages.
+         * @param message TimeLimitedAccessResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITimeLimitedAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeLimitedAccessResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeLimitedAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Decodes a TimeLimitedAccessResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TimeLimitedAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Verifies a TimeLimitedAccessResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TimeLimitedAccessResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeLimitedAccessResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Creates a plain object from a TimeLimitedAccessResponse message. Also converts values to other types if specified.
+         * @param message TimeLimitedAccessResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TimeLimitedAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeLimitedAccessResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -24146,8 +24664,15 @@ export namespace Automator {
      * We plan to support more protocols in the future.
      */
     enum SsoAuthenticationProtocolType {
-        UNKNOWN = 0,
+        UNKNOWN_PROTOCOL = 0,
         SAML2 = 1
+    }
+
+    /** CertificateFormat enum. */
+    enum CertificateFormat {
+        UNKNOWN_FORMAT = 0,
+        PKCS12 = 1,
+        JKS = 2
     }
 
     /** Properties of an AutomatorSettingValue. */
@@ -24341,11 +24866,14 @@ export namespace Automator {
         /** ApproveDeviceRequest devicePublicKey */
         devicePublicKey?: (Uint8Array|null);
 
-        /** ApproveDeviceRequest encryptedUserDataKey */
-        encryptedUserDataKey?: (Uint8Array|null);
-
         /** ApproveDeviceRequest serverEccPublicKeyId */
         serverEccPublicKeyId?: (number|null);
+
+        /** ApproveDeviceRequest userEncryptedDataKey */
+        userEncryptedDataKey?: (Uint8Array|null);
+
+        /** ApproveDeviceRequest userEncryptedDataKeyType */
+        userEncryptedDataKeyType?: (Enterprise.EncryptedKeyType|null);
     }
 
     /**
@@ -24377,11 +24905,14 @@ export namespace Automator {
         /** ApproveDeviceRequest devicePublicKey. */
         public devicePublicKey: Uint8Array;
 
-        /** ApproveDeviceRequest encryptedUserDataKey. */
-        public encryptedUserDataKey: Uint8Array;
-
         /** ApproveDeviceRequest serverEccPublicKeyId. */
         public serverEccPublicKeyId: number;
+
+        /** ApproveDeviceRequest userEncryptedDataKey. */
+        public userEncryptedDataKey: Uint8Array;
+
+        /** ApproveDeviceRequest userEncryptedDataKeyType. */
+        public userEncryptedDataKeyType: Enterprise.EncryptedKeyType;
 
         /**
          * Creates a new ApproveDeviceRequest instance using the specified properties.
@@ -24449,6 +24980,127 @@ export namespace Automator {
 
         /**
          * Converts this ApproveDeviceRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SetupRequest. */
+    interface ISetupRequest {
+
+        /** SetupRequest automatorId */
+        automatorId?: (number|Long|null);
+
+        /** SetupRequest serverEccPublicKeyId */
+        serverEccPublicKeyId?: (number|null);
+
+        /** SetupRequest automatorState */
+        automatorState?: (Automator.AutomatorState|null);
+
+        /** SetupRequest encryptedEnterprisePrivateEcKey */
+        encryptedEnterprisePrivateEcKey?: (Uint8Array|null);
+
+        /** SetupRequest encryptedEnterprisePrivateRsaKey */
+        encryptedEnterprisePrivateRsaKey?: (Uint8Array|null);
+    }
+
+    /**
+     * SetupRequest
+     * In NEEDS_CRYPTO_STEP_1, this causes the automator to reply with the automator public EC key.
+     * In NEEDS_CRYPTO_STEP_2, this causes the automator to accept the ec_enterprise_private_key encrypted with the automator's public EC key.
+     *
+     * The client should check the automatorState in the AutomatorResponse to see what the next step should be.
+     *
+     */
+    class SetupRequest implements ISetupRequest {
+
+        /**
+         * Constructs a new SetupRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Automator.ISetupRequest);
+
+        /** SetupRequest automatorId. */
+        public automatorId: (number|Long);
+
+        /** SetupRequest serverEccPublicKeyId. */
+        public serverEccPublicKeyId: number;
+
+        /** SetupRequest automatorState. */
+        public automatorState: Automator.AutomatorState;
+
+        /** SetupRequest encryptedEnterprisePrivateEcKey. */
+        public encryptedEnterprisePrivateEcKey: Uint8Array;
+
+        /** SetupRequest encryptedEnterprisePrivateRsaKey. */
+        public encryptedEnterprisePrivateRsaKey: Uint8Array;
+
+        /**
+         * Creates a new SetupRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetupRequest instance
+         */
+        public static create(properties?: Automator.ISetupRequest): Automator.SetupRequest;
+
+        /**
+         * Encodes the specified SetupRequest message. Does not implicitly {@link Automator.SetupRequest.verify|verify} messages.
+         * @param message SetupRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Automator.ISetupRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetupRequest message, length delimited. Does not implicitly {@link Automator.SetupRequest.verify|verify} messages.
+         * @param message SetupRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Automator.ISetupRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetupRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetupRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Automator.SetupRequest;
+
+        /**
+         * Decodes a SetupRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetupRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Automator.SetupRequest;
+
+        /**
+         * Verifies a SetupRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetupRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetupRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Automator.SetupRequest;
+
+        /**
+         * Creates a plain object from a SetupRequest message. Also converts values to other types if specified.
+         * @param message SetupRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Automator.SetupRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetupRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -24559,12 +25211,6 @@ export namespace Automator {
         /** InitializeRequest automatorId */
         automatorId?: (number|Long|null);
 
-        /** InitializeRequest sslCertificate */
-        sslCertificate?: (Uint8Array|null);
-
-        /** InitializeRequest sslCertificatePassword */
-        sslCertificatePassword?: (string|null);
-
         /** InitializeRequest idpMetadata */
         idpMetadata?: (string|null);
 
@@ -24582,9 +25228,6 @@ export namespace Automator {
 
         /** InitializeRequest lastnameMapping */
         lastnameMapping?: (string|null);
-
-        /** InitializeRequest eccEnterprisePrivateKey */
-        eccEnterprisePrivateKey?: (Uint8Array|null);
 
         /** InitializeRequest disabled */
         disabled?: (boolean|null);
@@ -24609,12 +25252,6 @@ export namespace Automator {
         /** InitializeRequest automatorId. */
         public automatorId: (number|Long);
 
-        /** InitializeRequest sslCertificate. */
-        public sslCertificate: Uint8Array;
-
-        /** InitializeRequest sslCertificatePassword. */
-        public sslCertificatePassword: string;
-
         /** InitializeRequest idpMetadata. */
         public idpMetadata: string;
 
@@ -24632,9 +25269,6 @@ export namespace Automator {
 
         /** InitializeRequest lastnameMapping. */
         public lastnameMapping: string;
-
-        /** InitializeRequest eccEnterprisePrivateKey. */
-        public eccEnterprisePrivateKey: Uint8Array;
 
         /** InitializeRequest disabled. */
         public disabled: boolean;
@@ -24718,12 +25352,34 @@ export namespace Automator {
 
         /** NotInitializedResponse automatorTransmissionKey */
         automatorTransmissionKey?: (Uint8Array|null);
+
+        /** NotInitializedResponse signingCertificate */
+        signingCertificate?: (Uint8Array|null);
+
+        /** NotInitializedResponse signingCertificateFilename */
+        signingCertificateFilename?: (string|null);
+
+        /** NotInitializedResponse signingCertificatePassword */
+        signingCertificatePassword?: (string|null);
+
+        /** NotInitializedResponse signingKeyPassword */
+        signingKeyPassword?: (string|null);
+
+        /** NotInitializedResponse signingCertificateFormat */
+        signingCertificateFormat?: (Automator.CertificateFormat|null);
+
+        /** NotInitializedResponse automatorPublicKey */
+        automatorPublicKey?: (Uint8Array|null);
     }
 
     /**
      * NotInitializedResponse
      * The Automator instance replies with this message if it has not been initialized.
-     * The message will be encrypted with the ECC public key whose ID is indicated in the request received from Keeper.
+     * The certificate is most likely the SSL certificate of the Automator.
+     * The certificate will be passed to the corresponding Cloud SSO instance and used to sign the IdP messages.
+     *
+     * This message will be encrypted with the ECC public key whose ID is indicated in the request received from Keeper.
+     * All other messages are encrypted with the automatorTransmissionKey.
      */
     class NotInitializedResponse implements INotInitializedResponse {
 
@@ -24735,6 +25391,24 @@ export namespace Automator {
 
         /** NotInitializedResponse automatorTransmissionKey. */
         public automatorTransmissionKey: Uint8Array;
+
+        /** NotInitializedResponse signingCertificate. */
+        public signingCertificate: Uint8Array;
+
+        /** NotInitializedResponse signingCertificateFilename. */
+        public signingCertificateFilename: string;
+
+        /** NotInitializedResponse signingCertificatePassword. */
+        public signingCertificatePassword: string;
+
+        /** NotInitializedResponse signingKeyPassword. */
+        public signingKeyPassword: string;
+
+        /** NotInitializedResponse signingCertificateFormat. */
+        public signingCertificateFormat: Automator.CertificateFormat;
+
+        /** NotInitializedResponse automatorPublicKey. */
+        public automatorPublicKey: Uint8Array;
 
         /**
          * Creates a new NotInitializedResponse instance using the specified properties.
@@ -24830,6 +25504,12 @@ export namespace Automator {
 
         /** AutomatorResponse error */
         error?: (Automator.IErrorResponse|null);
+
+        /** AutomatorResponse automatorState */
+        automatorState?: (Automator.AutomatorState|null);
+
+        /** AutomatorResponse automatorPublicEcKey */
+        automatorPublicEcKey?: (Uint8Array|null);
     }
 
     /**
@@ -24865,6 +25545,12 @@ export namespace Automator {
 
         /** AutomatorResponse error. */
         public error?: (Automator.IErrorResponse|null);
+
+        /** AutomatorResponse automatorState. */
+        public automatorState: Automator.AutomatorState;
+
+        /** AutomatorResponse automatorPublicEcKey. */
+        public automatorPublicEcKey: Uint8Array;
 
         /** AutomatorResponse response. */
         public response?: ("approveDevice"|"status"|"notInitialized"|"error");
@@ -25072,12 +25758,17 @@ export namespace Automator {
 
         /** StatusResponse sslCertificateExpiration */
         sslCertificateExpiration?: (number|Long|null);
+
+        /** StatusResponse notInitializedResponse */
+        notInitializedResponse?: (Automator.INotInitializedResponse|null);
     }
 
     /**
      * StatusResponse
      * Includes information about the status of the Automator instance, if it has been initialized.
      * There will be a message in the 'message' field of the AutomatorResponse if there was an internal error.
+     * If this is in response to an 'initializeRequest' message it will contain a NotInitializedResponse that
+     * contains information about the signing certificate used by the Automator.
      */
     class StatusResponse implements IStatusResponse {
 
@@ -25110,6 +25801,9 @@ export namespace Automator {
 
         /** StatusResponse sslCertificateExpiration. */
         public sslCertificateExpiration: (number|Long);
+
+        /** StatusResponse notInitializedResponse. */
+        public notInitializedResponse?: (Automator.INotInitializedResponse|null);
 
         /**
          * Creates a new StatusResponse instance using the specified properties.
@@ -25277,8 +25971,9 @@ export namespace Automator {
 
     /** These are the known skill types. */
     enum SkillType {
-        DEVICE_APPROVAL = 0,
-        TEAM_APPROVAL = 1
+        UNKNOWN_SKILL_TYPE = 0,
+        DEVICE_APPROVAL = 1,
+        TEAM_APPROVAL = 2
     }
 
     /** Properties of a LogEntry. */
@@ -25392,6 +26087,20 @@ export namespace Automator {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /**
+     * AutomatorState (enum)
+     *
+     * Provides the state of the Automator - part of the status.
+     */
+    enum AutomatorState {
+        UNKNOWN_STATE = 0,
+        RUNNING = 1,
+        ERROR = 2,
+        NEEDS_INITIALIZATION = 3,
+        NEEDS_CRYPTO_STEP_1 = 4,
+        NEEDS_CRYPTO_STEP_2 = 5
     }
 
     /** Properties of an AdminResponse. */
@@ -25530,6 +26239,9 @@ export namespace Automator {
 
         /** AutomatorInfo logEntries */
         logEntries?: (Automator.ILogEntry[]|null);
+
+        /** AutomatorInfo automatorState */
+        automatorState?: (Automator.AutomatorState|null);
     }
 
     /** Information about an automator for a client that is configuring an Automator. */
@@ -25567,6 +26279,9 @@ export namespace Automator {
 
         /** AutomatorInfo logEntries. */
         public logEntries: Automator.ILogEntry[];
+
+        /** AutomatorInfo automatorState. */
+        public automatorState: Automator.AutomatorState;
 
         /**
          * Creates a new AutomatorInfo instance using the specified properties.
@@ -25647,6 +26362,9 @@ export namespace Automator {
 
         /** AdminCreateAutomatorRequest name */
         name?: (string|null);
+
+        /** AdminCreateAutomatorRequest skill */
+        skill?: (Automator.IAutomatorSkill|null);
     }
 
     /**
@@ -25668,6 +26386,9 @@ export namespace Automator {
 
         /** AdminCreateAutomatorRequest name. */
         public name: string;
+
+        /** AdminCreateAutomatorRequest skill. */
+        public skill?: (Automator.IAutomatorSkill|null);
 
         /**
          * Creates a new AdminCreateAutomatorRequest instance using the specified properties.
@@ -26345,6 +27066,237 @@ export namespace Automator {
 
         /**
          * Converts this AdminEditAutomatorRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AdminSetupAutomatorRequest. */
+    interface IAdminSetupAutomatorRequest {
+
+        /** AdminSetupAutomatorRequest automatorId */
+        automatorId?: (number|Long|null);
+
+        /** AdminSetupAutomatorRequest automatorState */
+        automatorState?: (Automator.AutomatorState|null);
+
+        /** AdminSetupAutomatorRequest encryptedEcEnterprisePrivateKey */
+        encryptedEcEnterprisePrivateKey?: (Uint8Array|null);
+
+        /** AdminSetupAutomatorRequest encryptedRsaEnterprisePrivateKey */
+        encryptedRsaEnterprisePrivateKey?: (Uint8Array|null);
+    }
+
+    /**
+     * Initiate a setup operation with the automator via Keeper.
+     * Step 1 is to request the Automator's EC public key.  Use automatorState = NEEDS_CRYPTO_STEP_1
+     * Step 2 is to send the ec_enterprise_private_key encrypted with the public key. Use automatorState = NEEDS_CRYPTO_STEP_2
+     *
+     * Returns AdminSetupAutomatorResponse
+     */
+    class AdminSetupAutomatorRequest implements IAdminSetupAutomatorRequest {
+
+        /**
+         * Constructs a new AdminSetupAutomatorRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Automator.IAdminSetupAutomatorRequest);
+
+        /** AdminSetupAutomatorRequest automatorId. */
+        public automatorId: (number|Long);
+
+        /** AdminSetupAutomatorRequest automatorState. */
+        public automatorState: Automator.AutomatorState;
+
+        /** AdminSetupAutomatorRequest encryptedEcEnterprisePrivateKey. */
+        public encryptedEcEnterprisePrivateKey: Uint8Array;
+
+        /** AdminSetupAutomatorRequest encryptedRsaEnterprisePrivateKey. */
+        public encryptedRsaEnterprisePrivateKey: Uint8Array;
+
+        /**
+         * Creates a new AdminSetupAutomatorRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AdminSetupAutomatorRequest instance
+         */
+        public static create(properties?: Automator.IAdminSetupAutomatorRequest): Automator.AdminSetupAutomatorRequest;
+
+        /**
+         * Encodes the specified AdminSetupAutomatorRequest message. Does not implicitly {@link Automator.AdminSetupAutomatorRequest.verify|verify} messages.
+         * @param message AdminSetupAutomatorRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Automator.IAdminSetupAutomatorRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AdminSetupAutomatorRequest message, length delimited. Does not implicitly {@link Automator.AdminSetupAutomatorRequest.verify|verify} messages.
+         * @param message AdminSetupAutomatorRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Automator.IAdminSetupAutomatorRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AdminSetupAutomatorRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AdminSetupAutomatorRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Automator.AdminSetupAutomatorRequest;
+
+        /**
+         * Decodes an AdminSetupAutomatorRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AdminSetupAutomatorRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Automator.AdminSetupAutomatorRequest;
+
+        /**
+         * Verifies an AdminSetupAutomatorRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AdminSetupAutomatorRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AdminSetupAutomatorRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Automator.AdminSetupAutomatorRequest;
+
+        /**
+         * Creates a plain object from an AdminSetupAutomatorRequest message. Also converts values to other types if specified.
+         * @param message AdminSetupAutomatorRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Automator.AdminSetupAutomatorRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AdminSetupAutomatorRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AdminSetupAutomatorResponse. */
+    interface IAdminSetupAutomatorResponse {
+
+        /** AdminSetupAutomatorResponse success */
+        success?: (boolean|null);
+
+        /** AdminSetupAutomatorResponse message */
+        message?: (string|null);
+
+        /** AdminSetupAutomatorResponse automatorId */
+        automatorId?: (number|Long|null);
+
+        /** AdminSetupAutomatorResponse automatorState */
+        automatorState?: (Automator.AutomatorState|null);
+
+        /** AdminSetupAutomatorResponse automatorEcPublicKey */
+        automatorEcPublicKey?: (Uint8Array|null);
+    }
+
+    /**
+     * The response to an AdminSetupAutomatorRequest.
+     * The automatorEcPublicKey fields will be non-empty iff the AutomatorState is NEEDS_CRYPTO_STEP_2
+     */
+    class AdminSetupAutomatorResponse implements IAdminSetupAutomatorResponse {
+
+        /**
+         * Constructs a new AdminSetupAutomatorResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Automator.IAdminSetupAutomatorResponse);
+
+        /** AdminSetupAutomatorResponse success. */
+        public success: boolean;
+
+        /** AdminSetupAutomatorResponse message. */
+        public message: string;
+
+        /** AdminSetupAutomatorResponse automatorId. */
+        public automatorId: (number|Long);
+
+        /** AdminSetupAutomatorResponse automatorState. */
+        public automatorState: Automator.AutomatorState;
+
+        /** AdminSetupAutomatorResponse automatorEcPublicKey. */
+        public automatorEcPublicKey: Uint8Array;
+
+        /**
+         * Creates a new AdminSetupAutomatorResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AdminSetupAutomatorResponse instance
+         */
+        public static create(properties?: Automator.IAdminSetupAutomatorResponse): Automator.AdminSetupAutomatorResponse;
+
+        /**
+         * Encodes the specified AdminSetupAutomatorResponse message. Does not implicitly {@link Automator.AdminSetupAutomatorResponse.verify|verify} messages.
+         * @param message AdminSetupAutomatorResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Automator.IAdminSetupAutomatorResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AdminSetupAutomatorResponse message, length delimited. Does not implicitly {@link Automator.AdminSetupAutomatorResponse.verify|verify} messages.
+         * @param message AdminSetupAutomatorResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Automator.IAdminSetupAutomatorResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AdminSetupAutomatorResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AdminSetupAutomatorResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Automator.AdminSetupAutomatorResponse;
+
+        /**
+         * Decodes an AdminSetupAutomatorResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AdminSetupAutomatorResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Automator.AdminSetupAutomatorResponse;
+
+        /**
+         * Verifies an AdminSetupAutomatorResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AdminSetupAutomatorResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AdminSetupAutomatorResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Automator.AdminSetupAutomatorResponse;
+
+        /**
+         * Creates a plain object from an AdminSetupAutomatorResponse message. Also converts values to other types if specified.
+         * @param message AdminSetupAutomatorResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Automator.AdminSetupAutomatorResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AdminSetupAutomatorResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -41911,6 +42863,600 @@ export namespace Records {
 
         /**
          * Converts this ApplicationAddRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GetRecordDataWithAccessInfoRequest. */
+    interface IGetRecordDataWithAccessInfoRequest {
+
+        /** GetRecordDataWithAccessInfoRequest clientTime */
+        clientTime?: (number|Long|null);
+
+        /** GetRecordDataWithAccessInfoRequest recordUid */
+        recordUid?: (Uint8Array[]|null);
+    }
+
+    /** Represents a GetRecordDataWithAccessInfoRequest. */
+    class GetRecordDataWithAccessInfoRequest implements IGetRecordDataWithAccessInfoRequest {
+
+        /**
+         * Constructs a new GetRecordDataWithAccessInfoRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IGetRecordDataWithAccessInfoRequest);
+
+        /** GetRecordDataWithAccessInfoRequest clientTime. */
+        public clientTime: (number|Long);
+
+        /** GetRecordDataWithAccessInfoRequest recordUid. */
+        public recordUid: Uint8Array[];
+
+        /**
+         * Creates a new GetRecordDataWithAccessInfoRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetRecordDataWithAccessInfoRequest instance
+         */
+        public static create(properties?: Records.IGetRecordDataWithAccessInfoRequest): Records.GetRecordDataWithAccessInfoRequest;
+
+        /**
+         * Encodes the specified GetRecordDataWithAccessInfoRequest message. Does not implicitly {@link Records.GetRecordDataWithAccessInfoRequest.verify|verify} messages.
+         * @param message GetRecordDataWithAccessInfoRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IGetRecordDataWithAccessInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetRecordDataWithAccessInfoRequest message, length delimited. Does not implicitly {@link Records.GetRecordDataWithAccessInfoRequest.verify|verify} messages.
+         * @param message GetRecordDataWithAccessInfoRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IGetRecordDataWithAccessInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetRecordDataWithAccessInfoRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetRecordDataWithAccessInfoRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.GetRecordDataWithAccessInfoRequest;
+
+        /**
+         * Decodes a GetRecordDataWithAccessInfoRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetRecordDataWithAccessInfoRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.GetRecordDataWithAccessInfoRequest;
+
+        /**
+         * Verifies a GetRecordDataWithAccessInfoRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetRecordDataWithAccessInfoRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetRecordDataWithAccessInfoRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Records.GetRecordDataWithAccessInfoRequest;
+
+        /**
+         * Creates a plain object from a GetRecordDataWithAccessInfoRequest message. Also converts values to other types if specified.
+         * @param message GetRecordDataWithAccessInfoRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.GetRecordDataWithAccessInfoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetRecordDataWithAccessInfoRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a UserPermission. */
+    interface IUserPermission {
+
+        /** UserPermission username */
+        username?: (string|null);
+
+        /** UserPermission owner */
+        owner?: (boolean|null);
+
+        /** UserPermission sharable */
+        sharable?: (boolean|null);
+
+        /** UserPermission editable */
+        editable?: (boolean|null);
+
+        /** UserPermission awaitingApproval */
+        awaitingApproval?: (boolean|null);
+
+        /** UserPermission expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a UserPermission. */
+    class UserPermission implements IUserPermission {
+
+        /**
+         * Constructs a new UserPermission.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IUserPermission);
+
+        /** UserPermission username. */
+        public username: string;
+
+        /** UserPermission owner. */
+        public owner: boolean;
+
+        /** UserPermission sharable. */
+        public sharable: boolean;
+
+        /** UserPermission editable. */
+        public editable: boolean;
+
+        /** UserPermission awaitingApproval. */
+        public awaitingApproval: boolean;
+
+        /** UserPermission expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new UserPermission instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserPermission instance
+         */
+        public static create(properties?: Records.IUserPermission): Records.UserPermission;
+
+        /**
+         * Encodes the specified UserPermission message. Does not implicitly {@link Records.UserPermission.verify|verify} messages.
+         * @param message UserPermission message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IUserPermission, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserPermission message, length delimited. Does not implicitly {@link Records.UserPermission.verify|verify} messages.
+         * @param message UserPermission message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IUserPermission, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserPermission message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserPermission
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.UserPermission;
+
+        /**
+         * Decodes a UserPermission message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserPermission
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.UserPermission;
+
+        /**
+         * Verifies a UserPermission message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserPermission message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserPermission
+         */
+        public static fromObject(object: { [k: string]: any }): Records.UserPermission;
+
+        /**
+         * Creates a plain object from a UserPermission message. Also converts values to other types if specified.
+         * @param message UserPermission
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.UserPermission, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserPermission to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SharedFolderPermission. */
+    interface ISharedFolderPermission {
+
+        /** SharedFolderPermission sharedFolderUid */
+        sharedFolderUid?: (Uint8Array|null);
+
+        /** SharedFolderPermission resharable */
+        resharable?: (boolean|null);
+
+        /** SharedFolderPermission editable */
+        editable?: (boolean|null);
+
+        /** SharedFolderPermission revision */
+        revision?: (number|Long|null);
+
+        /** SharedFolderPermission expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a SharedFolderPermission. */
+    class SharedFolderPermission implements ISharedFolderPermission {
+
+        /**
+         * Constructs a new SharedFolderPermission.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.ISharedFolderPermission);
+
+        /** SharedFolderPermission sharedFolderUid. */
+        public sharedFolderUid: Uint8Array;
+
+        /** SharedFolderPermission resharable. */
+        public resharable: boolean;
+
+        /** SharedFolderPermission editable. */
+        public editable: boolean;
+
+        /** SharedFolderPermission revision. */
+        public revision: (number|Long);
+
+        /** SharedFolderPermission expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new SharedFolderPermission instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SharedFolderPermission instance
+         */
+        public static create(properties?: Records.ISharedFolderPermission): Records.SharedFolderPermission;
+
+        /**
+         * Encodes the specified SharedFolderPermission message. Does not implicitly {@link Records.SharedFolderPermission.verify|verify} messages.
+         * @param message SharedFolderPermission message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.ISharedFolderPermission, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SharedFolderPermission message, length delimited. Does not implicitly {@link Records.SharedFolderPermission.verify|verify} messages.
+         * @param message SharedFolderPermission message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.ISharedFolderPermission, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SharedFolderPermission message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SharedFolderPermission
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.SharedFolderPermission;
+
+        /**
+         * Decodes a SharedFolderPermission message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SharedFolderPermission
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.SharedFolderPermission;
+
+        /**
+         * Verifies a SharedFolderPermission message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SharedFolderPermission message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SharedFolderPermission
+         */
+        public static fromObject(object: { [k: string]: any }): Records.SharedFolderPermission;
+
+        /**
+         * Creates a plain object from a SharedFolderPermission message. Also converts values to other types if specified.
+         * @param message SharedFolderPermission
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.SharedFolderPermission, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SharedFolderPermission to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a RecordDataWithAccessInfo. */
+    interface IRecordDataWithAccessInfo {
+
+        /** RecordDataWithAccessInfo recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordDataWithAccessInfo revision */
+        revision?: (number|Long|null);
+
+        /** RecordDataWithAccessInfo version */
+        version?: (number|null);
+
+        /** RecordDataWithAccessInfo shared */
+        shared?: (boolean|null);
+
+        /** RecordDataWithAccessInfo encryptedRecordData */
+        encryptedRecordData?: (string|null);
+
+        /** RecordDataWithAccessInfo encryptedExtraData */
+        encryptedExtraData?: (string|null);
+
+        /** RecordDataWithAccessInfo clientModifiedTime */
+        clientModifiedTime?: (number|Long|null);
+
+        /** RecordDataWithAccessInfo ownerRecordUid */
+        ownerRecordUid?: (Uint8Array|null);
+
+        /** RecordDataWithAccessInfo encryptedLinkedRecordKey */
+        encryptedLinkedRecordKey?: (Uint8Array|null);
+
+        /** RecordDataWithAccessInfo fileId */
+        fileId?: ((number|Long)[]|null);
+
+        /** RecordDataWithAccessInfo fileSize */
+        fileSize?: (number|Long|null);
+
+        /** RecordDataWithAccessInfo thumbnailSize */
+        thumbnailSize?: (number|Long|null);
+
+        /** RecordDataWithAccessInfo userPermission */
+        userPermission?: (Records.IUserPermission[]|null);
+
+        /** RecordDataWithAccessInfo sharedFolderPermission */
+        sharedFolderPermission?: (Records.ISharedFolderPermission[]|null);
+    }
+
+    /** Represents a RecordDataWithAccessInfo. */
+    class RecordDataWithAccessInfo implements IRecordDataWithAccessInfo {
+
+        /**
+         * Constructs a new RecordDataWithAccessInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IRecordDataWithAccessInfo);
+
+        /** RecordDataWithAccessInfo recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordDataWithAccessInfo revision. */
+        public revision: (number|Long);
+
+        /** RecordDataWithAccessInfo version. */
+        public version: number;
+
+        /** RecordDataWithAccessInfo shared. */
+        public shared: boolean;
+
+        /** RecordDataWithAccessInfo encryptedRecordData. */
+        public encryptedRecordData: string;
+
+        /** RecordDataWithAccessInfo encryptedExtraData. */
+        public encryptedExtraData: string;
+
+        /** RecordDataWithAccessInfo clientModifiedTime. */
+        public clientModifiedTime: (number|Long);
+
+        /** RecordDataWithAccessInfo ownerRecordUid. */
+        public ownerRecordUid: Uint8Array;
+
+        /** RecordDataWithAccessInfo encryptedLinkedRecordKey. */
+        public encryptedLinkedRecordKey: Uint8Array;
+
+        /** RecordDataWithAccessInfo fileId. */
+        public fileId: (number|Long)[];
+
+        /** RecordDataWithAccessInfo fileSize. */
+        public fileSize: (number|Long);
+
+        /** RecordDataWithAccessInfo thumbnailSize. */
+        public thumbnailSize: (number|Long);
+
+        /** RecordDataWithAccessInfo userPermission. */
+        public userPermission: Records.IUserPermission[];
+
+        /** RecordDataWithAccessInfo sharedFolderPermission. */
+        public sharedFolderPermission: Records.ISharedFolderPermission[];
+
+        /**
+         * Creates a new RecordDataWithAccessInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordDataWithAccessInfo instance
+         */
+        public static create(properties?: Records.IRecordDataWithAccessInfo): Records.RecordDataWithAccessInfo;
+
+        /**
+         * Encodes the specified RecordDataWithAccessInfo message. Does not implicitly {@link Records.RecordDataWithAccessInfo.verify|verify} messages.
+         * @param message RecordDataWithAccessInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IRecordDataWithAccessInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordDataWithAccessInfo message, length delimited. Does not implicitly {@link Records.RecordDataWithAccessInfo.verify|verify} messages.
+         * @param message RecordDataWithAccessInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IRecordDataWithAccessInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordDataWithAccessInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordDataWithAccessInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.RecordDataWithAccessInfo;
+
+        /**
+         * Decodes a RecordDataWithAccessInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordDataWithAccessInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.RecordDataWithAccessInfo;
+
+        /**
+         * Verifies a RecordDataWithAccessInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordDataWithAccessInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordDataWithAccessInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Records.RecordDataWithAccessInfo;
+
+        /**
+         * Creates a plain object from a RecordDataWithAccessInfo message. Also converts values to other types if specified.
+         * @param message RecordDataWithAccessInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.RecordDataWithAccessInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordDataWithAccessInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GetRecordDataWithAccessInfoResponse. */
+    interface IGetRecordDataWithAccessInfoResponse {
+
+        /** GetRecordDataWithAccessInfoResponse recordDataWithAccessInfo */
+        recordDataWithAccessInfo?: (Records.IRecordDataWithAccessInfo[]|null);
+
+        /** GetRecordDataWithAccessInfoResponse noPermissionRecordUid */
+        noPermissionRecordUid?: (Uint8Array[]|null);
+    }
+
+    /** Represents a GetRecordDataWithAccessInfoResponse. */
+    class GetRecordDataWithAccessInfoResponse implements IGetRecordDataWithAccessInfoResponse {
+
+        /**
+         * Constructs a new GetRecordDataWithAccessInfoResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.IGetRecordDataWithAccessInfoResponse);
+
+        /** GetRecordDataWithAccessInfoResponse recordDataWithAccessInfo. */
+        public recordDataWithAccessInfo: Records.IRecordDataWithAccessInfo[];
+
+        /** GetRecordDataWithAccessInfoResponse noPermissionRecordUid. */
+        public noPermissionRecordUid: Uint8Array[];
+
+        /**
+         * Creates a new GetRecordDataWithAccessInfoResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetRecordDataWithAccessInfoResponse instance
+         */
+        public static create(properties?: Records.IGetRecordDataWithAccessInfoResponse): Records.GetRecordDataWithAccessInfoResponse;
+
+        /**
+         * Encodes the specified GetRecordDataWithAccessInfoResponse message. Does not implicitly {@link Records.GetRecordDataWithAccessInfoResponse.verify|verify} messages.
+         * @param message GetRecordDataWithAccessInfoResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.IGetRecordDataWithAccessInfoResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetRecordDataWithAccessInfoResponse message, length delimited. Does not implicitly {@link Records.GetRecordDataWithAccessInfoResponse.verify|verify} messages.
+         * @param message GetRecordDataWithAccessInfoResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.IGetRecordDataWithAccessInfoResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetRecordDataWithAccessInfoResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetRecordDataWithAccessInfoResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.GetRecordDataWithAccessInfoResponse;
+
+        /**
+         * Decodes a GetRecordDataWithAccessInfoResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetRecordDataWithAccessInfoResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.GetRecordDataWithAccessInfoResponse;
+
+        /**
+         * Verifies a GetRecordDataWithAccessInfoResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetRecordDataWithAccessInfoResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetRecordDataWithAccessInfoResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Records.GetRecordDataWithAccessInfoResponse;
+
+        /**
+         * Creates a plain object from a GetRecordDataWithAccessInfoResponse message. Also converts values to other types if specified.
+         * @param message GetRecordDataWithAccessInfoResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.GetRecordDataWithAccessInfoResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetRecordDataWithAccessInfoResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

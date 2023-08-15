@@ -2030,16 +2030,38 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       ApplicationShareType: {
         values: {
-          SHT_RECORD: 0,
-          SHT_FOLDER: 1
+          SHARE_TYPE_RECORD: 0,
+          SHARE_TYPE_FOLDER: 1
         }
       },
-      AddAppShareRequest: {
+      AddAppSharesRequest: {
         fields: {
           appRecordUid: {
             type: "bytes",
             id: 1
           },
+          shares: {
+            rule: "repeated",
+            type: "AppShareAdd",
+            id: 2
+          }
+        }
+      },
+      RemoveAppSharesRequest: {
+        fields: {
+          appRecordUid: {
+            type: "bytes",
+            id: 1
+          },
+          shares: {
+            rule: "repeated",
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      AppShareAdd: {
+        fields: {
           secretUid: {
             type: "bytes",
             id: 2
@@ -2103,6 +2125,23 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           accessExpireOn: {
             type: "int64",
             id: 6
+          },
+          id: {
+            type: "string",
+            id: 7
+          }
+        }
+      },
+      RemoveAppClientsRequest: {
+        fields: {
+          appRecordUid: {
+            type: "bytes",
+            id: 1
+          },
+          clients: {
+            rule: "repeated",
+            type: "bytes",
+            id: 2
           }
         }
       },
@@ -2207,6 +2246,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           folderRecords: {
             type: "int32",
             id: 5
+          },
+          clientCount: {
+            type: "int32",
+            id: 6
+          },
+          expiredClientCount: {
+            type: "int32",
+            id: 7
           }
         }
       },
@@ -2239,6 +2286,53 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
         fields: {
           email: {
             type: "string",
+            id: 1
+          }
+        }
+      },
+      TimeLimitedAccessType: {
+        values: {
+          INVALID_TIME_LIMITED_ACCESS_TYPE: 0,
+          USER_ACCESS_TO_RECORD: 1,
+          USER_OR_TEAM_ACCESS_TO_SHAREDFOLDER: 2,
+          RECORD_ACCESS_TO_SHAREDFOLDER: 3
+        }
+      },
+      TimeLimitedAccessRequest: {
+        fields: {
+          accountUid: {
+            rule: "repeated",
+            type: "bytes",
+            id: 1
+          },
+          teamUid: {
+            rule: "repeated",
+            type: "bytes",
+            id: 2
+          },
+          recordUid: {
+            rule: "repeated",
+            type: "bytes",
+            id: 3
+          },
+          sharedObjectUid: {
+            type: "bytes",
+            id: 4
+          },
+          timeLimitedAccessType: {
+            type: "TimeLimitedAccessType",
+            id: 5
+          },
+          expiration: {
+            type: "int64",
+            id: 6
+          }
+        }
+      },
+      TimeLimitedAccessResponse: {
+        fields: {
+          revision: {
+            type: "int64",
             id: 1
           }
         }
@@ -4941,8 +5035,15 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
     nested: {
       SsoAuthenticationProtocolType: {
         values: {
-          UNKNOWN: 0,
+          UNKNOWN_PROTOCOL: 0,
           SAML2: 1
+        }
+      },
+      CertificateFormat: {
+        values: {
+          UNKNOWN_FORMAT: 0,
+          PKCS12: 1,
+          JKS: 2
         }
       },
       AutomatorSettingValue: {
@@ -5027,13 +5128,41 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "bytes",
             id: 5
           },
-          encryptedUserDataKey: {
-            type: "bytes",
+          serverEccPublicKeyId: {
+            type: "int32",
             id: 6
+          },
+          userEncryptedDataKey: {
+            type: "bytes",
+            id: 7
+          },
+          userEncryptedDataKeyType: {
+            type: "Enterprise.EncryptedKeyType",
+            id: 8
+          }
+        }
+      },
+      SetupRequest: {
+        fields: {
+          automatorId: {
+            type: "int64",
+            id: 1
           },
           serverEccPublicKeyId: {
             type: "int32",
-            id: 7
+            id: 2
+          },
+          automatorState: {
+            type: "AutomatorState",
+            id: 3
+          },
+          encryptedEnterprisePrivateEcKey: {
+            type: "bytes",
+            id: 4
+          },
+          encryptedEnterprisePrivateRsaKey: {
+            type: "bytes",
+            id: 5
           }
         }
       },
@@ -5055,49 +5184,37 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "int64",
             id: 1
           },
-          sslCertificate: {
-            type: "bytes",
-            id: 2
-          },
-          sslCertificatePassword: {
-            type: "string",
-            id: 3
-          },
           idpMetadata: {
             type: "string",
-            id: 4
+            id: 2
           },
           idpSigningCertificate: {
             type: "bytes",
-            id: 5
+            id: 3
           },
           ssoEntityId: {
             type: "string",
-            id: 6
+            id: 4
           },
           emailMapping: {
             type: "string",
-            id: 7
+            id: 5
           },
           firstnameMapping: {
             type: "string",
-            id: 8
+            id: 6
           },
           lastnameMapping: {
             type: "string",
-            id: 9
-          },
-          eccEnterprisePrivateKey: {
-            type: "bytes",
-            id: 10
+            id: 7
           },
           disabled: {
             type: "bool",
-            id: 11
+            id: 8
           },
           serverEccPublicKeyId: {
             type: "int32",
-            id: 12
+            id: 9
           }
         }
       },
@@ -5106,6 +5223,30 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           automatorTransmissionKey: {
             type: "bytes",
             id: 1
+          },
+          signingCertificate: {
+            type: "bytes",
+            id: 2
+          },
+          signingCertificateFilename: {
+            type: "string",
+            id: 3
+          },
+          signingCertificatePassword: {
+            type: "string",
+            id: 4
+          },
+          signingKeyPassword: {
+            type: "string",
+            id: 5
+          },
+          signingCertificateFormat: {
+            type: "CertificateFormat",
+            id: 6
+          },
+          automatorPublicKey: {
+            type: "bytes",
+            id: 7
           }
         }
       },
@@ -5148,6 +5289,14 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           error: {
             type: "ErrorResponse",
             id: 7
+          },
+          automatorState: {
+            type: "AutomatorState",
+            id: 8
+          },
+          automatorPublicEcKey: {
+            type: "bytes",
+            id: 9
           }
         }
       },
@@ -5200,6 +5349,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           sslCertificateExpiration: {
             type: "int64",
             id: 8
+          },
+          notInitializedResponse: {
+            type: "NotInitializedResponse",
+            id: 9
           }
         }
       },
@@ -5213,8 +5366,9 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
       },
       SkillType: {
         values: {
-          DEVICE_APPROVAL: 0,
-          TEAM_APPROVAL: 1
+          UNKNOWN_SKILL_TYPE: 0,
+          DEVICE_APPROVAL: 1,
+          TEAM_APPROVAL: 2
         }
       },
       LogEntry: {
@@ -5235,6 +5389,16 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             type: "string",
             id: 4
           }
+        }
+      },
+      AutomatorState: {
+        values: {
+          UNKNOWN_STATE: 0,
+          RUNNING: 1,
+          ERROR: 2,
+          NEEDS_INITIALIZATION: 3,
+          NEEDS_CRYPTO_STEP_1: 4,
+          NEEDS_CRYPTO_STEP_2: 5
         }
       },
       AdminResponse: {
@@ -5294,6 +5458,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "LogEntry",
             id: 9
+          },
+          automatorState: {
+            type: "AutomatorState",
+            id: 10
           }
         }
       },
@@ -5306,6 +5474,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           name: {
             type: "string",
             id: 2
+          },
+          skill: {
+            type: "AutomatorSkill",
+            id: 3
           }
         }
       },
@@ -5380,6 +5552,50 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             rule: "repeated",
             type: "AutomatorSettingValue",
             id: 6
+          }
+        }
+      },
+      AdminSetupAutomatorRequest: {
+        fields: {
+          automatorId: {
+            type: "int64",
+            id: 1
+          },
+          automatorState: {
+            type: "AutomatorState",
+            id: 2
+          },
+          encryptedEcEnterprisePrivateKey: {
+            type: "bytes",
+            id: 3
+          },
+          encryptedRsaEnterprisePrivateKey: {
+            type: "bytes",
+            id: 4
+          }
+        }
+      },
+      AdminSetupAutomatorResponse: {
+        fields: {
+          success: {
+            type: "bool",
+            id: 1
+          },
+          message: {
+            type: "string",
+            id: 2
+          },
+          automatorId: {
+            type: "int64",
+            id: 3
+          },
+          automatorState: {
+            type: "AutomatorState",
+            id: 4
+          },
+          automatorEcPublicKey: {
+            type: "bytes",
+            id: 5
           }
         }
       },
@@ -8287,6 +8503,148 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
           data: {
             type: "bytes",
             id: 4
+          }
+        }
+      },
+      GetRecordDataWithAccessInfoRequest: {
+        fields: {
+          clientTime: {
+            type: "int64",
+            id: 1
+          },
+          recordUid: {
+            rule: "repeated",
+            type: "bytes",
+            id: 2
+          }
+        }
+      },
+      UserPermission: {
+        fields: {
+          username: {
+            type: "string",
+            id: 1
+          },
+          owner: {
+            type: "bool",
+            id: 2
+          },
+          sharable: {
+            type: "bool",
+            id: 3
+          },
+          editable: {
+            type: "bool",
+            id: 4
+          },
+          awaitingApproval: {
+            type: "bool",
+            id: 5
+          },
+          expiration: {
+            type: "int64",
+            id: 6
+          }
+        }
+      },
+      SharedFolderPermission: {
+        fields: {
+          sharedFolderUid: {
+            type: "bytes",
+            id: 1
+          },
+          resharable: {
+            type: "bool",
+            id: 2
+          },
+          editable: {
+            type: "bool",
+            id: 3
+          },
+          revision: {
+            type: "int64",
+            id: 4
+          },
+          expiration: {
+            type: "int64",
+            id: 5
+          }
+        }
+      },
+      RecordDataWithAccessInfo: {
+        fields: {
+          recordUid: {
+            type: "bytes",
+            id: 1
+          },
+          revision: {
+            type: "int64",
+            id: 2
+          },
+          version: {
+            type: "int32",
+            id: 3
+          },
+          shared: {
+            type: "bool",
+            id: 4
+          },
+          encryptedRecordData: {
+            type: "string",
+            id: 5
+          },
+          encryptedExtraData: {
+            type: "string",
+            id: 6
+          },
+          clientModifiedTime: {
+            type: "int64",
+            id: 7
+          },
+          ownerRecordUid: {
+            type: "bytes",
+            id: 8
+          },
+          encryptedLinkedRecordKey: {
+            type: "bytes",
+            id: 9
+          },
+          fileId: {
+            rule: "repeated",
+            type: "int64",
+            id: 10
+          },
+          fileSize: {
+            type: "int64",
+            id: 11
+          },
+          thumbnailSize: {
+            type: "int64",
+            id: 12
+          },
+          userPermission: {
+            rule: "repeated",
+            type: "UserPermission",
+            id: 13
+          },
+          sharedFolderPermission: {
+            rule: "repeated",
+            type: "SharedFolderPermission",
+            id: 14
+          }
+        }
+      },
+      GetRecordDataWithAccessInfoResponse: {
+        fields: {
+          recordDataWithAccessInfo: {
+            rule: "repeated",
+            type: "RecordDataWithAccessInfo",
+            id: 1
+          },
+          noPermissionRecordUid: {
+            rule: "repeated",
+            type: "bytes",
+            id: 2
           }
         }
       }
