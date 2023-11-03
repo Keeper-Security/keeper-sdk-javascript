@@ -10,24 +10,26 @@ import {
 import {KeeperEndpoint, KeeperEnvironment} from "./endpoint";
 import {KeyWrapper, platform} from "./platform";
 import {
-    decryptFromStorage,
-    generateEncryptionKey, wrapPassword,
+    generateEncryptionKey,
     generateUidBytes,
-    isTwoFactorResultCode,
     normal64,
     normal64Bytes,
     resolvablePromise,
-    webSafe64,
-    webSafe64FromBytes
+    webSafe64FromBytes,
+    wrapPassword
 } from "./utils";
 import {
     accountSummaryMessage,
     getEnterprisePublicKeyMessage,
-    logoutV3Message, NN,
+    logoutV3Message,
+    NN,
     requestCreateUserMessage,
     requestDeviceAdminApprovalMessage,
-    requestDeviceVerificationMessage, RestActionMessage, RestInMessage,
-    RestMessage, RestOutMessage,
+    requestDeviceVerificationMessage,
+    RestActionMessage,
+    RestInMessage,
+    RestMessage,
+    RestOutMessage,
     ssoServiceProviderRequestMessage,
     startLoginMessage,
     startLoginMessageFromSessionToken,
@@ -37,6 +39,8 @@ import {
     validateDeviceVerificationCodeMessage
 } from './restMessages'
 import {AccountSummary, Authentication} from './proto';
+import {RestCommand} from './commands'
+import {CloseReason, createAsyncSocket, SocketListener} from './socket';
 import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
@@ -46,8 +50,6 @@ import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
 import LoginType = Authentication.LoginType;
 import LoginMethod = Authentication.LoginMethod;
 import IAccountSummaryElements = AccountSummary.IAccountSummaryElements;
-import {RestCommand} from './commands'
-import {CloseReason, createAsyncSocket, SocketListener} from './socket';
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -680,7 +682,14 @@ export class Auth {
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
                     const token = wssRs.encryptedLoginToken ? normal64Bytes(wssRs.encryptedLoginToken) : loginToken
-                    resumeWithToken(token)
+                    if (wssRs.passcode) {
+                        const tfaChannel = channels.find(x => x.channel === DeviceVerificationMethods.TFA)
+                        if (tfaChannel && tfaChannel.validateCode) {
+                            tfaChannel.validateCode(wssRs.passcode)
+                        }
+                    } else {
+                        resumeWithToken(token)
+                    }
                 } else if (wssRs.message === 'device_approved') {
                     if (wssRs.approved) {
                         resumeWithToken(loginToken)
