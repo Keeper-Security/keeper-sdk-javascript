@@ -36,9 +36,9 @@ export type VaultStorage = KeyStorage & {
     delete(kind: VaultStorageKind, uid: string): Promise<void>
 }
 
-export type VaultStorageData = DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData
+export type VaultStorageData = DProfilePic | DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData
 
-export type VaultStorageKind = 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data'
+export type VaultStorageKind = 'profilePic' | 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data'
 
 export type VaultStorageResult<T extends VaultStorageKind> = (
     T extends 'continuationToken' ? DContinuationToken :
@@ -164,6 +164,14 @@ export type DProfile = {
     profileName: string
     data: any
     revision: number
+}
+
+export type DProfilePic = {
+    kind: 'profilePic'
+    data: {
+        url: string
+        revision: number
+    }
 }
 
 export type DBWRecord = {
@@ -664,6 +672,20 @@ const processProfile = async (profile: IProfile | null | undefined, storage: Vau
     }
 }
 
+const processProfilePic = async (profilePic, storage) => {
+    try {
+        if (!profilePic)
+            return;
+        await storage.put({
+            kind: 'profilePic',
+            data: profilePic,
+        });
+    }
+    catch (e: any) {
+        console.error(`Profile picture cannot be decrypted (${e.message})`);
+    }
+};
+
 const processSharedFolderFolders = async (folders: ISharedFolderFolder[], storage: VaultStorage, dependencies: Dependencies) => {
     for (const folder of folders as NN<ISharedFolderFolder>[]) {
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
@@ -1015,6 +1037,10 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             profiler?.time('processProfile')
             await processProfile(resp.profile, storage)
             profiler?.timeEnd('processProfile')
+            
+            profiler?.time('processProfilePic')
+            await processProfilePic(resp.profilePic, storage);
+            profiler?.timeEnd('processProfilePic')
 
             profiler?.time('processBreachWatchRecords')
             await processBreachWatchRecords(resp.breachWatchRecords, storage)
