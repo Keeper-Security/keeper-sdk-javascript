@@ -682,7 +682,7 @@ const processProfilePic = async (profilePic, storage) => {
         });
     }
     catch (e: any) {
-        console.error(`Profile cannot be decrypted (${e.message})`);
+        console.error(`Profile picture cannot be decrypted (${e.message})`);
     }
 };
 
