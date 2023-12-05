@@ -1,15 +1,23 @@
 import * as crypto from "crypto";
-import {createECDH} from "crypto";
+import {createECDH, hkdfSync} from "crypto";
 import * as https from "https";
 import * as FormData from "form-data"
 import * as NodeRSA from 'node-rsa';
 import * as WebSocket from 'faye-websocket'
 
-import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, UnwrapKeyMap} from "../platform";
+import {
+    EncryptionType,
+    KeyStorage,
+    KeyWrapper,
+    LogOptions,
+    Platform,
+    UnwrapKeyMap,
+    UnwrappedKeyType
+} from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
 import {getKeeperKeys} from "../transmissionKeys";
 import {SocketProxy, socketSendMessage} from '../socket'
-import { normal64 } from "../utils";
+import {normal64} from "../utils";
 import type {KeeperHttpResponse} from "../commands";
 
 const base64ToBytes = (data: string): Uint8Array => {
@@ -150,6 +158,16 @@ export const nodePlatform: Platform = class {
         })
     }
 
+    static async publicEncryptECWithHKDF(message: string | Uint8Array, pubKey: Uint8Array, id: Uint8Array): Promise<Uint8Array> {
+        const messageBytes = typeof message === "string" ? this.stringToBytes(message) : message
+        return await this.mainPublicEncryptEC(messageBytes, pubKey, id, true)
+        // return Promise.resolve(
+        //     {
+        //         publicKey: data.publicKeyWithEncryptedData,
+        //         privateKey: data.privateKey
+        //     })
+    }
+
     static async encrypt(data: Uint8Array, keyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<Uint8Array> {
         const key = await loadKey(keyId, storage)
         if (!key) {
@@ -194,15 +212,19 @@ export const nodePlatform: Platform = class {
         }, data)
     }
 
-    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+    static async mainPublicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array, useHKDF?: boolean): Promise<Uint8Array> {
         const ecdh = createECDH('prime256v1')
         ecdh.generateKeys()
         const ephemeralPublicKey = ecdh.getPublicKey()
         const sharedSecret = ecdh.computeSecret(key)
         const sharedSecretCombined = Buffer.concat([sharedSecret, id || new Uint8Array()])
-        const symmetricKey = crypto.createHash("SHA256").update(sharedSecretCombined).digest()
+        const symmetricKey = !useHKDF ? crypto.createHash("SHA256").update(sharedSecretCombined).digest() : Buffer.from(hkdfSync('sha256', sharedSecret, new Uint8Array(), id ?? Buffer.from([]), 32))
         const encryptedData = await this.aesGcmEncrypt(data, symmetricKey)
         return Buffer.concat([ephemeralPublicKey, encryptedData])
+    }
+
+    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        return await this.mainPublicEncryptEC(data, key, id)
     }
 
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
@@ -216,14 +238,14 @@ export const nodePlatform: Platform = class {
         }, data);
     }
 
-    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array, useHKDF?: boolean): Promise<Uint8Array> {
         const ecdh = createECDH('prime256v1')
         ecdh.setPrivateKey(privateKey)
         const publicKeyLength = 65
         const ephemeralPublicKey = data.slice(0, publicKeyLength)
         const sharedSecret = ecdh.computeSecret(ephemeralPublicKey)
         const sharedSecretCombined = Buffer.concat([sharedSecret, id || new Uint8Array()])
-        const symmetricKey = crypto.createHash("SHA256").update(sharedSecretCombined).digest()
+        const symmetricKey = !useHKDF ? crypto.createHash("SHA256").update(sharedSecretCombined).digest() : Buffer.from(hkdfSync('sha256', sharedSecret, new Uint8Array(), id ?? Buffer.from([]), 32))
         const encryptedData = data.slice(publicKeyLength)
         return await this.aesGcmDecrypt(encryptedData, symmetricKey)
     }
