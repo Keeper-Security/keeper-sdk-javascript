@@ -161,11 +161,6 @@ export const nodePlatform: Platform = class {
     static async publicEncryptECWithHKDF(message: string | Uint8Array, pubKey: Uint8Array, id: Uint8Array): Promise<Uint8Array> {
         const messageBytes = typeof message === "string" ? this.stringToBytes(message) : message
         return await this.mainPublicEncryptEC(messageBytes, pubKey, id, true)
-        // return Promise.resolve(
-        //     {
-        //         publicKey: data.publicKeyWithEncryptedData,
-        //         privateKey: data.privateKey
-        //     })
     }
 
     static async encrypt(data: Uint8Array, keyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<Uint8Array> {
