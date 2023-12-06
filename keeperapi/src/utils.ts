@@ -1,4 +1,4 @@
-import {KeyWrapper, LogOptions, platform} from "./platform";
+import {KeyWrapper, LogOptions, Platform, platform} from "./platform";
 import type {KeeperHost, TransmissionKey} from './configuration';
 import { AllowedNumbers } from "./transmissionKeys";
 

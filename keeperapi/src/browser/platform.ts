@@ -1,4 +1,13 @@
-import {EncryptionType, KeyStorage, KeyWrapper, LogOptions, Platform, UnwrappedKeyType, CryptoWorkerOptions, UnwrapKeyMap} from '../platform'
+import {
+    CryptoWorkerOptions,
+    EncryptionType,
+    KeyStorage,
+    KeyWrapper,
+    LogOptions,
+    Platform,
+    UnwrapKeyMap,
+    UnwrappedKeyType
+} from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
 import {getKeeperKeys} from "../transmissionKeys";
@@ -6,7 +15,13 @@ import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
 import {SocketProxy, socketSendMessage} from '../socket'
 import * as asmCrypto from 'asmcrypto.js'
 import type {KeeperHttpResponse} from "../commands";
-import {CryptoWorker, CryptoWorkerMessage, CryptoWorkerPool, CryptoWorkerPoolConfig, CryptoResults } from '../cryptoWorker';
+import {
+    CryptoResults,
+    CryptoWorker,
+    CryptoWorkerMessage,
+    CryptoWorkerPool,
+    CryptoWorkerPoolConfig
+} from '../cryptoWorker';
 
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 const CBC_IV_LENGTH = 16
@@ -375,6 +390,11 @@ export const browserPlatform: Platform = class {
         return { publicKey: new Uint8Array(publicKey), privateKey: normal64Bytes(privateKey.d!) }
     }
 
+    static async publicEncryptECWithHKDF(message: string | Uint8Array, pubKey: Uint8Array, id: Uint8Array): Promise<Uint8Array> {
+        const messageBytes = typeof message === "string" ? this.stringToBytes(message) : message
+        return await this.mainPublicEncryptEC(messageBytes, pubKey, id, true)
+    }
+
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKeyHex = base64ToHex(key);
         const pos = _asnhex_getPosArrayOfChildren_AtObj(publicKeyHex, 0);
@@ -387,21 +407,46 @@ export const browserPlatform: Platform = class {
         return hexToBytes(encryptedBinary);
     }
 
-    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+    static async mainPublicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array, useHKDF?: boolean) {
         const ephemeralKeyPair = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
         const ephemeralPublicKey = await crypto.subtle.exportKey('raw', ephemeralKeyPair.publicKey)
         const recipientPublicKey = await crypto.subtle.importKey('raw', key, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: recipientPublicKey }, ephemeralKeyPair.privateKey, 256)
         const idBytes = id || new Uint8Array()
-        const sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + idBytes.byteLength)
-        sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
-        sharedSecretCombined.set(idBytes, sharedSecret.byteLength)
-        const symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+        let symmetricKey: ArrayBuffer
+        if (!useHKDF) {
+            const sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + idBytes.byteLength)
+            sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
+            sharedSecretCombined.set(idBytes, sharedSecret.byteLength)
+            symmetricKey = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+        } else {
+            const hkdfKey = await crypto.subtle.importKey(
+                'raw',
+                sharedSecret,
+                'HKDF',
+                false,
+                ['deriveBits']
+            )
+            symmetricKey = await crypto.subtle.deriveBits(
+                {
+                    name: 'HKDF',
+                    hash: 'SHA-256',
+                    salt: new Uint8Array(),
+                    info: id
+                },
+                hkdfKey,
+                256
+            )
+        }
         const cipherText = await this.aesGcmEncrypt(data, new Uint8Array(symmetricKey))
         const result = new Uint8Array(ephemeralPublicKey.byteLength + cipherText.byteLength)
         result.set(new Uint8Array(ephemeralPublicKey), 0)
         result.set(new Uint8Array(cipherText), ephemeralPublicKey.byteLength)
         return result
+    }
+
+    static async publicEncryptEC(data: Uint8Array, key: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+        return await this.mainPublicEncryptEC(data, key, id)
     }
 
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
@@ -413,14 +458,14 @@ export const browserPlatform: Platform = class {
         return hexToBytes(decryptedBinary);
     }
 
-    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array): Promise<Uint8Array> {
+    static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array, useHKDF?: boolean): Promise<Uint8Array> {
         if (!publicKey) {
             throw Error('Public key is required for EC decryption')
         }
 
         const privateKeyImport = await this.importPrivateKeyEC(privateKey, publicKey)
 
-        return this.privateDecryptECWebCrypto(data, privateKeyImport, id)
+        return this.privateDecryptECWebCrypto(data, privateKeyImport, id, useHKDF)
     }
 
     static async importPrivateKeyEC(privateKey: Uint8Array, publicKey: Uint8Array) {
@@ -447,23 +492,45 @@ export const browserPlatform: Platform = class {
         return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
     }
 
-    static async deriveSharedSecretKey(ephemeralPublicKey: Uint8Array, privateKey: CryptoKey, id?: Uint8Array): Promise<CryptoKey> {
+    static async deriveSharedSecretKey(ephemeralPublicKey: Uint8Array, privateKey: CryptoKey, id?: Uint8Array, useHKDF?: boolean): Promise<CryptoKey> {
         const pubCryptoKey = await crypto.subtle.importKey('raw', ephemeralPublicKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: pubCryptoKey }, privateKey, 256)
-        let sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + (id?.byteLength ?? 0))
-        sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
-        if (id) {
-            sharedSecretCombined.set(id, sharedSecret.byteLength)
+        if (!useHKDF) {
+            let sharedSecretCombined = new Uint8Array(sharedSecret.byteLength + (id?.byteLength ?? 0))
+            sharedSecretCombined.set(new Uint8Array(sharedSecret), 0)
+            if (id) {
+                sharedSecretCombined.set(id, sharedSecret.byteLength)
+            }
+            const symmetricKeyBuffer = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
+            return this.aesGcmImportKey(new Uint8Array(symmetricKeyBuffer), false)
+        } else {
+            const hkdfKey = await crypto.subtle.importKey(
+                'raw',
+                sharedSecret,
+                'HKDF',
+                false,
+                ['deriveBits']
+            )
+
+            const symmetricKeyBuffer = await crypto.subtle.deriveBits(
+                {
+                    name: 'HKDF',
+                    hash: 'SHA-256',
+                    salt: new Uint8Array(),
+                    info: id ?? new Uint8Array()
+                },
+                hkdfKey,
+                256
+            )
+            return this.aesGcmImportKey(new Uint8Array(symmetricKeyBuffer), false)
         }
-        const symmetricKeyBuffer = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
-        return this.aesGcmImportKey(new Uint8Array(symmetricKeyBuffer), false)
     }
 
-    static async privateDecryptECWebCrypto(data: Uint8Array, privateKey: CryptoKey, id?: Uint8Array): Promise<Uint8Array> {
+    static async privateDecryptECWebCrypto(data: Uint8Array, privateKey: CryptoKey, id?: Uint8Array, useHKDF?: boolean): Promise<Uint8Array> {
         const message = data.slice(ECC_PUB_KEY_LENGTH)
         const ephemeralPublicKey = data.slice(0, ECC_PUB_KEY_LENGTH)
 
-        const symmetricKey = await this.deriveSharedSecretKey(ephemeralPublicKey, privateKey, id)
+        const symmetricKey = await this.deriveSharedSecretKey(ephemeralPublicKey, privateKey, id, useHKDF)
 
         return await this.aesGcmDecryptWebCrypto(message, symmetricKey)
     }
