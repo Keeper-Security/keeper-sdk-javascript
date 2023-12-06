@@ -256,6 +256,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
             keyId = 'data'
             encryptionType = 'gcm'
             break
+        // RSA TAGGED
         case RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
             keyId = 'pk_rsa'
             encryptionType = 'rsa'
@@ -291,6 +292,7 @@ const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependenc
             }
         }
 
+        // RSA TAGGED
         teamPrivateKeys[teamUid + '_priv'] = {
             data: team.teamPrivateKey,
             dataId: teamUid + '_priv',
@@ -317,6 +319,7 @@ const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependenc
                         unwrappedType: 'aes',
                     }
                     break
+                // RSA TAGGED
                 case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
                     teamSharedFolderKeys[folderUid] = {
                         data: folderKey.sharedFolderKey,
@@ -946,6 +949,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
         await platform.importKey('data', auth.dataKey!, undefined, true)
         await platform.importKeyEC('pk_ecc', new Uint8Array(auth.eccPrivateKey!), new Uint8Array(auth.eccPublicKey!), undefined, true)
+        // RSA TAGGED
         await platform.importKeyRSA('pk_rsa', auth.privateKey!, undefined, true)
 
         while (true) {

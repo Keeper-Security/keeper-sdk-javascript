@@ -285,6 +285,7 @@ export class KeeperEndpoint {
         return decryptCloudSsoResponse(token, this._transmissionKey.key)
     }
 
+    // RSA TAGGED
     public async getOnsitePublicKey(): Promise<string> {
         if (!this.onsitePublicKey || !this.onsitePrivateKey) {
             const {privateKey, publicKey} = await platform.generateRSAKeyPair()

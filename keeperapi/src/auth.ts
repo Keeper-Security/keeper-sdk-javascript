@@ -1111,6 +1111,7 @@ export class Auth {
         return JSON.parse(wssClientResponse.message)
     }
 
+    // RSA TAGGED
     private async createUserRequest(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
         const rsaKeys = await platform.generateRSAKeyPair()
         const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaKeys.privateKey, dataKey, true)
