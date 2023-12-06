@@ -9,6 +9,7 @@ import {browserPlatform} from "../browser/platform"
 import {publicKey, privateKey} from "./ecies-test-vectors";
 import {TextEncoder, TextDecoder} from 'util';
 import type {Platform} from "../platform";
+import {connectPlatform} from "../platform";
 
 Object.assign(global, {TextDecoder, TextEncoder})
 
@@ -21,31 +22,39 @@ Object.defineProperty(global.self, 'crypto', {
 
 describe('crypto test', () => {
     it('node API encrypts a message under EC and then decrypts it (test key pair)', async () => {
+        connectPlatform(nodePlatform)
         await ecEncryptionTest(nodePlatform, publicKey, privateKey)
     })
     it('node API encrypts a message under EC and then decrypts it (generated key pair)', async () => {
         const kp = await nodePlatform.generateECKeyPair()
+        connectPlatform(nodePlatform)
         await ecEncryptionTest(nodePlatform, kp.publicKey, kp.privateKey)
     })
     it('browser API encrypts a message under EC and then decrypts it (test key pair)', async () => {
+        connectPlatform(browserPlatform)
         await ecEncryptionTest(browserPlatform, publicKey, privateKey)
     })
     it('browser API encrypts a message under EC and then decrypts it (generated key pair)', async () => {
         const kp = await browserPlatform.generateECKeyPair()
+        connectPlatform(browserPlatform)
         await ecEncryptionTest(browserPlatform, kp.publicKey, kp.privateKey)
     })
     it('node API encrypts a message with HKDF under EC and then decrypts it (test key pair)', async () => {
+        connectPlatform(nodePlatform)
         await ecWithHkdfEncryptionTest(nodePlatform, publicKey, privateKey)
     })
     it('node API encrypts a message with HKDF under EC and then decrypts it (generated key pair)', async () => {
         const kp = await nodePlatform.generateECKeyPair()
+        connectPlatform(nodePlatform)
         await ecWithHkdfEncryptionTest(nodePlatform, kp.publicKey, kp.privateKey)
     })
     it('browser API encrypts a message with HKDF under EC and then decrypts it (test key pair)', async () => {
+        connectPlatform(browserPlatform)
         await ecWithHkdfEncryptionTest(browserPlatform, publicKey, privateKey)
     })
     it('browser API encrypts a message with HKDF under EC and then decrypts it (generated key pair)', async () => {
         const kp = await browserPlatform.generateECKeyPair()
+        connectPlatform(browserPlatform)
         await ecWithHkdfEncryptionTest(browserPlatform, kp.publicKey, kp.privateKey)
     })
 })

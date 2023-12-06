@@ -387,7 +387,7 @@ export const browserPlatform: Platform = class {
         const ecdh = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
         const privateKey = await crypto.subtle.exportKey('jwk', ecdh.privateKey)
         const publicKey = await crypto.subtle.exportKey('raw', ecdh.publicKey)
-        return { publicKey: new Uint8Array(publicKey), privateKey: normal64Bytes(privateKey.d!, this) }
+        return { publicKey: new Uint8Array(publicKey), privateKey: normal64Bytes(privateKey.d!) }
     }
 
     static async publicEncryptECWithHKDF(message: string | Uint8Array, pubKey: Uint8Array, id: Uint8Array): Promise<Uint8Array> {
@@ -469,9 +469,9 @@ export const browserPlatform: Platform = class {
     }
 
     static async importPrivateKeyEC(privateKey: Uint8Array, publicKey: Uint8Array) {
-        const x = webSafe64FromBytes(publicKey.subarray(1, 33), this)
-        const y = webSafe64FromBytes(publicKey.subarray(33, 65), this)
-        const d = webSafe64FromBytes(privateKey, this)
+        const x = webSafe64FromBytes(publicKey.subarray(1, 33))
+        const y = webSafe64FromBytes(publicKey.subarray(33, 65))
+        const d = webSafe64FromBytes(privateKey)
 
         const jwk = {
             'crv': 'P-256',

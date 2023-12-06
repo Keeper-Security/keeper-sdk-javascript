@@ -56,16 +56,16 @@ export function webSafe64(source: string): string {
     return source.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export function webSafe64FromBytes(source: Uint8Array, thisPlatform?: Platform): string {
-    return webSafe64((thisPlatform ?? platform).bytesToBase64(source));
+export function webSafe64FromBytes(source: Uint8Array): string {
+    return webSafe64(platform.bytesToBase64(source));
 }
 
 export function normal64(source: string): string {
     return source.replace(/-/g, '+').replace(/_/g, '/') + '=='.substring(0, (3 * source.length) % 4);
 }
 
-export function normal64Bytes(source: string, thisPlatform?: Platform): Uint8Array {
-    return (thisPlatform ?? platform).base64ToBytes(normal64(source));
+export function normal64Bytes(source: string): Uint8Array {
+    return platform.base64ToBytes(normal64(source));
 }
 
 export function isTwoFactorResultCode(resultCode: string): boolean {
