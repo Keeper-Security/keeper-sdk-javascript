@@ -256,7 +256,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
             keyId = 'data'
             encryptionType = 'gcm'
             break
-        // RSA TAGGED
+        // RSA TAGGED - might have to fallback to ecc or force ecc
         case RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
             keyId = 'pk_rsa'
             encryptionType = 'rsa'
