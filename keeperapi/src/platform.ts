@@ -115,7 +115,7 @@ export class KeyWrapper {
     }
 }
 
-export type UnwrappedKeyType = 'aes' | 'rsa'
+export type UnwrappedKeyType = 'aes' | 'rsa' | 'ecc'
 
 export type EncryptionType = 'cbc' | 'gcm' | 'rsa' | 'ecc'
 

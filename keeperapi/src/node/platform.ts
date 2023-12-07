@@ -71,7 +71,7 @@ export const nodePlatform: Platform = class {
         this.importKey(keyId, privateKey, storage)
     }
 
-    // RSA TAGGED
+    // RSA TAGGED - ecc version above
     static async importKeyRSA(keyId: string, key: Uint8Array, storage?: KeyStorage): Promise<void> {
         this.importKey(keyId, key, storage)
     }
@@ -101,7 +101,7 @@ export const nodePlatform: Platform = class {
                 unwrappedKey = await nodePlatform.aesGcmDecrypt(key, unwrappingKey)
                 break;
             case 'rsa':
-                // RSA TAGGED
+                // RSA TAGGED - ecc version already here, might need to fallback to ecc here
                 unwrappedKey = await nodePlatform.privateDecrypt(key, unwrappingKey)
                 break;
             case 'ecc':
@@ -130,7 +130,7 @@ export const nodePlatform: Platform = class {
                 decrypted = await nodePlatform.aesGcmDecrypt(data, key)
                 break;
             case 'rsa':
-                // RSA TAGGED
+                // RSA TAGGED - ecc version already here, might need to fallback to ecc here
                 decrypted = await nodePlatform.privateDecrypt(data, key)
                 break;
             case 'ecc':
@@ -142,7 +142,7 @@ export const nodePlatform: Platform = class {
         return decrypted
     }
 
-    // RSA TAGGED
+    // RSA TAGGED - ecc version already here
     static async generateRSAKeyPair(): Promise<{ privateKey: Uint8Array; publicKey: Uint8Array}> {
         const rsaKeys = new NodeRSA({b: 2048});
         const rsaPublicKey: Buffer = rsaKeys.exportKey('public-der');
@@ -181,7 +181,7 @@ export const nodePlatform: Platform = class {
                 encrypted = await nodePlatform.aesGcmEncrypt(data, key)
                 break;
             case 'rsa':
-                // RSA TAGGED
+                // RSA TAGGED - ecc version already here, might need to fallback to ecc here
                 encrypted = nodePlatform.publicEncrypt(data, this.bytesToBase64(key))
                 break;
             case 'ecc':
@@ -198,6 +198,8 @@ export const nodePlatform: Platform = class {
         return this.encrypt(key, wrappingKeyId, encryptionType, storage)
     }
 
+
+    // RSA TAGGED - ecc version below
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKey = key[0] === '-'  // PEM or DER?
             ? key
@@ -206,7 +208,6 @@ export const nodePlatform: Platform = class {
                 type: 'pkcs1',
                 format: 'der'
             })
-        // RSA TAGGED
         return crypto.publicEncrypt({
             key: publicKey,
             padding: RSA_PKCS1_PADDING
@@ -228,8 +229,8 @@ export const nodePlatform: Platform = class {
         return await this.mainPublicEncryptEC(data, key, id)
     }
 
+    // RSA TAGGED - ecc version below
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
-        // RSA TAGGED
         return crypto.privateDecrypt({
             key: crypto.createPrivateKey({
                 key: Buffer.from(key),
