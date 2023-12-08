@@ -2,7 +2,7 @@ import * as crypto from "crypto";
 import {createECDH, hkdfSync} from "crypto";
 import * as https from "https";
 import * as FormData from "form-data"
-import * as NodeRSA from 'node-rsa';
+import NodeRSA from 'node-rsa';
 import * as WebSocket from 'faye-websocket'
 
 import {
