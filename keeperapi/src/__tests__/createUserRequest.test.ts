@@ -6,9 +6,7 @@
 import crypto from 'crypto'
 import {nodePlatform} from "../node/platform";
 import {browserPlatform} from "../browser/platform"
-import {publicKey, privateKey} from "./ecies-test-vectors";
 import {TextEncoder, TextDecoder} from 'util';
-import type {Platform} from "../platform";
 import {KeyWrapper, connectPlatform, platform} from "../platform";
 import { Auth } from '../auth';
 import { KeeperEnvironment } from '../endpoint';

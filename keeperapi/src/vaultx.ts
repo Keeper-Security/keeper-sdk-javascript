@@ -272,7 +272,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
     return {keyId, encryptionType}
 }
 
-const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependencies: Dependencies) => {
+export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependencies: Dependencies) => {
     const teamKeys: UnwrapKeyMap = {}
     const teamPrivateKeys: UnwrapKeyMap = {}
     const teamSharedFolderKeys: UnwrapKeyMap = {}

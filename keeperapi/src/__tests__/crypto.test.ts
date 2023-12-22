@@ -8,7 +8,6 @@ import {nodePlatform} from "../node/platform";
 import {browserPlatform} from "../browser/platform"
 import {publicKey, privateKey} from "./ecies-test-vectors";
 import {TextEncoder, TextDecoder} from 'util';
-import type {Platform} from "../platform";
 import {connectPlatform, platform} from "../platform";
 
 Object.assign(global, {TextDecoder, TextEncoder})
