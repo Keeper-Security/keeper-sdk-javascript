@@ -105,7 +105,7 @@ export const browserPlatform: Platform = class {
     }
 
     static async importKeyEC(keyId: string, privateKey: Uint8Array, publicKey: Uint8Array, storage?: KeyStorage): Promise<void> {
-        const key = await this.importPrivateKeyEC(privateKey, publicKey)
+        const key = await this.importPrivateKeyEC(privateKey, publicKey)          
         cryptoKeysCache['ecc'][keyId] = key
 
         if (storage) {
@@ -214,9 +214,17 @@ export const browserPlatform: Platform = class {
                                 await this.importKeyRSA(keyId, keyBytes, storage)
                                 break
                             // TODO: add something like this, need to find pub/priv key pair
-                            // case 'ecc':
-                            //     await this.importKeyEC(keyId, keyBytes, keys[keyId].publicKey, storage)
-                            //     break
+                            case 'ecc':
+                                // gonna figure this out
+                                try {
+                                    debugger
+                                    const privkey = keyBytes.slice(ECC_PUB_KEY_LENGTH)
+                                    const pubKey = keyBytes.slice(0, ECC_PUB_KEY_LENGTH)
+                                    await this.importKeyEC(keyId, privkey, pubKey, storage)
+                                } catch(e){
+                                    console.error('ecc error in unwrapKeys: ', e)
+                                }
+                                break
                             default:
                                 throw new Error(`unable to import ${unwrappedType} key`)
                         }
@@ -267,13 +275,23 @@ export const browserPlatform: Platform = class {
                 await this.unwrapAesKey(key, keyId, unwrappingKeyId, encryptionType, storage, canExport)
                 break
             // TODO: add something like this, need to find pub/priv key pair
-            // case 'ecc':
-            //     if (cryptoKeysCache['gcm'][keyId]) {
-            //         return
-            //     }
+            case 'ecc':
+                if (cryptoKeysCache['gcm'][keyId]) {
+                    return
+                }
 
-            //     await this.unwrapECCKey(key, keyId, unwrappingKeyId, encryptionType, storage, canExport)
-            //     break
+                try {
+                    debugger
+                    // maybe this priv key?
+                    // const eccPrivateKey = await this.loadKey(unwrappingKeyId, 'ecc', storage)
+                    const privkey = key.slice(ECC_PUB_KEY_LENGTH)
+                    const pubKey = key.slice(0, ECC_PUB_KEY_LENGTH)
+    
+                    await this.unwrapECCKey(privkey, pubKey, keyId, unwrappingKeyId, encryptionType, storage)
+                } catch(e){
+                    console.error('ecc error in unwrapKey: ', e)
+                }
+                break
             default:
                 throw new Error('Unable to unwrap key type ' + unwrappedKeyType)
         }
@@ -370,6 +388,7 @@ export const browserPlatform: Platform = class {
                 return this.privateDecrypt(data, key)
             }
             case 'ecc': {
+                // explains ec privkey
                 const key = await this.loadKey(keyId, encryptionType, storage)
                 return this.privateDecryptECWebCrypto(data, key)
             }

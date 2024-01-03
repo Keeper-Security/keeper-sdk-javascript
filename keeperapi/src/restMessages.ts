@@ -277,6 +277,9 @@ export const updateSecurityData = (data: Authentication.ISecurityDataRequest): R
 export const setReusedPasswords = (data: Authentication.IReusedPasswordsRequest): RestInMessage<Authentication.IReusedPasswordsRequest> =>
     createInMessage(data, 'enterprise/set_reused_passwords', Authentication.ReusedPasswordsRequest)
 
+export const changeToKeyTypeOne = (data: Authentication.IChangeToKeyTypeOne): RestInMessage<Authentication.IChangeToKeyTypeOne> =>
+    createInMessage(data, 'vault/change_to_key_type_one', Authentication.ChangeToKeyTypeOne)
+
 /* -- SERVICE LOGGER -- */
 
 export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>
