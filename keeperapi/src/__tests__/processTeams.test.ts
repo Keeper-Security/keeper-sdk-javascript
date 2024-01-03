@@ -56,6 +56,7 @@ describe('Testing processTeams for ECC conversion', () => {
     })
 })
 
+// TODO: figure out how to create teams here
 async function createTeam(keyType: Records.RecordKeyType):Promise<Vault.ITeam>{
     switch(keyType){
         case Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY:
