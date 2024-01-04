@@ -256,6 +256,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
             keyId = 'data'
             encryptionType = 'gcm'
             break
+        // RSA TAGGED - might have to fallback to ecc or force ecc - dont make a change here, rely on keeperapp to provide the correct keyType
         case RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
             keyId = 'pk_rsa'
             encryptionType = 'rsa'
@@ -271,7 +272,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
     return {keyId, encryptionType}
 }
 
-const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependencies: Dependencies) => {
+export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependencies: Dependencies) => {
     const teamKeys: UnwrapKeyMap = {}
     const teamPrivateKeys: UnwrapKeyMap = {}
     const teamSharedFolderKeys: UnwrapKeyMap = {}
@@ -291,13 +292,39 @@ const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependenc
             }
         }
 
-        teamPrivateKeys[teamUid + '_priv'] = {
-            data: team.teamPrivateKey,
-            dataId: teamUid + '_priv',
-            keyId: teamUid,
-            encryptionType: 'cbc',
-            unwrappedType: 'rsa',
+        switch (team.teamKeyType) {
+            case Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY:
+                teamPrivateKeys[teamUid + '_priv'] = {
+                    data: team.teamPrivateKey,
+                    dataId: teamUid + '_priv',
+                    keyId: teamUid,
+                    encryptionType: 'cbc',
+                    unwrappedType: 'rsa',
+                }
+                break
+            // RSA TAGGED - this essentially changes the unwrapped type to ecc. make sure this is fine
+            case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
+                teamPrivateKeys[teamUid + '_priv'] = {
+                    data: team.teamPrivateKey,
+                    dataId: teamUid + '_priv',
+                    keyId: 'pk_ecc',
+                    encryptionType: 'ecc',
+                    unwrappedType: 'aes',
+                }
+                break
+            default:
+                console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
+                break
         }
+
+        // RSA TAGGED - fix is the switch case above. need to confirm the encryptionType and unwrappedType are correct
+        // teamPrivateKeys[teamUid + '_priv'] = {
+        //     data: team.teamPrivateKey,
+        //     dataId: teamUid + '_priv',
+        //     keyId: teamUid,
+        //     encryptionType: 'cbc',
+        //     unwrappedType: 'rsa',
+        // }
 
         for (const folderKey of team.sharedFolderKeys as NN<ISharedFolderKey>[]) {
             // Empty if team being removed from shared folder
@@ -317,12 +344,22 @@ const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependenc
                         unwrappedType: 'aes',
                     }
                     break
+                // RSA TAGGED - done, since this is a read operation, we only need to add ecc read below
                 case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
                     teamSharedFolderKeys[folderUid] = {
                         data: folderKey.sharedFolderKey,
                         dataId: folderUid,
                         keyId: teamUid + '_priv',
                         encryptionType: 'rsa',
+                        unwrappedType: 'aes',
+                    }
+                    break
+                case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
+                    teamSharedFolderKeys[folderUid] = {
+                        data: folderKey.sharedFolderKey,
+                        dataId: folderUid,
+                        keyId: 'pk_ecc',
+                        encryptionType: 'ecc',
                         unwrappedType: 'aes',
                     }
                     break
@@ -946,6 +983,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
         await platform.importKey('data', auth.dataKey!, undefined, true)
         await platform.importKeyEC('pk_ecc', new Uint8Array(auth.eccPrivateKey!), new Uint8Array(auth.eccPublicKey!), undefined, true)
+        // RSA TAGGED - keep here for read purposes
         await platform.importKeyRSA('pk_rsa', auth.privateKey!, undefined, true)
 
         while (true) {

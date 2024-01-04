@@ -25,6 +25,7 @@ export interface Platform {
 
     importKeyEC(keyId: string, privateKey: Uint8Array, publicKey: Uint8Array, storage?: KeyStorage, canExport?: boolean): Promise<void>
 
+    // RSA TAGGED - header
     importKeyRSA(keyId: string, key: Uint8Array, storage?: KeyStorage, canExport?: boolean): Promise<void>
 
     unloadKeys(): void
@@ -35,6 +36,7 @@ export interface Platform {
 
     decrypt(data: Uint8Array, keyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<Uint8Array>
 
+    // RSA TAGGED - header
     generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
 
     generateECKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>
@@ -113,7 +115,7 @@ export class KeyWrapper {
     }
 }
 
-export type UnwrappedKeyType = 'aes' | 'rsa'
+export type UnwrappedKeyType = 'aes' | 'rsa' | 'ecc'
 
 export type EncryptionType = 'cbc' | 'gcm' | 'rsa' | 'ecc'
 

@@ -262,6 +262,7 @@ function _asnhex_getDecendantHexVByNthList(h, currentIndex, nthList) {
     return _asnhex_getHexOfV_AtObj(h, idx);
 }
 
+// RSA TAGGED - no changes here
 function _rsapem_getPosArrayOfChildrenFromHex(hPrivateKey) {
     var a = new Array();
     var v1 = _asnhex_getStartPosOfV_AtObj(hPrivateKey, 0);
@@ -277,6 +278,7 @@ function _rsapem_getPosArrayOfChildrenFromHex(hPrivateKey) {
     return a;
 }
 
+// RSA TAGGED - no changes here
 export function _rsapem_getHexValueArrayOfChildrenFromHex(hPrivateKey) {
     var posArray = _rsapem_getPosArrayOfChildrenFromHex(hPrivateKey);
 

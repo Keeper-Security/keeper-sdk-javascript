@@ -78,6 +78,7 @@ export type LoginPayload = {
     v2TwoFactorToken?: string
     resumeSessionOnly?: boolean
     givenSessionToken?: string
+    ecOnly?: boolean
 }
 
 export enum UserType {
@@ -270,6 +271,7 @@ export class Auth {
             v2TwoFactorToken = undefined,
             resumeSessionOnly = false,
             givenSessionToken = undefined,
+            ecOnly = false,
         }: LoginPayload
     ) {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
@@ -434,7 +436,7 @@ export class Auth {
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.onsiteSso
 
-                    let onsitePublicKey = await this._endpoint.getOnsitePublicKey()
+                    let onsitePublicKey = await this._endpoint.getOnsitePublicKey(ecOnly)
                     let onsiteSsoLoginUrl = loginResponse.url + '?embedded&key=' + onsitePublicKey
 
                     if (this.options.authUI3?.redirectCallback) {
@@ -554,7 +556,7 @@ export class Auth {
         }
     }
 
-    async getSsoProvider(ssoDomain: string, locale?: string) {
+    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false) {
         let domainRequest: ISsoServiceProviderRequest = {
             name: ssoDomain.trim(),
             locale: locale,
@@ -563,7 +565,7 @@ export class Auth {
         const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
         const params = domainResponse.isCloud
             ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
-            : '?embedded&key=' + await this._endpoint.getOnsitePublicKey()
+            : '?embedded&key=' + await this._endpoint.getOnsitePublicKey(ecOnly)
 
         this.userType = domainResponse.isCloud ? UserType.cloudSso : UserType.onsiteSso
         this.ssoLogoutUrl = domainResponse.spUrl.replace('login', 'logout')
@@ -1111,6 +1113,7 @@ export class Auth {
         return JSON.parse(wssClientResponse.message)
     }
 
+    // RSA TAGGED - it looks like we are already providing an ecc key, dont need any changes from what i can see
     private async createUserRequest(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
         const rsaKeys = await platform.generateRSAKeyPair()
         const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaKeys.privateKey, dataKey, true)

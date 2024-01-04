@@ -285,12 +285,20 @@ export class KeeperEndpoint {
         return decryptCloudSsoResponse(token, this._transmissionKey.key)
     }
 
-    public async getOnsitePublicKey(): Promise<string> {
+    // RSA TAGGED - done, add ecOnly check to only make ec keys if ec only is true
+    public async getOnsitePublicKey(ecOnly:boolean): Promise<string> {
         if (!this.onsitePublicKey || !this.onsitePrivateKey) {
-            const {privateKey, publicKey} = await platform.generateRSAKeyPair()
-
-            this.onsitePrivateKey = privateKey
-            this.onsitePublicKey = publicKey
+            if(ecOnly){
+                const {privateKey, publicKey} = await platform.generateECKeyPair()
+    
+                this.onsitePrivateKey = privateKey
+                this.onsitePublicKey = publicKey
+            } else {
+                const {privateKey, publicKey} = await platform.generateRSAKeyPair()
+    
+                this.onsitePrivateKey = privateKey
+                this.onsitePublicKey = publicKey
+            }
         }
 
         return webSafe64FromBytes(this.onsitePublicKey)
