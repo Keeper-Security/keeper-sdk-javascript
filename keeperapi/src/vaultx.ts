@@ -292,30 +292,38 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             }
         }
 
-        switch (team.teamKeyType) {
-            case Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY:
-                teamPrivateKeys[teamUid + '_priv'] = {
-                    data: team.teamPrivateKey,
-                    dataId: teamUid + '_priv',
-                    keyId: teamUid,
-                    encryptionType: 'cbc',
-                    unwrappedType: 'rsa',
-                }
-                break
-            // RSA TAGGED - this essentially changes the unwrapped type to ecc. make sure this is fine
-            case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
-                teamPrivateKeys[teamUid + '_priv'] = {
-                    data: team.teamPrivateKey,
-                    dataId: teamUid + '_priv',
-                    keyId: 'pk_ecc',
-                    encryptionType: 'ecc',
-                    unwrappedType: 'aes',
-                }
-                break
-            default:
-                console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
-                break
+        teamPrivateKeys[teamUid + '_priv'] = {
+            data: team.teamPrivateKey,
+            dataId: teamUid + '_priv',
+            keyId: teamUid,
+            encryptionType: 'cbc',
+            unwrappedType: 'rsa',
         }
+
+        // switch (team.teamKeyType) {
+        //     case Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY:
+        //         teamPrivateKeys[teamUid + '_priv'] = {
+        //             data: team.teamPrivateKey,
+        //             dataId: teamUid + '_priv',
+        //             keyId: teamUid,
+        //             encryptionType: 'cbc',
+        //             unwrappedType: 'rsa',
+        //         }
+        //         break
+        //     // RSA TAGGED - this essentially changes the unwrapped type to ecc. make sure this is fine
+        //     case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
+        //         teamPrivateKeys[teamUid + '_priv'] = {
+        //             data: team.teamPrivateKey,
+        //             dataId: teamUid + '_priv',
+        //             keyId: 'pk_ecc',
+        //             encryptionType: 'ecc',
+        //             unwrappedType: 'aes',
+        //         }
+        //         break
+        //     default:
+        //         console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
+        //         break
+        // }
 
         // RSA TAGGED - fix is the switch case above. need to confirm the encryptionType and unwrappedType are correct
         // teamPrivateKeys[teamUid + '_priv'] = {
@@ -354,15 +362,15 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                         unwrappedType: 'aes',
                     }
                     break
-                case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
-                    teamSharedFolderKeys[folderUid] = {
-                        data: folderKey.sharedFolderKey,
-                        dataId: folderUid,
-                        keyId: 'pk_ecc',
-                        encryptionType: 'ecc',
-                        unwrappedType: 'aes',
-                    }
-                    break
+                // case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
+                //     teamSharedFolderKeys[folderUid] = {
+                //         data: folderKey.sharedFolderKey,
+                //         dataId: folderUid,
+                //         keyId: 'pk_ecc',
+                //         encryptionType: 'ecc',
+                //         unwrappedType: 'aes',
+                //     }
+                //     break
                 default:
                     console.error(`Key ${folderKey.keyType} type for team folder key ${teamUid}/${folderUid} is not supported for team folder decryption`)
                     break
