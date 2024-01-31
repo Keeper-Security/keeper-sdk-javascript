@@ -132,6 +132,7 @@ export class Auth {
     private socket?: SocketListener;
     public clientKey?: Uint8Array;
     private _accountSummary?: IAccountSummaryElements;
+    private _accountSummaryVersion: number = 1
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -1018,8 +1019,12 @@ export class Auth {
 
     async loadAccountSummary() {
         this._accountSummary = await this.executeRest(accountSummaryMessage({
-            summaryVersion: 1
+            summaryVersion: this._accountSummaryVersion
         }));
+    }
+
+    setAccountSummaryVersion(version: number) {
+        this._accountSummaryVersion = version
     }
 
     // async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
