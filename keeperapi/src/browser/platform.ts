@@ -214,17 +214,17 @@ export const browserPlatform: Platform = class {
                                 await this.importKeyRSA(keyId, keyBytes, storage)
                                 break
                             // TODO: add something like this, need to find pub/priv key pair
-                            case 'ecc':
-                                // gonna figure this out
-                                try {
-                                    debugger
-                                    const privkey = keyBytes.slice(ECC_PUB_KEY_LENGTH)
-                                    const pubKey = keyBytes.slice(0, ECC_PUB_KEY_LENGTH)
-                                    await this.importKeyEC(keyId, privkey, pubKey, storage)
-                                } catch(e){
-                                    console.error('ecc error in unwrapKeys: ', e)
-                                }
-                                break
+                            // case 'ecc':
+                            //     // gonna figure this out
+                            //     try {
+                            //         debugger
+                            //         const privkey = keyBytes.slice(ECC_PUB_KEY_LENGTH)
+                            //         const pubKey = keyBytes.slice(0, ECC_PUB_KEY_LENGTH)
+                            //         await this.importKeyEC(keyId, privkey, pubKey, storage)
+                            //     } catch(e){
+                            //         console.error('ecc error in unwrapKeys: ', e)
+                            //     }
+                            //     break
                             default:
                                 throw new Error(`unable to import ${unwrappedType} key`)
                         }
@@ -275,23 +275,23 @@ export const browserPlatform: Platform = class {
                 await this.unwrapAesKey(key, keyId, unwrappingKeyId, encryptionType, storage, canExport)
                 break
             // TODO: add something like this, need to find pub/priv key pair
-            case 'ecc':
-                if (cryptoKeysCache['gcm'][keyId]) {
-                    return
-                }
+            // case 'ecc':
+            //     if (cryptoKeysCache['gcm'][keyId]) {
+            //         return
+            //     }
 
-                try {
-                    debugger
-                    // maybe this priv key?
-                    // const eccPrivateKey = await this.loadKey(unwrappingKeyId, 'ecc', storage)
-                    const privkey = key.slice(ECC_PUB_KEY_LENGTH)
-                    const pubKey = key.slice(0, ECC_PUB_KEY_LENGTH)
+            //     try {
+            //         debugger
+            //         // maybe this priv key?
+            //         // const eccPrivateKey = await this.loadKey(unwrappingKeyId, 'ecc', storage)
+            //         const privkey = key.slice(ECC_PUB_KEY_LENGTH)
+            //         const pubKey = key.slice(0, ECC_PUB_KEY_LENGTH)
     
-                    await this.unwrapECCKey(privkey, pubKey, keyId, unwrappingKeyId, encryptionType, storage)
-                } catch(e){
-                    console.error('ecc error in unwrapKey: ', e)
-                }
-                break
+            //         await this.unwrapECCKey(privkey, pubKey, keyId, unwrappingKeyId, encryptionType, storage)
+            //     } catch(e){
+            //         console.error('ecc error in unwrapKey: ', e)
+            //     }
+            //     break
             default:
                 throw new Error('Unable to unwrap key type ' + unwrappedKeyType)
         }
