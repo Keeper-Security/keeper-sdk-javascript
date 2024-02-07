@@ -684,14 +684,19 @@ export class Auth {
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
-                    const token = wssRs.encryptedLoginToken ? normal64Bytes(wssRs.encryptedLoginToken) : loginToken
-                    if (wssRs.passcode) {
+                    // Duo
+                    if (wssRs.encryptedLoginToken) {
+                        const token = normal64Bytes(wssRs.encryptedLoginToken)
+                        resumeWithToken(token)
+                    }
+                    // DNA
+                    else if (wssRs.passcode) {
                         const tfaChannel = channels.find(x => x.channel === DeviceVerificationMethods.TFA)
                         if (tfaChannel && tfaChannel.validateCode) {
                             tfaChannel.validateCode(wssRs.passcode)
                         }
                     } else {
-                        resumeWithToken(token)
+                        // do nothing, we don't leak rejection during device approvals
                     }
                 } else if (wssRs.message === 'device_approved') {
                     if (wssRs.approved) {
@@ -871,10 +876,13 @@ export class Auth {
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
+                    // Duo
                     if (wssRs.encryptedLoginToken) {
                         const token = normal64Bytes(wssRs.encryptedLoginToken)
                         resumeWithToken(token)
-                    } else if (wssRs.passcode) {
+                    }
+                    // DNA
+                    else if (wssRs.passcode) {
                         (async () => {
                             await submitCode(lastPushChannel, wssRs.passcode)
                         })()
