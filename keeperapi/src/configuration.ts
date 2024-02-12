@@ -15,6 +15,7 @@ export interface ClientConfiguration {
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
     host: KeeperHost,
+    locale?: string
     onCommandFailure?: (error: KeeperError) => void,
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => Promise<void> // event to store device config
     onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token

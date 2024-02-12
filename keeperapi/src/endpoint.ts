@@ -30,6 +30,7 @@ import { AllowedNumbers, isAllowedNumber } from './transmissionKeys'
 
 export class KeeperEndpoint {
     private _transmissionKey?: TransmissionKey
+    private locale?: string
     public deviceToken?: Uint8Array | null
     public clientVersion
 
@@ -40,6 +41,9 @@ export class KeeperEndpoint {
         if (options.deviceToken) {
             this.deviceToken = options.deviceToken
         } 
+        if (options.locale) {
+            this.locale = options.locale
+        }
     }
 
     async getTransmissionKey():Promise<TransmissionKey> {
@@ -251,7 +255,7 @@ export class KeeperEndpoint {
 
     public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string): Promise<Uint8Array> {
         this._transmissionKey = await this.getTransmissionKey()
-        return prepareApiRequest(payload, this._transmissionKey, sessionToken)
+        return prepareApiRequest(payload, this._transmissionKey, sessionToken, this.locale)
     }
 
     async decryptPushMessage(pushMessageData: Uint8Array): Promise<WssClientResponse> {
@@ -262,7 +266,7 @@ export class KeeperEndpoint {
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
         this._transmissionKey = await this.getTransmissionKey()
-        return getPushConnectionRequest(messageSessionUid, this._transmissionKey, this.options.deviceConfig.deviceToken)
+        return getPushConnectionRequest(messageSessionUid, this._transmissionKey, this.options.deviceConfig.deviceToken, this.locale)
     }
 
     public async prepareSsoPayload(messageSessionUid: Uint8Array, username: string = '', idpSessionId = ''): Promise<string> {
@@ -276,7 +280,7 @@ export class KeeperEndpoint {
             "idpSessionId": idpSessionId,
             "username": username
         }
-        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this._transmissionKey)
+        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this._transmissionKey, this.locale)
         return webSafe64FromBytes(request)
     }
 
@@ -314,18 +318,18 @@ export class KeeperEndpoint {
     }
 }
 
-export async function getPushConnectionRequest(messageSessionUid: Uint8Array, transmissionKey: TransmissionKey, encryptedDeviceToken?: Uint8Array) {
+export async function getPushConnectionRequest(messageSessionUid: Uint8Array, transmissionKey: TransmissionKey, encryptedDeviceToken?: Uint8Array, locale?: string) {
     const connectionRequest = WssConnectionRequest.create({
         messageSessionUid: messageSessionUid,
         encryptedDeviceToken: encryptedDeviceToken,
         deviceTimeStamp: new Date().getTime()
     })
     const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
-    const apiRequest = await prepareApiRequest(connectionRequestBytes, transmissionKey)
+    const apiRequest = await prepareApiRequest(connectionRequestBytes, transmissionKey, undefined, locale)
     return webSafe64FromBytes(apiRequest)
 }
 
-export async function prepareApiRequest(payload: Uint8Array | unknown, transmissionKey: TransmissionKey, sessionToken?: string): Promise<Uint8Array> {
+export async function prepareApiRequest(payload: Uint8Array | unknown, transmissionKey: TransmissionKey, sessionToken?: string, locale?: string): Promise<Uint8Array> {
     const requestPayload = ApiRequestPayload.create()
     if (payload) {
         requestPayload.payload = payload instanceof Uint8Array
@@ -341,7 +345,7 @@ export async function prepareApiRequest(payload: Uint8Array | unknown, transmiss
         encryptedTransmissionKey: transmissionKey.encryptedKey,
         encryptedPayload: encryptedRequestPayload,
         publicKeyId: transmissionKey.publicKeyId,
-        locale: 'en_US'
+        locale: locale || 'en_US'
     })
     return ApiRequest.encode(apiRequest).finish()
 }
