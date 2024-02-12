@@ -930,17 +930,11 @@ const addCounts = (totalCounts: SyncResponseCounts, counts: SyncResponseCounts) 
     }
 }
 
-export interface SyncProfiler {
-  time(label: string): void
-  timeEnd(label: string): void 
-}
-
 export type SyncDownOptions = {
     auth: Auth,
     storage: VaultStorage
     maxCalls?: number
     logFormat?: SyncLogFormat
-    profiler?: SyncProfiler
     /**
      * Only supported in browser platform
      */
@@ -974,7 +968,7 @@ function wrapObjWithProxy<T extends object> (obj: T, controller?: SyncController
 }
 
 export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> => {
-    const {auth, profiler, useWorkers, controller} = options
+    const {auth, useWorkers, controller} = options
     const totalCounts = {}
     let result: SyncResult = {
         started: new Date(),
@@ -1020,81 +1014,43 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             networkTime += requestTime
             const dependencies = {}
 
-            profiler?.time('processTeams')
             await processTeams(resp.teams as NN<ITeam>[], storage, dependencies)
-            profiler?.timeEnd('processTeams')
 
-            profiler?.time('processUserFolders')
             await processUserFolders(resp.userFolders, storage, dependencies)
-            profiler?.timeEnd('processUserFolders')
 
-            profiler?.time('processUserFolderRecords')
             await processUserFolderRecords(resp.userFolderRecords, dependencies)
-            profiler?.timeEnd('processUserFolderRecords')
 
-            profiler?.time('processSharedFolders')
             await processSharedFolders(resp.sharedFolders, storage)
-            profiler?.timeEnd('processSharedFolders')
 
-            profiler?.time('processSharedFolderUsers')
             await processSharedFolderUsers(resp.sharedFolderUsers, storage)
-            profiler?.timeEnd('processSharedFolderUsers')
 
-            profiler?.time('processSharedFolderTeams')
             await processSharedFolderTeams(resp.sharedFolderTeams, storage)
-            profiler?.timeEnd('processSharedFolderTeams')
 
-            profiler?.time('processSharedFolderRecords')
             await processSharedFolderRecords(resp.sharedFolderRecords, storage)
-            profiler?.timeEnd('processSharedFolderRecords')
 
-            profiler?.time('processSharedFolderFolderRecords')
             await processSharedFolderFolderRecords(resp.sharedFolderFolderRecords, dependencies)
-            profiler?.timeEnd('processSharedFolderFolderRecords')
 
-            profiler?.time('processUserFolderSharedFolders')
             await processUserFolderSharedFolders(resp.userFolderSharedFolders, dependencies)
-            profiler?.timeEnd('processUserFolderSharedFolders')
 
-            profiler?.time('processMetadata')
             await processMetadata(resp.recordMetaData, storage)
-            profiler?.timeEnd('processMetadata')
 
-            profiler?.time('processRecordLinks')
             await processRecordLinks(resp.recordLinks, storage)
-            profiler?.timeEnd('processRecordLinks')
 
-            profiler?.time('processRecords')
             await processRecords(resp.records, storage)
-            profiler?.timeEnd('processRecords')
 
-            profiler?.time('processNonSharedData')
             await processNonSharedData(resp.nonSharedData, storage)
-            profiler?.timeEnd('processNonSharedData')
 
-            profiler?.time('processSharedFolderFolders')
             await processSharedFolderFolders(resp.sharedFolderFolders, storage, dependencies)
-            profiler?.timeEnd('processSharedFolderFolders')
 
-            profiler?.time('processReusedPasswords')
             await processReusedPasswords(resp.reusedPasswords, storage)
-            profiler?.timeEnd('processReusedPasswords')
 
-            profiler?.time('processProfile')
             await processProfile(resp.profile, storage)
-            profiler?.timeEnd('processProfile')
             
-            profiler?.time('processProfilePic')
             await processProfilePic(resp.profilePic, storage);
-            profiler?.timeEnd('processProfilePic')
 
-            profiler?.time('processBreachWatchRecords')
             await processBreachWatchRecords(resp.breachWatchRecords, storage)
-            profiler?.timeEnd('processBreachWatchRecords')
 
-            profiler?.time('processBreachWatchSecurityData')
             await processBreachWatchSecurityData(resp.breachWatchSecurityData, storage)
-            profiler?.timeEnd('processBreachWatchSecurityData')
 
             await storage.addDependencies(dependencies)
 
