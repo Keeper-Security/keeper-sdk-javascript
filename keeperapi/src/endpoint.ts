@@ -280,7 +280,7 @@ export class KeeperEndpoint {
             "idpSessionId": idpSessionId,
             "username": username
         }
-        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this._transmissionKey, this.locale)
+        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this._transmissionKey, undefined, this.locale)
         return webSafe64FromBytes(request)
     }
 
