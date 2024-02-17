@@ -323,7 +323,6 @@ export class Auth {
             }
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
-                loginType = null
                 if (startLoginRequest.loginType == LoginType.ALTERNATE) {
                     isAlternate = true
                 }
