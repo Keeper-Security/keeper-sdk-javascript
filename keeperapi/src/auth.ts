@@ -288,7 +288,6 @@ export class Auth {
         }
 
         let needUserName = false
-        let isAlternate = false
 
         const handleError = (resultCode: string, loginResponse: NN<Authentication.ILoginResponse>, error: KeeperError) => {
             const errorMessage = chooseErrorMessage(loginResponse.loginState)
@@ -323,15 +322,11 @@ export class Auth {
             }
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
-                loginType = null
-                if (startLoginRequest.loginType == LoginType.ALTERNATE) {
-                    isAlternate = true
-                }
             }
             if (loginToken) {
                 startLoginRequest.encryptedLoginToken = loginToken
             }
-            if (needUserName || !this.options.useSessionResumption || isAlternate || username) {
+            if (needUserName || !this.options.useSessionResumption || loginType === LoginType.ALTERNATE || username) {
                 startLoginRequest.username = this._username
                 needUserName = false
             }
@@ -465,7 +460,7 @@ export class Auth {
                     // TODO: loop in authHashLogin until successful or get into
                     // some other state other than Authentication.LoginState.REQUIRES_AUTH_HASH
                     if (!wrappedPassword && this.options.authUI3?.getPassword) {
-                        password = await this.options.authUI3.getPassword(isAlternate)
+                        password = await this.options.authUI3.getPassword(loginType === LoginType.ALTERNATE)
                         if (password) {
                             if (typeof password === 'string') {
                                 wrappedPassword = wrapPassword(password)
@@ -479,7 +474,7 @@ export class Auth {
                     }
 
                     try {
-                        await this.authHashLogin(loginResponse, username, wrappedPassword, isAlternate)
+                        await this.authHashLogin(loginResponse, username, wrappedPassword, loginType === LoginType.ALTERNATE)
                         return;
                     } catch (e: any) {
                         wrappedPassword = undefined
