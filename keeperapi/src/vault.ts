@@ -694,10 +694,6 @@ export class LegacyVault {
     //         sfuCommand.shared_folder_uid = sharedFolderUid
     //         await this.auth.executeCommand(sfuCommand)
     //     }
-    //
-    //     // only can leave shared folders if not the owner
-    //     // {"command":"shared_folder_update","pt":"-n4s_eSHBZzOMRZQtX0gDg","operation":"update","shared_folder_uid":"PFe3TzKS6wq3YtXivxR6oA","revision":944012,
-    //     // "remove_users":[{"username":"saldoukhov@gmail.com"}],"locale":"en_US","username":"saldoukhov@gmail.com","session_token":"6X8lJLgDecS2IKTwErliMX0UKYkhznDWS59asu4kVeN3GMidq--T1kyBJ1YSJ9hxm67qsMkXeG5egEGaAQ_YjVc6CrhyFJovS4mOIZ3APLVdiylEroLQbsttCgkF","client_version":"w14.13.0"}
     // }
 
     // async fetchUserPublicKey(user: string): Promise<string> {
