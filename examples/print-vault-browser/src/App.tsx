@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import './App.css'
-import {Auth, AuthUI, KeeperEnvironment, LegacyVault, Authentication} from '@keeper-security/keeperapi'
+import {Auth, AuthUI, KeeperEnvironment, syncDown, VaultStorage, DRecord, Authentication} from '@keeper-security/keeperapi'
 import LoginType = Authentication.LoginType;
 
 interface AppState {
@@ -57,10 +57,14 @@ class App extends Component<{}, AppState> implements AuthUI {
             newState.status.push('Logged In, querying records...')
             newState.loggedIn = true
             this.setState(newState)
-            let vault = new LegacyVault(auth)
-            await vault.syncDown()
+            const records = [] as DRecord[]
+            const storage = {} as VaultStorage
+            await syncDown({
+              auth,
+              storage,
+            })
             newState = {...this.state}
-            newState.records = [...vault.records.map(x => JSON.stringify(x))]
+            newState.records = [...records.map(x => JSON.stringify(x))]
             this.setState(newState)
         } catch (e) {
             console.log(e)
