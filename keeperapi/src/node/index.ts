@@ -2,7 +2,6 @@ export * from "../endpoint";
 export * from "../auth";
 export * from "../vendorModel";
 export * from "../vault";
-export * from "../vaultx";
 export * from "../company";
 export * from "../configuration";
 export * from "../commands";
