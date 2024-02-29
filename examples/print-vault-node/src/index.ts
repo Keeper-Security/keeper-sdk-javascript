@@ -1,4 +1,4 @@
-import {Auth, KeeperEnvironment, LegacyVault, Authentication} from '@keeper-security/keeperapi'
+import {Auth, KeeperEnvironment, syncDown, VaultStorage, DRecord, Authentication} from '@keeper-security/keeperapi'
 import * as readline from 'readline'
 import LoginType = Authentication.LoginType;
 
@@ -14,9 +14,14 @@ async function printVault(username: string, password: string) {
         })
         await auth.loginV3({username, password, loginType: LoginType.NORMAL})
         console.log('login successful')
-        let vault = new LegacyVault(auth)
-        await vault.syncDown()
-        vault.records.forEach(x => console.log(JSON.stringify(x)))
+
+        const records = [] as DRecord[]
+        const storage = {} as VaultStorage
+        await syncDown({
+          auth,
+          storage,
+        })
+        records.forEach(x => console.log(JSON.stringify(x)))
     } catch (e) {
         console.log(e)
     }
