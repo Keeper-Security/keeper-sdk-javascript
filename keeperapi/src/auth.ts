@@ -815,8 +815,8 @@ export class Auth {
                     expireIn: tfaExpiration
                 }
                 if(channel === TwoFactorChannelType.TWO_FA_CT_DUO && [TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH, TwoFactorPushType.TWO_FA_PUSH_DUO_CALL].includes(pushType)) {                    
-                    const testing = await this.executeRestAction(twoFASendDuoMessage(sendPushRequest))
-                    console.log(testing)
+                    const tfaValidateResponse = await this.executeRest(twoFASendDuoMessage(sendPushRequest))
+                    resumeWithToken(tfaValidateResponse.encryptedLoginToken)
                 } else {
                     await this.executeRestAction(twoFactorSend2FAPushMessage(sendPushRequest))
                 }
