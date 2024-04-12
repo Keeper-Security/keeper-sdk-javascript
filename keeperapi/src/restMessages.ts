@@ -148,6 +148,9 @@ export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswo
 export const startLoginMessageFromSessionToken = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, NN<Authentication.ILoginResponse>> =>
     createMessage(data, 'authentication/login_from_existing_session_token', Authentication.StartLoginRequest, Authentication.LoginResponse)
 
+export const twoFASendDuoMessage = (data: Authentication.ITwoFactorSendPushRequest): RestMessage<Authentication.ITwoFactorSendPushRequest, Authentication.TwoFactorValidateResponse> =>
+    createMessage(data, 'authentication/2fa_send_duo', Authentication.TwoFactorSendPushRequest, Authentication.TwoFactorValidateResponse)
+
 export const syncDownMessage = (data: Vault.ISyncDownRequest): RestMessage<Vault.ISyncDownRequest, NN<Vault.ISyncDownResponse>> =>
     createMessage(data, 'vault/sync_down', Vault.SyncDownRequest, Vault.SyncDownResponse)
 

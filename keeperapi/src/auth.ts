@@ -35,6 +35,7 @@ import {
     startLoginMessageFromSessionToken,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
+    twoFASendDuoMessage,
     validateAuthHashMessage,
     validateDeviceVerificationCodeMessage
 } from './restMessages'
@@ -813,7 +814,12 @@ export class Auth {
                     pushType: pushType,
                     expireIn: tfaExpiration
                 }
-                await this.executeRestAction(twoFactorSend2FAPushMessage(sendPushRequest))
+                if(channel === TwoFactorChannelType.TWO_FA_CT_DUO && [TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH, TwoFactorPushType.TWO_FA_PUSH_DUO_CALL].includes(pushType)) {                    
+                    const tfaValidateResponse = await this.executeRest(twoFASendDuoMessage(sendPushRequest))
+                    resumeWithToken(tfaValidateResponse.encryptedLoginToken)
+                } else {
+                    await this.executeRestAction(twoFactorSend2FAPushMessage(sendPushRequest))
+                }
                 lastPushChannel = channel
             }
 
