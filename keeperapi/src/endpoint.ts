@@ -293,13 +293,13 @@ export class KeeperEndpoint {
     // RSA TAGGED - done, add ecOnly check to only make ec keys if ec only is true
     public async getOnsitePublicKey(ecOnly:boolean): Promise<string> {
         if (!this.onsitePublicKey || !this.onsitePrivateKey) {
-            // if(ecOnly){
-            //     const {privateKey, publicKey} = await platform.generateECKeyPair()
+            if(ecOnly){
+                const {privateKey, publicKey} = await platform.generateECKeyPair()
     
-            //     this.onsitePrivateKey = privateKey
-            //     this.onsitePublicKey = publicKey
-            // } else {
-            // }
+                this.onsitePrivateKey = privateKey
+                this.onsitePublicKey = publicKey
+            } else {
+            }
             const {privateKey, publicKey} = await platform.generateRSAKeyPair()
 
             this.onsitePrivateKey = privateKey
