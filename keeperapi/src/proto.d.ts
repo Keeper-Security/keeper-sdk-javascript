@@ -72,7 +72,9 @@ export namespace Authentication {
         SUPPORT_SERVER = 6,
         ENTERPRISE_CREATION = 7,
         EXPIRED_BUT_ALLOWED_TO_SYNC = 8,
-        ACCEPT_FAMILY_INVITE = 9
+        ACCEPT_FAMILY_INVITE = 9,
+        ENTERPRISE_CREATION_PURCHASED = 10,
+        EMERGENCY_ACCESS = 11
     }
 
     /** Version enum. */
@@ -665,6 +667,12 @@ export namespace Authentication {
 
         /** NewUserMinimumParams isEnterpriseDomain */
         isEnterpriseDomain?: (boolean|null);
+
+        /** NewUserMinimumParams enterpriseEccPublicKey */
+        enterpriseEccPublicKey?: (Uint8Array|null);
+
+        /** NewUserMinimumParams forbidKeyType2 */
+        forbidKeyType2?: (boolean|null);
     }
 
     /** Represents a NewUserMinimumParams. */
@@ -687,6 +695,12 @@ export namespace Authentication {
 
         /** NewUserMinimumParams isEnterpriseDomain. */
         public isEnterpriseDomain: boolean;
+
+        /** NewUserMinimumParams enterpriseEccPublicKey. */
+        public enterpriseEccPublicKey: Uint8Array;
+
+        /** NewUserMinimumParams forbidKeyType2. */
+        public forbidKeyType2: boolean;
 
         /**
          * Creates a new NewUserMinimumParams instance using the specified properties.
@@ -5123,6 +5137,115 @@ export namespace Authentication {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a SecurityScoreData. */
+    interface ISecurityScoreData {
+
+        /** SecurityScoreData uid */
+        uid?: (Uint8Array|null);
+
+        /** SecurityScoreData data */
+        data?: (Uint8Array|null);
+
+        /** SecurityScoreData revision */
+        revision?: (number|Long|null);
+    }
+
+    /** Represents a SecurityScoreData. */
+    class SecurityScoreData implements ISecurityScoreData {
+
+        /**
+         * Constructs a new SecurityScoreData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISecurityScoreData);
+
+        /** SecurityScoreData uid. */
+        public uid: Uint8Array;
+
+        /** SecurityScoreData data. */
+        public data: Uint8Array;
+
+        /** SecurityScoreData revision. */
+        public revision: (number|Long);
+
+        /**
+         * Creates a new SecurityScoreData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SecurityScoreData instance
+         */
+        public static create(properties?: Authentication.ISecurityScoreData): Authentication.SecurityScoreData;
+
+        /**
+         * Encodes the specified SecurityScoreData message. Does not implicitly {@link Authentication.SecurityScoreData.verify|verify} messages.
+         * @param message SecurityScoreData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISecurityScoreData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SecurityScoreData message, length delimited. Does not implicitly {@link Authentication.SecurityScoreData.verify|verify} messages.
+         * @param message SecurityScoreData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISecurityScoreData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SecurityScoreData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SecurityScoreData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SecurityScoreData;
+
+        /**
+         * Decodes a SecurityScoreData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SecurityScoreData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SecurityScoreData;
+
+        /**
+         * Verifies a SecurityScoreData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SecurityScoreData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SecurityScoreData
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SecurityScoreData;
+
+        /**
+         * Creates a plain object from a SecurityScoreData message. Also converts values to other types if specified.
+         * @param message SecurityScoreData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SecurityScoreData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SecurityScoreData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityScoreData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a SecurityDataRequest. */
     interface ISecurityDataRequest {
 
@@ -5131,6 +5254,12 @@ export namespace Authentication {
 
         /** SecurityDataRequest masterPasswordSecurityData */
         masterPasswordSecurityData?: (Authentication.ISecurityData[]|null);
+
+        /** SecurityDataRequest encryptionType */
+        encryptionType?: (Enterprise.EncryptedKeyType|null);
+
+        /** SecurityDataRequest recordSecurityScoreData */
+        recordSecurityScoreData?: (Authentication.ISecurityScoreData[]|null);
     }
 
     /** Represents a SecurityDataRequest. */
@@ -5147,6 +5276,12 @@ export namespace Authentication {
 
         /** SecurityDataRequest masterPasswordSecurityData. */
         public masterPasswordSecurityData: Authentication.ISecurityData[];
+
+        /** SecurityDataRequest encryptionType. */
+        public encryptionType: Enterprise.EncryptedKeyType;
+
+        /** SecurityDataRequest recordSecurityScoreData. */
+        public recordSecurityScoreData: Authentication.ISecurityScoreData[];
 
         /**
          * Creates a new SecurityDataRequest instance using the specified properties.
@@ -5243,6 +5378,12 @@ export namespace Authentication {
 
         /** SecurityReportIncrementalData oldSecurityDataRevision */
         oldSecurityDataRevision?: (number|Long|null);
+
+        /** SecurityReportIncrementalData currentDataEncryptionType */
+        currentDataEncryptionType?: (Enterprise.EncryptedKeyType|null);
+
+        /** SecurityReportIncrementalData oldDataEncryptionType */
+        oldDataEncryptionType?: (Enterprise.EncryptedKeyType|null);
     }
 
     /** Represents a SecurityReportIncrementalData. */
@@ -5268,6 +5409,12 @@ export namespace Authentication {
 
         /** SecurityReportIncrementalData oldSecurityDataRevision. */
         public oldSecurityDataRevision: (number|Long);
+
+        /** SecurityReportIncrementalData currentDataEncryptionType. */
+        public currentDataEncryptionType: Enterprise.EncryptedKeyType;
+
+        /** SecurityReportIncrementalData oldDataEncryptionType. */
+        public oldDataEncryptionType: Enterprise.EncryptedKeyType;
 
         /**
          * Creates a new SecurityReportIncrementalData instance using the specified properties.
@@ -5373,6 +5520,9 @@ export namespace Authentication {
 
         /** SecurityReport userId */
         userId?: (number|null);
+
+        /** SecurityReport hasOldEncryption */
+        hasOldEncryption?: (boolean|null);
     }
 
     /** Represents a SecurityReport. */
@@ -5407,6 +5557,9 @@ export namespace Authentication {
 
         /** SecurityReport userId. */
         public userId: number;
+
+        /** SecurityReport hasOldEncryption. */
+        public hasOldEncryption: boolean;
 
         /**
          * Creates a new SecurityReport instance using the specified properties.
@@ -5700,6 +5853,9 @@ export namespace Authentication {
 
         /** SecurityReportResponse complete */
         complete?: (boolean|null);
+
+        /** SecurityReportResponse enterpriseEccPrivateKey */
+        enterpriseEccPrivateKey?: (Uint8Array|null);
     }
 
     /** Represents a SecurityReportResponse. */
@@ -5728,6 +5884,9 @@ export namespace Authentication {
 
         /** SecurityReportResponse complete. */
         public complete: boolean;
+
+        /** SecurityReportResponse enterpriseEccPrivateKey. */
+        public enterpriseEccPrivateKey: Uint8Array;
 
         /**
          * Creates a new SecurityReportResponse instance using the specified properties.
@@ -6440,6 +6599,571 @@ export namespace Authentication {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** EncryptedObjectType enum. */
+    enum EncryptedObjectType {
+        EOT_UNSPECIFIED = 0,
+        EOT_RECORD_KEY = 1,
+        EOT_SHARED_FOLDER_USER_KEY = 2,
+        EOT_SHARED_FOLDER_TEAM_KEY = 3,
+        EOT_TEAM_USER_KEY = 4,
+        EOT_USER_FOLDER_KEY = 5,
+        EOT_SECURITY_DATA = 6,
+        EOT_SECURITY_DATA_MASTER_PASSWORD = 7,
+        EOT_EMERGENCY_ACCESS_KEY = 8,
+        EOT_V2_RECORD_KEY = 9
+    }
+
+    /** Properties of a GetChangeKeyTypesRequest. */
+    interface IGetChangeKeyTypesRequest {
+
+        /** GetChangeKeyTypesRequest onlyTheseObjects */
+        onlyTheseObjects?: (Authentication.EncryptedObjectType[]|null);
+
+        /** GetChangeKeyTypesRequest limit */
+        limit?: (number|null);
+
+        /** GetChangeKeyTypesRequest includeRecommended */
+        includeRecommended?: (boolean|null);
+
+        /** GetChangeKeyTypesRequest includeKeys */
+        includeKeys?: (boolean|null);
+
+        /** GetChangeKeyTypesRequest includeAllowedKeyTypes */
+        includeAllowedKeyTypes?: (boolean|null);
+    }
+
+    /** Represents a GetChangeKeyTypesRequest. */
+    class GetChangeKeyTypesRequest implements IGetChangeKeyTypesRequest {
+
+        /**
+         * Constructs a new GetChangeKeyTypesRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IGetChangeKeyTypesRequest);
+
+        /** GetChangeKeyTypesRequest onlyTheseObjects. */
+        public onlyTheseObjects: Authentication.EncryptedObjectType[];
+
+        /** GetChangeKeyTypesRequest limit. */
+        public limit: number;
+
+        /** GetChangeKeyTypesRequest includeRecommended. */
+        public includeRecommended: boolean;
+
+        /** GetChangeKeyTypesRequest includeKeys. */
+        public includeKeys: boolean;
+
+        /** GetChangeKeyTypesRequest includeAllowedKeyTypes. */
+        public includeAllowedKeyTypes: boolean;
+
+        /**
+         * Creates a new GetChangeKeyTypesRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetChangeKeyTypesRequest instance
+         */
+        public static create(properties?: Authentication.IGetChangeKeyTypesRequest): Authentication.GetChangeKeyTypesRequest;
+
+        /**
+         * Encodes the specified GetChangeKeyTypesRequest message. Does not implicitly {@link Authentication.GetChangeKeyTypesRequest.verify|verify} messages.
+         * @param message GetChangeKeyTypesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IGetChangeKeyTypesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetChangeKeyTypesRequest message, length delimited. Does not implicitly {@link Authentication.GetChangeKeyTypesRequest.verify|verify} messages.
+         * @param message GetChangeKeyTypesRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IGetChangeKeyTypesRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetChangeKeyTypesRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetChangeKeyTypesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.GetChangeKeyTypesRequest;
+
+        /**
+         * Decodes a GetChangeKeyTypesRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetChangeKeyTypesRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.GetChangeKeyTypesRequest;
+
+        /**
+         * Verifies a GetChangeKeyTypesRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetChangeKeyTypesRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetChangeKeyTypesRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.GetChangeKeyTypesRequest;
+
+        /**
+         * Creates a plain object from a GetChangeKeyTypesRequest message. Also converts values to other types if specified.
+         * @param message GetChangeKeyTypesRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.GetChangeKeyTypesRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetChangeKeyTypesRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetChangeKeyTypesRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetChangeKeyTypesResponse. */
+    interface IGetChangeKeyTypesResponse {
+
+        /** GetChangeKeyTypesResponse keys */
+        keys?: (Authentication.IChangeKeyType[]|null);
+
+        /** GetChangeKeyTypesResponse allowedKeyTypes */
+        allowedKeyTypes?: (Authentication.IAllowedKeyTypes[]|null);
+    }
+
+    /** Represents a GetChangeKeyTypesResponse. */
+    class GetChangeKeyTypesResponse implements IGetChangeKeyTypesResponse {
+
+        /**
+         * Constructs a new GetChangeKeyTypesResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IGetChangeKeyTypesResponse);
+
+        /** GetChangeKeyTypesResponse keys. */
+        public keys: Authentication.IChangeKeyType[];
+
+        /** GetChangeKeyTypesResponse allowedKeyTypes. */
+        public allowedKeyTypes: Authentication.IAllowedKeyTypes[];
+
+        /**
+         * Creates a new GetChangeKeyTypesResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetChangeKeyTypesResponse instance
+         */
+        public static create(properties?: Authentication.IGetChangeKeyTypesResponse): Authentication.GetChangeKeyTypesResponse;
+
+        /**
+         * Encodes the specified GetChangeKeyTypesResponse message. Does not implicitly {@link Authentication.GetChangeKeyTypesResponse.verify|verify} messages.
+         * @param message GetChangeKeyTypesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IGetChangeKeyTypesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetChangeKeyTypesResponse message, length delimited. Does not implicitly {@link Authentication.GetChangeKeyTypesResponse.verify|verify} messages.
+         * @param message GetChangeKeyTypesResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IGetChangeKeyTypesResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetChangeKeyTypesResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetChangeKeyTypesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.GetChangeKeyTypesResponse;
+
+        /**
+         * Decodes a GetChangeKeyTypesResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetChangeKeyTypesResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.GetChangeKeyTypesResponse;
+
+        /**
+         * Verifies a GetChangeKeyTypesResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetChangeKeyTypesResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetChangeKeyTypesResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.GetChangeKeyTypesResponse;
+
+        /**
+         * Creates a plain object from a GetChangeKeyTypesResponse message. Also converts values to other types if specified.
+         * @param message GetChangeKeyTypesResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.GetChangeKeyTypesResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetChangeKeyTypesResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetChangeKeyTypesResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AllowedKeyTypes. */
+    interface IAllowedKeyTypes {
+
+        /** AllowedKeyTypes objectType */
+        objectType?: (Authentication.EncryptedObjectType|null);
+
+        /** AllowedKeyTypes allowedKeyTypes */
+        allowedKeyTypes?: (Enterprise.EncryptedKeyType[]|null);
+    }
+
+    /** Represents an AllowedKeyTypes. */
+    class AllowedKeyTypes implements IAllowedKeyTypes {
+
+        /**
+         * Constructs a new AllowedKeyTypes.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IAllowedKeyTypes);
+
+        /** AllowedKeyTypes objectType. */
+        public objectType: Authentication.EncryptedObjectType;
+
+        /** AllowedKeyTypes allowedKeyTypes. */
+        public allowedKeyTypes: Enterprise.EncryptedKeyType[];
+
+        /**
+         * Creates a new AllowedKeyTypes instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AllowedKeyTypes instance
+         */
+        public static create(properties?: Authentication.IAllowedKeyTypes): Authentication.AllowedKeyTypes;
+
+        /**
+         * Encodes the specified AllowedKeyTypes message. Does not implicitly {@link Authentication.AllowedKeyTypes.verify|verify} messages.
+         * @param message AllowedKeyTypes message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IAllowedKeyTypes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AllowedKeyTypes message, length delimited. Does not implicitly {@link Authentication.AllowedKeyTypes.verify|verify} messages.
+         * @param message AllowedKeyTypes message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IAllowedKeyTypes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AllowedKeyTypes message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AllowedKeyTypes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.AllowedKeyTypes;
+
+        /**
+         * Decodes an AllowedKeyTypes message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AllowedKeyTypes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.AllowedKeyTypes;
+
+        /**
+         * Verifies an AllowedKeyTypes message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AllowedKeyTypes message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AllowedKeyTypes
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.AllowedKeyTypes;
+
+        /**
+         * Creates a plain object from an AllowedKeyTypes message. Also converts values to other types if specified.
+         * @param message AllowedKeyTypes
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.AllowedKeyTypes, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AllowedKeyTypes to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AllowedKeyTypes
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a ChangeKeyTypes. */
+    interface IChangeKeyTypes {
+
+        /** ChangeKeyTypes keys */
+        keys?: (Authentication.IChangeKeyType[]|null);
+    }
+
+    /** Represents a ChangeKeyTypes. */
+    class ChangeKeyTypes implements IChangeKeyTypes {
+
+        /**
+         * Constructs a new ChangeKeyTypes.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IChangeKeyTypes);
+
+        /** ChangeKeyTypes keys. */
+        public keys: Authentication.IChangeKeyType[];
+
+        /**
+         * Creates a new ChangeKeyTypes instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ChangeKeyTypes instance
+         */
+        public static create(properties?: Authentication.IChangeKeyTypes): Authentication.ChangeKeyTypes;
+
+        /**
+         * Encodes the specified ChangeKeyTypes message. Does not implicitly {@link Authentication.ChangeKeyTypes.verify|verify} messages.
+         * @param message ChangeKeyTypes message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IChangeKeyTypes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ChangeKeyTypes message, length delimited. Does not implicitly {@link Authentication.ChangeKeyTypes.verify|verify} messages.
+         * @param message ChangeKeyTypes message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IChangeKeyTypes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ChangeKeyTypes message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ChangeKeyTypes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ChangeKeyTypes;
+
+        /**
+         * Decodes a ChangeKeyTypes message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ChangeKeyTypes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ChangeKeyTypes;
+
+        /**
+         * Verifies a ChangeKeyTypes message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ChangeKeyTypes message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ChangeKeyTypes
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ChangeKeyTypes;
+
+        /**
+         * Creates a plain object from a ChangeKeyTypes message. Also converts values to other types if specified.
+         * @param message ChangeKeyTypes
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ChangeKeyTypes, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ChangeKeyTypes to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeKeyTypes
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a ChangeKeyType. */
+    interface IChangeKeyType {
+
+        /** ChangeKeyType objectType */
+        objectType?: (Authentication.EncryptedObjectType|null);
+
+        /** ChangeKeyType uid */
+        uid?: (Uint8Array|null);
+
+        /** ChangeKeyType secondaryUid */
+        secondaryUid?: (Uint8Array|null);
+
+        /** ChangeKeyType key */
+        key?: (Uint8Array|null);
+
+        /** ChangeKeyType keyType */
+        keyType?: (Enterprise.EncryptedKeyType|null);
+
+        /** ChangeKeyType status */
+        status?: (Authentication.GenericStatus|null);
+    }
+
+    /** Represents a ChangeKeyType. */
+    class ChangeKeyType implements IChangeKeyType {
+
+        /**
+         * Constructs a new ChangeKeyType.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IChangeKeyType);
+
+        /** ChangeKeyType objectType. */
+        public objectType: Authentication.EncryptedObjectType;
+
+        /** ChangeKeyType uid. */
+        public uid: Uint8Array;
+
+        /** ChangeKeyType secondaryUid. */
+        public secondaryUid: Uint8Array;
+
+        /** ChangeKeyType key. */
+        public key: Uint8Array;
+
+        /** ChangeKeyType keyType. */
+        public keyType: Enterprise.EncryptedKeyType;
+
+        /** ChangeKeyType status. */
+        public status: Authentication.GenericStatus;
+
+        /**
+         * Creates a new ChangeKeyType instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ChangeKeyType instance
+         */
+        public static create(properties?: Authentication.IChangeKeyType): Authentication.ChangeKeyType;
+
+        /**
+         * Encodes the specified ChangeKeyType message. Does not implicitly {@link Authentication.ChangeKeyType.verify|verify} messages.
+         * @param message ChangeKeyType message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IChangeKeyType, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ChangeKeyType message, length delimited. Does not implicitly {@link Authentication.ChangeKeyType.verify|verify} messages.
+         * @param message ChangeKeyType message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IChangeKeyType, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ChangeKeyType message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ChangeKeyType
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.ChangeKeyType;
+
+        /**
+         * Decodes a ChangeKeyType message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ChangeKeyType
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.ChangeKeyType;
+
+        /**
+         * Verifies a ChangeKeyType message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ChangeKeyType message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ChangeKeyType
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.ChangeKeyType;
+
+        /**
+         * Creates a plain object from a ChangeKeyType message. Also converts values to other types if specified.
+         * @param message ChangeKeyType
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.ChangeKeyType, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ChangeKeyType to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChangeKeyType
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a SetKey. */
     interface ISetKey {
 
@@ -6714,6 +7438,9 @@ export namespace Authentication {
 
         /** CreateUserRequest encryptedVerificationToken */
         encryptedVerificationToken?: (Uint8Array|null);
+
+        /** CreateUserRequest enterpriseUsersDataKey */
+        enterpriseUsersDataKey?: (Uint8Array|null);
     }
 
     /** Represents a CreateUserRequest. */
@@ -6796,6 +7523,9 @@ export namespace Authentication {
 
         /** CreateUserRequest encryptedVerificationToken. */
         public encryptedVerificationToken: Uint8Array;
+
+        /** CreateUserRequest enterpriseUsersDataKey. */
+        public enterpriseUsersDataKey: Uint8Array;
 
         /**
          * Creates a new CreateUserRequest instance using the specified properties.
@@ -10633,6 +11363,9 @@ export namespace Authentication {
 
         /** EnterpriseUserIdDataKeyPair encryptedDataKey */
         encryptedDataKey?: (Uint8Array|null);
+
+        /** EnterpriseUserIdDataKeyPair keyType */
+        keyType?: (Enterprise.EncryptedKeyType|null);
     }
 
     /** Represents an EnterpriseUserIdDataKeyPair. */
@@ -10649,6 +11382,9 @@ export namespace Authentication {
 
         /** EnterpriseUserIdDataKeyPair encryptedDataKey. */
         public encryptedDataKey: Uint8Array;
+
+        /** EnterpriseUserIdDataKeyPair keyType. */
+        public keyType: Enterprise.EncryptedKeyType;
 
         /**
          * Creates a new EnterpriseUserIdDataKeyPair instance using the specified properties.
@@ -11532,6 +12268,9 @@ export namespace Authentication {
 
         /** GetDataKeyBackupV3Response minimumPbkdf2Iterations */
         minimumPbkdf2Iterations?: (number|null);
+
+        /** GetDataKeyBackupV3Response keyType */
+        keyType?: (Enterprise.KeyType|null);
     }
 
     /** Represents a GetDataKeyBackupV3Response. */
@@ -11569,6 +12308,9 @@ export namespace Authentication {
 
         /** GetDataKeyBackupV3Response minimumPbkdf2Iterations. */
         public minimumPbkdf2Iterations: number;
+
+        /** GetDataKeyBackupV3Response keyType. */
+        public keyType: Enterprise.KeyType;
 
         /**
          * Creates a new GetDataKeyBackupV3Response instance using the specified properties.
@@ -12060,6 +12802,412 @@ export namespace Authentication {
 
         /**
          * Gets the default type url for SetEccKeyPairRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SetEccKeyPairsRequest. */
+    interface ISetEccKeyPairsRequest {
+
+        /** SetEccKeyPairsRequest teamKeys */
+        teamKeys?: (Authentication.ITeamEccKeyPair[]|null);
+    }
+
+    /** Represents a SetEccKeyPairsRequest. */
+    class SetEccKeyPairsRequest implements ISetEccKeyPairsRequest {
+
+        /**
+         * Constructs a new SetEccKeyPairsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISetEccKeyPairsRequest);
+
+        /** SetEccKeyPairsRequest teamKeys. */
+        public teamKeys: Authentication.ITeamEccKeyPair[];
+
+        /**
+         * Creates a new SetEccKeyPairsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetEccKeyPairsRequest instance
+         */
+        public static create(properties?: Authentication.ISetEccKeyPairsRequest): Authentication.SetEccKeyPairsRequest;
+
+        /**
+         * Encodes the specified SetEccKeyPairsRequest message. Does not implicitly {@link Authentication.SetEccKeyPairsRequest.verify|verify} messages.
+         * @param message SetEccKeyPairsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISetEccKeyPairsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetEccKeyPairsRequest message, length delimited. Does not implicitly {@link Authentication.SetEccKeyPairsRequest.verify|verify} messages.
+         * @param message SetEccKeyPairsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISetEccKeyPairsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetEccKeyPairsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetEccKeyPairsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SetEccKeyPairsRequest;
+
+        /**
+         * Decodes a SetEccKeyPairsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetEccKeyPairsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SetEccKeyPairsRequest;
+
+        /**
+         * Verifies a SetEccKeyPairsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetEccKeyPairsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetEccKeyPairsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SetEccKeyPairsRequest;
+
+        /**
+         * Creates a plain object from a SetEccKeyPairsRequest message. Also converts values to other types if specified.
+         * @param message SetEccKeyPairsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SetEccKeyPairsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetEccKeyPairsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetEccKeyPairsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SetEccKeyPairsResponse. */
+    interface ISetEccKeyPairsResponse {
+
+        /** SetEccKeyPairsResponse teamKeys */
+        teamKeys?: (Authentication.ITeamEccKeyPairResponse[]|null);
+    }
+
+    /** Represents a SetEccKeyPairsResponse. */
+    class SetEccKeyPairsResponse implements ISetEccKeyPairsResponse {
+
+        /**
+         * Constructs a new SetEccKeyPairsResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISetEccKeyPairsResponse);
+
+        /** SetEccKeyPairsResponse teamKeys. */
+        public teamKeys: Authentication.ITeamEccKeyPairResponse[];
+
+        /**
+         * Creates a new SetEccKeyPairsResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetEccKeyPairsResponse instance
+         */
+        public static create(properties?: Authentication.ISetEccKeyPairsResponse): Authentication.SetEccKeyPairsResponse;
+
+        /**
+         * Encodes the specified SetEccKeyPairsResponse message. Does not implicitly {@link Authentication.SetEccKeyPairsResponse.verify|verify} messages.
+         * @param message SetEccKeyPairsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISetEccKeyPairsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetEccKeyPairsResponse message, length delimited. Does not implicitly {@link Authentication.SetEccKeyPairsResponse.verify|verify} messages.
+         * @param message SetEccKeyPairsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISetEccKeyPairsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetEccKeyPairsResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetEccKeyPairsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SetEccKeyPairsResponse;
+
+        /**
+         * Decodes a SetEccKeyPairsResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetEccKeyPairsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SetEccKeyPairsResponse;
+
+        /**
+         * Verifies a SetEccKeyPairsResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetEccKeyPairsResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetEccKeyPairsResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SetEccKeyPairsResponse;
+
+        /**
+         * Creates a plain object from a SetEccKeyPairsResponse message. Also converts values to other types if specified.
+         * @param message SetEccKeyPairsResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SetEccKeyPairsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetEccKeyPairsResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetEccKeyPairsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamEccKeyPair. */
+    interface ITeamEccKeyPair {
+
+        /** TeamEccKeyPair teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** TeamEccKeyPair publicKey */
+        publicKey?: (Uint8Array|null);
+
+        /** TeamEccKeyPair encryptedPrivateKey */
+        encryptedPrivateKey?: (Uint8Array|null);
+    }
+
+    /** Represents a TeamEccKeyPair. */
+    class TeamEccKeyPair implements ITeamEccKeyPair {
+
+        /**
+         * Constructs a new TeamEccKeyPair.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITeamEccKeyPair);
+
+        /** TeamEccKeyPair teamUid. */
+        public teamUid: Uint8Array;
+
+        /** TeamEccKeyPair publicKey. */
+        public publicKey: Uint8Array;
+
+        /** TeamEccKeyPair encryptedPrivateKey. */
+        public encryptedPrivateKey: Uint8Array;
+
+        /**
+         * Creates a new TeamEccKeyPair instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamEccKeyPair instance
+         */
+        public static create(properties?: Authentication.ITeamEccKeyPair): Authentication.TeamEccKeyPair;
+
+        /**
+         * Encodes the specified TeamEccKeyPair message. Does not implicitly {@link Authentication.TeamEccKeyPair.verify|verify} messages.
+         * @param message TeamEccKeyPair message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITeamEccKeyPair, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamEccKeyPair message, length delimited. Does not implicitly {@link Authentication.TeamEccKeyPair.verify|verify} messages.
+         * @param message TeamEccKeyPair message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITeamEccKeyPair, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamEccKeyPair message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamEccKeyPair
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TeamEccKeyPair;
+
+        /**
+         * Decodes a TeamEccKeyPair message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamEccKeyPair
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TeamEccKeyPair;
+
+        /**
+         * Verifies a TeamEccKeyPair message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamEccKeyPair message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamEccKeyPair
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TeamEccKeyPair;
+
+        /**
+         * Creates a plain object from a TeamEccKeyPair message. Also converts values to other types if specified.
+         * @param message TeamEccKeyPair
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TeamEccKeyPair, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamEccKeyPair to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamEccKeyPair
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamEccKeyPairResponse. */
+    interface ITeamEccKeyPairResponse {
+
+        /** TeamEccKeyPairResponse teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** TeamEccKeyPairResponse status */
+        status?: (Authentication.GenericStatus|null);
+    }
+
+    /** Represents a TeamEccKeyPairResponse. */
+    class TeamEccKeyPairResponse implements ITeamEccKeyPairResponse {
+
+        /**
+         * Constructs a new TeamEccKeyPairResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITeamEccKeyPairResponse);
+
+        /** TeamEccKeyPairResponse teamUid. */
+        public teamUid: Uint8Array;
+
+        /** TeamEccKeyPairResponse status. */
+        public status: Authentication.GenericStatus;
+
+        /**
+         * Creates a new TeamEccKeyPairResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamEccKeyPairResponse instance
+         */
+        public static create(properties?: Authentication.ITeamEccKeyPairResponse): Authentication.TeamEccKeyPairResponse;
+
+        /**
+         * Encodes the specified TeamEccKeyPairResponse message. Does not implicitly {@link Authentication.TeamEccKeyPairResponse.verify|verify} messages.
+         * @param message TeamEccKeyPairResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITeamEccKeyPairResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamEccKeyPairResponse message, length delimited. Does not implicitly {@link Authentication.TeamEccKeyPairResponse.verify|verify} messages.
+         * @param message TeamEccKeyPairResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITeamEccKeyPairResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamEccKeyPairResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamEccKeyPairResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TeamEccKeyPairResponse;
+
+        /**
+         * Decodes a TeamEccKeyPairResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamEccKeyPairResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TeamEccKeyPairResponse;
+
+        /**
+         * Verifies a TeamEccKeyPairResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamEccKeyPairResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamEccKeyPairResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TeamEccKeyPairResponse;
+
+        /**
+         * Creates a plain object from a TeamEccKeyPairResponse message. Also converts values to other types if specified.
+         * @param message TeamEccKeyPairResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TeamEccKeyPairResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamEccKeyPairResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamEccKeyPairResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -12727,6 +13875,9 @@ export namespace Authentication {
 
         /** AppShare createdOn */
         createdOn?: (number|Long|null);
+
+        /** AppShare data */
+        data?: (Uint8Array|null);
     }
 
     /** Represents an AppShare. */
@@ -12749,6 +13900,9 @@ export namespace Authentication {
 
         /** AppShare createdOn. */
         public createdOn: (number|Long);
+
+        /** AppShare data. */
+        public data: Uint8Array;
 
         /**
          * Creates a new AppShare instance using the specified properties.
@@ -13686,6 +14840,12 @@ export namespace Authentication {
 
         /** ApplicationSummary expiredClientCount */
         expiredClientCount?: (number|null);
+
+        /** ApplicationSummary username */
+        username?: (string|null);
+
+        /** ApplicationSummary appData */
+        appData?: (Uint8Array|null);
     }
 
     /** Represents an ApplicationSummary. */
@@ -13717,6 +14877,12 @@ export namespace Authentication {
 
         /** ApplicationSummary expiredClientCount. */
         public expiredClientCount: number;
+
+        /** ApplicationSummary username. */
+        public username: string;
+
+        /** ApplicationSummary appData. */
+        public appData: Uint8Array;
 
         /**
          * Creates a new ApplicationSummary instance using the specified properties.
@@ -14178,6 +15344,359 @@ export namespace Authentication {
 
         /**
          * Gets the default type url for SendShareInviteRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** TimeLimitedAccessType enum. */
+    enum TimeLimitedAccessType {
+        INVALID_TIME_LIMITED_ACCESS_TYPE = 0,
+        USER_ACCESS_TO_RECORD = 1,
+        USER_OR_TEAM_ACCESS_TO_SHAREDFOLDER = 2,
+        RECORD_ACCESS_TO_SHAREDFOLDER = 3
+    }
+
+    /** Properties of a TimeLimitedAccessRequest. */
+    interface ITimeLimitedAccessRequest {
+
+        /** TimeLimitedAccessRequest accountUid */
+        accountUid?: (Uint8Array[]|null);
+
+        /** TimeLimitedAccessRequest teamUid */
+        teamUid?: (Uint8Array[]|null);
+
+        /** TimeLimitedAccessRequest recordUid */
+        recordUid?: (Uint8Array[]|null);
+
+        /** TimeLimitedAccessRequest sharedObjectUid */
+        sharedObjectUid?: (Uint8Array|null);
+
+        /** TimeLimitedAccessRequest timeLimitedAccessType */
+        timeLimitedAccessType?: (Authentication.TimeLimitedAccessType|null);
+
+        /** TimeLimitedAccessRequest expiration */
+        expiration?: (number|Long|null);
+    }
+
+    /** Represents a TimeLimitedAccessRequest. */
+    class TimeLimitedAccessRequest implements ITimeLimitedAccessRequest {
+
+        /**
+         * Constructs a new TimeLimitedAccessRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITimeLimitedAccessRequest);
+
+        /** TimeLimitedAccessRequest accountUid. */
+        public accountUid: Uint8Array[];
+
+        /** TimeLimitedAccessRequest teamUid. */
+        public teamUid: Uint8Array[];
+
+        /** TimeLimitedAccessRequest recordUid. */
+        public recordUid: Uint8Array[];
+
+        /** TimeLimitedAccessRequest sharedObjectUid. */
+        public sharedObjectUid: Uint8Array;
+
+        /** TimeLimitedAccessRequest timeLimitedAccessType. */
+        public timeLimitedAccessType: Authentication.TimeLimitedAccessType;
+
+        /** TimeLimitedAccessRequest expiration. */
+        public expiration: (number|Long);
+
+        /**
+         * Creates a new TimeLimitedAccessRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeLimitedAccessRequest instance
+         */
+        public static create(properties?: Authentication.ITimeLimitedAccessRequest): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Encodes the specified TimeLimitedAccessRequest message. Does not implicitly {@link Authentication.TimeLimitedAccessRequest.verify|verify} messages.
+         * @param message TimeLimitedAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITimeLimitedAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TimeLimitedAccessRequest message, length delimited. Does not implicitly {@link Authentication.TimeLimitedAccessRequest.verify|verify} messages.
+         * @param message TimeLimitedAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITimeLimitedAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeLimitedAccessRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeLimitedAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Decodes a TimeLimitedAccessRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TimeLimitedAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Verifies a TimeLimitedAccessRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TimeLimitedAccessRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeLimitedAccessRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TimeLimitedAccessRequest;
+
+        /**
+         * Creates a plain object from a TimeLimitedAccessRequest message. Also converts values to other types if specified.
+         * @param message TimeLimitedAccessRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TimeLimitedAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeLimitedAccessRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeLimitedAccessRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TimeLimitedAccessStatus. */
+    interface ITimeLimitedAccessStatus {
+
+        /** TimeLimitedAccessStatus uid */
+        uid?: (Uint8Array|null);
+
+        /** TimeLimitedAccessStatus message */
+        message?: (string|null);
+    }
+
+    /** Represents a TimeLimitedAccessStatus. */
+    class TimeLimitedAccessStatus implements ITimeLimitedAccessStatus {
+
+        /**
+         * Constructs a new TimeLimitedAccessStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITimeLimitedAccessStatus);
+
+        /** TimeLimitedAccessStatus uid. */
+        public uid: Uint8Array;
+
+        /** TimeLimitedAccessStatus message. */
+        public message: string;
+
+        /**
+         * Creates a new TimeLimitedAccessStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeLimitedAccessStatus instance
+         */
+        public static create(properties?: Authentication.ITimeLimitedAccessStatus): Authentication.TimeLimitedAccessStatus;
+
+        /**
+         * Encodes the specified TimeLimitedAccessStatus message. Does not implicitly {@link Authentication.TimeLimitedAccessStatus.verify|verify} messages.
+         * @param message TimeLimitedAccessStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITimeLimitedAccessStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TimeLimitedAccessStatus message, length delimited. Does not implicitly {@link Authentication.TimeLimitedAccessStatus.verify|verify} messages.
+         * @param message TimeLimitedAccessStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITimeLimitedAccessStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeLimitedAccessStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeLimitedAccessStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TimeLimitedAccessStatus;
+
+        /**
+         * Decodes a TimeLimitedAccessStatus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TimeLimitedAccessStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TimeLimitedAccessStatus;
+
+        /**
+         * Verifies a TimeLimitedAccessStatus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TimeLimitedAccessStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeLimitedAccessStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TimeLimitedAccessStatus;
+
+        /**
+         * Creates a plain object from a TimeLimitedAccessStatus message. Also converts values to other types if specified.
+         * @param message TimeLimitedAccessStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TimeLimitedAccessStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeLimitedAccessStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeLimitedAccessStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TimeLimitedAccessResponse. */
+    interface ITimeLimitedAccessResponse {
+
+        /** TimeLimitedAccessResponse revision */
+        revision?: (number|Long|null);
+
+        /** TimeLimitedAccessResponse userAccessStatus */
+        userAccessStatus?: (Authentication.ITimeLimitedAccessStatus[]|null);
+
+        /** TimeLimitedAccessResponse teamAccessStatus */
+        teamAccessStatus?: (Authentication.ITimeLimitedAccessStatus[]|null);
+
+        /** TimeLimitedAccessResponse recordAccessStatus */
+        recordAccessStatus?: (Authentication.ITimeLimitedAccessStatus[]|null);
+    }
+
+    /** Represents a TimeLimitedAccessResponse. */
+    class TimeLimitedAccessResponse implements ITimeLimitedAccessResponse {
+
+        /**
+         * Constructs a new TimeLimitedAccessResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITimeLimitedAccessResponse);
+
+        /** TimeLimitedAccessResponse revision. */
+        public revision: (number|Long);
+
+        /** TimeLimitedAccessResponse userAccessStatus. */
+        public userAccessStatus: Authentication.ITimeLimitedAccessStatus[];
+
+        /** TimeLimitedAccessResponse teamAccessStatus. */
+        public teamAccessStatus: Authentication.ITimeLimitedAccessStatus[];
+
+        /** TimeLimitedAccessResponse recordAccessStatus. */
+        public recordAccessStatus: Authentication.ITimeLimitedAccessStatus[];
+
+        /**
+         * Creates a new TimeLimitedAccessResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeLimitedAccessResponse instance
+         */
+        public static create(properties?: Authentication.ITimeLimitedAccessResponse): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Encodes the specified TimeLimitedAccessResponse message. Does not implicitly {@link Authentication.TimeLimitedAccessResponse.verify|verify} messages.
+         * @param message TimeLimitedAccessResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITimeLimitedAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TimeLimitedAccessResponse message, length delimited. Does not implicitly {@link Authentication.TimeLimitedAccessResponse.verify|verify} messages.
+         * @param message TimeLimitedAccessResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITimeLimitedAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeLimitedAccessResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeLimitedAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Decodes a TimeLimitedAccessResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TimeLimitedAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Verifies a TimeLimitedAccessResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TimeLimitedAccessResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeLimitedAccessResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TimeLimitedAccessResponse;
+
+        /**
+         * Creates a plain object from a TimeLimitedAccessResponse message. Also converts values to other types if specified.
+         * @param message TimeLimitedAccessResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TimeLimitedAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeLimitedAccessResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeLimitedAccessResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -15032,6 +16551,218 @@ export namespace Authentication {
 
         /**
          * Gets the default type url for AccountRecoveryVerifyCodeResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EmergencyAccessLoginRequest. */
+    interface IEmergencyAccessLoginRequest {
+
+        /** EmergencyAccessLoginRequest owner */
+        owner?: (string|null);
+    }
+
+    /** Represents an EmergencyAccessLoginRequest. */
+    class EmergencyAccessLoginRequest implements IEmergencyAccessLoginRequest {
+
+        /**
+         * Constructs a new EmergencyAccessLoginRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IEmergencyAccessLoginRequest);
+
+        /** EmergencyAccessLoginRequest owner. */
+        public owner: string;
+
+        /**
+         * Creates a new EmergencyAccessLoginRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EmergencyAccessLoginRequest instance
+         */
+        public static create(properties?: Authentication.IEmergencyAccessLoginRequest): Authentication.EmergencyAccessLoginRequest;
+
+        /**
+         * Encodes the specified EmergencyAccessLoginRequest message. Does not implicitly {@link Authentication.EmergencyAccessLoginRequest.verify|verify} messages.
+         * @param message EmergencyAccessLoginRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IEmergencyAccessLoginRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EmergencyAccessLoginRequest message, length delimited. Does not implicitly {@link Authentication.EmergencyAccessLoginRequest.verify|verify} messages.
+         * @param message EmergencyAccessLoginRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IEmergencyAccessLoginRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EmergencyAccessLoginRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EmergencyAccessLoginRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.EmergencyAccessLoginRequest;
+
+        /**
+         * Decodes an EmergencyAccessLoginRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EmergencyAccessLoginRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.EmergencyAccessLoginRequest;
+
+        /**
+         * Verifies an EmergencyAccessLoginRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EmergencyAccessLoginRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EmergencyAccessLoginRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.EmergencyAccessLoginRequest;
+
+        /**
+         * Creates a plain object from an EmergencyAccessLoginRequest message. Also converts values to other types if specified.
+         * @param message EmergencyAccessLoginRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.EmergencyAccessLoginRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EmergencyAccessLoginRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EmergencyAccessLoginRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EmergencyAccessLoginResponse. */
+    interface IEmergencyAccessLoginResponse {
+
+        /** EmergencyAccessLoginResponse sessionToken */
+        sessionToken?: (Uint8Array|null);
+
+        /** EmergencyAccessLoginResponse dataKey */
+        dataKey?: (Enterprise.ITypedKey|null);
+
+        /** EmergencyAccessLoginResponse rsaPrivateKey */
+        rsaPrivateKey?: (Enterprise.ITypedKey|null);
+
+        /** EmergencyAccessLoginResponse eccPrivateKey */
+        eccPrivateKey?: (Enterprise.ITypedKey|null);
+    }
+
+    /** Represents an EmergencyAccessLoginResponse. */
+    class EmergencyAccessLoginResponse implements IEmergencyAccessLoginResponse {
+
+        /**
+         * Constructs a new EmergencyAccessLoginResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IEmergencyAccessLoginResponse);
+
+        /** EmergencyAccessLoginResponse sessionToken. */
+        public sessionToken: Uint8Array;
+
+        /** EmergencyAccessLoginResponse dataKey. */
+        public dataKey?: (Enterprise.ITypedKey|null);
+
+        /** EmergencyAccessLoginResponse rsaPrivateKey. */
+        public rsaPrivateKey?: (Enterprise.ITypedKey|null);
+
+        /** EmergencyAccessLoginResponse eccPrivateKey. */
+        public eccPrivateKey?: (Enterprise.ITypedKey|null);
+
+        /**
+         * Creates a new EmergencyAccessLoginResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EmergencyAccessLoginResponse instance
+         */
+        public static create(properties?: Authentication.IEmergencyAccessLoginResponse): Authentication.EmergencyAccessLoginResponse;
+
+        /**
+         * Encodes the specified EmergencyAccessLoginResponse message. Does not implicitly {@link Authentication.EmergencyAccessLoginResponse.verify|verify} messages.
+         * @param message EmergencyAccessLoginResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IEmergencyAccessLoginResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EmergencyAccessLoginResponse message, length delimited. Does not implicitly {@link Authentication.EmergencyAccessLoginResponse.verify|verify} messages.
+         * @param message EmergencyAccessLoginResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IEmergencyAccessLoginResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EmergencyAccessLoginResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EmergencyAccessLoginResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.EmergencyAccessLoginResponse;
+
+        /**
+         * Decodes an EmergencyAccessLoginResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EmergencyAccessLoginResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.EmergencyAccessLoginResponse;
+
+        /**
+         * Verifies an EmergencyAccessLoginResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EmergencyAccessLoginResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EmergencyAccessLoginResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.EmergencyAccessLoginResponse;
+
+        /**
+         * Creates a plain object from an EmergencyAccessLoginResponse message. Also converts values to other types if specified.
+         * @param message EmergencyAccessLoginResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.EmergencyAccessLoginResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EmergencyAccessLoginResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EmergencyAccessLoginResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -19052,6 +20783,12 @@ export namespace Enterprise {
 
         /** GeneralDataEntity distributor */
         distributor?: (boolean|null);
+
+        /** GeneralDataEntity forbidAccountTransfer */
+        forbidAccountTransfer?: (boolean|null);
+
+        /** GeneralDataEntity showUserOnboard */
+        showUserOnboard?: (boolean|null);
     }
 
     /** Represents a GeneralDataEntity. */
@@ -19077,6 +20814,12 @@ export namespace Enterprise {
 
         /** GeneralDataEntity distributor. */
         public distributor: boolean;
+
+        /** GeneralDataEntity forbidAccountTransfer. */
+        public forbidAccountTransfer: boolean;
+
+        /** GeneralDataEntity showUserOnboard. */
+        public showUserOnboard: boolean;
 
         /**
          * Creates a new GeneralDataEntity instance using the specified properties.
@@ -21505,6 +23248,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn apiCallCount */
         apiCallCount?: (number|null);
+
+        /** LicenseAddOn tierDescription */
+        tierDescription?: (string|null);
     }
 
     /** Represents a LicenseAddOn. */
@@ -21542,6 +23288,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn apiCallCount. */
         public apiCallCount: number;
+
+        /** LicenseAddOn tierDescription. */
+        public tierDescription: string;
 
         /**
          * Creates a new LicenseAddOn instance using the specified properties.
@@ -25277,7 +27026,10 @@ export namespace Enterprise {
         SECRETS_MANAGER = 4,
         ENTERPRISE_LOCKED = 5,
         FORBID_KEY_TYPE_2 = 6,
-        CONSOLE_ONBOARDED = 7
+        CONSOLE_ONBOARDED = 7,
+        FORBID_ACCOUNT_TRANSFER = 8,
+        NPS_POPUP_OPT_OUT = 9,
+        SHOW_USER_ONBOARD = 10
     }
 
     /** Properties of a SetRestrictVisibilityRequest. */
@@ -29978,6 +31730,9 @@ export namespace Enterprise {
 
         /** TeamsEnterpriseUsersAddUserRequest teamKey */
         teamKey?: (string|null);
+
+        /** TeamsEnterpriseUsersAddUserRequest typedTeamKey */
+        typedTeamKey?: (Enterprise.ITypedKey|null);
     }
 
     /** Represents a TeamsEnterpriseUsersAddUserRequest. */
@@ -29997,6 +31752,9 @@ export namespace Enterprise {
 
         /** TeamsEnterpriseUsersAddUserRequest teamKey. */
         public teamKey: string;
+
+        /** TeamsEnterpriseUsersAddUserRequest typedTeamKey. */
+        public typedTeamKey?: (Enterprise.ITypedKey|null);
 
         /**
          * Creates a new TeamsEnterpriseUsersAddUserRequest instance using the specified properties.
@@ -30070,6 +31828,109 @@ export namespace Enterprise {
 
         /**
          * Gets the default type url for TeamsEnterpriseUsersAddUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TypedKey. */
+    interface ITypedKey {
+
+        /** TypedKey key */
+        key?: (Uint8Array|null);
+
+        /** TypedKey keyType */
+        keyType?: (Enterprise.EncryptedKeyType|null);
+    }
+
+    /** Represents a TypedKey. */
+    class TypedKey implements ITypedKey {
+
+        /**
+         * Constructs a new TypedKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITypedKey);
+
+        /** TypedKey key. */
+        public key: Uint8Array;
+
+        /** TypedKey keyType. */
+        public keyType: Enterprise.EncryptedKeyType;
+
+        /**
+         * Creates a new TypedKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TypedKey instance
+         */
+        public static create(properties?: Enterprise.ITypedKey): Enterprise.TypedKey;
+
+        /**
+         * Encodes the specified TypedKey message. Does not implicitly {@link Enterprise.TypedKey.verify|verify} messages.
+         * @param message TypedKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITypedKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TypedKey message, length delimited. Does not implicitly {@link Enterprise.TypedKey.verify|verify} messages.
+         * @param message TypedKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITypedKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TypedKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TypedKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TypedKey;
+
+        /**
+         * Decodes a TypedKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TypedKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TypedKey;
+
+        /**
+         * Verifies a TypedKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TypedKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TypedKey
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TypedKey;
+
+        /**
+         * Creates a plain object from a TypedKey message. Also converts values to other types if specified.
+         * @param message TypedKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TypedKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TypedKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TypedKey
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -32477,6 +34338,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements minMasterPasswordLengthNoPrompt */
         minMasterPasswordLengthNoPrompt?: (number|null);
+
+        /** AccountSummaryElements forbidKeyType2 */
+        forbidKeyType2?: (boolean|null);
     }
 
     /** Represents an AccountSummaryElements. */
@@ -32538,6 +34402,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements minMasterPasswordLengthNoPrompt. */
         public minMasterPasswordLengthNoPrompt: number;
+
+        /** AccountSummaryElements forbidKeyType2. */
+        public forbidKeyType2: boolean;
 
         /**
          * Creates a new AccountSummaryElements instance using the specified properties.
@@ -33117,6 +34984,21 @@ export namespace AccountSummary {
 
         /** License error */
         error?: (AccountSummary.IResult|null);
+
+        /** License expiration */
+        expiration?: (number|Long|null);
+
+        /** License storageExpiration */
+        storageExpiration?: (number|Long|null);
+
+        /** License uploadsCount */
+        uploadsCount?: (number|null);
+
+        /** License units */
+        units?: (number|null);
+
+        /** License pendingEnterprise */
+        pendingEnterprise?: (boolean|null);
     }
 
     /** Represents a License. */
@@ -33208,6 +35090,21 @@ export namespace AccountSummary {
 
         /** License error. */
         public error?: (AccountSummary.IResult|null);
+
+        /** License expiration. */
+        public expiration: (number|Long);
+
+        /** License storageExpiration. */
+        public storageExpiration: (number|Long);
+
+        /** License uploadsCount. */
+        public uploadsCount: number;
+
+        /** License units. */
+        public units: number;
+
+        /** License pendingEnterprise. */
+        public pendingEnterprise: boolean;
 
         /**
          * Creates a new License instance using the specified properties.
@@ -36176,6 +38073,9 @@ export namespace Automator {
 
         /** ApproveDeviceResponse message */
         message?: (string|null);
+
+        /** ApproveDeviceResponse encryptedUserDataKeyType */
+        encryptedUserDataKeyType?: (Enterprise.EncryptedKeyType|null);
     }
 
     /**
@@ -36199,6 +38099,9 @@ export namespace Automator {
 
         /** ApproveDeviceResponse message. */
         public message: string;
+
+        /** ApproveDeviceResponse encryptedUserDataKeyType. */
+        public encryptedUserDataKeyType: Enterprise.EncryptedKeyType;
 
         /**
          * Creates a new ApproveDeviceResponse instance using the specified properties.
@@ -38760,6 +40663,9 @@ export namespace Automator {
 
         /** ApproveTeamsForUserRequest isEccOnly */
         isEccOnly?: (boolean|null);
+
+        /** ApproveTeamsForUserRequest userPublicKeyEcc */
+        userPublicKeyEcc?: (Uint8Array|null);
     }
 
     /**
@@ -38805,6 +40711,9 @@ export namespace Automator {
 
         /** ApproveTeamsForUserRequest isEccOnly. */
         public isEccOnly: boolean;
+
+        /** ApproveTeamsForUserRequest userPublicKeyEcc. */
+        public userPublicKeyEcc: Uint8Array;
 
         /**
          * Creates a new ApproveTeamsForUserRequest instance using the specified properties.
@@ -53073,7 +54982,9 @@ export namespace Folder {
     enum EncryptedKeyType {
         no_key = 0,
         encrypted_by_data_key = 1,
-        encrypted_by_public_key = 2
+        encrypted_by_public_key = 2,
+        encrypted_by_data_key_gcm = 3,
+        encrypted_by_public_key_ecc = 4
     }
 
     /** Properties of an EncryptedDataKey. */
@@ -54565,6 +56476,9 @@ export namespace Folder {
 
         /** SharedFolderUpdateRecord timerNotificationType */
         timerNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderUpdateRecord rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderUpdateRecord. */
@@ -54602,6 +56516,9 @@ export namespace Folder {
 
         /** SharedFolderUpdateRecord timerNotificationType. */
         public timerNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderUpdateRecord rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderUpdateRecord instance using the specified properties.
@@ -54701,6 +56618,12 @@ export namespace Folder {
 
         /** SharedFolderUpdateUser timerNotificationType */
         timerNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderUpdateUser typedSharedFolderKey */
+        typedSharedFolderKey?: (Folder.IEncryptedDataKey|null);
+
+        /** SharedFolderUpdateUser rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderUpdateUser. */
@@ -54729,6 +56652,12 @@ export namespace Folder {
 
         /** SharedFolderUpdateUser timerNotificationType. */
         public timerNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderUpdateUser typedSharedFolderKey. */
+        public typedSharedFolderKey?: (Folder.IEncryptedDataKey|null);
+
+        /** SharedFolderUpdateUser rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderUpdateUser instance using the specified properties.
@@ -54828,6 +56757,12 @@ export namespace Folder {
 
         /** SharedFolderUpdateTeam timerNotificationType */
         timerNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderUpdateTeam typedSharedFolderKey */
+        typedSharedFolderKey?: (Folder.IEncryptedDataKey|null);
+
+        /** SharedFolderUpdateTeam rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderUpdateTeam. */
@@ -54856,6 +56791,12 @@ export namespace Folder {
 
         /** SharedFolderUpdateTeam timerNotificationType. */
         public timerNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderUpdateTeam typedSharedFolderKey. */
+        public typedSharedFolderKey?: (Folder.IEncryptedDataKey|null);
+
+        /** SharedFolderUpdateTeam rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderUpdateTeam instance using the specified properties.
@@ -58010,6 +59951,200 @@ export namespace Records {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a SecurityData. */
+    interface ISecurityData {
+
+        /** SecurityData data */
+        data?: (Uint8Array|null);
+    }
+
+    /** Represents a SecurityData. */
+    class SecurityData implements ISecurityData {
+
+        /**
+         * Constructs a new SecurityData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.ISecurityData);
+
+        /** SecurityData data. */
+        public data: Uint8Array;
+
+        /**
+         * Creates a new SecurityData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SecurityData instance
+         */
+        public static create(properties?: Records.ISecurityData): Records.SecurityData;
+
+        /**
+         * Encodes the specified SecurityData message. Does not implicitly {@link Records.SecurityData.verify|verify} messages.
+         * @param message SecurityData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.ISecurityData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SecurityData message, length delimited. Does not implicitly {@link Records.SecurityData.verify|verify} messages.
+         * @param message SecurityData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.ISecurityData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SecurityData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SecurityData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.SecurityData;
+
+        /**
+         * Decodes a SecurityData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SecurityData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.SecurityData;
+
+        /**
+         * Verifies a SecurityData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SecurityData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SecurityData
+         */
+        public static fromObject(object: { [k: string]: any }): Records.SecurityData;
+
+        /**
+         * Creates a plain object from a SecurityData message. Also converts values to other types if specified.
+         * @param message SecurityData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.SecurityData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SecurityData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SecurityScoreData. */
+    interface ISecurityScoreData {
+
+        /** SecurityScoreData data */
+        data?: (Uint8Array|null);
+    }
+
+    /** Represents a SecurityScoreData. */
+    class SecurityScoreData implements ISecurityScoreData {
+
+        /**
+         * Constructs a new SecurityScoreData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Records.ISecurityScoreData);
+
+        /** SecurityScoreData data. */
+        public data: Uint8Array;
+
+        /**
+         * Creates a new SecurityScoreData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SecurityScoreData instance
+         */
+        public static create(properties?: Records.ISecurityScoreData): Records.SecurityScoreData;
+
+        /**
+         * Encodes the specified SecurityScoreData message. Does not implicitly {@link Records.SecurityScoreData.verify|verify} messages.
+         * @param message SecurityScoreData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Records.ISecurityScoreData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SecurityScoreData message, length delimited. Does not implicitly {@link Records.SecurityScoreData.verify|verify} messages.
+         * @param message SecurityScoreData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Records.ISecurityScoreData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SecurityScoreData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SecurityScoreData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Records.SecurityScoreData;
+
+        /**
+         * Decodes a SecurityScoreData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SecurityScoreData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Records.SecurityScoreData;
+
+        /**
+         * Verifies a SecurityScoreData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SecurityScoreData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SecurityScoreData
+         */
+        public static fromObject(object: { [k: string]: any }): Records.SecurityScoreData;
+
+        /**
+         * Creates a plain object from a SecurityScoreData message. Also converts values to other types if specified.
+         * @param message SecurityScoreData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Records.SecurityScoreData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SecurityScoreData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityScoreData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a RecordAdd. */
     interface IRecordAdd {
 
@@ -58042,6 +60177,12 @@ export namespace Records {
 
         /** RecordAdd audit */
         audit?: (Records.IRecordAudit|null);
+
+        /** RecordAdd securityData */
+        securityData?: (Records.ISecurityData|null);
+
+        /** RecordAdd securityScoreData */
+        securityScoreData?: (Records.ISecurityScoreData|null);
     }
 
     /** Represents a RecordAdd. */
@@ -58082,6 +60223,12 @@ export namespace Records {
 
         /** RecordAdd audit. */
         public audit?: (Records.IRecordAudit|null);
+
+        /** RecordAdd securityData. */
+        public securityData?: (Records.ISecurityData|null);
+
+        /** RecordAdd securityScoreData. */
+        public securityScoreData?: (Records.ISecurityScoreData|null);
 
         /**
          * Creates a new RecordAdd instance using the specified properties.
@@ -58290,6 +60437,12 @@ export namespace Records {
 
         /** RecordUpdate audit */
         audit?: (Records.IRecordAudit|null);
+
+        /** RecordUpdate securityData */
+        securityData?: (Records.ISecurityData|null);
+
+        /** RecordUpdate securityScoreData */
+        securityScoreData?: (Records.ISecurityScoreData|null);
     }
 
     /** Represents a RecordUpdate. */
@@ -58324,6 +60477,12 @@ export namespace Records {
 
         /** RecordUpdate audit. */
         public audit?: (Records.IRecordAudit|null);
+
+        /** RecordUpdate securityData. */
+        public securityData?: (Records.ISecurityData|null);
+
+        /** RecordUpdate securityScoreData. */
+        public securityScoreData?: (Records.ISecurityScoreData|null);
 
         /**
          * Creates a new RecordUpdate instance using the specified properties.
@@ -60645,6 +62804,9 @@ export namespace Records {
 
         /** ApplicationAddRequest data */
         data?: (Uint8Array|null);
+
+        /** ApplicationAddRequest audit */
+        audit?: (Records.IRecordAudit|null);
     }
 
     /** Represents an ApplicationAddRequest. */
@@ -60667,6 +62829,9 @@ export namespace Records {
 
         /** ApplicationAddRequest data. */
         public data: Uint8Array;
+
+        /** ApplicationAddRequest audit. */
+        public audit?: (Records.IRecordAudit|null);
 
         /**
          * Creates a new ApplicationAddRequest instance using the specified properties.
@@ -60891,6 +63056,9 @@ export namespace Records {
 
         /** UserPermission timerNotificationType */
         timerNotificationType?: (Records.TimerNotificationType|null);
+
+        /** UserPermission rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a UserPermission. */
@@ -60928,6 +63096,9 @@ export namespace Records {
 
         /** UserPermission timerNotificationType. */
         public timerNotificationType: Records.TimerNotificationType;
+
+        /** UserPermission rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new UserPermission instance using the specified properties.
@@ -61027,6 +63198,9 @@ export namespace Records {
 
         /** SharedFolderPermission timerNotificationType */
         timerNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderPermission rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderPermission. */
@@ -61055,6 +63229,9 @@ export namespace Records {
 
         /** SharedFolderPermission timerNotificationType. */
         public timerNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderPermission rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderPermission instance using the specified properties.
@@ -61893,6 +64070,9 @@ export namespace Records {
 
         /** SharedRecord timerNotificationType */
         timerNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedRecord rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedRecord. */
@@ -61939,6 +64119,9 @@ export namespace Records {
 
         /** SharedRecord timerNotificationType. */
         public timerNotificationType: Records.TimerNotificationType;
+
+        /** SharedRecord rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedRecord instance using the specified properties.
@@ -67576,6 +69759,9 @@ export namespace Vault {
 
         /** SyncDownResponse removedUsers */
         removedUsers?: (Uint8Array[]|null);
+
+        /** SyncDownResponse securityScoreData */
+        securityScoreData?: (Vault.ISecurityScoreData[]|null);
     }
 
     /** Represents a SyncDownResponse. */
@@ -67721,6 +69907,9 @@ export namespace Vault {
 
         /** SyncDownResponse removedUsers. */
         public removedUsers: Uint8Array[];
+
+        /** SyncDownResponse securityScoreData. */
+        public securityScoreData: Vault.ISecurityScoreData[];
 
         /**
          * Creates a new SyncDownResponse instance using the specified properties.
@@ -68479,6 +70668,9 @@ export namespace Vault {
 
         /** Team sharedFolderKeys */
         sharedFolderKeys?: (Vault.ISharedFolderKey[]|null);
+
+        /** Team teamEccPrivateKey */
+        teamEccPrivateKey?: (Uint8Array|null);
     }
 
     /** Represents a Team. */
@@ -68519,6 +70711,9 @@ export namespace Vault {
 
         /** Team sharedFolderKeys. */
         public sharedFolderKeys: Vault.ISharedFolderKey[];
+
+        /** Team teamEccPrivateKey. */
+        public teamEccPrivateKey: Uint8Array;
 
         /**
          * Creates a new Team instance using the specified properties.
@@ -68984,6 +71179,9 @@ export namespace Vault {
 
         /** SharedFolderFolderRecord recordUid */
         recordUid?: (Uint8Array|null);
+
+        /** SharedFolderFolderRecord revision */
+        revision?: (number|Long|null);
     }
 
     /** Represents a SharedFolderFolderRecord. */
@@ -69003,6 +71201,9 @@ export namespace Vault {
 
         /** SharedFolderFolderRecord recordUid. */
         public recordUid: Uint8Array;
+
+        /** SharedFolderFolderRecord revision. */
+        public revision: (number|Long);
 
         /**
          * Creates a new SharedFolderFolderRecord instance using the specified properties.
@@ -69214,6 +71415,9 @@ export namespace Vault {
 
         /** RecordMetaData expirationNotificationType */
         expirationNotificationType?: (Records.TimerNotificationType|null);
+
+        /** RecordMetaData ownerUsername */
+        ownerUsername?: (string|null);
     }
 
     /** Represents a RecordMetaData. */
@@ -69251,6 +71455,9 @@ export namespace Vault {
 
         /** RecordMetaData expirationNotificationType. */
         public expirationNotificationType: Records.TimerNotificationType;
+
+        /** RecordMetaData ownerUsername. */
+        public ownerUsername: string;
 
         /**
          * Creates a new RecordMetaData instance using the specified properties.
@@ -69656,6 +71863,9 @@ export namespace Vault {
 
         /** PendingTeamMember teamUids */
         teamUids?: (Uint8Array[]|null);
+
+        /** PendingTeamMember userEccPublicKey */
+        userEccPublicKey?: (Uint8Array|null);
     }
 
     /** Represents a PendingTeamMember. */
@@ -69675,6 +71885,9 @@ export namespace Vault {
 
         /** PendingTeamMember teamUids. */
         public teamUids: Uint8Array[];
+
+        /** PendingTeamMember userEccPublicKey. */
+        public userEccPublicKey: Uint8Array;
 
         /**
          * Creates a new PendingTeamMember instance using the specified properties.
@@ -70255,6 +72468,12 @@ export namespace Vault {
 
         /** SharedFolderRecord expirationNotificationType */
         expirationNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderRecord ownerUsername */
+        ownerUsername?: (string|null);
+
+        /** SharedFolderRecord rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderRecord. */
@@ -70292,6 +72511,12 @@ export namespace Vault {
 
         /** SharedFolderRecord expirationNotificationType. */
         public expirationNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderRecord ownerUsername. */
+        public ownerUsername: string;
+
+        /** SharedFolderRecord rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderRecord instance using the specified properties.
@@ -70394,6 +72619,9 @@ export namespace Vault {
 
         /** SharedFolderUser expirationNotificationType */
         expirationNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderUser rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderUser. */
@@ -70425,6 +72653,9 @@ export namespace Vault {
 
         /** SharedFolderUser expirationNotificationType. */
         public expirationNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderUser rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderUser instance using the specified properties.
@@ -70527,6 +72758,9 @@ export namespace Vault {
 
         /** SharedFolderTeam expirationNotificationType */
         expirationNotificationType?: (Records.TimerNotificationType|null);
+
+        /** SharedFolderTeam rotateOnExpiration */
+        rotateOnExpiration?: (boolean|null);
     }
 
     /** Represents a SharedFolderTeam. */
@@ -70558,6 +72792,9 @@ export namespace Vault {
 
         /** SharedFolderTeam expirationNotificationType. */
         public expirationNotificationType: Records.TimerNotificationType;
+
+        /** SharedFolderTeam rotateOnExpiration. */
+        public rotateOnExpiration: boolean;
 
         /**
          * Creates a new SharedFolderTeam instance using the specified properties.
@@ -71226,6 +73463,115 @@ export namespace Vault {
 
         /**
          * Gets the default type url for RecordRotation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SecurityScoreData. */
+    interface ISecurityScoreData {
+
+        /** SecurityScoreData recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** SecurityScoreData data */
+        data?: (Uint8Array|null);
+
+        /** SecurityScoreData revision */
+        revision?: (number|Long|null);
+    }
+
+    /** Represents a SecurityScoreData. */
+    class SecurityScoreData implements ISecurityScoreData {
+
+        /**
+         * Constructs a new SecurityScoreData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Vault.ISecurityScoreData);
+
+        /** SecurityScoreData recordUid. */
+        public recordUid: Uint8Array;
+
+        /** SecurityScoreData data. */
+        public data: Uint8Array;
+
+        /** SecurityScoreData revision. */
+        public revision: (number|Long);
+
+        /**
+         * Creates a new SecurityScoreData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SecurityScoreData instance
+         */
+        public static create(properties?: Vault.ISecurityScoreData): Vault.SecurityScoreData;
+
+        /**
+         * Encodes the specified SecurityScoreData message. Does not implicitly {@link Vault.SecurityScoreData.verify|verify} messages.
+         * @param message SecurityScoreData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Vault.ISecurityScoreData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SecurityScoreData message, length delimited. Does not implicitly {@link Vault.SecurityScoreData.verify|verify} messages.
+         * @param message SecurityScoreData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Vault.ISecurityScoreData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SecurityScoreData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SecurityScoreData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Vault.SecurityScoreData;
+
+        /**
+         * Decodes a SecurityScoreData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SecurityScoreData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Vault.SecurityScoreData;
+
+        /**
+         * Verifies a SecurityScoreData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SecurityScoreData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SecurityScoreData
+         */
+        public static fromObject(object: { [k: string]: any }): Vault.SecurityScoreData;
+
+        /**
+         * Creates a plain object from a SecurityScoreData message. Also converts values to other types if specified.
+         * @param message SecurityScoreData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Vault.SecurityScoreData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SecurityScoreData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SecurityScoreData
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */

@@ -1,4 +1,4 @@
-type BaseRequest = {
+export type BaseRequest = {
     command: string
     username?: string
     client_version?: string
@@ -208,7 +208,7 @@ export const moveCommand = (request: MoveRequest): RestCommand<MoveRequest, Keep
 
 export type ShareAccountRequest = {
     to_role_id: number
-    transfer_key: string
+    transfer_key?: string
 }
 
 export const shareAccountCommand = (request: ShareAccountRequest): RestCommand<ShareAccountRequest, KeeperResponse> => createCommand(request, 'share_account')

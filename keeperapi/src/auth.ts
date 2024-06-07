@@ -274,7 +274,7 @@ export class Auth {
             resumeSessionOnly = false,
             givenSessionToken = undefined,
             ecOnly = false,
-        }: LoginPayload
+        }: Partial<LoginPayload>
     ) {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
 
@@ -373,7 +373,7 @@ export class Auth {
                         if (!wrappedPassword) {
                             throw Error('Password must be assigned before user creation')
                         }
-                        await this.createUser(this._username, wrappedPassword)
+                        await this.createUser(this._username, wrappedPassword, ecOnly)
                     }
                     break;
                 case Authentication.LoginState.UPGRADE:
@@ -1128,7 +1128,16 @@ export class Auth {
     }
 
     // RSA TAGGED - it looks like we are already providing an ecc key, dont need any changes from what i can see
-    private async createUserRequest(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
+    // update: turns out we need to not include rsa keys at all when ecOnly is true
+    private async createUserRequest(dataKey: Uint8Array, ecOnly?:boolean): Promise<Authentication.ICreateUserRequest> {
+        if(ecOnly){
+            return this.createUserRequestECOnly(dataKey)
+        } else {
+            return this.createUserRequestRSAIncluded(dataKey)
+        }        
+    }
+
+    private async createUserRequestRSAIncluded(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
         const rsaKeys = await platform.generateRSAKeyPair()
         const rsaEncryptedPrivateKey = await platform.aesCbcEncrypt(rsaKeys.privateKey, dataKey, true)
 
@@ -1148,12 +1157,27 @@ export class Auth {
         }
     }
 
-    public async createUser(username: string, password: KeyWrapper) {
+    private async createUserRequestECOnly(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
+        const ecKeys = await platform.generateECKeyPair()
+        const eccEncryptedPrivateKey = await platform.aesGcmEncrypt(ecKeys.privateKey, dataKey)
+
+        const encryptedClientKey = await platform.aesCbcEncrypt(generateEncryptionKey(), dataKey, true)
+
+        return {
+            eccPublicKey: ecKeys.publicKey,
+            eccEncryptedPrivateKey: eccEncryptedPrivateKey,
+            encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+            encryptedClientKey: encryptedClientKey,
+            clientVersion: this.options.clientVersion,
+        }
+    }
+
+    public async createUser(username: string, password: KeyWrapper, ecOnly?:boolean) {
         const iterations = 100000
         const dataKey = generateEncryptionKey()
         const authVerifier = await createAuthVerifier(password, iterations)
         const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
-        const request = await this.createUserRequest(dataKey)
+        const request = await this.createUserRequest(dataKey, ecOnly)
         const regUserMsg = requestCreateUserMessage({
             ...request,
             username: username,
@@ -1163,13 +1187,13 @@ export class Auth {
         await this.executeRestAction(regUserMsg)
     }
 
-    private async createSsoUser(loginToken: Uint8Array) {
+    private async createSsoUser(loginToken: Uint8Array, ecOnly?:boolean) {
         if (!this.options.deviceConfig.publicKey) {
             throw Error('Public key is missing')
         }
         const dataKey = generateEncryptionKey()
         const encryptedDeviceDataKey = await platform.publicEncryptEC(dataKey, this.options.deviceConfig.publicKey)
-        const request = await this.createUserRequest(dataKey)
+        const request = await this.createUserRequest(dataKey, ecOnly)
         const regUserMsg = requestCreateUserMessage({
             ...request,
             username: this._username,
