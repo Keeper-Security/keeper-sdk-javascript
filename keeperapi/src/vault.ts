@@ -292,13 +292,13 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             }
         }
 
-        teamPrivateKeys[teamUid + '_priv'] = {
-            data: team.teamPrivateKey,
-            dataId: teamUid + '_priv',
-            keyId: teamUid,
-            encryptionType: 'cbc',
-            unwrappedType: 'rsa',
-        }
+        // teamPrivateKeys[teamUid + '_priv'] = {
+        //     data: team.teamPrivateKey,
+        //     dataId: teamUid + '_priv',
+        //     keyId: teamUid,
+        //     encryptionType: 'cbc',
+        //     unwrappedType: 'rsa',
+        // }
 
         switch (team.teamKeyType) {
             case Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY:
@@ -313,7 +313,8 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             // RSA TAGGED - this essentially changes the unwrapped type to ecc. make sure this is fine
             case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
                 teamPrivateKeys[teamUid + '_priv'] = {
-                    data: team.teamPrivateKey,
+                    // private key used above, but use full key here? will ask questions tomorrow
+                    data: team.teamKey,
                     dataId: teamUid + '_priv',
                     keyId: 'pk_ecc',
                     encryptionType: 'ecc',
@@ -326,13 +327,13 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
         }
 
         // RSA TAGGED - fix is the switch case above. need to confirm the encryptionType and unwrappedType are correct
-        teamPrivateKeys[teamUid + '_priv'] = {
-            data: team.teamPrivateKey,
-            dataId: teamUid + '_priv',
-            keyId: teamUid,
-            encryptionType: 'cbc',
-            unwrappedType: 'rsa',
-        }
+        // teamPrivateKeys[teamUid + '_priv'] = {
+        //     data: team.teamPrivateKey,
+        //     dataId: teamUid + '_priv',
+        //     keyId: teamUid,
+        //     encryptionType: 'cbc',
+        //     unwrappedType: 'rsa',
+        // }
 
         for (const folderKey of team.sharedFolderKeys as NN<ISharedFolderKey>[]) {
             // Empty if team being removed from shared folder
