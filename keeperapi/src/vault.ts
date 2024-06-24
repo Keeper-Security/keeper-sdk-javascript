@@ -627,7 +627,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
                 udata = JSON.parse(rec.udata)
             }
         } catch {
-            console.error('failed to parse the uData')
+            console.error('failed to parse the udata')
         }
         try {
             const decryptedData = await platform.decrypt(rec.data, recUid, encryptionType, storage)
