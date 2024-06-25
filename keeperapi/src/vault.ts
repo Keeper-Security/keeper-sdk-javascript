@@ -64,6 +64,10 @@ export type SyncResult = {
     fullSync?: boolean
 }
 
+export type Udata = {
+    file_ids?: string[]
+}
+
 export type DRecord = {
     kind: 'record'
     uid: string
@@ -73,7 +77,7 @@ export type DRecord = {
     shared: boolean
     clientModifiedTime: number
     extra?: any
-    udata?: any
+    udata?: Udata
 }
 
 export type DRecordMetadata = {
@@ -613,7 +617,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
         const encryptionType: EncryptionType = rec.version >= 3 ? 'gcm' : 'cbc'
 
         let extra: any
-        let udata: any
+        let udata: Udata | undefined
         try {
             if (rec.extra.byteLength > 0) {
                 const decryptedExtra = await platform.decrypt(rec.extra, recUid, encryptionType, storage)
