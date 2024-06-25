@@ -158,7 +158,8 @@ export class KeeperEndpoint {
         this._transmissionKey = await this.getTransmissionKey()
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
-            const request = await this.prepareRequest(payload, sessionToken)
+            const apiVersion = message.apiVersion || 0
+            const request = await this.prepareRequest(payload, sessionToken, apiVersion)
             log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR');
             const startTime = Date.now()
             const response = await platform.post(this.getUrl(message.path), request)
@@ -253,9 +254,9 @@ export class KeeperEndpoint {
         }
     }
 
-    public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string): Promise<Uint8Array> {
+    public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string, apiVersion?: number): Promise<Uint8Array> {
         this._transmissionKey = await this.getTransmissionKey()
-        return prepareApiRequest(payload, this._transmissionKey, sessionToken, this.locale)
+        return prepareApiRequest(payload, this._transmissionKey, sessionToken, this.locale, apiVersion)
     }
 
     async decryptPushMessage(pushMessageData: Uint8Array): Promise<WssClientResponse> {
@@ -329,7 +330,7 @@ export async function getPushConnectionRequest(messageSessionUid: Uint8Array, tr
     return webSafe64FromBytes(apiRequest)
 }
 
-export async function prepareApiRequest(payload: Uint8Array | unknown, transmissionKey: TransmissionKey, sessionToken?: string, locale?: string): Promise<Uint8Array> {
+export async function prepareApiRequest(payload: Uint8Array | unknown, transmissionKey: TransmissionKey, sessionToken?: string, locale?: string, apiVersion?: number): Promise<Uint8Array> {
     const requestPayload = ApiRequestPayload.create()
     if (payload) {
         requestPayload.payload = payload instanceof Uint8Array
@@ -339,6 +340,7 @@ export async function prepareApiRequest(payload: Uint8Array | unknown, transmiss
     if (sessionToken) {
         requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
     }
+    requestPayload.apiVersion = apiVersion || 0
     let requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
     let encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key)
     let apiRequest = ApiRequest.create({

@@ -19,17 +19,20 @@ export type NN<T> = Required<{ [prop in keyof T]: NonNullable<T[prop]> }>
 export type RestInMessage<TIn> = {
     path: string
     toBytes(): Uint8Array
+    apiVersion?: number
 }
 
 export type RestOutMessage<TOut> = {
     path: string
     fromBytes(data: Uint8Array): TOut
+    apiVersion?: number
 }
 
 export type RestMessage<TIn, TOut> = RestInMessage<TIn> & RestOutMessage<TOut>
 
 export type RestActionMessage = {
     path: string
+    apiVersion?: number
 }
 
 type encoderClass<T> = {
@@ -40,32 +43,36 @@ type decoderClass<T> = {
     decode: (reader: Uint8Array, length?: number) => T
 }
 
-const createInMessage = <TIn>(data: TIn, path: string, encoder: encoderClass<TIn>): RestInMessage<TIn> => ({
+const createInMessage = <TIn>(data: TIn, path: string, encoder: encoderClass<TIn>, apiVersion?: number): RestInMessage<TIn> => ({
     path: path,
     toBytes(): Uint8Array {
         return encoder.encode(data).finish()
-    }
+    },
+    apiVersion
 })
 
-const createOutMessage = <TOut>(path: string, decoder: decoderClass<TOut>): RestOutMessage<TOut> => ({
+const createOutMessage = <TOut>(path: string, decoder: decoderClass<TOut>, apiVersion?: number): RestOutMessage<TOut> => ({
     path: path,
     fromBytes(data: Uint8Array): TOut {
         return decoder.decode(data)
-    }
+    },
+    apiVersion
 })
 
-const createMessage = <TIn, TOut>(data: TIn, path: string, encoder: encoderClass<TIn>, decoder: decoderClass<TOut>): RestMessage<TIn, NN<TOut>> => ({
+const createMessage = <TIn, TOut>(data: TIn, path: string, encoder: encoderClass<TIn>, decoder: decoderClass<TOut>, apiVersion?: number): RestMessage<TIn, NN<TOut>> => ({
     path: path,
     toBytes(): Uint8Array {
         return encoder.encode(data).finish()
     },
     fromBytes(data: Uint8Array): NN<TOut> {
         return <NN<TOut>>decoder.decode(data)
-    }
+    },
+    apiVersion
 })
 
-const createActionMessage = (path: string): RestActionMessage => ({
-    path: path
+const createActionMessage = (path: string, apiVersion?: number): RestActionMessage => ({
+    path: path,
+    apiVersion
 })
 
 // new login
@@ -142,11 +149,14 @@ export const requestDeviceAdminApprovalMessage = (data: Authentication.IDeviceVe
 export const requestSaltAndIterations = (): RestOutMessage<Authentication.Salt> =>
     createOutMessage('authentication/get_salt_and_iterations', Authentication.Salt)
 
-export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswordReentryRequest): RestInMessage<Authentication.IMasterPasswordReentryRequest> =>
-    createInMessage(data, 'authentication/validate_master_password', Authentication.MasterPasswordReentryRequest)
+export const validateMasterPasswordMessage = (data: Authentication.IMasterPasswordReentryRequest): RestMessage<Authentication.IMasterPasswordReentryRequest, Authentication.IMasterPasswordReentryResponse> =>
+    createMessage(data, 'authentication/validate_master_password', Authentication.MasterPasswordReentryRequest, Authentication.MasterPasswordReentryResponse, 1)
 
 export const startLoginMessageFromSessionToken = (data: Authentication.IStartLoginRequest): RestMessage<Authentication.IStartLoginRequest, NN<Authentication.ILoginResponse>> =>
     createMessage(data, 'authentication/login_from_existing_session_token', Authentication.StartLoginRequest, Authentication.LoginResponse)
+
+export const twoFASendDuoMessage = (data: Authentication.ITwoFactorSendPushRequest): RestMessage<Authentication.ITwoFactorSendPushRequest, Authentication.TwoFactorValidateResponse> =>
+    createMessage(data, 'authentication/2fa_send_duo', Authentication.TwoFactorSendPushRequest, Authentication.TwoFactorValidateResponse)
 
 export const syncDownMessage = (data: Vault.ISyncDownRequest): RestMessage<Vault.ISyncDownRequest, NN<Vault.ISyncDownResponse>> =>
     createMessage(data, 'vault/sync_down', Vault.SyncDownRequest, Vault.SyncDownResponse)

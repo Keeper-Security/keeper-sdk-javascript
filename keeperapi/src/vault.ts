@@ -64,6 +64,10 @@ export type SyncResult = {
     fullSync?: boolean
 }
 
+export type Udata = {
+    file_ids?: string[]
+}
+
 export type DRecord = {
     kind: 'record'
     uid: string
@@ -73,6 +77,7 @@ export type DRecord = {
     shared: boolean
     clientModifiedTime: number
     extra?: any
+    udata?: Udata
 }
 
 export type DRecordMetadata = {
@@ -612,6 +617,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
         const encryptionType: EncryptionType = rec.version >= 3 ? 'gcm' : 'cbc'
 
         let extra: any
+        let udata: Udata | undefined
         try {
             if (rec.extra.byteLength > 0) {
                 const decryptedExtra = await platform.decrypt(rec.extra, recUid, encryptionType, storage)
@@ -620,7 +626,13 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
         } catch (e: any) {
             console.error(`The record extra data ${recUid} cannot be decrypted (${e.message})`)
         }
-
+        try {
+            if (!!rec.udata) {
+                udata = JSON.parse(rec.udata)
+            }
+        } catch {
+            console.error('failed to parse the udata')
+        }
         try {
             const decryptedData = await platform.decrypt(rec.data, recUid, encryptionType, storage)
             const recordData = JSON.parse(platform.bytesToString(decryptedData))
@@ -633,6 +645,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
                 shared: rec.shared,
                 extra,
                 clientModifiedTime: <number>rec.clientModifiedTime,
+                udata,
             })
         } catch (e: any) {
             console.error(`The record ${recUid} cannot be decrypted (${e.message})`)
