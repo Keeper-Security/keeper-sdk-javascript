@@ -319,9 +319,9 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
                 teamPrivateKeys[teamUid + '_priv'] = {
                     // private key used above, but use full key here? will ask questions tomorrow
-                    data: team.teamKey,
-                    dataId: teamUid + '_priv',
-                    keyId: 'pk_ecc',
+                    data: team.teamEccPrivateKey,
+                    dataId: teamUid + '_priv' + 'pk_ecc',
+                    keyId: teamUid + 'pk_ecc',
                     encryptionType: 'ecc',
                     unwrappedType: 'aes',
                 }
