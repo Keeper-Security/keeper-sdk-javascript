@@ -821,6 +821,14 @@ const processRemovedSharedFolderRecords = async (records: ISharedFolderRecord[],
     }
 }
 
+const processRemovedSharedFolderFolderRecords = async (records: ISharedFolderFolderRecord[], storage: VaultStorage, dependencies: RemovedDependencies) => {
+    for (const record of records as NN<ISharedFolderFolderRecord>[]) {
+        const sharedFolderFolderUid = webSafe64FromBytes(record.folderUid)
+        const recordUid = webSafe64FromBytes(record.recordUid)
+        addRemovedDependencies(dependencies, sharedFolderFolderUid, recordUid)
+    }
+}
+
 const processMetadata = async (recordMetaData: IRecordMetaData[], storage: VaultStorage) => {
     const recordKeys: UnwrapKeyMap = {}
 
@@ -1089,6 +1097,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRemovedSharedFolderTeams(resp.removedSharedFolderTeams, removedDependencies)
             processRemovedSharedFolderUsers(resp.removedSharedFolderUsers, removedDependencies)
             await processRemovedSharedFolderRecords(resp.removedSharedFolderRecords, storage, removedDependencies)
+            await processRemovedSharedFolderFolderRecords(resp.removedSharedFolderFolderRecords, storage, removedDependencies)
 
             const removedSFDependencies: Dependency[] = []
             for await (const folder of resp.removedSharedFolders) {

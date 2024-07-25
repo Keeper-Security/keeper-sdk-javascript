@@ -229,6 +229,36 @@ export type RecordAddRequest = {
 
 export const recordAddCommand = (request: RecordAddRequest): RestCommand<RecordAddRequest, KeeperResponse> => createCommand(request, 'record_add')
 
+export type RecordPreDeleteObject = {
+    object_uid: string
+    object_type: 'record'
+    from_uid: string
+    from_type: string
+    delete_resolution: 'unlink'
+}
+export type RecordPreDeleteRequest = {
+    objects: RecordPreDeleteObject[]
+}
+export type DeletionSummary = {
+    deletion_summary: string[]
+}
+export type PreDeleteResponse = {
+    pre_delete_token: string
+    would_delete: DeletionSummary
+}
+export type KeeperPreDeleteResponse = {
+    result: string
+    result_code: string
+    message?: string
+    pre_delete_response: PreDeleteResponse
+}
+export type RecordDeleteRequest = {
+    pre_delete_token: string
+}
+
+export const recordPreDeleteCommand = (request: RecordPreDeleteRequest): RestCommand<RecordPreDeleteRequest, KeeperPreDeleteResponse> => createCommand(request, 'pre_delete')
+export const recordDeleteCommand = (request: RecordDeleteRequest): RestCommand<RecordDeleteRequest, KeeperResponse> => createCommand(request, 'delete')
+
 export type EnterpriseSettingInclude =
     | "AuditSyncConfig"
     | "AuditSyncContext"
