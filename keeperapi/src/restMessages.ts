@@ -290,6 +290,23 @@ export const setReusedPasswords = (data: Authentication.IReusedPasswordsRequest)
 export const changeToKeyTypeOne = (data: Authentication.IChangeToKeyTypeOne): RestInMessage<Authentication.IChangeToKeyTypeOne> =>
     createInMessage(data, 'vault/change_to_key_type_one', Authentication.ChangeToKeyTypeOne)
 
+/* -- BreachWatch -- */
+
+export const breachWatchInitialize = (): RestOutMessage<BreachWatch.IBreachWatchTokenRequest> =>
+    createOutMessage('breachwatch/initialize', BreachWatch.BreachWatchTokenResponse)
+
+export const breachWatchSaveToken = (data: BreachWatch.IBreachWatchTokenRequest): RestInMessage<BreachWatch.IBreachWatchTokenRequest> =>
+    createInMessage(data,'breachwatch/save_token', BreachWatch.BreachWatchTokenRequest)
+
+export const breachWatchAnonymizeToken = (data: BreachWatch.IBreachWatchTokenRequest): RestMessage<BreachWatch.IBreachWatchTokenRequest, BreachWatch.IAnonymizedTokenResponse> =>
+    createMessage(data, 'breachwatch/anonymize_token', BreachWatch.BreachWatchTokenRequest, BreachWatch.AnonymizedTokenResponse)
+
+export const breachWatchStatus = (data: BreachWatch.IBreachWatchStatusRequest): RestMessage<BreachWatch.IBreachWatchStatusRequest, BreachWatch.IBreachWatchStatusResponse> =>
+    createMessage(data, 'breachwatch/status', BreachWatch.BreachWatchStatusRequest, BreachWatch.BreachWatchStatusResponse)
+
+export const breachWatchUpdateRecordData = (data: BreachWatch.IBreachWatchUpdateRequest): RestMessage<BreachWatch.IBreachWatchUpdateRequest, BreachWatch.IBreachWatchUpdateResponse> =>
+    createMessage(data, 'breachwatch/update_record_data', BreachWatch.BreachWatchUpdateRequest, BreachWatch.BreachWatchUpdateResponse)
+
 /* -- SERVICE LOGGER -- */
 
 export const serviceLoggerGetMessage = (data: ServiceLogger.IServiceLogGetRequest): RestMessage<ServiceLogger.IServiceLogGetRequest, ServiceLogger.IServiceLogResponse> =>
