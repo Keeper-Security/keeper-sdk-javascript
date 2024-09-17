@@ -197,6 +197,9 @@ export const recordTypeDeleteMessage = (data: Records.IRecordType): RestMessage<
 export const recordsGetMessage = (data: Records.IRecordsGetRequest): RestMessage<Records.IRecordsGetRequest, Records.IRecordsGetResponse> =>
     createMessage(data, 'vault/records_get', Records.RecordsGetRequest, Records.RecordsGetResponse)
 
+export const getRecordsDetailsMessage = (data: Records.IGetRecordDataWithAccessInfoRequest): RestMessage<Records.IGetRecordDataWithAccessInfoRequest, Records.IGetRecordDataWithAccessInfoResponse> =>
+  createMessage(data, 'vault/get_records_details', Records.GetRecordDataWithAccessInfoRequest, Records.GetRecordDataWithAccessInfoResponse)
+
 export const recordsAddMessage = (data: Records.IRecordsAddRequest): RestMessage<Records.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records_add', Records.RecordsAddRequest, Records.RecordsModifyResponse)
 
