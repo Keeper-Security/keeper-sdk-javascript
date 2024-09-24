@@ -35,7 +35,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "protobufjs": "^7.2.4",
     "protobufjs-cli": "^1.1.1",
-    "rollup": "^2.77.1",
+    "rollup": "^3.29.5",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.32.1",
     "ts-jest": "^29.1.1",
