@@ -64,6 +64,10 @@ export type SyncResult = {
     fullSync?: boolean
 }
 
+export type Udata = {
+    file_ids?: string[]
+}
+
 export type DRecord = {
     kind: 'record'
     uid: string
@@ -73,6 +77,7 @@ export type DRecord = {
     shared: boolean
     clientModifiedTime: number
     extra?: any
+    udata?: Udata
 }
 
 export type DRecordMetadata = {
@@ -613,6 +618,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
         const encryptionType: EncryptionType = rec.version >= 3 ? 'gcm' : 'cbc'
 
         let extra: any
+        let udata: Udata | undefined
         try {
             if (rec.extra.byteLength > 0) {
                 const decryptedExtra = await platform.decrypt(rec.extra, recUid, encryptionType, storage)
@@ -621,7 +627,13 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
         } catch (e: any) {
             console.error(`The record extra data ${recUid} cannot be decrypted (${e.message})`)
         }
-
+        try {
+            if (!!rec.udata) {
+                udata = JSON.parse(rec.udata)
+            }
+        } catch {
+            console.error('failed to parse the udata')
+        }
         try {
             const decryptedData = await platform.decrypt(rec.data, recUid, encryptionType, storage)
             const recordData = JSON.parse(platform.bytesToString(decryptedData))
@@ -634,6 +646,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
                 shared: rec.shared,
                 extra,
                 clientModifiedTime: <number>rec.clientModifiedTime,
+                udata,
             })
         } catch (e: any) {
             console.error(`The record ${recUid} cannot be decrypted (${e.message})`)
@@ -806,6 +819,14 @@ const processRemovedSharedFolderRecords = async (records: ISharedFolderRecord[],
         const sharedFolderUid = webSafe64FromBytes(record.sharedFolderUid)
         const recordUid = webSafe64FromBytes(record.recordUid)
         addRemovedDependencies(dependencies, sharedFolderUid, recordUid)
+    }
+}
+
+const processRemovedSharedFolderFolderRecords = async (records: ISharedFolderFolderRecord[], storage: VaultStorage, dependencies: RemovedDependencies) => {
+    for (const record of records as NN<ISharedFolderFolderRecord>[]) {
+        const sharedFolderFolderUid = webSafe64FromBytes(record.folderUid)
+        const recordUid = webSafe64FromBytes(record.recordUid)
+        addRemovedDependencies(dependencies, sharedFolderFolderUid, recordUid)
     }
 }
 
@@ -1077,6 +1098,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRemovedSharedFolderTeams(resp.removedSharedFolderTeams, removedDependencies)
             processRemovedSharedFolderUsers(resp.removedSharedFolderUsers, removedDependencies)
             await processRemovedSharedFolderRecords(resp.removedSharedFolderRecords, storage, removedDependencies)
+            await processRemovedSharedFolderFolderRecords(resp.removedSharedFolderFolderRecords, storage, removedDependencies)
 
             const removedSFDependencies: Dependency[] = []
             for await (const folder of resp.removedSharedFolders) {
