@@ -297,48 +297,29 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             }
         }
 
-        // teamPrivateKeys[teamUid + '_priv'] = {
-        //     data: team.teamPrivateKey,
-        //     dataId: teamUid + '_priv',
-        //     keyId: teamUid,
-        //     encryptionType: 'cbc',
-        //     unwrappedType: 'rsa',
-        // }
-
-        switch (team.teamKeyType) {
-            case Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY:
-                teamPrivateKeys[teamUid + '_priv'] = {
-                    data: team.teamPrivateKey,
-                    dataId: teamUid + '_priv',
-                    keyId: teamUid,
-                    encryptionType: 'cbc',
-                    unwrappedType: 'rsa',
-                }
-                break
-            // RSA TAGGED - this essentially changes the unwrapped type to ecc. make sure this is fine
-            case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
-                teamPrivateKeys[teamUid + '_priv'] = {
-                    // private key used above, but use full key here? will ask questions tomorrow
-                    data: team.teamEccPrivateKey,
-                    dataId: teamUid + '_priv' + 'pk_ecc',
-                    keyId: teamUid + 'pk_ecc',
-                    encryptionType: 'ecc',
-                    unwrappedType: 'aes',
-                }
-                break
-            default:
-                console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
-                break
+        if(team.teamPrivateKey?.length){
+            teamPrivateKeys[teamUid + '_priv'] = {
+                data: team.teamPrivateKey,
+                dataId: teamUid + '_priv',
+                keyId: teamUid,
+                encryptionType: 'cbc',
+                unwrappedType: 'rsa',
+            }
+        } else {
+            console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
         }
 
-        // RSA TAGGED - fix is the switch case above. need to confirm the encryptionType and unwrappedType are correct
-        // teamPrivateKeys[teamUid + '_priv'] = {
-        //     data: team.teamPrivateKey,
-        //     dataId: teamUid + '_priv',
-        //     keyId: teamUid,
-        //     encryptionType: 'cbc',
-        //     unwrappedType: 'rsa',
-        // }
+        if(team.teamEccPublicKey?.length && team.teamEccPrivateKey?.length) {
+            teamPrivateKeys[teamUid + '_ecc'] = {
+                data: new Uint8Array([...team.teamEccPublicKey, ...team.teamEccPrivateKey]),
+                dataId: teamUid + '_ecc',
+                keyId: teamUid,
+                encryptionType: 'gcm',
+                unwrappedType: 'ecc',
+            }
+        } else {
+            console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
+        }
 
         for (const folderKey of team.sharedFolderKeys as NN<ISharedFolderKey>[]) {
             // Empty if team being removed from shared folder
@@ -372,7 +353,7 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                     teamSharedFolderKeys[folderUid] = {
                         data: folderKey.sharedFolderKey,
                         dataId: folderUid,
-                        keyId: 'pk_ecc',
+                        keyId: teamUid + '_ecc',
                         encryptionType: 'ecc',
                         unwrappedType: 'aes',
                     }

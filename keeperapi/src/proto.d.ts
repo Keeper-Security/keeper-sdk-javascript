@@ -1378,6 +1378,8 @@ export namespace Authentication {
         REQUIRES_ACCOUNT_CREATION = 16,
         REQUIRES_DEVICE_ENCRYPTED_DATA_KEY = 17,
         LOGIN_TOKEN_EXPIRED = 18,
+        NO_ENTERPRISE = 19,
+        REQUIRES_ENTERPRISE_INVITE = 20,
         LOGGED_IN = 99
     }
 
@@ -11355,6 +11357,103 @@ export namespace Authentication {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a UserDataKeyByNodeRequest. */
+    interface IUserDataKeyByNodeRequest {
+
+        /** UserDataKeyByNodeRequest nodeIds */
+        nodeIds?: ((number|Long)[]|null);
+    }
+
+    /** Represents a UserDataKeyByNodeRequest. */
+    class UserDataKeyByNodeRequest implements IUserDataKeyByNodeRequest {
+
+        /**
+         * Constructs a new UserDataKeyByNodeRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUserDataKeyByNodeRequest);
+
+        /** UserDataKeyByNodeRequest nodeIds. */
+        public nodeIds: (number|Long)[];
+
+        /**
+         * Creates a new UserDataKeyByNodeRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserDataKeyByNodeRequest instance
+         */
+        public static create(properties?: Authentication.IUserDataKeyByNodeRequest): Authentication.UserDataKeyByNodeRequest;
+
+        /**
+         * Encodes the specified UserDataKeyByNodeRequest message. Does not implicitly {@link Authentication.UserDataKeyByNodeRequest.verify|verify} messages.
+         * @param message UserDataKeyByNodeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUserDataKeyByNodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserDataKeyByNodeRequest message, length delimited. Does not implicitly {@link Authentication.UserDataKeyByNodeRequest.verify|verify} messages.
+         * @param message UserDataKeyByNodeRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUserDataKeyByNodeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserDataKeyByNodeRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserDataKeyByNodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UserDataKeyByNodeRequest;
+
+        /**
+         * Decodes a UserDataKeyByNodeRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserDataKeyByNodeRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UserDataKeyByNodeRequest;
+
+        /**
+         * Verifies a UserDataKeyByNodeRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserDataKeyByNodeRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserDataKeyByNodeRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UserDataKeyByNodeRequest;
+
+        /**
+         * Creates a plain object from a UserDataKeyByNodeRequest message. Also converts values to other types if specified.
+         * @param message UserDataKeyByNodeRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UserDataKeyByNodeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserDataKeyByNodeRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserDataKeyByNodeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of an EnterpriseUserIdDataKeyPair. */
     interface IEnterpriseUserIdDataKeyPair {
 
@@ -17950,6 +18049,109 @@ export namespace Enterprise {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a ReEncryptedUserDataKey. */
+    interface IReEncryptedUserDataKey {
+
+        /** ReEncryptedUserDataKey enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** ReEncryptedUserDataKey userEncryptedDataKey */
+        userEncryptedDataKey?: (Uint8Array|null);
+    }
+
+    /** Represents a ReEncryptedUserDataKey. */
+    class ReEncryptedUserDataKey implements IReEncryptedUserDataKey {
+
+        /**
+         * Constructs a new ReEncryptedUserDataKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IReEncryptedUserDataKey);
+
+        /** ReEncryptedUserDataKey enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** ReEncryptedUserDataKey userEncryptedDataKey. */
+        public userEncryptedDataKey: Uint8Array;
+
+        /**
+         * Creates a new ReEncryptedUserDataKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReEncryptedUserDataKey instance
+         */
+        public static create(properties?: Enterprise.IReEncryptedUserDataKey): Enterprise.ReEncryptedUserDataKey;
+
+        /**
+         * Encodes the specified ReEncryptedUserDataKey message. Does not implicitly {@link Enterprise.ReEncryptedUserDataKey.verify|verify} messages.
+         * @param message ReEncryptedUserDataKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IReEncryptedUserDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReEncryptedUserDataKey message, length delimited. Does not implicitly {@link Enterprise.ReEncryptedUserDataKey.verify|verify} messages.
+         * @param message ReEncryptedUserDataKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IReEncryptedUserDataKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReEncryptedUserDataKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReEncryptedUserDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ReEncryptedUserDataKey;
+
+        /**
+         * Decodes a ReEncryptedUserDataKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReEncryptedUserDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ReEncryptedUserDataKey;
+
+        /**
+         * Verifies a ReEncryptedUserDataKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReEncryptedUserDataKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReEncryptedUserDataKey
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ReEncryptedUserDataKey;
+
+        /**
+         * Creates a plain object from a ReEncryptedUserDataKey message. Also converts values to other types if specified.
+         * @param message ReEncryptedUserDataKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ReEncryptedUserDataKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReEncryptedUserDataKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReEncryptedUserDataKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a NodeToManagedCompanyRequest. */
     interface INodeToManagedCompanyRequest {
 
@@ -17970,6 +18172,9 @@ export namespace Enterprise {
 
         /** NodeToManagedCompanyRequest teamKeys */
         teamKeys?: (Enterprise.IEncryptedTeamKeyRequest[]|null);
+
+        /** NodeToManagedCompanyRequest usersDataKeys */
+        usersDataKeys?: (Enterprise.IReEncryptedUserDataKey[]|null);
     }
 
     /** Represents a NodeToManagedCompanyRequest. */
@@ -17998,6 +18203,9 @@ export namespace Enterprise {
 
         /** NodeToManagedCompanyRequest teamKeys. */
         public teamKeys: Enterprise.IEncryptedTeamKeyRequest[];
+
+        /** NodeToManagedCompanyRequest usersDataKeys. */
+        public usersDataKeys: Enterprise.IReEncryptedUserDataKey[];
 
         /**
          * Creates a new NodeToManagedCompanyRequest instance using the specified properties.
@@ -19272,6 +19480,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData */
         allUsersRoleData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey */
+        roleKeyEncryptedWithUserPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an EnterpriseRegistration. */
@@ -19324,6 +19535,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData. */
         public allUsersRoleData: Uint8Array;
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey. */
+        public roleKeyEncryptedWithUserPublicKey: Uint8Array;
 
         /**
          * Creates a new EnterpriseRegistration instance using the specified properties.
@@ -20560,6 +20774,315 @@ export namespace Enterprise {
 
         /**
          * Gets the default type url for EnterpriseUserDataKeys
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EnterpriseUserDataKeyLight. */
+    interface IEnterpriseUserDataKeyLight {
+
+        /** EnterpriseUserDataKeyLight enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** EnterpriseUserDataKeyLight userEncryptedDataKey */
+        userEncryptedDataKey?: (Uint8Array|null);
+
+        /** EnterpriseUserDataKeyLight keyTypeId */
+        keyTypeId?: (number|null);
+    }
+
+    /** Represents an EnterpriseUserDataKeyLight. */
+    class EnterpriseUserDataKeyLight implements IEnterpriseUserDataKeyLight {
+
+        /**
+         * Constructs a new EnterpriseUserDataKeyLight.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserDataKeyLight);
+
+        /** EnterpriseUserDataKeyLight enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** EnterpriseUserDataKeyLight userEncryptedDataKey. */
+        public userEncryptedDataKey: Uint8Array;
+
+        /** EnterpriseUserDataKeyLight keyTypeId. */
+        public keyTypeId: number;
+
+        /**
+         * Creates a new EnterpriseUserDataKeyLight instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserDataKeyLight instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserDataKeyLight): Enterprise.EnterpriseUserDataKeyLight;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeyLight message. Does not implicitly {@link Enterprise.EnterpriseUserDataKeyLight.verify|verify} messages.
+         * @param message EnterpriseUserDataKeyLight message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserDataKeyLight, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeyLight message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserDataKeyLight.verify|verify} messages.
+         * @param message EnterpriseUserDataKeyLight message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserDataKeyLight, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserDataKeyLight message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserDataKeyLight
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserDataKeyLight;
+
+        /**
+         * Decodes an EnterpriseUserDataKeyLight message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserDataKeyLight
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserDataKeyLight;
+
+        /**
+         * Verifies an EnterpriseUserDataKeyLight message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserDataKeyLight message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserDataKeyLight
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserDataKeyLight;
+
+        /**
+         * Creates a plain object from an EnterpriseUserDataKeyLight message. Also converts values to other types if specified.
+         * @param message EnterpriseUserDataKeyLight
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserDataKeyLight, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserDataKeyLight to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserDataKeyLight
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EnterpriseUserDataKeysByNode. */
+    interface IEnterpriseUserDataKeysByNode {
+
+        /** EnterpriseUserDataKeysByNode nodeId */
+        nodeId?: (number|Long|null);
+
+        /** EnterpriseUserDataKeysByNode keys */
+        keys?: (Enterprise.IEnterpriseUserDataKeyLight[]|null);
+    }
+
+    /** Represents an EnterpriseUserDataKeysByNode. */
+    class EnterpriseUserDataKeysByNode implements IEnterpriseUserDataKeysByNode {
+
+        /**
+         * Constructs a new EnterpriseUserDataKeysByNode.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserDataKeysByNode);
+
+        /** EnterpriseUserDataKeysByNode nodeId. */
+        public nodeId: (number|Long);
+
+        /** EnterpriseUserDataKeysByNode keys. */
+        public keys: Enterprise.IEnterpriseUserDataKeyLight[];
+
+        /**
+         * Creates a new EnterpriseUserDataKeysByNode instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserDataKeysByNode instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserDataKeysByNode): Enterprise.EnterpriseUserDataKeysByNode;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeysByNode message. Does not implicitly {@link Enterprise.EnterpriseUserDataKeysByNode.verify|verify} messages.
+         * @param message EnterpriseUserDataKeysByNode message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserDataKeysByNode, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeysByNode message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserDataKeysByNode.verify|verify} messages.
+         * @param message EnterpriseUserDataKeysByNode message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserDataKeysByNode, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserDataKeysByNode message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserDataKeysByNode
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserDataKeysByNode;
+
+        /**
+         * Decodes an EnterpriseUserDataKeysByNode message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserDataKeysByNode
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserDataKeysByNode;
+
+        /**
+         * Verifies an EnterpriseUserDataKeysByNode message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserDataKeysByNode message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserDataKeysByNode
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserDataKeysByNode;
+
+        /**
+         * Creates a plain object from an EnterpriseUserDataKeysByNode message. Also converts values to other types if specified.
+         * @param message EnterpriseUserDataKeysByNode
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserDataKeysByNode, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserDataKeysByNode to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserDataKeysByNode
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EnterpriseUserDataKeysByNodeResponse. */
+    interface IEnterpriseUserDataKeysByNodeResponse {
+
+        /** EnterpriseUserDataKeysByNodeResponse keys */
+        keys?: (Enterprise.IEnterpriseUserDataKeysByNode[]|null);
+    }
+
+    /** Represents an EnterpriseUserDataKeysByNodeResponse. */
+    class EnterpriseUserDataKeysByNodeResponse implements IEnterpriseUserDataKeysByNodeResponse {
+
+        /**
+         * Constructs a new EnterpriseUserDataKeysByNodeResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IEnterpriseUserDataKeysByNodeResponse);
+
+        /** EnterpriseUserDataKeysByNodeResponse keys. */
+        public keys: Enterprise.IEnterpriseUserDataKeysByNode[];
+
+        /**
+         * Creates a new EnterpriseUserDataKeysByNodeResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EnterpriseUserDataKeysByNodeResponse instance
+         */
+        public static create(properties?: Enterprise.IEnterpriseUserDataKeysByNodeResponse): Enterprise.EnterpriseUserDataKeysByNodeResponse;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeysByNodeResponse message. Does not implicitly {@link Enterprise.EnterpriseUserDataKeysByNodeResponse.verify|verify} messages.
+         * @param message EnterpriseUserDataKeysByNodeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IEnterpriseUserDataKeysByNodeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EnterpriseUserDataKeysByNodeResponse message, length delimited. Does not implicitly {@link Enterprise.EnterpriseUserDataKeysByNodeResponse.verify|verify} messages.
+         * @param message EnterpriseUserDataKeysByNodeResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IEnterpriseUserDataKeysByNodeResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EnterpriseUserDataKeysByNodeResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EnterpriseUserDataKeysByNodeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.EnterpriseUserDataKeysByNodeResponse;
+
+        /**
+         * Decodes an EnterpriseUserDataKeysByNodeResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EnterpriseUserDataKeysByNodeResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.EnterpriseUserDataKeysByNodeResponse;
+
+        /**
+         * Verifies an EnterpriseUserDataKeysByNodeResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EnterpriseUserDataKeysByNodeResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EnterpriseUserDataKeysByNodeResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.EnterpriseUserDataKeysByNodeResponse;
+
+        /**
+         * Creates a plain object from an EnterpriseUserDataKeysByNodeResponse message. Also converts values to other types if specified.
+         * @param message EnterpriseUserDataKeysByNodeResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.EnterpriseUserDataKeysByNodeResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EnterpriseUserDataKeysByNodeResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EnterpriseUserDataKeysByNodeResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -32301,6 +32824,660 @@ export namespace Enterprise {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a TeamsEnterpriseUsersRemoveRequest. */
+    interface ITeamsEnterpriseUsersRemoveRequest {
+
+        /** TeamsEnterpriseUsersRemoveRequest teams */
+        teams?: (Enterprise.ITeamsEnterpriseUsersRemoveTeamRequest[]|null);
+    }
+
+    /** Represents a TeamsEnterpriseUsersRemoveRequest. */
+    class TeamsEnterpriseUsersRemoveRequest implements ITeamsEnterpriseUsersRemoveRequest {
+
+        /**
+         * Constructs a new TeamsEnterpriseUsersRemoveRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITeamsEnterpriseUsersRemoveRequest);
+
+        /** TeamsEnterpriseUsersRemoveRequest teams. */
+        public teams: Enterprise.ITeamsEnterpriseUsersRemoveTeamRequest[];
+
+        /**
+         * Creates a new TeamsEnterpriseUsersRemoveRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamsEnterpriseUsersRemoveRequest instance
+         */
+        public static create(properties?: Enterprise.ITeamsEnterpriseUsersRemoveRequest): Enterprise.TeamsEnterpriseUsersRemoveRequest;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveRequest message. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveRequest.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITeamsEnterpriseUsersRemoveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveRequest message, length delimited. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveRequest.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITeamsEnterpriseUsersRemoveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamsEnterpriseUsersRemoveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TeamsEnterpriseUsersRemoveRequest;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamsEnterpriseUsersRemoveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TeamsEnterpriseUsersRemoveRequest;
+
+        /**
+         * Verifies a TeamsEnterpriseUsersRemoveRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamsEnterpriseUsersRemoveRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamsEnterpriseUsersRemoveRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TeamsEnterpriseUsersRemoveRequest;
+
+        /**
+         * Creates a plain object from a TeamsEnterpriseUsersRemoveRequest message. Also converts values to other types if specified.
+         * @param message TeamsEnterpriseUsersRemoveRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TeamsEnterpriseUsersRemoveRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamsEnterpriseUsersRemoveRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersRemoveRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamsEnterpriseUsersRemoveTeamRequest. */
+    interface ITeamsEnterpriseUsersRemoveTeamRequest {
+
+        /** TeamsEnterpriseUsersRemoveTeamRequest teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** TeamsEnterpriseUsersRemoveTeamRequest users */
+        users?: (Enterprise.ITeamsEnterpriseUsersRemoveUserRequest[]|null);
+    }
+
+    /** Represents a TeamsEnterpriseUsersRemoveTeamRequest. */
+    class TeamsEnterpriseUsersRemoveTeamRequest implements ITeamsEnterpriseUsersRemoveTeamRequest {
+
+        /**
+         * Constructs a new TeamsEnterpriseUsersRemoveTeamRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITeamsEnterpriseUsersRemoveTeamRequest);
+
+        /** TeamsEnterpriseUsersRemoveTeamRequest teamUid. */
+        public teamUid: Uint8Array;
+
+        /** TeamsEnterpriseUsersRemoveTeamRequest users. */
+        public users: Enterprise.ITeamsEnterpriseUsersRemoveUserRequest[];
+
+        /**
+         * Creates a new TeamsEnterpriseUsersRemoveTeamRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamsEnterpriseUsersRemoveTeamRequest instance
+         */
+        public static create(properties?: Enterprise.ITeamsEnterpriseUsersRemoveTeamRequest): Enterprise.TeamsEnterpriseUsersRemoveTeamRequest;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveTeamRequest message. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveTeamRequest.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveTeamRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITeamsEnterpriseUsersRemoveTeamRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveTeamRequest message, length delimited. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveTeamRequest.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveTeamRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITeamsEnterpriseUsersRemoveTeamRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveTeamRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamsEnterpriseUsersRemoveTeamRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TeamsEnterpriseUsersRemoveTeamRequest;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveTeamRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamsEnterpriseUsersRemoveTeamRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TeamsEnterpriseUsersRemoveTeamRequest;
+
+        /**
+         * Verifies a TeamsEnterpriseUsersRemoveTeamRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamsEnterpriseUsersRemoveTeamRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamsEnterpriseUsersRemoveTeamRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TeamsEnterpriseUsersRemoveTeamRequest;
+
+        /**
+         * Creates a plain object from a TeamsEnterpriseUsersRemoveTeamRequest message. Also converts values to other types if specified.
+         * @param message TeamsEnterpriseUsersRemoveTeamRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TeamsEnterpriseUsersRemoveTeamRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamsEnterpriseUsersRemoveTeamRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersRemoveTeamRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamsEnterpriseUsersRemoveUserRequest. */
+    interface ITeamsEnterpriseUsersRemoveUserRequest {
+
+        /** TeamsEnterpriseUsersRemoveUserRequest enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+    }
+
+    /** Represents a TeamsEnterpriseUsersRemoveUserRequest. */
+    class TeamsEnterpriseUsersRemoveUserRequest implements ITeamsEnterpriseUsersRemoveUserRequest {
+
+        /**
+         * Constructs a new TeamsEnterpriseUsersRemoveUserRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITeamsEnterpriseUsersRemoveUserRequest);
+
+        /** TeamsEnterpriseUsersRemoveUserRequest enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /**
+         * Creates a new TeamsEnterpriseUsersRemoveUserRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamsEnterpriseUsersRemoveUserRequest instance
+         */
+        public static create(properties?: Enterprise.ITeamsEnterpriseUsersRemoveUserRequest): Enterprise.TeamsEnterpriseUsersRemoveUserRequest;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveUserRequest message. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveUserRequest.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveUserRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITeamsEnterpriseUsersRemoveUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveUserRequest message, length delimited. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveUserRequest.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveUserRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITeamsEnterpriseUsersRemoveUserRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveUserRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamsEnterpriseUsersRemoveUserRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TeamsEnterpriseUsersRemoveUserRequest;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveUserRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamsEnterpriseUsersRemoveUserRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TeamsEnterpriseUsersRemoveUserRequest;
+
+        /**
+         * Verifies a TeamsEnterpriseUsersRemoveUserRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamsEnterpriseUsersRemoveUserRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamsEnterpriseUsersRemoveUserRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TeamsEnterpriseUsersRemoveUserRequest;
+
+        /**
+         * Creates a plain object from a TeamsEnterpriseUsersRemoveUserRequest message. Also converts values to other types if specified.
+         * @param message TeamsEnterpriseUsersRemoveUserRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TeamsEnterpriseUsersRemoveUserRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamsEnterpriseUsersRemoveUserRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersRemoveUserRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamsEnterpriseUsersRemoveResponse. */
+    interface ITeamsEnterpriseUsersRemoveResponse {
+
+        /** TeamsEnterpriseUsersRemoveResponse teams */
+        teams?: (Enterprise.ITeamsEnterpriseUsersRemoveTeamResponse[]|null);
+
+        /** TeamsEnterpriseUsersRemoveResponse revision */
+        revision?: (number|Long|null);
+    }
+
+    /** Represents a TeamsEnterpriseUsersRemoveResponse. */
+    class TeamsEnterpriseUsersRemoveResponse implements ITeamsEnterpriseUsersRemoveResponse {
+
+        /**
+         * Constructs a new TeamsEnterpriseUsersRemoveResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITeamsEnterpriseUsersRemoveResponse);
+
+        /** TeamsEnterpriseUsersRemoveResponse teams. */
+        public teams: Enterprise.ITeamsEnterpriseUsersRemoveTeamResponse[];
+
+        /** TeamsEnterpriseUsersRemoveResponse revision. */
+        public revision: (number|Long);
+
+        /**
+         * Creates a new TeamsEnterpriseUsersRemoveResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamsEnterpriseUsersRemoveResponse instance
+         */
+        public static create(properties?: Enterprise.ITeamsEnterpriseUsersRemoveResponse): Enterprise.TeamsEnterpriseUsersRemoveResponse;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveResponse message. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveResponse.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITeamsEnterpriseUsersRemoveResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveResponse message, length delimited. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveResponse.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITeamsEnterpriseUsersRemoveResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamsEnterpriseUsersRemoveResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TeamsEnterpriseUsersRemoveResponse;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamsEnterpriseUsersRemoveResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TeamsEnterpriseUsersRemoveResponse;
+
+        /**
+         * Verifies a TeamsEnterpriseUsersRemoveResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamsEnterpriseUsersRemoveResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamsEnterpriseUsersRemoveResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TeamsEnterpriseUsersRemoveResponse;
+
+        /**
+         * Creates a plain object from a TeamsEnterpriseUsersRemoveResponse message. Also converts values to other types if specified.
+         * @param message TeamsEnterpriseUsersRemoveResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TeamsEnterpriseUsersRemoveResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamsEnterpriseUsersRemoveResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersRemoveResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamsEnterpriseUsersRemoveTeamResponse. */
+    interface ITeamsEnterpriseUsersRemoveTeamResponse {
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse users */
+        users?: (Enterprise.ITeamsEnterpriseUsersRemoveUserResponse[]|null);
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse success */
+        success?: (boolean|null);
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse message */
+        message?: (string|null);
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse resultCode */
+        resultCode?: (string|null);
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse additionalInfo */
+        additionalInfo?: (string|null);
+    }
+
+    /** Represents a TeamsEnterpriseUsersRemoveTeamResponse. */
+    class TeamsEnterpriseUsersRemoveTeamResponse implements ITeamsEnterpriseUsersRemoveTeamResponse {
+
+        /**
+         * Constructs a new TeamsEnterpriseUsersRemoveTeamResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITeamsEnterpriseUsersRemoveTeamResponse);
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse teamUid. */
+        public teamUid: Uint8Array;
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse users. */
+        public users: Enterprise.ITeamsEnterpriseUsersRemoveUserResponse[];
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse success. */
+        public success: boolean;
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse message. */
+        public message: string;
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse resultCode. */
+        public resultCode: string;
+
+        /** TeamsEnterpriseUsersRemoveTeamResponse additionalInfo. */
+        public additionalInfo: string;
+
+        /**
+         * Creates a new TeamsEnterpriseUsersRemoveTeamResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamsEnterpriseUsersRemoveTeamResponse instance
+         */
+        public static create(properties?: Enterprise.ITeamsEnterpriseUsersRemoveTeamResponse): Enterprise.TeamsEnterpriseUsersRemoveTeamResponse;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveTeamResponse message. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveTeamResponse.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveTeamResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITeamsEnterpriseUsersRemoveTeamResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveTeamResponse message, length delimited. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveTeamResponse.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveTeamResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITeamsEnterpriseUsersRemoveTeamResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveTeamResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamsEnterpriseUsersRemoveTeamResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TeamsEnterpriseUsersRemoveTeamResponse;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveTeamResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamsEnterpriseUsersRemoveTeamResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TeamsEnterpriseUsersRemoveTeamResponse;
+
+        /**
+         * Verifies a TeamsEnterpriseUsersRemoveTeamResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamsEnterpriseUsersRemoveTeamResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamsEnterpriseUsersRemoveTeamResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TeamsEnterpriseUsersRemoveTeamResponse;
+
+        /**
+         * Creates a plain object from a TeamsEnterpriseUsersRemoveTeamResponse message. Also converts values to other types if specified.
+         * @param message TeamsEnterpriseUsersRemoveTeamResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TeamsEnterpriseUsersRemoveTeamResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamsEnterpriseUsersRemoveTeamResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersRemoveTeamResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TeamsEnterpriseUsersRemoveUserResponse. */
+    interface ITeamsEnterpriseUsersRemoveUserResponse {
+
+        /** TeamsEnterpriseUsersRemoveUserResponse enterpriseUserId */
+        enterpriseUserId?: (number|Long|null);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse revision */
+        revision?: (number|Long|null);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse success */
+        success?: (boolean|null);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse message */
+        message?: (string|null);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse resultCode */
+        resultCode?: (string|null);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse additionalInfo */
+        additionalInfo?: (string|null);
+    }
+
+    /** Represents a TeamsEnterpriseUsersRemoveUserResponse. */
+    class TeamsEnterpriseUsersRemoveUserResponse implements ITeamsEnterpriseUsersRemoveUserResponse {
+
+        /**
+         * Constructs a new TeamsEnterpriseUsersRemoveUserResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.ITeamsEnterpriseUsersRemoveUserResponse);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse enterpriseUserId. */
+        public enterpriseUserId: (number|Long);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse revision. */
+        public revision: (number|Long);
+
+        /** TeamsEnterpriseUsersRemoveUserResponse success. */
+        public success: boolean;
+
+        /** TeamsEnterpriseUsersRemoveUserResponse message. */
+        public message: string;
+
+        /** TeamsEnterpriseUsersRemoveUserResponse resultCode. */
+        public resultCode: string;
+
+        /** TeamsEnterpriseUsersRemoveUserResponse additionalInfo. */
+        public additionalInfo: string;
+
+        /**
+         * Creates a new TeamsEnterpriseUsersRemoveUserResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TeamsEnterpriseUsersRemoveUserResponse instance
+         */
+        public static create(properties?: Enterprise.ITeamsEnterpriseUsersRemoveUserResponse): Enterprise.TeamsEnterpriseUsersRemoveUserResponse;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveUserResponse message. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveUserResponse.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveUserResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.ITeamsEnterpriseUsersRemoveUserResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TeamsEnterpriseUsersRemoveUserResponse message, length delimited. Does not implicitly {@link Enterprise.TeamsEnterpriseUsersRemoveUserResponse.verify|verify} messages.
+         * @param message TeamsEnterpriseUsersRemoveUserResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.ITeamsEnterpriseUsersRemoveUserResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveUserResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TeamsEnterpriseUsersRemoveUserResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.TeamsEnterpriseUsersRemoveUserResponse;
+
+        /**
+         * Decodes a TeamsEnterpriseUsersRemoveUserResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TeamsEnterpriseUsersRemoveUserResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.TeamsEnterpriseUsersRemoveUserResponse;
+
+        /**
+         * Verifies a TeamsEnterpriseUsersRemoveUserResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TeamsEnterpriseUsersRemoveUserResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TeamsEnterpriseUsersRemoveUserResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.TeamsEnterpriseUsersRemoveUserResponse;
+
+        /**
+         * Creates a plain object from a TeamsEnterpriseUsersRemoveUserResponse message. Also converts values to other types if specified.
+         * @param message TeamsEnterpriseUsersRemoveUserResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.TeamsEnterpriseUsersRemoveUserResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TeamsEnterpriseUsersRemoveUserResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TeamsEnterpriseUsersRemoveUserResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a DomainAlias. */
     interface IDomainAlias {
 
@@ -35439,6 +36616,9 @@ export namespace AccountSummary {
 
         /** Settings channels */
         channels?: (Authentication.TwoFactorChannelType[]|null);
+
+        /** Settings personalUsernames */
+        personalUsernames?: (string[]|null);
     }
 
     /** Represents a Settings. */
@@ -35563,6 +36743,9 @@ export namespace AccountSummary {
 
         /** Settings channels. */
         public channels: Authentication.TwoFactorChannelType[];
+
+        /** Settings personalUsernames. */
+        public personalUsernames: string[];
 
         /**
          * Creates a new Settings instance using the specified properties.
@@ -36905,7 +38088,8 @@ export namespace Automator {
      */
     enum SsoAuthenticationProtocolType {
         UNKNOWN_PROTOCOL = 0,
-        SAML2 = 1
+        SAML2 = 1,
+        JWT = 2
     }
 
     /** CertificateFormat enum. */
@@ -41628,7 +42812,8 @@ export namespace SsoCloud {
 
     /** Authentication protocols we support. */
     enum AuthProtocolType {
-        SAML2 = 0
+        SAML2 = 0,
+        JWT = 1
     }
 
     /** Datatypes of SsoCloudSettings */
@@ -54506,6 +55691,115 @@ export namespace Tokens {
 
         /**
          * Gets the default type url for UserLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a KeyCloakToken. */
+    interface IKeyCloakToken {
+
+        /** KeyCloakToken email */
+        email?: (string|null);
+
+        /** KeyCloakToken userId */
+        userId?: (string|null);
+
+        /** KeyCloakToken groups */
+        groups?: (string[]|null);
+    }
+
+    /** Represents a KeyCloakToken. */
+    class KeyCloakToken implements IKeyCloakToken {
+
+        /**
+         * Constructs a new KeyCloakToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IKeyCloakToken);
+
+        /** KeyCloakToken email. */
+        public email: string;
+
+        /** KeyCloakToken userId. */
+        public userId: string;
+
+        /** KeyCloakToken groups. */
+        public groups: string[];
+
+        /**
+         * Creates a new KeyCloakToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns KeyCloakToken instance
+         */
+        public static create(properties?: Tokens.IKeyCloakToken): Tokens.KeyCloakToken;
+
+        /**
+         * Encodes the specified KeyCloakToken message. Does not implicitly {@link Tokens.KeyCloakToken.verify|verify} messages.
+         * @param message KeyCloakToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IKeyCloakToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified KeyCloakToken message, length delimited. Does not implicitly {@link Tokens.KeyCloakToken.verify|verify} messages.
+         * @param message KeyCloakToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IKeyCloakToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a KeyCloakToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns KeyCloakToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.KeyCloakToken;
+
+        /**
+         * Decodes a KeyCloakToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns KeyCloakToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.KeyCloakToken;
+
+        /**
+         * Verifies a KeyCloakToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a KeyCloakToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns KeyCloakToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.KeyCloakToken;
+
+        /**
+         * Creates a plain object from a KeyCloakToken message. Also converts values to other types if specified.
+         * @param message KeyCloakToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.KeyCloakToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this KeyCloakToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KeyCloakToken
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -70671,6 +71965,9 @@ export namespace Vault {
 
         /** Team teamEccPrivateKey */
         teamEccPrivateKey?: (Uint8Array|null);
+
+        /** Team teamEccPublicKey */
+        teamEccPublicKey?: (Uint8Array|null);
     }
 
     /** Represents a Team. */
@@ -70714,6 +72011,9 @@ export namespace Vault {
 
         /** Team teamEccPrivateKey. */
         public teamEccPrivateKey: Uint8Array;
+
+        /** Team teamEccPublicKey. */
+        public teamEccPublicKey: Uint8Array;
 
         /**
          * Creates a new Team instance using the specified properties.
