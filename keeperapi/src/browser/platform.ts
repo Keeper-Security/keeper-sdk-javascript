@@ -91,8 +91,8 @@ export const browserPlatform: Platform = class {
         const extractable = !!canExport
         const cbcKey = await this.aesCbcImportKey(key, extractable) 
         const gcmKey = await this.aesGcmImportKey(key, extractable)
-        cryptoKeysCache['cbc'][keyId] = cbcKey
-        cryptoKeysCache['gcm'][keyId] = gcmKey
+        setCryptoKeysCache('cbc', keyId, cbcKey)//cryptoKeysCache['cbc'][keyId] = cbcKey
+        setCryptoKeysCache('gcm', keyId, gcmKey)//cryptoKeysCache['gcm'][keyId] = gcmKey
 
         if (storage) {
             if (storage.saveObject) {
@@ -106,7 +106,7 @@ export const browserPlatform: Platform = class {
 
     static async importKeyEC(keyId: string, privateKey: Uint8Array, publicKey: Uint8Array, storage?: KeyStorage): Promise<void> {
         const key = await this.importPrivateKeyEC(privateKey, publicKey)          
-        cryptoKeysCache['ecc'][keyId] = key
+        setCryptoKeysCache('ecc', keyId, key)//cryptoKeysCache['ecc'][keyId] = key
 
         if (storage) {
             if (storage.saveObject) {
@@ -121,7 +121,7 @@ export const browserPlatform: Platform = class {
 
     // RSA TAGGED - done, there is already an ecc version
     static async importKeyRSA(keyId: string, key: Uint8Array, storage?: KeyStorage): Promise<void> {
-        keyBytesCache[keyId] = key
+        setKeyBytesCache(keyId, key)//keyBytesCache[keyId] = key
 
         if (storage) {
             await storage.saveKeyBytes(keyId, key)
@@ -129,10 +129,11 @@ export const browserPlatform: Platform = class {
     }
 
     static unloadKeys(): void {
-        cryptoKeysCache.cbc = {}
-        cryptoKeysCache.gcm = {}
-        cryptoKeysCache.ecc = {}
-        keyBytesCache = {}
+        // cryptoKeysCache.cbc = {}
+        // cryptoKeysCache.gcm = {}
+        // cryptoKeysCache.ecc = {}
+        clearCryptoKeysCache()
+        clearKeyBytesCache()//keyBytesCache = {}
     }
 
     static getStorageKeyId(keyId: string, keyType: EncryptionType): string {
@@ -170,7 +171,7 @@ export const browserPlatform: Platform = class {
     }
 
     static async loadKeyBytes(keyId: string, storage?: KeyStorage): Promise<Uint8Array> {
-        const cachedKey = keyBytesCache[keyId]
+        const cachedKey = getKeyBytesCacheItem(keyId)//keyBytesCache[keyId]
         if (cachedKey) {
             return cachedKey
         }
@@ -180,18 +181,18 @@ export const browserPlatform: Platform = class {
         if (!keyBytes) {
             throw new Error(`Unable to load the key ${keyId}`)
         }
-        keyBytesCache[keyId] = keyBytes
+        setKeyBytesCache(keyId, keyBytes)//keyBytesCache[keyId] = keyBytes
         return keyBytes
     }
 
     static async loadKey(keyId: string, keyType: CryptoKeyType, storage?: KeyStorage): Promise<CryptoKey> {
-        const cachedKey = cryptoKeysCache[keyType][keyId]
+        const cachedKey = getCryptoKeysCacheItem(keyType, keyId)//cryptoKeysCache[keyType][keyId]
         if (cachedKey) {
             return cachedKey
         }
 
         const key = await this.loadCryptoKey(keyId, keyType, storage)
-        cryptoKeysCache[keyType][keyId] = key
+        setCryptoKeysCache(keyType, keyId, key)//cryptoKeysCache[keyType][keyId] = key
         return key
     }
 
@@ -258,7 +259,7 @@ export const browserPlatform: Platform = class {
         switch (unwrappedKeyType) {
             case 'rsa':
                 // RSA TAGGED - added another item for ecc
-                if (keyBytesCache[keyId]) {
+                if(getKeyBytesCacheItem(keyId)){//if (keyBytesCache[keyId]) {
                     // Skip redundant RSA key decryption
                     return
                 }
@@ -266,7 +267,7 @@ export const browserPlatform: Platform = class {
                 await this.unwrapRSAKey(key, keyId, unwrappingKeyId, encryptionType, storage)
                 break            
             case 'aes':
-                if (cryptoKeysCache['gcm'][keyId]) {
+                if(getCryptoKeysCacheItem('gcm', keyId)){//if (cryptoKeysCache['gcm'][keyId]) {
                     // Keeperapp sometimes provides redundant key data, for example, like if you own a record in a shared folder,
                     // or if a record belongs to multiple shared folders. So, short circuit when possible for a performance improvement
                     return
@@ -276,14 +277,11 @@ export const browserPlatform: Platform = class {
                 break
             // TODO: add something like this, need to find pub/priv key pair
             case 'ecc':
-                if (cryptoKeysCache['gcm'][keyId]) {
+                if(getCryptoKeysCacheItem('gcm', keyId)){// if (cryptoKeysCache['gcm'][keyId]) {
                     return
                 }
-
+                
                 try {
-                    debugger
-                    // maybe this priv key?
-                    // const eccPrivateKey = await this.loadKey(unwrappingKeyId, 'ecc', storage)
                     const privkey = key.slice(ECC_PUB_KEY_LENGTH)
                     const pubKey = key.slice(0, ECC_PUB_KEY_LENGTH)
     
@@ -346,8 +344,8 @@ export const browserPlatform: Platform = class {
         const gcmKey = await crypto.subtle.unwrapKey('raw', wrappedKey, unwrappingKey, algoParams, 'AES-GCM', canExtract, keyUsages)
         const cbcKey = await crypto.subtle.unwrapKey('raw', wrappedKey, unwrappingKey, algoParams, 'AES-CBC', canExtract, keyUsages)
 
-        cryptoKeysCache['cbc'][keyId] = cbcKey
-        cryptoKeysCache['gcm'][keyId] = gcmKey
+        setCryptoKeysCache('cbc', keyId, cbcKey)//cryptoKeysCache['cbc'][keyId] = cbcKey
+        setCryptoKeysCache('gcm', keyId, gcmKey)//cryptoKeysCache['gcm'][keyId] = gcmKey
 
         if (storage) {
             if (storage.saveObject) {
@@ -528,7 +526,7 @@ export const browserPlatform: Platform = class {
             'key_ops': [
                 'deriveBits'
             ],
-            'kty': 'EC',
+            'kty': 'EC',            
             x,
             y
         }
@@ -1001,6 +999,21 @@ const heartbeat = setInterval(() => {
 }, 10000)
 
 let keyBytesCache: Record<string, Uint8Array> = {}
+const getKeyBytesCache = () => {
+    return keyBytesCache
+}
+
+const getKeyBytesCacheItem = (key:any) => {
+    return keyBytesCache[key]
+}
+
+const setKeyBytesCache = (key:any, value:any) => {
+    keyBytesCache[key] = value
+}
+
+const clearKeyBytesCache = () => {
+    keyBytesCache = {}
+}
 
 type CryptoKeyCache = {
     [key in CryptoKeyType]: Record<string, CryptoKey>
@@ -1010,10 +1023,30 @@ type CryptoKeyCache = {
 // RSA TAGGED - just removes rsa type
 type CryptoKeyType = Exclude<EncryptionType, 'rsa'>
 
-const cryptoKeysCache: CryptoKeyCache = {
+let cryptoKeysCache: CryptoKeyCache = {
     cbc: {},
     gcm: {},
     ecc: {},
+}
+
+const getCryptoKeysCache = () => {
+    return cryptoKeysCache
+}
+
+const getCryptoKeysCacheItem = (encr:'cbc' | 'gcm' | 'ecc', key:any) => {
+    return cryptoKeysCache[encr][key]
+}
+
+const setCryptoKeysCache = (encr:'cbc' | 'gcm' | 'ecc', key:any, value:any) => {
+    cryptoKeysCache[encr][key] = value
+}
+
+const clearCryptoKeysCache = () => {
+    cryptoKeysCache = {
+        cbc: {},
+        gcm: {},
+        ecc: {},
+    } 
 }
 
 class BrowserCryptoWorker implements CryptoWorker {
