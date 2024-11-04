@@ -23,7 +23,6 @@ import {
     CryptoWorkerPoolConfig
 } from '../cryptoWorker';
 
-// RSA TAGGED - just naming the algo
 const rsaAlgorithmName: string = "RSASSA-PKCS1-v1_5";
 const CBC_IV_LENGTH = 16
 const GCM_IV_LENGTH = 12
@@ -119,7 +118,6 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    // RSA TAGGED - done, there is already an ecc version
     static async importKeyRSA(keyId: string, key: Uint8Array, storage?: KeyStorage): Promise<void> {
         keyBytesCache[keyId] = key
 
@@ -252,7 +250,6 @@ export const browserPlatform: Platform = class {
     static async unwrapKey(key: Uint8Array, keyId: string, unwrappingKeyId: string, encryptionType: EncryptionType, unwrappedKeyType: UnwrappedKeyType, storage?: KeyStorage, canExport?: boolean): Promise<void> {
         switch (unwrappedKeyType) {
             case 'rsa':
-                // RSA TAGGED - added another item for ecc
                 if (keyBytesCache[keyId]) {
                     // Skip redundant RSA key decryption
                     return
@@ -295,7 +292,6 @@ export const browserPlatform: Platform = class {
         let algoParams: AesCbcParams | AesGcmParams
         switch (encryptionType) {
             case 'rsa':
-                // RSA TAGGED - ecc already an option, but might need to fallback to ecc here
                 const rsaKey = await this.loadKeyBytes(unwrappingKeyId, storage)
                 const keyBytes = this.privateDecrypt(key, rsaKey)
                 await this.importKey(keyId, keyBytes, storage, canExport) 
@@ -352,7 +348,6 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    // RSA TAGGED - created copy with ECC involved, unwrapping the private key instead
     static async unwrapRSAKey(key: Uint8Array, keyId: string, unwrappingKeyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<void> {
         const rsaKey = await this.decrypt(key, unwrappingKeyId, encryptionType, storage)
         await this.importKeyRSA(keyId, rsaKey, storage)
@@ -375,7 +370,6 @@ export const browserPlatform: Platform = class {
                 return this.aesGcmDecryptWebCrypto(data, key)
             }
             case 'rsa': {
-                // RSA TAGGED - ecc already an option, but might need to fallback to ecc here
                 const key = await this.loadKeyBytes(keyId, storage)
                 return this.privateDecrypt(data, key)
             }
@@ -389,7 +383,6 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    // RSA TAGGED - ecc copy already below
     static async generateRSAKeyPair(): Promise<{privateKey: Uint8Array; publicKey: Uint8Array}> {
         let keyPair = await crypto.subtle.generateKey({
             name: rsaAlgorithmName,
@@ -433,7 +426,6 @@ export const browserPlatform: Platform = class {
         return await this.mainPublicEncryptEC(messageBytes, pubKey, id, true)
     }
 
-    // RSA TAGGED - ecc copy already below
     static publicEncrypt(data: Uint8Array, key: string): Uint8Array {
         let publicKeyHex = base64ToHex(key);
         const pos = _asnhex_getPosArrayOfChildren_AtObj(publicKeyHex, 0);
@@ -488,7 +480,6 @@ export const browserPlatform: Platform = class {
         return await this.mainPublicEncryptEC(data, key, id)
     }
 
-    // RSA TAGGED - ecc copy already below
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
         let pkh = bytesToHex(key);
         const rsa = new RSAKey();
@@ -575,8 +566,6 @@ export const browserPlatform: Platform = class {
         return await this.aesGcmDecryptWebCrypto(message, symmetricKey)
     }
 
-    // TODO Not tested
-    // RSA TAGGED - unused
     static async privateSign(data: Uint8Array, key: string): Promise<Uint8Array> {
         let _key = await crypto.subtle.importKey("pkcs8",
             browserPlatform.base64ToBytes(key),
@@ -605,7 +594,6 @@ export const browserPlatform: Platform = class {
             }
 
             case 'rsa': {
-                // RSA TAGGED - ecc already an option, but might need to fallback to ecc here
                 const publicKey = await this.loadKeyBytes(keyId + '_pub')
                 return this.publicEncrypt(data, this.bytesToBase64(publicKey))
             }
@@ -999,7 +987,6 @@ type CryptoKeyCache = {
 }
 
 // Web crypto supports aes gcm, aes cbc with padding, and ecc
-// RSA TAGGED - just removes rsa type
 type CryptoKeyType = Exclude<EncryptionType, 'rsa'>
 
 let cryptoKeysCache: CryptoKeyCache = {
