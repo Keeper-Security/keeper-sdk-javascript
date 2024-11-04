@@ -299,11 +299,11 @@ export class KeeperEndpoint {
                 this.onsitePrivateKey = privateKey
                 this.onsitePublicKey = publicKey
             } else {
+                const {privateKey, publicKey} = await platform.generateRSAKeyPair()
+    
+                this.onsitePrivateKey = privateKey
+                this.onsitePublicKey = publicKey
             }
-            const {privateKey, publicKey} = await platform.generateRSAKeyPair()
-
-            this.onsitePrivateKey = privateKey
-            this.onsitePublicKey = publicKey
         }
 
         return webSafe64FromBytes(this.onsitePublicKey)
