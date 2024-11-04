@@ -208,7 +208,8 @@ export const moveCommand = (request: MoveRequest): RestCommand<MoveRequest, Keep
 
 export type ShareAccountRequest = {
     to_role_id: number
-    transfer_key: string
+    // do not include transfer key for EC only https://keeper.atlassian.net/wiki/x/OYCoAg
+    transfer_key?: string
 }
 
 export const shareAccountCommand = (request: ShareAccountRequest): RestCommand<ShareAccountRequest, KeeperResponse> => createCommand(request, 'share_account')
