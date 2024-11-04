@@ -305,8 +305,6 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                 encryptionType: 'cbc',
                 unwrappedType: 'rsa',
             }
-        } else {
-            console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
         }
 
         if(team.teamEccPublicKey?.length && team.teamEccPrivateKey?.length) {
@@ -317,7 +315,9 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                 encryptionType: 'gcm',
                 unwrappedType: 'ecc',
             }
-        } else {
+        }
+
+        if(!team.teamPrivateKey?.length && (!team.teamEccPublicKey?.length || !team.teamEccPrivateKey?.length)){
             console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
         }
 
