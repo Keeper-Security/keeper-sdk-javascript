@@ -339,7 +339,6 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                         unwrappedType: 'aes',
                     }
                     break
-                // RSA TAGGED - done, since this is a read operation, we only need to add ecc read below
                 case Records.RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
                     teamSharedFolderKeys[folderUid] = {
                         data: folderKey.sharedFolderKey,
@@ -988,7 +987,6 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
         await platform.importKey('data', auth.dataKey!, undefined, true)
         await platform.importKeyEC('pk_ecc', new Uint8Array(auth.eccPrivateKey!), new Uint8Array(auth.eccPublicKey!), undefined, true)
-        // RSA TAGGED - keep here for read purposes
         await platform.importKeyRSA('pk_rsa', auth.privateKey!, undefined, true)
 
         while (true) {

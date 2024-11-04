@@ -1127,8 +1127,7 @@ export class Auth {
         return JSON.parse(wssClientResponse.message)
     }
 
-    // RSA TAGGED - it looks like we are already providing an ecc key, dont need any changes from what i can see
-    // update: turns out we need to not include rsa keys at all when ecOnly is true
+    // we need to not include rsa keys at all when ecOnly is true
     private async createUserRequest(dataKey: Uint8Array, ecOnly?:boolean): Promise<Authentication.ICreateUserRequest> {
         if(ecOnly){
             return this.createUserRequestECOnly(dataKey)
