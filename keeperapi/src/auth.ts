@@ -108,7 +108,7 @@ export type SessionParams = {
 
 export type EncryptionKeys = {
     dataKey: Uint8Array;
-    privateKey: Uint8Array;
+    privateKey?: Uint8Array;
     eccPrivateKey: Uint8Array;
 }
 
@@ -995,8 +995,12 @@ export class Auth {
             }
         }
         if (!encryptedPrivateKey || !encryptedEccPrivateKey) {
-            encryptedPrivateKey = this.accountSummary?.keysInfo?.encryptedPrivateKey || undefined
-            encryptedEccPrivateKey = this.accountSummary?.keysInfo?.encryptedEccPrivateKey || undefined
+            // protobuf embeds the unit8array into the prototype of this.accountSummary.keysInfo, check for length as well
+            const encryptedPrivateKeyUint8 = this.accountSummary?.keysInfo?.encryptedPrivateKey || undefined
+            const encryptedEccPrivateKeyUint8 = this.accountSummary?.keysInfo?.encryptedEccPrivateKey || undefined
+            encryptedPrivateKey = encryptedPrivateKeyUint8?.length ? encryptedPrivateKeyUint8 : undefined
+            encryptedEccPrivateKey = encryptedEccPrivateKeyUint8?.length ? encryptedEccPrivateKeyUint8 : undefined
+
             if (this.options.kvs) {
                 if (encryptedPrivateKey) {
                     this.options.kvs.saveValue(`${this._username}/private_key`, platform.bytesToBase64(encryptedPrivateKey))
@@ -1212,14 +1216,33 @@ export class Auth {
         }
     }
 
-    public getKeys(): EncryptionKeys {
-        if (!this.dataKey || !this.privateKey || !this.eccPrivateKey) {
-            throw Error('Encryption keys are missing')
-        }
-        return {
-            dataKey: this.dataKey,
-            privateKey: this.privateKey,
-            eccPrivateKey: this.eccPrivateKey
+    public getKeys(ecOnly?:boolean): EncryptionKeys {
+        if(ecOnly){
+            if (!this.dataKey || !this.eccPrivateKey) {
+                throw Error('Encryption keys are missing')
+            }
+
+            if(this.privateKey){
+                return {
+                    dataKey: this.dataKey,
+                    privateKey: this.privateKey,
+                    eccPrivateKey: this.eccPrivateKey
+                }
+            } else {
+                return {
+                    dataKey: this.dataKey,
+                    eccPrivateKey: this.eccPrivateKey
+                }
+            }
+        } else {
+            if (!this.dataKey || !this.privateKey || !this.eccPrivateKey) {
+                throw Error('Encryption keys are missing')
+            }
+            return {
+                dataKey: this.dataKey,
+                privateKey: this.privateKey,
+                eccPrivateKey: this.eccPrivateKey
+            }
         }
     }
 
