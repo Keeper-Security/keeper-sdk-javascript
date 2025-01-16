@@ -36,9 +36,9 @@ export type VaultStorage = KeyStorage & {
     delete(kind: VaultStorageKind, uid: string): Promise<void>
 }
 
-export type VaultStorageData = DProfilePic | DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData
+export type VaultStorageData = DProfilePic | DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData | DSecurityScoreData
 
-export type VaultStorageKind = 'profilePic' | 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data'
+export type VaultStorageKind = 'profilePic' | 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data' | 'security_score_data'
 
 export type VaultStorageResult<T extends VaultStorageKind> = (
     T extends 'continuationToken' ? DContinuationToken :
@@ -192,6 +192,13 @@ export type DBWSecurityData = {
     kind: 'bw_security_data'
     uid: string
     revision: number
+}
+
+export type DSecurityScoreData = {
+    kind: 'security_score_data',
+    uid: string,
+    data: any,
+    revision: number,
 }
 
 export type DContinuationToken = {
@@ -885,6 +892,32 @@ const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurity
     }
 }
 
+const processSecurityScoreData = async (securityScoreDataList: Vault.ISecurityScoreData[], storage: VaultStorage) => {
+    for (const securityScoreData of securityScoreDataList) {
+        if (
+          !securityScoreData.recordUid
+          || !securityScoreData.data
+          || typeof securityScoreData.revision !== 'number'
+        ) continue
+
+        const recUid = webSafe64FromBytes(securityScoreData.recordUid)
+        try {
+            const decrypted = await platform.decrypt(securityScoreData.data, recUid, 'gcm', storage)
+            const securityScoreDataObj = JSON.parse(platform.bytesToString(decrypted))
+            await storage.put({
+                kind: 'security_score_data',
+                uid: recUid,
+                revision: securityScoreData.revision,
+                data: securityScoreDataObj,
+            })
+        } catch (e: any) {
+           console.error(
+             `The security score data ${recUid} cannot be decrypted (${e.message})`
+           )
+        }
+    }
+}
+
 export type SyncLogFormat = '!' | 'raw' | 'obj' | 'str' | 'cnt' | 'cnt_t'
 
 const logProtobuf = (data: any, format: SyncLogFormat, seqNo: number, counts: any) => {
@@ -1052,6 +1085,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processBreachWatchRecords(resp.breachWatchRecords, storage)
 
             await processBreachWatchSecurityData(resp.breachWatchSecurityData, storage)
+
+            await processSecurityScoreData(resp.securityScoreData, storage)
 
             await storage.addDependencies(dependencies)
 
