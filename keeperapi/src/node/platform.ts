@@ -224,14 +224,11 @@ export const nodePlatform: Platform = class {
     }
 
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
-        return crypto.privateDecrypt({
-            key: crypto.createPrivateKey({
-                key: Buffer.from(key),
-                type: 'pkcs1',
-                format: 'der',
-            }),
-            padding: RSA_PKCS1_PADDING
-        }, data);
+        const rsaPrivateKey = new NodeRSA(Buffer.from(key), 'pkcs1-private-der', {
+          encryptionScheme: 'pkcs1'
+        })
+        rsaPrivateKey.setOptions({environment: 'browser'}) // use pure implementation, not native (CVE-2023-46809)
+        return rsaPrivateKey.decrypt(Buffer.from(data))
     }
 
     static async privateDecryptEC(data: Uint8Array, privateKey: Uint8Array, publicKey?: Uint8Array, id?: Uint8Array, useHKDF?: boolean): Promise<Uint8Array> {
