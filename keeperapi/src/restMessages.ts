@@ -4,6 +4,7 @@ import {Writer} from 'protobufjs'
 import {
     AccountSummary,
     Authentication,
+    BI,
     BreachWatch,
     Automator,
     Enterprise,
@@ -292,6 +293,10 @@ export const setReusedPasswords = (data: Authentication.IReusedPasswordsRequest)
 
 export const changeToKeyTypeOne = (data: Authentication.IChangeToKeyTypeOne): RestInMessage<Authentication.IChangeToKeyTypeOne> =>
     createInMessage(data, 'vault/change_to_key_type_one', Authentication.ChangeToKeyTypeOne)
+
+/* -- BI -- */
+export const customerCapture = (data: BI.ICustomerCaptureRequest): RestMessage<BI.ICustomerCaptureRequest, BI.ICustomerCaptureResponse> => 
+    createMessage(data, 'bi_api/rest/browser_extension/customer_capture', BI.CustomerCaptureRequest, BI.CustomerCaptureResponse)
 
 /* -- BreachWatch -- */
 

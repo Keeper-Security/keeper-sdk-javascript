@@ -16,7 +16,8 @@ export const formatTimeDiff = (timeDiff: Date): string => {
 }
 
 export function getKeeperUrl(host: KeeperHost, forPath: string) {
-    return `https://${host}/api/rest/${forPath}`;
+    const basePath = forPath.startsWith('bi_api') ? '' : 'api/rest/';
+    return `https://${host}/${basePath}${forPath}`;
 }
 
 export function getKeeperSAMLUrl(host: KeeperHost, forPath: string, serviceProviderId?: number) {
