@@ -33,12 +33,12 @@ export type VaultStorage = KeyStorage & {
     removeDependencies(dependencies: RemovedDependencies): Promise<void>
     clear(): Promise<void>
     get<T extends VaultStorageKind>(kind: T, uid?: string): Promise<VaultStorageResult<T>>
-    delete(kind: VaultStorageKind, uid: string): Promise<void>
+    delete(kind: VaultStorageKind, uid: string | Uint8Array): Promise<void>
 }
 
-export type VaultStorageData = DProfilePic | DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData | DSecurityScoreData
+export type VaultStorageData = DProfilePic | DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData | DSecurityScoreData | DUser
 
-export type VaultStorageKind = 'profilePic' | 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data' | 'security_score_data'
+export type VaultStorageKind = 'profilePic' | 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data' | 'security_score_data' | 'user'
 
 export type VaultStorageResult<T extends VaultStorageKind> = (
     T extends 'continuationToken' ? DContinuationToken :
@@ -201,6 +201,12 @@ export type DSecurityScoreData = {
     revision: number,
 }
 
+export type DUser = {
+    kind: 'user',
+    accountUid?:Uint8Array | null,
+    username?:string | null,
+}
+
 export type DContinuationToken = {
     kind?: 'continuationToken'
     token: string
@@ -282,6 +288,16 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
             return null
     }
     return {keyId, encryptionType}
+}
+
+export const processUsers = async (users: Vault.IUser[], storage: VaultStorage) => {
+    for (const user of users) {
+        await storage.put({
+            kind: 'user',
+            accountUid: user.accountUid,
+            username: user.username,
+        })
+    }
 }
 
 export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, dependencies: Dependencies) => {
@@ -1048,6 +1064,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             networkTime += requestTime
             const dependencies = {}
 
+            await processUsers(resp.users, storage)
+
             await processTeams(resp.teams as NN<ITeam>[], storage, dependencies)
 
             await processUserFolders(resp.userFolders, storage, dependencies)
@@ -1118,10 +1136,12 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             for await (const folder of resp.removedSharedFolders) {
                 const folderUid = webSafe64FromBytes(folder)
                 await getDependencies(folderUid, storage, removedSFDependencies)
-                removedDependencies[folderUid] = '*'
+                if(!removedDependencies[folderUid]){
+                    removedDependencies[folderUid] = '*'
+                }
                 await storage.delete('shared_folder', folderUid)
             }
-            for (const removedSFDependency of removedSFDependencies) {
+            for await (const removedSFDependency of removedSFDependencies) {
                 switch (removedSFDependency.kind) {
                     case "record":
                         await storage.delete('record', removedSFDependency.uid)
@@ -1132,6 +1152,10 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                         break;
                 }
             }
+            for await (const user of resp.removedUsers) {
+                await storage.delete('user', user)
+            }
+
             await storage.removeDependencies(removedDependencies)
 
             continuationToken = resp.continuationToken || undefined
