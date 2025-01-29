@@ -203,8 +203,8 @@ export type DSecurityScoreData = {
 
 export type DUser = {
     kind: 'user',
-    accountUid?:Uint8Array | null,
-    username?:string | null,
+    accountUid:Uint8Array,
+    username:string,
 }
 
 export type DContinuationToken = {
@@ -291,7 +291,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
 }
 
 export const processUsers = async (users: Vault.IUser[], storage: VaultStorage) => {
-    for (const user of users) {
+    for (const user of users as NN<Vault.IUser>[]) {
         await storage.put({
             kind: 'user',
             accountUid: user.accountUid,
