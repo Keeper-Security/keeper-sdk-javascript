@@ -234,6 +234,7 @@ export class Auth {
         platform.unloadKeys()
         await this.executeRestAction(logoutV3Message())
         await this.idpLogout()
+        this._sessionToken = ''
     }
 
     async connect() {
@@ -1038,6 +1039,10 @@ export class Auth {
 
     setAccountSummaryVersion(version: number) {
         this._accountSummaryVersion = version
+    }
+
+    setSessionToken(token: string) {
+        this._sessionToken = token
     }
 
     // async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
