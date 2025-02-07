@@ -134,6 +134,7 @@ export class Auth {
     public clientKey?: Uint8Array;
     private _accountSummary?: IAccountSummaryElements;
     private _accountSummaryVersion: number = 1
+    
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -234,6 +235,7 @@ export class Auth {
         platform.unloadKeys()
         await this.executeRestAction(logoutV3Message())
         await this.idpLogout()
+        this._sessionToken = ''
     }
 
     async connect() {
@@ -1038,6 +1040,10 @@ export class Auth {
 
     setAccountSummaryVersion(version: number) {
         this._accountSummaryVersion = version
+    }
+
+    public setSessionToken(token: string) {
+        this._sessionToken = token
     }
 
     // async executeCommand<Command extends KeeperCommand>(command: Command): Promise<Command["response"]> {
