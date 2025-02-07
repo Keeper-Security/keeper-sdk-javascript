@@ -134,6 +134,7 @@ export class Auth {
     public clientKey?: Uint8Array;
     private _accountSummary?: IAccountSummaryElements;
     private _accountSummaryVersion: number = 1
+    
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -1041,7 +1042,7 @@ export class Auth {
         this._accountSummaryVersion = version
     }
 
-    setSessionToken(token: string) {
+    public setSessionToken(token: string) {
         this._sessionToken = token
     }
 
