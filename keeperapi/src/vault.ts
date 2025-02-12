@@ -915,12 +915,13 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
           || typeof securityScoreData.revision !== 'number'
         ) continue
 
-        if (!securityScoreData.data) {
-            await storage.delete('security_score_data', securityScoreData.recordUid)
+        const recUid = webSafe64FromBytes(securityScoreData.recordUid)
+
+        if (!securityScoreData.data || securityScoreData.data.length === 0) {
+            await storage.delete('security_score_data', recUid)
             continue
         }
 
-        const recUid = webSafe64FromBytes(securityScoreData.recordUid)
         try {
             const decrypted = await platform.decrypt(securityScoreData.data, recUid, 'gcm', storage)
             const securityScoreDataObj = JSON.parse(platform.bytesToString(decrypted))
