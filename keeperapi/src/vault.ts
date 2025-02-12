@@ -912,9 +912,13 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
     for (const securityScoreData of securityScoreDataList) {
         if (
           !securityScoreData.recordUid
-          || !securityScoreData.data
           || typeof securityScoreData.revision !== 'number'
         ) continue
+
+        if (!securityScoreData.data) {
+            await storage.delete('security_score_data', securityScoreData.recordUid)
+            continue
+        }
 
         const recUid = webSafe64FromBytes(securityScoreData.recordUid)
         try {
