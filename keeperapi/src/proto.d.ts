@@ -35,7 +35,8 @@ export namespace Authentication {
         BIO = 2,
         ALTERNATE = 3,
         OFFLINE = 4,
-        FORGOT_PASSWORD = 5
+        FORGOT_PASSWORD = 5,
+        PASSKEY_BIO = 6
     }
 
     /** DeviceStatus enum. */
@@ -1378,6 +1379,9 @@ export namespace Authentication {
         REQUIRES_ACCOUNT_CREATION = 16,
         REQUIRES_DEVICE_ENCRYPTED_DATA_KEY = 17,
         LOGIN_TOKEN_EXPIRED = 18,
+        PASSKEY_INITIATE_CHALLENGE = 19,
+        PASSKEY_AUTH_REQUIRED = 20,
+        PASSKEY_VERIFY_AUTHENTICATION = 21,
         LOGGED_IN = 99
     }
 
@@ -17097,6 +17101,1215 @@ export namespace Authentication {
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
+
+    /** AuthenticatorAttachment enum. */
+    enum AuthenticatorAttachment {
+        CROSS_PLATFORM = 0,
+        PLATFORM = 1,
+        ALL_SUPPORTED = 2
+    }
+
+    /** Properties of a PasskeyRegistrationRequest. */
+    interface IPasskeyRegistrationRequest {
+
+        /** PasskeyRegistrationRequest authenticatorAttachment */
+        authenticatorAttachment?: (Authentication.AuthenticatorAttachment|null);
+    }
+
+    /** Represents a PasskeyRegistrationRequest. */
+    class PasskeyRegistrationRequest implements IPasskeyRegistrationRequest {
+
+        /**
+         * Constructs a new PasskeyRegistrationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyRegistrationRequest);
+
+        /** PasskeyRegistrationRequest authenticatorAttachment. */
+        public authenticatorAttachment: Authentication.AuthenticatorAttachment;
+
+        /**
+         * Creates a new PasskeyRegistrationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyRegistrationRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyRegistrationRequest): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Encodes the specified PasskeyRegistrationRequest message. Does not implicitly {@link Authentication.PasskeyRegistrationRequest.verify|verify} messages.
+         * @param message PasskeyRegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyRegistrationRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyRegistrationRequest.verify|verify} messages.
+         * @param message PasskeyRegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyRegistrationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyRegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Decodes a PasskeyRegistrationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyRegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Verifies a PasskeyRegistrationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyRegistrationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyRegistrationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Creates a plain object from a PasskeyRegistrationRequest message. Also converts values to other types if specified.
+         * @param message PasskeyRegistrationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyRegistrationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyRegistrationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyRegistrationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyRegistrationResponse. */
+    interface IPasskeyRegistrationResponse {
+
+        /** PasskeyRegistrationResponse challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyRegistrationResponse pkCreationOptions */
+        pkCreationOptions?: (string|null);
+    }
+
+    /** Represents a PasskeyRegistrationResponse. */
+    class PasskeyRegistrationResponse implements IPasskeyRegistrationResponse {
+
+        /**
+         * Constructs a new PasskeyRegistrationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyRegistrationResponse);
+
+        /** PasskeyRegistrationResponse challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyRegistrationResponse pkCreationOptions. */
+        public pkCreationOptions: string;
+
+        /**
+         * Creates a new PasskeyRegistrationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyRegistrationResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyRegistrationResponse): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Encodes the specified PasskeyRegistrationResponse message. Does not implicitly {@link Authentication.PasskeyRegistrationResponse.verify|verify} messages.
+         * @param message PasskeyRegistrationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyRegistrationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyRegistrationResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyRegistrationResponse.verify|verify} messages.
+         * @param message PasskeyRegistrationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyRegistrationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyRegistrationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyRegistrationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Decodes a PasskeyRegistrationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyRegistrationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Verifies a PasskeyRegistrationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyRegistrationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyRegistrationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Creates a plain object from a PasskeyRegistrationResponse message. Also converts values to other types if specified.
+         * @param message PasskeyRegistrationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyRegistrationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyRegistrationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyRegistrationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyRegistrationFinalization. */
+    interface IPasskeyRegistrationFinalization {
+
+        /** PasskeyRegistrationFinalization challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyRegistrationFinalization authenticatorResponse */
+        authenticatorResponse?: (string|null);
+
+        /** PasskeyRegistrationFinalization friendlyName */
+        friendlyName?: (string|null);
+    }
+
+    /** Represents a PasskeyRegistrationFinalization. */
+    class PasskeyRegistrationFinalization implements IPasskeyRegistrationFinalization {
+
+        /**
+         * Constructs a new PasskeyRegistrationFinalization.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyRegistrationFinalization);
+
+        /** PasskeyRegistrationFinalization challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyRegistrationFinalization authenticatorResponse. */
+        public authenticatorResponse: string;
+
+        /** PasskeyRegistrationFinalization friendlyName. */
+        public friendlyName?: (string|null);
+
+        /** PasskeyRegistrationFinalization _friendlyName. */
+        public _friendlyName?: "friendlyName";
+
+        /**
+         * Creates a new PasskeyRegistrationFinalization instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyRegistrationFinalization instance
+         */
+        public static create(properties?: Authentication.IPasskeyRegistrationFinalization): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Encodes the specified PasskeyRegistrationFinalization message. Does not implicitly {@link Authentication.PasskeyRegistrationFinalization.verify|verify} messages.
+         * @param message PasskeyRegistrationFinalization message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyRegistrationFinalization, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyRegistrationFinalization message, length delimited. Does not implicitly {@link Authentication.PasskeyRegistrationFinalization.verify|verify} messages.
+         * @param message PasskeyRegistrationFinalization message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyRegistrationFinalization, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyRegistrationFinalization message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyRegistrationFinalization
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Decodes a PasskeyRegistrationFinalization message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyRegistrationFinalization
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Verifies a PasskeyRegistrationFinalization message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyRegistrationFinalization message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyRegistrationFinalization
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Creates a plain object from a PasskeyRegistrationFinalization message. Also converts values to other types if specified.
+         * @param message PasskeyRegistrationFinalization
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyRegistrationFinalization, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyRegistrationFinalization to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyRegistrationFinalization
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** PasskeyPurpose enum. */
+    enum PasskeyPurpose {
+        PK_LOGIN = 0,
+        PK_REAUTH = 1
+    }
+
+    /** Properties of a PasskeyAuthenticationRequest. */
+    interface IPasskeyAuthenticationRequest {
+
+        /** PasskeyAuthenticationRequest authenticatorAttachment */
+        authenticatorAttachment?: (Authentication.AuthenticatorAttachment|null);
+
+        /** PasskeyAuthenticationRequest passkeyPurpose */
+        passkeyPurpose?: (Authentication.PasskeyPurpose|null);
+
+        /** PasskeyAuthenticationRequest encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyAuthenticationRequest. */
+    class PasskeyAuthenticationRequest implements IPasskeyAuthenticationRequest {
+
+        /**
+         * Constructs a new PasskeyAuthenticationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyAuthenticationRequest);
+
+        /** PasskeyAuthenticationRequest authenticatorAttachment. */
+        public authenticatorAttachment: Authentication.AuthenticatorAttachment;
+
+        /** PasskeyAuthenticationRequest passkeyPurpose. */
+        public passkeyPurpose: Authentication.PasskeyPurpose;
+
+        /** PasskeyAuthenticationRequest encryptedLoginToken. */
+        public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationRequest _encryptedLoginToken. */
+        public _encryptedLoginToken?: "encryptedLoginToken";
+
+        /**
+         * Creates a new PasskeyAuthenticationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyAuthenticationRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyAuthenticationRequest): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationRequest message. Does not implicitly {@link Authentication.PasskeyAuthenticationRequest.verify|verify} messages.
+         * @param message PasskeyAuthenticationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyAuthenticationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyAuthenticationRequest.verify|verify} messages.
+         * @param message PasskeyAuthenticationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyAuthenticationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyAuthenticationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyAuthenticationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Decodes a PasskeyAuthenticationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyAuthenticationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Verifies a PasskeyAuthenticationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyAuthenticationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyAuthenticationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Creates a plain object from a PasskeyAuthenticationRequest message. Also converts values to other types if specified.
+         * @param message PasskeyAuthenticationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyAuthenticationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyAuthenticationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyAuthenticationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyAuthenticationResponse. */
+    interface IPasskeyAuthenticationResponse {
+
+        /** PasskeyAuthenticationResponse pkRequestOptions */
+        pkRequestOptions?: (string|null);
+
+        /** PasskeyAuthenticationResponse challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationResponse encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyAuthenticationResponse. */
+    class PasskeyAuthenticationResponse implements IPasskeyAuthenticationResponse {
+
+        /**
+         * Constructs a new PasskeyAuthenticationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyAuthenticationResponse);
+
+        /** PasskeyAuthenticationResponse pkRequestOptions. */
+        public pkRequestOptions: string;
+
+        /** PasskeyAuthenticationResponse challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyAuthenticationResponse encryptedLoginToken. */
+        public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationResponse _encryptedLoginToken. */
+        public _encryptedLoginToken?: "encryptedLoginToken";
+
+        /**
+         * Creates a new PasskeyAuthenticationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyAuthenticationResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyAuthenticationResponse): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationResponse message. Does not implicitly {@link Authentication.PasskeyAuthenticationResponse.verify|verify} messages.
+         * @param message PasskeyAuthenticationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyAuthenticationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyAuthenticationResponse.verify|verify} messages.
+         * @param message PasskeyAuthenticationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyAuthenticationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyAuthenticationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyAuthenticationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Decodes a PasskeyAuthenticationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyAuthenticationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Verifies a PasskeyAuthenticationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyAuthenticationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyAuthenticationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Creates a plain object from a PasskeyAuthenticationResponse message. Also converts values to other types if specified.
+         * @param message PasskeyAuthenticationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyAuthenticationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyAuthenticationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyAuthenticationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyValidationRequest. */
+    interface IPasskeyValidationRequest {
+
+        /** PasskeyValidationRequest challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyValidationRequest assertionResponse */
+        assertionResponse?: (Uint8Array|null);
+
+        /** PasskeyValidationRequest passkeyPurpose */
+        passkeyPurpose?: (Authentication.PasskeyPurpose|null);
+
+        /** PasskeyValidationRequest encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyValidationRequest. */
+    class PasskeyValidationRequest implements IPasskeyValidationRequest {
+
+        /**
+         * Constructs a new PasskeyValidationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyValidationRequest);
+
+        /** PasskeyValidationRequest challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyValidationRequest assertionResponse. */
+        public assertionResponse: Uint8Array;
+
+        /** PasskeyValidationRequest passkeyPurpose. */
+        public passkeyPurpose: Authentication.PasskeyPurpose;
+
+        /** PasskeyValidationRequest encryptedLoginToken. */
+        public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyValidationRequest _encryptedLoginToken. */
+        public _encryptedLoginToken?: "encryptedLoginToken";
+
+        /**
+         * Creates a new PasskeyValidationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyValidationRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyValidationRequest): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Encodes the specified PasskeyValidationRequest message. Does not implicitly {@link Authentication.PasskeyValidationRequest.verify|verify} messages.
+         * @param message PasskeyValidationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyValidationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyValidationRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyValidationRequest.verify|verify} messages.
+         * @param message PasskeyValidationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyValidationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyValidationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyValidationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Decodes a PasskeyValidationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyValidationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Verifies a PasskeyValidationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyValidationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyValidationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Creates a plain object from a PasskeyValidationRequest message. Also converts values to other types if specified.
+         * @param message PasskeyValidationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyValidationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyValidationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyValidationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyValidationResponse. */
+    interface IPasskeyValidationResponse {
+
+        /** PasskeyValidationResponse isValid */
+        isValid?: (boolean|null);
+
+        /** PasskeyValidationResponse encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyValidationResponse. */
+    class PasskeyValidationResponse implements IPasskeyValidationResponse {
+
+        /**
+         * Constructs a new PasskeyValidationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyValidationResponse);
+
+        /** PasskeyValidationResponse isValid. */
+        public isValid: boolean;
+
+        /** PasskeyValidationResponse encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
+        /**
+         * Creates a new PasskeyValidationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyValidationResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyValidationResponse): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Encodes the specified PasskeyValidationResponse message. Does not implicitly {@link Authentication.PasskeyValidationResponse.verify|verify} messages.
+         * @param message PasskeyValidationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyValidationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyValidationResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyValidationResponse.verify|verify} messages.
+         * @param message PasskeyValidationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyValidationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyValidationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyValidationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Decodes a PasskeyValidationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyValidationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Verifies a PasskeyValidationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyValidationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyValidationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Creates a plain object from a PasskeyValidationResponse message. Also converts values to other types if specified.
+         * @param message PasskeyValidationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyValidationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyValidationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyValidationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpdatePasskeyRequest. */
+    interface IUpdatePasskeyRequest {
+
+        /** UpdatePasskeyRequest userId */
+        userId?: (number|null);
+
+        /** UpdatePasskeyRequest credentialId */
+        credentialId?: (Uint8Array|null);
+
+        /** UpdatePasskeyRequest friendlyName */
+        friendlyName?: (string|null);
+    }
+
+    /** Represents an UpdatePasskeyRequest. */
+    class UpdatePasskeyRequest implements IUpdatePasskeyRequest {
+
+        /**
+         * Constructs a new UpdatePasskeyRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUpdatePasskeyRequest);
+
+        /** UpdatePasskeyRequest userId. */
+        public userId: number;
+
+        /** UpdatePasskeyRequest credentialId. */
+        public credentialId: Uint8Array;
+
+        /** UpdatePasskeyRequest friendlyName. */
+        public friendlyName?: (string|null);
+
+        /** UpdatePasskeyRequest _friendlyName. */
+        public _friendlyName?: "friendlyName";
+
+        /**
+         * Creates a new UpdatePasskeyRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpdatePasskeyRequest instance
+         */
+        public static create(properties?: Authentication.IUpdatePasskeyRequest): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Encodes the specified UpdatePasskeyRequest message. Does not implicitly {@link Authentication.UpdatePasskeyRequest.verify|verify} messages.
+         * @param message UpdatePasskeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUpdatePasskeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpdatePasskeyRequest message, length delimited. Does not implicitly {@link Authentication.UpdatePasskeyRequest.verify|verify} messages.
+         * @param message UpdatePasskeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUpdatePasskeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpdatePasskeyRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpdatePasskeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Decodes an UpdatePasskeyRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpdatePasskeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Verifies an UpdatePasskeyRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpdatePasskeyRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpdatePasskeyRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Creates a plain object from an UpdatePasskeyRequest message. Also converts values to other types if specified.
+         * @param message UpdatePasskeyRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UpdatePasskeyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpdatePasskeyRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpdatePasskeyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyListRequest. */
+    interface IPasskeyListRequest {
+
+        /** PasskeyListRequest includeDisabled */
+        includeDisabled?: (boolean|null);
+    }
+
+    /** Represents a PasskeyListRequest. */
+    class PasskeyListRequest implements IPasskeyListRequest {
+
+        /**
+         * Constructs a new PasskeyListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyListRequest);
+
+        /** PasskeyListRequest includeDisabled. */
+        public includeDisabled: boolean;
+
+        /**
+         * Creates a new PasskeyListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyListRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyListRequest): Authentication.PasskeyListRequest;
+
+        /**
+         * Encodes the specified PasskeyListRequest message. Does not implicitly {@link Authentication.PasskeyListRequest.verify|verify} messages.
+         * @param message PasskeyListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyListRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyListRequest.verify|verify} messages.
+         * @param message PasskeyListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyListRequest;
+
+        /**
+         * Decodes a PasskeyListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyListRequest;
+
+        /**
+         * Verifies a PasskeyListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyListRequest;
+
+        /**
+         * Creates a plain object from a PasskeyListRequest message. Also converts values to other types if specified.
+         * @param message PasskeyListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyListRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyInfo. */
+    interface IPasskeyInfo {
+
+        /** PasskeyInfo userId */
+        userId?: (number|null);
+
+        /** PasskeyInfo credentialId */
+        credentialId?: (Uint8Array|null);
+
+        /** PasskeyInfo friendlyName */
+        friendlyName?: (string|null);
+
+        /** PasskeyInfo AAGUID */
+        AAGUID?: (string|null);
+
+        /** PasskeyInfo createdAtMillis */
+        createdAtMillis?: (number|Long|null);
+
+        /** PasskeyInfo lastUsedMillis */
+        lastUsedMillis?: (number|Long|null);
+
+        /** PasskeyInfo disabledAtMillis */
+        disabledAtMillis?: (number|Long|null);
+    }
+
+    /** Represents a PasskeyInfo. */
+    class PasskeyInfo implements IPasskeyInfo {
+
+        /**
+         * Constructs a new PasskeyInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyInfo);
+
+        /** PasskeyInfo userId. */
+        public userId: number;
+
+        /** PasskeyInfo credentialId. */
+        public credentialId: Uint8Array;
+
+        /** PasskeyInfo friendlyName. */
+        public friendlyName: string;
+
+        /** PasskeyInfo AAGUID. */
+        public AAGUID: string;
+
+        /** PasskeyInfo createdAtMillis. */
+        public createdAtMillis: (number|Long);
+
+        /** PasskeyInfo lastUsedMillis. */
+        public lastUsedMillis: (number|Long);
+
+        /** PasskeyInfo disabledAtMillis. */
+        public disabledAtMillis: (number|Long);
+
+        /**
+         * Creates a new PasskeyInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyInfo instance
+         */
+        public static create(properties?: Authentication.IPasskeyInfo): Authentication.PasskeyInfo;
+
+        /**
+         * Encodes the specified PasskeyInfo message. Does not implicitly {@link Authentication.PasskeyInfo.verify|verify} messages.
+         * @param message PasskeyInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyInfo message, length delimited. Does not implicitly {@link Authentication.PasskeyInfo.verify|verify} messages.
+         * @param message PasskeyInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyInfo;
+
+        /**
+         * Decodes a PasskeyInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyInfo;
+
+        /**
+         * Verifies a PasskeyInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyInfo;
+
+        /**
+         * Creates a plain object from a PasskeyInfo message. Also converts values to other types if specified.
+         * @param message PasskeyInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyListResponse. */
+    interface IPasskeyListResponse {
+
+        /** PasskeyListResponse passkeyInfo */
+        passkeyInfo?: (Authentication.IPasskeyInfo[]|null);
+    }
+
+    /** Represents a PasskeyListResponse. */
+    class PasskeyListResponse implements IPasskeyListResponse {
+
+        /**
+         * Constructs a new PasskeyListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyListResponse);
+
+        /** PasskeyListResponse passkeyInfo. */
+        public passkeyInfo: Authentication.IPasskeyInfo[];
+
+        /**
+         * Creates a new PasskeyListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyListResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyListResponse): Authentication.PasskeyListResponse;
+
+        /**
+         * Encodes the specified PasskeyListResponse message. Does not implicitly {@link Authentication.PasskeyListResponse.verify|verify} messages.
+         * @param message PasskeyListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyListResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyListResponse.verify|verify} messages.
+         * @param message PasskeyListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyListResponse;
+
+        /**
+         * Decodes a PasskeyListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyListResponse;
+
+        /**
+         * Verifies a PasskeyListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyListResponse;
+
+        /**
+         * Creates a plain object from a PasskeyListResponse message. Also converts values to other types if specified.
+         * @param message PasskeyListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyListResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
 }
 
 /** Namespace Enterprise. */
@@ -19478,6 +20691,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData */
         allUsersRoleData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey */
+        roleKeyEncryptedWithUserPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an EnterpriseRegistration. */
@@ -19530,6 +20746,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData. */
         public allUsersRoleData: Uint8Array;
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey. */
+        public roleKeyEncryptedWithUserPublicKey: Uint8Array;
 
         /**
          * Creates a new EnterpriseRegistration instance using the specified properties.
@@ -23766,6 +24985,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn tierDescription */
         tierDescription?: (string|null);
+
+        /** LicenseAddOn seatsAllocated */
+        seatsAllocated?: (number|null);
     }
 
     /** Represents a LicenseAddOn. */
@@ -23806,6 +25028,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn tierDescription. */
         public tierDescription: string;
+
+        /** LicenseAddOn seatsAllocated. */
+        public seatsAllocated: number;
 
         /**
          * Creates a new LicenseAddOn instance using the specified properties.
