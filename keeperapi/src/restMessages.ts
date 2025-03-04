@@ -165,6 +165,27 @@ export const syncDownMessage = (data: Vault.ISyncDownRequest): RestMessage<Vault
 export const getSyncData = (data: Vault.IBreachWatchGetSyncDataRequest): RestMessage<Vault.IBreachWatchGetSyncDataRequest, Vault.IBreachWatchGetSyncDataResponse> => 
     createMessage(data, 'breachwatch/get_sync_data', Vault.BreachWatchGetSyncDataRequest, Vault.BreachWatchGetSyncDataResponse)
 
+export const generatePasskeyRegistration = (data: Authentication.IPasskeyRegistrationRequest): RestMessage<Authentication.IPasskeyRegistrationRequest, Authentication.IPasskeyRegistrationResponse> => 
+    createMessage(data, 'authentication/passkey/generate_registration', Authentication.PasskeyRegistrationRequest, Authentication.PasskeyRegistrationResponse)
+
+export const verifyPasskeyRegistration = (data: Authentication.IPasskeyRegistrationFinalization): RestInMessage<Authentication.IPasskeyRegistrationFinalization> =>
+    createInMessage(data, 'authentication/passkey/verify_registration', Authentication.PasskeyRegistrationFinalization)
+
+export const generatePasskeyAuthentication = (data: Authentication.IPasskeyAuthenticationRequest): RestMessage<Authentication.IPasskeyAuthenticationRequest, Authentication.IPasskeyAuthenticationResponse> =>
+    createMessage(data, 'authentication/passkey/generate_authentication', Authentication.PasskeyAuthenticationRequest, Authentication.PasskeyAuthenticationResponse)
+
+export const verifyPasskeyAuthentication = (data: Authentication.IPasskeyValidationRequest): RestMessage<Authentication.IPasskeyValidationRequest, Authentication.IPasskeyValidationResponse> =>
+    createMessage(data, 'authentication/passkey/verify_authentication', Authentication.PasskeyValidationRequest, Authentication.PasskeyValidationResponse)
+
+export const getAvailablePasskeys = (data: Authentication.IPasskeyListRequest): RestMessage<Authentication.IPasskeyListRequest, Authentication.IPasskeyListResponse> =>
+    createMessage(data, 'authentication/passkey/get_available_keys', Authentication.PasskeyListRequest, Authentication.PasskeyListResponse)
+
+export const disablePasskey = (data: Authentication.IUpdatePasskeyRequest): RestInMessage<Authentication.IUpdatePasskeyRequest> =>
+    createInMessage(data, 'authentication/passkey/disable', Authentication.UpdatePasskeyRequest)
+
+export const updatePasskeyName = (data: Authentication.IUpdatePasskeyRequest): RestInMessage<Authentication.IUpdatePasskeyRequest> =>
+    createInMessage(data, 'authentication/passkey/update_friendly_name', Authentication.UpdatePasskeyRequest)
+
 export const keepAliveMessage = (): RestActionMessage => createActionMessage('keep_alive')
 
 export const logoutV3Message = (): RestActionMessage => createActionMessage('vault/logout_v3')
