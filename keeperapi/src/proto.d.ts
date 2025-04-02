@@ -19478,6 +19478,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData */
         allUsersRoleData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey */
+        roleKeyEncryptedWithUserPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an EnterpriseRegistration. */
@@ -19530,6 +19533,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData. */
         public allUsersRoleData: Uint8Array;
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey. */
+        public roleKeyEncryptedWithUserPublicKey: Uint8Array;
 
         /**
          * Creates a new EnterpriseRegistration instance using the specified properties.
@@ -23766,6 +23772,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn tierDescription */
         tierDescription?: (string|null);
+
+        /** LicenseAddOn seatsAllocated */
+        seatsAllocated?: (number|null);
     }
 
     /** Represents a LicenseAddOn. */
@@ -23806,6 +23815,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn tierDescription. */
         public tierDescription: string;
+
+        /** LicenseAddOn seatsAllocated. */
+        public seatsAllocated: number;
 
         /**
          * Creates a new LicenseAddOn instance using the specified properties.
@@ -60832,6 +60844,9 @@ export namespace Records {
 
         /** RecordsAddRequest clientTime */
         clientTime?: (number|Long|null);
+
+        /** RecordsAddRequest securityDataKeyType */
+        securityDataKeyType?: (Records.RecordKeyType|null);
     }
 
     /** Represents a RecordsAddRequest. */
@@ -60848,6 +60863,9 @@ export namespace Records {
 
         /** RecordsAddRequest clientTime. */
         public clientTime: (number|Long);
+
+        /** RecordsAddRequest securityDataKeyType. */
+        public securityDataKeyType: Records.RecordKeyType;
 
         /**
          * Creates a new RecordsAddRequest instance using the specified properties.
@@ -61086,6 +61104,9 @@ export namespace Records {
 
         /** RecordsUpdateRequest clientTime */
         clientTime?: (number|Long|null);
+
+        /** RecordsUpdateRequest securityDataKeyType */
+        securityDataKeyType?: (Records.RecordKeyType|null);
     }
 
     /** Represents a RecordsUpdateRequest. */
@@ -61102,6 +61123,9 @@ export namespace Records {
 
         /** RecordsUpdateRequest clientTime. */
         public clientTime: (number|Long);
+
+        /** RecordsUpdateRequest securityDataKeyType. */
+        public securityDataKeyType: Records.RecordKeyType;
 
         /**
          * Creates a new RecordsUpdateRequest instance using the specified properties.
