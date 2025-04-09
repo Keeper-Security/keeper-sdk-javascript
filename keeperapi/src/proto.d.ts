@@ -35,7 +35,8 @@ export namespace Authentication {
         BIO = 2,
         ALTERNATE = 3,
         OFFLINE = 4,
-        FORGOT_PASSWORD = 5
+        FORGOT_PASSWORD = 5,
+        PASSKEY_BIO = 6
     }
 
     /** DeviceStatus enum. */
@@ -1378,6 +1379,9 @@ export namespace Authentication {
         REQUIRES_ACCOUNT_CREATION = 16,
         REQUIRES_DEVICE_ENCRYPTED_DATA_KEY = 17,
         LOGIN_TOKEN_EXPIRED = 18,
+        PASSKEY_INITIATE_CHALLENGE = 19,
+        PASSKEY_AUTH_REQUIRED = 20,
+        PASSKEY_VERIFY_AUTHENTICATION = 21,
         LOGGED_IN = 99
     }
 
@@ -17097,6 +17101,1215 @@ export namespace Authentication {
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
+
+    /** AuthenticatorAttachment enum. */
+    enum AuthenticatorAttachment {
+        CROSS_PLATFORM = 0,
+        PLATFORM = 1,
+        ALL_SUPPORTED = 2
+    }
+
+    /** Properties of a PasskeyRegistrationRequest. */
+    interface IPasskeyRegistrationRequest {
+
+        /** PasskeyRegistrationRequest authenticatorAttachment */
+        authenticatorAttachment?: (Authentication.AuthenticatorAttachment|null);
+    }
+
+    /** Represents a PasskeyRegistrationRequest. */
+    class PasskeyRegistrationRequest implements IPasskeyRegistrationRequest {
+
+        /**
+         * Constructs a new PasskeyRegistrationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyRegistrationRequest);
+
+        /** PasskeyRegistrationRequest authenticatorAttachment. */
+        public authenticatorAttachment: Authentication.AuthenticatorAttachment;
+
+        /**
+         * Creates a new PasskeyRegistrationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyRegistrationRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyRegistrationRequest): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Encodes the specified PasskeyRegistrationRequest message. Does not implicitly {@link Authentication.PasskeyRegistrationRequest.verify|verify} messages.
+         * @param message PasskeyRegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyRegistrationRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyRegistrationRequest.verify|verify} messages.
+         * @param message PasskeyRegistrationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyRegistrationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyRegistrationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyRegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Decodes a PasskeyRegistrationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyRegistrationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Verifies a PasskeyRegistrationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyRegistrationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyRegistrationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyRegistrationRequest;
+
+        /**
+         * Creates a plain object from a PasskeyRegistrationRequest message. Also converts values to other types if specified.
+         * @param message PasskeyRegistrationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyRegistrationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyRegistrationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyRegistrationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyRegistrationResponse. */
+    interface IPasskeyRegistrationResponse {
+
+        /** PasskeyRegistrationResponse challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyRegistrationResponse pkCreationOptions */
+        pkCreationOptions?: (string|null);
+    }
+
+    /** Represents a PasskeyRegistrationResponse. */
+    class PasskeyRegistrationResponse implements IPasskeyRegistrationResponse {
+
+        /**
+         * Constructs a new PasskeyRegistrationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyRegistrationResponse);
+
+        /** PasskeyRegistrationResponse challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyRegistrationResponse pkCreationOptions. */
+        public pkCreationOptions: string;
+
+        /**
+         * Creates a new PasskeyRegistrationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyRegistrationResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyRegistrationResponse): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Encodes the specified PasskeyRegistrationResponse message. Does not implicitly {@link Authentication.PasskeyRegistrationResponse.verify|verify} messages.
+         * @param message PasskeyRegistrationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyRegistrationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyRegistrationResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyRegistrationResponse.verify|verify} messages.
+         * @param message PasskeyRegistrationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyRegistrationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyRegistrationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyRegistrationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Decodes a PasskeyRegistrationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyRegistrationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Verifies a PasskeyRegistrationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyRegistrationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyRegistrationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyRegistrationResponse;
+
+        /**
+         * Creates a plain object from a PasskeyRegistrationResponse message. Also converts values to other types if specified.
+         * @param message PasskeyRegistrationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyRegistrationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyRegistrationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyRegistrationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyRegistrationFinalization. */
+    interface IPasskeyRegistrationFinalization {
+
+        /** PasskeyRegistrationFinalization challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyRegistrationFinalization authenticatorResponse */
+        authenticatorResponse?: (string|null);
+
+        /** PasskeyRegistrationFinalization friendlyName */
+        friendlyName?: (string|null);
+    }
+
+    /** Represents a PasskeyRegistrationFinalization. */
+    class PasskeyRegistrationFinalization implements IPasskeyRegistrationFinalization {
+
+        /**
+         * Constructs a new PasskeyRegistrationFinalization.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyRegistrationFinalization);
+
+        /** PasskeyRegistrationFinalization challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyRegistrationFinalization authenticatorResponse. */
+        public authenticatorResponse: string;
+
+        /** PasskeyRegistrationFinalization friendlyName. */
+        public friendlyName?: (string|null);
+
+        /** PasskeyRegistrationFinalization _friendlyName. */
+        public _friendlyName?: "friendlyName";
+
+        /**
+         * Creates a new PasskeyRegistrationFinalization instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyRegistrationFinalization instance
+         */
+        public static create(properties?: Authentication.IPasskeyRegistrationFinalization): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Encodes the specified PasskeyRegistrationFinalization message. Does not implicitly {@link Authentication.PasskeyRegistrationFinalization.verify|verify} messages.
+         * @param message PasskeyRegistrationFinalization message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyRegistrationFinalization, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyRegistrationFinalization message, length delimited. Does not implicitly {@link Authentication.PasskeyRegistrationFinalization.verify|verify} messages.
+         * @param message PasskeyRegistrationFinalization message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyRegistrationFinalization, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyRegistrationFinalization message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyRegistrationFinalization
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Decodes a PasskeyRegistrationFinalization message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyRegistrationFinalization
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Verifies a PasskeyRegistrationFinalization message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyRegistrationFinalization message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyRegistrationFinalization
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyRegistrationFinalization;
+
+        /**
+         * Creates a plain object from a PasskeyRegistrationFinalization message. Also converts values to other types if specified.
+         * @param message PasskeyRegistrationFinalization
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyRegistrationFinalization, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyRegistrationFinalization to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyRegistrationFinalization
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** PasskeyPurpose enum. */
+    enum PasskeyPurpose {
+        PK_LOGIN = 0,
+        PK_REAUTH = 1
+    }
+
+    /** Properties of a PasskeyAuthenticationRequest. */
+    interface IPasskeyAuthenticationRequest {
+
+        /** PasskeyAuthenticationRequest authenticatorAttachment */
+        authenticatorAttachment?: (Authentication.AuthenticatorAttachment|null);
+
+        /** PasskeyAuthenticationRequest passkeyPurpose */
+        passkeyPurpose?: (Authentication.PasskeyPurpose|null);
+
+        /** PasskeyAuthenticationRequest encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyAuthenticationRequest. */
+    class PasskeyAuthenticationRequest implements IPasskeyAuthenticationRequest {
+
+        /**
+         * Constructs a new PasskeyAuthenticationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyAuthenticationRequest);
+
+        /** PasskeyAuthenticationRequest authenticatorAttachment. */
+        public authenticatorAttachment: Authentication.AuthenticatorAttachment;
+
+        /** PasskeyAuthenticationRequest passkeyPurpose. */
+        public passkeyPurpose: Authentication.PasskeyPurpose;
+
+        /** PasskeyAuthenticationRequest encryptedLoginToken. */
+        public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationRequest _encryptedLoginToken. */
+        public _encryptedLoginToken?: "encryptedLoginToken";
+
+        /**
+         * Creates a new PasskeyAuthenticationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyAuthenticationRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyAuthenticationRequest): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationRequest message. Does not implicitly {@link Authentication.PasskeyAuthenticationRequest.verify|verify} messages.
+         * @param message PasskeyAuthenticationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyAuthenticationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyAuthenticationRequest.verify|verify} messages.
+         * @param message PasskeyAuthenticationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyAuthenticationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyAuthenticationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyAuthenticationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Decodes a PasskeyAuthenticationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyAuthenticationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Verifies a PasskeyAuthenticationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyAuthenticationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyAuthenticationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyAuthenticationRequest;
+
+        /**
+         * Creates a plain object from a PasskeyAuthenticationRequest message. Also converts values to other types if specified.
+         * @param message PasskeyAuthenticationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyAuthenticationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyAuthenticationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyAuthenticationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyAuthenticationResponse. */
+    interface IPasskeyAuthenticationResponse {
+
+        /** PasskeyAuthenticationResponse pkRequestOptions */
+        pkRequestOptions?: (string|null);
+
+        /** PasskeyAuthenticationResponse challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationResponse encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyAuthenticationResponse. */
+    class PasskeyAuthenticationResponse implements IPasskeyAuthenticationResponse {
+
+        /**
+         * Constructs a new PasskeyAuthenticationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyAuthenticationResponse);
+
+        /** PasskeyAuthenticationResponse pkRequestOptions. */
+        public pkRequestOptions: string;
+
+        /** PasskeyAuthenticationResponse challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyAuthenticationResponse encryptedLoginToken. */
+        public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationResponse _encryptedLoginToken. */
+        public _encryptedLoginToken?: "encryptedLoginToken";
+
+        /**
+         * Creates a new PasskeyAuthenticationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyAuthenticationResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyAuthenticationResponse): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationResponse message. Does not implicitly {@link Authentication.PasskeyAuthenticationResponse.verify|verify} messages.
+         * @param message PasskeyAuthenticationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyAuthenticationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyAuthenticationResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyAuthenticationResponse.verify|verify} messages.
+         * @param message PasskeyAuthenticationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyAuthenticationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyAuthenticationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyAuthenticationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Decodes a PasskeyAuthenticationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyAuthenticationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Verifies a PasskeyAuthenticationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyAuthenticationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyAuthenticationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyAuthenticationResponse;
+
+        /**
+         * Creates a plain object from a PasskeyAuthenticationResponse message. Also converts values to other types if specified.
+         * @param message PasskeyAuthenticationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyAuthenticationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyAuthenticationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyAuthenticationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyValidationRequest. */
+    interface IPasskeyValidationRequest {
+
+        /** PasskeyValidationRequest challengeToken */
+        challengeToken?: (Uint8Array|null);
+
+        /** PasskeyValidationRequest assertionResponse */
+        assertionResponse?: (Uint8Array|null);
+
+        /** PasskeyValidationRequest passkeyPurpose */
+        passkeyPurpose?: (Authentication.PasskeyPurpose|null);
+
+        /** PasskeyValidationRequest encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyValidationRequest. */
+    class PasskeyValidationRequest implements IPasskeyValidationRequest {
+
+        /**
+         * Constructs a new PasskeyValidationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyValidationRequest);
+
+        /** PasskeyValidationRequest challengeToken. */
+        public challengeToken: Uint8Array;
+
+        /** PasskeyValidationRequest assertionResponse. */
+        public assertionResponse: Uint8Array;
+
+        /** PasskeyValidationRequest passkeyPurpose. */
+        public passkeyPurpose: Authentication.PasskeyPurpose;
+
+        /** PasskeyValidationRequest encryptedLoginToken. */
+        public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyValidationRequest _encryptedLoginToken. */
+        public _encryptedLoginToken?: "encryptedLoginToken";
+
+        /**
+         * Creates a new PasskeyValidationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyValidationRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyValidationRequest): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Encodes the specified PasskeyValidationRequest message. Does not implicitly {@link Authentication.PasskeyValidationRequest.verify|verify} messages.
+         * @param message PasskeyValidationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyValidationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyValidationRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyValidationRequest.verify|verify} messages.
+         * @param message PasskeyValidationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyValidationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyValidationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyValidationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Decodes a PasskeyValidationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyValidationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Verifies a PasskeyValidationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyValidationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyValidationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyValidationRequest;
+
+        /**
+         * Creates a plain object from a PasskeyValidationRequest message. Also converts values to other types if specified.
+         * @param message PasskeyValidationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyValidationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyValidationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyValidationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyValidationResponse. */
+    interface IPasskeyValidationResponse {
+
+        /** PasskeyValidationResponse isValid */
+        isValid?: (boolean|null);
+
+        /** PasskeyValidationResponse encryptedLoginToken */
+        encryptedLoginToken?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyValidationResponse. */
+    class PasskeyValidationResponse implements IPasskeyValidationResponse {
+
+        /**
+         * Constructs a new PasskeyValidationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyValidationResponse);
+
+        /** PasskeyValidationResponse isValid. */
+        public isValid: boolean;
+
+        /** PasskeyValidationResponse encryptedLoginToken. */
+        public encryptedLoginToken: Uint8Array;
+
+        /**
+         * Creates a new PasskeyValidationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyValidationResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyValidationResponse): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Encodes the specified PasskeyValidationResponse message. Does not implicitly {@link Authentication.PasskeyValidationResponse.verify|verify} messages.
+         * @param message PasskeyValidationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyValidationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyValidationResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyValidationResponse.verify|verify} messages.
+         * @param message PasskeyValidationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyValidationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyValidationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyValidationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Decodes a PasskeyValidationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyValidationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Verifies a PasskeyValidationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyValidationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyValidationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyValidationResponse;
+
+        /**
+         * Creates a plain object from a PasskeyValidationResponse message. Also converts values to other types if specified.
+         * @param message PasskeyValidationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyValidationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyValidationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyValidationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpdatePasskeyRequest. */
+    interface IUpdatePasskeyRequest {
+
+        /** UpdatePasskeyRequest userId */
+        userId?: (number|null);
+
+        /** UpdatePasskeyRequest credentialId */
+        credentialId?: (Uint8Array|null);
+
+        /** UpdatePasskeyRequest friendlyName */
+        friendlyName?: (string|null);
+    }
+
+    /** Represents an UpdatePasskeyRequest. */
+    class UpdatePasskeyRequest implements IUpdatePasskeyRequest {
+
+        /**
+         * Constructs a new UpdatePasskeyRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IUpdatePasskeyRequest);
+
+        /** UpdatePasskeyRequest userId. */
+        public userId: number;
+
+        /** UpdatePasskeyRequest credentialId. */
+        public credentialId: Uint8Array;
+
+        /** UpdatePasskeyRequest friendlyName. */
+        public friendlyName?: (string|null);
+
+        /** UpdatePasskeyRequest _friendlyName. */
+        public _friendlyName?: "friendlyName";
+
+        /**
+         * Creates a new UpdatePasskeyRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpdatePasskeyRequest instance
+         */
+        public static create(properties?: Authentication.IUpdatePasskeyRequest): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Encodes the specified UpdatePasskeyRequest message. Does not implicitly {@link Authentication.UpdatePasskeyRequest.verify|verify} messages.
+         * @param message UpdatePasskeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IUpdatePasskeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpdatePasskeyRequest message, length delimited. Does not implicitly {@link Authentication.UpdatePasskeyRequest.verify|verify} messages.
+         * @param message UpdatePasskeyRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IUpdatePasskeyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpdatePasskeyRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpdatePasskeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Decodes an UpdatePasskeyRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpdatePasskeyRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Verifies an UpdatePasskeyRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpdatePasskeyRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpdatePasskeyRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.UpdatePasskeyRequest;
+
+        /**
+         * Creates a plain object from an UpdatePasskeyRequest message. Also converts values to other types if specified.
+         * @param message UpdatePasskeyRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.UpdatePasskeyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpdatePasskeyRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpdatePasskeyRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyListRequest. */
+    interface IPasskeyListRequest {
+
+        /** PasskeyListRequest includeDisabled */
+        includeDisabled?: (boolean|null);
+    }
+
+    /** Represents a PasskeyListRequest. */
+    class PasskeyListRequest implements IPasskeyListRequest {
+
+        /**
+         * Constructs a new PasskeyListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyListRequest);
+
+        /** PasskeyListRequest includeDisabled. */
+        public includeDisabled: boolean;
+
+        /**
+         * Creates a new PasskeyListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyListRequest instance
+         */
+        public static create(properties?: Authentication.IPasskeyListRequest): Authentication.PasskeyListRequest;
+
+        /**
+         * Encodes the specified PasskeyListRequest message. Does not implicitly {@link Authentication.PasskeyListRequest.verify|verify} messages.
+         * @param message PasskeyListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyListRequest message, length delimited. Does not implicitly {@link Authentication.PasskeyListRequest.verify|verify} messages.
+         * @param message PasskeyListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyListRequest;
+
+        /**
+         * Decodes a PasskeyListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyListRequest;
+
+        /**
+         * Verifies a PasskeyListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyListRequest;
+
+        /**
+         * Creates a plain object from a PasskeyListRequest message. Also converts values to other types if specified.
+         * @param message PasskeyListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyListRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyInfo. */
+    interface IPasskeyInfo {
+
+        /** PasskeyInfo userId */
+        userId?: (number|null);
+
+        /** PasskeyInfo credentialId */
+        credentialId?: (Uint8Array|null);
+
+        /** PasskeyInfo friendlyName */
+        friendlyName?: (string|null);
+
+        /** PasskeyInfo AAGUID */
+        AAGUID?: (string|null);
+
+        /** PasskeyInfo createdAtMillis */
+        createdAtMillis?: (number|Long|null);
+
+        /** PasskeyInfo lastUsedMillis */
+        lastUsedMillis?: (number|Long|null);
+
+        /** PasskeyInfo disabledAtMillis */
+        disabledAtMillis?: (number|Long|null);
+    }
+
+    /** Represents a PasskeyInfo. */
+    class PasskeyInfo implements IPasskeyInfo {
+
+        /**
+         * Constructs a new PasskeyInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyInfo);
+
+        /** PasskeyInfo userId. */
+        public userId: number;
+
+        /** PasskeyInfo credentialId. */
+        public credentialId: Uint8Array;
+
+        /** PasskeyInfo friendlyName. */
+        public friendlyName: string;
+
+        /** PasskeyInfo AAGUID. */
+        public AAGUID: string;
+
+        /** PasskeyInfo createdAtMillis. */
+        public createdAtMillis: (number|Long);
+
+        /** PasskeyInfo lastUsedMillis. */
+        public lastUsedMillis: (number|Long);
+
+        /** PasskeyInfo disabledAtMillis. */
+        public disabledAtMillis: (number|Long);
+
+        /**
+         * Creates a new PasskeyInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyInfo instance
+         */
+        public static create(properties?: Authentication.IPasskeyInfo): Authentication.PasskeyInfo;
+
+        /**
+         * Encodes the specified PasskeyInfo message. Does not implicitly {@link Authentication.PasskeyInfo.verify|verify} messages.
+         * @param message PasskeyInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyInfo message, length delimited. Does not implicitly {@link Authentication.PasskeyInfo.verify|verify} messages.
+         * @param message PasskeyInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyInfo;
+
+        /**
+         * Decodes a PasskeyInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyInfo;
+
+        /**
+         * Verifies a PasskeyInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyInfo;
+
+        /**
+         * Creates a plain object from a PasskeyInfo message. Also converts values to other types if specified.
+         * @param message PasskeyInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PasskeyListResponse. */
+    interface IPasskeyListResponse {
+
+        /** PasskeyListResponse passkeyInfo */
+        passkeyInfo?: (Authentication.IPasskeyInfo[]|null);
+    }
+
+    /** Represents a PasskeyListResponse. */
+    class PasskeyListResponse implements IPasskeyListResponse {
+
+        /**
+         * Constructs a new PasskeyListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IPasskeyListResponse);
+
+        /** PasskeyListResponse passkeyInfo. */
+        public passkeyInfo: Authentication.IPasskeyInfo[];
+
+        /**
+         * Creates a new PasskeyListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyListResponse instance
+         */
+        public static create(properties?: Authentication.IPasskeyListResponse): Authentication.PasskeyListResponse;
+
+        /**
+         * Encodes the specified PasskeyListResponse message. Does not implicitly {@link Authentication.PasskeyListResponse.verify|verify} messages.
+         * @param message PasskeyListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IPasskeyListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyListResponse message, length delimited. Does not implicitly {@link Authentication.PasskeyListResponse.verify|verify} messages.
+         * @param message PasskeyListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IPasskeyListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.PasskeyListResponse;
+
+        /**
+         * Decodes a PasskeyListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.PasskeyListResponse;
+
+        /**
+         * Verifies a PasskeyListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.PasskeyListResponse;
+
+        /**
+         * Creates a plain object from a PasskeyListResponse message. Also converts values to other types if specified.
+         * @param message PasskeyListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.PasskeyListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyListResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
 }
 
 /** Namespace Enterprise. */
@@ -19478,6 +20691,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData */
         allUsersRoleData?: (Uint8Array|null);
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey */
+        roleKeyEncryptedWithUserPublicKey?: (Uint8Array|null);
     }
 
     /** Represents an EnterpriseRegistration. */
@@ -19530,6 +20746,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration allUsersRoleData. */
         public allUsersRoleData: Uint8Array;
+
+        /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey. */
+        public roleKeyEncryptedWithUserPublicKey: Uint8Array;
 
         /**
          * Creates a new EnterpriseRegistration instance using the specified properties.
@@ -23766,6 +24985,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn tierDescription */
         tierDescription?: (string|null);
+
+        /** LicenseAddOn seatsAllocated */
+        seatsAllocated?: (number|null);
     }
 
     /** Represents a LicenseAddOn. */
@@ -23806,6 +25028,9 @@ export namespace Enterprise {
 
         /** LicenseAddOn tierDescription. */
         public tierDescription: string;
+
+        /** LicenseAddOn seatsAllocated. */
+        public seatsAllocated: number;
 
         /**
          * Creates a new LicenseAddOn instance using the specified properties.
@@ -51396,7 +52621,8 @@ export namespace Tokens {
         USER3 = 51,
         USER4 = 52,
         USER5 = 53,
-        USER_REMOVED = 54
+        USER_REMOVED = 54,
+        NOTIFICATION_SYNC_DATA = 55
     }
 
     /** Properties of a Position. */
@@ -53135,6 +54361,9 @@ export namespace Tokens {
 
         /** VaultSyncDownContinuationToken noRemovedSharedFoldersWithTeamAccess */
         noRemovedSharedFoldersWithTeamAccess?: (boolean|null);
+
+        /** VaultSyncDownContinuationToken notificationSyncPoint */
+        notificationSyncPoint?: (number|Long|null);
     }
 
     /** Represents a VaultSyncDownContinuationToken. */
@@ -53175,6 +54404,9 @@ export namespace Tokens {
 
         /** VaultSyncDownContinuationToken noRemovedSharedFoldersWithTeamAccess. */
         public noRemovedSharedFoldersWithTeamAccess: boolean;
+
+        /** VaultSyncDownContinuationToken notificationSyncPoint. */
+        public notificationSyncPoint: (number|Long);
 
         /**
          * Creates a new VaultSyncDownContinuationToken instance using the specified properties.
@@ -60832,6 +62064,9 @@ export namespace Records {
 
         /** RecordsAddRequest clientTime */
         clientTime?: (number|Long|null);
+
+        /** RecordsAddRequest securityDataKeyType */
+        securityDataKeyType?: (Records.RecordKeyType|null);
     }
 
     /** Represents a RecordsAddRequest. */
@@ -60848,6 +62083,9 @@ export namespace Records {
 
         /** RecordsAddRequest clientTime. */
         public clientTime: (number|Long);
+
+        /** RecordsAddRequest securityDataKeyType. */
+        public securityDataKeyType: Records.RecordKeyType;
 
         /**
          * Creates a new RecordsAddRequest instance using the specified properties.
@@ -61086,6 +62324,9 @@ export namespace Records {
 
         /** RecordsUpdateRequest clientTime */
         clientTime?: (number|Long|null);
+
+        /** RecordsUpdateRequest securityDataKeyType */
+        securityDataKeyType?: (Records.RecordKeyType|null);
     }
 
     /** Represents a RecordsUpdateRequest. */
@@ -61102,6 +62343,9 @@ export namespace Records {
 
         /** RecordsUpdateRequest clientTime. */
         public clientTime: (number|Long);
+
+        /** RecordsUpdateRequest securityDataKeyType. */
+        public securityDataKeyType: Records.RecordKeyType;
 
         /**
          * Creates a new RecordsUpdateRequest instance using the specified properties.
@@ -70278,6 +71522,9 @@ export namespace Vault {
 
         /** SyncDownResponse securityScoreData */
         securityScoreData?: (Vault.ISecurityScoreData[]|null);
+
+        /** SyncDownResponse notificationSync */
+        notificationSync?: (NotificationCenter.INotificationWrapper[]|null);
     }
 
     /** Represents a SyncDownResponse. */
@@ -70426,6 +71673,9 @@ export namespace Vault {
 
         /** SyncDownResponse securityScoreData. */
         public securityScoreData: Vault.ISecurityScoreData[];
+
+        /** SyncDownResponse notificationSync. */
+        public notificationSync: NotificationCenter.INotificationWrapper[];
 
         /**
          * Creates a new SyncDownResponse instance using the specified properties.
@@ -74300,6 +75550,2571 @@ export namespace Vault {
 
         /**
          * Gets the default type url for BreachWatchGetSyncDataResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
+/** Namespace NotificationCenter. */
+export namespace NotificationCenter {
+
+    /** NotificationCategory enum. */
+    enum NotificationCategory {
+        NC_UNSPECIFIED = 0,
+        NC_ACCOUNT = 1,
+        NC_SHARING = 2,
+        NC_ENTERPRISE = 3
+    }
+
+    /** NotificationType enum. */
+    enum NotificationType {
+        NT_UNSPECIFIED = 0,
+        NT_ALERT = 1,
+        NT_DEVICE_APPROVAL = 2,
+        NT_MASTER_PASS_UPDATED = 3,
+        NT_SHARE_APPROVAL = 4,
+        NT_SHARE_APPROVAL_APPROVED = 5,
+        NT_SHARED = 6,
+        NT_TRANSFERRED = 7,
+        NT_LICENSE_LIMIT_REACHED = 8,
+        NT_APPROVAL_REQUEST = 9,
+        NT_APPROVED_RESPONSE = 10,
+        NT_DENIED_RESPONSE = 11
+    }
+
+    /** NotificationReadStatus enum. */
+    enum NotificationReadStatus {
+        NRS_UNSPECIFIED = 0,
+        NRS_LAST = 1,
+        NRS_READ = 2,
+        NRS_UNREAD = 3
+    }
+
+    /** NotificationApprovalStatus enum. */
+    enum NotificationApprovalStatus {
+        NAS_UNSPECIFIED = 0,
+        NAS_APPROVED = 1,
+        NAS_DENIED = 2,
+        NAS_LOST_APPROVAL_RIGHTS = 3,
+        NAS_LOST_ACCESS = 4
+    }
+
+    /** Properties of an EncryptedData. */
+    interface IEncryptedData {
+
+        /** EncryptedData version */
+        version?: (number|null);
+
+        /** EncryptedData data */
+        data?: (Uint8Array|null);
+    }
+
+    /** Represents an EncryptedData. */
+    class EncryptedData implements IEncryptedData {
+
+        /**
+         * Constructs a new EncryptedData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.IEncryptedData);
+
+        /** EncryptedData version. */
+        public version: number;
+
+        /** EncryptedData data. */
+        public data: Uint8Array;
+
+        /**
+         * Creates a new EncryptedData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EncryptedData instance
+         */
+        public static create(properties?: NotificationCenter.IEncryptedData): NotificationCenter.EncryptedData;
+
+        /**
+         * Encodes the specified EncryptedData message. Does not implicitly {@link NotificationCenter.EncryptedData.verify|verify} messages.
+         * @param message EncryptedData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.IEncryptedData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EncryptedData message, length delimited. Does not implicitly {@link NotificationCenter.EncryptedData.verify|verify} messages.
+         * @param message EncryptedData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.IEncryptedData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EncryptedData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EncryptedData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.EncryptedData;
+
+        /**
+         * Decodes an EncryptedData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EncryptedData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.EncryptedData;
+
+        /**
+         * Verifies an EncryptedData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EncryptedData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EncryptedData
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.EncryptedData;
+
+        /**
+         * Creates a plain object from an EncryptedData message. Also converts values to other types if specified.
+         * @param message EncryptedData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.EncryptedData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EncryptedData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EncryptedData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a Notification. */
+    interface INotification {
+
+        /** Notification type */
+        type?: (NotificationCenter.NotificationType|null);
+
+        /** Notification category */
+        category?: (NotificationCenter.NotificationCategory|null);
+
+        /** Notification sender */
+        sender?: (GraphSync.IGraphSyncRef|null);
+
+        /** Notification senderFullName */
+        senderFullName?: (string|null);
+
+        /** Notification encryptedData */
+        encryptedData?: (NotificationCenter.IEncryptedData|null);
+
+        /** Notification refs */
+        refs?: (GraphSync.IGraphSyncRef[]|null);
+    }
+
+    /** Represents a Notification. */
+    class Notification implements INotification {
+
+        /**
+         * Constructs a new Notification.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotification);
+
+        /** Notification type. */
+        public type: NotificationCenter.NotificationType;
+
+        /** Notification category. */
+        public category: NotificationCenter.NotificationCategory;
+
+        /** Notification sender. */
+        public sender?: (GraphSync.IGraphSyncRef|null);
+
+        /** Notification senderFullName. */
+        public senderFullName: string;
+
+        /** Notification encryptedData. */
+        public encryptedData?: (NotificationCenter.IEncryptedData|null);
+
+        /** Notification refs. */
+        public refs: GraphSync.IGraphSyncRef[];
+
+        /**
+         * Creates a new Notification instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Notification instance
+         */
+        public static create(properties?: NotificationCenter.INotification): NotificationCenter.Notification;
+
+        /**
+         * Encodes the specified Notification message. Does not implicitly {@link NotificationCenter.Notification.verify|verify} messages.
+         * @param message Notification message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Notification message, length delimited. Does not implicitly {@link NotificationCenter.Notification.verify|verify} messages.
+         * @param message Notification message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Notification message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Notification
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.Notification;
+
+        /**
+         * Decodes a Notification message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Notification
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.Notification;
+
+        /**
+         * Verifies a Notification message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Notification message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Notification
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.Notification;
+
+        /**
+         * Creates a plain object from a Notification message. Also converts values to other types if specified.
+         * @param message Notification
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.Notification, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Notification to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Notification
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationReadMark. */
+    interface INotificationReadMark {
+
+        /** NotificationReadMark uid */
+        uid?: (Uint8Array|null);
+
+        /** NotificationReadMark notificationEdgeId */
+        notificationEdgeId?: (number|Long|null);
+
+        /** NotificationReadMark markEdgeId */
+        markEdgeId?: (number|Long|null);
+
+        /** NotificationReadMark readStatus */
+        readStatus?: (NotificationCenter.NotificationReadStatus|null);
+    }
+
+    /** Represents a NotificationReadMark. */
+    class NotificationReadMark implements INotificationReadMark {
+
+        /**
+         * Constructs a new NotificationReadMark.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationReadMark);
+
+        /** NotificationReadMark uid. */
+        public uid: Uint8Array;
+
+        /** NotificationReadMark notificationEdgeId. */
+        public notificationEdgeId: (number|Long);
+
+        /** NotificationReadMark markEdgeId. */
+        public markEdgeId: (number|Long);
+
+        /** NotificationReadMark readStatus. */
+        public readStatus: NotificationCenter.NotificationReadStatus;
+
+        /**
+         * Creates a new NotificationReadMark instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationReadMark instance
+         */
+        public static create(properties?: NotificationCenter.INotificationReadMark): NotificationCenter.NotificationReadMark;
+
+        /**
+         * Encodes the specified NotificationReadMark message. Does not implicitly {@link NotificationCenter.NotificationReadMark.verify|verify} messages.
+         * @param message NotificationReadMark message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationReadMark, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationReadMark message, length delimited. Does not implicitly {@link NotificationCenter.NotificationReadMark.verify|verify} messages.
+         * @param message NotificationReadMark message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationReadMark, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationReadMark message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationReadMark
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationReadMark;
+
+        /**
+         * Decodes a NotificationReadMark message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationReadMark
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationReadMark;
+
+        /**
+         * Verifies a NotificationReadMark message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationReadMark message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationReadMark
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationReadMark;
+
+        /**
+         * Creates a plain object from a NotificationReadMark message. Also converts values to other types if specified.
+         * @param message NotificationReadMark
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationReadMark, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationReadMark to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationReadMark
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationContent. */
+    interface INotificationContent {
+
+        /** NotificationContent notification */
+        notification?: (NotificationCenter.INotification|null);
+
+        /** NotificationContent readStatus */
+        readStatus?: (NotificationCenter.NotificationReadStatus|null);
+
+        /** NotificationContent approvalStatus */
+        approvalStatus?: (NotificationCenter.NotificationApprovalStatus|null);
+
+        /** NotificationContent clientTypeIDs */
+        clientTypeIDs?: (number[]|null);
+
+        /** NotificationContent deviceIDs */
+        deviceIDs?: ((number|Long)[]|null);
+    }
+
+    /** Represents a NotificationContent. */
+    class NotificationContent implements INotificationContent {
+
+        /**
+         * Constructs a new NotificationContent.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationContent);
+
+        /** NotificationContent notification. */
+        public notification?: (NotificationCenter.INotification|null);
+
+        /** NotificationContent readStatus. */
+        public readStatus?: (NotificationCenter.NotificationReadStatus|null);
+
+        /** NotificationContent approvalStatus. */
+        public approvalStatus?: (NotificationCenter.NotificationApprovalStatus|null);
+
+        /** NotificationContent clientTypeIDs. */
+        public clientTypeIDs: number[];
+
+        /** NotificationContent deviceIDs. */
+        public deviceIDs: (number|Long)[];
+
+        /** NotificationContent type. */
+        public type?: ("notification"|"readStatus"|"approvalStatus");
+
+        /**
+         * Creates a new NotificationContent instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationContent instance
+         */
+        public static create(properties?: NotificationCenter.INotificationContent): NotificationCenter.NotificationContent;
+
+        /**
+         * Encodes the specified NotificationContent message. Does not implicitly {@link NotificationCenter.NotificationContent.verify|verify} messages.
+         * @param message NotificationContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationContent message, length delimited. Does not implicitly {@link NotificationCenter.NotificationContent.verify|verify} messages.
+         * @param message NotificationContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationContent message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationContent;
+
+        /**
+         * Decodes a NotificationContent message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationContent;
+
+        /**
+         * Verifies a NotificationContent message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationContent message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationContent
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationContent;
+
+        /**
+         * Creates a plain object from a NotificationContent message. Also converts values to other types if specified.
+         * @param message NotificationContent
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationContent, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationContent to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationContent
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationWrapper. */
+    interface INotificationWrapper {
+
+        /** NotificationWrapper uid */
+        uid?: (Uint8Array|null);
+
+        /** NotificationWrapper content */
+        content?: (NotificationCenter.INotificationContent|null);
+
+        /** NotificationWrapper timestamp */
+        timestamp?: (number|Long|null);
+    }
+
+    /** Represents a NotificationWrapper. */
+    class NotificationWrapper implements INotificationWrapper {
+
+        /**
+         * Constructs a new NotificationWrapper.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationWrapper);
+
+        /** NotificationWrapper uid. */
+        public uid: Uint8Array;
+
+        /** NotificationWrapper content. */
+        public content?: (NotificationCenter.INotificationContent|null);
+
+        /** NotificationWrapper timestamp. */
+        public timestamp: (number|Long);
+
+        /**
+         * Creates a new NotificationWrapper instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationWrapper instance
+         */
+        public static create(properties?: NotificationCenter.INotificationWrapper): NotificationCenter.NotificationWrapper;
+
+        /**
+         * Encodes the specified NotificationWrapper message. Does not implicitly {@link NotificationCenter.NotificationWrapper.verify|verify} messages.
+         * @param message NotificationWrapper message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationWrapper, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationWrapper message, length delimited. Does not implicitly {@link NotificationCenter.NotificationWrapper.verify|verify} messages.
+         * @param message NotificationWrapper message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationWrapper, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationWrapper message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationWrapper
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationWrapper;
+
+        /**
+         * Decodes a NotificationWrapper message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationWrapper
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationWrapper;
+
+        /**
+         * Verifies a NotificationWrapper message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationWrapper message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationWrapper
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationWrapper;
+
+        /**
+         * Creates a plain object from a NotificationWrapper message. Also converts values to other types if specified.
+         * @param message NotificationWrapper
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationWrapper, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationWrapper to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationWrapper
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationSync. */
+    interface INotificationSync {
+
+        /** NotificationSync data */
+        data?: (NotificationCenter.INotificationWrapper[]|null);
+
+        /** NotificationSync syncPoint */
+        syncPoint?: (number|Long|null);
+
+        /** NotificationSync hasMore */
+        hasMore?: (boolean|null);
+    }
+
+    /** Represents a NotificationSync. */
+    class NotificationSync implements INotificationSync {
+
+        /**
+         * Constructs a new NotificationSync.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationSync);
+
+        /** NotificationSync data. */
+        public data: NotificationCenter.INotificationWrapper[];
+
+        /** NotificationSync syncPoint. */
+        public syncPoint: (number|Long);
+
+        /** NotificationSync hasMore. */
+        public hasMore: boolean;
+
+        /**
+         * Creates a new NotificationSync instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationSync instance
+         */
+        public static create(properties?: NotificationCenter.INotificationSync): NotificationCenter.NotificationSync;
+
+        /**
+         * Encodes the specified NotificationSync message. Does not implicitly {@link NotificationCenter.NotificationSync.verify|verify} messages.
+         * @param message NotificationSync message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationSync, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationSync message, length delimited. Does not implicitly {@link NotificationCenter.NotificationSync.verify|verify} messages.
+         * @param message NotificationSync message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationSync, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationSync message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationSync
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationSync;
+
+        /**
+         * Decodes a NotificationSync message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationSync
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationSync;
+
+        /**
+         * Verifies a NotificationSync message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationSync message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationSync
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationSync;
+
+        /**
+         * Creates a plain object from a NotificationSync message. Also converts values to other types if specified.
+         * @param message NotificationSync
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationSync, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationSync to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationSync
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a ReadStatusUpdate. */
+    interface IReadStatusUpdate {
+
+        /** ReadStatusUpdate notificationUid */
+        notificationUid?: (Uint8Array|null);
+
+        /** ReadStatusUpdate status */
+        status?: (NotificationCenter.NotificationReadStatus|null);
+    }
+
+    /** Represents a ReadStatusUpdate. */
+    class ReadStatusUpdate implements IReadStatusUpdate {
+
+        /**
+         * Constructs a new ReadStatusUpdate.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.IReadStatusUpdate);
+
+        /** ReadStatusUpdate notificationUid. */
+        public notificationUid: Uint8Array;
+
+        /** ReadStatusUpdate status. */
+        public status: NotificationCenter.NotificationReadStatus;
+
+        /**
+         * Creates a new ReadStatusUpdate instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReadStatusUpdate instance
+         */
+        public static create(properties?: NotificationCenter.IReadStatusUpdate): NotificationCenter.ReadStatusUpdate;
+
+        /**
+         * Encodes the specified ReadStatusUpdate message. Does not implicitly {@link NotificationCenter.ReadStatusUpdate.verify|verify} messages.
+         * @param message ReadStatusUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.IReadStatusUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReadStatusUpdate message, length delimited. Does not implicitly {@link NotificationCenter.ReadStatusUpdate.verify|verify} messages.
+         * @param message ReadStatusUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.IReadStatusUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReadStatusUpdate message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReadStatusUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.ReadStatusUpdate;
+
+        /**
+         * Decodes a ReadStatusUpdate message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReadStatusUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.ReadStatusUpdate;
+
+        /**
+         * Verifies a ReadStatusUpdate message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReadStatusUpdate message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReadStatusUpdate
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.ReadStatusUpdate;
+
+        /**
+         * Creates a plain object from a ReadStatusUpdate message. Also converts values to other types if specified.
+         * @param message ReadStatusUpdate
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.ReadStatusUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReadStatusUpdate to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ReadStatusUpdate
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an ApprovalStatusUpdate. */
+    interface IApprovalStatusUpdate {
+
+        /** ApprovalStatusUpdate notificationUid */
+        notificationUid?: (Uint8Array|null);
+
+        /** ApprovalStatusUpdate status */
+        status?: (NotificationCenter.NotificationApprovalStatus|null);
+    }
+
+    /** Represents an ApprovalStatusUpdate. */
+    class ApprovalStatusUpdate implements IApprovalStatusUpdate {
+
+        /**
+         * Constructs a new ApprovalStatusUpdate.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.IApprovalStatusUpdate);
+
+        /** ApprovalStatusUpdate notificationUid. */
+        public notificationUid: Uint8Array;
+
+        /** ApprovalStatusUpdate status. */
+        public status: NotificationCenter.NotificationApprovalStatus;
+
+        /**
+         * Creates a new ApprovalStatusUpdate instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApprovalStatusUpdate instance
+         */
+        public static create(properties?: NotificationCenter.IApprovalStatusUpdate): NotificationCenter.ApprovalStatusUpdate;
+
+        /**
+         * Encodes the specified ApprovalStatusUpdate message. Does not implicitly {@link NotificationCenter.ApprovalStatusUpdate.verify|verify} messages.
+         * @param message ApprovalStatusUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.IApprovalStatusUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ApprovalStatusUpdate message, length delimited. Does not implicitly {@link NotificationCenter.ApprovalStatusUpdate.verify|verify} messages.
+         * @param message ApprovalStatusUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.IApprovalStatusUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApprovalStatusUpdate message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApprovalStatusUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.ApprovalStatusUpdate;
+
+        /**
+         * Decodes an ApprovalStatusUpdate message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ApprovalStatusUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.ApprovalStatusUpdate;
+
+        /**
+         * Verifies an ApprovalStatusUpdate message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ApprovalStatusUpdate message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApprovalStatusUpdate
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.ApprovalStatusUpdate;
+
+        /**
+         * Creates a plain object from an ApprovalStatusUpdate message. Also converts values to other types if specified.
+         * @param message ApprovalStatusUpdate
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.ApprovalStatusUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApprovalStatusUpdate to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApprovalStatusUpdate
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a ProcessMarkReadEventsRequest. */
+    interface IProcessMarkReadEventsRequest {
+
+        /** ProcessMarkReadEventsRequest readStatusUpdate */
+        readStatusUpdate?: (NotificationCenter.IReadStatusUpdate[]|null);
+    }
+
+    /** Represents a ProcessMarkReadEventsRequest. */
+    class ProcessMarkReadEventsRequest implements IProcessMarkReadEventsRequest {
+
+        /**
+         * Constructs a new ProcessMarkReadEventsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.IProcessMarkReadEventsRequest);
+
+        /** ProcessMarkReadEventsRequest readStatusUpdate. */
+        public readStatusUpdate: NotificationCenter.IReadStatusUpdate[];
+
+        /**
+         * Creates a new ProcessMarkReadEventsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ProcessMarkReadEventsRequest instance
+         */
+        public static create(properties?: NotificationCenter.IProcessMarkReadEventsRequest): NotificationCenter.ProcessMarkReadEventsRequest;
+
+        /**
+         * Encodes the specified ProcessMarkReadEventsRequest message. Does not implicitly {@link NotificationCenter.ProcessMarkReadEventsRequest.verify|verify} messages.
+         * @param message ProcessMarkReadEventsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.IProcessMarkReadEventsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ProcessMarkReadEventsRequest message, length delimited. Does not implicitly {@link NotificationCenter.ProcessMarkReadEventsRequest.verify|verify} messages.
+         * @param message ProcessMarkReadEventsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.IProcessMarkReadEventsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ProcessMarkReadEventsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ProcessMarkReadEventsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.ProcessMarkReadEventsRequest;
+
+        /**
+         * Decodes a ProcessMarkReadEventsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ProcessMarkReadEventsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.ProcessMarkReadEventsRequest;
+
+        /**
+         * Verifies a ProcessMarkReadEventsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ProcessMarkReadEventsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ProcessMarkReadEventsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.ProcessMarkReadEventsRequest;
+
+        /**
+         * Creates a plain object from a ProcessMarkReadEventsRequest message. Also converts values to other types if specified.
+         * @param message ProcessMarkReadEventsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.ProcessMarkReadEventsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ProcessMarkReadEventsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ProcessMarkReadEventsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationSendRequest. */
+    interface INotificationSendRequest {
+
+        /** NotificationSendRequest recipients */
+        recipients?: (GraphSync.IGraphSyncRef[]|null);
+
+        /** NotificationSendRequest notification */
+        notification?: (NotificationCenter.INotification|null);
+
+        /** NotificationSendRequest clientTypeIDs */
+        clientTypeIDs?: (number[]|null);
+
+        /** NotificationSendRequest deviceIDs */
+        deviceIDs?: ((number|Long)[]|null);
+    }
+
+    /** Represents a NotificationSendRequest. */
+    class NotificationSendRequest implements INotificationSendRequest {
+
+        /**
+         * Constructs a new NotificationSendRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationSendRequest);
+
+        /** NotificationSendRequest recipients. */
+        public recipients: GraphSync.IGraphSyncRef[];
+
+        /** NotificationSendRequest notification. */
+        public notification?: (NotificationCenter.INotification|null);
+
+        /** NotificationSendRequest clientTypeIDs. */
+        public clientTypeIDs: number[];
+
+        /** NotificationSendRequest deviceIDs. */
+        public deviceIDs: (number|Long)[];
+
+        /**
+         * Creates a new NotificationSendRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationSendRequest instance
+         */
+        public static create(properties?: NotificationCenter.INotificationSendRequest): NotificationCenter.NotificationSendRequest;
+
+        /**
+         * Encodes the specified NotificationSendRequest message. Does not implicitly {@link NotificationCenter.NotificationSendRequest.verify|verify} messages.
+         * @param message NotificationSendRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationSendRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationSendRequest message, length delimited. Does not implicitly {@link NotificationCenter.NotificationSendRequest.verify|verify} messages.
+         * @param message NotificationSendRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationSendRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationSendRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationSendRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationSendRequest;
+
+        /**
+         * Decodes a NotificationSendRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationSendRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationSendRequest;
+
+        /**
+         * Verifies a NotificationSendRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationSendRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationSendRequest
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationSendRequest;
+
+        /**
+         * Creates a plain object from a NotificationSendRequest message. Also converts values to other types if specified.
+         * @param message NotificationSendRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationSendRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationSendRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationSendRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationsSendRequest. */
+    interface INotificationsSendRequest {
+
+        /** NotificationsSendRequest notifications */
+        notifications?: (NotificationCenter.INotificationSendRequest[]|null);
+    }
+
+    /** Represents a NotificationsSendRequest. */
+    class NotificationsSendRequest implements INotificationsSendRequest {
+
+        /**
+         * Constructs a new NotificationsSendRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationsSendRequest);
+
+        /** NotificationsSendRequest notifications. */
+        public notifications: NotificationCenter.INotificationSendRequest[];
+
+        /**
+         * Creates a new NotificationsSendRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationsSendRequest instance
+         */
+        public static create(properties?: NotificationCenter.INotificationsSendRequest): NotificationCenter.NotificationsSendRequest;
+
+        /**
+         * Encodes the specified NotificationsSendRequest message. Does not implicitly {@link NotificationCenter.NotificationsSendRequest.verify|verify} messages.
+         * @param message NotificationsSendRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationsSendRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationsSendRequest message, length delimited. Does not implicitly {@link NotificationCenter.NotificationsSendRequest.verify|verify} messages.
+         * @param message NotificationsSendRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationsSendRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationsSendRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationsSendRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationsSendRequest;
+
+        /**
+         * Decodes a NotificationsSendRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationsSendRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationsSendRequest;
+
+        /**
+         * Verifies a NotificationsSendRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationsSendRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationsSendRequest
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationsSendRequest;
+
+        /**
+         * Creates a plain object from a NotificationsSendRequest message. Also converts values to other types if specified.
+         * @param message NotificationsSendRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationsSendRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationsSendRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationsSendRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationSyncRequest. */
+    interface INotificationSyncRequest {
+
+        /** NotificationSyncRequest syncPoint */
+        syncPoint?: (number|Long|null);
+    }
+
+    /** Represents a NotificationSyncRequest. */
+    class NotificationSyncRequest implements INotificationSyncRequest {
+
+        /**
+         * Constructs a new NotificationSyncRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationSyncRequest);
+
+        /** NotificationSyncRequest syncPoint. */
+        public syncPoint: (number|Long);
+
+        /**
+         * Creates a new NotificationSyncRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationSyncRequest instance
+         */
+        public static create(properties?: NotificationCenter.INotificationSyncRequest): NotificationCenter.NotificationSyncRequest;
+
+        /**
+         * Encodes the specified NotificationSyncRequest message. Does not implicitly {@link NotificationCenter.NotificationSyncRequest.verify|verify} messages.
+         * @param message NotificationSyncRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationSyncRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationSyncRequest message, length delimited. Does not implicitly {@link NotificationCenter.NotificationSyncRequest.verify|verify} messages.
+         * @param message NotificationSyncRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationSyncRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationSyncRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationSyncRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationSyncRequest;
+
+        /**
+         * Decodes a NotificationSyncRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationSyncRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationSyncRequest;
+
+        /**
+         * Verifies a NotificationSyncRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationSyncRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationSyncRequest
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationSyncRequest;
+
+        /**
+         * Creates a plain object from a NotificationSyncRequest message. Also converts values to other types if specified.
+         * @param message NotificationSyncRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationSyncRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationSyncRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationSyncRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
+/** Namespace GraphSync. */
+export namespace GraphSync {
+
+    /** RefType enum. */
+    enum RefType {
+        RFT_UNSPECIFIED = 0,
+        RFT_GENERAL = 1,
+        USER = 2,
+        DEVICE = 3,
+        REC = 4,
+        FOLDER = 5,
+        TEAM = 6,
+        ENTERPRISE = 7,
+        PAM_DIRECTORY = 8,
+        PAM_MACHINE = 9,
+        PAM_DATABASE = 10,
+        PAM_USER = 11,
+        PAM_NETWORK = 12,
+        PAM_BROWSER = 13,
+        CONNECTION = 14,
+        WORKFLOW = 15,
+        NOTIFICATION = 16,
+        USER_INFO = 17,
+        TEAM_INFO = 18,
+        ROLE = 19
+    }
+
+    /** Properties of a GraphSyncRef. */
+    interface IGraphSyncRef {
+
+        /** GraphSyncRef type */
+        type?: (GraphSync.RefType|null);
+
+        /** GraphSyncRef value */
+        value?: (Uint8Array|null);
+
+        /** GraphSyncRef name */
+        name?: (string|null);
+    }
+
+    /** Represents a GraphSyncRef. */
+    class GraphSyncRef implements IGraphSyncRef {
+
+        /**
+         * Constructs a new GraphSyncRef.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncRef);
+
+        /** GraphSyncRef type. */
+        public type: GraphSync.RefType;
+
+        /** GraphSyncRef value. */
+        public value: Uint8Array;
+
+        /** GraphSyncRef name. */
+        public name: string;
+
+        /**
+         * Creates a new GraphSyncRef instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncRef instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncRef): GraphSync.GraphSyncRef;
+
+        /**
+         * Encodes the specified GraphSyncRef message. Does not implicitly {@link GraphSync.GraphSyncRef.verify|verify} messages.
+         * @param message GraphSyncRef message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncRef, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncRef message, length delimited. Does not implicitly {@link GraphSync.GraphSyncRef.verify|verify} messages.
+         * @param message GraphSyncRef message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncRef, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncRef message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncRef
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncRef;
+
+        /**
+         * Decodes a GraphSyncRef message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncRef
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncRef;
+
+        /**
+         * Verifies a GraphSyncRef message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncRef message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncRef
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncRef;
+
+        /**
+         * Creates a plain object from a GraphSyncRef message. Also converts values to other types if specified.
+         * @param message GraphSyncRef
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncRef, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncRef to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncRef
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** GraphSyncDataType enum. */
+    enum GraphSyncDataType {
+        GSE_UNSPECIFIED = 0,
+        GSE_DATA = 1,
+        GSE_KEY = 2,
+        GSE_LINK = 3,
+        GSE_ACL = 4,
+        GSE_DELETION = 5
+    }
+
+    /** GraphSyncActorType enum. */
+    enum GraphSyncActorType {
+        GSA_UNSPECIFIED = 0,
+        GSA_USER = 1,
+        GSA_SERVICE = 2,
+        GSA_PAM_GATEWAY = 3
+    }
+
+    /** Properties of a GraphSyncActor. */
+    interface IGraphSyncActor {
+
+        /** GraphSyncActor type */
+        type?: (GraphSync.GraphSyncActorType|null);
+
+        /** GraphSyncActor id */
+        id?: (Uint8Array|null);
+
+        /** GraphSyncActor name */
+        name?: (string|null);
+
+        /** GraphSyncActor effectiveUserId */
+        effectiveUserId?: (Uint8Array|null);
+    }
+
+    /** Represents a GraphSyncActor. */
+    class GraphSyncActor implements IGraphSyncActor {
+
+        /**
+         * Constructs a new GraphSyncActor.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncActor);
+
+        /** GraphSyncActor type. */
+        public type: GraphSync.GraphSyncActorType;
+
+        /** GraphSyncActor id. */
+        public id: Uint8Array;
+
+        /** GraphSyncActor name. */
+        public name: string;
+
+        /** GraphSyncActor effectiveUserId. */
+        public effectiveUserId: Uint8Array;
+
+        /**
+         * Creates a new GraphSyncActor instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncActor instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncActor): GraphSync.GraphSyncActor;
+
+        /**
+         * Encodes the specified GraphSyncActor message. Does not implicitly {@link GraphSync.GraphSyncActor.verify|verify} messages.
+         * @param message GraphSyncActor message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncActor, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncActor message, length delimited. Does not implicitly {@link GraphSync.GraphSyncActor.verify|verify} messages.
+         * @param message GraphSyncActor message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncActor, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncActor message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncActor
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncActor;
+
+        /**
+         * Decodes a GraphSyncActor message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncActor
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncActor;
+
+        /**
+         * Verifies a GraphSyncActor message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncActor message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncActor
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncActor;
+
+        /**
+         * Creates a plain object from a GraphSyncActor message. Also converts values to other types if specified.
+         * @param message GraphSyncActor
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncActor, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncActor to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncActor
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncData. */
+    interface IGraphSyncData {
+
+        /** GraphSyncData type */
+        type?: (GraphSync.GraphSyncDataType|null);
+
+        /** GraphSyncData ref */
+        ref?: (GraphSync.IGraphSyncRef|null);
+
+        /** GraphSyncData parentRef */
+        parentRef?: (GraphSync.IGraphSyncRef|null);
+
+        /** GraphSyncData content */
+        content?: (Uint8Array|null);
+
+        /** GraphSyncData path */
+        path?: (string|null);
+    }
+
+    /** Represents a GraphSyncData. */
+    class GraphSyncData implements IGraphSyncData {
+
+        /**
+         * Constructs a new GraphSyncData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncData);
+
+        /** GraphSyncData type. */
+        public type: GraphSync.GraphSyncDataType;
+
+        /** GraphSyncData ref. */
+        public ref?: (GraphSync.IGraphSyncRef|null);
+
+        /** GraphSyncData parentRef. */
+        public parentRef?: (GraphSync.IGraphSyncRef|null);
+
+        /** GraphSyncData content. */
+        public content: Uint8Array;
+
+        /** GraphSyncData path. */
+        public path: string;
+
+        /**
+         * Creates a new GraphSyncData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncData instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncData): GraphSync.GraphSyncData;
+
+        /**
+         * Encodes the specified GraphSyncData message. Does not implicitly {@link GraphSync.GraphSyncData.verify|verify} messages.
+         * @param message GraphSyncData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncData message, length delimited. Does not implicitly {@link GraphSync.GraphSyncData.verify|verify} messages.
+         * @param message GraphSyncData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncData;
+
+        /**
+         * Decodes a GraphSyncData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncData;
+
+        /**
+         * Verifies a GraphSyncData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncData
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncData;
+
+        /**
+         * Creates a plain object from a GraphSyncData message. Also converts values to other types if specified.
+         * @param message GraphSyncData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncDataPlus. */
+    interface IGraphSyncDataPlus {
+
+        /** GraphSyncDataPlus data */
+        data?: (GraphSync.IGraphSyncData|null);
+
+        /** GraphSyncDataPlus timestamp */
+        timestamp?: (number|Long|null);
+
+        /** GraphSyncDataPlus actor */
+        actor?: (GraphSync.IGraphSyncActor|null);
+    }
+
+    /** Represents a GraphSyncDataPlus. */
+    class GraphSyncDataPlus implements IGraphSyncDataPlus {
+
+        /**
+         * Constructs a new GraphSyncDataPlus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncDataPlus);
+
+        /** GraphSyncDataPlus data. */
+        public data?: (GraphSync.IGraphSyncData|null);
+
+        /** GraphSyncDataPlus timestamp. */
+        public timestamp: (number|Long);
+
+        /** GraphSyncDataPlus actor. */
+        public actor?: (GraphSync.IGraphSyncActor|null);
+
+        /**
+         * Creates a new GraphSyncDataPlus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncDataPlus instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncDataPlus): GraphSync.GraphSyncDataPlus;
+
+        /**
+         * Encodes the specified GraphSyncDataPlus message. Does not implicitly {@link GraphSync.GraphSyncDataPlus.verify|verify} messages.
+         * @param message GraphSyncDataPlus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncDataPlus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncDataPlus message, length delimited. Does not implicitly {@link GraphSync.GraphSyncDataPlus.verify|verify} messages.
+         * @param message GraphSyncDataPlus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncDataPlus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncDataPlus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncDataPlus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncDataPlus;
+
+        /**
+         * Decodes a GraphSyncDataPlus message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncDataPlus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncDataPlus;
+
+        /**
+         * Verifies a GraphSyncDataPlus message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncDataPlus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncDataPlus
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncDataPlus;
+
+        /**
+         * Creates a plain object from a GraphSyncDataPlus message. Also converts values to other types if specified.
+         * @param message GraphSyncDataPlus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncDataPlus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncDataPlus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncDataPlus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncQuery. */
+    interface IGraphSyncQuery {
+
+        /** GraphSyncQuery streamId */
+        streamId?: (Uint8Array|null);
+
+        /** GraphSyncQuery origin */
+        origin?: (Uint8Array|null);
+
+        /** GraphSyncQuery syncPoint */
+        syncPoint?: (number|Long|null);
+
+        /** GraphSyncQuery maxCount */
+        maxCount?: (number|null);
+    }
+
+    /** Represents a GraphSyncQuery. */
+    class GraphSyncQuery implements IGraphSyncQuery {
+
+        /**
+         * Constructs a new GraphSyncQuery.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncQuery);
+
+        /** GraphSyncQuery streamId. */
+        public streamId: Uint8Array;
+
+        /** GraphSyncQuery origin. */
+        public origin: Uint8Array;
+
+        /** GraphSyncQuery syncPoint. */
+        public syncPoint: (number|Long);
+
+        /** GraphSyncQuery maxCount. */
+        public maxCount: number;
+
+        /**
+         * Creates a new GraphSyncQuery instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncQuery instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncQuery): GraphSync.GraphSyncQuery;
+
+        /**
+         * Encodes the specified GraphSyncQuery message. Does not implicitly {@link GraphSync.GraphSyncQuery.verify|verify} messages.
+         * @param message GraphSyncQuery message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncQuery, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncQuery message, length delimited. Does not implicitly {@link GraphSync.GraphSyncQuery.verify|verify} messages.
+         * @param message GraphSyncQuery message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncQuery, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncQuery message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncQuery
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncQuery;
+
+        /**
+         * Decodes a GraphSyncQuery message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncQuery
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncQuery;
+
+        /**
+         * Verifies a GraphSyncQuery message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncQuery message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncQuery
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncQuery;
+
+        /**
+         * Creates a plain object from a GraphSyncQuery message. Also converts values to other types if specified.
+         * @param message GraphSyncQuery
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncQuery, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncQuery to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncQuery
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncResult. */
+    interface IGraphSyncResult {
+
+        /** GraphSyncResult streamId */
+        streamId?: (Uint8Array|null);
+
+        /** GraphSyncResult syncPoint */
+        syncPoint?: (number|Long|null);
+
+        /** GraphSyncResult data */
+        data?: (GraphSync.IGraphSyncDataPlus[]|null);
+
+        /** GraphSyncResult hasMore */
+        hasMore?: (boolean|null);
+    }
+
+    /** Represents a GraphSyncResult. */
+    class GraphSyncResult implements IGraphSyncResult {
+
+        /**
+         * Constructs a new GraphSyncResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncResult);
+
+        /** GraphSyncResult streamId. */
+        public streamId: Uint8Array;
+
+        /** GraphSyncResult syncPoint. */
+        public syncPoint: (number|Long);
+
+        /** GraphSyncResult data. */
+        public data: GraphSync.IGraphSyncDataPlus[];
+
+        /** GraphSyncResult hasMore. */
+        public hasMore: boolean;
+
+        /**
+         * Creates a new GraphSyncResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncResult instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncResult): GraphSync.GraphSyncResult;
+
+        /**
+         * Encodes the specified GraphSyncResult message. Does not implicitly {@link GraphSync.GraphSyncResult.verify|verify} messages.
+         * @param message GraphSyncResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncResult message, length delimited. Does not implicitly {@link GraphSync.GraphSyncResult.verify|verify} messages.
+         * @param message GraphSyncResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncResult;
+
+        /**
+         * Decodes a GraphSyncResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncResult;
+
+        /**
+         * Verifies a GraphSyncResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncResult
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncResult;
+
+        /**
+         * Creates a plain object from a GraphSyncResult message. Also converts values to other types if specified.
+         * @param message GraphSyncResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncMultiQuery. */
+    interface IGraphSyncMultiQuery {
+
+        /** GraphSyncMultiQuery queries */
+        queries?: (GraphSync.IGraphSyncQuery[]|null);
+    }
+
+    /** Represents a GraphSyncMultiQuery. */
+    class GraphSyncMultiQuery implements IGraphSyncMultiQuery {
+
+        /**
+         * Constructs a new GraphSyncMultiQuery.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncMultiQuery);
+
+        /** GraphSyncMultiQuery queries. */
+        public queries: GraphSync.IGraphSyncQuery[];
+
+        /**
+         * Creates a new GraphSyncMultiQuery instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncMultiQuery instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncMultiQuery): GraphSync.GraphSyncMultiQuery;
+
+        /**
+         * Encodes the specified GraphSyncMultiQuery message. Does not implicitly {@link GraphSync.GraphSyncMultiQuery.verify|verify} messages.
+         * @param message GraphSyncMultiQuery message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncMultiQuery, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncMultiQuery message, length delimited. Does not implicitly {@link GraphSync.GraphSyncMultiQuery.verify|verify} messages.
+         * @param message GraphSyncMultiQuery message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncMultiQuery, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncMultiQuery message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncMultiQuery
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncMultiQuery;
+
+        /**
+         * Decodes a GraphSyncMultiQuery message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncMultiQuery
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncMultiQuery;
+
+        /**
+         * Verifies a GraphSyncMultiQuery message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncMultiQuery message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncMultiQuery
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncMultiQuery;
+
+        /**
+         * Creates a plain object from a GraphSyncMultiQuery message. Also converts values to other types if specified.
+         * @param message GraphSyncMultiQuery
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncMultiQuery, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncMultiQuery to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncMultiQuery
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncMultiResult. */
+    interface IGraphSyncMultiResult {
+
+        /** GraphSyncMultiResult results */
+        results?: (GraphSync.IGraphSyncResult[]|null);
+    }
+
+    /** Represents a GraphSyncMultiResult. */
+    class GraphSyncMultiResult implements IGraphSyncMultiResult {
+
+        /**
+         * Constructs a new GraphSyncMultiResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncMultiResult);
+
+        /** GraphSyncMultiResult results. */
+        public results: GraphSync.IGraphSyncResult[];
+
+        /**
+         * Creates a new GraphSyncMultiResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncMultiResult instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncMultiResult): GraphSync.GraphSyncMultiResult;
+
+        /**
+         * Encodes the specified GraphSyncMultiResult message. Does not implicitly {@link GraphSync.GraphSyncMultiResult.verify|verify} messages.
+         * @param message GraphSyncMultiResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncMultiResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncMultiResult message, length delimited. Does not implicitly {@link GraphSync.GraphSyncMultiResult.verify|verify} messages.
+         * @param message GraphSyncMultiResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncMultiResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncMultiResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncMultiResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncMultiResult;
+
+        /**
+         * Decodes a GraphSyncMultiResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncMultiResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncMultiResult;
+
+        /**
+         * Verifies a GraphSyncMultiResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncMultiResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncMultiResult
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncMultiResult;
+
+        /**
+         * Creates a plain object from a GraphSyncMultiResult message. Also converts values to other types if specified.
+         * @param message GraphSyncMultiResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncMultiResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncMultiResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncMultiResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncAddDataRequest. */
+    interface IGraphSyncAddDataRequest {
+
+        /** GraphSyncAddDataRequest origin */
+        origin?: (GraphSync.IGraphSyncRef|null);
+
+        /** GraphSyncAddDataRequest data */
+        data?: (GraphSync.IGraphSyncData[]|null);
+    }
+
+    /** Represents a GraphSyncAddDataRequest. */
+    class GraphSyncAddDataRequest implements IGraphSyncAddDataRequest {
+
+        /**
+         * Constructs a new GraphSyncAddDataRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncAddDataRequest);
+
+        /** GraphSyncAddDataRequest origin. */
+        public origin?: (GraphSync.IGraphSyncRef|null);
+
+        /** GraphSyncAddDataRequest data. */
+        public data: GraphSync.IGraphSyncData[];
+
+        /**
+         * Creates a new GraphSyncAddDataRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncAddDataRequest instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncAddDataRequest): GraphSync.GraphSyncAddDataRequest;
+
+        /**
+         * Encodes the specified GraphSyncAddDataRequest message. Does not implicitly {@link GraphSync.GraphSyncAddDataRequest.verify|verify} messages.
+         * @param message GraphSyncAddDataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncAddDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncAddDataRequest message, length delimited. Does not implicitly {@link GraphSync.GraphSyncAddDataRequest.verify|verify} messages.
+         * @param message GraphSyncAddDataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncAddDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncAddDataRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncAddDataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncAddDataRequest;
+
+        /**
+         * Decodes a GraphSyncAddDataRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncAddDataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncAddDataRequest;
+
+        /**
+         * Verifies a GraphSyncAddDataRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncAddDataRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncAddDataRequest
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncAddDataRequest;
+
+        /**
+         * Creates a plain object from a GraphSyncAddDataRequest message. Also converts values to other types if specified.
+         * @param message GraphSyncAddDataRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncAddDataRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncAddDataRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncAddDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncLeafsQuery. */
+    interface IGraphSyncLeafsQuery {
+
+        /** GraphSyncLeafsQuery vertices */
+        vertices?: (Uint8Array[]|null);
+    }
+
+    /** Represents a GraphSyncLeafsQuery. */
+    class GraphSyncLeafsQuery implements IGraphSyncLeafsQuery {
+
+        /**
+         * Constructs a new GraphSyncLeafsQuery.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncLeafsQuery);
+
+        /** GraphSyncLeafsQuery vertices. */
+        public vertices: Uint8Array[];
+
+        /**
+         * Creates a new GraphSyncLeafsQuery instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncLeafsQuery instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncLeafsQuery): GraphSync.GraphSyncLeafsQuery;
+
+        /**
+         * Encodes the specified GraphSyncLeafsQuery message. Does not implicitly {@link GraphSync.GraphSyncLeafsQuery.verify|verify} messages.
+         * @param message GraphSyncLeafsQuery message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncLeafsQuery, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncLeafsQuery message, length delimited. Does not implicitly {@link GraphSync.GraphSyncLeafsQuery.verify|verify} messages.
+         * @param message GraphSyncLeafsQuery message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncLeafsQuery, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncLeafsQuery message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncLeafsQuery
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncLeafsQuery;
+
+        /**
+         * Decodes a GraphSyncLeafsQuery message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncLeafsQuery
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncLeafsQuery;
+
+        /**
+         * Verifies a GraphSyncLeafsQuery message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncLeafsQuery message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncLeafsQuery
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncLeafsQuery;
+
+        /**
+         * Creates a plain object from a GraphSyncLeafsQuery message. Also converts values to other types if specified.
+         * @param message GraphSyncLeafsQuery
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncLeafsQuery, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncLeafsQuery to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncLeafsQuery
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GraphSyncRefsResult. */
+    interface IGraphSyncRefsResult {
+
+        /** GraphSyncRefsResult refs */
+        refs?: (GraphSync.IGraphSyncRef[]|null);
+    }
+
+    /** Represents a GraphSyncRefsResult. */
+    class GraphSyncRefsResult implements IGraphSyncRefsResult {
+
+        /**
+         * Constructs a new GraphSyncRefsResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: GraphSync.IGraphSyncRefsResult);
+
+        /** GraphSyncRefsResult refs. */
+        public refs: GraphSync.IGraphSyncRef[];
+
+        /**
+         * Creates a new GraphSyncRefsResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GraphSyncRefsResult instance
+         */
+        public static create(properties?: GraphSync.IGraphSyncRefsResult): GraphSync.GraphSyncRefsResult;
+
+        /**
+         * Encodes the specified GraphSyncRefsResult message. Does not implicitly {@link GraphSync.GraphSyncRefsResult.verify|verify} messages.
+         * @param message GraphSyncRefsResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: GraphSync.IGraphSyncRefsResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GraphSyncRefsResult message, length delimited. Does not implicitly {@link GraphSync.GraphSyncRefsResult.verify|verify} messages.
+         * @param message GraphSyncRefsResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: GraphSync.IGraphSyncRefsResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GraphSyncRefsResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GraphSyncRefsResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): GraphSync.GraphSyncRefsResult;
+
+        /**
+         * Decodes a GraphSyncRefsResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GraphSyncRefsResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): GraphSync.GraphSyncRefsResult;
+
+        /**
+         * Verifies a GraphSyncRefsResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GraphSyncRefsResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GraphSyncRefsResult
+         */
+        public static fromObject(object: { [k: string]: any }): GraphSync.GraphSyncRefsResult;
+
+        /**
+         * Creates a plain object from a GraphSyncRefsResult message. Also converts values to other types if specified.
+         * @param message GraphSyncRefsResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: GraphSync.GraphSyncRefsResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GraphSyncRefsResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GraphSyncRefsResult
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
