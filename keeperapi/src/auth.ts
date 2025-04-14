@@ -315,14 +315,14 @@ export class Auth {
                 await this.connect()
             }
 
-            const startLoginRequest: IStartLoginRequest = {
+            const startLoginRequest = new Authentication.StartLoginRequest({
                 clientVersion: this.endpoint.clientVersion,
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginMethod: loginMethod,
                 cloneCode: await this.options.sessionStorage?.getCloneCode(this.options.host as KeeperEnvironment, this._username),
                 v2TwoFactorToken: v2TwoFactorToken
-            }
+            })
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
             }
@@ -333,6 +333,8 @@ export class Auth {
                 startLoginRequest.username = this._username
                 needUserName = false
             }
+
+            console.log(startLoginRequest)
 
             var loginResponse: NN<Authentication.ILoginResponse>;
             if (givenSessionToken){
@@ -497,6 +499,9 @@ export class Auth {
                         console.log('Error in Authentication.LoginState.LOGGED_IN: ', e)
                         return;
                     }
+                default:
+                    handleError('generic_error', loginResponse, new Error(`Unknown login state ${loginResponse.loginState}`))
+                    return
             }
         }
     }
