@@ -62,6 +62,7 @@ export type SyncResult = {
     error?: string
     continuationToken?: string
     fullSync?: boolean
+    isSecurityDataFieldEmptyInFullSync?: boolean
 }
 
 export type Udata = {
@@ -1056,6 +1057,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             if (resp.cacheStatus == CacheStatus.CLEAR) {
                 await storage.clear()
                 result.fullSync = true
+                result.isSecurityDataFieldEmptyInFullSync = resp.breachWatchSecurityData.length === 0
             }
             if (result.pageCount === 0 && useWorkers && platform.supportsConcurrency && resp.hasMore) {
                 try {
