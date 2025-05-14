@@ -210,6 +210,7 @@ export type DUser = {
 export type DContinuationToken = {
     kind?: 'continuationToken'
     token: string
+    isSecurityDataFieldEmptyInFullSync?: boolean
 }
 
 export type Dependency = {
@@ -1168,7 +1169,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             result.continuationToken = respContinuationToken
             await storage.put({
                 kind: 'continuationToken',
-                token: respContinuationToken
+                token: respContinuationToken,
+                isSecurityDataFieldEmptyInFullSync: resp.cacheStatus === CacheStatus.CLEAR && resp.breachWatchSecurityData.length === 0,
             })
             if (!resp.hasMore || (options.maxCalls && result.pageCount >= options.maxCalls)) {
                 break
