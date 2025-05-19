@@ -183,7 +183,8 @@ export type DBWRecord = {
     kind: 'bw_record'
     uid: string
     data: any
-    scannedBy: string
+    scannedBy?: string
+    scannedByAccountUid?: string
     type: string
     revision: number
 }
@@ -883,7 +884,8 @@ const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storag
               kind: 'bw_record',
               uid: recUid,
               data: obj,
-              scannedBy: bwRecord.scannedBy,
+              scannedBy: bwRecord.scannedBy ? bwRecord.scannedBy : undefined,
+              scannedByAccountUid: bwRecord.scannedByAccountUid ? webSafe64FromBytes(bwRecord.scannedByAccountUid) : undefined,
               type: 'RECORD',
               revision: bwRecord.revision as number
             })
