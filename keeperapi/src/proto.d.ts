@@ -25,7 +25,9 @@ export namespace Authentication {
         ROMANIAN = 17,
         RUSSIAN = 18,
         SLOVAK = 19,
-        SPANISH = 20
+        SPANISH = 20,
+        FINNISH = 21,
+        SWEDISH = 22
     }
 
     /** LoginType enum. */
@@ -450,6 +452,12 @@ export namespace Authentication {
 
         /** DeviceRequest deviceName */
         deviceName?: (string|null);
+
+        /** DeviceRequest devicePlatform */
+        devicePlatform?: (string|null);
+
+        /** DeviceRequest clientFormFactor */
+        clientFormFactor?: (Authentication.ClientFormFactor|null);
     }
 
     /** Represents a DeviceRequest. */
@@ -466,6 +474,12 @@ export namespace Authentication {
 
         /** DeviceRequest deviceName. */
         public deviceName: string;
+
+        /** DeviceRequest devicePlatform. */
+        public devicePlatform: string;
+
+        /** DeviceRequest clientFormFactor. */
+        public clientFormFactor: Authentication.ClientFormFactor;
 
         /**
          * Creates a new DeviceRequest instance using the specified properties.
@@ -1382,6 +1396,7 @@ export namespace Authentication {
         PASSKEY_INITIATE_CHALLENGE = 19,
         PASSKEY_AUTH_REQUIRED = 20,
         PASSKEY_VERIFY_AUTHENTICATION = 21,
+        AFTER_PASSKEY_LOGIN = 22,
         LOGGED_IN = 99
     }
 
@@ -1432,6 +1447,9 @@ export namespace Authentication {
 
         /** StartLoginRequest accountUid */
         accountUid?: (Uint8Array|null);
+
+        /** StartLoginRequest fromSessionToken */
+        fromSessionToken?: (Uint8Array|null);
     }
 
     /** Represents a StartLoginRequest. */
@@ -1478,6 +1496,9 @@ export namespace Authentication {
 
         /** StartLoginRequest accountUid. */
         public accountUid: Uint8Array;
+
+        /** StartLoginRequest fromSessionToken. */
+        public fromSessionToken: Uint8Array;
 
         /**
          * Creates a new StartLoginRequest instance using the specified properties.
@@ -1738,6 +1759,218 @@ export namespace Authentication {
 
         /**
          * Gets the default type url for LoginResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SwitchListElement. */
+    interface ISwitchListElement {
+
+        /** SwitchListElement username */
+        username?: (string|null);
+
+        /** SwitchListElement fullName */
+        fullName?: (string|null);
+
+        /** SwitchListElement authRequired */
+        authRequired?: (boolean|null);
+
+        /** SwitchListElement isLinked */
+        isLinked?: (boolean|null);
+    }
+
+    /** Represents a SwitchListElement. */
+    class SwitchListElement implements ISwitchListElement {
+
+        /**
+         * Constructs a new SwitchListElement.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISwitchListElement);
+
+        /** SwitchListElement username. */
+        public username: string;
+
+        /** SwitchListElement fullName. */
+        public fullName: string;
+
+        /** SwitchListElement authRequired. */
+        public authRequired: boolean;
+
+        /** SwitchListElement isLinked. */
+        public isLinked: boolean;
+
+        /**
+         * Creates a new SwitchListElement instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SwitchListElement instance
+         */
+        public static create(properties?: Authentication.ISwitchListElement): Authentication.SwitchListElement;
+
+        /**
+         * Encodes the specified SwitchListElement message. Does not implicitly {@link Authentication.SwitchListElement.verify|verify} messages.
+         * @param message SwitchListElement message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISwitchListElement, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SwitchListElement message, length delimited. Does not implicitly {@link Authentication.SwitchListElement.verify|verify} messages.
+         * @param message SwitchListElement message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISwitchListElement, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SwitchListElement message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SwitchListElement
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SwitchListElement;
+
+        /**
+         * Decodes a SwitchListElement message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SwitchListElement
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SwitchListElement;
+
+        /**
+         * Verifies a SwitchListElement message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SwitchListElement message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SwitchListElement
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SwitchListElement;
+
+        /**
+         * Creates a plain object from a SwitchListElement message. Also converts values to other types if specified.
+         * @param message SwitchListElement
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SwitchListElement, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SwitchListElement to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SwitchListElement
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SwitchListResponse. */
+    interface ISwitchListResponse {
+
+        /** SwitchListResponse elements */
+        elements?: (Authentication.ISwitchListElement[]|null);
+    }
+
+    /** Represents a SwitchListResponse. */
+    class SwitchListResponse implements ISwitchListResponse {
+
+        /**
+         * Constructs a new SwitchListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ISwitchListResponse);
+
+        /** SwitchListResponse elements. */
+        public elements: Authentication.ISwitchListElement[];
+
+        /**
+         * Creates a new SwitchListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SwitchListResponse instance
+         */
+        public static create(properties?: Authentication.ISwitchListResponse): Authentication.SwitchListResponse;
+
+        /**
+         * Encodes the specified SwitchListResponse message. Does not implicitly {@link Authentication.SwitchListResponse.verify|verify} messages.
+         * @param message SwitchListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ISwitchListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SwitchListResponse message, length delimited. Does not implicitly {@link Authentication.SwitchListResponse.verify|verify} messages.
+         * @param message SwitchListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ISwitchListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SwitchListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SwitchListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.SwitchListResponse;
+
+        /**
+         * Decodes a SwitchListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SwitchListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.SwitchListResponse;
+
+        /**
+         * Verifies a SwitchListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SwitchListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SwitchListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.SwitchListResponse;
+
+        /**
+         * Creates a plain object from a SwitchListResponse message. Also converts values to other types if specified.
+         * @param message SwitchListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.SwitchListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SwitchListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SwitchListResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -4159,6 +4392,12 @@ export namespace Authentication {
 
         /** DeviceUpdateRequest deviceStatus */
         deviceStatus?: (Authentication.DeviceStatus|null);
+
+        /** DeviceUpdateRequest devicePlatform */
+        devicePlatform?: (string|null);
+
+        /** DeviceUpdateRequest clientFormFactor */
+        clientFormFactor?: (Authentication.ClientFormFactor|null);
     }
 
     /** Represents a DeviceUpdateRequest. */
@@ -4184,6 +4423,12 @@ export namespace Authentication {
 
         /** DeviceUpdateRequest deviceStatus. */
         public deviceStatus: Authentication.DeviceStatus;
+
+        /** DeviceUpdateRequest devicePlatform. */
+        public devicePlatform: string;
+
+        /** DeviceUpdateRequest clientFormFactor. */
+        public clientFormFactor: Authentication.ClientFormFactor;
 
         /**
          * Creates a new DeviceUpdateRequest instance using the specified properties.
@@ -4277,6 +4522,12 @@ export namespace Authentication {
 
         /** RegisterDeviceInRegionRequest devicePublicKey */
         devicePublicKey?: (Uint8Array|null);
+
+        /** RegisterDeviceInRegionRequest devicePlatform */
+        devicePlatform?: (string|null);
+
+        /** RegisterDeviceInRegionRequest clientFormFactor */
+        clientFormFactor?: (Authentication.ClientFormFactor|null);
     }
 
     /** Represents a RegisterDeviceInRegionRequest. */
@@ -4299,6 +4550,12 @@ export namespace Authentication {
 
         /** RegisterDeviceInRegionRequest devicePublicKey. */
         public devicePublicKey: Uint8Array;
+
+        /** RegisterDeviceInRegionRequest devicePlatform. */
+        public devicePlatform: string;
+
+        /** RegisterDeviceInRegionRequest clientFormFactor. */
+        public clientFormFactor: Authentication.ClientFormFactor;
 
         /**
          * Creates a new RegisterDeviceInRegionRequest instance using the specified properties.
@@ -8487,6 +8744,12 @@ export namespace Authentication {
 
         /** DeviceRegistrationRequest devicePublicKey */
         devicePublicKey?: (Uint8Array|null);
+
+        /** DeviceRegistrationRequest devicePlatform */
+        devicePlatform?: (string|null);
+
+        /** DeviceRegistrationRequest clientFormFactor */
+        clientFormFactor?: (Authentication.ClientFormFactor|null);
     }
 
     /** Represents a DeviceRegistrationRequest. */
@@ -8506,6 +8769,12 @@ export namespace Authentication {
 
         /** DeviceRegistrationRequest devicePublicKey. */
         public devicePublicKey: Uint8Array;
+
+        /** DeviceRegistrationRequest devicePlatform. */
+        public devicePlatform: string;
+
+        /** DeviceRegistrationRequest clientFormFactor. */
+        public clientFormFactor: Authentication.ClientFormFactor;
 
         /**
          * Creates a new DeviceRegistrationRequest instance using the specified properties.
@@ -14345,6 +14614,9 @@ export namespace Authentication {
 
         /** AddExternalShareRequest isSelfDestruct */
         isSelfDestruct?: (boolean|null);
+
+        /** AddExternalShareRequest isEditable */
+        isEditable?: (boolean|null);
     }
 
     /** Represents an AddExternalShareRequest. */
@@ -14373,6 +14645,9 @@ export namespace Authentication {
 
         /** AddExternalShareRequest isSelfDestruct. */
         public isSelfDestruct: boolean;
+
+        /** AddExternalShareRequest isEditable. */
+        public isEditable: boolean;
 
         /**
          * Creates a new AddExternalShareRequest instance using the specified properties.
@@ -14487,6 +14762,9 @@ export namespace Authentication {
 
         /** AppClient appClientType */
         appClientType?: (Enterprise.AppClientType|null);
+
+        /** AppClient canEdit */
+        canEdit?: (boolean|null);
     }
 
     /** Represents an AppClient. */
@@ -14530,6 +14808,9 @@ export namespace Authentication {
 
         /** AppClient appClientType. */
         public appClientType: Enterprise.AppClientType;
+
+        /** AppClient canEdit. */
+        public canEdit: boolean;
 
         /**
          * Creates a new AppClient instance using the specified properties.
@@ -17436,6 +17717,15 @@ export namespace Authentication {
         /** PasskeyAuthenticationRequest passkeyPurpose */
         passkeyPurpose?: (Authentication.PasskeyPurpose|null);
 
+        /** PasskeyAuthenticationRequest clientVersion */
+        clientVersion?: (string|null);
+
+        /** PasskeyAuthenticationRequest encryptedDeviceToken */
+        encryptedDeviceToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationRequest username */
+        username?: (string|null);
+
         /** PasskeyAuthenticationRequest encryptedLoginToken */
         encryptedLoginToken?: (Uint8Array|null);
     }
@@ -17455,8 +17745,20 @@ export namespace Authentication {
         /** PasskeyAuthenticationRequest passkeyPurpose. */
         public passkeyPurpose: Authentication.PasskeyPurpose;
 
+        /** PasskeyAuthenticationRequest clientVersion. */
+        public clientVersion: string;
+
+        /** PasskeyAuthenticationRequest encryptedDeviceToken. */
+        public encryptedDeviceToken: Uint8Array;
+
+        /** PasskeyAuthenticationRequest username. */
+        public username?: (string|null);
+
         /** PasskeyAuthenticationRequest encryptedLoginToken. */
         public encryptedLoginToken?: (Uint8Array|null);
+
+        /** PasskeyAuthenticationRequest _username. */
+        public _username?: "username";
 
         /** PasskeyAuthenticationRequest _encryptedLoginToken. */
         public _encryptedLoginToken?: "encryptedLoginToken";
@@ -18309,6 +18611,14 @@ export namespace Authentication {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** ClientFormFactor enum. */
+    enum ClientFormFactor {
+        FF_EMPTY = 0,
+        FF_PHONE = 1,
+        FF_TABLET = 2,
+        FF_WATCH = 3
     }
 }
 
@@ -20694,6 +21004,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey */
         roleKeyEncryptedWithUserPublicKey?: (Uint8Array|null);
+
+        /** EnterpriseRegistration approverRoleData */
+        approverRoleData?: (Uint8Array|null);
     }
 
     /** Represents an EnterpriseRegistration. */
@@ -20749,6 +21062,9 @@ export namespace Enterprise {
 
         /** EnterpriseRegistration roleKeyEncryptedWithUserPublicKey. */
         public roleKeyEncryptedWithUserPublicKey: Uint8Array;
+
+        /** EnterpriseRegistration approverRoleData. */
+        public approverRoleData: Uint8Array;
 
         /**
          * Creates a new EnterpriseRegistration instance using the specified properties.
@@ -36260,6 +36576,12 @@ export namespace AccountSummary {
 
         /** DeviceInfo groupId */
         groupId?: (number|Long|null);
+
+        /** DeviceInfo devicePlatform */
+        devicePlatform?: (string|null);
+
+        /** DeviceInfo clientFormFactor */
+        clientFormFactor?: (Authentication.ClientFormFactor|null);
     }
 
     /** Represents a DeviceInfo. */
@@ -36303,6 +36625,12 @@ export namespace AccountSummary {
 
         /** DeviceInfo groupId. */
         public groupId: (number|Long);
+
+        /** DeviceInfo devicePlatform. */
+        public devicePlatform: string;
+
+        /** DeviceInfo clientFormFactor. */
+        public clientFormFactor: Authentication.ClientFormFactor;
 
         /**
          * Creates a new DeviceInfo instance using the specified properties.
@@ -36740,6 +37068,9 @@ export namespace AccountSummary {
 
         /** License pendingEnterprise */
         pendingEnterprise?: (boolean|null);
+
+        /** License isPamEnabled */
+        isPamEnabled?: (boolean|null);
     }
 
     /** Represents a License. */
@@ -36846,6 +37177,9 @@ export namespace AccountSummary {
 
         /** License pendingEnterprise. */
         public pendingEnterprise: boolean;
+
+        /** License isPamEnabled. */
+        public isPamEnabled: boolean;
 
         /**
          * Creates a new License instance using the specified properties.
@@ -37180,6 +37514,9 @@ export namespace AccountSummary {
 
         /** Settings channels */
         channels?: (Authentication.TwoFactorChannelType[]|null);
+
+        /** Settings personalUsernames */
+        personalUsernames?: (string[]|null);
     }
 
     /** Represents a Settings. */
@@ -37304,6 +37641,9 @@ export namespace AccountSummary {
 
         /** Settings channels. */
         public channels: Authentication.TwoFactorChannelType[];
+
+        /** Settings personalUsernames. */
+        public personalUsernames: string[];
 
         /**
          * Creates a new Settings instance using the specified properties.
@@ -49738,6 +50078,109 @@ export namespace Tokens {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a PasskeyLoginToken. */
+    interface IPasskeyLoginToken {
+
+        /** PasskeyLoginToken passkeyVerificationMS */
+        passkeyVerificationMS?: (number|Long|null);
+
+        /** PasskeyLoginToken challenge */
+        challenge?: (Uint8Array|null);
+    }
+
+    /** Represents a PasskeyLoginToken. */
+    class PasskeyLoginToken implements IPasskeyLoginToken {
+
+        /**
+         * Constructs a new PasskeyLoginToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IPasskeyLoginToken);
+
+        /** PasskeyLoginToken passkeyVerificationMS. */
+        public passkeyVerificationMS: (number|Long);
+
+        /** PasskeyLoginToken challenge. */
+        public challenge: Uint8Array;
+
+        /**
+         * Creates a new PasskeyLoginToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PasskeyLoginToken instance
+         */
+        public static create(properties?: Tokens.IPasskeyLoginToken): Tokens.PasskeyLoginToken;
+
+        /**
+         * Encodes the specified PasskeyLoginToken message. Does not implicitly {@link Tokens.PasskeyLoginToken.verify|verify} messages.
+         * @param message PasskeyLoginToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IPasskeyLoginToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PasskeyLoginToken message, length delimited. Does not implicitly {@link Tokens.PasskeyLoginToken.verify|verify} messages.
+         * @param message PasskeyLoginToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IPasskeyLoginToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PasskeyLoginToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PasskeyLoginToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.PasskeyLoginToken;
+
+        /**
+         * Decodes a PasskeyLoginToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PasskeyLoginToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.PasskeyLoginToken;
+
+        /**
+         * Verifies a PasskeyLoginToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PasskeyLoginToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PasskeyLoginToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.PasskeyLoginToken;
+
+        /**
+         * Creates a plain object from a PasskeyLoginToken message. Also converts values to other types if specified.
+         * @param message PasskeyLoginToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.PasskeyLoginToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PasskeyLoginToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PasskeyLoginToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a LoginToken. */
     interface ILoginToken {
 
@@ -49785,6 +50228,12 @@ export namespace Tokens {
 
         /** LoginToken loginType */
         loginType?: (Authentication.LoginType|null);
+
+        /** LoginToken fromUserId */
+        fromUserId?: (number|null);
+
+        /** LoginToken passkeyLoginToken */
+        passkeyLoginToken?: (Tokens.IPasskeyLoginToken|null);
     }
 
     /** Represents a LoginToken. */
@@ -49840,6 +50289,12 @@ export namespace Tokens {
 
         /** LoginToken loginType. */
         public loginType: Authentication.LoginType;
+
+        /** LoginToken fromUserId. */
+        public fromUserId: number;
+
+        /** LoginToken passkeyLoginToken. */
+        public passkeyLoginToken?: (Tokens.IPasskeyLoginToken|null);
 
         /**
          * Creates a new LoginToken instance using the specified properties.
@@ -56254,6 +56709,103 @@ export namespace Tokens {
 
         /**
          * Gets the default type url for UserLocation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a IPWhiteList. */
+    interface IIPWhiteList {
+
+        /** IPWhiteList ipranges */
+        ipranges?: (string|null);
+    }
+
+    /** Represents a IPWhiteList. */
+    class IPWhiteList implements IIPWhiteList {
+
+        /**
+         * Constructs a new IPWhiteList.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IIPWhiteList);
+
+        /** IPWhiteList ipranges. */
+        public ipranges: string;
+
+        /**
+         * Creates a new IPWhiteList instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IPWhiteList instance
+         */
+        public static create(properties?: Tokens.IIPWhiteList): Tokens.IPWhiteList;
+
+        /**
+         * Encodes the specified IPWhiteList message. Does not implicitly {@link Tokens.IPWhiteList.verify|verify} messages.
+         * @param message IPWhiteList message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IIPWhiteList, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IPWhiteList message, length delimited. Does not implicitly {@link Tokens.IPWhiteList.verify|verify} messages.
+         * @param message IPWhiteList message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IIPWhiteList, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a IPWhiteList message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IPWhiteList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.IPWhiteList;
+
+        /**
+         * Decodes a IPWhiteList message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IPWhiteList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.IPWhiteList;
+
+        /**
+         * Verifies a IPWhiteList message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a IPWhiteList message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IPWhiteList
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.IPWhiteList;
+
+        /**
+         * Creates a plain object from a IPWhiteList message. Also converts values to other types if specified.
+         * @param message IPWhiteList
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.IPWhiteList, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IPWhiteList to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IPWhiteList
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -75555,6 +76107,103 @@ export namespace Vault {
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
+
+    /** Properties of a GetAccountUidMapResponse. */
+    interface IGetAccountUidMapResponse {
+
+        /** GetAccountUidMapResponse users */
+        users?: (Vault.IUser[]|null);
+    }
+
+    /** Represents a GetAccountUidMapResponse. */
+    class GetAccountUidMapResponse implements IGetAccountUidMapResponse {
+
+        /**
+         * Constructs a new GetAccountUidMapResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Vault.IGetAccountUidMapResponse);
+
+        /** GetAccountUidMapResponse users. */
+        public users: Vault.IUser[];
+
+        /**
+         * Creates a new GetAccountUidMapResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetAccountUidMapResponse instance
+         */
+        public static create(properties?: Vault.IGetAccountUidMapResponse): Vault.GetAccountUidMapResponse;
+
+        /**
+         * Encodes the specified GetAccountUidMapResponse message. Does not implicitly {@link Vault.GetAccountUidMapResponse.verify|verify} messages.
+         * @param message GetAccountUidMapResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Vault.IGetAccountUidMapResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetAccountUidMapResponse message, length delimited. Does not implicitly {@link Vault.GetAccountUidMapResponse.verify|verify} messages.
+         * @param message GetAccountUidMapResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Vault.IGetAccountUidMapResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetAccountUidMapResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetAccountUidMapResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Vault.GetAccountUidMapResponse;
+
+        /**
+         * Decodes a GetAccountUidMapResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetAccountUidMapResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Vault.GetAccountUidMapResponse;
+
+        /**
+         * Verifies a GetAccountUidMapResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetAccountUidMapResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetAccountUidMapResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Vault.GetAccountUidMapResponse;
+
+        /**
+         * Creates a plain object from a GetAccountUidMapResponse message. Also converts values to other types if specified.
+         * @param message GetAccountUidMapResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Vault.GetAccountUidMapResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetAccountUidMapResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetAccountUidMapResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
 }
 
 /** Namespace NotificationCenter. */
@@ -75565,7 +76214,11 @@ export namespace NotificationCenter {
         NC_UNSPECIFIED = 0,
         NC_ACCOUNT = 1,
         NC_SHARING = 2,
-        NC_ENTERPRISE = 3
+        NC_ENTERPRISE = 3,
+        NC_SECURITY = 4,
+        NC_REQUEST = 5,
+        NC_SYSTEM = 6,
+        NC_PROMOTION = 7
     }
 
     /** NotificationType enum. */
@@ -75581,7 +76234,8 @@ export namespace NotificationCenter {
         NT_LICENSE_LIMIT_REACHED = 8,
         NT_APPROVAL_REQUEST = 9,
         NT_APPROVED_RESPONSE = 10,
-        NT_DENIED_RESPONSE = 11
+        NT_DENIED_RESPONSE = 11,
+        NT_2FA_CONFIGURED = 12
     }
 
     /** NotificationReadStatus enum. */
@@ -75724,6 +76378,9 @@ export namespace NotificationCenter {
 
         /** Notification refs */
         refs?: (GraphSync.IGraphSyncRef[]|null);
+
+        /** Notification categories */
+        categories?: (NotificationCenter.NotificationCategory[]|null);
     }
 
     /** Represents a Notification. */
@@ -75752,6 +76409,9 @@ export namespace NotificationCenter {
 
         /** Notification refs. */
         public refs: GraphSync.IGraphSyncRef[];
+
+        /** Notification categories. */
+        public categories: NotificationCenter.NotificationCategory[];
 
         /**
          * Creates a new Notification instance using the specified properties.
@@ -76906,26 +77566,25 @@ export namespace GraphSync {
 
     /** RefType enum. */
     enum RefType {
-        RFT_UNSPECIFIED = 0,
-        RFT_GENERAL = 1,
-        USER = 2,
-        DEVICE = 3,
-        REC = 4,
-        FOLDER = 5,
-        TEAM = 6,
-        ENTERPRISE = 7,
-        PAM_DIRECTORY = 8,
-        PAM_MACHINE = 9,
-        PAM_DATABASE = 10,
-        PAM_USER = 11,
-        PAM_NETWORK = 12,
-        PAM_BROWSER = 13,
-        CONNECTION = 14,
-        WORKFLOW = 15,
-        NOTIFICATION = 16,
-        USER_INFO = 17,
-        TEAM_INFO = 18,
-        ROLE = 19
+        RFT_GENERAL = 0,
+        RFT_USER = 1,
+        RFT_DEVICE = 2,
+        RFT_REC = 3,
+        RFT_FOLDER = 4,
+        RFT_TEAM = 5,
+        RFT_ENTERPRISE = 6,
+        RFT_PAM_DIRECTORY = 7,
+        RFT_PAM_MACHINE = 8,
+        RFT_PAM_DATABASE = 9,
+        RFT_PAM_USER = 10,
+        RFT_PAM_NETWORK = 11,
+        RFT_PAM_BROWSER = 12,
+        RFT_CONNECTION = 13,
+        RFT_WORKFLOW = 14,
+        RFT_NOTIFICATION = 15,
+        RFT_USER_INFO = 16,
+        RFT_TEAM_INFO = 17,
+        RFT_ROLE = 18
     }
 
     /** Properties of a GraphSyncRef. */
@@ -77039,20 +77698,18 @@ export namespace GraphSync {
 
     /** GraphSyncDataType enum. */
     enum GraphSyncDataType {
-        GSE_UNSPECIFIED = 0,
-        GSE_DATA = 1,
-        GSE_KEY = 2,
-        GSE_LINK = 3,
-        GSE_ACL = 4,
-        GSE_DELETION = 5
+        GSE_DATA = 0,
+        GSE_KEY = 1,
+        GSE_LINK = 2,
+        GSE_ACL = 3,
+        GSE_DELETION = 4
     }
 
     /** GraphSyncActorType enum. */
     enum GraphSyncActorType {
-        GSA_UNSPECIFIED = 0,
-        GSA_USER = 1,
-        GSA_SERVICE = 2,
-        GSA_PAM_GATEWAY = 3
+        GSA_USER = 0,
+        GSA_SERVICE = 1,
+        GSA_PAM_GATEWAY = 2
     }
 
     /** Properties of a GraphSyncActor. */
