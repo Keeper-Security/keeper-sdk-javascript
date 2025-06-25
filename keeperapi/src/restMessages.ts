@@ -11,7 +11,8 @@ import {
     Records,
     ServiceLogger,
     SsoCloud,
-    Vault
+    Vault,
+    Tokens
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -335,6 +336,10 @@ export const breachWatchStatus = (data: BreachWatch.IBreachWatchStatusRequest): 
 
 export const breachWatchUpdateRecordData = (data: BreachWatch.IBreachWatchUpdateRequest): RestMessage<BreachWatch.IBreachWatchUpdateRequest, BreachWatch.IBreachWatchUpdateResponse> =>
     createMessage(data, 'breachwatch/update_record_data', BreachWatch.BreachWatchUpdateRequest, BreachWatch.BreachWatchUpdateResponse)
+
+export const getCheckoutTokenMessage = (): RestOutMessage<Tokens.ICheckOutTokenResponse> =>
+    createOutMessage('checkouttoken/get_checkout_token', Tokens.CheckOutTokenResponse)
+
 
 /* -- SERVICE LOGGER -- */
 
