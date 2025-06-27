@@ -133,6 +133,23 @@ export const browserPlatform: Platform = class {
         keyBytesCache = {}
     }
 
+    static unloadNonUserKeys(): void {
+        cryptoKeysCache = {
+            cbc: {
+                data: cryptoKeysCache.cbc.data
+            },
+            gcm: {
+                data: cryptoKeysCache.gcm.data
+            },
+            ecc: {
+                pk_ecc: cryptoKeysCache.ecc.pk_ecc
+            },
+        }
+        keyBytesCache = {
+            pk_rsa: keyBytesCache.pk_rsa
+        }
+    }
+
     static getStorageKeyId(keyId: string, keyType: EncryptionType): string {
         switch (keyType) {
             case 'cbc':
