@@ -27,7 +27,13 @@ export interface Platform {
 
     importKeyRSA(keyId: string, key: Uint8Array, storage?: KeyStorage, canExport?: boolean): Promise<void>
 
+    // Removes all keys stored in the local cache, including user keys, record keys, etc.
+    // A typical use case is during logout, when you want to completely clear the cached keys.
     unloadKeys(): void
+
+    // Clears all cached keys except user keys.
+    // A good use case is a manual full sync while the user is still logged in.
+    unloadNonUserKeys(): void
 
     unwrapKey(key: Uint8Array, keyId: string, unwrappingKeyId: string, encryptionType: EncryptionType, unwrappedType: UnwrappedKeyType, storage?: KeyStorage, canExport?: boolean): Promise<void>
 

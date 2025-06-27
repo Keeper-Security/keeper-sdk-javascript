@@ -1057,6 +1057,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             addCounts(totalCounts, counts)
             logProtobuf(resp, options.logFormat || '!', result.pageCount, counts)
             if (resp.cacheStatus == CacheStatus.CLEAR) {
+                platform.unloadNonUserKeys()
                 await storage.clear()
                 result.fullSync = true
             }

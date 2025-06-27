@@ -79,6 +79,14 @@ export const nodePlatform: Platform = class {
         keyCache = {}
     }
 
+    static unloadNonUserKeys(): void {
+        keyCache = {
+            data: keyCache.data,
+            pk_ecc: keyCache.pk_ecc,
+            pk_rsa: keyCache.pk_rsa,
+        }
+    }
+
     static async unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void> {
         for (const task of Object.values(keys)) {
             try {
