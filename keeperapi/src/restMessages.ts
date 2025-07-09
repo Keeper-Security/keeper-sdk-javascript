@@ -251,8 +251,8 @@ export const accountSummaryMessage = (data: AccountSummary.IAccountSummaryReques
 export const sendSessionMessage = (data: Authentication.ISendSessionMessageRequest): RestInMessage<Authentication.ISendSessionMessageRequest> =>
     createInMessage(data, 'pushserver/send_session_message', Authentication.SendSessionMessageRequest)
 
-export const supportSendNotifications = (data: NotificationCenter.INotificationSendRequest): RestInMessage<NotificationCenter.INotificationSendRequest> =>
-    createInMessage(data, 'support/send_notifications', NotificationCenter.NotificationSendRequest)
+export const supportSendNotifications = (data: NotificationCenter.INotificationsSendRequest): RestInMessage<NotificationCenter.INotificationsSendRequest> =>
+    createInMessage(data, 'support/send_notifications', NotificationCenter.NotificationsSendRequest)
 
 export const teamsEnterpriseUsersAdd = (data: Enterprise.ITeamsEnterpriseUsersAddRequest): RestMessage<Enterprise.ITeamsEnterpriseUsersAddRequest, Enterprise.ITeamsEnterpriseUsersAddResponse> =>
     createMessage(data, 'enterprise/teams_enterprise_users_add', Enterprise.TeamsEnterpriseUsersAddRequest, Enterprise.TeamsEnterpriseUsersAddResponse)
