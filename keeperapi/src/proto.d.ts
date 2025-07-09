@@ -79156,7 +79156,8 @@ export namespace BI {
         GBP = 2,
         JPY = 3,
         EUR = 4,
-        AUD = 5
+        AUD = 5,
+        CAD = 6
     }
 
     /** Properties of a ValidateSessionTokenRequest. */
@@ -81366,7 +81367,8 @@ export namespace BI {
             UNKNOWN = 0,
             MONTH = 1,
             USER_MONTH = 2,
-            USER_CONSUMED_MONTH = 3
+            USER_CONSUMED_MONTH = 3,
+            ENDPOINT_MONTH = 4
         }
     }
 
@@ -81820,6 +81822,315 @@ export namespace BI {
         }
     }
 
+    /** Properties of a VaultInvoicesListRequest. */
+    interface IVaultInvoicesListRequest {
+    }
+
+    /** Represents a VaultInvoicesListRequest. */
+    class VaultInvoicesListRequest implements IVaultInvoicesListRequest {
+
+        /**
+         * Constructs a new VaultInvoicesListRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IVaultInvoicesListRequest);
+
+        /**
+         * Creates a new VaultInvoicesListRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns VaultInvoicesListRequest instance
+         */
+        public static create(properties?: BI.IVaultInvoicesListRequest): BI.VaultInvoicesListRequest;
+
+        /**
+         * Encodes the specified VaultInvoicesListRequest message. Does not implicitly {@link BI.VaultInvoicesListRequest.verify|verify} messages.
+         * @param message VaultInvoicesListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IVaultInvoicesListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified VaultInvoicesListRequest message, length delimited. Does not implicitly {@link BI.VaultInvoicesListRequest.verify|verify} messages.
+         * @param message VaultInvoicesListRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IVaultInvoicesListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a VaultInvoicesListRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns VaultInvoicesListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoicesListRequest;
+
+        /**
+         * Decodes a VaultInvoicesListRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns VaultInvoicesListRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoicesListRequest;
+
+        /**
+         * Verifies a VaultInvoicesListRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a VaultInvoicesListRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns VaultInvoicesListRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.VaultInvoicesListRequest;
+
+        /**
+         * Creates a plain object from a VaultInvoicesListRequest message. Also converts values to other types if specified.
+         * @param message VaultInvoicesListRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.VaultInvoicesListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this VaultInvoicesListRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultInvoicesListRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a VaultInvoicesListResponse. */
+    interface IVaultInvoicesListResponse {
+
+        /** VaultInvoicesListResponse invoices */
+        invoices?: (BI.IVaultInvoice[]|null);
+    }
+
+    /** Represents a VaultInvoicesListResponse. */
+    class VaultInvoicesListResponse implements IVaultInvoicesListResponse {
+
+        /**
+         * Constructs a new VaultInvoicesListResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IVaultInvoicesListResponse);
+
+        /** VaultInvoicesListResponse invoices. */
+        public invoices: BI.IVaultInvoice[];
+
+        /**
+         * Creates a new VaultInvoicesListResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns VaultInvoicesListResponse instance
+         */
+        public static create(properties?: BI.IVaultInvoicesListResponse): BI.VaultInvoicesListResponse;
+
+        /**
+         * Encodes the specified VaultInvoicesListResponse message. Does not implicitly {@link BI.VaultInvoicesListResponse.verify|verify} messages.
+         * @param message VaultInvoicesListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IVaultInvoicesListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified VaultInvoicesListResponse message, length delimited. Does not implicitly {@link BI.VaultInvoicesListResponse.verify|verify} messages.
+         * @param message VaultInvoicesListResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IVaultInvoicesListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a VaultInvoicesListResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns VaultInvoicesListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoicesListResponse;
+
+        /**
+         * Decodes a VaultInvoicesListResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns VaultInvoicesListResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoicesListResponse;
+
+        /**
+         * Verifies a VaultInvoicesListResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a VaultInvoicesListResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns VaultInvoicesListResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.VaultInvoicesListResponse;
+
+        /**
+         * Creates a plain object from a VaultInvoicesListResponse message. Also converts values to other types if specified.
+         * @param message VaultInvoicesListResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.VaultInvoicesListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this VaultInvoicesListResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultInvoicesListResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a VaultInvoice. */
+    interface IVaultInvoice {
+
+        /** VaultInvoice id */
+        id?: (number|null);
+
+        /** VaultInvoice invoiceNumber */
+        invoiceNumber?: (string|null);
+
+        /** VaultInvoice dateCreated */
+        dateCreated?: (number|Long|null);
+
+        /** VaultInvoice total */
+        total?: (BI.Invoice.ICost|null);
+
+        /** VaultInvoice purchaseType */
+        purchaseType?: (BI.Invoice.Type|null);
+    }
+
+    /** Represents a VaultInvoice. */
+    class VaultInvoice implements IVaultInvoice {
+
+        /**
+         * Constructs a new VaultInvoice.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IVaultInvoice);
+
+        /** VaultInvoice id. */
+        public id: number;
+
+        /** VaultInvoice invoiceNumber. */
+        public invoiceNumber: string;
+
+        /** VaultInvoice dateCreated. */
+        public dateCreated: (number|Long);
+
+        /** VaultInvoice total. */
+        public total?: (BI.Invoice.ICost|null);
+
+        /** VaultInvoice purchaseType. */
+        public purchaseType: BI.Invoice.Type;
+
+        /**
+         * Creates a new VaultInvoice instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns VaultInvoice instance
+         */
+        public static create(properties?: BI.IVaultInvoice): BI.VaultInvoice;
+
+        /**
+         * Encodes the specified VaultInvoice message. Does not implicitly {@link BI.VaultInvoice.verify|verify} messages.
+         * @param message VaultInvoice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IVaultInvoice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified VaultInvoice message, length delimited. Does not implicitly {@link BI.VaultInvoice.verify|verify} messages.
+         * @param message VaultInvoice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IVaultInvoice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a VaultInvoice message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns VaultInvoice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoice;
+
+        /**
+         * Decodes a VaultInvoice message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns VaultInvoice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoice;
+
+        /**
+         * Verifies a VaultInvoice message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a VaultInvoice message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns VaultInvoice
+         */
+        public static fromObject(object: { [k: string]: any }): BI.VaultInvoice;
+
+        /**
+         * Creates a plain object from a VaultInvoice message. Also converts values to other types if specified.
+         * @param message VaultInvoice
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.VaultInvoice, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this VaultInvoice to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultInvoice
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of an InvoiceDownloadRequest. */
     interface IInvoiceDownloadRequest {
 
@@ -82014,6 +82325,206 @@ export namespace BI {
 
         /**
          * Gets the default type url for InvoiceDownloadResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a VaultInvoiceDownloadLinkRequest. */
+    interface IVaultInvoiceDownloadLinkRequest {
+
+        /** VaultInvoiceDownloadLinkRequest invoiceNumber */
+        invoiceNumber?: (string|null);
+    }
+
+    /** Represents a VaultInvoiceDownloadLinkRequest. */
+    class VaultInvoiceDownloadLinkRequest implements IVaultInvoiceDownloadLinkRequest {
+
+        /**
+         * Constructs a new VaultInvoiceDownloadLinkRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IVaultInvoiceDownloadLinkRequest);
+
+        /** VaultInvoiceDownloadLinkRequest invoiceNumber. */
+        public invoiceNumber: string;
+
+        /**
+         * Creates a new VaultInvoiceDownloadLinkRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns VaultInvoiceDownloadLinkRequest instance
+         */
+        public static create(properties?: BI.IVaultInvoiceDownloadLinkRequest): BI.VaultInvoiceDownloadLinkRequest;
+
+        /**
+         * Encodes the specified VaultInvoiceDownloadLinkRequest message. Does not implicitly {@link BI.VaultInvoiceDownloadLinkRequest.verify|verify} messages.
+         * @param message VaultInvoiceDownloadLinkRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IVaultInvoiceDownloadLinkRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified VaultInvoiceDownloadLinkRequest message, length delimited. Does not implicitly {@link BI.VaultInvoiceDownloadLinkRequest.verify|verify} messages.
+         * @param message VaultInvoiceDownloadLinkRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IVaultInvoiceDownloadLinkRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a VaultInvoiceDownloadLinkRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns VaultInvoiceDownloadLinkRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoiceDownloadLinkRequest;
+
+        /**
+         * Decodes a VaultInvoiceDownloadLinkRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns VaultInvoiceDownloadLinkRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoiceDownloadLinkRequest;
+
+        /**
+         * Verifies a VaultInvoiceDownloadLinkRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a VaultInvoiceDownloadLinkRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns VaultInvoiceDownloadLinkRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.VaultInvoiceDownloadLinkRequest;
+
+        /**
+         * Creates a plain object from a VaultInvoiceDownloadLinkRequest message. Also converts values to other types if specified.
+         * @param message VaultInvoiceDownloadLinkRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.VaultInvoiceDownloadLinkRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this VaultInvoiceDownloadLinkRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultInvoiceDownloadLinkRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a VaultInvoiceDownloadLinkResponse. */
+    interface IVaultInvoiceDownloadLinkResponse {
+
+        /** VaultInvoiceDownloadLinkResponse link */
+        link?: (string|null);
+
+        /** VaultInvoiceDownloadLinkResponse fileName */
+        fileName?: (string|null);
+    }
+
+    /** Represents a VaultInvoiceDownloadLinkResponse. */
+    class VaultInvoiceDownloadLinkResponse implements IVaultInvoiceDownloadLinkResponse {
+
+        /**
+         * Constructs a new VaultInvoiceDownloadLinkResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IVaultInvoiceDownloadLinkResponse);
+
+        /** VaultInvoiceDownloadLinkResponse link. */
+        public link: string;
+
+        /** VaultInvoiceDownloadLinkResponse fileName. */
+        public fileName: string;
+
+        /**
+         * Creates a new VaultInvoiceDownloadLinkResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns VaultInvoiceDownloadLinkResponse instance
+         */
+        public static create(properties?: BI.IVaultInvoiceDownloadLinkResponse): BI.VaultInvoiceDownloadLinkResponse;
+
+        /**
+         * Encodes the specified VaultInvoiceDownloadLinkResponse message. Does not implicitly {@link BI.VaultInvoiceDownloadLinkResponse.verify|verify} messages.
+         * @param message VaultInvoiceDownloadLinkResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IVaultInvoiceDownloadLinkResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified VaultInvoiceDownloadLinkResponse message, length delimited. Does not implicitly {@link BI.VaultInvoiceDownloadLinkResponse.verify|verify} messages.
+         * @param message VaultInvoiceDownloadLinkResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IVaultInvoiceDownloadLinkResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a VaultInvoiceDownloadLinkResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns VaultInvoiceDownloadLinkResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoiceDownloadLinkResponse;
+
+        /**
+         * Decodes a VaultInvoiceDownloadLinkResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns VaultInvoiceDownloadLinkResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoiceDownloadLinkResponse;
+
+        /**
+         * Verifies a VaultInvoiceDownloadLinkResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a VaultInvoiceDownloadLinkResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns VaultInvoiceDownloadLinkResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.VaultInvoiceDownloadLinkResponse;
+
+        /**
+         * Creates a plain object from a VaultInvoiceDownloadLinkResponse message. Also converts values to other types if specified.
+         * @param message VaultInvoiceDownloadLinkResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.VaultInvoiceDownloadLinkResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this VaultInvoiceDownloadLinkResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for VaultInvoiceDownloadLinkResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -84688,6 +85199,12 @@ export namespace BI {
 
         /** CustomerCaptureRequest test */
         test?: (boolean|null);
+
+        /** CustomerCaptureRequest issueType */
+        issueType?: (string|null);
+
+        /** CustomerCaptureRequest notes */
+        notes?: (string|null);
     }
 
     /** Represents a CustomerCaptureRequest. */
@@ -84719,6 +85236,12 @@ export namespace BI {
 
         /** CustomerCaptureRequest test. */
         public test: boolean;
+
+        /** CustomerCaptureRequest issueType. */
+        public issueType: string;
+
+        /** CustomerCaptureRequest notes. */
+        public notes: string;
 
         /**
          * Creates a new CustomerCaptureRequest instance using the specified properties.
@@ -84883,6 +85406,892 @@ export namespace BI {
 
         /**
          * Gets the default type url for CustomerCaptureResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** PurchaseProductType enum. */
+    enum PurchaseProductType {
+        upgradeToEnterprise = 0,
+        addUsers = 1,
+        addStorage = 2,
+        addAudit = 3,
+        addBreachWatch = 4,
+        addCompliance = 5,
+        addChat = 6,
+        addPAM = 7,
+        addSilverSupport = 8,
+        addPlatinumSupport = 9
+    }
+
+    /** Properties of an Error. */
+    interface IError {
+
+        /** Error code */
+        code?: (string|null);
+
+        /** Error message */
+        message?: (string|null);
+
+        /** Error extras */
+        extras?: ({ [k: string]: string }|null);
+    }
+
+    /** Represents an Error. */
+    class Error implements IError {
+
+        /**
+         * Constructs a new Error.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IError);
+
+        /** Error code. */
+        public code: string;
+
+        /** Error message. */
+        public message: string;
+
+        /** Error extras. */
+        public extras: { [k: string]: string };
+
+        /**
+         * Creates a new Error instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Error instance
+         */
+        public static create(properties?: BI.IError): BI.Error;
+
+        /**
+         * Encodes the specified Error message. Does not implicitly {@link BI.Error.verify|verify} messages.
+         * @param message Error message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Error message, length delimited. Does not implicitly {@link BI.Error.verify|verify} messages.
+         * @param message Error message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an Error message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Error
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.Error;
+
+        /**
+         * Decodes an Error message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Error
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.Error;
+
+        /**
+         * Verifies an Error message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an Error message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Error
+         */
+        public static fromObject(object: { [k: string]: any }): BI.Error;
+
+        /**
+         * Creates a plain object from an Error message. Also converts values to other types if specified.
+         * @param message Error
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.Error, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Error to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Error
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a QuotePurchase. */
+    interface IQuotePurchase {
+
+        /** QuotePurchase quoteTotal */
+        quoteTotal?: (number|null);
+
+        /** QuotePurchase includedTax */
+        includedTax?: (boolean|null);
+
+        /** QuotePurchase includedOtherAddons */
+        includedOtherAddons?: (boolean|null);
+
+        /** QuotePurchase taxAmount */
+        taxAmount?: (number|null);
+
+        /** QuotePurchase taxLabel */
+        taxLabel?: (string|null);
+    }
+
+    /** Represents a QuotePurchase. */
+    class QuotePurchase implements IQuotePurchase {
+
+        /**
+         * Constructs a new QuotePurchase.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IQuotePurchase);
+
+        /** QuotePurchase quoteTotal. */
+        public quoteTotal: number;
+
+        /** QuotePurchase includedTax. */
+        public includedTax: boolean;
+
+        /** QuotePurchase includedOtherAddons. */
+        public includedOtherAddons: boolean;
+
+        /** QuotePurchase taxAmount. */
+        public taxAmount: number;
+
+        /** QuotePurchase taxLabel. */
+        public taxLabel: string;
+
+        /**
+         * Creates a new QuotePurchase instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns QuotePurchase instance
+         */
+        public static create(properties?: BI.IQuotePurchase): BI.QuotePurchase;
+
+        /**
+         * Encodes the specified QuotePurchase message. Does not implicitly {@link BI.QuotePurchase.verify|verify} messages.
+         * @param message QuotePurchase message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IQuotePurchase, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified QuotePurchase message, length delimited. Does not implicitly {@link BI.QuotePurchase.verify|verify} messages.
+         * @param message QuotePurchase message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IQuotePurchase, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a QuotePurchase message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns QuotePurchase
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.QuotePurchase;
+
+        /**
+         * Decodes a QuotePurchase message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns QuotePurchase
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.QuotePurchase;
+
+        /**
+         * Verifies a QuotePurchase message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a QuotePurchase message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns QuotePurchase
+         */
+        public static fromObject(object: { [k: string]: any }): BI.QuotePurchase;
+
+        /**
+         * Creates a plain object from a QuotePurchase message. Also converts values to other types if specified.
+         * @param message QuotePurchase
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.QuotePurchase, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this QuotePurchase to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for QuotePurchase
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpgradeLicenseStatusRequest. */
+    interface IUpgradeLicenseStatusRequest {
+    }
+
+    /** Represents an UpgradeLicenseStatusRequest. */
+    class UpgradeLicenseStatusRequest implements IUpgradeLicenseStatusRequest {
+
+        /**
+         * Constructs a new UpgradeLicenseStatusRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IUpgradeLicenseStatusRequest);
+
+        /**
+         * Creates a new UpgradeLicenseStatusRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpgradeLicenseStatusRequest instance
+         */
+        public static create(properties?: BI.IUpgradeLicenseStatusRequest): BI.UpgradeLicenseStatusRequest;
+
+        /**
+         * Encodes the specified UpgradeLicenseStatusRequest message. Does not implicitly {@link BI.UpgradeLicenseStatusRequest.verify|verify} messages.
+         * @param message UpgradeLicenseStatusRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IUpgradeLicenseStatusRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpgradeLicenseStatusRequest message, length delimited. Does not implicitly {@link BI.UpgradeLicenseStatusRequest.verify|verify} messages.
+         * @param message UpgradeLicenseStatusRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IUpgradeLicenseStatusRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpgradeLicenseStatusRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpgradeLicenseStatusRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseStatusRequest;
+
+        /**
+         * Decodes an UpgradeLicenseStatusRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpgradeLicenseStatusRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseStatusRequest;
+
+        /**
+         * Verifies an UpgradeLicenseStatusRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpgradeLicenseStatusRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpgradeLicenseStatusRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseStatusRequest;
+
+        /**
+         * Creates a plain object from an UpgradeLicenseStatusRequest message. Also converts values to other types if specified.
+         * @param message UpgradeLicenseStatusRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.UpgradeLicenseStatusRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpgradeLicenseStatusRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpgradeLicenseStatusRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpgradeLicenseStatusResponse. */
+    interface IUpgradeLicenseStatusResponse {
+
+        /** UpgradeLicenseStatusResponse allowPurchaseFromConsole */
+        allowPurchaseFromConsole?: (boolean|null);
+
+        /** UpgradeLicenseStatusResponse checkoutLink */
+        checkoutLink?: (string|null);
+
+        /** UpgradeLicenseStatusResponse error */
+        error?: (BI.IError|null);
+    }
+
+    /** Represents an UpgradeLicenseStatusResponse. */
+    class UpgradeLicenseStatusResponse implements IUpgradeLicenseStatusResponse {
+
+        /**
+         * Constructs a new UpgradeLicenseStatusResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IUpgradeLicenseStatusResponse);
+
+        /** UpgradeLicenseStatusResponse allowPurchaseFromConsole. */
+        public allowPurchaseFromConsole: boolean;
+
+        /** UpgradeLicenseStatusResponse checkoutLink. */
+        public checkoutLink: string;
+
+        /** UpgradeLicenseStatusResponse error. */
+        public error?: (BI.IError|null);
+
+        /**
+         * Creates a new UpgradeLicenseStatusResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpgradeLicenseStatusResponse instance
+         */
+        public static create(properties?: BI.IUpgradeLicenseStatusResponse): BI.UpgradeLicenseStatusResponse;
+
+        /**
+         * Encodes the specified UpgradeLicenseStatusResponse message. Does not implicitly {@link BI.UpgradeLicenseStatusResponse.verify|verify} messages.
+         * @param message UpgradeLicenseStatusResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IUpgradeLicenseStatusResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpgradeLicenseStatusResponse message, length delimited. Does not implicitly {@link BI.UpgradeLicenseStatusResponse.verify|verify} messages.
+         * @param message UpgradeLicenseStatusResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IUpgradeLicenseStatusResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpgradeLicenseStatusResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpgradeLicenseStatusResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseStatusResponse;
+
+        /**
+         * Decodes an UpgradeLicenseStatusResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpgradeLicenseStatusResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseStatusResponse;
+
+        /**
+         * Verifies an UpgradeLicenseStatusResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpgradeLicenseStatusResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpgradeLicenseStatusResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseStatusResponse;
+
+        /**
+         * Creates a plain object from an UpgradeLicenseStatusResponse message. Also converts values to other types if specified.
+         * @param message UpgradeLicenseStatusResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.UpgradeLicenseStatusResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpgradeLicenseStatusResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpgradeLicenseStatusResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpgradeLicenseQuotePurchaseRequest. */
+    interface IUpgradeLicenseQuotePurchaseRequest {
+
+        /** UpgradeLicenseQuotePurchaseRequest productType */
+        productType?: (BI.PurchaseProductType|null);
+
+        /** UpgradeLicenseQuotePurchaseRequest quantity */
+        quantity?: (number|null);
+    }
+
+    /** Represents an UpgradeLicenseQuotePurchaseRequest. */
+    class UpgradeLicenseQuotePurchaseRequest implements IUpgradeLicenseQuotePurchaseRequest {
+
+        /**
+         * Constructs a new UpgradeLicenseQuotePurchaseRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IUpgradeLicenseQuotePurchaseRequest);
+
+        /** UpgradeLicenseQuotePurchaseRequest productType. */
+        public productType: BI.PurchaseProductType;
+
+        /** UpgradeLicenseQuotePurchaseRequest quantity. */
+        public quantity: number;
+
+        /**
+         * Creates a new UpgradeLicenseQuotePurchaseRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpgradeLicenseQuotePurchaseRequest instance
+         */
+        public static create(properties?: BI.IUpgradeLicenseQuotePurchaseRequest): BI.UpgradeLicenseQuotePurchaseRequest;
+
+        /**
+         * Encodes the specified UpgradeLicenseQuotePurchaseRequest message. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseRequest.verify|verify} messages.
+         * @param message UpgradeLicenseQuotePurchaseRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IUpgradeLicenseQuotePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpgradeLicenseQuotePurchaseRequest message, length delimited. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseRequest.verify|verify} messages.
+         * @param message UpgradeLicenseQuotePurchaseRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IUpgradeLicenseQuotePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpgradeLicenseQuotePurchaseRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpgradeLicenseQuotePurchaseRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseQuotePurchaseRequest;
+
+        /**
+         * Decodes an UpgradeLicenseQuotePurchaseRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpgradeLicenseQuotePurchaseRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseQuotePurchaseRequest;
+
+        /**
+         * Verifies an UpgradeLicenseQuotePurchaseRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpgradeLicenseQuotePurchaseRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpgradeLicenseQuotePurchaseRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseQuotePurchaseRequest;
+
+        /**
+         * Creates a plain object from an UpgradeLicenseQuotePurchaseRequest message. Also converts values to other types if specified.
+         * @param message UpgradeLicenseQuotePurchaseRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.UpgradeLicenseQuotePurchaseRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpgradeLicenseQuotePurchaseRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpgradeLicenseQuotePurchaseRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpgradeLicenseQuotePurchaseResponse. */
+    interface IUpgradeLicenseQuotePurchaseResponse {
+
+        /** UpgradeLicenseQuotePurchaseResponse success */
+        success?: (boolean|null);
+
+        /** UpgradeLicenseQuotePurchaseResponse quotePurchase */
+        quotePurchase?: (BI.IQuotePurchase|null);
+
+        /** UpgradeLicenseQuotePurchaseResponse viewSummaryLink */
+        viewSummaryLink?: (string|null);
+
+        /** UpgradeLicenseQuotePurchaseResponse error */
+        error?: (BI.IError|null);
+    }
+
+    /** Represents an UpgradeLicenseQuotePurchaseResponse. */
+    class UpgradeLicenseQuotePurchaseResponse implements IUpgradeLicenseQuotePurchaseResponse {
+
+        /**
+         * Constructs a new UpgradeLicenseQuotePurchaseResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IUpgradeLicenseQuotePurchaseResponse);
+
+        /** UpgradeLicenseQuotePurchaseResponse success. */
+        public success: boolean;
+
+        /** UpgradeLicenseQuotePurchaseResponse quotePurchase. */
+        public quotePurchase?: (BI.IQuotePurchase|null);
+
+        /** UpgradeLicenseQuotePurchaseResponse viewSummaryLink. */
+        public viewSummaryLink: string;
+
+        /** UpgradeLicenseQuotePurchaseResponse error. */
+        public error?: (BI.IError|null);
+
+        /**
+         * Creates a new UpgradeLicenseQuotePurchaseResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpgradeLicenseQuotePurchaseResponse instance
+         */
+        public static create(properties?: BI.IUpgradeLicenseQuotePurchaseResponse): BI.UpgradeLicenseQuotePurchaseResponse;
+
+        /**
+         * Encodes the specified UpgradeLicenseQuotePurchaseResponse message. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseResponse.verify|verify} messages.
+         * @param message UpgradeLicenseQuotePurchaseResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IUpgradeLicenseQuotePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpgradeLicenseQuotePurchaseResponse message, length delimited. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseResponse.verify|verify} messages.
+         * @param message UpgradeLicenseQuotePurchaseResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IUpgradeLicenseQuotePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpgradeLicenseQuotePurchaseResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpgradeLicenseQuotePurchaseResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseQuotePurchaseResponse;
+
+        /**
+         * Decodes an UpgradeLicenseQuotePurchaseResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpgradeLicenseQuotePurchaseResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseQuotePurchaseResponse;
+
+        /**
+         * Verifies an UpgradeLicenseQuotePurchaseResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpgradeLicenseQuotePurchaseResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpgradeLicenseQuotePurchaseResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseQuotePurchaseResponse;
+
+        /**
+         * Creates a plain object from an UpgradeLicenseQuotePurchaseResponse message. Also converts values to other types if specified.
+         * @param message UpgradeLicenseQuotePurchaseResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.UpgradeLicenseQuotePurchaseResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpgradeLicenseQuotePurchaseResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpgradeLicenseQuotePurchaseResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpgradeLicenseCompletePurchaseRequest. */
+    interface IUpgradeLicenseCompletePurchaseRequest {
+
+        /** UpgradeLicenseCompletePurchaseRequest productType */
+        productType?: (BI.PurchaseProductType|null);
+
+        /** UpgradeLicenseCompletePurchaseRequest quantity */
+        quantity?: (number|null);
+
+        /** UpgradeLicenseCompletePurchaseRequest quotePurchase */
+        quotePurchase?: (BI.IQuotePurchase|null);
+    }
+
+    /** Represents an UpgradeLicenseCompletePurchaseRequest. */
+    class UpgradeLicenseCompletePurchaseRequest implements IUpgradeLicenseCompletePurchaseRequest {
+
+        /**
+         * Constructs a new UpgradeLicenseCompletePurchaseRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IUpgradeLicenseCompletePurchaseRequest);
+
+        /** UpgradeLicenseCompletePurchaseRequest productType. */
+        public productType: BI.PurchaseProductType;
+
+        /** UpgradeLicenseCompletePurchaseRequest quantity. */
+        public quantity: number;
+
+        /** UpgradeLicenseCompletePurchaseRequest quotePurchase. */
+        public quotePurchase?: (BI.IQuotePurchase|null);
+
+        /**
+         * Creates a new UpgradeLicenseCompletePurchaseRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpgradeLicenseCompletePurchaseRequest instance
+         */
+        public static create(properties?: BI.IUpgradeLicenseCompletePurchaseRequest): BI.UpgradeLicenseCompletePurchaseRequest;
+
+        /**
+         * Encodes the specified UpgradeLicenseCompletePurchaseRequest message. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseRequest.verify|verify} messages.
+         * @param message UpgradeLicenseCompletePurchaseRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IUpgradeLicenseCompletePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpgradeLicenseCompletePurchaseRequest message, length delimited. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseRequest.verify|verify} messages.
+         * @param message UpgradeLicenseCompletePurchaseRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IUpgradeLicenseCompletePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpgradeLicenseCompletePurchaseRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpgradeLicenseCompletePurchaseRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseCompletePurchaseRequest;
+
+        /**
+         * Decodes an UpgradeLicenseCompletePurchaseRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpgradeLicenseCompletePurchaseRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseCompletePurchaseRequest;
+
+        /**
+         * Verifies an UpgradeLicenseCompletePurchaseRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpgradeLicenseCompletePurchaseRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpgradeLicenseCompletePurchaseRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseCompletePurchaseRequest;
+
+        /**
+         * Creates a plain object from an UpgradeLicenseCompletePurchaseRequest message. Also converts values to other types if specified.
+         * @param message UpgradeLicenseCompletePurchaseRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.UpgradeLicenseCompletePurchaseRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpgradeLicenseCompletePurchaseRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpgradeLicenseCompletePurchaseRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an UpgradeLicenseCompletePurchaseResponse. */
+    interface IUpgradeLicenseCompletePurchaseResponse {
+
+        /** UpgradeLicenseCompletePurchaseResponse success */
+        success?: (boolean|null);
+
+        /** UpgradeLicenseCompletePurchaseResponse invoiceNumber */
+        invoiceNumber?: (string|null);
+
+        /** UpgradeLicenseCompletePurchaseResponse error */
+        error?: (BI.IError|null);
+
+        /** UpgradeLicenseCompletePurchaseResponse quotePurchase */
+        quotePurchase?: (BI.IQuotePurchase|null);
+    }
+
+    /** Represents an UpgradeLicenseCompletePurchaseResponse. */
+    class UpgradeLicenseCompletePurchaseResponse implements IUpgradeLicenseCompletePurchaseResponse {
+
+        /**
+         * Constructs a new UpgradeLicenseCompletePurchaseResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IUpgradeLicenseCompletePurchaseResponse);
+
+        /** UpgradeLicenseCompletePurchaseResponse success. */
+        public success: boolean;
+
+        /** UpgradeLicenseCompletePurchaseResponse invoiceNumber. */
+        public invoiceNumber: string;
+
+        /** UpgradeLicenseCompletePurchaseResponse error. */
+        public error?: (BI.IError|null);
+
+        /** UpgradeLicenseCompletePurchaseResponse quotePurchase. */
+        public quotePurchase?: (BI.IQuotePurchase|null);
+
+        /**
+         * Creates a new UpgradeLicenseCompletePurchaseResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UpgradeLicenseCompletePurchaseResponse instance
+         */
+        public static create(properties?: BI.IUpgradeLicenseCompletePurchaseResponse): BI.UpgradeLicenseCompletePurchaseResponse;
+
+        /**
+         * Encodes the specified UpgradeLicenseCompletePurchaseResponse message. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseResponse.verify|verify} messages.
+         * @param message UpgradeLicenseCompletePurchaseResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IUpgradeLicenseCompletePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UpgradeLicenseCompletePurchaseResponse message, length delimited. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseResponse.verify|verify} messages.
+         * @param message UpgradeLicenseCompletePurchaseResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IUpgradeLicenseCompletePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an UpgradeLicenseCompletePurchaseResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UpgradeLicenseCompletePurchaseResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseCompletePurchaseResponse;
+
+        /**
+         * Decodes an UpgradeLicenseCompletePurchaseResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UpgradeLicenseCompletePurchaseResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseCompletePurchaseResponse;
+
+        /**
+         * Verifies an UpgradeLicenseCompletePurchaseResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an UpgradeLicenseCompletePurchaseResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UpgradeLicenseCompletePurchaseResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseCompletePurchaseResponse;
+
+        /**
+         * Creates a plain object from an UpgradeLicenseCompletePurchaseResponse message. Also converts values to other types if specified.
+         * @param message UpgradeLicenseCompletePurchaseResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.UpgradeLicenseCompletePurchaseResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UpgradeLicenseCompletePurchaseResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UpgradeLicenseCompletePurchaseResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
