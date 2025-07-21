@@ -1,7 +1,7 @@
 {
   "name": "@keeper-security/keeperapi",
   "description": "Keeper API Javascript SDK",
-  "version": "16.0.82",
+  "version": "16.0.83",
   "browser": "dist/index.es.js",
   "main": "dist/index.cjs.js",
   "types": "dist/node/index.d.ts",
@@ -21,7 +21,7 @@
   "dependencies": {
     "asmcrypto.js": "^2.3.2",
     "faye-websocket": "^0.11.3",
-    "form-data": "^3.0.0",
+    "form-data": "^4.0.0",
     "node-rsa": "^1.0.8"
   },
   "devDependencies": {
