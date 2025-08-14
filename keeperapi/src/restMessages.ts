@@ -13,7 +13,8 @@ import {
     SsoCloud,
     Vault,
     Tokens,
-    NotificationCenter
+    NotificationCenter,
+    Folder
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -428,3 +429,30 @@ export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeA
 
 export const automatorAdminResetMessage = (data: Automator.AdminResetAutomatorRequest, url: string): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse)
+
+// begin shared folder change
+export const folderAddMessage = (data: Folder.FolderAddRequest): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
+    createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
+
+export const folderUpdateMessage = (data: Folder.FolderUpdateRequest): RestMessage<Folder.IFolderUpdateRequest, Folder.IFolderUpdateResponse> =>
+    createMessage(data, 'vault/folders/v3/update', Folder.FolderUpdateRequest, Folder.FolderUpdateResponse)
+
+export const folderRecordUpdateMessage = (data: Folder.FolderRecordUpdateRequest): RestMessage<Folder.IFolderRecordUpdateRequest, Folder.IFolderRecordUpdateResponse> =>
+    createMessage(data, 'vault/folders/v3/record_update', Folder.FolderRecordUpdateRequest, Folder.FolderRecordUpdateResponse)
+
+export const folderAccessUpdateMessage = (data: Folder.FolderAccessRequest): RestMessage<Folder.IFolderAccessRequest, Folder.IFolderAccessResponse> =>
+    createMessage(data, 'vault/folders/v3/access_update', Folder.FolderAccessRequest, Folder.FolderAccessResponse)
+
+// waiting for proto correction
+// export const V3RecordAddMessage = (data: Record.v3.RecordsAddRequest): RestMessage<Folder.IFolderRecordAddRequest, Folder.IFolderRecordAddResponse> =>
+//     createMessage(data, 'vault/records/v3/add', Folder.FolderRecordAddRequest, Folder.FolderRecordAddResponse)
+
+export const V3RecordUpdateMessage = (data: Records.RecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.RecordsModifyResponse> =>
+    createMessage(data, 'vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
+
+// waiting for proto correction
+// export const V3RecordShareMessage = (data: Record.RecordSharing.Request): RestMessage<Records.IRecordsShareRequest, Records.RecordsShareResponse> =>
+//     createMessage(data, 'vault/records/v3/share', Records.RecordsShareRequest, Records.RecordsShareResponse)
+
+export const RecordOwnershipTransferMessage = (data: Records.RecordsOnwershipTransferRequest): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
+    createMessage(data, 'vault/records_ownership_transfer', Records.RecordsOnwershipTransferRequest, Records.RecordsOnwershipTransferResponse)

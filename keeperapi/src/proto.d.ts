@@ -5645,6 +5645,9 @@ export namespace Authentication {
 
         /** SecurityReportIncrementalData oldDataEncryptionType */
         oldDataEncryptionType?: (Enterprise.EncryptedKeyType|null);
+
+        /** SecurityReportIncrementalData recordUid */
+        recordUid?: (Uint8Array|null);
     }
 
     /** Represents a SecurityReportIncrementalData. */
@@ -5676,6 +5679,9 @@ export namespace Authentication {
 
         /** SecurityReportIncrementalData oldDataEncryptionType. */
         public oldDataEncryptionType: Enterprise.EncryptedKeyType;
+
+        /** SecurityReportIncrementalData recordUid. */
+        public recordUid: Uint8Array;
 
         /**
          * Creates a new SecurityReportIncrementalData instance using the specified properties.
@@ -5905,6 +5911,9 @@ export namespace Authentication {
 
         /** SecurityReportSaveRequest securityReport */
         securityReport?: (Authentication.ISecurityReport[]|null);
+
+        /** SecurityReportSaveRequest continuationToken */
+        continuationToken?: (Uint8Array|null);
     }
 
     /** Represents a SecurityReportSaveRequest. */
@@ -5918,6 +5927,9 @@ export namespace Authentication {
 
         /** SecurityReportSaveRequest securityReport. */
         public securityReport: Authentication.ISecurityReport[];
+
+        /** SecurityReportSaveRequest continuationToken. */
+        public continuationToken: Uint8Array;
 
         /**
          * Creates a new SecurityReportSaveRequest instance using the specified properties.
@@ -6117,6 +6129,9 @@ export namespace Authentication {
 
         /** SecurityReportResponse enterpriseEccPrivateKey */
         enterpriseEccPrivateKey?: (Uint8Array|null);
+
+        /** SecurityReportResponse hasIncrementalData */
+        hasIncrementalData?: (boolean|null);
     }
 
     /** Represents a SecurityReportResponse. */
@@ -6148,6 +6163,9 @@ export namespace Authentication {
 
         /** SecurityReportResponse enterpriseEccPrivateKey. */
         public enterpriseEccPrivateKey: Uint8Array;
+
+        /** SecurityReportResponse hasIncrementalData. */
+        public hasIncrementalData: boolean;
 
         /**
          * Creates a new SecurityReportResponse instance using the specified properties.
@@ -6221,6 +6239,206 @@ export namespace Authentication {
 
         /**
          * Gets the default type url for SecurityReportResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an IncrementalSecurityDataRequest. */
+    interface IIncrementalSecurityDataRequest {
+
+        /** IncrementalSecurityDataRequest continuationToken */
+        continuationToken?: (Uint8Array|null);
+    }
+
+    /** Represents an IncrementalSecurityDataRequest. */
+    class IncrementalSecurityDataRequest implements IIncrementalSecurityDataRequest {
+
+        /**
+         * Constructs a new IncrementalSecurityDataRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IIncrementalSecurityDataRequest);
+
+        /** IncrementalSecurityDataRequest continuationToken. */
+        public continuationToken: Uint8Array;
+
+        /**
+         * Creates a new IncrementalSecurityDataRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IncrementalSecurityDataRequest instance
+         */
+        public static create(properties?: Authentication.IIncrementalSecurityDataRequest): Authentication.IncrementalSecurityDataRequest;
+
+        /**
+         * Encodes the specified IncrementalSecurityDataRequest message. Does not implicitly {@link Authentication.IncrementalSecurityDataRequest.verify|verify} messages.
+         * @param message IncrementalSecurityDataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IIncrementalSecurityDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IncrementalSecurityDataRequest message, length delimited. Does not implicitly {@link Authentication.IncrementalSecurityDataRequest.verify|verify} messages.
+         * @param message IncrementalSecurityDataRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IIncrementalSecurityDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IncrementalSecurityDataRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IncrementalSecurityDataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.IncrementalSecurityDataRequest;
+
+        /**
+         * Decodes an IncrementalSecurityDataRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IncrementalSecurityDataRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.IncrementalSecurityDataRequest;
+
+        /**
+         * Verifies an IncrementalSecurityDataRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IncrementalSecurityDataRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IncrementalSecurityDataRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.IncrementalSecurityDataRequest;
+
+        /**
+         * Creates a plain object from an IncrementalSecurityDataRequest message. Also converts values to other types if specified.
+         * @param message IncrementalSecurityDataRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.IncrementalSecurityDataRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IncrementalSecurityDataRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IncrementalSecurityDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an IncrementalSecurityDataResponse. */
+    interface IIncrementalSecurityDataResponse {
+
+        /** IncrementalSecurityDataResponse securityReportIncrementalData */
+        securityReportIncrementalData?: (Authentication.ISecurityReportIncrementalData[]|null);
+
+        /** IncrementalSecurityDataResponse continuationToken */
+        continuationToken?: (Uint8Array|null);
+    }
+
+    /** Represents an IncrementalSecurityDataResponse. */
+    class IncrementalSecurityDataResponse implements IIncrementalSecurityDataResponse {
+
+        /**
+         * Constructs a new IncrementalSecurityDataResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IIncrementalSecurityDataResponse);
+
+        /** IncrementalSecurityDataResponse securityReportIncrementalData. */
+        public securityReportIncrementalData: Authentication.ISecurityReportIncrementalData[];
+
+        /** IncrementalSecurityDataResponse continuationToken. */
+        public continuationToken: Uint8Array;
+
+        /**
+         * Creates a new IncrementalSecurityDataResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IncrementalSecurityDataResponse instance
+         */
+        public static create(properties?: Authentication.IIncrementalSecurityDataResponse): Authentication.IncrementalSecurityDataResponse;
+
+        /**
+         * Encodes the specified IncrementalSecurityDataResponse message. Does not implicitly {@link Authentication.IncrementalSecurityDataResponse.verify|verify} messages.
+         * @param message IncrementalSecurityDataResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IIncrementalSecurityDataResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IncrementalSecurityDataResponse message, length delimited. Does not implicitly {@link Authentication.IncrementalSecurityDataResponse.verify|verify} messages.
+         * @param message IncrementalSecurityDataResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IIncrementalSecurityDataResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IncrementalSecurityDataResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IncrementalSecurityDataResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.IncrementalSecurityDataResponse;
+
+        /**
+         * Decodes an IncrementalSecurityDataResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IncrementalSecurityDataResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.IncrementalSecurityDataResponse;
+
+        /**
+         * Verifies an IncrementalSecurityDataResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IncrementalSecurityDataResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IncrementalSecurityDataResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.IncrementalSecurityDataResponse;
+
+        /**
+         * Creates a plain object from an IncrementalSecurityDataResponse message. Also converts values to other types if specified.
+         * @param message IncrementalSecurityDataResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.IncrementalSecurityDataResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IncrementalSecurityDataResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IncrementalSecurityDataResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -18620,6 +18838,303 @@ export namespace Authentication {
         FF_TABLET = 2,
         FF_WATCH = 3
     }
+
+    /** Properties of a TranslationInfo. */
+    interface ITranslationInfo {
+
+        /** TranslationInfo translationKey */
+        translationKey?: (string|null);
+
+        /** TranslationInfo translationValue */
+        translationValue?: (string|null);
+    }
+
+    /** Represents a TranslationInfo. */
+    class TranslationInfo implements ITranslationInfo {
+
+        /**
+         * Constructs a new TranslationInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITranslationInfo);
+
+        /** TranslationInfo translationKey. */
+        public translationKey: string;
+
+        /** TranslationInfo translationValue. */
+        public translationValue: string;
+
+        /**
+         * Creates a new TranslationInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TranslationInfo instance
+         */
+        public static create(properties?: Authentication.ITranslationInfo): Authentication.TranslationInfo;
+
+        /**
+         * Encodes the specified TranslationInfo message. Does not implicitly {@link Authentication.TranslationInfo.verify|verify} messages.
+         * @param message TranslationInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITranslationInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TranslationInfo message, length delimited. Does not implicitly {@link Authentication.TranslationInfo.verify|verify} messages.
+         * @param message TranslationInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITranslationInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TranslationInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TranslationInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TranslationInfo;
+
+        /**
+         * Decodes a TranslationInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TranslationInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TranslationInfo;
+
+        /**
+         * Verifies a TranslationInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TranslationInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TranslationInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TranslationInfo;
+
+        /**
+         * Creates a plain object from a TranslationInfo message. Also converts values to other types if specified.
+         * @param message TranslationInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TranslationInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TranslationInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TranslationInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TranslationRequest. */
+    interface ITranslationRequest {
+
+        /** TranslationRequest translationKey */
+        translationKey?: (string[]|null);
+    }
+
+    /** Represents a TranslationRequest. */
+    class TranslationRequest implements ITranslationRequest {
+
+        /**
+         * Constructs a new TranslationRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITranslationRequest);
+
+        /** TranslationRequest translationKey. */
+        public translationKey: string[];
+
+        /**
+         * Creates a new TranslationRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TranslationRequest instance
+         */
+        public static create(properties?: Authentication.ITranslationRequest): Authentication.TranslationRequest;
+
+        /**
+         * Encodes the specified TranslationRequest message. Does not implicitly {@link Authentication.TranslationRequest.verify|verify} messages.
+         * @param message TranslationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITranslationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TranslationRequest message, length delimited. Does not implicitly {@link Authentication.TranslationRequest.verify|verify} messages.
+         * @param message TranslationRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITranslationRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TranslationRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TranslationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TranslationRequest;
+
+        /**
+         * Decodes a TranslationRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TranslationRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TranslationRequest;
+
+        /**
+         * Verifies a TranslationRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TranslationRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TranslationRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TranslationRequest;
+
+        /**
+         * Creates a plain object from a TranslationRequest message. Also converts values to other types if specified.
+         * @param message TranslationRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TranslationRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TranslationRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TranslationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TranslationResponse. */
+    interface ITranslationResponse {
+
+        /** TranslationResponse translationInfo */
+        translationInfo?: (Authentication.ITranslationInfo[]|null);
+    }
+
+    /** Represents a TranslationResponse. */
+    class TranslationResponse implements ITranslationResponse {
+
+        /**
+         * Constructs a new TranslationResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ITranslationResponse);
+
+        /** TranslationResponse translationInfo. */
+        public translationInfo: Authentication.ITranslationInfo[];
+
+        /**
+         * Creates a new TranslationResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TranslationResponse instance
+         */
+        public static create(properties?: Authentication.ITranslationResponse): Authentication.TranslationResponse;
+
+        /**
+         * Encodes the specified TranslationResponse message. Does not implicitly {@link Authentication.TranslationResponse.verify|verify} messages.
+         * @param message TranslationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ITranslationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified TranslationResponse message, length delimited. Does not implicitly {@link Authentication.TranslationResponse.verify|verify} messages.
+         * @param message TranslationResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.ITranslationResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TranslationResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TranslationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.TranslationResponse;
+
+        /**
+         * Decodes a TranslationResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns TranslationResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.TranslationResponse;
+
+        /**
+         * Verifies a TranslationResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a TranslationResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TranslationResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.TranslationResponse;
+
+        /**
+         * Creates a plain object from a TranslationResponse message. Also converts values to other types if specified.
+         * @param message TranslationResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.TranslationResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TranslationResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TranslationResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
 }
 
 /** Namespace Enterprise. */
@@ -27133,8 +27648,7 @@ export namespace Enterprise {
         DEVICES_REQUEST_FOR_ADMIN_APPROVAL = 20,
         USER_ALIASES = 21,
         COMPLIANCE_REPORT_CRITERIA_AND_FILTER = 22,
-        COMPLIANCE_REPORTS = 23,
-        QUEUED_TEAM_USERS_INCLUDING_PENDING = 24
+        COMPLIANCE_REPORTS = 23
     }
 
     /** CacheStatus enum. */
@@ -38986,7 +39500,8 @@ export namespace Automator {
      */
     enum SsoAuthenticationProtocolType {
         UNKNOWN_PROTOCOL = 0,
-        SAML2 = 1
+        SAML2 = 1,
+        JWT = 2
     }
 
     /** CertificateFormat enum. */
@@ -43709,7 +44224,8 @@ export namespace SsoCloud {
 
     /** Authentication protocols we support. */
     enum AuthProtocolType {
-        SAML2 = 0
+        SAML2 = 0,
+        JWT = 1
     }
 
     /** Datatypes of SsoCloudSettings */
@@ -54819,6 +55335,9 @@ export namespace Tokens {
 
         /** VaultSyncDownContinuationToken notificationSyncPoint */
         notificationSyncPoint?: (number|Long|null);
+
+        /** VaultSyncDownContinuationToken multiPageIncrementalClientVersion */
+        multiPageIncrementalClientVersion?: (number|null);
     }
 
     /** Represents a VaultSyncDownContinuationToken. */
@@ -54862,6 +55381,9 @@ export namespace Tokens {
 
         /** VaultSyncDownContinuationToken notificationSyncPoint. */
         public notificationSyncPoint: (number|Long);
+
+        /** VaultSyncDownContinuationToken multiPageIncrementalClientVersion. */
+        public multiPageIncrementalClientVersion: number;
 
         /**
          * Creates a new VaultSyncDownContinuationToken instance using the specified properties.
@@ -56715,6 +57237,109 @@ export namespace Tokens {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a KeyCloakToken. */
+    interface IKeyCloakToken {
+
+        /** KeyCloakToken email */
+        email?: (string|null);
+
+        /** KeyCloakToken groups */
+        groups?: (string[]|null);
+    }
+
+    /** Represents a KeyCloakToken. */
+    class KeyCloakToken implements IKeyCloakToken {
+
+        /**
+         * Constructs a new KeyCloakToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IKeyCloakToken);
+
+        /** KeyCloakToken email. */
+        public email: string;
+
+        /** KeyCloakToken groups. */
+        public groups: string[];
+
+        /**
+         * Creates a new KeyCloakToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns KeyCloakToken instance
+         */
+        public static create(properties?: Tokens.IKeyCloakToken): Tokens.KeyCloakToken;
+
+        /**
+         * Encodes the specified KeyCloakToken message. Does not implicitly {@link Tokens.KeyCloakToken.verify|verify} messages.
+         * @param message KeyCloakToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IKeyCloakToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified KeyCloakToken message, length delimited. Does not implicitly {@link Tokens.KeyCloakToken.verify|verify} messages.
+         * @param message KeyCloakToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IKeyCloakToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a KeyCloakToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns KeyCloakToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.KeyCloakToken;
+
+        /**
+         * Decodes a KeyCloakToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns KeyCloakToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.KeyCloakToken;
+
+        /**
+         * Verifies a KeyCloakToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a KeyCloakToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns KeyCloakToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.KeyCloakToken;
+
+        /**
+         * Creates a plain object from a KeyCloakToken message. Also converts values to other types if specified.
+         * @param message KeyCloakToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.KeyCloakToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this KeyCloakToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KeyCloakToken
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a IPWhiteList. */
     interface IIPWhiteList {
 
@@ -56806,6 +57431,115 @@ export namespace Tokens {
 
         /**
          * Gets the default type url for IPWhiteList
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an IncrementalSecurityDataContToken. */
+    interface IIncrementalSecurityDataContToken {
+
+        /** IncrementalSecurityDataContToken enterpriseUserIdUpToSave */
+        enterpriseUserIdUpToSave?: (number|Long|null);
+
+        /** IncrementalSecurityDataContToken revisionUpToSave */
+        revisionUpToSave?: (number|Long|null);
+
+        /** IncrementalSecurityDataContToken recordUidUpToSave */
+        recordUidUpToSave?: (Uint8Array|null);
+    }
+
+    /** Represents an IncrementalSecurityDataContToken. */
+    class IncrementalSecurityDataContToken implements IIncrementalSecurityDataContToken {
+
+        /**
+         * Constructs a new IncrementalSecurityDataContToken.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IIncrementalSecurityDataContToken);
+
+        /** IncrementalSecurityDataContToken enterpriseUserIdUpToSave. */
+        public enterpriseUserIdUpToSave: (number|Long);
+
+        /** IncrementalSecurityDataContToken revisionUpToSave. */
+        public revisionUpToSave: (number|Long);
+
+        /** IncrementalSecurityDataContToken recordUidUpToSave. */
+        public recordUidUpToSave: Uint8Array;
+
+        /**
+         * Creates a new IncrementalSecurityDataContToken instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IncrementalSecurityDataContToken instance
+         */
+        public static create(properties?: Tokens.IIncrementalSecurityDataContToken): Tokens.IncrementalSecurityDataContToken;
+
+        /**
+         * Encodes the specified IncrementalSecurityDataContToken message. Does not implicitly {@link Tokens.IncrementalSecurityDataContToken.verify|verify} messages.
+         * @param message IncrementalSecurityDataContToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IIncrementalSecurityDataContToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IncrementalSecurityDataContToken message, length delimited. Does not implicitly {@link Tokens.IncrementalSecurityDataContToken.verify|verify} messages.
+         * @param message IncrementalSecurityDataContToken message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Tokens.IIncrementalSecurityDataContToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IncrementalSecurityDataContToken message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IncrementalSecurityDataContToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.IncrementalSecurityDataContToken;
+
+        /**
+         * Decodes an IncrementalSecurityDataContToken message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IncrementalSecurityDataContToken
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Tokens.IncrementalSecurityDataContToken;
+
+        /**
+         * Verifies an IncrementalSecurityDataContToken message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IncrementalSecurityDataContToken message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IncrementalSecurityDataContToken
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.IncrementalSecurityDataContToken;
+
+        /**
+         * Creates a plain object from an IncrementalSecurityDataContToken message. Also converts values to other types if specified.
+         * @param message IncrementalSecurityDataContToken
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.IncrementalSecurityDataContToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IncrementalSecurityDataContToken to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for IncrementalSecurityDataContToken
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -60858,6 +61592,2908 @@ export namespace Folder {
 
         /**
          * Gets the default type url for RestoreSharedObject
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** FolderUsageType enum. */
+    enum FolderUsageType {
+        UT_UNKNOWN = 0,
+        UT_NORMAL = 1,
+        UT_WORKFLOW = 2
+    }
+
+    /** Properties of a FolderData. */
+    interface IFolderData {
+
+        /** FolderData folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderData parentUid */
+        parentUid?: (Uint8Array|null);
+
+        /** FolderData data */
+        data?: (Uint8Array|null);
+
+        /** FolderData type */
+        type?: (Folder.FolderUsageType|null);
+
+        /** FolderData inheritUserPermissions */
+        inheritUserPermissions?: (Folder.SetBooleanValue|null);
+
+        /** FolderData folderKey */
+        folderKey?: (Uint8Array|null);
+
+        /** FolderData ownerInfo */
+        ownerInfo?: (Folder.IUserInfo|null);
+
+        /** FolderData dateCreated */
+        dateCreated?: (number|Long|null);
+
+        /** FolderData lastModified */
+        lastModified?: (number|Long|null);
+    }
+
+    /**
+     * FolderData is used in the folder add and update requests and it is stored in the DAG.
+     * It is also used to store folders' data in the sync down response.
+     */
+    class FolderData implements IFolderData {
+
+        /**
+         * Constructs a new FolderData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderData);
+
+        /** FolderData folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderData parentUid. */
+        public parentUid: Uint8Array;
+
+        /** FolderData data. */
+        public data: Uint8Array;
+
+        /** FolderData type. */
+        public type: Folder.FolderUsageType;
+
+        /** FolderData inheritUserPermissions. */
+        public inheritUserPermissions: Folder.SetBooleanValue;
+
+        /** FolderData folderKey. */
+        public folderKey: Uint8Array;
+
+        /** FolderData ownerInfo. */
+        public ownerInfo?: (Folder.IUserInfo|null);
+
+        /** FolderData dateCreated. */
+        public dateCreated: (number|Long);
+
+        /** FolderData lastModified. */
+        public lastModified: (number|Long);
+
+        /**
+         * Creates a new FolderData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderData instance
+         */
+        public static create(properties?: Folder.IFolderData): Folder.FolderData;
+
+        /**
+         * Encodes the specified FolderData message. Does not implicitly {@link Folder.FolderData.verify|verify} messages.
+         * @param message FolderData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderData message, length delimited. Does not implicitly {@link Folder.FolderData.verify|verify} messages.
+         * @param message FolderData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderData;
+
+        /**
+         * Decodes a FolderData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderData;
+
+        /**
+         * Verifies a FolderData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderData
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderData;
+
+        /**
+         * Creates a plain object from a FolderData message. Also converts values to other types if specified.
+         * @param message FolderData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderKey. */
+    interface IFolderKey {
+
+        /** FolderKey folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderKey parentUid */
+        parentUid?: (Uint8Array|null);
+
+        /** FolderKey folderKey */
+        folderKey?: (Uint8Array|null);
+
+        /** FolderKey encryptedBy */
+        encryptedBy?: (Folder.FolderKeyEncryptionType|null);
+    }
+
+    /** Represents a FolderKey. */
+    class FolderKey implements IFolderKey {
+
+        /**
+         * Constructs a new FolderKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderKey);
+
+        /** FolderKey folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderKey parentUid. */
+        public parentUid: Uint8Array;
+
+        /** FolderKey folderKey. */
+        public folderKey: Uint8Array;
+
+        /** FolderKey encryptedBy. */
+        public encryptedBy: Folder.FolderKeyEncryptionType;
+
+        /**
+         * Creates a new FolderKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderKey instance
+         */
+        public static create(properties?: Folder.IFolderKey): Folder.FolderKey;
+
+        /**
+         * Encodes the specified FolderKey message. Does not implicitly {@link Folder.FolderKey.verify|verify} messages.
+         * @param message FolderKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderKey message, length delimited. Does not implicitly {@link Folder.FolderKey.verify|verify} messages.
+         * @param message FolderKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderKey;
+
+        /**
+         * Decodes a FolderKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderKey;
+
+        /**
+         * Verifies a FolderKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderKey
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderKey;
+
+        /**
+         * Creates a plain object from a FolderKey message. Also converts values to other types if specified.
+         * @param message FolderKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** FolderKeyEncryptionType enum. */
+    enum FolderKeyEncryptionType {
+        ENCRYPTED_BY_USER_KEY = 0,
+        ENCRYPTED_BY_PARENT_KEY = 1
+    }
+
+    /** Properties of a FolderAddRequest. */
+    interface IFolderAddRequest {
+
+        /** FolderAddRequest folderData */
+        folderData?: (Folder.IFolderData[]|null);
+    }
+
+    /** Represents a FolderAddRequest. */
+    class FolderAddRequest implements IFolderAddRequest {
+
+        /**
+         * Constructs a new FolderAddRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderAddRequest);
+
+        /** FolderAddRequest folderData. */
+        public folderData: Folder.IFolderData[];
+
+        /**
+         * Creates a new FolderAddRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderAddRequest instance
+         */
+        public static create(properties?: Folder.IFolderAddRequest): Folder.FolderAddRequest;
+
+        /**
+         * Encodes the specified FolderAddRequest message. Does not implicitly {@link Folder.FolderAddRequest.verify|verify} messages.
+         * @param message FolderAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderAddRequest message, length delimited. Does not implicitly {@link Folder.FolderAddRequest.verify|verify} messages.
+         * @param message FolderAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderAddRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderAddRequest;
+
+        /**
+         * Decodes a FolderAddRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderAddRequest;
+
+        /**
+         * Verifies a FolderAddRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderAddRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderAddRequest;
+
+        /**
+         * Creates a plain object from a FolderAddRequest message. Also converts values to other types if specified.
+         * @param message FolderAddRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderAddRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderAddRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** FolderModifyStatus enum. */
+    enum FolderModifyStatus {
+        SUCCESS = 0,
+        BAD_REQUEST = 1,
+        ACCESS_DENIED = 2,
+        NOT_FOUND = 3
+    }
+
+    /** Properties of a FolderModifyResult. */
+    interface IFolderModifyResult {
+
+        /** FolderModifyResult folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderModifyResult status */
+        status?: (Folder.FolderModifyStatus|null);
+
+        /** FolderModifyResult message */
+        message?: (string|null);
+    }
+
+    /** Represents a FolderModifyResult. */
+    class FolderModifyResult implements IFolderModifyResult {
+
+        /**
+         * Constructs a new FolderModifyResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderModifyResult);
+
+        /** FolderModifyResult folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderModifyResult status. */
+        public status: Folder.FolderModifyStatus;
+
+        /** FolderModifyResult message. */
+        public message: string;
+
+        /**
+         * Creates a new FolderModifyResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderModifyResult instance
+         */
+        public static create(properties?: Folder.IFolderModifyResult): Folder.FolderModifyResult;
+
+        /**
+         * Encodes the specified FolderModifyResult message. Does not implicitly {@link Folder.FolderModifyResult.verify|verify} messages.
+         * @param message FolderModifyResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderModifyResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderModifyResult message, length delimited. Does not implicitly {@link Folder.FolderModifyResult.verify|verify} messages.
+         * @param message FolderModifyResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderModifyResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderModifyResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderModifyResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderModifyResult;
+
+        /**
+         * Decodes a FolderModifyResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderModifyResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderModifyResult;
+
+        /**
+         * Verifies a FolderModifyResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderModifyResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderModifyResult
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderModifyResult;
+
+        /**
+         * Creates a plain object from a FolderModifyResult message. Also converts values to other types if specified.
+         * @param message FolderModifyResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderModifyResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderModifyResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderModifyResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderAddResponse. */
+    interface IFolderAddResponse {
+
+        /** FolderAddResponse folderAddResults */
+        folderAddResults?: (Folder.IFolderModifyResult[]|null);
+    }
+
+    /** Represents a FolderAddResponse. */
+    class FolderAddResponse implements IFolderAddResponse {
+
+        /**
+         * Constructs a new FolderAddResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderAddResponse);
+
+        /** FolderAddResponse folderAddResults. */
+        public folderAddResults: Folder.IFolderModifyResult[];
+
+        /**
+         * Creates a new FolderAddResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderAddResponse instance
+         */
+        public static create(properties?: Folder.IFolderAddResponse): Folder.FolderAddResponse;
+
+        /**
+         * Encodes the specified FolderAddResponse message. Does not implicitly {@link Folder.FolderAddResponse.verify|verify} messages.
+         * @param message FolderAddResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderAddResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderAddResponse message, length delimited. Does not implicitly {@link Folder.FolderAddResponse.verify|verify} messages.
+         * @param message FolderAddResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderAddResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderAddResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderAddResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderAddResponse;
+
+        /**
+         * Decodes a FolderAddResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderAddResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderAddResponse;
+
+        /**
+         * Verifies a FolderAddResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderAddResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderAddResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderAddResponse;
+
+        /**
+         * Creates a plain object from a FolderAddResponse message. Also converts values to other types if specified.
+         * @param message FolderAddResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderAddResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderAddResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderAddResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderUpdateRequest. */
+    interface IFolderUpdateRequest {
+
+        /** FolderUpdateRequest folderData */
+        folderData?: (Folder.IFolderData[]|null);
+    }
+
+    /** Represents a FolderUpdateRequest. */
+    class FolderUpdateRequest implements IFolderUpdateRequest {
+
+        /**
+         * Constructs a new FolderUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderUpdateRequest);
+
+        /** FolderUpdateRequest folderData. */
+        public folderData: Folder.IFolderData[];
+
+        /**
+         * Creates a new FolderUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderUpdateRequest instance
+         */
+        public static create(properties?: Folder.IFolderUpdateRequest): Folder.FolderUpdateRequest;
+
+        /**
+         * Encodes the specified FolderUpdateRequest message. Does not implicitly {@link Folder.FolderUpdateRequest.verify|verify} messages.
+         * @param message FolderUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderUpdateRequest message, length delimited. Does not implicitly {@link Folder.FolderUpdateRequest.verify|verify} messages.
+         * @param message FolderUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderUpdateRequest;
+
+        /**
+         * Decodes a FolderUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderUpdateRequest;
+
+        /**
+         * Verifies a FolderUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderUpdateRequest;
+
+        /**
+         * Creates a plain object from a FolderUpdateRequest message. Also converts values to other types if specified.
+         * @param message FolderUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderUpdateResponse. */
+    interface IFolderUpdateResponse {
+
+        /** FolderUpdateResponse folderUpdateResults */
+        folderUpdateResults?: (Folder.IFolderModifyResult[]|null);
+    }
+
+    /** Represents a FolderUpdateResponse. */
+    class FolderUpdateResponse implements IFolderUpdateResponse {
+
+        /**
+         * Constructs a new FolderUpdateResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderUpdateResponse);
+
+        /** FolderUpdateResponse folderUpdateResults. */
+        public folderUpdateResults: Folder.IFolderModifyResult[];
+
+        /**
+         * Creates a new FolderUpdateResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderUpdateResponse instance
+         */
+        public static create(properties?: Folder.IFolderUpdateResponse): Folder.FolderUpdateResponse;
+
+        /**
+         * Encodes the specified FolderUpdateResponse message. Does not implicitly {@link Folder.FolderUpdateResponse.verify|verify} messages.
+         * @param message FolderUpdateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderUpdateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderUpdateResponse message, length delimited. Does not implicitly {@link Folder.FolderUpdateResponse.verify|verify} messages.
+         * @param message FolderUpdateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderUpdateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderUpdateResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderUpdateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderUpdateResponse;
+
+        /**
+         * Decodes a FolderUpdateResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderUpdateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderUpdateResponse;
+
+        /**
+         * Verifies a FolderUpdateResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderUpdateResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderUpdateResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderUpdateResponse;
+
+        /**
+         * Creates a plain object from a FolderUpdateResponse message. Also converts values to other types if specified.
+         * @param message FolderUpdateResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderUpdateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderUpdateResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderUpdateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** FolderPermissionBits enum. */
+    enum FolderPermissionBits {
+        noBits = 0,
+        canAddUsers = 1,
+        canRemoveUsers = 2,
+        canAddRecords = 4,
+        canRemoveRecords = 8,
+        canDeleteRecords = 16,
+        canCreateFolders = 32,
+        canDeleteFolders = 64,
+        canChangeUserPermissions = 128,
+        canChangeRecordPermissions = 256,
+        canChangeFolderOwnership = 512,
+        canChangeRecordOwnership = 1024,
+        canEditRecords = 2048,
+        canViewRecords = 4096,
+        canReshareRecords = 8192,
+        canApproveAccess = 16384,
+        canRequestAccess = 32768,
+        canUpdateSetting = 65536
+    }
+
+    /** Properties of a FolderPermissions. */
+    interface IFolderPermissions {
+
+        /** FolderPermissions canAddUsers */
+        canAddUsers?: (boolean|null);
+
+        /** FolderPermissions canRemoveUsers */
+        canRemoveUsers?: (boolean|null);
+
+        /** FolderPermissions canAddRecords */
+        canAddRecords?: (boolean|null);
+
+        /** FolderPermissions canRemoveRecords */
+        canRemoveRecords?: (boolean|null);
+
+        /** FolderPermissions canDeleteRecords */
+        canDeleteRecords?: (boolean|null);
+
+        /** FolderPermissions canCreateFolders */
+        canCreateFolders?: (boolean|null);
+
+        /** FolderPermissions canDeleteFolders */
+        canDeleteFolders?: (boolean|null);
+
+        /** FolderPermissions canChangeUserPermissions */
+        canChangeUserPermissions?: (boolean|null);
+
+        /** FolderPermissions canChangeRecordPermissions */
+        canChangeRecordPermissions?: (boolean|null);
+
+        /** FolderPermissions canChangeFolderOwnership */
+        canChangeFolderOwnership?: (boolean|null);
+
+        /** FolderPermissions canChangeRecordOwnership */
+        canChangeRecordOwnership?: (boolean|null);
+
+        /** FolderPermissions canEditRecords */
+        canEditRecords?: (boolean|null);
+
+        /** FolderPermissions canViewRecords */
+        canViewRecords?: (boolean|null);
+
+        /** FolderPermissions canReshareRecords */
+        canReshareRecords?: (boolean|null);
+
+        /** FolderPermissions canApproveAccess */
+        canApproveAccess?: (boolean|null);
+
+        /** FolderPermissions canRequestAccess */
+        canRequestAccess?: (boolean|null);
+
+        /** FolderPermissions canUpdateSetting */
+        canUpdateSetting?: (boolean|null);
+    }
+
+    /** Represents a FolderPermissions. */
+    class FolderPermissions implements IFolderPermissions {
+
+        /**
+         * Constructs a new FolderPermissions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderPermissions);
+
+        /** FolderPermissions canAddUsers. */
+        public canAddUsers: boolean;
+
+        /** FolderPermissions canRemoveUsers. */
+        public canRemoveUsers: boolean;
+
+        /** FolderPermissions canAddRecords. */
+        public canAddRecords: boolean;
+
+        /** FolderPermissions canRemoveRecords. */
+        public canRemoveRecords: boolean;
+
+        /** FolderPermissions canDeleteRecords. */
+        public canDeleteRecords: boolean;
+
+        /** FolderPermissions canCreateFolders. */
+        public canCreateFolders: boolean;
+
+        /** FolderPermissions canDeleteFolders. */
+        public canDeleteFolders: boolean;
+
+        /** FolderPermissions canChangeUserPermissions. */
+        public canChangeUserPermissions: boolean;
+
+        /** FolderPermissions canChangeRecordPermissions. */
+        public canChangeRecordPermissions: boolean;
+
+        /** FolderPermissions canChangeFolderOwnership. */
+        public canChangeFolderOwnership: boolean;
+
+        /** FolderPermissions canChangeRecordOwnership. */
+        public canChangeRecordOwnership: boolean;
+
+        /** FolderPermissions canEditRecords. */
+        public canEditRecords: boolean;
+
+        /** FolderPermissions canViewRecords. */
+        public canViewRecords: boolean;
+
+        /** FolderPermissions canReshareRecords. */
+        public canReshareRecords: boolean;
+
+        /** FolderPermissions canApproveAccess. */
+        public canApproveAccess: boolean;
+
+        /** FolderPermissions canRequestAccess. */
+        public canRequestAccess: boolean;
+
+        /** FolderPermissions canUpdateSetting. */
+        public canUpdateSetting: boolean;
+
+        /**
+         * Creates a new FolderPermissions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderPermissions instance
+         */
+        public static create(properties?: Folder.IFolderPermissions): Folder.FolderPermissions;
+
+        /**
+         * Encodes the specified FolderPermissions message. Does not implicitly {@link Folder.FolderPermissions.verify|verify} messages.
+         * @param message FolderPermissions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderPermissions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderPermissions message, length delimited. Does not implicitly {@link Folder.FolderPermissions.verify|verify} messages.
+         * @param message FolderPermissions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderPermissions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderPermissions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderPermissions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderPermissions;
+
+        /**
+         * Decodes a FolderPermissions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderPermissions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderPermissions;
+
+        /**
+         * Verifies a FolderPermissions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderPermissions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderPermissions
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderPermissions;
+
+        /**
+         * Creates a plain object from a FolderPermissions message. Also converts values to other types if specified.
+         * @param message FolderPermissions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderPermissions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderPermissions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderPermissions
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a Capabilities. */
+    interface ICapabilities {
+
+        /** Capabilities canAddUsers */
+        canAddUsers?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canRemoveUsers */
+        canRemoveUsers?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canAddRecords */
+        canAddRecords?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canRemoveRecords */
+        canRemoveRecords?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canDeleteRecords */
+        canDeleteRecords?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canCreateFolders */
+        canCreateFolders?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canDeleteFolders */
+        canDeleteFolders?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canChangeUserPermissions */
+        canChangeUserPermissions?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canChangeRecordPermissions */
+        canChangeRecordPermissions?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canChangeFolderOwnership */
+        canChangeFolderOwnership?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canChangeRecordOwnership */
+        canChangeRecordOwnership?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canEditRecords */
+        canEditRecords?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canViewRecords */
+        canViewRecords?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canReshareRecords */
+        canReshareRecords?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canApproveAccess */
+        canApproveAccess?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canRequestAccess */
+        canRequestAccess?: (Folder.SetBooleanValue|null);
+
+        /** Capabilities canUpdateSetting */
+        canUpdateSetting?: (Folder.SetBooleanValue|null);
+    }
+
+    /** Represents a Capabilities. */
+    class Capabilities implements ICapabilities {
+
+        /**
+         * Constructs a new Capabilities.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.ICapabilities);
+
+        /** Capabilities canAddUsers. */
+        public canAddUsers: Folder.SetBooleanValue;
+
+        /** Capabilities canRemoveUsers. */
+        public canRemoveUsers: Folder.SetBooleanValue;
+
+        /** Capabilities canAddRecords. */
+        public canAddRecords: Folder.SetBooleanValue;
+
+        /** Capabilities canRemoveRecords. */
+        public canRemoveRecords: Folder.SetBooleanValue;
+
+        /** Capabilities canDeleteRecords. */
+        public canDeleteRecords: Folder.SetBooleanValue;
+
+        /** Capabilities canCreateFolders. */
+        public canCreateFolders: Folder.SetBooleanValue;
+
+        /** Capabilities canDeleteFolders. */
+        public canDeleteFolders: Folder.SetBooleanValue;
+
+        /** Capabilities canChangeUserPermissions. */
+        public canChangeUserPermissions: Folder.SetBooleanValue;
+
+        /** Capabilities canChangeRecordPermissions. */
+        public canChangeRecordPermissions: Folder.SetBooleanValue;
+
+        /** Capabilities canChangeFolderOwnership. */
+        public canChangeFolderOwnership: Folder.SetBooleanValue;
+
+        /** Capabilities canChangeRecordOwnership. */
+        public canChangeRecordOwnership: Folder.SetBooleanValue;
+
+        /** Capabilities canEditRecords. */
+        public canEditRecords: Folder.SetBooleanValue;
+
+        /** Capabilities canViewRecords. */
+        public canViewRecords: Folder.SetBooleanValue;
+
+        /** Capabilities canReshareRecords. */
+        public canReshareRecords: Folder.SetBooleanValue;
+
+        /** Capabilities canApproveAccess. */
+        public canApproveAccess: Folder.SetBooleanValue;
+
+        /** Capabilities canRequestAccess. */
+        public canRequestAccess: Folder.SetBooleanValue;
+
+        /** Capabilities canUpdateSetting. */
+        public canUpdateSetting: Folder.SetBooleanValue;
+
+        /**
+         * Creates a new Capabilities instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Capabilities instance
+         */
+        public static create(properties?: Folder.ICapabilities): Folder.Capabilities;
+
+        /**
+         * Encodes the specified Capabilities message. Does not implicitly {@link Folder.Capabilities.verify|verify} messages.
+         * @param message Capabilities message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.ICapabilities, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Capabilities message, length delimited. Does not implicitly {@link Folder.Capabilities.verify|verify} messages.
+         * @param message Capabilities message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.ICapabilities, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Capabilities message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Capabilities
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.Capabilities;
+
+        /**
+         * Decodes a Capabilities message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Capabilities
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.Capabilities;
+
+        /**
+         * Verifies a Capabilities message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Capabilities message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Capabilities
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.Capabilities;
+
+        /**
+         * Creates a plain object from a Capabilities message. Also converts values to other types if specified.
+         * @param message Capabilities
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.Capabilities, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Capabilities to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Capabilities
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderRecordUpdateRequest. */
+    interface IFolderRecordUpdateRequest {
+
+        /** FolderRecordUpdateRequest folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderRecordUpdateRequest addRecords */
+        addRecords?: (Folder.IFolderRecord[]|null);
+
+        /** FolderRecordUpdateRequest updateRecords */
+        updateRecords?: (Folder.IFolderRecord[]|null);
+
+        /** FolderRecordUpdateRequest removeRecords */
+        removeRecords?: (Folder.IFolderRecord[]|null);
+    }
+
+    /** Represents a FolderRecordUpdateRequest. */
+    class FolderRecordUpdateRequest implements IFolderRecordUpdateRequest {
+
+        /**
+         * Constructs a new FolderRecordUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderRecordUpdateRequest);
+
+        /** FolderRecordUpdateRequest folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderRecordUpdateRequest addRecords. */
+        public addRecords: Folder.IFolderRecord[];
+
+        /** FolderRecordUpdateRequest updateRecords. */
+        public updateRecords: Folder.IFolderRecord[];
+
+        /** FolderRecordUpdateRequest removeRecords. */
+        public removeRecords: Folder.IFolderRecord[];
+
+        /**
+         * Creates a new FolderRecordUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderRecordUpdateRequest instance
+         */
+        public static create(properties?: Folder.IFolderRecordUpdateRequest): Folder.FolderRecordUpdateRequest;
+
+        /**
+         * Encodes the specified FolderRecordUpdateRequest message. Does not implicitly {@link Folder.FolderRecordUpdateRequest.verify|verify} messages.
+         * @param message FolderRecordUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderRecordUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderRecordUpdateRequest message, length delimited. Does not implicitly {@link Folder.FolderRecordUpdateRequest.verify|verify} messages.
+         * @param message FolderRecordUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderRecordUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderRecordUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderRecordUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderRecordUpdateRequest;
+
+        /**
+         * Decodes a FolderRecordUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderRecordUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderRecordUpdateRequest;
+
+        /**
+         * Verifies a FolderRecordUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderRecordUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderRecordUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderRecordUpdateRequest;
+
+        /**
+         * Creates a plain object from a FolderRecordUpdateRequest message. Also converts values to other types if specified.
+         * @param message FolderRecordUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderRecordUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderRecordUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRecordUpdateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderRecord. */
+    interface IFolderRecord {
+
+        /** FolderRecord recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** FolderRecord encryptedRecordKey */
+        encryptedRecordKey?: (Uint8Array|null);
+
+        /** FolderRecord hidden */
+        hidden?: (Folder.SetBooleanValue|null);
+
+        /** FolderRecord tlaProperties */
+        tlaProperties?: (common.tla.ITLAProperties|null);
+    }
+
+    /** Represents a FolderRecord. */
+    class FolderRecord implements IFolderRecord {
+
+        /**
+         * Constructs a new FolderRecord.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderRecord);
+
+        /** FolderRecord recordUid. */
+        public recordUid: Uint8Array;
+
+        /** FolderRecord encryptedRecordKey. */
+        public encryptedRecordKey: Uint8Array;
+
+        /** FolderRecord hidden. */
+        public hidden: Folder.SetBooleanValue;
+
+        /** FolderRecord tlaProperties. */
+        public tlaProperties?: (common.tla.ITLAProperties|null);
+
+        /**
+         * Creates a new FolderRecord instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderRecord instance
+         */
+        public static create(properties?: Folder.IFolderRecord): Folder.FolderRecord;
+
+        /**
+         * Encodes the specified FolderRecord message. Does not implicitly {@link Folder.FolderRecord.verify|verify} messages.
+         * @param message FolderRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderRecord message, length delimited. Does not implicitly {@link Folder.FolderRecord.verify|verify} messages.
+         * @param message FolderRecord message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderRecord message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderRecord;
+
+        /**
+         * Decodes a FolderRecord message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderRecord;
+
+        /**
+         * Verifies a FolderRecord message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderRecord message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderRecord
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderRecord;
+
+        /**
+         * Creates a plain object from a FolderRecord message. Also converts values to other types if specified.
+         * @param message FolderRecord
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderRecord, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderRecord to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderRecordUpdateResponse. */
+    interface IFolderRecordUpdateResponse {
+
+        /** FolderRecordUpdateResponse folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderRecordUpdateResponse folderRecordUpdateResult */
+        folderRecordUpdateResult?: (Folder.IFolderRecordUpdateResult[]|null);
+    }
+
+    /** Represents a FolderRecordUpdateResponse. */
+    class FolderRecordUpdateResponse implements IFolderRecordUpdateResponse {
+
+        /**
+         * Constructs a new FolderRecordUpdateResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderRecordUpdateResponse);
+
+        /** FolderRecordUpdateResponse folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderRecordUpdateResponse folderRecordUpdateResult. */
+        public folderRecordUpdateResult: Folder.IFolderRecordUpdateResult[];
+
+        /**
+         * Creates a new FolderRecordUpdateResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderRecordUpdateResponse instance
+         */
+        public static create(properties?: Folder.IFolderRecordUpdateResponse): Folder.FolderRecordUpdateResponse;
+
+        /**
+         * Encodes the specified FolderRecordUpdateResponse message. Does not implicitly {@link Folder.FolderRecordUpdateResponse.verify|verify} messages.
+         * @param message FolderRecordUpdateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderRecordUpdateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderRecordUpdateResponse message, length delimited. Does not implicitly {@link Folder.FolderRecordUpdateResponse.verify|verify} messages.
+         * @param message FolderRecordUpdateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderRecordUpdateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderRecordUpdateResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderRecordUpdateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderRecordUpdateResponse;
+
+        /**
+         * Decodes a FolderRecordUpdateResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderRecordUpdateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderRecordUpdateResponse;
+
+        /**
+         * Verifies a FolderRecordUpdateResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderRecordUpdateResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderRecordUpdateResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderRecordUpdateResponse;
+
+        /**
+         * Creates a plain object from a FolderRecordUpdateResponse message. Also converts values to other types if specified.
+         * @param message FolderRecordUpdateResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderRecordUpdateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderRecordUpdateResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRecordUpdateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderRecordUpdateResult. */
+    interface IFolderRecordUpdateResult {
+
+        /** FolderRecordUpdateResult recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** FolderRecordUpdateResult status */
+        status?: (Folder.FolderModifyStatus|null);
+
+        /** FolderRecordUpdateResult message */
+        message?: (string|null);
+    }
+
+    /** Represents a FolderRecordUpdateResult. */
+    class FolderRecordUpdateResult implements IFolderRecordUpdateResult {
+
+        /**
+         * Constructs a new FolderRecordUpdateResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderRecordUpdateResult);
+
+        /** FolderRecordUpdateResult recordUid. */
+        public recordUid: Uint8Array;
+
+        /** FolderRecordUpdateResult status. */
+        public status: Folder.FolderModifyStatus;
+
+        /** FolderRecordUpdateResult message. */
+        public message: string;
+
+        /**
+         * Creates a new FolderRecordUpdateResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderRecordUpdateResult instance
+         */
+        public static create(properties?: Folder.IFolderRecordUpdateResult): Folder.FolderRecordUpdateResult;
+
+        /**
+         * Encodes the specified FolderRecordUpdateResult message. Does not implicitly {@link Folder.FolderRecordUpdateResult.verify|verify} messages.
+         * @param message FolderRecordUpdateResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderRecordUpdateResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderRecordUpdateResult message, length delimited. Does not implicitly {@link Folder.FolderRecordUpdateResult.verify|verify} messages.
+         * @param message FolderRecordUpdateResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderRecordUpdateResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderRecordUpdateResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderRecordUpdateResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderRecordUpdateResult;
+
+        /**
+         * Decodes a FolderRecordUpdateResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderRecordUpdateResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderRecordUpdateResult;
+
+        /**
+         * Verifies a FolderRecordUpdateResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderRecordUpdateResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderRecordUpdateResult
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderRecordUpdateResult;
+
+        /**
+         * Creates a plain object from a FolderRecordUpdateResult message. Also converts values to other types if specified.
+         * @param message FolderRecordUpdateResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderRecordUpdateResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderRecordUpdateResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderRecordUpdateResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** AccessRoleType enum. */
+    enum AccessRoleType {
+        NO_ROLE = 0,
+        VIEWER = 1,
+        SHARED_MANAGER = 2,
+        CONTRIBUTOR = 3,
+        CONTENT_MANAGER = 4,
+        MANAGER = 5
+    }
+
+    /** Properties of a FolderAccessData. */
+    interface IFolderAccessData {
+
+        /** FolderAccessData folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderAccessData accessTypeUid */
+        accessTypeUid?: (Uint8Array|null);
+
+        /** FolderAccessData accessType */
+        accessType?: (Folder.AccessType|null);
+
+        /** FolderAccessData accessRoleType */
+        accessRoleType?: (Folder.AccessRoleType|null);
+
+        /** FolderAccessData folderKey */
+        folderKey?: (Folder.IEncryptedDataKey|null);
+
+        /** FolderAccessData inherited */
+        inherited?: (boolean|null);
+
+        /** FolderAccessData hidden */
+        hidden?: (boolean|null);
+
+        /** FolderAccessData permissions */
+        permissions?: (Folder.IFolderPermissions|null);
+
+        /** FolderAccessData tlaProperties */
+        tlaProperties?: (common.tla.ITLAProperties|null);
+
+        /** FolderAccessData dateCreated */
+        dateCreated?: (number|Long|null);
+
+        /** FolderAccessData lastModified */
+        lastModified?: (number|Long|null);
+    }
+
+    /** Represents a FolderAccessData. */
+    class FolderAccessData implements IFolderAccessData {
+
+        /**
+         * Constructs a new FolderAccessData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderAccessData);
+
+        /** FolderAccessData folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderAccessData accessTypeUid. */
+        public accessTypeUid: Uint8Array;
+
+        /** FolderAccessData accessType. */
+        public accessType: Folder.AccessType;
+
+        /** FolderAccessData accessRoleType. */
+        public accessRoleType: Folder.AccessRoleType;
+
+        /** FolderAccessData folderKey. */
+        public folderKey?: (Folder.IEncryptedDataKey|null);
+
+        /** FolderAccessData inherited. */
+        public inherited: boolean;
+
+        /** FolderAccessData hidden. */
+        public hidden: boolean;
+
+        /** FolderAccessData permissions. */
+        public permissions?: (Folder.IFolderPermissions|null);
+
+        /** FolderAccessData tlaProperties. */
+        public tlaProperties?: (common.tla.ITLAProperties|null);
+
+        /** FolderAccessData dateCreated. */
+        public dateCreated: (number|Long);
+
+        /** FolderAccessData lastModified. */
+        public lastModified: (number|Long);
+
+        /**
+         * Creates a new FolderAccessData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderAccessData instance
+         */
+        public static create(properties?: Folder.IFolderAccessData): Folder.FolderAccessData;
+
+        /**
+         * Encodes the specified FolderAccessData message. Does not implicitly {@link Folder.FolderAccessData.verify|verify} messages.
+         * @param message FolderAccessData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderAccessData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderAccessData message, length delimited. Does not implicitly {@link Folder.FolderAccessData.verify|verify} messages.
+         * @param message FolderAccessData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderAccessData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderAccessData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderAccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderAccessData;
+
+        /**
+         * Decodes a FolderAccessData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderAccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderAccessData;
+
+        /**
+         * Verifies a FolderAccessData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderAccessData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderAccessData
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderAccessData;
+
+        /**
+         * Creates a plain object from a FolderAccessData message. Also converts values to other types if specified.
+         * @param message FolderAccessData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderAccessData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderAccessData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderAccessData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RevokedAccess. */
+    interface IRevokedAccess {
+
+        /** the uid of the folder whose access have been revoked */
+        folderUid?: (Uint8Array|null);
+
+        /** the uid of actor whose access has been revoked. can represent a Team or a User (an account) */
+        actorUid?: (Uint8Array|null);
+
+        /** discriminant to distinguish between user (account) and team */
+        accessType?: (Folder.AccessType|null);
+    }
+
+    /** Represents a RevokedAccess. */
+    class RevokedAccess implements IRevokedAccess {
+
+        /**
+         * Constructs a new RevokedAccess.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IRevokedAccess);
+
+        /** the uid of the folder whose access have been revoked */
+        public folderUid: Uint8Array;
+
+        /** the uid of actor whose access has been revoked. can represent a Team or a User (an account) */
+        public actorUid: Uint8Array;
+
+        /** discriminant to distinguish between user (account) and team */
+        public accessType: Folder.AccessType;
+
+        /**
+         * Creates a new RevokedAccess instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RevokedAccess instance
+         */
+        public static create(properties?: Folder.IRevokedAccess): Folder.RevokedAccess;
+
+        /**
+         * Encodes the specified RevokedAccess message. Does not implicitly {@link Folder.RevokedAccess.verify|verify} messages.
+         * @param message RevokedAccess message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IRevokedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RevokedAccess message, length delimited. Does not implicitly {@link Folder.RevokedAccess.verify|verify} messages.
+         * @param message RevokedAccess message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IRevokedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RevokedAccess message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RevokedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.RevokedAccess;
+
+        /**
+         * Decodes a RevokedAccess message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RevokedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.RevokedAccess;
+
+        /**
+         * Verifies a RevokedAccess message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RevokedAccess message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RevokedAccess
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.RevokedAccess;
+
+        /**
+         * Creates a plain object from a RevokedAccess message. Also converts values to other types if specified.
+         * @param message RevokedAccess
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.RevokedAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RevokedAccess to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RevokedAccess
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordAccessData. */
+    interface IRecordAccessData {
+
+        /** RecordAccessData accessTypeUid */
+        accessTypeUid?: (Uint8Array|null);
+
+        /** RecordAccessData accessType */
+        accessType?: (Folder.AccessType|null);
+
+        /** RecordAccessData recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordAccessData accessRoleType */
+        accessRoleType?: (Folder.AccessRoleType|null);
+
+        /** RecordAccessData owner */
+        owner?: (boolean|null);
+
+        /** RecordAccessData inherited */
+        inherited?: (boolean|null);
+
+        /** RecordAccessData hidden */
+        hidden?: (boolean|null);
+
+        /** RecordAccessData deniedAccess */
+        deniedAccess?: (boolean|null);
+
+        /** RecordAccessData canEdit */
+        canEdit?: (boolean|null);
+
+        /** RecordAccessData canView */
+        canView?: (boolean|null);
+
+        /** RecordAccessData canShare */
+        canShare?: (boolean|null);
+
+        /** RecordAccessData canDelete */
+        canDelete?: (boolean|null);
+
+        /** RecordAccessData canRequestAccess */
+        canRequestAccess?: (boolean|null);
+
+        /** RecordAccessData canApproveAccess */
+        canApproveAccess?: (boolean|null);
+
+        /** RecordAccessData dateCreated */
+        dateCreated?: (number|Long|null);
+
+        /** RecordAccessData lastModified */
+        lastModified?: (number|Long|null);
+
+        /** RecordAccessData tlaProperties */
+        tlaProperties?: (common.tla.ITLAProperties|null);
+    }
+
+    /** Represents a RecordAccessData. */
+    class RecordAccessData implements IRecordAccessData {
+
+        /**
+         * Constructs a new RecordAccessData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IRecordAccessData);
+
+        /** RecordAccessData accessTypeUid. */
+        public accessTypeUid: Uint8Array;
+
+        /** RecordAccessData accessType. */
+        public accessType: Folder.AccessType;
+
+        /** RecordAccessData recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordAccessData accessRoleType. */
+        public accessRoleType: Folder.AccessRoleType;
+
+        /** RecordAccessData owner. */
+        public owner: boolean;
+
+        /** RecordAccessData inherited. */
+        public inherited: boolean;
+
+        /** RecordAccessData hidden. */
+        public hidden: boolean;
+
+        /** RecordAccessData deniedAccess. */
+        public deniedAccess: boolean;
+
+        /** RecordAccessData canEdit. */
+        public canEdit: boolean;
+
+        /** RecordAccessData canView. */
+        public canView: boolean;
+
+        /** RecordAccessData canShare. */
+        public canShare: boolean;
+
+        /** RecordAccessData canDelete. */
+        public canDelete: boolean;
+
+        /** RecordAccessData canRequestAccess. */
+        public canRequestAccess: boolean;
+
+        /** RecordAccessData canApproveAccess. */
+        public canApproveAccess: boolean;
+
+        /** RecordAccessData dateCreated. */
+        public dateCreated: (number|Long);
+
+        /** RecordAccessData lastModified. */
+        public lastModified: (number|Long);
+
+        /** RecordAccessData tlaProperties. */
+        public tlaProperties?: (common.tla.ITLAProperties|null);
+
+        /**
+         * Creates a new RecordAccessData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordAccessData instance
+         */
+        public static create(properties?: Folder.IRecordAccessData): Folder.RecordAccessData;
+
+        /**
+         * Encodes the specified RecordAccessData message. Does not implicitly {@link Folder.RecordAccessData.verify|verify} messages.
+         * @param message RecordAccessData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IRecordAccessData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordAccessData message, length delimited. Does not implicitly {@link Folder.RecordAccessData.verify|verify} messages.
+         * @param message RecordAccessData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IRecordAccessData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordAccessData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordAccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.RecordAccessData;
+
+        /**
+         * Decodes a RecordAccessData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordAccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.RecordAccessData;
+
+        /**
+         * Verifies a RecordAccessData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordAccessData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordAccessData
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.RecordAccessData;
+
+        /**
+         * Creates a plain object from a RecordAccessData message. Also converts values to other types if specified.
+         * @param message RecordAccessData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.RecordAccessData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordAccessData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordAccessData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AccessData. */
+    interface IAccessData {
+
+        /** AccessData accessTypeUid */
+        accessTypeUid?: (Uint8Array|null);
+
+        /** AccessData accessRoleType */
+        accessRoleType?: (Folder.AccessRoleType|null);
+
+        /** AccessData deniedAccess */
+        deniedAccess?: (boolean|null);
+
+        /** AccessData inherited */
+        inherited?: (boolean|null);
+
+        /** AccessData hidden */
+        hidden?: (boolean|null);
+
+        /** AccessData capabilities */
+        capabilities?: (Folder.ICapabilities|null);
+    }
+
+    /** Represents an AccessData. */
+    class AccessData implements IAccessData {
+
+        /**
+         * Constructs a new AccessData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IAccessData);
+
+        /** AccessData accessTypeUid. */
+        public accessTypeUid: Uint8Array;
+
+        /** AccessData accessRoleType. */
+        public accessRoleType: Folder.AccessRoleType;
+
+        /** AccessData deniedAccess. */
+        public deniedAccess: boolean;
+
+        /** AccessData inherited. */
+        public inherited: boolean;
+
+        /** AccessData hidden. */
+        public hidden: boolean;
+
+        /** AccessData capabilities. */
+        public capabilities?: (Folder.ICapabilities|null);
+
+        /**
+         * Creates a new AccessData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AccessData instance
+         */
+        public static create(properties?: Folder.IAccessData): Folder.AccessData;
+
+        /**
+         * Encodes the specified AccessData message. Does not implicitly {@link Folder.AccessData.verify|verify} messages.
+         * @param message AccessData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IAccessData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AccessData message, length delimited. Does not implicitly {@link Folder.AccessData.verify|verify} messages.
+         * @param message AccessData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IAccessData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AccessData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.AccessData;
+
+        /**
+         * Decodes an AccessData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.AccessData;
+
+        /**
+         * Verifies an AccessData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AccessData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AccessData
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.AccessData;
+
+        /**
+         * Creates a plain object from an AccessData message. Also converts values to other types if specified.
+         * @param message AccessData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.AccessData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AccessData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AccessData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderAccessRequest. */
+    interface IFolderAccessRequest {
+
+        /** FolderAccessRequest folderAccessAdds */
+        folderAccessAdds?: (Folder.IFolderAccessData[]|null);
+
+        /** FolderAccessRequest folderAccessUpdates */
+        folderAccessUpdates?: (Folder.IFolderAccessData[]|null);
+
+        /** FolderAccessRequest folderAccessRemoves */
+        folderAccessRemoves?: (Folder.IFolderAccessData[]|null);
+    }
+
+    /** Request for rest/vault/folders/v3/access_update end-point. */
+    class FolderAccessRequest implements IFolderAccessRequest {
+
+        /**
+         * Constructs a new FolderAccessRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderAccessRequest);
+
+        /** FolderAccessRequest folderAccessAdds. */
+        public folderAccessAdds: Folder.IFolderAccessData[];
+
+        /** FolderAccessRequest folderAccessUpdates. */
+        public folderAccessUpdates: Folder.IFolderAccessData[];
+
+        /** FolderAccessRequest folderAccessRemoves. */
+        public folderAccessRemoves: Folder.IFolderAccessData[];
+
+        /**
+         * Creates a new FolderAccessRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderAccessRequest instance
+         */
+        public static create(properties?: Folder.IFolderAccessRequest): Folder.FolderAccessRequest;
+
+        /**
+         * Encodes the specified FolderAccessRequest message. Does not implicitly {@link Folder.FolderAccessRequest.verify|verify} messages.
+         * @param message FolderAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderAccessRequest message, length delimited. Does not implicitly {@link Folder.FolderAccessRequest.verify|verify} messages.
+         * @param message FolderAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderAccessRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderAccessRequest;
+
+        /**
+         * Decodes a FolderAccessRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderAccessRequest;
+
+        /**
+         * Verifies a FolderAccessRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderAccessRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderAccessRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderAccessRequest;
+
+        /**
+         * Creates a plain object from a FolderAccessRequest message. Also converts values to other types if specified.
+         * @param message FolderAccessRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderAccessRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderAccessRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderAccessResult. */
+    interface IFolderAccessResult {
+
+        /** FolderAccessResult folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** FolderAccessResult accessUid */
+        accessUid?: (Uint8Array|null);
+
+        /** FolderAccessResult accessType */
+        accessType?: (Folder.AccessType|null);
+
+        /** FolderAccessResult status */
+        status?: (Folder.FolderModifyStatus|null);
+
+        /** FolderAccessResult message */
+        message?: (string|null);
+    }
+
+    /** Represents a FolderAccessResult. */
+    class FolderAccessResult implements IFolderAccessResult {
+
+        /**
+         * Constructs a new FolderAccessResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderAccessResult);
+
+        /** FolderAccessResult folderUid. */
+        public folderUid: Uint8Array;
+
+        /** FolderAccessResult accessUid. */
+        public accessUid: Uint8Array;
+
+        /** FolderAccessResult accessType. */
+        public accessType: Folder.AccessType;
+
+        /** FolderAccessResult status. */
+        public status: Folder.FolderModifyStatus;
+
+        /** FolderAccessResult message. */
+        public message: string;
+
+        /**
+         * Creates a new FolderAccessResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderAccessResult instance
+         */
+        public static create(properties?: Folder.IFolderAccessResult): Folder.FolderAccessResult;
+
+        /**
+         * Encodes the specified FolderAccessResult message. Does not implicitly {@link Folder.FolderAccessResult.verify|verify} messages.
+         * @param message FolderAccessResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderAccessResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderAccessResult message, length delimited. Does not implicitly {@link Folder.FolderAccessResult.verify|verify} messages.
+         * @param message FolderAccessResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderAccessResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderAccessResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderAccessResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderAccessResult;
+
+        /**
+         * Decodes a FolderAccessResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderAccessResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderAccessResult;
+
+        /**
+         * Verifies a FolderAccessResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderAccessResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderAccessResult
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderAccessResult;
+
+        /**
+         * Creates a plain object from a FolderAccessResult message. Also converts values to other types if specified.
+         * @param message FolderAccessResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderAccessResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderAccessResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderAccessResult
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderAccessResponse. */
+    interface IFolderAccessResponse {
+
+        /** FolderAccessResponse folderAccessResults */
+        folderAccessResults?: (Folder.IFolderAccessResult[]|null);
+    }
+
+    /** Response for rest/vault/folders/v3/access_update end-point. */
+    class FolderAccessResponse implements IFolderAccessResponse {
+
+        /**
+         * Constructs a new FolderAccessResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IFolderAccessResponse);
+
+        /** FolderAccessResponse folderAccessResults. */
+        public folderAccessResults: Folder.IFolderAccessResult[];
+
+        /**
+         * Creates a new FolderAccessResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderAccessResponse instance
+         */
+        public static create(properties?: Folder.IFolderAccessResponse): Folder.FolderAccessResponse;
+
+        /**
+         * Encodes the specified FolderAccessResponse message. Does not implicitly {@link Folder.FolderAccessResponse.verify|verify} messages.
+         * @param message FolderAccessResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IFolderAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderAccessResponse message, length delimited. Does not implicitly {@link Folder.FolderAccessResponse.verify|verify} messages.
+         * @param message FolderAccessResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IFolderAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderAccessResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.FolderAccessResponse;
+
+        /**
+         * Decodes a FolderAccessResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.FolderAccessResponse;
+
+        /**
+         * Verifies a FolderAccessResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderAccessResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderAccessResponse
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.FolderAccessResponse;
+
+        /**
+         * Creates a plain object from a FolderAccessResponse message. Also converts values to other types if specified.
+         * @param message FolderAccessResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.FolderAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderAccessResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderAccessResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** AccessType enum. */
+    enum AccessType {
+        AT_UNKNOWN = 0,
+        AT_OWNER = 1,
+        AT_USER = 2,
+        AT_TEAM = 3,
+        AT_ENTERPRISE = 4,
+        AT_FOLDER = 5,
+        AT_APPLICATION = 6
+    }
+
+    /** ObjectType enum. */
+    enum ObjectType {
+        OT_UNKNOWN = 0,
+        OT_RECORD = 1,
+        OT_FOLDER = 2
+    }
+
+    /** Properties of a UserInfo. */
+    interface IUserInfo {
+
+        /** UserInfo accountUid */
+        accountUid?: (Uint8Array|null);
+
+        /** UserInfo username */
+        username?: (string|null);
+    }
+
+    /** Represents a UserInfo. */
+    class UserInfo implements IUserInfo {
+
+        /**
+         * Constructs a new UserInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IUserInfo);
+
+        /** UserInfo accountUid. */
+        public accountUid: Uint8Array;
+
+        /** UserInfo username. */
+        public username: string;
+
+        /**
+         * Creates a new UserInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserInfo instance
+         */
+        public static create(properties?: Folder.IUserInfo): Folder.UserInfo;
+
+        /**
+         * Encodes the specified UserInfo message. Does not implicitly {@link Folder.UserInfo.verify|verify} messages.
+         * @param message UserInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IUserInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserInfo message, length delimited. Does not implicitly {@link Folder.UserInfo.verify|verify} messages.
+         * @param message UserInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IUserInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.UserInfo;
+
+        /**
+         * Decodes a UserInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.UserInfo;
+
+        /**
+         * Verifies a UserInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.UserInfo;
+
+        /**
+         * Creates a plain object from a UserInfo message. Also converts values to other types if specified.
+         * @param message UserInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.UserInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordData. */
+    interface IRecordData {
+
+        /** RecordData user */
+        user?: (Folder.IUserInfo|null);
+
+        /** RecordData data */
+        data?: (Uint8Array|null);
+
+        /** RecordData recordUid */
+        recordUid?: (Uint8Array|null);
+    }
+
+    /** Represents a RecordData. */
+    class RecordData implements IRecordData {
+
+        /**
+         * Constructs a new RecordData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IRecordData);
+
+        /** RecordData user. */
+        public user?: (Folder.IUserInfo|null);
+
+        /** RecordData data. */
+        public data: Uint8Array;
+
+        /** RecordData recordUid. */
+        public recordUid: Uint8Array;
+
+        /**
+         * Creates a new RecordData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordData instance
+         */
+        public static create(properties?: Folder.IRecordData): Folder.RecordData;
+
+        /**
+         * Encodes the specified RecordData message. Does not implicitly {@link Folder.RecordData.verify|verify} messages.
+         * @param message RecordData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IRecordData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordData message, length delimited. Does not implicitly {@link Folder.RecordData.verify|verify} messages.
+         * @param message RecordData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IRecordData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.RecordData;
+
+        /**
+         * Decodes a RecordData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.RecordData;
+
+        /**
+         * Verifies a RecordData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordData
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.RecordData;
+
+        /**
+         * Creates a plain object from a RecordData message. Also converts values to other types if specified.
+         * @param message RecordData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.RecordData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RecordKey. */
+    interface IRecordKey {
+
+        /** RecordKey userUid */
+        userUid?: (Uint8Array|null);
+
+        /** RecordKey recordUid */
+        recordUid?: (Uint8Array|null);
+
+        /** RecordKey recordKey */
+        recordKey?: (Uint8Array|null);
+
+        /** RecordKey encryptedKeyType */
+        encryptedKeyType?: (Folder.EncryptedKeyType|null);
+    }
+
+    /**
+     * Represents a key for a record, which includes the user UID, record UID, and the encrypted key type.
+     * This is used to identify and manage access to the record's encrypted data.
+     */
+    class RecordKey implements IRecordKey {
+
+        /**
+         * Constructs a new RecordKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Folder.IRecordKey);
+
+        /** RecordKey userUid. */
+        public userUid: Uint8Array;
+
+        /** RecordKey recordUid. */
+        public recordUid: Uint8Array;
+
+        /** RecordKey recordKey. */
+        public recordKey: Uint8Array;
+
+        /** RecordKey encryptedKeyType. */
+        public encryptedKeyType: Folder.EncryptedKeyType;
+
+        /**
+         * Creates a new RecordKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordKey instance
+         */
+        public static create(properties?: Folder.IRecordKey): Folder.RecordKey;
+
+        /**
+         * Encodes the specified RecordKey message. Does not implicitly {@link Folder.RecordKey.verify|verify} messages.
+         * @param message RecordKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Folder.IRecordKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RecordKey message, length delimited. Does not implicitly {@link Folder.RecordKey.verify|verify} messages.
+         * @param message RecordKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Folder.IRecordKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Folder.RecordKey;
+
+        /**
+         * Decodes a RecordKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RecordKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Folder.RecordKey;
+
+        /**
+         * Verifies a RecordKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RecordKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordKey
+         */
+        public static fromObject(object: { [k: string]: any }): Folder.RecordKey;
+
+        /**
+         * Creates a plain object from a RecordKey message. Also converts values to other types if specified.
+         * @param message RecordKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Folder.RecordKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordKey
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -68707,7 +72343,11 @@ export namespace Records {
         USER_OR_TEAM_ACCESS_TO_SHAREDFOLDER = 2,
         RECORD_ACCESS_TO_SHAREDFOLDER = 3,
         USER_ACCESS_TO_SHAREDFOLDER = 4,
-        TEAM_ACCESS_TO_SHAREDFOLDER = 5
+        TEAM_ACCESS_TO_SHAREDFOLDER = 5,
+        RECORD_ACCESS_TO_FOLDER = 6,
+        USER_ACCESS_TO_FOLDER = 7,
+        TEAM_ACCESS_TO_FOLDER = 8,
+        USER_OR_TEAM_ACCESS_TO_FOLDER = 9
     }
 
     /** TimerNotificationType enum. */
@@ -69163,6 +72803,145 @@ export namespace Records {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
+/** Namespace common. */
+export namespace common {
+
+    /** Namespace tla. */
+    namespace tla {
+
+        /** Properties of a TLAProperties. */
+        interface ITLAProperties {
+
+            /** Expiration time (in milliseconds) for the user's access to the record. */
+            expiration?: (number|Long|null);
+
+            /**
+             * Notification settings for access expiration events.
+             * Possible values:
+             * - NOTIFICATION_OFF = 0
+             * - NOTIFY_OWNER = 1
+             * - NOTIFY_PRIVILEGED_USERS = 2
+             */
+            timerNotificationType?: (common.tla.TimerNotificationType|null);
+
+            /** Indicates whether access should be rotated automatically when it expires. */
+            rotateOnExpiration?: (boolean|null);
+        }
+
+        /**
+         * Properties related to time-limited access (TLA) for a record.
+         * Includes expiration settings, notification preferences, and rotation behavior.
+         */
+        class TLAProperties implements ITLAProperties {
+
+            /**
+             * Constructs a new TLAProperties.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: common.tla.ITLAProperties);
+
+            /** Expiration time (in milliseconds) for the user's access to the record. */
+            public expiration: (number|Long);
+
+            /**
+             * Notification settings for access expiration events.
+             * Possible values:
+             * - NOTIFICATION_OFF = 0
+             * - NOTIFY_OWNER = 1
+             * - NOTIFY_PRIVILEGED_USERS = 2
+             */
+            public timerNotificationType: common.tla.TimerNotificationType;
+
+            /** Indicates whether access should be rotated automatically when it expires. */
+            public rotateOnExpiration: boolean;
+
+            /**
+             * Creates a new TLAProperties instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns TLAProperties instance
+             */
+            public static create(properties?: common.tla.ITLAProperties): common.tla.TLAProperties;
+
+            /**
+             * Encodes the specified TLAProperties message. Does not implicitly {@link common.tla.TLAProperties.verify|verify} messages.
+             * @param message TLAProperties message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: common.tla.ITLAProperties, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified TLAProperties message, length delimited. Does not implicitly {@link common.tla.TLAProperties.verify|verify} messages.
+             * @param message TLAProperties message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: common.tla.ITLAProperties, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a TLAProperties message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns TLAProperties
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): common.tla.TLAProperties;
+
+            /**
+             * Decodes a TLAProperties message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns TLAProperties
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): common.tla.TLAProperties;
+
+            /**
+             * Verifies a TLAProperties message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a TLAProperties message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns TLAProperties
+             */
+            public static fromObject(object: { [k: string]: any }): common.tla.TLAProperties;
+
+            /**
+             * Creates a plain object from a TLAProperties message. Also converts values to other types if specified.
+             * @param message TLAProperties
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: common.tla.TLAProperties, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this TLAProperties to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for TLAProperties
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Enum representing notification settings for access expiration events. */
+        enum TimerNotificationType {
+            NOTIFICATION_OFF = 0,
+            NOTIFY_OWNER = 1,
+            NOTIFY_PRIVILEGED_USERS = 2
+        }
     }
 }
 
@@ -72077,6 +75856,9 @@ export namespace Vault {
 
         /** SyncDownResponse notificationSync */
         notificationSync?: (NotificationCenter.INotificationWrapper[]|null);
+
+        /** SyncDownResponse folderDataSync */
+        folderDataSync?: (Vault.IFolderDataSync|null);
     }
 
     /** Represents a SyncDownResponse. */
@@ -72229,6 +76011,9 @@ export namespace Vault {
         /** SyncDownResponse notificationSync. */
         public notificationSync: NotificationCenter.INotificationWrapper[];
 
+        /** SyncDownResponse folderDataSync. */
+        public folderDataSync?: (Vault.IFolderDataSync|null);
+
         /**
          * Creates a new SyncDownResponse instance using the specified properties.
          * @param [properties] Properties to set
@@ -72301,6 +76086,163 @@ export namespace Vault {
 
         /**
          * Gets the default type url for SyncDownResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a FolderDataSync. */
+    interface IFolderDataSync {
+
+        /** FolderDataSync folders */
+        folders?: (Folder.IFolderData[]|null);
+
+        /** FolderDataSync folderKeys */
+        folderKeys?: (Folder.IFolderKey[]|null);
+
+        /** FolderDataSync folderRecordKeys */
+        folderRecordKeys?: (Records.IFolderRecordKey[]|null);
+
+        /** FolderDataSync folderAccesses */
+        folderAccesses?: (Folder.IFolderAccessData[]|null);
+
+        /** FolderDataSync recordKeys */
+        recordKeys?: (Folder.IRecordKey[]|null);
+
+        /** FolderDataSync recordAccesses */
+        recordAccesses?: (Folder.IRecordAccessData[]|null);
+
+        /** FolderDataSync recordData */
+        recordData?: (Folder.IRecordData[]|null);
+
+        /** FolderDataSync recordLinks */
+        recordLinks?: (Vault.IRecordLink[]|null);
+
+        /** FolderDataSync removedRecordLinks */
+        removedRecordLinks?: (Vault.IRecordLink[]|null);
+
+        /** FolderDataSync removedFolderRecords */
+        removedFolderRecords?: (Records.IFolderRecordKey[]|null);
+
+        /** FolderDataSync revokedFolderAccesses */
+        revokedFolderAccesses?: (Folder.IRevokedAccess[]|null);
+    }
+
+    /** Represents a FolderDataSync. */
+    class FolderDataSync implements IFolderDataSync {
+
+        /**
+         * Constructs a new FolderDataSync.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Vault.IFolderDataSync);
+
+        /** FolderDataSync folders. */
+        public folders: Folder.IFolderData[];
+
+        /** FolderDataSync folderKeys. */
+        public folderKeys: Folder.IFolderKey[];
+
+        /** FolderDataSync folderRecordKeys. */
+        public folderRecordKeys: Records.IFolderRecordKey[];
+
+        /** FolderDataSync folderAccesses. */
+        public folderAccesses: Folder.IFolderAccessData[];
+
+        /** FolderDataSync recordKeys. */
+        public recordKeys: Folder.IRecordKey[];
+
+        /** FolderDataSync recordAccesses. */
+        public recordAccesses: Folder.IRecordAccessData[];
+
+        /** FolderDataSync recordData. */
+        public recordData: Folder.IRecordData[];
+
+        /** FolderDataSync recordLinks. */
+        public recordLinks: Vault.IRecordLink[];
+
+        /** FolderDataSync removedRecordLinks. */
+        public removedRecordLinks: Vault.IRecordLink[];
+
+        /** FolderDataSync removedFolderRecords. */
+        public removedFolderRecords: Records.IFolderRecordKey[];
+
+        /** FolderDataSync revokedFolderAccesses. */
+        public revokedFolderAccesses: Folder.IRevokedAccess[];
+
+        /**
+         * Creates a new FolderDataSync instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FolderDataSync instance
+         */
+        public static create(properties?: Vault.IFolderDataSync): Vault.FolderDataSync;
+
+        /**
+         * Encodes the specified FolderDataSync message. Does not implicitly {@link Vault.FolderDataSync.verify|verify} messages.
+         * @param message FolderDataSync message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Vault.IFolderDataSync, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FolderDataSync message, length delimited. Does not implicitly {@link Vault.FolderDataSync.verify|verify} messages.
+         * @param message FolderDataSync message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Vault.IFolderDataSync, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FolderDataSync message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FolderDataSync
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Vault.FolderDataSync;
+
+        /**
+         * Decodes a FolderDataSync message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FolderDataSync
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Vault.FolderDataSync;
+
+        /**
+         * Verifies a FolderDataSync message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FolderDataSync message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FolderDataSync
+         */
+        public static fromObject(object: { [k: string]: any }): Vault.FolderDataSync;
+
+        /**
+         * Creates a plain object from a FolderDataSync message. Also converts values to other types if specified.
+         * @param message FolderDataSync
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Vault.FolderDataSync, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FolderDataSync to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for FolderDataSync
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -76235,7 +80177,8 @@ export namespace NotificationCenter {
         NT_APPROVAL_REQUEST = 9,
         NT_APPROVED_RESPONSE = 10,
         NT_DENIED_RESPONSE = 11,
-        NT_2FA_CONFIGURED = 12
+        NT_2FA_CONFIGURED = 12,
+        NT_SHARE_APPROVAL_DENIED = 13
     }
 
     /** NotificationReadStatus enum. */
@@ -76618,6 +80561,9 @@ export namespace NotificationCenter {
         /** NotificationContent approvalStatus */
         approvalStatus?: (NotificationCenter.NotificationApprovalStatus|null);
 
+        /** NotificationContent trimmingPoint */
+        trimmingPoint?: (boolean|null);
+
         /** NotificationContent clientTypeIDs */
         clientTypeIDs?: (number[]|null);
 
@@ -76643,6 +80589,9 @@ export namespace NotificationCenter {
         /** NotificationContent approvalStatus. */
         public approvalStatus?: (NotificationCenter.NotificationApprovalStatus|null);
 
+        /** NotificationContent trimmingPoint. */
+        public trimmingPoint?: (boolean|null);
+
         /** NotificationContent clientTypeIDs. */
         public clientTypeIDs: number[];
 
@@ -76650,7 +80599,7 @@ export namespace NotificationCenter {
         public deviceIDs: (number|Long)[];
 
         /** NotificationContent type. */
-        public type?: ("notification"|"readStatus"|"approvalStatus");
+        public type?: ("notification"|"readStatus"|"approvalStatus"|"trimmingPoint");
 
         /**
          * Creates a new NotificationContent instance using the specified properties.
@@ -78779,6 +82728,374 @@ export namespace GraphSync {
     }
 }
 
+/** Namespace Dag. */
+export namespace Dag {
+
+    /** RefType enum. */
+    enum RefType {
+        GENERAL = 0,
+        USER = 1,
+        DEVICE = 2,
+        REC = 3,
+        FOLDER = 4,
+        TEAM = 5,
+        ENTERPRISE = 6,
+        PAM_DIRECTORY = 7,
+        PAM_MACHINE = 8,
+        PAM_USER = 9
+    }
+
+    /** DataType enum. */
+    enum DataType {
+        DATA = 0,
+        KEY = 1,
+        LINK = 2,
+        ACL = 3,
+        DELETION = 4,
+        DENIAL = 5,
+        UNDENIAL = 6
+    }
+
+    /** Properties of a Ref. */
+    interface IRef {
+
+        /** Ref type */
+        type?: (Dag.RefType|null);
+
+        /** Ref value */
+        value?: (Uint8Array|null);
+
+        /** Ref name */
+        name?: (string|null);
+    }
+
+    /** Represents a Ref. */
+    class Ref implements IRef {
+
+        /**
+         * Constructs a new Ref.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Dag.IRef);
+
+        /** Ref type. */
+        public type: Dag.RefType;
+
+        /** Ref value. */
+        public value: Uint8Array;
+
+        /** Ref name. */
+        public name: string;
+
+        /**
+         * Creates a new Ref instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Ref instance
+         */
+        public static create(properties?: Dag.IRef): Dag.Ref;
+
+        /**
+         * Encodes the specified Ref message. Does not implicitly {@link Dag.Ref.verify|verify} messages.
+         * @param message Ref message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Dag.IRef, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Ref message, length delimited. Does not implicitly {@link Dag.Ref.verify|verify} messages.
+         * @param message Ref message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Dag.IRef, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Ref message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Ref
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Dag.Ref;
+
+        /**
+         * Decodes a Ref message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Ref
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Dag.Ref;
+
+        /**
+         * Verifies a Ref message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Ref message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Ref
+         */
+        public static fromObject(object: { [k: string]: any }): Dag.Ref;
+
+        /**
+         * Creates a plain object from a Ref message. Also converts values to other types if specified.
+         * @param message Ref
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Dag.Ref, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Ref to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Ref
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a Data. */
+    interface IData {
+
+        /** Data dataType */
+        dataType?: (Dag.DataType|null);
+
+        /** Data ref */
+        ref?: (Dag.IRef|null);
+
+        /** Data parentRef */
+        parentRef?: (Dag.IRef|null);
+
+        /** Data content */
+        content?: (Uint8Array|null);
+
+        /** Data path */
+        path?: (string|null);
+    }
+
+    /** Represents a Data. */
+    class Data implements IData {
+
+        /**
+         * Constructs a new Data.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Dag.IData);
+
+        /** Data dataType. */
+        public dataType: Dag.DataType;
+
+        /** Data ref. */
+        public ref?: (Dag.IRef|null);
+
+        /** Data parentRef. */
+        public parentRef?: (Dag.IRef|null);
+
+        /** Data content. */
+        public content: Uint8Array;
+
+        /** Data path. */
+        public path: string;
+
+        /**
+         * Creates a new Data instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Data instance
+         */
+        public static create(properties?: Dag.IData): Dag.Data;
+
+        /**
+         * Encodes the specified Data message. Does not implicitly {@link Dag.Data.verify|verify} messages.
+         * @param message Data message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Dag.IData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Data message, length delimited. Does not implicitly {@link Dag.Data.verify|verify} messages.
+         * @param message Data message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Dag.IData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Data message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Data
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Dag.Data;
+
+        /**
+         * Decodes a Data message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Data
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Dag.Data;
+
+        /**
+         * Verifies a Data message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Data message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Data
+         */
+        public static fromObject(object: { [k: string]: any }): Dag.Data;
+
+        /**
+         * Creates a plain object from a Data message. Also converts values to other types if specified.
+         * @param message Data
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Dag.Data, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Data to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Data
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SyncData. */
+    interface ISyncData {
+
+        /** SyncData data */
+        data?: (Dag.IData[]|null);
+
+        /** SyncData syncPoint */
+        syncPoint?: (number|Long|null);
+
+        /** SyncData hasMore */
+        hasMore?: (boolean|null);
+    }
+
+    /** Represents a SyncData. */
+    class SyncData implements ISyncData {
+
+        /**
+         * Constructs a new SyncData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Dag.ISyncData);
+
+        /** SyncData data. */
+        public data: Dag.IData[];
+
+        /** SyncData syncPoint. */
+        public syncPoint: (number|Long);
+
+        /** SyncData hasMore. */
+        public hasMore: boolean;
+
+        /**
+         * Creates a new SyncData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SyncData instance
+         */
+        public static create(properties?: Dag.ISyncData): Dag.SyncData;
+
+        /**
+         * Encodes the specified SyncData message. Does not implicitly {@link Dag.SyncData.verify|verify} messages.
+         * @param message SyncData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Dag.ISyncData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SyncData message, length delimited. Does not implicitly {@link Dag.SyncData.verify|verify} messages.
+         * @param message SyncData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Dag.ISyncData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SyncData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SyncData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Dag.SyncData;
+
+        /**
+         * Decodes a SyncData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SyncData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Dag.SyncData;
+
+        /**
+         * Verifies a SyncData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SyncData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SyncData
+         */
+        public static fromObject(object: { [k: string]: any }): Dag.SyncData;
+
+        /**
+         * Creates a plain object from a SyncData message. Also converts values to other types if specified.
+         * @param message SyncData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Dag.SyncData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SyncData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SyncData
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
 /** Namespace Upsell. */
 export namespace Upsell {
 
@@ -79156,8 +83473,7 @@ export namespace BI {
         GBP = 2,
         JPY = 3,
         EUR = 4,
-        AUD = 5,
-        CAD = 6
+        AUD = 5
     }
 
     /** Properties of a ValidateSessionTokenRequest. */
@@ -81367,8 +85683,7 @@ export namespace BI {
             UNKNOWN = 0,
             MONTH = 1,
             USER_MONTH = 2,
-            USER_CONSUMED_MONTH = 3,
-            ENDPOINT_MONTH = 4
+            USER_CONSUMED_MONTH = 3
         }
     }
 
@@ -81822,315 +86137,6 @@ export namespace BI {
         }
     }
 
-    /** Properties of a VaultInvoicesListRequest. */
-    interface IVaultInvoicesListRequest {
-    }
-
-    /** Represents a VaultInvoicesListRequest. */
-    class VaultInvoicesListRequest implements IVaultInvoicesListRequest {
-
-        /**
-         * Constructs a new VaultInvoicesListRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IVaultInvoicesListRequest);
-
-        /**
-         * Creates a new VaultInvoicesListRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns VaultInvoicesListRequest instance
-         */
-        public static create(properties?: BI.IVaultInvoicesListRequest): BI.VaultInvoicesListRequest;
-
-        /**
-         * Encodes the specified VaultInvoicesListRequest message. Does not implicitly {@link BI.VaultInvoicesListRequest.verify|verify} messages.
-         * @param message VaultInvoicesListRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IVaultInvoicesListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified VaultInvoicesListRequest message, length delimited. Does not implicitly {@link BI.VaultInvoicesListRequest.verify|verify} messages.
-         * @param message VaultInvoicesListRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IVaultInvoicesListRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a VaultInvoicesListRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns VaultInvoicesListRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoicesListRequest;
-
-        /**
-         * Decodes a VaultInvoicesListRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns VaultInvoicesListRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoicesListRequest;
-
-        /**
-         * Verifies a VaultInvoicesListRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a VaultInvoicesListRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns VaultInvoicesListRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BI.VaultInvoicesListRequest;
-
-        /**
-         * Creates a plain object from a VaultInvoicesListRequest message. Also converts values to other types if specified.
-         * @param message VaultInvoicesListRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.VaultInvoicesListRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this VaultInvoicesListRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for VaultInvoicesListRequest
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of a VaultInvoicesListResponse. */
-    interface IVaultInvoicesListResponse {
-
-        /** VaultInvoicesListResponse invoices */
-        invoices?: (BI.IVaultInvoice[]|null);
-    }
-
-    /** Represents a VaultInvoicesListResponse. */
-    class VaultInvoicesListResponse implements IVaultInvoicesListResponse {
-
-        /**
-         * Constructs a new VaultInvoicesListResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IVaultInvoicesListResponse);
-
-        /** VaultInvoicesListResponse invoices. */
-        public invoices: BI.IVaultInvoice[];
-
-        /**
-         * Creates a new VaultInvoicesListResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns VaultInvoicesListResponse instance
-         */
-        public static create(properties?: BI.IVaultInvoicesListResponse): BI.VaultInvoicesListResponse;
-
-        /**
-         * Encodes the specified VaultInvoicesListResponse message. Does not implicitly {@link BI.VaultInvoicesListResponse.verify|verify} messages.
-         * @param message VaultInvoicesListResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IVaultInvoicesListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified VaultInvoicesListResponse message, length delimited. Does not implicitly {@link BI.VaultInvoicesListResponse.verify|verify} messages.
-         * @param message VaultInvoicesListResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IVaultInvoicesListResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a VaultInvoicesListResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns VaultInvoicesListResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoicesListResponse;
-
-        /**
-         * Decodes a VaultInvoicesListResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns VaultInvoicesListResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoicesListResponse;
-
-        /**
-         * Verifies a VaultInvoicesListResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a VaultInvoicesListResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns VaultInvoicesListResponse
-         */
-        public static fromObject(object: { [k: string]: any }): BI.VaultInvoicesListResponse;
-
-        /**
-         * Creates a plain object from a VaultInvoicesListResponse message. Also converts values to other types if specified.
-         * @param message VaultInvoicesListResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.VaultInvoicesListResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this VaultInvoicesListResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for VaultInvoicesListResponse
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of a VaultInvoice. */
-    interface IVaultInvoice {
-
-        /** VaultInvoice id */
-        id?: (number|null);
-
-        /** VaultInvoice invoiceNumber */
-        invoiceNumber?: (string|null);
-
-        /** VaultInvoice dateCreated */
-        dateCreated?: (number|Long|null);
-
-        /** VaultInvoice total */
-        total?: (BI.Invoice.ICost|null);
-
-        /** VaultInvoice purchaseType */
-        purchaseType?: (BI.Invoice.Type|null);
-    }
-
-    /** Represents a VaultInvoice. */
-    class VaultInvoice implements IVaultInvoice {
-
-        /**
-         * Constructs a new VaultInvoice.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IVaultInvoice);
-
-        /** VaultInvoice id. */
-        public id: number;
-
-        /** VaultInvoice invoiceNumber. */
-        public invoiceNumber: string;
-
-        /** VaultInvoice dateCreated. */
-        public dateCreated: (number|Long);
-
-        /** VaultInvoice total. */
-        public total?: (BI.Invoice.ICost|null);
-
-        /** VaultInvoice purchaseType. */
-        public purchaseType: BI.Invoice.Type;
-
-        /**
-         * Creates a new VaultInvoice instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns VaultInvoice instance
-         */
-        public static create(properties?: BI.IVaultInvoice): BI.VaultInvoice;
-
-        /**
-         * Encodes the specified VaultInvoice message. Does not implicitly {@link BI.VaultInvoice.verify|verify} messages.
-         * @param message VaultInvoice message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IVaultInvoice, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified VaultInvoice message, length delimited. Does not implicitly {@link BI.VaultInvoice.verify|verify} messages.
-         * @param message VaultInvoice message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IVaultInvoice, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a VaultInvoice message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns VaultInvoice
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoice;
-
-        /**
-         * Decodes a VaultInvoice message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns VaultInvoice
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoice;
-
-        /**
-         * Verifies a VaultInvoice message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a VaultInvoice message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns VaultInvoice
-         */
-        public static fromObject(object: { [k: string]: any }): BI.VaultInvoice;
-
-        /**
-         * Creates a plain object from a VaultInvoice message. Also converts values to other types if specified.
-         * @param message VaultInvoice
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.VaultInvoice, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this VaultInvoice to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for VaultInvoice
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
     /** Properties of an InvoiceDownloadRequest. */
     interface IInvoiceDownloadRequest {
 
@@ -82325,206 +86331,6 @@ export namespace BI {
 
         /**
          * Gets the default type url for InvoiceDownloadResponse
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of a VaultInvoiceDownloadLinkRequest. */
-    interface IVaultInvoiceDownloadLinkRequest {
-
-        /** VaultInvoiceDownloadLinkRequest invoiceNumber */
-        invoiceNumber?: (string|null);
-    }
-
-    /** Represents a VaultInvoiceDownloadLinkRequest. */
-    class VaultInvoiceDownloadLinkRequest implements IVaultInvoiceDownloadLinkRequest {
-
-        /**
-         * Constructs a new VaultInvoiceDownloadLinkRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IVaultInvoiceDownloadLinkRequest);
-
-        /** VaultInvoiceDownloadLinkRequest invoiceNumber. */
-        public invoiceNumber: string;
-
-        /**
-         * Creates a new VaultInvoiceDownloadLinkRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns VaultInvoiceDownloadLinkRequest instance
-         */
-        public static create(properties?: BI.IVaultInvoiceDownloadLinkRequest): BI.VaultInvoiceDownloadLinkRequest;
-
-        /**
-         * Encodes the specified VaultInvoiceDownloadLinkRequest message. Does not implicitly {@link BI.VaultInvoiceDownloadLinkRequest.verify|verify} messages.
-         * @param message VaultInvoiceDownloadLinkRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IVaultInvoiceDownloadLinkRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified VaultInvoiceDownloadLinkRequest message, length delimited. Does not implicitly {@link BI.VaultInvoiceDownloadLinkRequest.verify|verify} messages.
-         * @param message VaultInvoiceDownloadLinkRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IVaultInvoiceDownloadLinkRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a VaultInvoiceDownloadLinkRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns VaultInvoiceDownloadLinkRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoiceDownloadLinkRequest;
-
-        /**
-         * Decodes a VaultInvoiceDownloadLinkRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns VaultInvoiceDownloadLinkRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoiceDownloadLinkRequest;
-
-        /**
-         * Verifies a VaultInvoiceDownloadLinkRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a VaultInvoiceDownloadLinkRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns VaultInvoiceDownloadLinkRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BI.VaultInvoiceDownloadLinkRequest;
-
-        /**
-         * Creates a plain object from a VaultInvoiceDownloadLinkRequest message. Also converts values to other types if specified.
-         * @param message VaultInvoiceDownloadLinkRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.VaultInvoiceDownloadLinkRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this VaultInvoiceDownloadLinkRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for VaultInvoiceDownloadLinkRequest
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of a VaultInvoiceDownloadLinkResponse. */
-    interface IVaultInvoiceDownloadLinkResponse {
-
-        /** VaultInvoiceDownloadLinkResponse link */
-        link?: (string|null);
-
-        /** VaultInvoiceDownloadLinkResponse fileName */
-        fileName?: (string|null);
-    }
-
-    /** Represents a VaultInvoiceDownloadLinkResponse. */
-    class VaultInvoiceDownloadLinkResponse implements IVaultInvoiceDownloadLinkResponse {
-
-        /**
-         * Constructs a new VaultInvoiceDownloadLinkResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IVaultInvoiceDownloadLinkResponse);
-
-        /** VaultInvoiceDownloadLinkResponse link. */
-        public link: string;
-
-        /** VaultInvoiceDownloadLinkResponse fileName. */
-        public fileName: string;
-
-        /**
-         * Creates a new VaultInvoiceDownloadLinkResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns VaultInvoiceDownloadLinkResponse instance
-         */
-        public static create(properties?: BI.IVaultInvoiceDownloadLinkResponse): BI.VaultInvoiceDownloadLinkResponse;
-
-        /**
-         * Encodes the specified VaultInvoiceDownloadLinkResponse message. Does not implicitly {@link BI.VaultInvoiceDownloadLinkResponse.verify|verify} messages.
-         * @param message VaultInvoiceDownloadLinkResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IVaultInvoiceDownloadLinkResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified VaultInvoiceDownloadLinkResponse message, length delimited. Does not implicitly {@link BI.VaultInvoiceDownloadLinkResponse.verify|verify} messages.
-         * @param message VaultInvoiceDownloadLinkResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IVaultInvoiceDownloadLinkResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a VaultInvoiceDownloadLinkResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns VaultInvoiceDownloadLinkResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.VaultInvoiceDownloadLinkResponse;
-
-        /**
-         * Decodes a VaultInvoiceDownloadLinkResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns VaultInvoiceDownloadLinkResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.VaultInvoiceDownloadLinkResponse;
-
-        /**
-         * Verifies a VaultInvoiceDownloadLinkResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a VaultInvoiceDownloadLinkResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns VaultInvoiceDownloadLinkResponse
-         */
-        public static fromObject(object: { [k: string]: any }): BI.VaultInvoiceDownloadLinkResponse;
-
-        /**
-         * Creates a plain object from a VaultInvoiceDownloadLinkResponse message. Also converts values to other types if specified.
-         * @param message VaultInvoiceDownloadLinkResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.VaultInvoiceDownloadLinkResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this VaultInvoiceDownloadLinkResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for VaultInvoiceDownloadLinkResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -85199,12 +89005,6 @@ export namespace BI {
 
         /** CustomerCaptureRequest test */
         test?: (boolean|null);
-
-        /** CustomerCaptureRequest issueType */
-        issueType?: (string|null);
-
-        /** CustomerCaptureRequest notes */
-        notes?: (string|null);
     }
 
     /** Represents a CustomerCaptureRequest. */
@@ -85236,12 +89036,6 @@ export namespace BI {
 
         /** CustomerCaptureRequest test. */
         public test: boolean;
-
-        /** CustomerCaptureRequest issueType. */
-        public issueType: string;
-
-        /** CustomerCaptureRequest notes. */
-        public notes: string;
 
         /**
          * Creates a new CustomerCaptureRequest instance using the specified properties.
@@ -85406,892 +89200,6 @@ export namespace BI {
 
         /**
          * Gets the default type url for CustomerCaptureResponse
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** PurchaseProductType enum. */
-    enum PurchaseProductType {
-        upgradeToEnterprise = 0,
-        addUsers = 1,
-        addStorage = 2,
-        addAudit = 3,
-        addBreachWatch = 4,
-        addCompliance = 5,
-        addChat = 6,
-        addPAM = 7,
-        addSilverSupport = 8,
-        addPlatinumSupport = 9
-    }
-
-    /** Properties of an Error. */
-    interface IError {
-
-        /** Error code */
-        code?: (string|null);
-
-        /** Error message */
-        message?: (string|null);
-
-        /** Error extras */
-        extras?: ({ [k: string]: string }|null);
-    }
-
-    /** Represents an Error. */
-    class Error implements IError {
-
-        /**
-         * Constructs a new Error.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IError);
-
-        /** Error code. */
-        public code: string;
-
-        /** Error message. */
-        public message: string;
-
-        /** Error extras. */
-        public extras: { [k: string]: string };
-
-        /**
-         * Creates a new Error instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns Error instance
-         */
-        public static create(properties?: BI.IError): BI.Error;
-
-        /**
-         * Encodes the specified Error message. Does not implicitly {@link BI.Error.verify|verify} messages.
-         * @param message Error message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IError, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified Error message, length delimited. Does not implicitly {@link BI.Error.verify|verify} messages.
-         * @param message Error message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IError, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an Error message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns Error
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.Error;
-
-        /**
-         * Decodes an Error message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns Error
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.Error;
-
-        /**
-         * Verifies an Error message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an Error message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Error
-         */
-        public static fromObject(object: { [k: string]: any }): BI.Error;
-
-        /**
-         * Creates a plain object from an Error message. Also converts values to other types if specified.
-         * @param message Error
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.Error, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Error to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for Error
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of a QuotePurchase. */
-    interface IQuotePurchase {
-
-        /** QuotePurchase quoteTotal */
-        quoteTotal?: (number|null);
-
-        /** QuotePurchase includedTax */
-        includedTax?: (boolean|null);
-
-        /** QuotePurchase includedOtherAddons */
-        includedOtherAddons?: (boolean|null);
-
-        /** QuotePurchase taxAmount */
-        taxAmount?: (number|null);
-
-        /** QuotePurchase taxLabel */
-        taxLabel?: (string|null);
-    }
-
-    /** Represents a QuotePurchase. */
-    class QuotePurchase implements IQuotePurchase {
-
-        /**
-         * Constructs a new QuotePurchase.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IQuotePurchase);
-
-        /** QuotePurchase quoteTotal. */
-        public quoteTotal: number;
-
-        /** QuotePurchase includedTax. */
-        public includedTax: boolean;
-
-        /** QuotePurchase includedOtherAddons. */
-        public includedOtherAddons: boolean;
-
-        /** QuotePurchase taxAmount. */
-        public taxAmount: number;
-
-        /** QuotePurchase taxLabel. */
-        public taxLabel: string;
-
-        /**
-         * Creates a new QuotePurchase instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns QuotePurchase instance
-         */
-        public static create(properties?: BI.IQuotePurchase): BI.QuotePurchase;
-
-        /**
-         * Encodes the specified QuotePurchase message. Does not implicitly {@link BI.QuotePurchase.verify|verify} messages.
-         * @param message QuotePurchase message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IQuotePurchase, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified QuotePurchase message, length delimited. Does not implicitly {@link BI.QuotePurchase.verify|verify} messages.
-         * @param message QuotePurchase message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IQuotePurchase, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a QuotePurchase message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns QuotePurchase
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.QuotePurchase;
-
-        /**
-         * Decodes a QuotePurchase message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns QuotePurchase
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.QuotePurchase;
-
-        /**
-         * Verifies a QuotePurchase message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a QuotePurchase message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns QuotePurchase
-         */
-        public static fromObject(object: { [k: string]: any }): BI.QuotePurchase;
-
-        /**
-         * Creates a plain object from a QuotePurchase message. Also converts values to other types if specified.
-         * @param message QuotePurchase
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.QuotePurchase, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this QuotePurchase to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for QuotePurchase
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an UpgradeLicenseStatusRequest. */
-    interface IUpgradeLicenseStatusRequest {
-    }
-
-    /** Represents an UpgradeLicenseStatusRequest. */
-    class UpgradeLicenseStatusRequest implements IUpgradeLicenseStatusRequest {
-
-        /**
-         * Constructs a new UpgradeLicenseStatusRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IUpgradeLicenseStatusRequest);
-
-        /**
-         * Creates a new UpgradeLicenseStatusRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UpgradeLicenseStatusRequest instance
-         */
-        public static create(properties?: BI.IUpgradeLicenseStatusRequest): BI.UpgradeLicenseStatusRequest;
-
-        /**
-         * Encodes the specified UpgradeLicenseStatusRequest message. Does not implicitly {@link BI.UpgradeLicenseStatusRequest.verify|verify} messages.
-         * @param message UpgradeLicenseStatusRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IUpgradeLicenseStatusRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UpgradeLicenseStatusRequest message, length delimited. Does not implicitly {@link BI.UpgradeLicenseStatusRequest.verify|verify} messages.
-         * @param message UpgradeLicenseStatusRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IUpgradeLicenseStatusRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an UpgradeLicenseStatusRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UpgradeLicenseStatusRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseStatusRequest;
-
-        /**
-         * Decodes an UpgradeLicenseStatusRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UpgradeLicenseStatusRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseStatusRequest;
-
-        /**
-         * Verifies an UpgradeLicenseStatusRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an UpgradeLicenseStatusRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UpgradeLicenseStatusRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseStatusRequest;
-
-        /**
-         * Creates a plain object from an UpgradeLicenseStatusRequest message. Also converts values to other types if specified.
-         * @param message UpgradeLicenseStatusRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.UpgradeLicenseStatusRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UpgradeLicenseStatusRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for UpgradeLicenseStatusRequest
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an UpgradeLicenseStatusResponse. */
-    interface IUpgradeLicenseStatusResponse {
-
-        /** UpgradeLicenseStatusResponse allowPurchaseFromConsole */
-        allowPurchaseFromConsole?: (boolean|null);
-
-        /** UpgradeLicenseStatusResponse checkoutLink */
-        checkoutLink?: (string|null);
-
-        /** UpgradeLicenseStatusResponse error */
-        error?: (BI.IError|null);
-    }
-
-    /** Represents an UpgradeLicenseStatusResponse. */
-    class UpgradeLicenseStatusResponse implements IUpgradeLicenseStatusResponse {
-
-        /**
-         * Constructs a new UpgradeLicenseStatusResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IUpgradeLicenseStatusResponse);
-
-        /** UpgradeLicenseStatusResponse allowPurchaseFromConsole. */
-        public allowPurchaseFromConsole: boolean;
-
-        /** UpgradeLicenseStatusResponse checkoutLink. */
-        public checkoutLink: string;
-
-        /** UpgradeLicenseStatusResponse error. */
-        public error?: (BI.IError|null);
-
-        /**
-         * Creates a new UpgradeLicenseStatusResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UpgradeLicenseStatusResponse instance
-         */
-        public static create(properties?: BI.IUpgradeLicenseStatusResponse): BI.UpgradeLicenseStatusResponse;
-
-        /**
-         * Encodes the specified UpgradeLicenseStatusResponse message. Does not implicitly {@link BI.UpgradeLicenseStatusResponse.verify|verify} messages.
-         * @param message UpgradeLicenseStatusResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IUpgradeLicenseStatusResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UpgradeLicenseStatusResponse message, length delimited. Does not implicitly {@link BI.UpgradeLicenseStatusResponse.verify|verify} messages.
-         * @param message UpgradeLicenseStatusResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IUpgradeLicenseStatusResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an UpgradeLicenseStatusResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UpgradeLicenseStatusResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseStatusResponse;
-
-        /**
-         * Decodes an UpgradeLicenseStatusResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UpgradeLicenseStatusResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseStatusResponse;
-
-        /**
-         * Verifies an UpgradeLicenseStatusResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an UpgradeLicenseStatusResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UpgradeLicenseStatusResponse
-         */
-        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseStatusResponse;
-
-        /**
-         * Creates a plain object from an UpgradeLicenseStatusResponse message. Also converts values to other types if specified.
-         * @param message UpgradeLicenseStatusResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.UpgradeLicenseStatusResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UpgradeLicenseStatusResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for UpgradeLicenseStatusResponse
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an UpgradeLicenseQuotePurchaseRequest. */
-    interface IUpgradeLicenseQuotePurchaseRequest {
-
-        /** UpgradeLicenseQuotePurchaseRequest productType */
-        productType?: (BI.PurchaseProductType|null);
-
-        /** UpgradeLicenseQuotePurchaseRequest quantity */
-        quantity?: (number|null);
-    }
-
-    /** Represents an UpgradeLicenseQuotePurchaseRequest. */
-    class UpgradeLicenseQuotePurchaseRequest implements IUpgradeLicenseQuotePurchaseRequest {
-
-        /**
-         * Constructs a new UpgradeLicenseQuotePurchaseRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IUpgradeLicenseQuotePurchaseRequest);
-
-        /** UpgradeLicenseQuotePurchaseRequest productType. */
-        public productType: BI.PurchaseProductType;
-
-        /** UpgradeLicenseQuotePurchaseRequest quantity. */
-        public quantity: number;
-
-        /**
-         * Creates a new UpgradeLicenseQuotePurchaseRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UpgradeLicenseQuotePurchaseRequest instance
-         */
-        public static create(properties?: BI.IUpgradeLicenseQuotePurchaseRequest): BI.UpgradeLicenseQuotePurchaseRequest;
-
-        /**
-         * Encodes the specified UpgradeLicenseQuotePurchaseRequest message. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseRequest.verify|verify} messages.
-         * @param message UpgradeLicenseQuotePurchaseRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IUpgradeLicenseQuotePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UpgradeLicenseQuotePurchaseRequest message, length delimited. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseRequest.verify|verify} messages.
-         * @param message UpgradeLicenseQuotePurchaseRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IUpgradeLicenseQuotePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an UpgradeLicenseQuotePurchaseRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UpgradeLicenseQuotePurchaseRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseQuotePurchaseRequest;
-
-        /**
-         * Decodes an UpgradeLicenseQuotePurchaseRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UpgradeLicenseQuotePurchaseRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseQuotePurchaseRequest;
-
-        /**
-         * Verifies an UpgradeLicenseQuotePurchaseRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an UpgradeLicenseQuotePurchaseRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UpgradeLicenseQuotePurchaseRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseQuotePurchaseRequest;
-
-        /**
-         * Creates a plain object from an UpgradeLicenseQuotePurchaseRequest message. Also converts values to other types if specified.
-         * @param message UpgradeLicenseQuotePurchaseRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.UpgradeLicenseQuotePurchaseRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UpgradeLicenseQuotePurchaseRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for UpgradeLicenseQuotePurchaseRequest
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an UpgradeLicenseQuotePurchaseResponse. */
-    interface IUpgradeLicenseQuotePurchaseResponse {
-
-        /** UpgradeLicenseQuotePurchaseResponse success */
-        success?: (boolean|null);
-
-        /** UpgradeLicenseQuotePurchaseResponse quotePurchase */
-        quotePurchase?: (BI.IQuotePurchase|null);
-
-        /** UpgradeLicenseQuotePurchaseResponse viewSummaryLink */
-        viewSummaryLink?: (string|null);
-
-        /** UpgradeLicenseQuotePurchaseResponse error */
-        error?: (BI.IError|null);
-    }
-
-    /** Represents an UpgradeLicenseQuotePurchaseResponse. */
-    class UpgradeLicenseQuotePurchaseResponse implements IUpgradeLicenseQuotePurchaseResponse {
-
-        /**
-         * Constructs a new UpgradeLicenseQuotePurchaseResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IUpgradeLicenseQuotePurchaseResponse);
-
-        /** UpgradeLicenseQuotePurchaseResponse success. */
-        public success: boolean;
-
-        /** UpgradeLicenseQuotePurchaseResponse quotePurchase. */
-        public quotePurchase?: (BI.IQuotePurchase|null);
-
-        /** UpgradeLicenseQuotePurchaseResponse viewSummaryLink. */
-        public viewSummaryLink: string;
-
-        /** UpgradeLicenseQuotePurchaseResponse error. */
-        public error?: (BI.IError|null);
-
-        /**
-         * Creates a new UpgradeLicenseQuotePurchaseResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UpgradeLicenseQuotePurchaseResponse instance
-         */
-        public static create(properties?: BI.IUpgradeLicenseQuotePurchaseResponse): BI.UpgradeLicenseQuotePurchaseResponse;
-
-        /**
-         * Encodes the specified UpgradeLicenseQuotePurchaseResponse message. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseResponse.verify|verify} messages.
-         * @param message UpgradeLicenseQuotePurchaseResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IUpgradeLicenseQuotePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UpgradeLicenseQuotePurchaseResponse message, length delimited. Does not implicitly {@link BI.UpgradeLicenseQuotePurchaseResponse.verify|verify} messages.
-         * @param message UpgradeLicenseQuotePurchaseResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IUpgradeLicenseQuotePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an UpgradeLicenseQuotePurchaseResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UpgradeLicenseQuotePurchaseResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseQuotePurchaseResponse;
-
-        /**
-         * Decodes an UpgradeLicenseQuotePurchaseResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UpgradeLicenseQuotePurchaseResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseQuotePurchaseResponse;
-
-        /**
-         * Verifies an UpgradeLicenseQuotePurchaseResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an UpgradeLicenseQuotePurchaseResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UpgradeLicenseQuotePurchaseResponse
-         */
-        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseQuotePurchaseResponse;
-
-        /**
-         * Creates a plain object from an UpgradeLicenseQuotePurchaseResponse message. Also converts values to other types if specified.
-         * @param message UpgradeLicenseQuotePurchaseResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.UpgradeLicenseQuotePurchaseResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UpgradeLicenseQuotePurchaseResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for UpgradeLicenseQuotePurchaseResponse
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an UpgradeLicenseCompletePurchaseRequest. */
-    interface IUpgradeLicenseCompletePurchaseRequest {
-
-        /** UpgradeLicenseCompletePurchaseRequest productType */
-        productType?: (BI.PurchaseProductType|null);
-
-        /** UpgradeLicenseCompletePurchaseRequest quantity */
-        quantity?: (number|null);
-
-        /** UpgradeLicenseCompletePurchaseRequest quotePurchase */
-        quotePurchase?: (BI.IQuotePurchase|null);
-    }
-
-    /** Represents an UpgradeLicenseCompletePurchaseRequest. */
-    class UpgradeLicenseCompletePurchaseRequest implements IUpgradeLicenseCompletePurchaseRequest {
-
-        /**
-         * Constructs a new UpgradeLicenseCompletePurchaseRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IUpgradeLicenseCompletePurchaseRequest);
-
-        /** UpgradeLicenseCompletePurchaseRequest productType. */
-        public productType: BI.PurchaseProductType;
-
-        /** UpgradeLicenseCompletePurchaseRequest quantity. */
-        public quantity: number;
-
-        /** UpgradeLicenseCompletePurchaseRequest quotePurchase. */
-        public quotePurchase?: (BI.IQuotePurchase|null);
-
-        /**
-         * Creates a new UpgradeLicenseCompletePurchaseRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UpgradeLicenseCompletePurchaseRequest instance
-         */
-        public static create(properties?: BI.IUpgradeLicenseCompletePurchaseRequest): BI.UpgradeLicenseCompletePurchaseRequest;
-
-        /**
-         * Encodes the specified UpgradeLicenseCompletePurchaseRequest message. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseRequest.verify|verify} messages.
-         * @param message UpgradeLicenseCompletePurchaseRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IUpgradeLicenseCompletePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UpgradeLicenseCompletePurchaseRequest message, length delimited. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseRequest.verify|verify} messages.
-         * @param message UpgradeLicenseCompletePurchaseRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IUpgradeLicenseCompletePurchaseRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an UpgradeLicenseCompletePurchaseRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UpgradeLicenseCompletePurchaseRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseCompletePurchaseRequest;
-
-        /**
-         * Decodes an UpgradeLicenseCompletePurchaseRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UpgradeLicenseCompletePurchaseRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseCompletePurchaseRequest;
-
-        /**
-         * Verifies an UpgradeLicenseCompletePurchaseRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an UpgradeLicenseCompletePurchaseRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UpgradeLicenseCompletePurchaseRequest
-         */
-        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseCompletePurchaseRequest;
-
-        /**
-         * Creates a plain object from an UpgradeLicenseCompletePurchaseRequest message. Also converts values to other types if specified.
-         * @param message UpgradeLicenseCompletePurchaseRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.UpgradeLicenseCompletePurchaseRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UpgradeLicenseCompletePurchaseRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for UpgradeLicenseCompletePurchaseRequest
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an UpgradeLicenseCompletePurchaseResponse. */
-    interface IUpgradeLicenseCompletePurchaseResponse {
-
-        /** UpgradeLicenseCompletePurchaseResponse success */
-        success?: (boolean|null);
-
-        /** UpgradeLicenseCompletePurchaseResponse invoiceNumber */
-        invoiceNumber?: (string|null);
-
-        /** UpgradeLicenseCompletePurchaseResponse error */
-        error?: (BI.IError|null);
-
-        /** UpgradeLicenseCompletePurchaseResponse quotePurchase */
-        quotePurchase?: (BI.IQuotePurchase|null);
-    }
-
-    /** Represents an UpgradeLicenseCompletePurchaseResponse. */
-    class UpgradeLicenseCompletePurchaseResponse implements IUpgradeLicenseCompletePurchaseResponse {
-
-        /**
-         * Constructs a new UpgradeLicenseCompletePurchaseResponse.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: BI.IUpgradeLicenseCompletePurchaseResponse);
-
-        /** UpgradeLicenseCompletePurchaseResponse success. */
-        public success: boolean;
-
-        /** UpgradeLicenseCompletePurchaseResponse invoiceNumber. */
-        public invoiceNumber: string;
-
-        /** UpgradeLicenseCompletePurchaseResponse error. */
-        public error?: (BI.IError|null);
-
-        /** UpgradeLicenseCompletePurchaseResponse quotePurchase. */
-        public quotePurchase?: (BI.IQuotePurchase|null);
-
-        /**
-         * Creates a new UpgradeLicenseCompletePurchaseResponse instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns UpgradeLicenseCompletePurchaseResponse instance
-         */
-        public static create(properties?: BI.IUpgradeLicenseCompletePurchaseResponse): BI.UpgradeLicenseCompletePurchaseResponse;
-
-        /**
-         * Encodes the specified UpgradeLicenseCompletePurchaseResponse message. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseResponse.verify|verify} messages.
-         * @param message UpgradeLicenseCompletePurchaseResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: BI.IUpgradeLicenseCompletePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified UpgradeLicenseCompletePurchaseResponse message, length delimited. Does not implicitly {@link BI.UpgradeLicenseCompletePurchaseResponse.verify|verify} messages.
-         * @param message UpgradeLicenseCompletePurchaseResponse message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: BI.IUpgradeLicenseCompletePurchaseResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an UpgradeLicenseCompletePurchaseResponse message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns UpgradeLicenseCompletePurchaseResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.UpgradeLicenseCompletePurchaseResponse;
-
-        /**
-         * Decodes an UpgradeLicenseCompletePurchaseResponse message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns UpgradeLicenseCompletePurchaseResponse
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.UpgradeLicenseCompletePurchaseResponse;
-
-        /**
-         * Verifies an UpgradeLicenseCompletePurchaseResponse message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an UpgradeLicenseCompletePurchaseResponse message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns UpgradeLicenseCompletePurchaseResponse
-         */
-        public static fromObject(object: { [k: string]: any }): BI.UpgradeLicenseCompletePurchaseResponse;
-
-        /**
-         * Creates a plain object from an UpgradeLicenseCompletePurchaseResponse message. Also converts values to other types if specified.
-         * @param message UpgradeLicenseCompletePurchaseResponse
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: BI.UpgradeLicenseCompletePurchaseResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this UpgradeLicenseCompletePurchaseResponse to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for UpgradeLicenseCompletePurchaseResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
