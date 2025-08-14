@@ -14,7 +14,9 @@ import {
     Vault,
     Tokens,
     NotificationCenter,
-    Folder
+    Folder,
+    record,
+    records
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -443,16 +445,21 @@ export const folderRecordUpdateMessage = (data: Folder.FolderRecordUpdateRequest
 export const folderAccessUpdateMessage = (data: Folder.FolderAccessRequest): RestMessage<Folder.IFolderAccessRequest, Folder.IFolderAccessResponse> =>
     createMessage(data, 'vault/folders/v3/access_update', Folder.FolderAccessRequest, Folder.FolderAccessResponse)
 
-// waiting for proto correction
-// export const V3RecordAddMessage = (data: Record.v3.RecordsAddRequest): RestMessage<Folder.IFolderRecordAddRequest, Folder.IFolderRecordAddResponse> =>
-//     createMessage(data, 'vault/records/v3/add', Folder.FolderRecordAddRequest, Folder.FolderRecordAddResponse)
+export const V3RecordAddMessage = (data: record.v3.RecordsAddRequest): RestMessage<record.v3.RecordsAddRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, 'vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
 
-export const V3RecordUpdateMessage = (data: Records.RecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.RecordsModifyResponse> =>
+export const V3RecordUpdateMessage = (data: Records.RecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
-// waiting for proto correction
-// export const V3RecordShareMessage = (data: Record.RecordSharing.Request): RestMessage<Records.IRecordsShareRequest, Records.RecordsShareResponse> =>
-//     createMessage(data, 'vault/records/v3/share', Records.RecordsShareRequest, Records.RecordsShareResponse)
+export const V3RecordShareMessage = (data: records.share.v3.Request): RestMessage<records.share.v3.IRequest, records.share.v3.IResponse> =>
+    createMessage(data, 'vault/records/v3/share', records.share.v3.Request, records.share.v3.Response)
+
+export const V3RecordDetailsMessage = (data: record.v3.details.RecordDataRequest): RestMessage<record.v3.details.IRecordDataRequest, record.v3.details.IRecordDataResponse> =>
+    createMessage(data, 'vault/records/v3/details/data', record.v3.details.RecordDataRequest, record.v3.details.RecordDataResponse)
+
+export const V3RecordAccessMessage = (data: record.v3.details.RecordAccessRequest): RestMessage<record.v3.details.IRecordAccessRequest, record.v3.details.IRecordAccessResponse> =>
+    createMessage(data, 'vault/records/v3/details/access', record.v3.details.RecordAccessRequest, record.v3.details.RecordAccessResponse)
 
 export const RecordOwnershipTransferMessage = (data: Records.RecordsOnwershipTransferRequest): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
-    createMessage(data, 'vault/records_ownership_transfer', Records.RecordsOnwershipTransferRequest, Records.RecordsOnwershipTransferResponse)
+    createMessage(data, 'vault/records/v3/transfer', Records.RecordsOnwershipTransferRequest, Records.RecordsOnwershipTransferResponse)
+// end shared folder change
