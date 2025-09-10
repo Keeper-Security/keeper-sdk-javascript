@@ -80,6 +80,7 @@ export type LoginPayload = {
     resumeSessionOnly?: boolean
     givenSessionToken?: string
     ecOnly?: boolean
+    fromSessionToken?: Uint8Array | null
 }
 
 export enum UserType {
@@ -276,6 +277,7 @@ export class Auth {
             resumeSessionOnly = false,
             givenSessionToken = undefined,
             ecOnly = false,
+            fromSessionToken = undefined
         }: Partial<LoginPayload>
     ) {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
@@ -321,7 +323,8 @@ export class Auth {
                 messageSessionUid: this.messageSessionUid,
                 loginMethod: loginMethod,
                 cloneCode: await this.options.sessionStorage?.getCloneCode(this.options.host as KeeperEnvironment, this._username),
-                v2TwoFactorToken: v2TwoFactorToken
+                v2TwoFactorToken: v2TwoFactorToken,
+                fromSessionToken,
             })
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
