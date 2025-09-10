@@ -395,6 +395,12 @@ export const ssoServiceProviderRequestMessage = (data: Authentication.ISsoServic
 export const ssoCloudValidationRequestMessage = (data: SsoCloud.ISsoCloudConfigurationValidationRequest, url: string): RestMessage<SsoCloud.ISsoCloudConfigurationValidationRequest, SsoCloud.ISsoCloudConfigurationValidationResponse> =>
     createMessage(data, url, SsoCloud.SsoCloudConfigurationValidationRequest, SsoCloud.SsoCloudConfigurationValidationResponse)
 
+export const switchAccountListAuthenticated = ()  => createOutMessage('/authentication/switch_account_list_authenticated', Authentication.SwitchListResponse)
+
+export const switchAccountListRemoved = (data: Authentication.LoginAsUserRequest): RestInMessage<Authentication.ILoginAsUserRequest>  => createInMessage(data, '/authentication/switch_account_list_remove', Authentication.LoginAsUserRequest)
+
+export const switchAccountFromAuthenticated = (data: Authentication.LoginAsUserRequest)  => createMessage(data, '/authentication/switch_account_from_authenticated', Authentication.LoginAsUserRequest, Authentication.LoginResponse)
+
 
 /* -- Keeper Automator -- */
 
