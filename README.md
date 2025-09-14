@@ -1,8 +1,10 @@
+![Keeper Javascript SDK Header](https://github.com/user-attachments/assets/45eba9d8-9afc-49e6-b05b-fd1600bd495a)
+
 ### Keeper Javascript SDK
 
-This SDK allows to interact with Keeper backend service (KeeperApp) - login, sync Vault, manipulate enterprise data etc.
+This Javascript SDK allows you to interact with the Keeper backend API service - login, sync Vault, manage data etc.
 
-This SDK can be used from Node or from browser
+This SDK can be used from Node or from the browser
 
 [![NPM](https://img.shields.io/npm/v/@keeper-security/keeperapi?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/@keeper-security/keeperapi)
 
