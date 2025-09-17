@@ -15,8 +15,7 @@ import {
     Tokens,
     NotificationCenter,
     Folder,
-    record,
-    records
+    record
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -432,7 +431,7 @@ export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeA
 export const automatorAdminResetMessage = (data: Automator.AdminResetAutomatorRequest, url: string): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse)
 
-// begin shared folder change
+// Keeper Drive API
 export const folderAddMessage = (data: Folder.FolderAddRequest): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
     createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
 
@@ -451,8 +450,8 @@ export const V3RecordAddMessage = (data: record.v3.RecordsAddRequest): RestMessa
 export const V3RecordUpdateMessage = (data: Records.RecordsUpdateRequest): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
-export const V3RecordShareMessage = (data: records.share.v3.Request): RestMessage<records.share.v3.IRequest, records.share.v3.IResponse> =>
-    createMessage(data, 'vault/records/v3/share', records.share.v3.Request, records.share.v3.Response)
+export const V3RecordShareMessage = (data: record.v3.sharing.Request): RestMessage<record.v3.sharing.IRequest, record.v3.sharing.IResponse> =>
+    createMessage(data, 'vault/records/v3/share', record.v3.sharing.Request, record.v3.sharing.Response)
 
 export const V3RecordDetailsMessage = (data: record.v3.details.RecordDataRequest): RestMessage<record.v3.details.IRecordDataRequest, record.v3.details.IRecordDataResponse> =>
     createMessage(data, 'vault/records/v3/details/data', record.v3.details.RecordDataRequest, record.v3.details.RecordDataResponse)
@@ -462,4 +461,4 @@ export const V3RecordAccessMessage = (data: record.v3.details.RecordAccessReques
 
 export const RecordOwnershipTransferMessage = (data: Records.RecordsOnwershipTransferRequest): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
     createMessage(data, 'vault/records/v3/transfer', Records.RecordsOnwershipTransferRequest, Records.RecordsOnwershipTransferResponse)
-// end shared folder change
+// Keeper Drive API
