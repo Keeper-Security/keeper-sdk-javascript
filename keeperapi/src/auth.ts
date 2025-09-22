@@ -33,6 +33,7 @@ import {
     ssoServiceProviderRequestMessage,
     startLoginMessage,
     startLoginMessageFromSessionToken,
+    switchAccountFromAuthenticated,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     twoFASendDuoMessage,
@@ -42,7 +43,6 @@ import {
 import {AccountSummary, Authentication} from './proto';
 import {RestCommand} from './commands'
 import {CloseReason, createAsyncSocket, SocketListener} from './socket';
-import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
@@ -506,6 +506,23 @@ export class Auth {
                     handleError('generic_error', loginResponse, new Error(`Unknown login state ${loginResponse.loginState}`))
                     return
             }
+        }
+    }
+
+    async switchToActiveAccount({username}: {username: string}): Promise<Authentication.LoginResponse | undefined> {
+        try {
+            const request = new Authentication.LoginAsUserRequest({username})
+            const response = await this.executeRest(switchAccountFromAuthenticated(request))
+            if (response.loginState !== Authentication.LoginState.LOGGED_IN) {
+                throw new Error('account switching failed')
+            }
+            if (response.cloneCode && response.cloneCode.length > 0) {
+                this.options.sessionStorage?.saveCloneCode(this.options.host as KeeperEnvironment, this._username, response.cloneCode)
+            }
+            return response
+        } catch (err) {
+            console.error(err)
+            return undefined
         }
     }
 
