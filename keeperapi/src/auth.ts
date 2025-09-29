@@ -80,7 +80,7 @@ export type LoginPayload = {
     resumeSessionOnly?: boolean
     givenSessionToken?: string
     ecOnly?: boolean
-    fromSessionToken?: Uint8Array | null
+    primaryAccountSessionTokenForLinking?: Uint8Array | null
 }
 
 export enum UserType {
@@ -282,7 +282,7 @@ export class Auth {
             resumeSessionOnly = false,
             givenSessionToken = undefined,
             ecOnly = false,
-            fromSessionToken = undefined
+            primaryAccountSessionTokenForLinking = undefined
         }: Partial<LoginPayload>
     ): Promise<{result: LoginV3ResultEnum} | undefined> {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
@@ -329,7 +329,7 @@ export class Auth {
                 loginMethod: loginMethod,
                 cloneCode: await this.options.sessionStorage?.getCloneCode(this.options.host as KeeperEnvironment, this._username),
                 v2TwoFactorToken: v2TwoFactorToken,
-                fromSessionToken,
+                fromSessionToken: primaryAccountSessionTokenForLinking,
             })
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
@@ -412,7 +412,7 @@ export class Auth {
                     handleError('license_expired', loginResponse, new Error(loginResponse.message))
                     return;
                 case Authentication.LoginState.REGION_REDIRECT:
-                    if (!!fromSessionToken) {
+                    if (!!primaryAccountSessionTokenForLinking) {
                         return {
                             result: LoginV3ResultEnum.LINKING_BLOCKED_BY_CROSS_REGION,
                         }
