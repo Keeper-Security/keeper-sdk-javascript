@@ -113,6 +113,11 @@ export type EncryptionKeys = {
     eccPrivateKey: Uint8Array;
 }
 
+export const enum LoginV3ResultEnum {
+    NOT_LOGGED_IN = 'notLoggedin',
+    LINKING_BLOCKED_BY_CROSS_REGION = 'linkingBlockedByCrossRegion',
+}
+
 export class Auth {
     ssoLogoutUrl: string = ''
     userType: UserType = UserType.normal
@@ -279,7 +284,7 @@ export class Auth {
             ecOnly = false,
             fromSessionToken = undefined
         }: Partial<LoginPayload>
-    ) {
+    ): Promise<{result: LoginV3ResultEnum} | undefined> {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
 
         let wrappedPassword: KeyWrapper | undefined;
@@ -357,7 +362,7 @@ export class Auth {
             }
             if (resumeSessionOnly && loginResponse && (loginResponse.loginState != Authentication.LoginState.LOGGED_IN)) {
                 return {
-                    result: 'notLoggedin'
+                    result: LoginV3ResultEnum.NOT_LOGGED_IN,
                 }
             }
             console.log(loginResponse)
@@ -395,7 +400,7 @@ export class Auth {
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
                 case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
-                    if (givenSessionToken) return { result: 'notLoggedin' }
+                    if (givenSessionToken) return { result: LoginV3ResultEnum.NOT_LOGGED_IN }
                     try {
                         loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
                     } catch (e: any) {
@@ -407,6 +412,12 @@ export class Auth {
                     handleError('license_expired', loginResponse, new Error(loginResponse.message))
                     return;
                 case Authentication.LoginState.REGION_REDIRECT:
+                    if (!!fromSessionToken) {
+                        return {
+                            result: LoginV3ResultEnum.LINKING_BLOCKED_BY_CROSS_REGION,
+                        }
+                    }
+
                     // TODO: put region_redirect in its own loop since
                     // its unique to the other states.
                     this.options.host = loginResponse.stateSpecificValue
