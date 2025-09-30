@@ -271,7 +271,13 @@ export class Auth {
     }
 
     /**
-     * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
+     * @param {LoginPayload} payload - Options for login.
+     * @param {boolean} [payload.disableLinkingForAccountWithYubikey2fa] -
+     *        Opt-out flag for linking YubiKey 2FA accounts.
+     *        Normally, these accounts can be linked, but some clients
+     *        have technical issues that prevent them from supporting
+     *        the linking flow. When true, `loginV3` will block the
+     *        linking attempt and return `LINKING_BLOCKED_BY_YUBIKEY_2FA`.
      */
     async loginV3(
         {
@@ -285,6 +291,11 @@ export class Auth {
             givenSessionToken = undefined,
             ecOnly = false,
             primaryAccountSessionTokenForLinking = undefined,
+            /*
+             * Prevents linking YubiKey 2FA accounts.
+             * Normally, these accounts can be linked, but some clients have technical issues
+             * that prevent them from supporting the linking flow, so they can opt out via this flag.
+             */
             disableLinkingForAccountWithYubikey2fa,
         }: Partial<LoginPayload>
     ): Promise<{result: LoginV3ResultEnum} | undefined> {
