@@ -81,6 +81,7 @@ export type LoginPayload = {
     givenSessionToken?: string
     ecOnly?: boolean
     primaryAccountSessionTokenForLinking?: Uint8Array | null
+    disableLinkingForAccountWithYubikey2fa?: boolean
 }
 
 export enum UserType {
@@ -116,6 +117,7 @@ export type EncryptionKeys = {
 export const enum LoginV3ResultEnum {
     NOT_LOGGED_IN = 'notLoggedin',
     LINKING_BLOCKED_BY_CROSS_REGION = 'linkingBlockedByCrossRegion',
+    LINKING_BLOCKED_BY_YUBIKEY_2FA = 'linkingBlockedByYubikey2fa',
 }
 
 export class Auth {
@@ -269,7 +271,13 @@ export class Auth {
     }
 
     /**
-     * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
+     * @param {LoginPayload} payload - Options for login.
+     * @param {boolean} [payload.disableLinkingForAccountWithYubikey2fa] -
+     *        Opt-out flag for linking YubiKey 2FA accounts.
+     *        Normally, these accounts can be linked, but some clients
+     *        have technical issues that prevent them from supporting
+     *        the linking flow. When true, `loginV3` will block the
+     *        linking attempt and return `LINKING_BLOCKED_BY_YUBIKEY_2FA`.
      */
     async loginV3(
         {
@@ -282,7 +290,13 @@ export class Auth {
             resumeSessionOnly = false,
             givenSessionToken = undefined,
             ecOnly = false,
-            primaryAccountSessionTokenForLinking = undefined
+            primaryAccountSessionTokenForLinking = undefined,
+            /*
+             * Prevents linking YubiKey 2FA accounts.
+             * Normally, these accounts can be linked, but some clients have technical issues
+             * that prevent them from supporting the linking flow, so they can opt out via this flag.
+             */
+            disableLinkingForAccountWithYubikey2fa,
         }: Partial<LoginPayload>
     ): Promise<{result: LoginV3ResultEnum} | undefined> {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
@@ -468,6 +482,11 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REQUIRES_2FA:
                     try{
+                        if (!!disableLinkingForAccountWithYubikey2fa && !!primaryAccountSessionTokenForLinking) {
+                            return {
+                                result: LoginV3ResultEnum.LINKING_BLOCKED_BY_YUBIKEY_2FA,
+                            }
+                        }
                         loginToken = await this.handleTwoFactor(loginResponse)
                     } catch(e: any){
                         if (e?.message && e.message == 'push_declined'){
