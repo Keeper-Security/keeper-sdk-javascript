@@ -482,7 +482,15 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REQUIRES_2FA:
                     try{
-                        if (!!disableLinkingForAccountWithYubikey2fa && !!primaryAccountSessionTokenForLinking) {
+                        const activeChannel = loginResponse.channels.find((channel) => channel.challenge) || loginResponse.channels[0]
+                        if (
+                          !!disableLinkingForAccountWithYubikey2fa &&
+                          !!primaryAccountSessionTokenForLinking &&
+                          (
+                            activeChannel.channelType === TwoFactorChannelType.TWO_FA_CT_WEBAUTHN ||
+                            activeChannel.channelType === TwoFactorChannelType.TWO_FA_CT_U2F
+                          )
+                        ) {
                             return {
                                 result: LoginV3ResultEnum.LINKING_BLOCKED_BY_YUBIKEY_2FA,
                             }
