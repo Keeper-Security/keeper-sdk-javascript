@@ -87,6 +87,8 @@ export type DRecordMetadata = {
     canShare: boolean
     canEdit: boolean
     recordKeyType: Records.RecordKeyType
+    ownerAccountUid?: string
+    ownerUsername?: string
 }
 
 export type DTeam = {
@@ -109,6 +111,8 @@ export type DSharedFolder = {
     uid: string
     data: any
     name?: string
+    ownerAccountUid?: string
+    ownerUsername?: string
     revision: number
     defaultCanEdit: boolean
     defaultCanShare: boolean
@@ -119,7 +123,8 @@ export type DSharedFolder = {
 export type DSharedFolderUser = {
     kind: 'shared_folder_user'
     sharedFolderUid: string
-    accountUid: string
+    accountUid?: string
+    accountUsername?: string
     manageRecords: boolean
     manageUsers: boolean
 }
@@ -137,10 +142,12 @@ export type DSharedFolderRecord = {
     kind: 'shared_folder_record'
     sharedFolderUid: string
     recordUid: string
+    // ownerAccountUid?: Uint8Array
     ownerUid: string
     owner: boolean
     canShare: boolean
     canEdit: boolean
+    ownerUsername?: string
 }
 
 export type DSharedFolderFolder = {
@@ -508,6 +515,7 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
         if (!folderName && !folderData) {
             continue
         }
+        const ownerUid = folder.ownerAccountUid ? webSafe64FromBytes(folder.ownerAccountUid) : undefined
         await storage.put({
             kind: 'shared_folder',
             uid: folderUid,
@@ -518,6 +526,8 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
             defaultCanShare: folder.defaultCanReshare,
             defaultManageUsers: folder.defaultManageUsers,
             defaultManageRecords: folder.defaultManageRecords,
+            ownerAccountUid: ownerUid,
+            ownerUsername: folder.owner,
         })
     }
 }
@@ -528,6 +538,7 @@ const processSharedFolderUsers = async (users: ISharedFolderUser[], storage: Vau
             kind: 'shared_folder_user',
             sharedFolderUid: webSafe64FromBytes(user.sharedFolderUid),
             accountUid: webSafe64FromBytes(user.accountUid),
+            accountUsername: user.username,
             manageRecords: user.manageRecords,
             manageUsers: user.manageUsers,
         })
@@ -581,6 +592,7 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 ownerUid,
                 canEdit: rec.owner ? true : rec.canEdit,
                 canShare: rec.owner ? true : rec.canShare,
+                ownerUsername: rec.ownerUsername,
             })
         } catch (e: any) {
             console.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
@@ -853,13 +865,16 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
                 }
             }
 
+            const ownerUid = mData.ownerAccountUid ? webSafe64FromBytes(mData.ownerAccountUid) : undefined
             await storage.put({
               kind: 'metadata',
               uid: recUid,
               canEdit: mData.canEdit,
               canShare: mData.canShare,
               owner: mData.owner,
-              recordKeyType: mData.recordKeyType
+              recordKeyType: mData.recordKeyType,
+              ownerAccountUid: ownerUid,
+              ownerUsername: mData.ownerUsername,
             })
         } catch (e: any) {
             console.error(`The record metadata ${recUid} cannot be decrypted (${e.message})`)
