@@ -12,6 +12,7 @@ import {KeyWrapper, platform} from "./platform";
 import {
     generateEncryptionKey,
     generateUidBytes,
+    hasYubikeyChannel,
     normal64,
     normal64Bytes,
     resolvablePromise,
@@ -51,6 +52,7 @@ import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
 import LoginType = Authentication.LoginType;
 import LoginMethod = Authentication.LoginMethod;
 import IAccountSummaryElements = AccountSummary.IAccountSummaryElements;
+import ITwoFactorChannelInfo = Authentication.ITwoFactorChannelInfo;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -482,14 +484,10 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REQUIRES_2FA:
                     try{
-                        const activeChannel = loginResponse.channels.find((channel) => channel.challenge) || loginResponse.channels[0]
                         if (
                           !!disableLinkingForAccountWithYubikey2fa &&
                           !!primaryAccountSessionTokenForLinking &&
-                          (
-                            activeChannel.channelType === TwoFactorChannelType.TWO_FA_CT_WEBAUTHN ||
-                            activeChannel.channelType === TwoFactorChannelType.TWO_FA_CT_U2F
-                          )
+                          hasYubikeyChannel(loginResponse.channels)
                         ) {
                             return {
                                 result: LoginV3ResultEnum.LINKING_BLOCKED_BY_YUBIKEY_2FA,
