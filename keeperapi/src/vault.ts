@@ -223,6 +223,7 @@ export type DContinuationToken = {
 
 export type Dependency = {
     kind: VaultStorageKind
+    parentUid: string
     uid: string
 }
 export type Dependencies = Record<string, Set<Dependency>>
@@ -236,7 +237,8 @@ const addDependencies = (dependencies: Dependencies, parentUid: string, childUid
     }
     children.add({
         kind: kind,
-        uid: childUid
+        uid: childUid,
+        parentUid: parentUid
     })
 }
 
@@ -1160,15 +1162,15 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             for await (const folder of resp.removedSharedFolders) {
                 const folderUid = webSafe64FromBytes(folder)
                 await getDependencies(folderUid, storage, removedSFDependencies)
-                if(!removedDependencies[folderUid]){
+                if(!removedDependencies[folderUid] && !removedSFDependencies[0]){
                     removedDependencies[folderUid] = '*'
                 }
                 await storage.delete('shared_folder', folderUid)
             }
             for await (const removedSFDependency of removedSFDependencies) {
                 switch (removedSFDependency.kind) {
-                    case "record":
-                        await storage.delete('record', removedSFDependency.uid)
+                    case "record":     
+                        addRemovedDependencies(removedDependencies, removedSFDependency.parentUid, removedSFDependency.uid)
                         break;
                     case "user_folder":
                         removedDependencies[removedSFDependency.uid] = '*'
