@@ -93,6 +93,121 @@ export namespace Authentication {
         COPY = 1
     }
 
+    /** Properties of a QrcMessageKey. */
+    interface IQrcMessageKey {
+
+        /** QrcMessageKey clientEcPublicKey */
+        clientEcPublicKey?: (Uint8Array|null);
+
+        /** QrcMessageKey mlKemEncapsulatedKey */
+        mlKemEncapsulatedKey?: (Uint8Array|null);
+
+        /** QrcMessageKey data */
+        data?: (Uint8Array|null);
+
+        /** QrcMessageKey msgVersion */
+        msgVersion?: (number|null);
+    }
+
+    /** Represents a QrcMessageKey. */
+    class QrcMessageKey implements IQrcMessageKey {
+
+        /**
+         * Constructs a new QrcMessageKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.IQrcMessageKey);
+
+        /** QrcMessageKey clientEcPublicKey. */
+        public clientEcPublicKey: Uint8Array;
+
+        /** QrcMessageKey mlKemEncapsulatedKey. */
+        public mlKemEncapsulatedKey: Uint8Array;
+
+        /** QrcMessageKey data. */
+        public data: Uint8Array;
+
+        /** QrcMessageKey msgVersion. */
+        public msgVersion: number;
+
+        /**
+         * Creates a new QrcMessageKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns QrcMessageKey instance
+         */
+        public static create(properties?: Authentication.IQrcMessageKey): Authentication.QrcMessageKey;
+
+        /**
+         * Encodes the specified QrcMessageKey message. Does not implicitly {@link Authentication.QrcMessageKey.verify|verify} messages.
+         * @param message QrcMessageKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.IQrcMessageKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified QrcMessageKey message, length delimited. Does not implicitly {@link Authentication.QrcMessageKey.verify|verify} messages.
+         * @param message QrcMessageKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Authentication.IQrcMessageKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a QrcMessageKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns QrcMessageKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.QrcMessageKey;
+
+        /**
+         * Decodes a QrcMessageKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns QrcMessageKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Authentication.QrcMessageKey;
+
+        /**
+         * Verifies a QrcMessageKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a QrcMessageKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns QrcMessageKey
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.QrcMessageKey;
+
+        /**
+         * Creates a plain object from a QrcMessageKey message. Also converts values to other types if specified.
+         * @param message QrcMessageKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.QrcMessageKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this QrcMessageKey to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for QrcMessageKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of an ApiRequest. */
     interface IApiRequest {
 
@@ -116,6 +231,9 @@ export namespace Authentication {
 
         /** ApiRequest subEnvironment */
         subEnvironment?: (string|null);
+
+        /** ApiRequest qrcMessageKey */
+        qrcMessageKey?: (Authentication.IQrcMessageKey|null);
     }
 
     /** Represents an ApiRequest. */
@@ -147,6 +265,9 @@ export namespace Authentication {
 
         /** ApiRequest subEnvironment. */
         public subEnvironment: string;
+
+        /** ApiRequest qrcMessageKey. */
+        public qrcMessageKey?: (Authentication.IQrcMessageKey|null);
 
         /**
          * Creates a new ApiRequest instance using the specified properties.
@@ -1785,6 +1906,9 @@ export namespace Authentication {
 
         /** SwitchListElement isLinked */
         isLinked?: (boolean|null);
+
+        /** SwitchListElement profilePicUrl */
+        profilePicUrl?: (string|null);
     }
 
     /** Represents a SwitchListElement. */
@@ -1807,6 +1931,9 @@ export namespace Authentication {
 
         /** SwitchListElement isLinked. */
         public isLinked: boolean;
+
+        /** SwitchListElement profilePicUrl. */
+        public profilePicUrl: string;
 
         /**
          * Creates a new SwitchListElement instance using the specified properties.
@@ -20769,6 +20896,109 @@ export namespace Enterprise {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a ManagedNodesByRole. */
+    interface IManagedNodesByRole {
+
+        /** ManagedNodesByRole roleId */
+        roleId?: (number|Long|null);
+
+        /** ManagedNodesByRole managedNodeId */
+        managedNodeId?: ((number|Long)[]|null);
+    }
+
+    /** Represents a ManagedNodesByRole. */
+    class ManagedNodesByRole implements IManagedNodesByRole {
+
+        /**
+         * Constructs a new ManagedNodesByRole.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IManagedNodesByRole);
+
+        /** ManagedNodesByRole roleId. */
+        public roleId: (number|Long);
+
+        /** ManagedNodesByRole managedNodeId. */
+        public managedNodeId: (number|Long)[];
+
+        /**
+         * Creates a new ManagedNodesByRole instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ManagedNodesByRole instance
+         */
+        public static create(properties?: Enterprise.IManagedNodesByRole): Enterprise.ManagedNodesByRole;
+
+        /**
+         * Encodes the specified ManagedNodesByRole message. Does not implicitly {@link Enterprise.ManagedNodesByRole.verify|verify} messages.
+         * @param message ManagedNodesByRole message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IManagedNodesByRole, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ManagedNodesByRole message, length delimited. Does not implicitly {@link Enterprise.ManagedNodesByRole.verify|verify} messages.
+         * @param message ManagedNodesByRole message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IManagedNodesByRole, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ManagedNodesByRole message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ManagedNodesByRole
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.ManagedNodesByRole;
+
+        /**
+         * Decodes a ManagedNodesByRole message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ManagedNodesByRole
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.ManagedNodesByRole;
+
+        /**
+         * Verifies a ManagedNodesByRole message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ManagedNodesByRole message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ManagedNodesByRole
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.ManagedNodesByRole;
+
+        /**
+         * Creates a plain object from a ManagedNodesByRole message. Also converts values to other types if specified.
+         * @param message ManagedNodesByRole
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.ManagedNodesByRole, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ManagedNodesByRole to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ManagedNodesByRole
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a RoleUserAddKeys. */
     interface IRoleUserAddKeys {
 
@@ -21088,7 +21318,8 @@ export namespace Enterprise {
         INVALID_NODE_ID = 5,
         MAY_NOT_REMOVE_SELF_FROM_ROLE = 6,
         MUST_HAVE_ONE_USER_ADMIN = 7,
-        INVALID_ROLE_ID = 8
+        INVALID_ROLE_ID = 8,
+        PAM_LICENSE_SEAT_EXCEEDED = 9
     }
 
     /** Properties of a RoleUserAddResult. */
@@ -41494,6 +41725,9 @@ export namespace Automator {
 
         /** StatusResponse numberOfTeamsDenied */
         numberOfTeamsDenied?: (number|Long|null);
+
+        /** StatusResponse sslCertificateInfo */
+        sslCertificateInfo?: (Automator.ISSLCertificateInfo[]|null);
     }
 
     /**
@@ -41552,6 +41786,9 @@ export namespace Automator {
 
         /** StatusResponse numberOfTeamsDenied. */
         public numberOfTeamsDenied: (number|Long);
+
+        /** StatusResponse sslCertificateInfo. */
+        public sslCertificateInfo: Automator.ISSLCertificateInfo[];
 
         /**
          * Creates a new StatusResponse instance using the specified properties.
@@ -44885,6 +45122,136 @@ export namespace Automator {
 
         /**
          * Gets the default type url for ApproveOneTeamResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SSLCertificateInfo. */
+    interface ISSLCertificateInfo {
+
+        /** SSLCertificateInfo hostname */
+        hostname?: (string|null);
+
+        /** SSLCertificateInfo subject */
+        subject?: (string|null);
+
+        /** SSLCertificateInfo issuedBy */
+        issuedBy?: (string|null);
+
+        /** SSLCertificateInfo issuedOn */
+        issuedOn?: (string|null);
+
+        /** SSLCertificateInfo expiresOn */
+        expiresOn?: (string|null);
+
+        /** SSLCertificateInfo checkedOn */
+        checkedOn?: (string|null);
+    }
+
+    /**
+     * SSLCertificateInfo - This message contains information about the SSL certificate of an Automator instance.
+     * It is used to send a message to an Admin to renew the certificate.
+     */
+    class SSLCertificateInfo implements ISSLCertificateInfo {
+
+        /**
+         * Constructs a new SSLCertificateInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Automator.ISSLCertificateInfo);
+
+        /** SSLCertificateInfo hostname. */
+        public hostname: string;
+
+        /** SSLCertificateInfo subject. */
+        public subject: string;
+
+        /** SSLCertificateInfo issuedBy. */
+        public issuedBy: string;
+
+        /** SSLCertificateInfo issuedOn. */
+        public issuedOn: string;
+
+        /** SSLCertificateInfo expiresOn. */
+        public expiresOn: string;
+
+        /** SSLCertificateInfo checkedOn. */
+        public checkedOn: string;
+
+        /**
+         * Creates a new SSLCertificateInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SSLCertificateInfo instance
+         */
+        public static create(properties?: Automator.ISSLCertificateInfo): Automator.SSLCertificateInfo;
+
+        /**
+         * Encodes the specified SSLCertificateInfo message. Does not implicitly {@link Automator.SSLCertificateInfo.verify|verify} messages.
+         * @param message SSLCertificateInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Automator.ISSLCertificateInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SSLCertificateInfo message, length delimited. Does not implicitly {@link Automator.SSLCertificateInfo.verify|verify} messages.
+         * @param message SSLCertificateInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Automator.ISSLCertificateInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SSLCertificateInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SSLCertificateInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Automator.SSLCertificateInfo;
+
+        /**
+         * Decodes a SSLCertificateInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SSLCertificateInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Automator.SSLCertificateInfo;
+
+        /**
+         * Verifies a SSLCertificateInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SSLCertificateInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SSLCertificateInfo
+         */
+        public static fromObject(object: { [k: string]: any }): Automator.SSLCertificateInfo;
+
+        /**
+         * Creates a plain object from a SSLCertificateInfo message. Also converts values to other types if specified.
+         * @param message SSLCertificateInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Automator.SSLCertificateInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SSLCertificateInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SSLCertificateInfo
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
