@@ -12,7 +12,6 @@ import {KeyWrapper, platform} from "./platform";
 import {
     generateEncryptionKey,
     generateUidBytes,
-    hasYubikeyChannel,
     normal64,
     normal64Bytes,
     resolvablePromise,
@@ -1374,3 +1373,5 @@ function chooseErrorMessage(loginState: Authentication.LoginState){
     }
 }
 
+const hasYubikeyChannel = (channels: Authentication.ITwoFactorChannelInfo[]): boolean =>
+  !!channels.find(({challenge, channelType}) => challenge && (channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F || channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN))

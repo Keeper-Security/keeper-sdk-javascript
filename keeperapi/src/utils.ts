@@ -170,5 +170,4 @@ export function resolvablePromise(): { promise: Promise<void>, resolve: () => vo
     }
 }
 
-export const hasYubikeyChannel = (channels: Authentication.ITwoFactorChannelInfo[]): boolean =>
-  !!channels.find(({challenge, channelType}) => challenge && (channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F || channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN))
+
