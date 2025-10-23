@@ -1,7 +1,6 @@
 import {KeyWrapper, LogOptions, Platform, platform} from "./platform";
 import type {KeeperHost, TransmissionKey} from './configuration';
 import { AllowedNumbers } from "./transmissionKeys";
-import {Authentication} from "./proto";
 
 export const log = (message: string, options: LogOptions = 'default') => {
     platform.log(message, options)
@@ -170,5 +169,4 @@ export function resolvablePromise(): { promise: Promise<void>, resolve: () => vo
     }
 }
 
-export const hasYubikeyChannel = (channels: Authentication.ITwoFactorChannelInfo[]): boolean =>
-  !!channels.find(({challenge, channelType}) => challenge && (channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F || channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN))
+
