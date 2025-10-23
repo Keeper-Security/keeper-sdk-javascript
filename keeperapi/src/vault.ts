@@ -87,6 +87,8 @@ export type DRecordMetadata = {
     canShare: boolean
     canEdit: boolean
     recordKeyType: Records.RecordKeyType
+    ownerAccountUid?: string
+    ownerUsername?: string
 }
 
 export type DTeam = {
@@ -109,6 +111,8 @@ export type DSharedFolder = {
     uid: string
     data: any
     name?: string
+    ownerAccountUid?: string
+    ownerUsername?: string
     revision: number
     defaultCanEdit: boolean
     defaultCanShare: boolean
@@ -119,7 +123,8 @@ export type DSharedFolder = {
 export type DSharedFolderUser = {
     kind: 'shared_folder_user'
     sharedFolderUid: string
-    accountUid: string
+    accountUid?: string
+    accountUsername?: string
     manageRecords: boolean
     manageUsers: boolean
 }
@@ -137,10 +142,12 @@ export type DSharedFolderRecord = {
     kind: 'shared_folder_record'
     sharedFolderUid: string
     recordUid: string
+    // ownerAccountUid?: Uint8Array
     ownerUid: string
     owner: boolean
     canShare: boolean
     canEdit: boolean
+    ownerUsername?: string
 }
 
 export type DSharedFolderFolder = {
@@ -216,8 +223,10 @@ export type DContinuationToken = {
 
 export type Dependency = {
     kind: VaultStorageKind
+    parentUid: string
     uid: string
 }
+export type DependencyMap = Record<string, Dependency>
 export type Dependencies = Record<string, Set<Dependency>>
 export type RemovedDependencies = Record<string, Set<string> | '*'>
 
@@ -229,7 +238,8 @@ const addDependencies = (dependencies: Dependencies, parentUid: string, childUid
     }
     children.add({
         kind: kind,
-        uid: childUid
+        uid: childUid,
+        parentUid: parentUid
     })
 }
 
@@ -245,15 +255,15 @@ const addRemovedDependencies = (dependencies: RemovedDependencies, parentUid: st
     children.add(childUid)
 }
 
-const getDependencies = async (folderUid: string, storage: VaultStorage, results: Dependency[]) => {
+const getDependencies = async (folderUid: string, storage: VaultStorage, results: DependencyMap) => {
     const storageGetDependencies = await storage.getDependencies(folderUid)
     for await (const dependency of storageGetDependencies || []) {
         switch (dependency.kind) {
             case "record":
-                results.push(dependency)
+                results[dependency.parentUid] = dependency
                 break;
             case "user_folder":
-                results.push(dependency)
+                results[dependency.parentUid] = dependency
                 await getDependencies(dependency.uid, storage, results)
                 break;
             default:
@@ -508,6 +518,7 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
         if (!folderName && !folderData) {
             continue
         }
+        const ownerUid = folder.ownerAccountUid ? webSafe64FromBytes(folder.ownerAccountUid) : undefined
         await storage.put({
             kind: 'shared_folder',
             uid: folderUid,
@@ -518,6 +529,8 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
             defaultCanShare: folder.defaultCanReshare,
             defaultManageUsers: folder.defaultManageUsers,
             defaultManageRecords: folder.defaultManageRecords,
+            ownerAccountUid: ownerUid,
+            ownerUsername: folder.owner,
         })
     }
 }
@@ -528,6 +541,7 @@ const processSharedFolderUsers = async (users: ISharedFolderUser[], storage: Vau
             kind: 'shared_folder_user',
             sharedFolderUid: webSafe64FromBytes(user.sharedFolderUid),
             accountUid: webSafe64FromBytes(user.accountUid),
+            accountUsername: user.username,
             manageRecords: user.manageRecords,
             manageUsers: user.manageUsers,
         })
@@ -581,6 +595,7 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 ownerUid,
                 canEdit: rec.owner ? true : rec.canEdit,
                 canShare: rec.owner ? true : rec.canShare,
+                ownerUsername: rec.ownerUsername,
             })
         } catch (e: any) {
             console.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
@@ -853,13 +868,16 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
                 }
             }
 
+            const ownerUid = mData.ownerAccountUid ? webSafe64FromBytes(mData.ownerAccountUid) : undefined
             await storage.put({
               kind: 'metadata',
               uid: recUid,
               canEdit: mData.canEdit,
               canShare: mData.canShare,
               owner: mData.owner,
-              recordKeyType: mData.recordKeyType
+              recordKeyType: mData.recordKeyType,
+              ownerAccountUid: ownerUid,
+              ownerUsername: mData.ownerUsername,
             })
         } catch (e: any) {
             console.error(`The record metadata ${recUid} cannot be decrypted (${e.message})`)
@@ -1141,19 +1159,19 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRemovedSharedFolderRecords(resp.removedSharedFolderRecords, storage, removedDependencies)
             await processRemovedSharedFolderFolderRecords(resp.removedSharedFolderFolderRecords, storage, removedDependencies)
 
-            const removedSFDependencies: Dependency[] = []
+            const removedSFDependencies: DependencyMap = {}
             for await (const folder of resp.removedSharedFolders) {
                 const folderUid = webSafe64FromBytes(folder)
                 await getDependencies(folderUid, storage, removedSFDependencies)
-                if(!removedDependencies[folderUid]){
+                if(!removedDependencies[folderUid] && !removedSFDependencies[folderUid]){
                     removedDependencies[folderUid] = '*'
                 }
                 await storage.delete('shared_folder', folderUid)
             }
-            for await (const removedSFDependency of removedSFDependencies) {
+            for await (const removedSFDependency of Object.values(removedSFDependencies)) {
                 switch (removedSFDependency.kind) {
-                    case "record":
-                        await storage.delete('record', removedSFDependency.uid)
+                    case "record":     
+                        addRemovedDependencies(removedDependencies, removedSFDependency.parentUid, removedSFDependency.uid)
                         break;
                     case "user_folder":
                         removedDependencies[removedSFDependency.uid] = '*'
