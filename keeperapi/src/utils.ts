@@ -1,7 +1,6 @@
 import {KeyWrapper, LogOptions, Platform, platform} from "./platform";
 import type {KeeperHost, TransmissionKey} from './configuration';
 import { AllowedNumbers } from "./transmissionKeys";
-import {Authentication} from "./proto";
 
 export const log = (message: string, options: LogOptions = 'default') => {
     platform.log(message, options)
