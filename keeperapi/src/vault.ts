@@ -226,6 +226,7 @@ export type Dependency = {
     parentUid: string
     uid: string
 }
+export type DependencyMap = Record<string, Dependency>
 export type Dependencies = Record<string, Set<Dependency>>
 export type RemovedDependencies = Record<string, Set<string> | '*'>
 
@@ -254,15 +255,15 @@ const addRemovedDependencies = (dependencies: RemovedDependencies, parentUid: st
     children.add(childUid)
 }
 
-const getDependencies = async (folderUid: string, storage: VaultStorage, results: Dependency[]) => {
+const getDependencies = async (folderUid: string, storage: VaultStorage, results: DependencyMap) => {
     const storageGetDependencies = await storage.getDependencies(folderUid)
     for await (const dependency of storageGetDependencies || []) {
         switch (dependency.kind) {
             case "record":
-                results.push(dependency)
+                results[dependency.parentUid] = dependency
                 break;
             case "user_folder":
-                results.push(dependency)
+                results[dependency.parentUid] = dependency
                 await getDependencies(dependency.uid, storage, results)
                 break;
             default:
@@ -1158,16 +1159,16 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRemovedSharedFolderRecords(resp.removedSharedFolderRecords, storage, removedDependencies)
             await processRemovedSharedFolderFolderRecords(resp.removedSharedFolderFolderRecords, storage, removedDependencies)
 
-            const removedSFDependencies: Dependency[] = []
+            const removedSFDependencies: DependencyMap = {}
             for await (const folder of resp.removedSharedFolders) {
                 const folderUid = webSafe64FromBytes(folder)
                 await getDependencies(folderUid, storage, removedSFDependencies)
-                if(!removedDependencies[folderUid] && !removedSFDependencies[0]){
+                if(!removedDependencies[folderUid] && !removedSFDependencies[folderUid]){
                     removedDependencies[folderUid] = '*'
                 }
                 await storage.delete('shared_folder', folderUid)
             }
-            for await (const removedSFDependency of removedSFDependencies) {
+            for await (const removedSFDependency of Object.values(removedSFDependencies)) {
                 switch (removedSFDependency.kind) {
                     case "record":     
                         addRemovedDependencies(removedDependencies, removedSFDependency.parentUid, removedSFDependency.uid)
