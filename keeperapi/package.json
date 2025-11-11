@@ -1,7 +1,7 @@
 {
   "name": "@keeper-security/keeperapi",
   "description": "Keeper API Javascript SDK",
-  "version": "16.0.90",
+  "version": "16.0.91",
   "browser": "dist/index.es.js",
   "main": "dist/index.cjs.js",
   "types": "dist/node/index.d.ts",
@@ -19,6 +19,7 @@
     "publish-to-npm": "npm publish"
   },
   "dependencies": {
+    "@noble/post-quantum": "^0.5.2",
     "asmcrypto.js": "^2.3.2",
     "faye-websocket": "^0.11.3",
     "form-data": "^4.0.4",

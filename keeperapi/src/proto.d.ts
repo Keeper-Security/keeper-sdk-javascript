@@ -107,6 +107,9 @@ export namespace Authentication {
 
         /** QrcMessageKey msgVersion */
         msgVersion?: (number|null);
+
+        /** QrcMessageKey ecKeyId */
+        ecKeyId?: (number|null);
     }
 
     /** Represents a QrcMessageKey. */
@@ -129,6 +132,9 @@ export namespace Authentication {
 
         /** QrcMessageKey msgVersion. */
         public msgVersion: number;
+
+        /** QrcMessageKey ecKeyId. */
+        public ecKeyId: number;
 
         /**
          * Creates a new QrcMessageKey instance using the specified properties.
@@ -37641,6 +37647,109 @@ export namespace Enterprise {
 
         /**
          * Gets the default type url for ClearSecurityDataRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RolesByTeam. */
+    interface IRolesByTeam {
+
+        /** RolesByTeam teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** RolesByTeam roleId */
+        roleId?: ((number|Long)[]|null);
+    }
+
+    /** Represents a RolesByTeam. */
+    class RolesByTeam implements IRolesByTeam {
+
+        /**
+         * Constructs a new RolesByTeam.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IRolesByTeam);
+
+        /** RolesByTeam teamUid. */
+        public teamUid: Uint8Array;
+
+        /** RolesByTeam roleId. */
+        public roleId: (number|Long)[];
+
+        /**
+         * Creates a new RolesByTeam instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RolesByTeam instance
+         */
+        public static create(properties?: Enterprise.IRolesByTeam): Enterprise.RolesByTeam;
+
+        /**
+         * Encodes the specified RolesByTeam message. Does not implicitly {@link Enterprise.RolesByTeam.verify|verify} messages.
+         * @param message RolesByTeam message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IRolesByTeam, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RolesByTeam message, length delimited. Does not implicitly {@link Enterprise.RolesByTeam.verify|verify} messages.
+         * @param message RolesByTeam message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: Enterprise.IRolesByTeam, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RolesByTeam message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RolesByTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.RolesByTeam;
+
+        /**
+         * Decodes a RolesByTeam message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RolesByTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Enterprise.RolesByTeam;
+
+        /**
+         * Verifies a RolesByTeam message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RolesByTeam message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RolesByTeam
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.RolesByTeam;
+
+        /**
+         * Creates a plain object from a RolesByTeam message. Also converts values to other types if specified.
+         * @param message RolesByTeam
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.RolesByTeam, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RolesByTeam to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RolesByTeam
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -78022,7 +78131,14 @@ export namespace NotificationCenter {
         NT_APPROVED_RESPONSE = 10,
         NT_DENIED_RESPONSE = 11,
         NT_2FA_CONFIGURED = 12,
-        NT_SHARE_APPROVAL_DENIED = 13
+        NT_SHARE_APPROVAL_DENIED = 13,
+        NT_DEVICE_APPROVAL_APPROVED = 14,
+        NT_DEVICE_APPROVAL_DENIED = 15,
+        NT_ACCOUNT_CREATED = 16,
+        NT_2FA_ENABLED = 17,
+        NT_2FA_DISABLED = 18,
+        NT_SECURITY_KEYS_ENABLED = 19,
+        NT_SECURITY_KEYS_DISABLED = 20
     }
 
     /** NotificationReadStatus enum. */
@@ -79347,6 +79463,103 @@ export namespace NotificationCenter {
 
         /**
          * Gets the default type url for NotificationSyncRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a NotificationsApprovalStatusUpdateRequest. */
+    interface INotificationsApprovalStatusUpdateRequest {
+
+        /** NotificationsApprovalStatusUpdateRequest updates */
+        updates?: (NotificationCenter.IApprovalStatusUpdate[]|null);
+    }
+
+    /** Represents a NotificationsApprovalStatusUpdateRequest. */
+    class NotificationsApprovalStatusUpdateRequest implements INotificationsApprovalStatusUpdateRequest {
+
+        /**
+         * Constructs a new NotificationsApprovalStatusUpdateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: NotificationCenter.INotificationsApprovalStatusUpdateRequest);
+
+        /** NotificationsApprovalStatusUpdateRequest updates. */
+        public updates: NotificationCenter.IApprovalStatusUpdate[];
+
+        /**
+         * Creates a new NotificationsApprovalStatusUpdateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NotificationsApprovalStatusUpdateRequest instance
+         */
+        public static create(properties?: NotificationCenter.INotificationsApprovalStatusUpdateRequest): NotificationCenter.NotificationsApprovalStatusUpdateRequest;
+
+        /**
+         * Encodes the specified NotificationsApprovalStatusUpdateRequest message. Does not implicitly {@link NotificationCenter.NotificationsApprovalStatusUpdateRequest.verify|verify} messages.
+         * @param message NotificationsApprovalStatusUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: NotificationCenter.INotificationsApprovalStatusUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NotificationsApprovalStatusUpdateRequest message, length delimited. Does not implicitly {@link NotificationCenter.NotificationsApprovalStatusUpdateRequest.verify|verify} messages.
+         * @param message NotificationsApprovalStatusUpdateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: NotificationCenter.INotificationsApprovalStatusUpdateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NotificationsApprovalStatusUpdateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NotificationsApprovalStatusUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): NotificationCenter.NotificationsApprovalStatusUpdateRequest;
+
+        /**
+         * Decodes a NotificationsApprovalStatusUpdateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NotificationsApprovalStatusUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): NotificationCenter.NotificationsApprovalStatusUpdateRequest;
+
+        /**
+         * Verifies a NotificationsApprovalStatusUpdateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NotificationsApprovalStatusUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NotificationsApprovalStatusUpdateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): NotificationCenter.NotificationsApprovalStatusUpdateRequest;
+
+        /**
+         * Creates a plain object from a NotificationsApprovalStatusUpdateRequest message. Also converts values to other types if specified.
+         * @param message NotificationsApprovalStatusUpdateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: NotificationCenter.NotificationsApprovalStatusUpdateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NotificationsApprovalStatusUpdateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NotificationsApprovalStatusUpdateRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -86978,6 +87191,206 @@ export namespace BI {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of an EventResponse. */
+    interface IEventResponse {
+
+        /** EventResponse index */
+        index?: (number|null);
+
+        /** EventResponse status */
+        status?: (boolean|null);
+    }
+
+    /** Represents an EventResponse. */
+    class EventResponse implements IEventResponse {
+
+        /**
+         * Constructs a new EventResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IEventResponse);
+
+        /** EventResponse index. */
+        public index: number;
+
+        /** EventResponse status. */
+        public status: boolean;
+
+        /**
+         * Creates a new EventResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EventResponse instance
+         */
+        public static create(properties?: BI.IEventResponse): BI.EventResponse;
+
+        /**
+         * Encodes the specified EventResponse message. Does not implicitly {@link BI.EventResponse.verify|verify} messages.
+         * @param message EventResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IEventResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EventResponse message, length delimited. Does not implicitly {@link BI.EventResponse.verify|verify} messages.
+         * @param message EventResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IEventResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EventResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EventResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.EventResponse;
+
+        /**
+         * Decodes an EventResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EventResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.EventResponse;
+
+        /**
+         * Verifies an EventResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EventResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EventResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.EventResponse;
+
+        /**
+         * Creates a plain object from an EventResponse message. Also converts values to other types if specified.
+         * @param message EventResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.EventResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EventResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EventResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EventsResponse. */
+    interface IEventsResponse {
+
+        /** EventsResponse response */
+        response?: (BI.IEventResponse[]|null);
+    }
+
+    /** Represents an EventsResponse. */
+    class EventsResponse implements IEventsResponse {
+
+        /**
+         * Constructs a new EventsResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IEventsResponse);
+
+        /** EventsResponse response. */
+        public response: BI.IEventResponse[];
+
+        /**
+         * Creates a new EventsResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EventsResponse instance
+         */
+        public static create(properties?: BI.IEventsResponse): BI.EventsResponse;
+
+        /**
+         * Encodes the specified EventsResponse message. Does not implicitly {@link BI.EventsResponse.verify|verify} messages.
+         * @param message EventsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IEventsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EventsResponse message, length delimited. Does not implicitly {@link BI.EventsResponse.verify|verify} messages.
+         * @param message EventsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IEventsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EventsResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EventsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.EventsResponse;
+
+        /**
+         * Decodes an EventsResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EventsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.EventsResponse;
+
+        /**
+         * Verifies an EventsResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EventsResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EventsResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.EventsResponse;
+
+        /**
+         * Creates a plain object from an EventsResponse message. Also converts values to other types if specified.
+         * @param message EventsResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.EventsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EventsResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EventsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a CustomerCaptureRequest. */
     interface ICustomerCaptureRequest {
 
@@ -87225,7 +87638,8 @@ export namespace BI {
         addChat = 6,
         addPAM = 7,
         addSilverSupport = 8,
-        addPlatinumSupport = 9
+        addPlatinumSupport = 9,
+        addKEPM = 10
     }
 
     /** Properties of an Error. */
@@ -87354,6 +87768,9 @@ export namespace BI {
 
         /** QuotePurchase taxLabel */
         taxLabel?: (string|null);
+
+        /** QuotePurchase purchaseIdentifier */
+        purchaseIdentifier?: (string|null);
     }
 
     /** Represents a QuotePurchase. */
@@ -87379,6 +87796,9 @@ export namespace BI {
 
         /** QuotePurchase taxLabel. */
         public taxLabel: string;
+
+        /** QuotePurchase purchaseIdentifier. */
+        public purchaseIdentifier: string;
 
         /**
          * Creates a new QuotePurchase instance using the specified properties.
@@ -87452,6 +87872,423 @@ export namespace BI {
 
         /**
          * Gets the default type url for QuotePurchase
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PurchaseOptions. */
+    interface IPurchaseOptions {
+
+        /** PurchaseOptions inConsole */
+        inConsole?: (boolean|null);
+
+        /** PurchaseOptions externalCheckout */
+        externalCheckout?: (boolean|null);
+    }
+
+    /** Represents a PurchaseOptions. */
+    class PurchaseOptions implements IPurchaseOptions {
+
+        /**
+         * Constructs a new PurchaseOptions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IPurchaseOptions);
+
+        /** PurchaseOptions inConsole. */
+        public inConsole?: (boolean|null);
+
+        /** PurchaseOptions externalCheckout. */
+        public externalCheckout?: (boolean|null);
+
+        /** PurchaseOptions _inConsole. */
+        public _inConsole?: "inConsole";
+
+        /** PurchaseOptions _externalCheckout. */
+        public _externalCheckout?: "externalCheckout";
+
+        /**
+         * Creates a new PurchaseOptions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PurchaseOptions instance
+         */
+        public static create(properties?: BI.IPurchaseOptions): BI.PurchaseOptions;
+
+        /**
+         * Encodes the specified PurchaseOptions message. Does not implicitly {@link BI.PurchaseOptions.verify|verify} messages.
+         * @param message PurchaseOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IPurchaseOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PurchaseOptions message, length delimited. Does not implicitly {@link BI.PurchaseOptions.verify|verify} messages.
+         * @param message PurchaseOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IPurchaseOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PurchaseOptions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PurchaseOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.PurchaseOptions;
+
+        /**
+         * Decodes a PurchaseOptions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PurchaseOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.PurchaseOptions;
+
+        /**
+         * Verifies a PurchaseOptions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PurchaseOptions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PurchaseOptions
+         */
+        public static fromObject(object: { [k: string]: any }): BI.PurchaseOptions;
+
+        /**
+         * Creates a plain object from a PurchaseOptions message. Also converts values to other types if specified.
+         * @param message PurchaseOptions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.PurchaseOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PurchaseOptions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PurchaseOptions
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AddonPurchaseOptions. */
+    interface IAddonPurchaseOptions {
+
+        /** AddonPurchaseOptions storage */
+        storage?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions audit */
+        audit?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions breachwatch */
+        breachwatch?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions chat */
+        chat?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions compliance */
+        compliance?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions professionalServicesSilver */
+        professionalServicesSilver?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions professionalServicesPlatinum */
+        professionalServicesPlatinum?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions pam */
+        pam?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions epm */
+        epm?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions secretsManager */
+        secretsManager?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions connectionManager */
+        connectionManager?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions remoteBrowserIsolation */
+        remoteBrowserIsolation?: (BI.IPurchaseOptions|null);
+    }
+
+    /** Represents an AddonPurchaseOptions. */
+    class AddonPurchaseOptions implements IAddonPurchaseOptions {
+
+        /**
+         * Constructs a new AddonPurchaseOptions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IAddonPurchaseOptions);
+
+        /** AddonPurchaseOptions storage. */
+        public storage?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions audit. */
+        public audit?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions breachwatch. */
+        public breachwatch?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions chat. */
+        public chat?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions compliance. */
+        public compliance?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions professionalServicesSilver. */
+        public professionalServicesSilver?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions professionalServicesPlatinum. */
+        public professionalServicesPlatinum?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions pam. */
+        public pam?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions epm. */
+        public epm?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions secretsManager. */
+        public secretsManager?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions connectionManager. */
+        public connectionManager?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions remoteBrowserIsolation. */
+        public remoteBrowserIsolation?: (BI.IPurchaseOptions|null);
+
+        /** AddonPurchaseOptions _storage. */
+        public _storage?: "storage";
+
+        /** AddonPurchaseOptions _audit. */
+        public _audit?: "audit";
+
+        /** AddonPurchaseOptions _breachwatch. */
+        public _breachwatch?: "breachwatch";
+
+        /** AddonPurchaseOptions _chat. */
+        public _chat?: "chat";
+
+        /** AddonPurchaseOptions _compliance. */
+        public _compliance?: "compliance";
+
+        /** AddonPurchaseOptions _professionalServicesSilver. */
+        public _professionalServicesSilver?: "professionalServicesSilver";
+
+        /** AddonPurchaseOptions _professionalServicesPlatinum. */
+        public _professionalServicesPlatinum?: "professionalServicesPlatinum";
+
+        /** AddonPurchaseOptions _pam. */
+        public _pam?: "pam";
+
+        /** AddonPurchaseOptions _epm. */
+        public _epm?: "epm";
+
+        /** AddonPurchaseOptions _secretsManager. */
+        public _secretsManager?: "secretsManager";
+
+        /** AddonPurchaseOptions _connectionManager. */
+        public _connectionManager?: "connectionManager";
+
+        /** AddonPurchaseOptions _remoteBrowserIsolation. */
+        public _remoteBrowserIsolation?: "remoteBrowserIsolation";
+
+        /**
+         * Creates a new AddonPurchaseOptions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AddonPurchaseOptions instance
+         */
+        public static create(properties?: BI.IAddonPurchaseOptions): BI.AddonPurchaseOptions;
+
+        /**
+         * Encodes the specified AddonPurchaseOptions message. Does not implicitly {@link BI.AddonPurchaseOptions.verify|verify} messages.
+         * @param message AddonPurchaseOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IAddonPurchaseOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AddonPurchaseOptions message, length delimited. Does not implicitly {@link BI.AddonPurchaseOptions.verify|verify} messages.
+         * @param message AddonPurchaseOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IAddonPurchaseOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AddonPurchaseOptions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AddonPurchaseOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.AddonPurchaseOptions;
+
+        /**
+         * Decodes an AddonPurchaseOptions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AddonPurchaseOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.AddonPurchaseOptions;
+
+        /**
+         * Verifies an AddonPurchaseOptions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AddonPurchaseOptions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AddonPurchaseOptions
+         */
+        public static fromObject(object: { [k: string]: any }): BI.AddonPurchaseOptions;
+
+        /**
+         * Creates a plain object from an AddonPurchaseOptions message. Also converts values to other types if specified.
+         * @param message AddonPurchaseOptions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.AddonPurchaseOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AddonPurchaseOptions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddonPurchaseOptions
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AvailablePurchaseOptions. */
+    interface IAvailablePurchaseOptions {
+
+        /** AvailablePurchaseOptions basePlan */
+        basePlan?: (BI.IPurchaseOptions|null);
+
+        /** AvailablePurchaseOptions users */
+        users?: (BI.IPurchaseOptions|null);
+
+        /** AvailablePurchaseOptions addons */
+        addons?: (BI.IAddonPurchaseOptions|null);
+    }
+
+    /** Represents an AvailablePurchaseOptions. */
+    class AvailablePurchaseOptions implements IAvailablePurchaseOptions {
+
+        /**
+         * Constructs a new AvailablePurchaseOptions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IAvailablePurchaseOptions);
+
+        /** AvailablePurchaseOptions basePlan. */
+        public basePlan?: (BI.IPurchaseOptions|null);
+
+        /** AvailablePurchaseOptions users. */
+        public users?: (BI.IPurchaseOptions|null);
+
+        /** AvailablePurchaseOptions addons. */
+        public addons?: (BI.IAddonPurchaseOptions|null);
+
+        /**
+         * Creates a new AvailablePurchaseOptions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AvailablePurchaseOptions instance
+         */
+        public static create(properties?: BI.IAvailablePurchaseOptions): BI.AvailablePurchaseOptions;
+
+        /**
+         * Encodes the specified AvailablePurchaseOptions message. Does not implicitly {@link BI.AvailablePurchaseOptions.verify|verify} messages.
+         * @param message AvailablePurchaseOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IAvailablePurchaseOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AvailablePurchaseOptions message, length delimited. Does not implicitly {@link BI.AvailablePurchaseOptions.verify|verify} messages.
+         * @param message AvailablePurchaseOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IAvailablePurchaseOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AvailablePurchaseOptions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AvailablePurchaseOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.AvailablePurchaseOptions;
+
+        /**
+         * Decodes an AvailablePurchaseOptions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AvailablePurchaseOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.AvailablePurchaseOptions;
+
+        /**
+         * Verifies an AvailablePurchaseOptions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AvailablePurchaseOptions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AvailablePurchaseOptions
+         */
+        public static fromObject(object: { [k: string]: any }): BI.AvailablePurchaseOptions;
+
+        /**
+         * Creates a plain object from an AvailablePurchaseOptions message. Also converts values to other types if specified.
+         * @param message AvailablePurchaseOptions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.AvailablePurchaseOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AvailablePurchaseOptions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AvailablePurchaseOptions
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -87555,8 +88392,8 @@ export namespace BI {
         /** UpgradeLicenseStatusResponse allowPurchaseFromConsole */
         allowPurchaseFromConsole?: (boolean|null);
 
-        /** UpgradeLicenseStatusResponse checkoutLink */
-        checkoutLink?: (string|null);
+        /** UpgradeLicenseStatusResponse purchaseOptions */
+        purchaseOptions?: (BI.IAvailablePurchaseOptions|null);
 
         /** UpgradeLicenseStatusResponse error */
         error?: (BI.IError|null);
@@ -87574,8 +88411,8 @@ export namespace BI {
         /** UpgradeLicenseStatusResponse allowPurchaseFromConsole. */
         public allowPurchaseFromConsole: boolean;
 
-        /** UpgradeLicenseStatusResponse checkoutLink. */
-        public checkoutLink: string;
+        /** UpgradeLicenseStatusResponse purchaseOptions. */
+        public purchaseOptions?: (BI.IAvailablePurchaseOptions|null);
 
         /** UpgradeLicenseStatusResponse error. */
         public error?: (BI.IError|null);
@@ -87666,6 +88503,9 @@ export namespace BI {
 
         /** UpgradeLicenseQuotePurchaseRequest quantity */
         quantity?: (number|null);
+
+        /** UpgradeLicenseQuotePurchaseRequest tier */
+        tier?: (number|null);
     }
 
     /** Represents an UpgradeLicenseQuotePurchaseRequest. */
@@ -87682,6 +88522,9 @@ export namespace BI {
 
         /** UpgradeLicenseQuotePurchaseRequest quantity. */
         public quantity: number;
+
+        /** UpgradeLicenseQuotePurchaseRequest tier. */
+        public tier: number;
 
         /**
          * Creates a new UpgradeLicenseQuotePurchaseRequest instance using the specified properties.
@@ -87887,6 +88730,9 @@ export namespace BI {
 
         /** UpgradeLicenseCompletePurchaseRequest quotePurchase */
         quotePurchase?: (BI.IQuotePurchase|null);
+
+        /** UpgradeLicenseCompletePurchaseRequest tier */
+        tier?: (number|null);
     }
 
     /** Represents an UpgradeLicenseCompletePurchaseRequest. */
@@ -87906,6 +88752,9 @@ export namespace BI {
 
         /** UpgradeLicenseCompletePurchaseRequest quotePurchase. */
         public quotePurchase?: (BI.IQuotePurchase|null);
+
+        /** UpgradeLicenseCompletePurchaseRequest tier. */
+        public tier: number;
 
         /**
          * Creates a new UpgradeLicenseCompletePurchaseRequest instance using the specified properties.
@@ -88947,6 +89796,821 @@ export namespace BI {
 
         /**
          * Gets the default type url for SingularEventRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetDailyCountRequest. */
+    interface IGetDailyCountRequest {
+
+        /** GetDailyCountRequest enterpriseId */
+        enterpriseId?: (number[]|null);
+
+        /** GetDailyCountRequest monthYear */
+        monthYear?: (BI.IMonthYear|null);
+
+        /** GetDailyCountRequest dateRange */
+        dateRange?: (BI.IDateRange|null);
+    }
+
+    /** Represents a GetDailyCountRequest. */
+    class GetDailyCountRequest implements IGetDailyCountRequest {
+
+        /**
+         * Constructs a new GetDailyCountRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IGetDailyCountRequest);
+
+        /** GetDailyCountRequest enterpriseId. */
+        public enterpriseId: number[];
+
+        /** GetDailyCountRequest monthYear. */
+        public monthYear?: (BI.IMonthYear|null);
+
+        /** GetDailyCountRequest dateRange. */
+        public dateRange?: (BI.IDateRange|null);
+
+        /** GetDailyCountRequest period. */
+        public period?: ("monthYear"|"dateRange");
+
+        /**
+         * Creates a new GetDailyCountRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetDailyCountRequest instance
+         */
+        public static create(properties?: BI.IGetDailyCountRequest): BI.GetDailyCountRequest;
+
+        /**
+         * Encodes the specified GetDailyCountRequest message. Does not implicitly {@link BI.GetDailyCountRequest.verify|verify} messages.
+         * @param message GetDailyCountRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IGetDailyCountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetDailyCountRequest message, length delimited. Does not implicitly {@link BI.GetDailyCountRequest.verify|verify} messages.
+         * @param message GetDailyCountRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IGetDailyCountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetDailyCountRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetDailyCountRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.GetDailyCountRequest;
+
+        /**
+         * Decodes a GetDailyCountRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetDailyCountRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.GetDailyCountRequest;
+
+        /**
+         * Verifies a GetDailyCountRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetDailyCountRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetDailyCountRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.GetDailyCountRequest;
+
+        /**
+         * Creates a plain object from a GetDailyCountRequest message. Also converts values to other types if specified.
+         * @param message GetDailyCountRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.GetDailyCountRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetDailyCountRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetDailyCountRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a MonthYear. */
+    interface IMonthYear {
+
+        /** MonthYear month */
+        month?: (number|null);
+
+        /** MonthYear year */
+        year?: (number|null);
+    }
+
+    /** Represents a MonthYear. */
+    class MonthYear implements IMonthYear {
+
+        /**
+         * Constructs a new MonthYear.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IMonthYear);
+
+        /** MonthYear month. */
+        public month: number;
+
+        /** MonthYear year. */
+        public year: number;
+
+        /**
+         * Creates a new MonthYear instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MonthYear instance
+         */
+        public static create(properties?: BI.IMonthYear): BI.MonthYear;
+
+        /**
+         * Encodes the specified MonthYear message. Does not implicitly {@link BI.MonthYear.verify|verify} messages.
+         * @param message MonthYear message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IMonthYear, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MonthYear message, length delimited. Does not implicitly {@link BI.MonthYear.verify|verify} messages.
+         * @param message MonthYear message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IMonthYear, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MonthYear message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MonthYear
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.MonthYear;
+
+        /**
+         * Decodes a MonthYear message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MonthYear
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.MonthYear;
+
+        /**
+         * Verifies a MonthYear message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MonthYear message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MonthYear
+         */
+        public static fromObject(object: { [k: string]: any }): BI.MonthYear;
+
+        /**
+         * Creates a plain object from a MonthYear message. Also converts values to other types if specified.
+         * @param message MonthYear
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.MonthYear, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MonthYear to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MonthYear
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a DateRange. */
+    interface IDateRange {
+
+        /** DateRange start */
+        start?: (number|Long|null);
+
+        /** DateRange end */
+        end?: (number|Long|null);
+    }
+
+    /** Represents a DateRange. */
+    class DateRange implements IDateRange {
+
+        /**
+         * Constructs a new DateRange.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IDateRange);
+
+        /** DateRange start. */
+        public start: (number|Long);
+
+        /** DateRange end. */
+        public end: (number|Long);
+
+        /**
+         * Creates a new DateRange instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DateRange instance
+         */
+        public static create(properties?: BI.IDateRange): BI.DateRange;
+
+        /**
+         * Encodes the specified DateRange message. Does not implicitly {@link BI.DateRange.verify|verify} messages.
+         * @param message DateRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IDateRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DateRange message, length delimited. Does not implicitly {@link BI.DateRange.verify|verify} messages.
+         * @param message DateRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IDateRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DateRange message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DateRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.DateRange;
+
+        /**
+         * Decodes a DateRange message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DateRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.DateRange;
+
+        /**
+         * Verifies a DateRange message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DateRange message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DateRange
+         */
+        public static fromObject(object: { [k: string]: any }): BI.DateRange;
+
+        /**
+         * Creates a plain object from a DateRange message. Also converts values to other types if specified.
+         * @param message DateRange
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.DateRange, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DateRange to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DateRange
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a DailyCount. */
+    interface IDailyCount {
+
+        /** DailyCount date */
+        date?: (number|Long|null);
+
+        /** DailyCount pamCount */
+        pamCount?: (number|null);
+    }
+
+    /** Represents a DailyCount. */
+    class DailyCount implements IDailyCount {
+
+        /**
+         * Constructs a new DailyCount.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IDailyCount);
+
+        /** DailyCount date. */
+        public date: (number|Long);
+
+        /** DailyCount pamCount. */
+        public pamCount: number;
+
+        /**
+         * Creates a new DailyCount instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DailyCount instance
+         */
+        public static create(properties?: BI.IDailyCount): BI.DailyCount;
+
+        /**
+         * Encodes the specified DailyCount message. Does not implicitly {@link BI.DailyCount.verify|verify} messages.
+         * @param message DailyCount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IDailyCount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DailyCount message, length delimited. Does not implicitly {@link BI.DailyCount.verify|verify} messages.
+         * @param message DailyCount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IDailyCount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DailyCount message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DailyCount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.DailyCount;
+
+        /**
+         * Decodes a DailyCount message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DailyCount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.DailyCount;
+
+        /**
+         * Verifies a DailyCount message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DailyCount message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DailyCount
+         */
+        public static fromObject(object: { [k: string]: any }): BI.DailyCount;
+
+        /**
+         * Creates a plain object from a DailyCount message. Also converts values to other types if specified.
+         * @param message DailyCount
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.DailyCount, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DailyCount to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DailyCount
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a CountForEnterprise. */
+    interface ICountForEnterprise {
+
+        /** CountForEnterprise enterpriseId */
+        enterpriseId?: (number|null);
+
+        /** CountForEnterprise counts */
+        counts?: (BI.IDailyCount[]|null);
+    }
+
+    /** Represents a CountForEnterprise. */
+    class CountForEnterprise implements ICountForEnterprise {
+
+        /**
+         * Constructs a new CountForEnterprise.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.ICountForEnterprise);
+
+        /** CountForEnterprise enterpriseId. */
+        public enterpriseId: number;
+
+        /** CountForEnterprise counts. */
+        public counts: BI.IDailyCount[];
+
+        /**
+         * Creates a new CountForEnterprise instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns CountForEnterprise instance
+         */
+        public static create(properties?: BI.ICountForEnterprise): BI.CountForEnterprise;
+
+        /**
+         * Encodes the specified CountForEnterprise message. Does not implicitly {@link BI.CountForEnterprise.verify|verify} messages.
+         * @param message CountForEnterprise message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.ICountForEnterprise, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified CountForEnterprise message, length delimited. Does not implicitly {@link BI.CountForEnterprise.verify|verify} messages.
+         * @param message CountForEnterprise message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.ICountForEnterprise, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a CountForEnterprise message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns CountForEnterprise
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.CountForEnterprise;
+
+        /**
+         * Decodes a CountForEnterprise message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns CountForEnterprise
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.CountForEnterprise;
+
+        /**
+         * Verifies a CountForEnterprise message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a CountForEnterprise message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns CountForEnterprise
+         */
+        public static fromObject(object: { [k: string]: any }): BI.CountForEnterprise;
+
+        /**
+         * Creates a plain object from a CountForEnterprise message. Also converts values to other types if specified.
+         * @param message CountForEnterprise
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.CountForEnterprise, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this CountForEnterprise to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for CountForEnterprise
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetDailyCountResponse. */
+    interface IGetDailyCountResponse {
+
+        /** GetDailyCountResponse enterpriseCounts */
+        enterpriseCounts?: (BI.ICountForEnterprise[]|null);
+    }
+
+    /** Represents a GetDailyCountResponse. */
+    class GetDailyCountResponse implements IGetDailyCountResponse {
+
+        /**
+         * Constructs a new GetDailyCountResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IGetDailyCountResponse);
+
+        /** GetDailyCountResponse enterpriseCounts. */
+        public enterpriseCounts: BI.ICountForEnterprise[];
+
+        /**
+         * Creates a new GetDailyCountResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetDailyCountResponse instance
+         */
+        public static create(properties?: BI.IGetDailyCountResponse): BI.GetDailyCountResponse;
+
+        /**
+         * Encodes the specified GetDailyCountResponse message. Does not implicitly {@link BI.GetDailyCountResponse.verify|verify} messages.
+         * @param message GetDailyCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IGetDailyCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetDailyCountResponse message, length delimited. Does not implicitly {@link BI.GetDailyCountResponse.verify|verify} messages.
+         * @param message GetDailyCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IGetDailyCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetDailyCountResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetDailyCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.GetDailyCountResponse;
+
+        /**
+         * Decodes a GetDailyCountResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetDailyCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.GetDailyCountResponse;
+
+        /**
+         * Verifies a GetDailyCountResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetDailyCountResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetDailyCountResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.GetDailyCountResponse;
+
+        /**
+         * Creates a plain object from a GetDailyCountResponse message. Also converts values to other types if specified.
+         * @param message GetDailyCountResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.GetDailyCountResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetDailyCountResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetDailyCountResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an ActivePamCountRequest. */
+    interface IActivePamCountRequest {
+
+        /** ActivePamCountRequest enterpriseId */
+        enterpriseId?: (number|null);
+    }
+
+    /** Represents an ActivePamCountRequest. */
+    class ActivePamCountRequest implements IActivePamCountRequest {
+
+        /**
+         * Constructs a new ActivePamCountRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IActivePamCountRequest);
+
+        /** ActivePamCountRequest enterpriseId. */
+        public enterpriseId: number;
+
+        /**
+         * Creates a new ActivePamCountRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ActivePamCountRequest instance
+         */
+        public static create(properties?: BI.IActivePamCountRequest): BI.ActivePamCountRequest;
+
+        /**
+         * Encodes the specified ActivePamCountRequest message. Does not implicitly {@link BI.ActivePamCountRequest.verify|verify} messages.
+         * @param message ActivePamCountRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IActivePamCountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ActivePamCountRequest message, length delimited. Does not implicitly {@link BI.ActivePamCountRequest.verify|verify} messages.
+         * @param message ActivePamCountRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IActivePamCountRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ActivePamCountRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ActivePamCountRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.ActivePamCountRequest;
+
+        /**
+         * Decodes an ActivePamCountRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ActivePamCountRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.ActivePamCountRequest;
+
+        /**
+         * Verifies an ActivePamCountRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ActivePamCountRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ActivePamCountRequest
+         */
+        public static fromObject(object: { [k: string]: any }): BI.ActivePamCountRequest;
+
+        /**
+         * Creates a plain object from an ActivePamCountRequest message. Also converts values to other types if specified.
+         * @param message ActivePamCountRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.ActivePamCountRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ActivePamCountRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ActivePamCountRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an ActivePamCountResponse. */
+    interface IActivePamCountResponse {
+
+        /** ActivePamCountResponse pamCount */
+        pamCount?: (number|null);
+    }
+
+    /** Represents an ActivePamCountResponse. */
+    class ActivePamCountResponse implements IActivePamCountResponse {
+
+        /**
+         * Constructs a new ActivePamCountResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IActivePamCountResponse);
+
+        /** ActivePamCountResponse pamCount. */
+        public pamCount: number;
+
+        /**
+         * Creates a new ActivePamCountResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ActivePamCountResponse instance
+         */
+        public static create(properties?: BI.IActivePamCountResponse): BI.ActivePamCountResponse;
+
+        /**
+         * Encodes the specified ActivePamCountResponse message. Does not implicitly {@link BI.ActivePamCountResponse.verify|verify} messages.
+         * @param message ActivePamCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IActivePamCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ActivePamCountResponse message, length delimited. Does not implicitly {@link BI.ActivePamCountResponse.verify|verify} messages.
+         * @param message ActivePamCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: BI.IActivePamCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ActivePamCountResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ActivePamCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.ActivePamCountResponse;
+
+        /**
+         * Decodes an ActivePamCountResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ActivePamCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BI.ActivePamCountResponse;
+
+        /**
+         * Verifies an ActivePamCountResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ActivePamCountResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ActivePamCountResponse
+         */
+        public static fromObject(object: { [k: string]: any }): BI.ActivePamCountResponse;
+
+        /**
+         * Creates a plain object from an ActivePamCountResponse message. Also converts values to other types if specified.
+         * @param message ActivePamCountResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.ActivePamCountResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ActivePamCountResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ActivePamCountResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
