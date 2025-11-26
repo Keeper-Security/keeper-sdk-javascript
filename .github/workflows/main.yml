@@ -34,9 +34,9 @@ jobs:
         env:
           NPM_TOKEN: ""
 
-#      - name: Lib - Run Tests
-#        run: npm run test:ci
-#        working-directory: ./keeperapi
+      - name: Lib - Run Sync Down Test
+        run: npm run test:syncDown
+        working-directory: ./keeperapi
 
       - name: Examples (node) - Installation
         run: npm run link-local
