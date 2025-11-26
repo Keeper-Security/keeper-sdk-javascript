@@ -991,7 +991,7 @@ function bytesToHex(data: Uint8Array): string {
 
 const OPCODE_PING = new Uint8Array([0x9])
 
-export const heartbeat = setInterval(() => {
+const heartbeat = setInterval(() => {
     if (!socket) return
     if (socket.readyState !== WebSocket.OPEN) return
     socket.send(OPCODE_PING)

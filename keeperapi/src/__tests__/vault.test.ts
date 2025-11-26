@@ -1,6 +1,6 @@
 import {syncDown, VaultStorage} from "../vault"
 import {Auth} from '../auth'
-import {browserPlatform, heartbeat} from "../browser/platform"
+import {nodePlatform} from "../node/platform"
 import {connectPlatform, platform} from "../platform";
 import {generateTestEccKeyPair} from './testUtils'
 import {SyncDownResponseBuilder} from './SyncDownResponseBuilder'
@@ -16,12 +16,9 @@ describe('Sync Down', () => {
   let mockSyncDownCommand: jest.MockedFunction<() => any>;
   let syncDownResponseBuilder: SyncDownResponseBuilder;
   beforeAll(async () => {
-    connectPlatform(browserPlatform)
+    connectPlatform(nodePlatform)
     dataKey = platform.getRandomBytes(32)
     eccKeyPair = await generateTestEccKeyPair()
-  })
-  afterAll(() => {
-    clearInterval(heartbeat)
   })
   describe('Owned Records', () => {
     beforeEach(() => {
@@ -31,7 +28,8 @@ describe('Sync Down', () => {
         delete: jest.fn(),
         removeDependencies: jest.fn(),
         put: jest.fn(),
-        saveObject: jest.fn()
+        saveObject: jest.fn(),
+        saveKeyBytes: jest.fn(),
       } as unknown as VaultStorage;
       mockSyncDownCommand = jest.fn()
       auth = {
