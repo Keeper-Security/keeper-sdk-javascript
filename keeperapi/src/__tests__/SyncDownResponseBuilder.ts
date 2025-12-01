@@ -39,6 +39,16 @@ export class SyncDownResponseBuilder {
     }
   }
 
+  addSecurityScoreData(securityScoreData: Vault.ISecurityScoreData) {
+    this.data.securityScoreData?.push(securityScoreData)
+    return this
+  }
+
+  addBreachWatchSecurityData(breachWatchSecurityData: Vault.IBreachWatchSecurityData) {
+    this.data.breachWatchSecurityData?.push(breachWatchSecurityData)
+    return this
+  }
+
   addUserFolderRecord(userFolderRecord: Vault.IUserFolderRecord) {
     this.data.userFolderRecords?.push(userFolderRecord)
     return this
