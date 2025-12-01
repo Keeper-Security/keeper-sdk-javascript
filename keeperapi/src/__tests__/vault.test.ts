@@ -2,10 +2,8 @@ import {syncDown, VaultStorage} from "../vault"
 import {Auth} from '../auth'
 import {nodePlatform} from "../node/platform"
 import {connectPlatform, platform} from "../platform";
-import {generateTestEccKeyPair} from './testUtils'
 import {SyncDownResponseBuilder} from './SyncDownResponseBuilder'
 import {Records, Vault} from "../proto";
-import RecordKeyType = Records.RecordKeyType;
 import {webSafe64FromBytes} from "../utils";
 
 describe('Sync Down', () => {
@@ -18,7 +16,7 @@ describe('Sync Down', () => {
   beforeAll(async () => {
     connectPlatform(nodePlatform)
     dataKey = platform.getRandomBytes(32)
-    eccKeyPair = await generateTestEccKeyPair()
+    eccKeyPair = await platform.generateECKeyPair()
   })
   describe('Owned Records', () => {
     beforeEach(() => {
@@ -57,7 +55,7 @@ describe('Sync Down', () => {
         owner: true,
         canEdit: true,
         canShare: true,
-        recordKeyType: RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM,
+        recordKeyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM,
         ownerUsername: 'hlee+dev@keepersecurity.com',
         ownerAccountUid: platform.getRandomBytes(16),
       }
