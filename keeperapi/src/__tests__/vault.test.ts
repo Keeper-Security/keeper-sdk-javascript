@@ -38,7 +38,7 @@ describe('Sync Down', () => {
       } as unknown as Auth;
       syncDownResponseBuilder = new SyncDownResponseBuilder();
     })
-    it('calls the storage.get when a new record is created by the user', async () => {
+    it('saves the record data when a new record is created by the user', async () => {
       const decryptedRecordKey = platform.getRandomBytes(32)
       const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
       const recordUid = platform.getRandomBytes(16)
@@ -90,7 +90,7 @@ describe('Sync Down', () => {
       )
     })
 
-    it('calls the storage.put when an existing record is updated by the user', async () => {
+    it('saves the new record data when an existing record is updated by the user', async () => {
       const decryptedRecordKey = platform.getRandomBytes(32)
       const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
       const recordUid = platform.getRandomBytes(16)
@@ -124,7 +124,7 @@ describe('Sync Down', () => {
       )
     })
 
-    it('calls the storage.delete when an existing record is removed', async () => {
+    it('deletes the record data when an existing record is removed', async () => {
       const recordUid = platform.getRandomBytes(16)
       syncDownResponseBuilder
         .addRemovedRecord(recordUid)
