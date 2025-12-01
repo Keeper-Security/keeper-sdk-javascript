@@ -48,7 +48,10 @@ describe('Sync Down', () => {
       }
       const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
       const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
-
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        revision: 1,
+      }
       const recordMetadata: Vault.IRecordMetaData = {
         recordUid,
         recordKey,
@@ -66,6 +69,7 @@ describe('Sync Down', () => {
         extra: new Uint8Array([]),
       }
       syncDownResponseBuilder
+        .addUserFolderRecord(userFolderRecord)
         .addRecordMetadata(recordMetadata)
         .addRecord(record)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
@@ -88,6 +92,13 @@ describe('Sync Down', () => {
           data: decryptedRecordData,
         })
       )
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        "": new Set([{
+          kind: "record",
+          "parentUid": "",
+          uid: recordUidStr,
+        }])
+      })
     })
 
     it('saves the new record data when an existing record is updated by the user', async () => {

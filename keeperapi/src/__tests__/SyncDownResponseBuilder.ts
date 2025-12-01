@@ -39,6 +39,11 @@ export class SyncDownResponseBuilder {
     }
   }
 
+  addUserFolderRecord(userFolderRecord: Vault.IUserFolderRecord) {
+    this.data.userFolderRecords?.push(userFolderRecord)
+    return this
+  }
+
   addRecordMetadata(recordMetadata: Vault.IRecordMetaData) {
     this.data.recordMetaData?.push(recordMetadata)
     return this

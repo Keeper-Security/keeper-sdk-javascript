@@ -468,7 +468,7 @@ const processUserFolders = async (folders: IUserFolder[], storage: VaultStorage,
 const processUserFolderRecords = async (folderRecords: IUserFolderRecord[], dependencies: Dependencies) => {
     for (const folderRecord of folderRecords as NN<IUserFolderRecord>[]) {
         const recUid = webSafe64FromBytes(folderRecord.recordUid)
-        if (folderRecord.folderUid.length > 0) {
+        if (folderRecord.folderUid?.length > 0) {
             addDependencies(dependencies, webSafe64FromBytes(folderRecord.folderUid), recUid, 'record')
         } else {
             // Root user folder
