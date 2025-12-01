@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20'
 
       - name: Lib - Install
         run: npm i
@@ -34,9 +34,9 @@ jobs:
         env:
           NPM_TOKEN: ""
 
-#      - name: Lib - Run Tests
-#        run: npm run test:ci
-#        working-directory: ./keeperapi
+      - name: Lib - Run Sync Down Test
+        run: npm run test:syncDown
+        working-directory: ./keeperapi
 
       - name: Examples (node) - Installation
         run: npm run link-local
