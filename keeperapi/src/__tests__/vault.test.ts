@@ -34,26 +34,26 @@ describe('Sync Down', () => {
       accountUid: platform.getRandomBytes(16)
     }
   })
+  beforeEach(() => {
+    storage = {
+      get: jest.fn(),
+      addDependencies: jest.fn(),
+      delete: jest.fn(),
+      removeDependencies: jest.fn(),
+      put: jest.fn(),
+      saveObject: jest.fn(),
+      saveKeyBytes: jest.fn(),
+    } as unknown as VaultStorage;
+    mockSyncDownCommand = jest.fn()
+    auth = {
+      dataKey,
+      eccPrivateKey: eccKeyPair.privateKey,
+      eccPublicKey: eccKeyPair.publicKey,
+      executeRest: mockSyncDownCommand,
+    } as unknown as Auth;
+    syncDownResponseBuilder = new SyncDownResponseBuilder();
+  })
   describe('Owned Records', () => {
-    beforeEach(() => {
-      storage = {
-        get: jest.fn(),
-        addDependencies: jest.fn(),
-        delete: jest.fn(),
-        removeDependencies: jest.fn(),
-        put: jest.fn(),
-        saveObject: jest.fn(),
-        saveKeyBytes: jest.fn(),
-      } as unknown as VaultStorage;
-      mockSyncDownCommand = jest.fn()
-      auth = {
-        dataKey,
-        eccPrivateKey: eccKeyPair.privateKey,
-        eccPublicKey: eccKeyPair.publicKey,
-        executeRest: mockSyncDownCommand,
-      } as unknown as Auth;
-      syncDownResponseBuilder = new SyncDownResponseBuilder();
-    })
     it('saves the record data when a new record is created by the user', async () => {
       const decryptedRecordKey = platform.getRandomBytes(32)
       const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
