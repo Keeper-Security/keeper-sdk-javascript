@@ -17,6 +17,10 @@ describe('Sync Down', () => {
     username: string,
     accountUid: Uint8Array,
   }
+  let anotherUserA: {
+    username: string,
+    accountUid: Uint8Array,
+  }
   beforeAll(async () => {
     connectPlatform(nodePlatform)
     dataKey = platform.getRandomBytes(32)
@@ -25,27 +29,31 @@ describe('Sync Down', () => {
       username: 'keeper@keepersecurity.com',
       accountUid: platform.getRandomBytes(16)
     }
+    anotherUserA = {
+      username: 'another@keepersecurity.com',
+      accountUid: platform.getRandomBytes(16)
+    }
+  })
+  beforeEach(() => {
+    storage = {
+      get: jest.fn(),
+      addDependencies: jest.fn(),
+      delete: jest.fn(),
+      removeDependencies: jest.fn(),
+      put: jest.fn(),
+      saveObject: jest.fn(),
+      saveKeyBytes: jest.fn(),
+    } as unknown as VaultStorage;
+    mockSyncDownCommand = jest.fn()
+    auth = {
+      dataKey,
+      eccPrivateKey: eccKeyPair.privateKey,
+      eccPublicKey: eccKeyPair.publicKey,
+      executeRest: mockSyncDownCommand,
+    } as unknown as Auth;
+    syncDownResponseBuilder = new SyncDownResponseBuilder();
   })
   describe('Owned Records', () => {
-    beforeEach(() => {
-      storage = {
-        get: jest.fn(),
-        addDependencies: jest.fn(),
-        delete: jest.fn(),
-        removeDependencies: jest.fn(),
-        put: jest.fn(),
-        saveObject: jest.fn(),
-        saveKeyBytes: jest.fn(),
-      } as unknown as VaultStorage;
-      mockSyncDownCommand = jest.fn()
-      auth = {
-        dataKey,
-        eccPrivateKey: eccKeyPair.privateKey,
-        eccPublicKey: eccKeyPair.publicKey,
-        executeRest: mockSyncDownCommand,
-      } as unknown as Auth;
-      syncDownResponseBuilder = new SyncDownResponseBuilder();
-    })
     it('saves the record data when a new record is created by the user', async () => {
       const decryptedRecordKey = platform.getRandomBytes(32)
       const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
@@ -253,6 +261,133 @@ describe('Sync Down', () => {
       })
       expect(storage.delete).toHaveBeenCalledWith('record', webSafe64FromBytes(recordUid))
     })
+  })
+  describe('Directly-Shared Records', () => {
+    it('saves the record data when a record is direct-shared by other user', async () => {
+      const decryptedRecordKey = platform.getRandomBytes(32)
+      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
+      const recordUid = platform.getRandomBytes(16)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const decryptedRecordData = {
+        title: 'test record',
+      }
+      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
+      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        revision: 1,
+      }
+      const recordMetadata: Vault.IRecordMetaData = {
+        recordUid,
+        recordKey,
+        owner: false,
+        canEdit: true,
+        canShare: true,
+        recordKeyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM,
+        ownerUsername: anotherUserA.username,
+        ownerAccountUid: anotherUserA.accountUid,
+      }
+      const record: Vault.IRecord = {
+        recordUid,
+        version: 3,
+        data: recordData,
+        extra: new Uint8Array([]),
+      }
+      syncDownResponseBuilder
+        .addUserFolderRecord(userFolderRecord)
+        .addRecordMetadata(recordMetadata)
+        .addRecord(record)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'metadata',
+          uid: recordUidStr,
+          owner: recordMetadata.owner,
+          ownerUsername: recordMetadata.ownerUsername,
+        })
+      )
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'record',
+          uid: recordUidStr,
+          data: decryptedRecordData,
+        })
+      )
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        "": new Set([{
+          kind: "record",
+          "parentUid": "",
+          uid: recordUidStr,
+        }])
+      })
+    })
+    it('saves the record data when the direct-shared record is updated by another user or the user', async () => {
+      const decryptedRecordKey = platform.getRandomBytes(32)
+      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
+      const recordUid = platform.getRandomBytes(16)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+      const decryptedRecordData = {
+        title: 'test record updated',
+      }
+      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
+      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
+      const recordMetadata: Vault.IRecordMetaData = {
+        recordUid,
+        recordKey,
+        owner: false,
+        canEdit: true,
+        canShare: true,
+        recordKeyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM,
+        ownerUsername: anotherUserA.username,
+        ownerAccountUid: anotherUserA.accountUid,
+      }
+      const record: Vault.IRecord = {
+        recordUid,
+        version: 3,
+        data: recordData,
+        extra: new Uint8Array([]),
+      }
+      syncDownResponseBuilder
+        .addRecord(record)
+        .addRecordMetadata(recordMetadata)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'metadata',
+          uid: recordUidStr,
+          owner: recordMetadata.owner,
+          ownerUsername: recordMetadata.ownerUsername,
+        })
+      )
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'record',
+          uid: recordUidStr,
+          data: decryptedRecordData,
+        })
+      )
+    })
+    it('deletes the record data when the direct-shared record is unshared by another user or deleted by the user', async () => {
+      const recordUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder
+        .addRemovedRecord(recordUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith('record', webSafe64FromBytes(recordUid))
+    })
+    it('does nothing when the direct-shared record is deleted by another user', () => {})
   })
 })
 
