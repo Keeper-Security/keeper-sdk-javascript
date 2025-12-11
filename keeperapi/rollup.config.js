@@ -20,7 +20,8 @@ export default [
         ],
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "protobufjs/minimal"
+            "protobufjs/minimal",
+            "@noble/post-quantum/ml-kem.js"
         ],
         plugins: [
             typescript({
@@ -56,7 +57,8 @@ export default [
         ],
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "crypto", "constants", "https", "protobufjs/minimal"
+            "crypto", "constants", "https", "protobufjs/minimal",
+            "@noble/post-quantum/ml-kem.js"
         ],
         plugins: [
             typescript({

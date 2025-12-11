@@ -1,6 +1,7 @@
 import {KeyWrapper, LogOptions, Platform, platform} from "./platform";
-import type {KeeperHost, TransmissionKey} from './configuration';
-import { AllowedNumbers } from "./transmissionKeys";
+import type {KeeperHost, TransmissionKey, TransmissionKeyHpke} from './configuration';
+import { AllowedEcKeyIds, AllowedMlKemKeyIds, getKeeperMlKemKeyVariant, isAllowedEcKeyId, isAllowedMlKemKeyId } from "./transmissionKeys";
+import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from "./qrc";
 
 export const log = (message: string, options: LogOptions = 'default') => {
     platform.log(message, options)
@@ -44,13 +45,74 @@ export function getKeeperAutomatorAdminUrl(host: KeeperHost, forPath: string, au
     }
 }
 
-export async function generateTransmissionKey(keyNumber: AllowedNumbers): Promise<TransmissionKey> {
+export async function generateTransmissionKey(ecKeyId: AllowedEcKeyIds, mlKemKeyId: AllowedMlKemKeyIds): Promise<TransmissionKey> {
     const transmissionKey = platform.getRandomBytes(32)
     return {
-        publicKeyId: keyNumber,
+        ecKeyId,
         key: transmissionKey,
-        encryptedKey: await platform.publicEncryptEC(transmissionKey, platform.keys[keyNumber])
+        ecEncryptedKey: await platform.publicEncryptEC(transmissionKey, platform.keys[ecKeyId]),
+        mlKemKeyId
     }
+}
+
+export async function generateHpkeTransmissionKey(
+    transmissionKey: TransmissionKey,
+    useOptionalData: boolean = true
+): Promise<TransmissionKeyHpke> {
+    // Validate and get server public keys
+    const {ecKeyId, mlKemKeyId} = transmissionKey
+    if (!isAllowedEcKeyId(ecKeyId)) {
+        throw new Error(`Invalid EC key ID: ${ecKeyId}`)
+    }
+    if (!isAllowedMlKemKeyId(mlKemKeyId)) {
+        throw new Error(`Invalid ML-KEM key ID: ${mlKemKeyId}`)
+    }
+    const serverEcPublicKey = platform.keys[ecKeyId]
+    const serverMlKemPublicKey = platform.mlKemKeys[mlKemKeyId]
+    if (!serverEcPublicKey) {
+        throw new Error(`EC public key not found for ID: ${ecKeyId}`)
+    }
+    if (!serverMlKemPublicKey) {
+        throw new Error(`ML-KEM public key not found for ID: ${mlKemKeyId}`)
+    }
+
+    // Generate optional data if requested (recommended for unique request binding)
+    const optionalData = useOptionalData ? platform.getRandomBytes(OPTIONAL_DATA_LENGTH) : undefined;
+
+    // Initialize HPKE with appropriate ciphersuite
+    const mlKemVariant = getKeeperMlKemKeyVariant(mlKemKeyId);
+    let hpke: HPKE_ECDH_KYBER;
+    switch (mlKemVariant) {
+        case MlKemVariant.ML_KEM_768:
+            hpke = new HPKE_ECDH_KYBER(Ciphersuite.HPKE_MLKEM768_ECDHP256_HKDFSHA256_AESGCM256);
+            break;
+        case MlKemVariant.ML_KEM_1024:
+            hpke = new HPKE_ECDH_KYBER(Ciphersuite.HPKE_MLKEM1024_ECDHP256_HKDFSHA256_AESGCM256);
+            break;
+        default:
+            throw new Error(`Unsupported ML-KEM variant: ${mlKemVariant}`);
+    }
+
+    // Encrypt transmission key using QRC
+    const qrcResult = await hpke.encrypt(
+        transmissionKey.key,
+        serverEcPublicKey,
+        serverMlKemPublicKey,
+        optionalData
+    );
+
+    return {
+        mlKemKeyId,
+        key: transmissionKey.key,
+        qrcMessageKey: {
+            clientEcPublicKey: qrcResult.clientEcPublicKey,
+            mlKemEncapsulatedKey: qrcResult.mlKemEncapsulatedKey,
+            data: qrcResult.encryptedData,
+            msgVersion: qrcResult.msgVersion,
+            ecKeyId: ecKeyId
+        },
+        optionalData: optionalData
+    };
 }
 
 export function webSafe64(source: string): string {

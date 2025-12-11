@@ -8,6 +8,9 @@ module.exports = {
   // Ignore dist folder and node_modules
   testPathIgnorePatterns: ["/node_modules/", "/dist/"],
 
+  // Transform ESM packages from node_modules
+  transformIgnorePatterns: ["node_modules/(?!@noble/)"],
+
   // Module file extensions
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
 };
