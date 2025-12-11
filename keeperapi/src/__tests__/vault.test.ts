@@ -51,23 +51,16 @@ describe('Sync Down', () => {
       eccPublicKey: eccKeyPair.publicKey,
       executeRest: mockSyncDownCommand,
     } as unknown as Auth;
-    syncDownResponseBuilder = new SyncDownResponseBuilder();
+    syncDownResponseBuilder = new SyncDownResponseBuilder(platform, auth);
   })
   describe('Owned Records', () => {
     it('saves the record data when a new record is created by the user', async () => {
-      const decryptedRecordKey = platform.getRandomBytes(32)
-      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
-      const recordUid = platform.getRandomBytes(16)
-      const recordUidStr = webSafe64FromBytes(recordUid)
       const decryptedRecordData = {
-        title: 'test record',
+        title: 'test record'
       }
-      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
-      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
-      const userFolderRecord: Vault.IUserFolderRecord = {
-        recordUid,
-        revision: 1,
-      }
+      const { recordUid, recordKey } = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      syncDownResponseBuilder.addUserFolderRecord(recordUid)
       const recordMetadata: Vault.IRecordMetaData = {
         recordUid,
         recordKey,
@@ -78,16 +71,7 @@ describe('Sync Down', () => {
         ownerUsername: syncDownUser.username,
         ownerAccountUid: syncDownUser.accountUid,
       }
-      const record: Vault.IRecord = {
-        recordUid,
-        version: 3,
-        data: recordData,
-        extra: new Uint8Array([]),
-      }
-      syncDownResponseBuilder
-        .addUserFolderRecord(userFolderRecord)
-        .addRecordMetadata(recordMetadata)
-        .addRecord(record)
+      syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -117,10 +101,6 @@ describe('Sync Down', () => {
       })
     })
     it('saves breach watch data and security score data if a record contains a password', async () => {
-      const decryptedRecordKey = platform.getRandomBytes(32)
-      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
-      const recordUid = platform.getRandomBytes(16)
-      const recordUidStr = webSafe64FromBytes(recordUid)
       const decryptedRecordData = {
         title: 'test record',
         fields: [
@@ -130,12 +110,9 @@ describe('Sync Down', () => {
           }
         ],
       }
-      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
-      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
-      const userFolderRecord: Vault.IUserFolderRecord = {
-        recordUid,
-        revision: 1,
-      }
+      const { recordUid, recordKey, record, decryptedSecurityScoreDataData } = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      syncDownResponseBuilder.addUserFolderRecord(recordUid)
       const recordMetadata: Vault.IRecordMetaData = {
         recordUid,
         recordKey,
@@ -146,34 +123,7 @@ describe('Sync Down', () => {
         ownerUsername: syncDownUser.username,
         ownerAccountUid: syncDownUser.accountUid,
       }
-      const record: Vault.IRecord = {
-        recordUid,
-        version: 3,
-        data: recordData,
-        extra: new Uint8Array([]),
-        revision: 1,
-      }
-      const breachWatchSecurityData: Vault.IBreachWatchSecurityData = {
-        recordUid,
-        revision: record.revision,
-      }
-      const decryptedSecurityScoreDataData = {
-        padding: '',
-        password: 'this is a password',
-        score: 1,
-        version: 1,
-      }
-      const securityScoreData: Vault.ISecurityScoreData = {
-        recordUid,
-        data: await platform.aesGcmEncrypt(platform.stringToBytes(JSON.stringify(decryptedSecurityScoreDataData)), decryptedRecordKey),
-        revision: record.revision,
-      }
-      syncDownResponseBuilder
-        .addUserFolderRecord(userFolderRecord)
-        .addRecordMetadata(recordMetadata)
-        .addRecord(record)
-        .addBreachWatchSecurityData(breachWatchSecurityData)
-        .addSecurityScoreData(securityScoreData)
+      syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -197,14 +147,14 @@ describe('Sync Down', () => {
       expect(storage.put).toHaveBeenCalledWith(
         expect.objectContaining({
           kind: 'bw_security_data',
-          revision: breachWatchSecurityData.revision,
+          revision: record.revision,
           uid: recordUidStr,
         })
       )
       expect(storage.put).toHaveBeenCalledWith(
         expect.objectContaining({
           kind: 'security_score_data',
-          revision: breachWatchSecurityData.revision,
+          revision: record.revision,
           uid: recordUidStr,
           data: decryptedSecurityScoreDataData,
         })
@@ -218,25 +168,12 @@ describe('Sync Down', () => {
       })
     })
     it('saves the new record data when an existing record is updated by the user', async () => {
-      const decryptedRecordKey = platform.getRandomBytes(32)
-      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
-      const recordUid = platform.getRandomBytes(16)
-      const recordUidStr = webSafe64FromBytes(recordUid)
-      await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
       const decryptedRecordData = {
         title: 'test record updated',
       }
-      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
-      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
-
-      const record: Vault.IRecord = {
-        recordUid,
-        version: 3,
-        data: recordData,
-        extra: new Uint8Array([]),
-      }
-      syncDownResponseBuilder
-        .addRecord(record)
+      const {recordKey, recordUid} = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -264,19 +201,11 @@ describe('Sync Down', () => {
   })
   describe('Directly-Shared Records', () => {
     it('saves the record data when a record is direct-shared by other user', async () => {
-      const decryptedRecordKey = platform.getRandomBytes(32)
-      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
-      const recordUid = platform.getRandomBytes(16)
-      const recordUidStr = webSafe64FromBytes(recordUid)
       const decryptedRecordData = {
         title: 'test record',
       }
-      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
-      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
-      const userFolderRecord: Vault.IUserFolderRecord = {
-        recordUid,
-        revision: 1,
-      }
+      const { recordUid, recordKey } = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
       const recordMetadata: Vault.IRecordMetaData = {
         recordUid,
         recordKey,
@@ -287,16 +216,8 @@ describe('Sync Down', () => {
         ownerUsername: anotherUserA.username,
         ownerAccountUid: anotherUserA.accountUid,
       }
-      const record: Vault.IRecord = {
-        recordUid,
-        version: 3,
-        data: recordData,
-        extra: new Uint8Array([]),
-      }
-      syncDownResponseBuilder
-        .addUserFolderRecord(userFolderRecord)
-        .addRecordMetadata(recordMetadata)
-        .addRecord(record)
+      syncDownResponseBuilder.addUserFolderRecord(recordUid)
+      syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -326,17 +247,12 @@ describe('Sync Down', () => {
       })
     })
     it('saves the record data when the direct-shared record is updated by another user or the user', async () => {
-      const decryptedRecordKey = platform.getRandomBytes(32)
-      const recordKey = await platform.aesGcmEncrypt(decryptedRecordKey, auth.dataKey!)
-      const recordUid = platform.getRandomBytes(16)
-      const recordUidStr = webSafe64FromBytes(recordUid)
-      await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
       const decryptedRecordData = {
         title: 'test record updated',
       }
-      const decodedRecordData = platform.stringToBytes(JSON.stringify(decryptedRecordData))
-      const recordData = await platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
-      const recordMetadata: Vault.IRecordMetaData = {
+      const {recordUid, recordKey} = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const recordMetadata: Vault.IRecordMetaData = {// recordMetadata is returned only the share permission is updated
         recordUid,
         recordKey,
         owner: false,
@@ -346,15 +262,7 @@ describe('Sync Down', () => {
         ownerUsername: anotherUserA.username,
         ownerAccountUid: anotherUserA.accountUid,
       }
-      const record: Vault.IRecord = {
-        recordUid,
-        version: 3,
-        data: recordData,
-        extra: new Uint8Array([]),
-      }
-      syncDownResponseBuilder
-        .addRecord(record)
-        .addRecordMetadata(recordMetadata)
+      syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -389,5 +297,216 @@ describe('Sync Down', () => {
     })
     it('does nothing when the direct-shared record is deleted by another user', () => {})
   })
+  describe('User Folders', () => {
+    it.each([
+      "saves the new folder data when the user creates a folder at the root",
+      "saves the corresponding folder data when the user updates an existing folder",
+    ])(`%s`, async () => {
+      const decryptedUserFolderKey = platform.getRandomBytes(32)
+      const userFolderKey= await platform.aesCbcEncrypt(decryptedUserFolderKey, auth.dataKey!, true)
+      const folderUid = platform.getRandomBytes(16)
+      const folderData = { title: 'a new user folder' }
+      const userFolder: Vault.IUserFolder = {
+        folderUid,
+        revision: Date.now(),
+        keyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY,
+        userFolderKey,
+        data: await platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(folderData)), decryptedUserFolderKey, true),
+        parentUid: new Uint8Array([]),
+      }
+      syncDownResponseBuilder
+        .addUserFolder(userFolder)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith({
+        data: folderData,
+        kind: 'user_folder',
+        revision: userFolder.revision,
+        uid: webSafe64FromBytes(folderUid)
+      })
+    })
+    it('deletes the corresponding folder data when a user deletes an existing folder - empty folder', async () => {
+      const folderUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder
+        .addRemovedUserFolder(folderUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith("user_folder", webSafe64FromBytes(folderUid))
+    })
+    it('deletes the corresponding folder data when a user deletes an existing folder - folder with child records and child folders', async () => {
+      /*
+      folder A/      <-- contains a record C
+      └── folder B/  <-- contains a record D
+       */
+      const folderAUid = platform.getRandomBytes(16)
+      const recordCUid = platform.getRandomBytes(16)
+      const folderBUid = platform.getRandomBytes(16)
+      const recordDUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder.addRemovedUserFolder(folderAUid)
+      syncDownResponseBuilder.addRemovedUserFolder(folderBUid)
+      syncDownResponseBuilder.addRemovedRecord(recordCUid)
+      syncDownResponseBuilder.addRemovedRecord(recordDUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith("user_folder", webSafe64FromBytes(folderAUid))
+      expect(storage.delete).toHaveBeenCalledWith("user_folder", webSafe64FromBytes(folderBUid))
+      expect(storage.delete).toHaveBeenCalledWith("record", webSafe64FromBytes(recordCUid))
+      expect(storage.delete).toHaveBeenCalledWith("record", webSafe64FromBytes(recordDUid))
+    })
+    it.each([
+      "saves the new folder data when a new child folder is added to an existing folder",
+      "saves the folder data when an existing folder is added as a child to another folder",
+      "saves the folder data when an existing child folder's data is updated",
+      "saves the folder data when an existing child folder is removed from one parent, and moved to folder to another",
+      "saves the folder data when a nested child folder is moved from its current parent to another parent",
+    ])('%s', async () => {
+      const decryptedUserFolderKey = platform.getRandomBytes(32)
+      const userFolderKey= await platform.aesCbcEncrypt(decryptedUserFolderKey, auth.dataKey!, true)
+      const parentFolderUid = platform.getRandomBytes(16)
+      const folderUid = platform.getRandomBytes(16)
+      const folderUidStr = webSafe64FromBytes(folderUid)
+      const parentFolderUidStr = webSafe64FromBytes(parentFolderUid)
+      const folderData = { title: 'a child folder' }
+      const userFolder: Vault.IUserFolder = {
+        folderUid,
+        revision: Date.now(),
+        keyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY,
+        userFolderKey,
+        data: await platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(folderData)), decryptedUserFolderKey, true),
+        parentUid: parentFolderUid,
+      }
+      syncDownResponseBuilder
+        .addUserFolder(userFolder)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith({
+        data: folderData,
+        kind: 'user_folder',
+        revision: userFolder.revision,
+        uid: webSafe64FromBytes(folderUid)
+      })
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        [parentFolderUidStr]: new Set([{
+          kind: "user_folder",
+          parentUid: parentFolderUidStr,
+          uid: folderUidStr,
+        }])
+      })
+    })
+    it('saves a new child record created by the user', async () => {
+      const folderUid = platform.getRandomBytes(16)
+      const decryptedRecordData = {
+        title: 'a child record record',
+      }
+      const {recordUid, recordKey} = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const folderUidStr = webSafe64FromBytes(folderUid)
+      const recordMetadata: Vault.IRecordMetaData = {
+        recordUid,
+        recordKey,
+        owner: true,
+        canEdit: true,
+        canShare: true,
+        recordKeyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM,
+        ownerUsername: syncDownUser.username,
+        ownerAccountUid: syncDownUser.accountUid,
+      }
+      syncDownResponseBuilder.addUserFolderRecord(recordUid, folderUid)
+      syncDownResponseBuilder.addRecordMetadata(recordMetadata)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'metadata',
+          uid: recordUidStr,
+          owner: recordMetadata.owner,
+          ownerUsername: recordMetadata.ownerUsername,
+        })
+      )
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'record',
+          uid: recordUidStr,
+          data: decryptedRecordData,
+        })
+      )
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        [folderUidStr]: new Set([{
+          kind: "record",
+          "parentUid": folderUidStr,
+          uid: recordUidStr,
+        }])
+      })
+    })
+    it('saves the child record when it is moved from a folder A to another B', async () => {
+      const folderAUid = platform.getRandomBytes(16)
+      const folderBUid = platform.getRandomBytes(16)
+      const recordUid = platform.getRandomBytes(16)
+      const folderAUidStr = webSafe64FromBytes(folderAUid)
+      const folderBUidStr = webSafe64FromBytes(folderBUid)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      syncDownResponseBuilder.addUserFolderRecord(recordUid, folderBUid)
+      syncDownResponseBuilder.addRemovedUserFolderRecord(recordUid, folderAUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        [folderBUidStr]: new Set([{
+          kind: "record",
+          "parentUid": folderBUidStr,
+          uid: recordUidStr,
+        }])
+      })
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        [folderAUidStr]: new Set([recordUidStr])
+      })
+    })
+    it('saves the child record data when its updated by the user', async () => {
+      const decryptedRecordData = {
+        title: 'child record updated',
+      }
+      const {recordKey, recordUid} = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'record',
+          uid: recordUidStr,
+          data: decryptedRecordData,
+        })
+      )
+    })
+    it('deletes the child record data when its deleted by the user', async () => {
+      const recordUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder.addRemovedRecord(recordUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith("record", webSafe64FromBytes(recordUid))
+    })
+  })
 })
-
