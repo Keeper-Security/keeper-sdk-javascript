@@ -70,9 +70,9 @@ export class SyncDownResponseBuilder {
     this.data.recordMetaData?.push(recordMetadata)
   }
 
-  async addRecord(decryptedRecordData: DecryptedRecordData) {
+  async addRecord(decryptedRecordData: DecryptedRecordData, encryptionKey?: Uint8Array) {
     const decryptedRecordKey = this.platform.getRandomBytes(32)
-    const recordKey = await this.platform.aesGcmEncrypt(decryptedRecordKey, this.auth.dataKey!)
+    const recordKey = await this.platform.aesGcmEncrypt(decryptedRecordKey, encryptionKey ? encryptionKey : this.auth.dataKey!)
     const recordUid = this.platform.getRandomBytes(16)
     const decodedRecordData = this.platform.stringToBytes(JSON.stringify(decryptedRecordData))
     const recordData = await this.platform.aesGcmEncrypt(decodedRecordData, decryptedRecordKey)
@@ -130,6 +130,58 @@ export class SyncDownResponseBuilder {
 
   addRemovedUserFolderRecord(recordUid: Uint8Array, folderUid: Uint8Array) {
     this.data.removedUserFolderRecords?.push({recordUid, folderUid})
+  }
+
+  addSharedFolder(sharedFolder: Vault.ISharedFolder) {
+    this.data.sharedFolders?.push(sharedFolder)
+  }
+
+  addSharedFolderUser(sharedFolderUser: Vault.ISharedFolderUser) {
+    this.data.sharedFolderUsers?.push(sharedFolderUser)
+  }
+
+  addRemovedSharedFolder(sharedFolderUid: Uint8Array) {
+    this.data.removedSharedFolders?.push(sharedFolderUid)
+  }
+
+  addRemovedSharedFolderTeam(sharedFolderTeam: Vault.ISharedFolderTeam) {
+    this.data.removedSharedFolderTeams?.push(sharedFolderTeam)
+  }
+
+  addSharedFolderTeam(sharedFolderTeam: Vault.ISharedFolderTeam) {
+    this.data.sharedFolderTeams?.push(sharedFolderTeam)
+  }
+
+  addUserFolderSharedFolder(userFolderSharedFolder: Vault.IUserFolderSharedFolder) {
+    this.data.userFolderSharedFolders?.push(userFolderSharedFolder)
+  }
+
+  addTeam(team: Vault.ITeam) {
+    this.data.teams?.push(team)
+  }
+
+  addSharedFolderRecord(sharedFolderRecord: Vault.ISharedFolderRecord) {
+    this.data.sharedFolderRecords?.push(sharedFolderRecord)
+  }
+
+  addRemovedSharedFolderRecord(sharedFolderRecord: Vault.ISharedFolderRecord) {
+    this.data.removedSharedFolderRecords?.push(sharedFolderRecord)
+  }
+
+  addSharedFolderFolder(sharedFolderFolder: Vault.ISharedFolderFolder) {
+    this.data.sharedFolderFolders?.push(sharedFolderFolder)
+  }
+
+  addRemovedSharedFolderFolder(removedSharedFolderFolder: Vault.ISharedFolderFolder) {
+    this.data.removedSharedFolderFolders?.push(removedSharedFolderFolder)
+  }
+
+  addSharedFolderFolderRecord(sharedFolderFolderRecord: Vault.ISharedFolderFolderRecord) {
+    this.data.sharedFolderFolderRecords?.push(sharedFolderFolderRecord)
+  }
+
+  addRemovedSharedFolderFolderRecord(sharedFolderFolderRecord: Vault.ISharedFolderFolderRecord) {
+    this.data.removedSharedFolderFolderRecords?.push(sharedFolderFolderRecord)
   }
 
   build() {
