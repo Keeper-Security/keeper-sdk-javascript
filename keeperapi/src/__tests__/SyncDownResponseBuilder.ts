@@ -1,4 +1,4 @@
-import {Vault} from "../proto";
+import {Records, Vault} from "../proto";
 import {platform, Platform} from "../platform";
 import {Auth} from "../auth";
 
@@ -18,6 +18,24 @@ type DecryptedSecurityScoreDataData = {
   score: number,
   version: number,
 }
+
+type DecryptedSharedFolderFolderData = {
+  name: string // folder name
+}
+
+type DecryptedSharedFolderData = {
+  name: string
+}
+
+type UserInfo = {
+  username: string
+  accountUid: Uint8Array
+}
+
+type SharedFolderPermissionData = Pick<
+  Vault.ISharedFolder,
+  "defaultCanEdit" | "defaultCanReshare" | "defaultManageUsers" | "defaultManageRecords"
+>
 
 export class SyncDownResponseBuilder {
   private readonly data: Vault.ISyncDownResponse;
@@ -132,8 +150,35 @@ export class SyncDownResponseBuilder {
     this.data.removedUserFolderRecords?.push({recordUid, folderUid})
   }
 
-  addSharedFolder(sharedFolder: Vault.ISharedFolder) {
+  async addSharedFolder(
+    decryptedSharedFolderData: DecryptedSharedFolderData,
+    userInfo: UserInfo,
+    permissionData: SharedFolderPermissionData,
+    encryptionkey?: Uint8Array
+  ) {
+    const sharedFolderUid = platform.getRandomBytes(16)
+    const decryptedSharedFolderKey = platform.getRandomBytes(32)
+    let sharedFolderKey: Uint8Array
+    if (!encryptionkey) {
+      sharedFolderKey = await platform.aesCbcEncrypt(decryptedSharedFolderKey, encryptionkey ? encryptionkey : this.auth.dataKey!, true)
+    } else {// normally when a shared folder is shared to a team
+      sharedFolderKey = platform.publicEncrypt(decryptedSharedFolderKey, platform.bytesToBase64(encryptionkey))
+    }
+    const sharedFolder: Vault.ISharedFolder = {
+      sharedFolderUid,
+      sharedFolderKey,
+      owner: userInfo.username,
+      ownerAccountUid: userInfo.accountUid,
+      keyType: encryptionkey ? Records.RecordKeyType.NO_KEY : Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY,
+      revision: Date.now(),
+      name: await platform.aesCbcEncrypt(platform.stringToBytes(decryptedSharedFolderData.name), decryptedSharedFolderKey, true),
+      data: await platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(decryptedSharedFolderData)), decryptedSharedFolderKey, true),
+      ...permissionData,
+    }
+
     this.data.sharedFolders?.push(sharedFolder)
+
+    return {sharedFolderUid, sharedFolder, sharedFolderKey, decryptedSharedFolderKey}
   }
 
   addSharedFolderUser(sharedFolderUser: Vault.ISharedFolderUser) {
@@ -168,8 +213,32 @@ export class SyncDownResponseBuilder {
     this.data.removedSharedFolderRecords?.push(sharedFolderRecord)
   }
 
-  addSharedFolderFolder(sharedFolderFolder: Vault.ISharedFolderFolder) {
+  async addSharedFolderFolder(
+    decryptedSharedFolderFolderData: DecryptedSharedFolderFolderData,
+    sharedFolderUid: Uint8Array,
+    decryptedSharedFolderKey: Uint8Array,
+    parentUid: Uint8Array = new Uint8Array([])
+    ) {
+    const sharedFolderFolderUid = platform.getRandomBytes(16)
+    const decryptedSharedFolderFolderKey = platform.getRandomBytes(32)
+    const sharedFolderFolderKey = await platform.aesCbcEncrypt(decryptedSharedFolderFolderKey, decryptedSharedFolderKey, true)
+    const sharedFolderFolder: Vault.ISharedFolderFolder = {
+      sharedFolderUid,
+      folderUid: sharedFolderFolderUid,
+      sharedFolderFolderKey,
+      keyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY,
+      revision: Date.now(),
+      data: await platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(decryptedSharedFolderFolderData)), decryptedSharedFolderFolderKey, true),
+      // either empty or the parent shared folder's uid if the folder is the direct child of the shared folder (level 0)
+      parentUid,
+    }
+
     this.data.sharedFolderFolders?.push(sharedFolderFolder)
+
+    return {
+      sharedFolderFolderUid,
+      sharedFolderFolder,
+    }
   }
 
   addRemovedSharedFolderFolder(removedSharedFolderFolder: Vault.ISharedFolderFolder) {
