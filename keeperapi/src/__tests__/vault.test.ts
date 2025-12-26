@@ -64,7 +64,11 @@ describe('Sync Down', () => {
       }
       const { recordUid, recordKey } = await syncDownResponseBuilder.addRecord(decryptedRecordData)
       const recordUidStr = webSafe64FromBytes(recordUid)
-      syncDownResponseBuilder.addUserFolderRecord(recordUid)
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        revision: Date.now()
+      }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
       const recordMetadata: Vault.IRecordMetaData = {
         recordUid,
         recordKey,
@@ -116,7 +120,11 @@ describe('Sync Down', () => {
       }
       const { recordUid, recordKey, record, decryptedSecurityScoreDataData } = await syncDownResponseBuilder.addRecord(decryptedRecordData)
       const recordUidStr = webSafe64FromBytes(recordUid)
-      syncDownResponseBuilder.addUserFolderRecord(recordUid)
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        revision: Date.now()
+      }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
       const recordMetadata: Vault.IRecordMetaData = {
         recordUid,
         recordKey,
@@ -220,7 +228,11 @@ describe('Sync Down', () => {
         ownerUsername: anotherUserA.username,
         ownerAccountUid: anotherUserA.accountUid,
       }
-      syncDownResponseBuilder.addUserFolderRecord(recordUid)
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        revision: Date.now(),
+      }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
       syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
@@ -430,7 +442,12 @@ describe('Sync Down', () => {
         ownerUsername: syncDownUser.username,
         ownerAccountUid: syncDownUser.accountUid,
       }
-      syncDownResponseBuilder.addUserFolderRecord(recordUid, folderUid)
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        folderUid,
+        revision: Date.now(),
+      }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
       syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
@@ -467,7 +484,12 @@ describe('Sync Down', () => {
       const folderAUidStr = webSafe64FromBytes(folderAUid)
       const folderBUidStr = webSafe64FromBytes(folderBUid)
       const recordUidStr = webSafe64FromBytes(recordUid)
-      syncDownResponseBuilder.addUserFolderRecord(recordUid, folderBUid)
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        folderUid: folderBUid,
+        revision: Date.now(),
+      }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
       syncDownResponseBuilder.addRemovedUserFolderRecord(recordUid, folderAUid)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
@@ -536,12 +558,6 @@ describe('Sync Down', () => {
         manageUsers: true,
       }
       syncDownResponseBuilder.addSharedFolderUser(sharedFolderUser)
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        revision: sharedFolder.revision,
-        sharedFolderUid,
-        folderUid: new Uint8Array([]), // root folder
-      }
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -597,12 +613,6 @@ describe('Sync Down', () => {
       }
       syncDownResponseBuilder.addSharedFolderUser(sharedFolderUserA)
       syncDownResponseBuilder.addSharedFolderUser(sharedFolderUserB)
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        revision: sharedFolder.revision,
-        sharedFolderUid,
-        folderUid: new Uint8Array([]), // root folder
-      }
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -654,7 +664,7 @@ describe('Sync Down', () => {
         defaultCanReshare: false,
         defaultManageUsers: false,
         defaultManageRecords: false,
-      }, decryptedTeamPrivateKeyPair.privateKey)
+      }, {encryptionKey: decryptedTeamPrivateKeyPair.privateKey})
       const sharedFolderUidStr = webSafe64FromBytes(sharedFolderUid)
       const team: Vault.ITeam = {
         teamUid,
@@ -674,11 +684,6 @@ describe('Sync Down', () => {
         restrictShare: false,
         restrictView: false,
       }
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        revision: sharedFolder.revision,
-        sharedFolderUid,
-        folderUid: new Uint8Array([]), // root folder
-      }
       const sharedFolderUser: Vault.ISharedFolderUser = {
         username: 'other user who owns the shared folder',
         accountUid: anotherUserA.accountUid,
@@ -694,7 +699,6 @@ describe('Sync Down', () => {
         sharedFolderUid,
       }
       syncDownResponseBuilder.addTeam(team)
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       syncDownResponseBuilder.addSharedFolderUser(sharedFolderUser)
       syncDownResponseBuilder.addSharedFolderTeam(sharedFolderTeam)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
@@ -757,12 +761,6 @@ describe('Sync Down', () => {
         defaultManageUsers: false,
         defaultManageRecords: false,
       })
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        revision: sharedFolder.revision,
-        sharedFolderUid,
-        folderUid: new Uint8Array([]), // root folder
-      }
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -853,14 +851,8 @@ describe('Sync Down', () => {
         sharedFolderUid,
         recordUid,
       }
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        sharedFolderUid,
-        folderUid: new Uint8Array([]),
-        revision: Date.now()
-      }
       syncDownResponseBuilder.addSharedFolderRecord(sharedFolderRecord)
       syncDownResponseBuilder.addSharedFolderFolderRecord(sharedFolderFolderRecord)
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -922,15 +914,10 @@ describe('Sync Down', () => {
         sharedFolderUid,
         recordUid,
       }
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        sharedFolderUid,
-        folderUid: new Uint8Array([]),
-        revision: Date.now()
-      }
+
       syncDownResponseBuilder.addRemovedRecord(recordUid)
       syncDownResponseBuilder.addSharedFolderRecord(sharedFolderRecord)
       syncDownResponseBuilder.addSharedFolderFolderRecord(sharedFolderFolderRecord)
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -983,14 +970,8 @@ describe('Sync Down', () => {
         recordUid,
         sharedFolderUid,
       }
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        sharedFolderUid,
-        folderUid: new Uint8Array([]),
-        revision: Date.now()
-      }
       syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
       syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecord)
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -1010,7 +991,7 @@ describe('Sync Down', () => {
     })
     it('updates the record data when it is moved out of a shared folder (moved to the root vault)', async () => {
       const decryptedRecordData = {
-        title: "a record removed from a shared folder and moved to a root vault"
+        title: "a record removed from a shared folder to a root vault"
       }
       const {recordUid, recordKey, record} = await syncDownResponseBuilder.addRecord(decryptedRecordData)
       const recordUidStr = webSafe64FromBytes(recordUid)
@@ -1033,15 +1014,15 @@ describe('Sync Down', () => {
         recordUid,
         sharedFolderUid,
       }
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        sharedFolderUid,
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
         folderUid: new Uint8Array([]),
-        revision: Date.now()
+        revision: Date.now(),
       }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
       syncDownResponseBuilder.addRecordMetadata(recordMetadata)
       syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
       syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecord)
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -1056,6 +1037,13 @@ describe('Sync Down', () => {
         kind: "metadata",
         uid: recordUidStr,
       }))
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        "": new Set([{
+          kind: "record",
+          parentUid: "",
+          uid: recordUidStr,
+        }]),
+      })
       expect(storage.removeDependencies).toHaveBeenCalledWith({
         "": new Set([recordUidStr]),
         [sharedFolderUidStr]: new Set([recordUidStr])
@@ -1065,6 +1053,90 @@ describe('Sync Down', () => {
           uid: sharedFolderUidStr,
           kind: "shared_folder",
           revision: sharedFolder.revision,
+        })
+      )
+    })
+    it('updates the record data when it is moved out of a shared folder (moved to another shared folder)', async () => {
+      /*
+      [before update]
+      shared folder A/  <-- contains a record
+      shared folder B/
+      [after update]
+      shared folder A/
+      shared-folder folder B/  <-- the record moved from A to B
+      */
+      const decryptedRecordData = {
+        title: "a record removed from a shared folder to a root vault"
+      }
+      const sharedFolderDataA = {
+        name: 'shared folder A',
+      }
+      const sharedFolderDataB = {
+        name: 'shared folder A',
+      }
+      const {sharedFolderUid: sharedFolderUidA, sharedFolder: sharedFolderA} = await syncDownResponseBuilder.addSharedFolder(sharedFolderDataA, syncDownUser, {})
+      const {sharedFolderUid: sharedFolderUidB, sharedFolder: sharedFolderB, decryptedSharedFolderKey: decryptedSharedFolderKeyB} = await syncDownResponseBuilder.addSharedFolder(sharedFolderDataB, syncDownUser, {})
+      const sharedFolderUidAStr =  webSafe64FromBytes(sharedFolderUidA)
+      const sharedFolderUidBStr =  webSafe64FromBytes(sharedFolderUidB)
+      const {recordUid, recordKey, record} = await syncDownResponseBuilder.addRecord(decryptedRecordData, decryptedSharedFolderKeyB)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const removedSharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        recordUid,
+        sharedFolderUid: sharedFolderUidA,
+        folderUid: new Uint8Array([])
+      }
+      const removedSharedFolderRecord: Vault.ISharedFolderRecord = {
+        recordUid,
+        sharedFolderUid: sharedFolderUidA,
+      }
+      const sharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        recordUid,
+        sharedFolderUid: sharedFolderUidB,
+        revision: Date.now(),
+        folderUid: new Uint8Array([])
+      }
+      const sharedFolderRecord: Vault.ISharedFolderRecord = {
+        recordUid,
+        recordKey,
+        sharedFolderUid: sharedFolderUidB,
+        owner: true,
+        ownerAccountUid: new Uint8Array([]),
+      }
+      syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
+      syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecord)
+      syncDownResponseBuilder.addSharedFolderRecord(sharedFolderRecord)
+      syncDownResponseBuilder.addSharedFolderFolderRecord(sharedFolderFolderRecord)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "record",
+        uid: recordUidStr,
+        revision: record.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: 'shared_folder_record',
+        recordUid: recordUidStr,
+        sharedFolderUid: sharedFolderUidBStr,
+      }))
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        "": new Set([recordUidStr]),
+        [sharedFolderUidAStr]: new Set([recordUidStr])
+      })
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          uid: sharedFolderUidAStr,
+          kind: "shared_folder",
+          revision: sharedFolderA.revision,
+        })
+      )
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          uid: sharedFolderUidBStr,
+          kind: "shared_folder",
+          revision: sharedFolderB.revision,
         })
       )
     })
@@ -1184,17 +1256,10 @@ describe('Sync Down', () => {
         recordUid: recordUidD,
         sharedFolderUid,
       }
-
-      const userFolderSharedFolder: Vault.IUserFolderSharedFolder = {
-        revision: Date.now(),
-        sharedFolderUid,
-        folderUid: new Uint8Array([]),
-      }
       syncDownResponseBuilder.addRemovedSharedFolderFolder(removedSharedFolderFolderA)
       syncDownResponseBuilder.addRemovedSharedFolderFolder(removedSharedFolderFolderB)
       syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecordC)
       syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecordD)
-      syncDownResponseBuilder.addUserFolderSharedFolder(userFolderSharedFolder)
       mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
       await syncDown({
         auth,
@@ -1217,7 +1282,7 @@ describe('Sync Down', () => {
       }))
     })
     it('does not allow to take the shared-folder folder out from the shared folder', () => {})
-    it('updates the folder data when a shared-folder is moved into another shared-folder folder: both are still under the same shared folder', async () => {
+    it('updates the folder data when a shared-folder folder is moved into another shared-folder folder: both are still under the same shared folder', async () => {
       /*
       [before update]
       shared-folder folder A/
@@ -1269,6 +1334,322 @@ describe('Sync Down', () => {
         sharedFolderUid: sharedFolderUidStr,
       }))
     })
-    it('saves the record data when a new record data is added to a shared-folder folder', async () => {})
+    it('saves the record data when a new record data is added to a shared-folder folder', async () => {
+      const sharedFolderData = {
+        name: 'shared folder',
+      }
+      const sharedFolderFolderData = {
+        name: 'shared-folder folder',
+      }
+      const recordData = {
+        title: 'record'
+      }
+      const {sharedFolderUid, sharedFolder, decryptedSharedFolderKey} = await syncDownResponseBuilder.addSharedFolder(sharedFolderData, syncDownUser, {})
+      const sharedFolderUidStr = webSafe64FromBytes(sharedFolderUid)
+      const {sharedFolderFolderUid, sharedFolderFolder} = await syncDownResponseBuilder.addSharedFolderFolder(sharedFolderFolderData, sharedFolderUid, decryptedSharedFolderKey)
+      const sharedFolderFolderUidStr = webSafe64FromBytes(sharedFolderFolderUid)
+      const {recordUid, record, recordKey} = await syncDownResponseBuilder.addRecord(recordData, decryptedSharedFolderKey)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const sharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        sharedFolderUid,
+        recordUid,
+        folderUid: sharedFolderFolderUid,
+        revision: Date.now(),
+      }
+      const sharedFolderRecord: Vault.ISharedFolderRecord = {
+        owner: true,
+        sharedFolderUid,
+        recordKey,
+        recordUid,
+        ownerAccountUid: new Uint8Array([]),
+      }
+      syncDownResponseBuilder.addSharedFolderFolderRecord(sharedFolderFolderRecord)
+      syncDownResponseBuilder.addSharedFolderRecord(sharedFolderRecord)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "shared_folder",
+        uid: sharedFolderUidStr,
+        revision: sharedFolder.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "shared_folder_folder",
+        uid: sharedFolderFolderUidStr,
+        revision: sharedFolderFolder.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: 'record',
+        uid: recordUidStr,
+        revision: record.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith({
+        kind: 'shared_folder_record',
+        recordUid: recordUidStr,
+        sharedFolderUid: sharedFolderUidStr,
+        canEdit: true,
+        canShare: true,
+        owner: sharedFolderRecord.owner,
+        ownerUid: webSafe64FromBytes(sharedFolderRecord.ownerAccountUid!),
+        ownerUsername: sharedFolderRecord.ownerUsername,
+      })
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        [sharedFolderFolderUidStr]: new Set([{
+          kind: "record",
+          uid: recordUidStr,
+          parentUid: sharedFolderFolderUidStr,
+        }])
+      })
+    })
+    it('saves the record data when an existing record is added to a shared-folder folder', async () => {
+      const sharedFolderData = {
+        name: 'shared folder',
+      }
+      const recordData = {
+        title: 'record'
+      }
+      const {sharedFolderUid, sharedFolder, decryptedSharedFolderKey} = await syncDownResponseBuilder.addSharedFolder(sharedFolderData, syncDownUser, {})
+      const sharedFolderUidStr = webSafe64FromBytes(sharedFolderUid)
+      const {recordUid, record, recordKey} = await syncDownResponseBuilder.addRecord(recordData, decryptedSharedFolderKey)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const sharedFolderFolderUid = platform.getRandomBytes(16)
+      const sharedFolderFolderUidStr = webSafe64FromBytes(sharedFolderFolderUid)
+      const sharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        sharedFolderUid,
+        recordUid,
+        folderUid: sharedFolderFolderUid,
+        revision: Date.now(),
+      }
+      const sharedFolderRecord: Vault.ISharedFolderRecord = {
+        owner: true,
+        sharedFolderUid,
+        recordKey,
+        recordUid,
+        ownerAccountUid: new Uint8Array([]),
+      }
+      syncDownResponseBuilder.addSharedFolderFolderRecord(sharedFolderFolderRecord)
+      syncDownResponseBuilder.addSharedFolderRecord(sharedFolderRecord)
+      syncDownResponseBuilder.addRemovedRecord(recordUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "shared_folder",
+        uid: sharedFolderUidStr,
+        revision: sharedFolder.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "record",
+        uid: recordUidStr,
+        revision: record.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith({
+        kind: 'shared_folder_record',
+        recordUid: recordUidStr,
+        sharedFolderUid: sharedFolderUidStr,
+        canEdit: true,
+        canShare: true,
+        owner: sharedFolderRecord.owner,
+        ownerUid: webSafe64FromBytes(sharedFolderRecord.ownerAccountUid!),
+        ownerUsername: sharedFolderRecord.ownerUsername,
+      })
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        [sharedFolderFolderUidStr]: new Set([{
+          kind: "record",
+          uid: recordUidStr,
+          parentUid: sharedFolderFolderUidStr,
+        }])
+      })
+      expect(storage.delete).toHaveBeenCalledWith("record", recordUidStr)
+    })
+    it('saves the record data when an existing child record of a shared-folder folder is updated', async () => {
+      const sharedFolderUid = platform.getRandomBytes(16)
+      const sharedFolderUidStr = webSafe64FromBytes(sharedFolderUid)
+      const decryptedSharedFolderKey = platform.getRandomBytes(32)
+      const recordData = {
+        title: 'a child record has been updated'
+      }
+      const {recordUid, record, recordKey} = await syncDownResponseBuilder.addRecord(recordData, decryptedSharedFolderKey)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const sharedFolderKey = await platform.aesGcmEncrypt(decryptedSharedFolderKey, auth.dataKey!)
+      await platform.unwrapKey(sharedFolderKey, sharedFolderUidStr, 'data', 'gcm', 'aes')
+      await platform.unwrapKey(recordKey, recordUidStr, sharedFolderUidStr, 'gcm', 'aes')
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: 'record',
+        uid: webSafe64FromBytes(recordUid),
+        revision: record.revision,
+      }))
+    })
+    it('updates the record data when a child record of a shared-folder folder is deleted', async () => {
+      const recordUid = platform.getRandomBytes(16)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const sharedFolderData = {
+        name: 'shared folder',
+      }
+      const {sharedFolderUid, sharedFolder} = await syncDownResponseBuilder.addSharedFolder(sharedFolderData, syncDownUser, {})
+      const sharedFolderUidStr = webSafe64FromBytes(sharedFolderUid)
+      const sharedFolderFolderUid = platform.getRandomBytes(16)
+      const sharedFolderFolderUidStr = webSafe64FromBytes(sharedFolderFolderUid)
+      const removedSharedFolderRecord: Vault.ISharedFolderRecord = {
+        sharedFolderUid,
+        recordUid,
+      }
+      const removedSharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        folderUid: sharedFolderFolderUid,
+        sharedFolderUid,
+        recordUid,
+      }
+      syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecord)
+      syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "shared_folder",
+        uid: sharedFolderUidStr,
+        revision: sharedFolder.revision,
+      }))
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        [sharedFolderUidStr]: new Set([recordUidStr]),
+        [sharedFolderFolderUidStr]: new Set([recordUidStr]),
+      })
+    })
+    it('updates the record data when a child record when its moved to another shared-folder folder within the same parent shared folder', async () => {
+      /*
+      [before update]
+      shared folder
+      |── shared-folder folder A/  <-- contains a record C
+      └── shared-folder folder B/
+      [after update]
+      shared folder
+      |── shared-folder folder A/
+      └── shared-folder folder B/  <-- contains a record C
+      */
+      const recordUid = platform.getRandomBytes(16)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const sharedFolderUid = platform.getRandomBytes(16)
+      const sharedFolderFolderUidA = platform.getRandomBytes(16)
+      const sharedFolderFolderUidAStr = webSafe64FromBytes(sharedFolderFolderUidA)
+      const sharedFolderFolderUidB = platform.getRandomBytes(16)
+      const sharedFolderFolderUidBStr = webSafe64FromBytes(sharedFolderFolderUidB)
+      const removedSharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        sharedFolderUid,
+        folderUid: sharedFolderFolderUidA,
+        recordUid,
+      }
+      const sharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        sharedFolderUid,
+        folderUid: sharedFolderFolderUidB,
+        recordUid,
+        revision: Date.now(),
+      }
+      syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
+      syncDownResponseBuilder.addSharedFolderFolderRecord(sharedFolderFolderRecord)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        [sharedFolderFolderUidBStr]: new Set([{
+          kind: "record",
+          parentUid: sharedFolderFolderUidBStr,
+          uid: recordUidStr,
+        }]),
+      })
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        [sharedFolderFolderUidAStr]: new Set([recordUidStr]),
+      })
+    })
+    it('updates the record data when a child record of a shared-folder folder is moved out of their parent shared folder', async () => {
+      /*
+      [before update]
+      root
+      └── shared folder
+          └── shared-folder folder/  <-- contains a record C
+      [after update]
+      root  <-- contains a record C
+      └── shared folder
+          └── shared-folder folder/
+      */
+      const decryptedRecordData = {
+        title: "a record removed from a shared-folder folder to a root vault"
+      }
+      const {recordUid, recordKey, record} = await syncDownResponseBuilder.addRecord(decryptedRecordData)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const recordMetadata: Vault.IRecordMetaData = {
+        recordUid,
+        recordKey,
+        recordKeyType: Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM,
+      }
+      const sharedFolderData = {
+        name: 'a shared folder',
+      }
+      const {sharedFolderUid, sharedFolder} = await syncDownResponseBuilder.addSharedFolder(sharedFolderData, syncDownUser, {})
+      const sharedFolderUidStr =  webSafe64FromBytes(sharedFolderUid)
+      const sharedFolderFolderUid = platform.getRandomBytes(16)
+      const sharedFolderFolderUidStr = webSafe64FromBytes(sharedFolderFolderUid)
+      const removedSharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        recordUid,
+        sharedFolderUid,
+        folderUid: sharedFolderFolderUid,
+      }
+      const removedSharedFolderRecord: Vault.ISharedFolderRecord = {
+        recordUid,
+        sharedFolderUid,
+      }
+      const userFolderRecord: Vault.IUserFolderRecord = {
+        recordUid,
+        folderUid: new Uint8Array([]),
+        revision: Date.now(),
+      }
+      syncDownResponseBuilder.addUserFolderRecord(userFolderRecord)
+      syncDownResponseBuilder.addRecordMetadata(recordMetadata)
+      syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
+      syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecord)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "record",
+        uid: recordUidStr,
+        revision: record.revision,
+      }))
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: "metadata",
+        uid: recordUidStr,
+      }))
+      expect(storage.put).toHaveBeenCalledWith(
+        expect.objectContaining({
+          uid: sharedFolderUidStr,
+          kind: "shared_folder",
+          revision: sharedFolder.revision,
+        })
+      )
+      expect(storage.addDependencies).toHaveBeenCalledWith({
+        "": new Set([{
+          kind: "record",
+          parentUid: "",
+          uid: recordUidStr,
+        }]),
+      })
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        [sharedFolderUidStr]: new Set([recordUidStr]),
+        [sharedFolderFolderUidStr]: new Set([recordUidStr]),
+      })
+    })
   })
 })

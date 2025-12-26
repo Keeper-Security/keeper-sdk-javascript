@@ -80,8 +80,8 @@ export class SyncDownResponseBuilder {
     }
   }
 
-  addUserFolderRecord(recordUid: Uint8Array, folderUid?: Uint8Array) {
-    this.data.userFolderRecords?.push({recordUid, folderUid, revision: Date.now()})
+  addUserFolderRecord(userFolderRecord: Vault.IUserFolderRecord) {
+    this.data.userFolderRecords?.push(userFolderRecord)
   }
 
   addRecordMetadata(recordMetadata: Vault.IRecordMetaData) {
@@ -130,7 +130,8 @@ export class SyncDownResponseBuilder {
       recordKey,
       recordUid,
       record,
-      decryptedSecurityScoreDataData
+      decryptedSecurityScoreDataData,
+      decryptedRecordKey,
     }
   }
 
@@ -154,22 +155,25 @@ export class SyncDownResponseBuilder {
     decryptedSharedFolderData: DecryptedSharedFolderData,
     userInfo: UserInfo,
     permissionData: SharedFolderPermissionData,
-    encryptionkey?: Uint8Array
+    options?: {
+      encryptionKey?: Uint8Array
+      parentFolderUid?: Uint8Array
+    },
   ) {
     const sharedFolderUid = platform.getRandomBytes(16)
     const decryptedSharedFolderKey = platform.getRandomBytes(32)
     let sharedFolderKey: Uint8Array
-    if (!encryptionkey) {
-      sharedFolderKey = await platform.aesCbcEncrypt(decryptedSharedFolderKey, encryptionkey ? encryptionkey : this.auth.dataKey!, true)
+    if (!options?.encryptionKey) {
+      sharedFolderKey = await platform.aesCbcEncrypt(decryptedSharedFolderKey, options?.encryptionKey ? options?.encryptionKey : this.auth.dataKey!, true)
     } else {// normally when a shared folder is shared to a team
-      sharedFolderKey = platform.publicEncrypt(decryptedSharedFolderKey, platform.bytesToBase64(encryptionkey))
+      sharedFolderKey = platform.publicEncrypt(decryptedSharedFolderKey, platform.bytesToBase64(options.encryptionKey))
     }
     const sharedFolder: Vault.ISharedFolder = {
       sharedFolderUid,
       sharedFolderKey,
       owner: userInfo.username,
       ownerAccountUid: userInfo.accountUid,
-      keyType: encryptionkey ? Records.RecordKeyType.NO_KEY : Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY,
+      keyType: options?.encryptionKey ? Records.RecordKeyType.NO_KEY : Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY,
       revision: Date.now(),
       name: await platform.aesCbcEncrypt(platform.stringToBytes(decryptedSharedFolderData.name), decryptedSharedFolderKey, true),
       data: await platform.aesCbcEncrypt(platform.stringToBytes(JSON.stringify(decryptedSharedFolderData)), decryptedSharedFolderKey, true),
@@ -177,6 +181,11 @@ export class SyncDownResponseBuilder {
     }
 
     this.data.sharedFolders?.push(sharedFolder)
+    this.data.userFolderSharedFolders?.push({
+      sharedFolderUid,
+      revision: sharedFolder.revision,
+      folderUid: options?.parentFolderUid ? options?.parentFolderUid : new Uint8Array([]),
+    })
 
     return {sharedFolderUid, sharedFolder, sharedFolderKey, decryptedSharedFolderKey}
   }
@@ -195,10 +204,6 @@ export class SyncDownResponseBuilder {
 
   addSharedFolderTeam(sharedFolderTeam: Vault.ISharedFolderTeam) {
     this.data.sharedFolderTeams?.push(sharedFolderTeam)
-  }
-
-  addUserFolderSharedFolder(userFolderSharedFolder: Vault.IUserFolderSharedFolder) {
-    this.data.userFolderSharedFolders?.push(userFolderSharedFolder)
   }
 
   addTeam(team: Vault.ITeam) {
