@@ -1652,4 +1652,114 @@ describe('Sync Down', () => {
       })
     })
   })
+  describe('Owned Records + Shared Folders', () => {
+    // TODO(@hleekeeper): the test cases may differ after addressing BE-7056
+    it.each([
+      `deletes the shared folder and all child resources including the owned child records when a user is removed from the shared folder`,
+      `deletes the shared folder and all child resources including the owned child records when the shared folder is deleted (regardless or access type to the folder - user or team access)`,
+    ])(`%s`, async () => {
+      const sharedFolderUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder.addRemovedSharedFolder(sharedFolderUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith("shared_folder", webSafe64FromBytes(sharedFolderUid))
+    })
+    it(`deletes the shared folder and all child resources including the owned child records when a user's team is removed from the shared folder`, async () => {
+      const teamUid = platform.getRandomBytes(16)
+      const sharedFolderUid = platform.getRandomBytes(16)
+      const removedSharedFolderTeam: Vault.ISharedFolderTeam = {
+        teamUid,
+        sharedFolderUid,
+      }
+      syncDownResponseBuilder.addRemovedSharedFolderTeam(removedSharedFolderTeam)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        [webSafe64FromBytes(sharedFolderUid)]: new Set([webSafe64FromBytes(teamUid)])
+      })
+    })
+  })
+  describe('Directly-Shared Records + Shared Folders', () => {
+    // TODO(@hleekeeper): the test cases may differ after addressing BE-7056
+    it.each([
+      `deletes the shared folder and all child resources except the directly-shared records when a user is removed from the shared folder`,
+      `deletes the shared folder and all child resources except the directly-shared records when the shared folder is deleted (regardless of folder access type - user or team access)`,
+    ])(`%s`, async () => {
+      const sharedFolderUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder.addRemovedSharedFolder(sharedFolderUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith("shared_folder", webSafe64FromBytes(sharedFolderUid))
+    })
+    it(`deletes the shared folder and all child resources except the directly-shared records when a user is removed from the shared folder`, async () => {
+      const teamUid = platform.getRandomBytes(16)
+      const sharedFolderUid = platform.getRandomBytes(16)
+      const removedSharedFolderTeam: Vault.ISharedFolderTeam = {
+        teamUid,
+        sharedFolderUid,
+      }
+      syncDownResponseBuilder.addRemovedSharedFolderTeam(removedSharedFolderTeam)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        [webSafe64FromBytes(sharedFolderUid)]: new Set([webSafe64FromBytes(teamUid)])
+      })
+    })
+    it(`doesn't delete the folder data when the directly-shared record is unshared, including the record data (regardless of folder access type - user or team access)`, async () => {
+      const recordUid = platform.getRandomBytes(16)
+      syncDownResponseBuilder.addRemovedRecord(recordUid)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.delete).toHaveBeenCalledWith("record", webSafe64FromBytes(recordUid))
+    })
+    it(`doesn't delete the folder data when the directly-shared record is deleted, including the record data (regardless of folder access type - user or team access)`, async () => {
+      const recordUid = platform.getRandomBytes(16)
+      const recordUidStr = webSafe64FromBytes(recordUid)
+      const sharedFolderData = {
+        name: "shared folder"
+      }
+      const {sharedFolderUid, sharedFolder} = await syncDownResponseBuilder.addSharedFolder(sharedFolderData, anotherUserA, {})
+      const sharedFolderUidStr = webSafe64FromBytes(sharedFolderUid)
+      const removedSharedFolderFolderRecord: Vault.ISharedFolderFolderRecord = {
+        recordUid,
+        sharedFolderUid,
+        folderUid: new Uint8Array([]),
+      }
+      const removedSharedFolderRecord: Vault.ISharedFolderRecord = {
+        recordUid,
+        sharedFolderUid,
+      }
+      syncDownResponseBuilder.addRemovedSharedFolderRecord(removedSharedFolderRecord)
+      syncDownResponseBuilder.addRemovedSharedFolderFolderRecord(removedSharedFolderFolderRecord)
+      mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+      await syncDown({
+        auth,
+        storage,
+      })
+      expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+        kind: 'shared_folder',
+        uid: sharedFolderUidStr,
+        revision: sharedFolder.revision,
+      }))
+      expect(storage.removeDependencies).toHaveBeenCalledWith({
+        "": new Set([recordUidStr]),
+        [sharedFolderUidStr]: new Set([recordUidStr]),
+      })
+    })
+  })
 })
