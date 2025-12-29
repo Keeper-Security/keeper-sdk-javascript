@@ -1072,7 +1072,7 @@ describe('Sync Down', () => {
         name: 'shared folder A',
       }
       const sharedFolderDataB = {
-        name: 'shared folder A',
+        name: 'shared folder B',
       }
       const {sharedFolderUid: sharedFolderUidA, sharedFolder: sharedFolderA} = await syncDownResponseBuilder.addSharedFolder(sharedFolderDataA, syncDownUser, {})
       const {sharedFolderUid: sharedFolderUidB, sharedFolder: sharedFolderB, decryptedSharedFolderKey: decryptedSharedFolderKeyB} = await syncDownResponseBuilder.addSharedFolder(sharedFolderDataB, syncDownUser, {})
