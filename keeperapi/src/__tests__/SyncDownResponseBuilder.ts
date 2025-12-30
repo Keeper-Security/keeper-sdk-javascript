@@ -258,6 +258,31 @@ export class SyncDownResponseBuilder {
     this.data.removedSharedFolderFolderRecords?.push(sharedFolderFolderRecord)
   }
 
+  addRecordLink(recordLink: Vault.IRecordLink) {
+    this.data.recordLinks?.push(recordLink)
+  }
+
+  addRemovedRecordLink(recordLink: Vault.IRecordLink) {
+    this.data.removedRecordLinks?.push(recordLink)
+  }
+
+  async addLinkedRecord(data: DecryptedRecordData, version: 3 | 4, encryptionKey: Uint8Array) {
+    const decryptedLinkedRecordKey = this.platform.getRandomBytes(32)
+    const linkedRecordUid = platform.getRandomBytes(16)
+    const linkedRecordKey = await this.platform.aesGcmEncrypt(decryptedLinkedRecordKey, encryptionKey)
+    const linkedRecordData = await this.platform.aesGcmEncrypt(this.platform.stringToBytes(JSON.stringify(data)), decryptedLinkedRecordKey)
+    const linkedRecord: Vault.IRecord = {
+      recordUid: linkedRecordUid,
+      version,
+      data: linkedRecordData,
+      extra: new Uint8Array([]),
+      revision: Date.now()
+    }
+    this.data.records?.push(linkedRecord)
+
+    return {linkedRecord, linkedRecordUid, linkedRecordKey}
+  }
+
   build() {
     return this.data
   }

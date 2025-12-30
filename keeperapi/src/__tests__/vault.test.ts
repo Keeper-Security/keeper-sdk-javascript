@@ -1762,4 +1762,201 @@ describe('Sync Down', () => {
       })
     })
   })
+  describe('Linked Records', () => {
+    describe('V4 Linked Records - File Attachments', () => {
+      it('saves the record data when a new linked record is added to a record', async () => {
+        const recordData = {
+          title: 'parent record',
+        }
+        const linkedRecordData = {
+          title: "file attached to the parent record"
+        }
+        const {recordUid, record, decryptedRecordKey, recordKey} = await syncDownResponseBuilder.addRecord(recordData)
+        const recordUidStr = webSafe64FromBytes(recordUid)
+        const {linkedRecordUid, linkedRecordKey, linkedRecord} = await syncDownResponseBuilder.addLinkedRecord(linkedRecordData, 4, decryptedRecordKey)
+        const linkedRecordUidStr = webSafe64FromBytes(linkedRecordUid)
+        const recordLink: Vault.IRecordLink = {
+          parentRecordUid: recordUid,
+          childRecordUid: linkedRecordUid,
+          recordKey: linkedRecordKey,
+        }
+        syncDownResponseBuilder.addRecordLink(recordLink)
+        await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: recordData,
+          uid: recordUidStr,
+          revision: record.revision,
+        }))
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: linkedRecordData,
+          uid: linkedRecordUidStr,
+          revision: linkedRecord.revision,
+        }))
+      })
+      it('saves the record data when a linked record is updated, attached to another record', async () => {
+        const recordData = {
+          title: 'parent record',
+        }
+        const linkedRecordData = {
+          title: "file attachment updated"
+        }
+        const {recordUid, record, decryptedRecordKey, recordKey} = await syncDownResponseBuilder.addRecord(recordData)
+        const recordUidStr = webSafe64FromBytes(recordUid)
+        const {linkedRecordUid, linkedRecord, linkedRecordKey} = await syncDownResponseBuilder.addLinkedRecord(linkedRecordData, 4, decryptedRecordKey)
+        const linkedRecordUidStr = webSafe64FromBytes(linkedRecordUid)
+        await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+        await platform.unwrapKey(linkedRecordKey, linkedRecordUidStr, recordUidStr, 'gcm', 'aes')
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: recordData,
+          uid: recordUidStr,
+          revision: record.revision,
+        }))
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: linkedRecordData,
+          uid: linkedRecordUidStr,
+          revision: linkedRecord.revision,
+        }))
+      })
+      it('update the record data when a linked record is unlinked from a record', async () => {
+        const recordData = {
+          title: 'parent record',
+        }
+        const {recordUid, record, recordKey} = await syncDownResponseBuilder.addRecord(recordData)
+        const recordUidStr = webSafe64FromBytes(recordUid)
+        await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+        const linkedRecordUid = platform.getRandomBytes(16)
+        const linkedRecordUidStr = webSafe64FromBytes(linkedRecordUid)
+        const removedRecordLink: Vault.IRecordLink = {
+          parentRecordUid: recordUid,
+          childRecordUid: linkedRecordUid,
+        }
+        syncDownResponseBuilder.addRemovedRecordLink(removedRecordLink)
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: recordData,
+          uid: recordUidStr,
+          revision: record.revision,
+        }))
+        expect(storage.removeDependencies).toHaveBeenCalledWith({
+          [recordUidStr]: new Set([linkedRecordUidStr])
+        })
+      })
+    })
+    describe('V3 Linked Records - Credit Cards / Addresses', () => {
+      it('saves the record data when a new linked record is added to a record', async () => {
+        const recordData = {
+          title: 'parent record',
+        }
+        const linkedRecordData = {
+          title: "credit card"
+        }
+        const {recordUid, record, decryptedRecordKey, recordKey} = await syncDownResponseBuilder.addRecord(recordData)
+        const recordUidStr = webSafe64FromBytes(recordUid)
+        const {linkedRecordUid, linkedRecord, linkedRecordKey} = await syncDownResponseBuilder.addLinkedRecord(linkedRecordData, 3, decryptedRecordKey)
+        const linkedRecordUidStr = webSafe64FromBytes(linkedRecordUid)
+        const recordLink: Vault.IRecordLink = {
+          parentRecordUid: recordUid,
+          childRecordUid: linkedRecordUid,
+          recordKey: linkedRecordKey,
+        }
+        syncDownResponseBuilder.addRecordLink(recordLink)
+        await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: recordData,
+          uid: recordUidStr,
+          revision: record.revision,
+        }))
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: linkedRecordData,
+          uid: linkedRecordUidStr,
+          revision: linkedRecord.revision,
+        }))
+      })
+      it('saves the record data when a linked record is updated, attached to another record', async () => {
+        const linkedRecordData = {
+          title: "credit card updated"
+        }
+        const {linkedRecordUid, linkedRecordKey, linkedRecord} = await syncDownResponseBuilder.addLinkedRecord(linkedRecordData, 3, auth.dataKey!)
+        const linkedRecordUidStr = webSafe64FromBytes(linkedRecordUid)
+        await platform.unwrapKey(linkedRecordKey, linkedRecordUidStr, 'data', 'gcm', 'aes')
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: linkedRecordData,
+          uid: linkedRecordUidStr,
+          revision: linkedRecord.revision,
+        }))
+      })
+      it('updates the record data when a linked record is unlinked from a record', async () => {
+        const recordData = {
+          title: 'parent record',
+        }
+        const {recordUid, record, recordKey} = await syncDownResponseBuilder.addRecord(recordData)
+        const recordUidStr = webSafe64FromBytes(recordUid)
+        await platform.unwrapKey(recordKey, recordUidStr, 'data', 'gcm', 'aes')
+        const linkedRecordUid = platform.getRandomBytes(16)
+        const linkedRecordUidStr = webSafe64FromBytes(linkedRecordUid)
+        const removedRecordLink: Vault.IRecordLink = {
+          parentRecordUid: recordUid,
+          childRecordUid: linkedRecordUid,
+        }
+        syncDownResponseBuilder.addRemovedRecordLink(removedRecordLink)
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.put).toHaveBeenCalledWith(expect.objectContaining({
+          kind: "record",
+          data: recordData,
+          uid: recordUidStr,
+          revision: record.revision,
+        }))
+        expect(storage.removeDependencies).toHaveBeenCalledWith({
+          [recordUidStr]: new Set([linkedRecordUidStr])
+        })
+      })
+      it(`deletes the record data when a linked record is deleted - owned linked records`, async () => {
+        const recordUid = platform.getRandomBytes(16)
+        syncDownResponseBuilder.addRemovedRecord(recordUid)
+        mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+        await syncDown({
+          auth,
+          storage,
+        })
+        expect(storage.delete).toHaveBeenCalledWith("record", webSafe64FromBytes(recordUid))
+      })
+      it('does nothing when a linked record is deleted - shared linked record', async () => {})
+    })
+  })
 })
