@@ -58,7 +58,7 @@ export class SocketListener {
 
     private isConnected: boolean
     private reconnectTimeout?: ReturnType<typeof setTimeout>
-    private currentBackoffSeconds: number
+    private currentBackoffSeconds: number = 0
     private isClosedByClient: boolean
 
     constructor(url: string, messageSessionUid?: Uint8Array, getConnectionRequest?: (messageSessionUid:Uint8Array) => Promise<string>) {
@@ -70,7 +70,7 @@ export class SocketListener {
         this.messageListeners = []
         this.singleMessageListeners = []
         this.onOpenListeners = []
-        this.currentBackoffSeconds = SocketListener.getBaseReconnectionInterval()
+        this.currentBackoffSeconds = this.getBaseReconnectionInterval()
         this.isClosedByClient = false
         this.isConnected = false
         if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
@@ -93,7 +93,7 @@ export class SocketListener {
             if (this.reconnectTimeout) {
                 clearTimeout(this.reconnectTimeout)
             }
-            this.currentBackoffSeconds = SocketListener.getBaseReconnectionInterval()
+            this.currentBackoffSeconds = this.getBaseReconnectionInterval()
             this.handleOnOpen()
         })
 
@@ -109,6 +109,7 @@ export class SocketListener {
                 reason = JSON.parse(event['reason'])
             } catch {
                 console.log('Connection closed - no close reason.')
+                this.handleClose({code: 0, reason: {close_reason: 'No close reason provided'}})
                 this.reconnect()
                 return
             }
@@ -170,7 +171,7 @@ export class SocketListener {
 
     onClose(callback: () => void): void {
         if (!this.socket) throw new Error('Socket not available')
-        this.socket.onClose(callback)
+        this.closeListeners.push(callback)
     }
 
     onError(callback: () => void): void {
@@ -203,6 +204,7 @@ export class SocketListener {
         for (let { resolve } of this.singleCloseListeners) {
             resolve(messageData)
         }
+        this.closeListeners.length = 0
         this.singleCloseListeners.length = 0
     }
 
@@ -221,8 +223,12 @@ export class SocketListener {
         })
     }
 
-    private static getBaseReconnectionInterval(): number {
-        return Math.random() * 5
+    private getBaseReconnectionInterval(): number {
+        if (this.currentBackoffSeconds === 0) {
+            return Math.random() * 5
+        } else {
+            return this.currentBackoffSeconds
+        }
     }
 
     private reconnect() {
