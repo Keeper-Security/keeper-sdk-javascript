@@ -204,7 +204,7 @@ export class SocketListener {
         for (let { resolve } of this.singleCloseListeners) {
             resolve(messageData)
         }
-        this.closeListeners.length = 0
+        
         this.singleCloseListeners.length = 0
     }
 
