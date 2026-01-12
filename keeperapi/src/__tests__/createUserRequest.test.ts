@@ -6,19 +6,9 @@
 import crypto from 'crypto'
 import {nodePlatform} from "../node/platform";
 import {browserPlatform} from "../browser/platform"
-import {TextEncoder, TextDecoder} from 'util';
 import {KeyWrapper, connectPlatform, platform} from "../platform";
 import { Auth } from '../auth';
 import { KeeperEnvironment } from '../endpoint';
-
-Object.assign(global, {TextDecoder, TextEncoder})
-
-Object.defineProperty(global.self, 'crypto', {
-    value: {
-        subtle: crypto.webcrypto.subtle,
-        getRandomValues: (array: any) => crypto.randomBytes(array.length)
-    }
-})
 
 describe('create user request', () => {
 
