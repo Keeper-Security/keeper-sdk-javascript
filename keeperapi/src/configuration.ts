@@ -51,6 +51,14 @@ export interface DeviceConfig {
     publicKey?: Uint8Array
     transmissionKeyId?: number
     mlKemPublicKeyId?: number
+    /**
+     * Overrides `ClientConfiguration.useHpkeForTransmissionKey` if set.
+     * Relevant for GovCloud, which at time of writing has no HPKE support.
+     * It's also possible that a region (again, most likely GovCloud)
+     * may tell the client NOT to use HPKE any more even after it once did,
+     * so this caches that state.
+     */
+    useHpkeTransmission?: boolean
 }
 
 export interface SessionStorage {

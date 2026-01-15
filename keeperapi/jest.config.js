@@ -13,4 +13,7 @@ module.exports = {
 
   // Module file extensions
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+
+  // Setup file to run before each test file
+  setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
 };

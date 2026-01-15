@@ -48,3 +48,8 @@ export {
     buildContextInfo,
     validateContextInfoParams
 } from './context';
+
+// PEM encoding
+export {
+    encodeMlKemPublicKeyToPem
+} from './pem';

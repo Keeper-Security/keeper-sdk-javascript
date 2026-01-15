@@ -47,7 +47,7 @@ export class KeeperEndpoint {
         if (options.locale) {
             this.locale = options.locale
         }
-        if (options.useHpkeForTransmissionKey) {
+        if (options.useHpkeForTransmissionKey && options.deviceConfig.useHpkeTransmission !== false) {
             this.useHpkeForTransmissionKey = true
         }
     }
@@ -200,20 +200,37 @@ export class KeeperEndpoint {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
                         case 'key':
-                            if (errorObj.qrc_ec_key_id && errorObj.key_id){
-                                if (isAllowedEcKeyId(errorObj.qrc_ec_key_id) && isAllowedMlKemKeyId(errorObj.key_id)) {
-                                    // Rotate EC key and ML-KEM key
-                                    await this.updateTransmissionKey(errorObj.qrc_ec_key_id, errorObj.key_id)
-                                } else {
-                                    throw new Error('Incorrect Transmission Key IDs being used.')
-                                }
+                            let newEcKeyId: AllowedEcKeyIds
+                            let newMlKemKeyId: AllowedMlKemKeyIds
+                            let disableHpke = false
+
+                            if (errorObj.qrc_ec_key_id && errorObj.key_id && isAllowedEcKeyId(errorObj.qrc_ec_key_id)) {
+                                // Server provided both EC and ML-KEM key IDs (HPKE mode)
+                                newEcKeyId = errorObj.qrc_ec_key_id
+                                newMlKemKeyId = errorObj.key_id as AllowedMlKemKeyIds
+                                disableHpke = !isAllowedMlKemKeyId(errorObj.key_id) // disable if unknown ML-KEM key
                             } else if (errorObj.key_id && isAllowedEcKeyId(errorObj.key_id) && this._transmissionKey) {
-                                // Rotate EC key
-                                await this.updateTransmissionKey(errorObj.key_id, this._transmissionKey.mlKemKeyId as AllowedMlKemKeyIds)
+                                // Server provided only EC key ID (non-HPKE mode or fallback)
+                                newEcKeyId = errorObj.key_id
+                                newMlKemKeyId = this._transmissionKey.mlKemKeyId as AllowedMlKemKeyIds // keep current ML-KEM key id
+                                if (this.useHpkeForTransmissionKey) {
+                                    // If we tried HPKE but server only provided EC key, disable HPKE
+                                    disableHpke = true
+                                }
+                            } else {
+                                throw new Error(`Invalid key rotation request: ${errorMessage}`)
                             }
-                            else {
-                                throw new Error('Incorrect Transmission Key ID being used.')
+
+                            // Disable HPKE if server doesn't support it or provided unknown ML-KEM key
+                            if (disableHpke) {
+                                this.useHpkeForTransmissionKey = false
+                                this.options.deviceConfig.useHpkeTransmission = false
+                                if (this.options.onDeviceConfig) {
+                                    await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
+                                }
                             }
+
+                            await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId)
                             continue
                         case 'region_redirect':
                             this.options.host = errorObj.region_host!
