@@ -215,6 +215,16 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         expect(mockConfig.deviceConfig.mlKemPublicKeyId).toBe(defaultMlKemKeyId)
         expect(onDeviceConfigMock).toHaveBeenCalledTimes(1)
         expect(postSpy).toHaveBeenCalledTimes(2) // First fails, second succeeds
+
+        // Check that the first call used the default EC key, and second used the new EC key
+        const firstCallArgs = postSpy.mock.calls[0]
+        const firstRequest = Authentication.ApiRequest.decode(firstCallArgs[1])
+        expect(firstRequest.qrcMessageKey).toBeNull()
+        expect(firstRequest.publicKeyId).toBe(defaultEcKeyId)
+        const secondCallArgs = postSpy.mock.calls[1]
+        const secondRequest = Authentication.ApiRequest.decode(secondCallArgs[1])
+        expect(secondRequest.qrcMessageKey).toBeNull()
+        expect(secondRequest.publicKeyId).toBe(newEcKeyId)
     })
 
     it('should use default keys when device config has no keys set (HPKE)', async () => {
@@ -239,6 +249,18 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         expect(mockConfig.deviceConfig.mlKemPublicKeyId).toBe(newMlKemKeyId)
         expect(onDeviceConfigMock).toHaveBeenCalledTimes(1)
         expect(postSpy).toHaveBeenCalledTimes(2) // First fails, second succeeds
+
+        // Check that the first call used the default keys, and second used the new keys
+        const firstCallArgs = postSpy.mock.calls[0]
+        const firstRequest = Authentication.ApiRequest.decode(firstCallArgs[1])
+        expect(firstRequest.qrcMessageKey).toBeDefined()
+        expect(firstRequest.qrcMessageKey!.ecKeyId).toBe(defaultEcKeyId)
+        expect(firstRequest.publicKeyId).toBe(defaultMlKemKeyId)
+        const secondCallArgs = postSpy.mock.calls[1]
+        const secondRequest = Authentication.ApiRequest.decode(secondCallArgs[1])
+        expect(secondRequest.qrcMessageKey).toBeDefined()
+        expect(secondRequest.qrcMessageKey!.ecKeyId).toBe(newEcKeyId)
+        expect(secondRequest.publicKeyId).toBe(newMlKemKeyId)
     })
 
     it("should switch from HPKE to non-HPKE when server doesn't support HPKE", async () => {
