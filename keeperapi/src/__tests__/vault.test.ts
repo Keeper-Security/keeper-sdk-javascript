@@ -978,7 +978,6 @@ describe('Sync Down', () => {
         storage,
       })
       expect(storage.removeDependencies).toHaveBeenCalledWith({
-        "": new Set([recordUidStr]),
         [sharedFolderUidStr]: new Set([recordUidStr])
       })
       expect(storage.put).toHaveBeenCalledWith(
@@ -1045,7 +1044,6 @@ describe('Sync Down', () => {
         }]),
       })
       expect(storage.removeDependencies).toHaveBeenCalledWith({
-        "": new Set([recordUidStr]),
         [sharedFolderUidStr]: new Set([recordUidStr])
       })
       expect(storage.put).toHaveBeenCalledWith(
@@ -1122,7 +1120,6 @@ describe('Sync Down', () => {
         sharedFolderUid: sharedFolderUidBStr,
       }))
       expect(storage.removeDependencies).toHaveBeenCalledWith({
-        "": new Set([recordUidStr]),
         [sharedFolderUidAStr]: new Set([recordUidStr])
       })
       expect(storage.put).toHaveBeenCalledWith(
@@ -1757,7 +1754,6 @@ describe('Sync Down', () => {
         revision: sharedFolder.revision,
       }))
       expect(storage.removeDependencies).toHaveBeenCalledWith({
-        "": new Set([recordUidStr]),
         [sharedFolderUidStr]: new Set([recordUidStr]),
       })
     })
