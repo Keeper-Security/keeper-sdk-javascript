@@ -5,4 +5,4 @@
 - `npm start`
 
 ### NOTES
-- By default, the `preinstall` script links the installed version of `keeperapi` to the local version in this repo
+- This example automatically uses the local `keeperapi` package from the monorepo via `file:` reference

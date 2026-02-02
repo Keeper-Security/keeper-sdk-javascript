@@ -160,7 +160,7 @@ export class Auth {
             this.options.sessionStorage = {
                 lastUsername: undefined,
                 getCloneCode: () => Promise.resolve(null),
-                saveCloneCode: () => new Promise((res, rej) => {}),
+                saveCloneCode: () => Promise.resolve(),
                 getSessionParameters: () => Promise.resolve(null),
                 saveSessionParameters: () => Promise.resolve()
             }

@@ -4,26 +4,41 @@ import LoginType = Authentication.LoginType;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
-const clientVersion = 'w16.4.0'
+const clientVersion = 'w17.5.0'
 
 async function printVault(username: string, password: string) {
     try {
         let auth = new Auth({
             host: KeeperEnvironment.DEV,
-            clientVersion: clientVersion
+            clientVersion: clientVersion,
+            deviceConfig: { deviceName: "JS SDK Example" },
         })
         await auth.loginV3({username, password, loginType: LoginType.NORMAL})
-        console.log('login successful')
 
-        const records = [] as DRecord[]
-        const storage = {} as VaultStorage
+        const storage: VaultStorage = {
+           async put(data) {
+                if (data.kind === 'record') {
+                    console.log(JSON.stringify(data, null, 2))
+                }
+           },
+           // remaing methods are no-ops
+           async getDependencies(uid) { return undefined },
+           async addDependencies() { return },
+           async removeDependencies() { return },
+           async clear() { return },
+           async get(kind, uid) { return undefined },
+           async delete(kind, uid) { return },
+           async getKeyBytes() { return undefined },
+           async saveKeyBytes() {}
+        }
         await syncDown({
           auth,
           storage,
         })
-        records.forEach(x => console.log(JSON.stringify(x)))
+        process.exit(0)
     } catch (e) {
         console.log(e)
+        process.exit(1)
     }
 }
 

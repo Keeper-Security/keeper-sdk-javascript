@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "link-local": "npm link ../../keeperapi",
     "types": "tsc --watch",
     "types:ci": "tsc"
   },
   "dependencies": {
-    "keeperapi": "0.2.0",
+    "@keeper-security/keeperapi": "file:../../keeperapi",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },

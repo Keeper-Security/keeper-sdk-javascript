@@ -39,7 +39,7 @@ jobs:
         working-directory: ./keeperapi
 
       - name: Examples (node) - Installation
-        run: npm run link-local
+        run: npm i
         working-directory: ./examples/print-vault-node
 
       - name: Examples (node) - Check Types
@@ -47,7 +47,7 @@ jobs:
         working-directory: ./examples/print-vault-node
 
       - name: Examples (browser) - Installation
-        run: npm run link-local
+        run: npm i
         working-directory: ./examples/print-vault-browser
 
       - name: Examples (browser) - Check Types

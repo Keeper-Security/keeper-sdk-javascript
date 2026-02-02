@@ -11,31 +11,23 @@ This SDK can be used from Node or from the browser
 Usage:
 
 ```bash
-npm install keeperapi
+npm install @keeper-security/keeperapi
 ```
 
-```typescript
-    try {
-        let auth = new Auth({
-            host: KeeperEnvironment.DEV
-        });
-        await auth.login(username, password);
-        console.log("login successful");
-        let vault = new Vault(auth);
-        await vault.syncDown();
-        vault.records.forEach(x => console.log(JSON.stringify(x)));
-    } catch (e) {
-        console.log(e);
-    }
-```
+## Examples
 
-For local development, 
+Check out the example projects to see the SDK in action:
+
+- [Node.js Example](examples/print-vault-node) - Print vault contents using Node.js
+- [Browser Example](examples/print-vault-browser) - Print vault contents in a React web app
+
+## Local Development
 
 ```bash
 npm run build
 ```
  from "keeperapi" folder, then
- 
+
 ```bash
 npm link ../../keeperapi
 ```
