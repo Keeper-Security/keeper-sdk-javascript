@@ -336,7 +336,7 @@ export class KeeperEndpoint {
             payload: SsoCloud.SsoCloudRequest.encode(payload).finish(),
             transmissionKey: this._transmissionKey,
             locale: this.locale,
-            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+            useHpkeForTransmissionKey: false // HPKE not currently supported for Cloud SSO payload (KA-7996)
         })
         return webSafe64FromBytes(request)
     }
