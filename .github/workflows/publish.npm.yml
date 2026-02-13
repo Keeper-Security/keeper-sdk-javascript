@@ -1,4 +1,7 @@
 name: Publish to NPM
+permissions:
+  contents: read
+  pull-requests: write
 on:
   workflow_dispatch:
 
@@ -17,7 +20,7 @@ jobs:
 
       - name: Retrieve secrets from KSM
         id: ksmsecrets
-        uses: Keeper-Security/ksm-action@master
+        uses: Keeper-Security/ksm-action@d92a3c5d1df69745083436ba189f64a9cc1b25f5
         with:
           keeper-secret-config: ${{ secrets.KSM_CONFIG }}
           secrets: |
