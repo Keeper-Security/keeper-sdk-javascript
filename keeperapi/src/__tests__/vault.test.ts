@@ -1265,6 +1265,8 @@ describe('Sync Down', () => {
         auth,
         storage,
       })
+      expect(storage.delete).toHaveBeenCalledWith('user_folder', sharedFolderFolderUidAStr)
+      expect(storage.delete).toHaveBeenCalledWith('user_folder', sharedFolderFolderUidBStr)
       expect(storage.removeDependencies).toHaveBeenCalledWith({
         [sharedFolderUidStr]: new Set([
           sharedFolderFolderUidAStr,
