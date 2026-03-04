@@ -39,6 +39,7 @@ export class KeeperEndpoint {
     private onsitePublicKey: Uint8Array | null = null
 
     private useHpkeForTransmissionKey: boolean = false
+    blockRegionRedirects: boolean = false
 
     constructor(private options: ClientConfigurationInternal) {
         if (options.deviceToken) {
@@ -196,6 +197,7 @@ export class KeeperEndpoint {
                 return
             } catch {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
+                let blockedError: Error | undefined
                 try {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
@@ -233,6 +235,14 @@ export class KeeperEndpoint {
                             await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId)
                             continue
                         case 'region_redirect':
+                            if (this.blockRegionRedirects) {
+                                blockedError = new Error(JSON.stringify({
+                                    error: 'region_redirect',
+                                    region_host: errorObj.region_host,
+                                    blocked: true,
+                                }))
+                                break
+                            }
                             this.options.host = errorObj.region_host!
                             if (this.options.onRegionChanged) {
                                 await this.options.onRegionChanged(this.options.host);
@@ -250,11 +260,12 @@ export class KeeperEndpoint {
                             }
                         }
                     }
-                    if (this.options.onCommandFailure) {
+                    if (!blockedError && this.options.onCommandFailure) {
                         this.options.onCommandFailure({ ...errorObj, ...{ path: message.path } })
                     }
                 } catch {
                 }
+                if (blockedError) throw blockedError
                 throw(new Error(errorMessage))
             }
         }

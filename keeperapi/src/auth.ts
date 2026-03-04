@@ -615,23 +615,31 @@ export class Auth {
         }
     }
 
-    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false) {
+    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false, blockRegionRedirect = false) {
         let domainRequest: ISsoServiceProviderRequest = {
             name: ssoDomain.trim(),
             locale: locale,
             clientVersion: this.endpoint.clientVersion,
         }
-        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
-        const params = domainResponse.isCloud
-            ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
-            : '?embedded&key=' + await this._endpoint.getOnsitePublicKey(ecOnly)
 
-        this.userType = domainResponse.isCloud ? UserType.cloudSso : UserType.onsiteSso
-        this.ssoLogoutUrl = domainResponse.spUrl.replace('login', 'logout')
+        if (blockRegionRedirect) {
+            this._endpoint.blockRegionRedirects = true
+        }
+        try {
+            const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
+            const params = domainResponse.isCloud
+                ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
+                : '?embedded&key=' + await this._endpoint.getOnsitePublicKey(ecOnly)
 
-        return {
-            url: domainResponse.spUrl + params,
-            name: domainResponse.name,
+            this.userType = domainResponse.isCloud ? UserType.cloudSso : UserType.onsiteSso
+            this.ssoLogoutUrl = domainResponse.spUrl.replace('login', 'logout')
+
+            return {
+                url: domainResponse.spUrl + params,
+                name: domainResponse.name,
+            }
+        } finally {
+            this._endpoint.blockRegionRedirects = false
         }
     }
 
