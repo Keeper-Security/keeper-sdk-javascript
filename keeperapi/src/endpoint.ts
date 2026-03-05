@@ -1,10 +1,11 @@
 import {KeeperError} from './configuration'
-import {Authentication, Push, SsoCloud} from './proto'
+import {Authentication, Push, Router, SsoCloud} from './proto'
 import {platform} from './platform'
 import {
     formatTimeDiff,
     generateTransmissionKey,
     generateHpkeTransmissionKey,
+    getKeeperRouterUrl,
     getKeeperUrl,
     isTwoFactorResultCode, log,
     normal64Bytes,
@@ -165,6 +166,36 @@ export class KeeperEndpoint {
 
     async executeRestAction<TIn>(message: RestInMessage<TIn> | RestActionMessage, sessionToken?: string): Promise<void> {
         return this.executeRestInternal(message, sessionToken)
+    }
+
+    /**
+     * Executes a request against the PAM router endpoint.
+     * Unlike the standard Keeper API, the router uses header-based auth (EC-only, no HPKE):
+     *   TransmissionKey: base64(eciesEncrypt(transmissionKey, serverPublicKey))
+     *   Authorization: KeeperUser base64(aesGcmEncrypt(sessionTokenBytes, transmissionKey))
+     * The request body is the raw AES-GCM-encrypted protobuf (no ApiRequest wrapper).
+     * The response is a Router.RouterResponse protobuf with an encrypted payload.
+     */
+    async executeRouterRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken: string): Promise<TOut> {
+        const transmissionKey = await this.getTransmissionKey()
+        const sessionTokenBytes = normal64Bytes(sessionToken)
+        const encryptedSessionToken = await platform.aesGcmEncrypt(sessionTokenBytes, transmissionKey.key)
+        const encryptedPayload = await platform.aesGcmEncrypt(message.toBytes(), transmissionKey.key)
+        const headers = {
+            'TransmissionKey': platform.bytesToBase64(transmissionKey.ecEncryptedKey),
+            'Authorization': `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`
+        }
+        const url = getKeeperRouterUrl(this.options.host, message.path)
+        const response = await platform.post(url, encryptedPayload, headers)
+        if (!response.data || response.data.length === 0) {
+            throw new Error(`Empty response from router for ${message.path}`)
+        }
+        const routerResponse = Router.RouterResponse.decode(response.data)
+        if (!routerResponse.encryptedPayload || routerResponse.encryptedPayload.length === 0) {
+            throw new Error(`Router error for ${message.path}: [${routerResponse.responseCode}] ${routerResponse.errorMessage}`)
+        }
+        const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
+        return message.fromBytes(decryptedPayload)
     }
 
     private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut | void> {
