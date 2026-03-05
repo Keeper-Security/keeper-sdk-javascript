@@ -41,3 +41,9 @@ npm link ../../keeperapi
 ```
 
 from your client folder
+
+To ignore certain commits in git blame (like formatting commits), run this command:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```

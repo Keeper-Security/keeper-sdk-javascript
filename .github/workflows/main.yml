@@ -22,6 +22,10 @@ jobs:
         env:
           NPM_TOKEN: ""
 
+      - name: Lib - Check Formatting
+        run: npm run format:check
+        working-directory: ./keeperapi
+
       - name: Lib - Build
         run: npm run build
         working-directory: ./keeperapi
