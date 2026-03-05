@@ -29,6 +29,10 @@ import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import {KeeperHttpResponse, RestCommand} from './commands'
 import {AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId} from './transmissionKeys'
 
+export type ExecuteRestOptions = {
+    skipRegionRedirect?: boolean
+}
+
 export class KeeperEndpoint {
     private _transmissionKey?: TransmissionKey
     private locale?: string
@@ -154,16 +158,16 @@ export class KeeperEndpoint {
         }
     }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
+    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut> {
         // @ts-ignore
-        return this.executeRestInternal(message, sessionToken)
+        return this.executeRestInternal(message, sessionToken, options)
     }
 
     async executeRestAction<TIn>(message: RestInMessage<TIn> | RestActionMessage, sessionToken?: string): Promise<void> {
         return this.executeRestInternal(message, sessionToken)
     }
 
-    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string): Promise<TOut | void> {
+    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut | void> {
         this._transmissionKey = await this.getTransmissionKey()
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
@@ -233,6 +237,9 @@ export class KeeperEndpoint {
                             await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId)
                             continue
                         case 'region_redirect':
+                            if (options?.skipRegionRedirect) {
+                                throw new Error('region_redirect')
+                            }
                             this.options.host = errorObj.region_host!
                             if (this.options.onRegionChanged) {
                                 await this.options.onRegionChanged(this.options.host);

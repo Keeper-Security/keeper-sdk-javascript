@@ -7,7 +7,7 @@ import {
     LoginError,
     TwoFactorChannelData
 } from './configuration'
-import {KeeperEndpoint, KeeperEnvironment} from "./endpoint";
+import {KeeperEndpoint, KeeperEnvironment, ExecuteRestOptions} from "./endpoint";
 import {KeyWrapper, platform} from "./platform";
 import {
     generateEncryptionKey,
@@ -615,13 +615,13 @@ export class Auth {
         }
     }
 
-    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false) {
+    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false, skipRegionRedirect = false) {
         let domainRequest: ISsoServiceProviderRequest = {
             name: ssoDomain.trim(),
             locale: locale,
             clientVersion: this.endpoint.clientVersion,
         }
-        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
+        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest), { skipRegionRedirect })
         const params = domainResponse.isCloud
             ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
             : '?embedded&key=' + await this._endpoint.getOnsitePublicKey(ecOnly)
@@ -1117,8 +1117,8 @@ export class Auth {
     //     return this.endpoint.executeV2Command(command);
     // }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>): Promise<TOut> {
-        return this.endpoint.executeRest(message, this._sessionToken);
+    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, options?: ExecuteRestOptions): Promise<TOut> {
+        return this.endpoint.executeRest(message, this._sessionToken, options);
     }
 
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
