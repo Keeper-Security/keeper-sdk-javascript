@@ -1,5 +1,5 @@
 import {KeeperEnvironment} from "./endpoint";
-import {Authentication} from './proto';
+import {Authentication, Router} from './proto';
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
 import TwoFactorChannelType = Authentication.TwoFactorChannelType;
@@ -39,6 +39,7 @@ export type KeeperError = {
     message?: string
     path?: string
     result_code?: string
+    response_code?: Router.RouterResponseCode
     key_id?: number
     qrc_ec_key_id?: number
     region_host?: string

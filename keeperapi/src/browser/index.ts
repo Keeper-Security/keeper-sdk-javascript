@@ -11,6 +11,7 @@ export * from "../platform";
 export * from "../proto";
 export * from "../cryptoWorker";
 export * from "../qrc";
+export * from "../pam";
 import {connectPlatform} from "../platform";
 import {browserPlatform} from "./platform";
 

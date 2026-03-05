@@ -21,6 +21,15 @@ export function getKeeperUrl(host: KeeperHost, forPath: string) {
     return `https://${host}/${basePath}${forPath}`;
 }
 
+export function getKeeperRouterUrl(host: KeeperHost, forPath: string) {
+    switch (host) {
+        case 'govcloud.keepersecurity.us':
+            return `https://connect.keepersecurity.us/${forPath}`;
+        default:
+            return `https://connect.${host}/${forPath}`;
+    }
+}
+
 export function getKeeperSAMLUrl(host: KeeperHost, forPath: string, serviceProviderId?: number) {
     if (serviceProviderId) {
         return getKeeperUrl(host, `sso/saml/${forPath}/${serviceProviderId}`);
