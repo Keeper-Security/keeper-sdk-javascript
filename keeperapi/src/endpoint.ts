@@ -29,6 +29,10 @@ import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import {KeeperHttpResponse, RestCommand} from './commands'
 import {AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId} from './transmissionKeys'
 
+export type ExecuteRestOptions = {
+    skipRegionRedirect?: boolean
+}
+
 export class KeeperEndpoint {
     private _transmissionKey?: TransmissionKey
     private locale?: string
@@ -39,7 +43,6 @@ export class KeeperEndpoint {
     private onsitePublicKey: Uint8Array | null = null
 
     private useHpkeForTransmissionKey: boolean = false
-    blockRegionRedirects: boolean = false
 
     constructor(private options: ClientConfigurationInternal) {
         if (options.deviceToken) {
@@ -155,16 +158,16 @@ export class KeeperEndpoint {
         }
     }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
+    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut> {
         // @ts-ignore
-        return this.executeRestInternal(message, sessionToken)
+        return this.executeRestInternal(message, sessionToken, options)
     }
 
     async executeRestAction<TIn>(message: RestInMessage<TIn> | RestActionMessage, sessionToken?: string): Promise<void> {
         return this.executeRestInternal(message, sessionToken)
     }
 
-    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string): Promise<TOut | void> {
+    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut | void> {
         this._transmissionKey = await this.getTransmissionKey()
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
@@ -197,7 +200,6 @@ export class KeeperEndpoint {
                 return
             } catch {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
-                let blockedError: Error | undefined
                 try {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
@@ -235,13 +237,8 @@ export class KeeperEndpoint {
                             await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId)
                             continue
                         case 'region_redirect':
-                            if (this.blockRegionRedirects) {
-                                blockedError = new Error(JSON.stringify({
-                                    error: 'region_redirect',
-                                    region_host: errorObj.region_host,
-                                    blocked: true,
-                                }))
-                                break
+                            if (options?.skipRegionRedirect) {
+                                throw new Error('region_redirect')
                             }
                             this.options.host = errorObj.region_host!
                             if (this.options.onRegionChanged) {
@@ -260,12 +257,11 @@ export class KeeperEndpoint {
                             }
                         }
                     }
-                    if (!blockedError && this.options.onCommandFailure) {
+                    if (this.options.onCommandFailure) {
                         this.options.onCommandFailure({ ...errorObj, ...{ path: message.path } })
                     }
                 } catch {
                 }
-                if (blockedError) throw blockedError
                 throw(new Error(errorMessage))
             }
         }
