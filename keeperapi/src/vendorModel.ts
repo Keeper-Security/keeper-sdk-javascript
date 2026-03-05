@@ -33,4 +33,3 @@ export interface LicenseAdjustment {
     seats?: number;
     products: Product[];
 }
-

@@ -3,7 +3,7 @@
  * Leverages existing platform utilities where possible
  */
 
-import { platform } from "../platform";
+import { platform } from '../platform';
 
 /**
  * Concatenates multiple Uint8Arrays into a single Uint8Array
@@ -77,10 +77,10 @@ export function extractRawMlKemPublicKey(keyData: Uint8Array, expectedRawLength:
 
     // Otherwise, try to parse it as PEM
     const spkiDER = decodePem(keyData);
-    const spki = parseDER(spkiDER);           // SEQUENCE (outer)
-    const algId = parseDER(spki.data);         // SEQUENCE (AlgorithmIdentifier)
+    const spki = parseDER(spkiDER); // SEQUENCE (outer)
+    const algId = parseDER(spki.data); // SEQUENCE (AlgorithmIdentifier)
     const pubKey = parseDER(spki.data, algId.next); // BIT STRING
-    const rawPublicKey = pubKey.data.subarray(1);            // skip unused-bits byte
+    const rawPublicKey = pubKey.data.subarray(1); // skip unused-bits byte
     if (rawPublicKey.length !== expectedRawLength) {
         throw new Error(`Extracted key length ${rawPublicKey.length} does not match expected ${expectedRawLength}`);
     }
@@ -93,7 +93,7 @@ type DERElement = {
     len: number;
     data: Uint8Array;
     next: number;
-}
+};
 
 function parseDER(buf: Uint8Array, offset: number = 0): DERElement {
     const tag = buf[offset];

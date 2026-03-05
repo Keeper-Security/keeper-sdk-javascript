@@ -1,7 +1,7 @@
-import typescript from "rollup-plugin-typescript2"
-import pkg from './package.json'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
+import typescript from 'rollup-plugin-typescript2';
+import pkg from './package.json';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default [
     {
@@ -10,38 +10,36 @@ export default [
             {
                 file: pkg.browser,
                 format: 'es',
-                sourcemap: true
+                sourcemap: true,
             },
             // {
             //     file: pkg.browsertest,
             //     format: 'cjs',
             // },
         ],
-        external: [
-            ...Object.keys(pkg.dependencies || {}),
-            "protobufjs/minimal",
-            "@noble/post-quantum/ml-kem.js"
-        ],
+        external: [...Object.keys(pkg.dependencies || {}), 'protobufjs/minimal', '@noble/post-quantum/ml-kem.js'],
         plugins: [
             typescript({
-                tsconfig: "tsconfig.rollup.json"
-            })
-        ]
+                tsconfig: 'tsconfig.rollup.json',
+            }),
+        ],
     },
     {
         input: 'src/browser/browserWorker.ts',
-        output: [{
-            file: 'dist/worker/browserWorker.js',
-            format: 'iife',
-            sourcemap: true
-        }],
+        output: [
+            {
+                file: 'dist/worker/browserWorker.js',
+                format: 'iife',
+                sourcemap: true,
+            },
+        ],
         plugins: [
             typescript({
-                tsconfig: "tsconfig.rollup.json"
+                tsconfig: 'tsconfig.rollup.json',
             }),
             resolve(),
-            commonjs()
-        ]
+            commonjs(),
+        ],
     },
     {
         input: 'src/node/index.ts',
@@ -49,18 +47,21 @@ export default [
             {
                 file: pkg.main,
                 format: 'cjs',
-                sourcemap: true
-            }
+                sourcemap: true,
+            },
         ],
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "crypto", "constants", "https", "protobufjs/minimal",
-            "@noble/post-quantum/ml-kem.js"
+            'crypto',
+            'constants',
+            'https',
+            'protobufjs/minimal',
+            '@noble/post-quantum/ml-kem.js',
         ],
         plugins: [
             typescript({
-                tsconfig: "tsconfig.rollup.json"
-            })
-        ]
-    }
+                tsconfig: 'tsconfig.rollup.json',
+            }),
+        ],
+    },
 ];

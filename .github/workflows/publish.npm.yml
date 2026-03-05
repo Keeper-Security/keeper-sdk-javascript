@@ -1,32 +1,32 @@
 name: Publish to NPM
 on:
-  workflow_dispatch:
+    workflow_dispatch:
 
 permissions:
-  contents: read
-  id-token: write
+    contents: read
+    id-token: write
 
 jobs:
-  publish-npm:
-    environment: prod
-    runs-on: ubuntu-latest
+    publish-npm:
+        environment: prod
+        runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./keeperapi
+        defaults:
+            run:
+                working-directory: ./keeperapi
 
-    steps:
-      - name: Get the source code
-        uses: actions/checkout@v4
+        steps:
+            - name: Get the source code
+              uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '24'
+                  registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies
-        run: npm install
+            - name: Install dependencies
+              run: npm install
 
-      - name: Publish package
-        run: npm publish
+            - name: Publish package
+              run: npm publish

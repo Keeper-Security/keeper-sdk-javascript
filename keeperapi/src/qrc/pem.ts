@@ -7,8 +7,8 @@ import { concatUint8Arrays } from './utils';
 import { MlKemVariant } from './constants';
 
 // ML-KEM OIDs from NIST
-const ML_KEM_768_OID = new Uint8Array([0x06, 0x0B, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x02]);
-const ML_KEM_1024_OID = new Uint8Array([0x06, 0x0B, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x03]);
+const ML_KEM_768_OID = new Uint8Array([0x06, 0x0b, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x02]);
+const ML_KEM_1024_OID = new Uint8Array([0x06, 0x0b, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x04, 0x03]);
 
 /**
  * Encodes a length in DER format
@@ -19,7 +19,7 @@ function encodeLength(length: number): Uint8Array {
     } else if (length < 256) {
         return new Uint8Array([0x81, length]);
     } else if (length < 65536) {
-        return new Uint8Array([0x82, (length >> 8) & 0xFF, length & 0xFF]);
+        return new Uint8Array([0x82, (length >> 8) & 0xff, length & 0xff]);
     } else {
         throw new Error('Length too large for DER encoding');
     }

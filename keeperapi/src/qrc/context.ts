@@ -69,11 +69,15 @@ export function validateContextInfoParams(
     mlKemCiphertextHash: Uint8Array
 ): void {
     if (serverEcPublicKey.length !== EC_PUBLIC_KEY_LENGTH) {
-        throw new Error(`Invalid server EC public key length: ${serverEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`);
+        throw new Error(
+            `Invalid server EC public key length: ${serverEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`
+        );
     }
 
     if (clientEphemeralEcPublicKey.length !== EC_PUBLIC_KEY_LENGTH) {
-        throw new Error(`Invalid client EC public key length: ${clientEphemeralEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`);
+        throw new Error(
+            `Invalid client EC public key length: ${clientEphemeralEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`
+        );
     }
 
     if (mlKemCiphertextHash.length !== 32) {
