@@ -19,18 +19,18 @@ export const ML_KEM_1024_PRIVATE_KEY_LENGTH = 3168;
 export const ML_KEM_SHARED_SECRET_LENGTH = 32;
 
 // ECDH key lengths
-export const EC_PUBLIC_KEY_LENGTH = 65;  // Uncompressed P-256 public key (0x04 + x + y)
+export const EC_PUBLIC_KEY_LENGTH = 65; // Uncompressed P-256 public key (0x04 + x + y)
 export const EC_PRIVATE_KEY_LENGTH = 32; // P-256 private key scalar
 export const EC_SHARED_SECRET_LENGTH = 32; // ECDH shared secret with P-256
 
 // AES-GCM parameters
-export const AES_KEY_LENGTH = 32;         // AES-256
-export const AES_GCM_IV_LENGTH = 12;      // 96-bit IV for GCM
-export const AES_GCM_TAG_LENGTH = 16;     // 128-bit authentication tag
+export const AES_KEY_LENGTH = 32; // AES-256
+export const AES_GCM_IV_LENGTH = 12; // 96-bit IV for GCM
+export const AES_GCM_TAG_LENGTH = 16; // 128-bit authentication tag
 
 // HKDF parameters
-export const HKDF_SALT_LENGTH = 32;       // SHA-256 output size
-export const HKDF_OUTPUT_LENGTH = 32;     // AES-256 key size
+export const HKDF_SALT_LENGTH = 32; // SHA-256 output size
+export const HKDF_OUTPUT_LENGTH = 32; // AES-256 key size
 
 // Protocol version
 export const QRC_PROTOCOL_VERSION = 1;
@@ -41,13 +41,13 @@ export const OPTIONAL_DATA_LENGTH = 16;
 // Ciphersuite identifiers (must match server implementation)
 export enum Ciphersuite {
     HPKE_MLKEM768_ECDHP256_HKDFSHA256_AESGCM256 = 'HPKE_ML-KEM-768_ECDH-P256_HKDF-SHA256_AES-GCM-256',
-    HPKE_MLKEM1024_ECDHP256_HKDFSHA256_AESGCM256 = 'HPKE_ML-KEM-1024_ECDH-P256_HKDF-SHA256_AES-GCM-256'
+    HPKE_MLKEM1024_ECDHP256_HKDFSHA256_AESGCM256 = 'HPKE_ML-KEM-1024_ECDH-P256_HKDF-SHA256_AES-GCM-256',
 }
 
 // ML-KEM variant types
 export enum MlKemVariant {
     ML_KEM_768 = 768,
-    ML_KEM_1024 = 1024
+    ML_KEM_1024 = 1024,
 }
 
 // Map ciphersuite to ML-KEM variant

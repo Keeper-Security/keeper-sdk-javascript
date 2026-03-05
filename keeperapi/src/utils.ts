@@ -1,20 +1,26 @@
-import {KeyWrapper, LogOptions, Platform, platform} from "./platform";
-import type {KeeperHost, TransmissionKey, TransmissionKeyHpke} from './configuration';
-import { AllowedEcKeyIds, AllowedMlKemKeyIds, getKeeperMlKemKeyVariant, isAllowedEcKeyId, isAllowedMlKemKeyId } from "./transmissionKeys";
-import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from "./qrc";
+import { KeyWrapper, LogOptions, Platform, platform } from './platform';
+import type { KeeperHost, TransmissionKey, TransmissionKeyHpke } from './configuration';
+import {
+    AllowedEcKeyIds,
+    AllowedMlKemKeyIds,
+    getKeeperMlKemKeyVariant,
+    isAllowedEcKeyId,
+    isAllowedMlKemKeyId,
+} from './transmissionKeys';
+import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from './qrc';
 
 export const log = (message: string, options: LogOptions = 'default') => {
-    platform.log(message, options)
-}
+    platform.log(message, options);
+};
 
 export const formatTimeDiff = (timeDiff: Date): string => {
-    const minutes = timeDiff.getMinutes()
-    const seconds = timeDiff.getSeconds().toString().padStart(2, '0')
-    const milliseconds = timeDiff.getMilliseconds()
+    const minutes = timeDiff.getMinutes();
+    const seconds = timeDiff.getSeconds().toString().padStart(2, '0');
+    const milliseconds = timeDiff.getMilliseconds();
     return minutes > 0
         ? `${minutes.toString().padStart(2, '0')}:${seconds}.${milliseconds}`
-        : `${seconds}.${milliseconds}`
-}
+        : `${seconds}.${milliseconds}`;
+};
 
 export function getKeeperUrl(host: KeeperHost, forPath: string) {
     const basePath = forPath.startsWith('bi_api') ? '' : 'api/rest/';
@@ -45,14 +51,17 @@ export function getKeeperAutomatorAdminUrl(host: KeeperHost, forPath: string, au
     }
 }
 
-export async function generateTransmissionKey(ecKeyId: AllowedEcKeyIds, mlKemKeyId: AllowedMlKemKeyIds): Promise<TransmissionKey> {
-    const transmissionKey = platform.getRandomBytes(32)
+export async function generateTransmissionKey(
+    ecKeyId: AllowedEcKeyIds,
+    mlKemKeyId: AllowedMlKemKeyIds
+): Promise<TransmissionKey> {
+    const transmissionKey = platform.getRandomBytes(32);
     return {
         ecKeyId,
         key: transmissionKey,
         ecEncryptedKey: await platform.publicEncryptEC(transmissionKey, platform.keys[ecKeyId]),
-        mlKemKeyId
-    }
+        mlKemKeyId,
+    };
 }
 
 export async function generateHpkeTransmissionKey(
@@ -60,20 +69,20 @@ export async function generateHpkeTransmissionKey(
     useOptionalData: boolean = true
 ): Promise<TransmissionKeyHpke> {
     // Validate and get server public keys
-    const {ecKeyId, mlKemKeyId} = transmissionKey
+    const { ecKeyId, mlKemKeyId } = transmissionKey;
     if (!isAllowedEcKeyId(ecKeyId)) {
-        throw new Error(`Invalid EC key ID: ${ecKeyId}`)
+        throw new Error(`Invalid EC key ID: ${ecKeyId}`);
     }
     if (!isAllowedMlKemKeyId(mlKemKeyId)) {
-        throw new Error(`Invalid ML-KEM key ID: ${mlKemKeyId}`)
+        throw new Error(`Invalid ML-KEM key ID: ${mlKemKeyId}`);
     }
-    const serverEcPublicKey = platform.keys[ecKeyId]
-    const serverMlKemPublicKey = platform.mlKemKeys[mlKemKeyId]
+    const serverEcPublicKey = platform.keys[ecKeyId];
+    const serverMlKemPublicKey = platform.mlKemKeys[mlKemKeyId];
     if (!serverEcPublicKey) {
-        throw new Error(`EC public key not found for ID: ${ecKeyId}`)
+        throw new Error(`EC public key not found for ID: ${ecKeyId}`);
     }
     if (!serverMlKemPublicKey) {
-        throw new Error(`ML-KEM public key not found for ID: ${mlKemKeyId}`)
+        throw new Error(`ML-KEM public key not found for ID: ${mlKemKeyId}`);
     }
 
     // Generate optional data if requested (recommended for unique request binding)
@@ -94,12 +103,7 @@ export async function generateHpkeTransmissionKey(
     }
 
     // Encrypt transmission key using QRC
-    const qrcResult = await hpke.encrypt(
-        transmissionKey.key,
-        serverEcPublicKey,
-        serverMlKemPublicKey,
-        optionalData
-    );
+    const qrcResult = await hpke.encrypt(transmissionKey.key, serverEcPublicKey, serverMlKemPublicKey, optionalData);
 
     return {
         mlKemKeyId,
@@ -109,9 +113,9 @@ export async function generateHpkeTransmissionKey(
             mlKemEncapsulatedKey: qrcResult.mlKemEncapsulatedKey,
             data: qrcResult.encryptedData,
             msgVersion: qrcResult.msgVersion,
-            ecKeyId: ecKeyId
+            ecKeyId: ecKeyId,
         },
-        optionalData: optionalData
+        optionalData: optionalData,
     };
 }
 
@@ -132,7 +136,7 @@ export function normal64Bytes(source: string): Uint8Array {
 }
 
 export function isTwoFactorResultCode(resultCode: string): boolean {
-    return ["need_totp", "invalid_device_token", "invalid_totp"].includes(resultCode);
+    return ['need_totp', 'invalid_device_token', 'invalid_totp'].includes(resultCode);
 }
 
 export function generateEncryptionKey(): Uint8Array {
@@ -149,12 +153,12 @@ export function generateUid(): string {
 
 export function wrapPassword(key: string | Uint8Array): KeyWrapper {
     if (typeof key === 'string') {
-        return platform.wrapPassword(platform.stringToBytes(key))
+        return platform.wrapPassword(platform.stringToBytes(key));
     }
     if (key instanceof Uint8Array) {
-        return platform.wrapPassword(key)
+        return platform.wrapPassword(key);
     }
-    throw new Error('Error wrapping the password')
+    throw new Error('Error wrapping the password');
 }
 
 export async function encryptKey(key: Uint8Array, withKey: Uint8Array): Promise<string> {
@@ -197,38 +201,39 @@ export async function encryptObjectForStorage<T>(obj: T, key: Uint8Array): Promi
 export async function encryptObjectForStorageAsBytes<T>(obj: T, key: Uint8Array): Promise<Uint8Array> {
     let s = JSON.stringify(obj);
     let bytes = platform.stringToBytes(s);
-    return platform.aesCbcEncrypt(bytes, key, true)
+    return platform.aesCbcEncrypt(bytes, key, true);
 }
 
 export async function decryptObjectFromStorage<T>(data: string, key: Uint8Array): Promise<T> {
     try {
         let decrypted = await decryptFromStorage(data, key);
         return JSON.parse(platform.bytesToString(decrypted));
-    }
-    catch (e) {
+    } catch (e) {
         console.log(`Unable to decrypt ${data}`);
-        return {} as T
+        return {} as T;
     }
 }
 
-export async function encryptObjectForStorageGCM<T>(obj: T, key: Uint8Array, usePadding: boolean = true): Promise<Uint8Array> {
+export async function encryptObjectForStorageGCM<T>(
+    obj: T,
+    key: Uint8Array,
+    usePadding: boolean = true
+): Promise<Uint8Array> {
     let bytes = platform.stringToBytes(JSON.stringify(obj));
     if (usePadding) {
-        const paddedSize = Math.ceil(Math.max(384, bytes.length) / 16) * 16
-        bytes = Uint8Array.of(...bytes, ...Array(paddedSize - bytes.length).fill(0x20))
+        const paddedSize = Math.ceil(Math.max(384, bytes.length) / 16) * 16;
+        bytes = Uint8Array.of(...bytes, ...Array(paddedSize - bytes.length).fill(0x20));
     }
-    return platform.aesGcmEncrypt(bytes, key)
+    return platform.aesGcmEncrypt(bytes, key);
 }
 
-export function resolvablePromise(): { promise: Promise<void>, resolve: () => void } {
-    let resolver
+export function resolvablePromise(): { promise: Promise<void>; resolve: () => void } {
+    let resolver;
     const promise = new Promise<void>((resolve) => {
-        resolver = resolve
-    })
+        resolver = resolve;
+    });
     return {
         promise: promise,
-        resolve: resolver
-    }
+        resolve: resolver,
+    };
 }
-
-

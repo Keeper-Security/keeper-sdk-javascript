@@ -71,8 +71,10 @@ export class HPKE_ECDH_KYBER {
         );
 
         // Perform ML-KEM encapsulation
-        const { ciphertext: mlKemCiphertext, sharedSecret: mlKemSharedSecret } =
-            mlKemEncapsulate(serverMlKemPublicKey, this.mlKemVariant);
+        const { ciphertext: mlKemCiphertext, sharedSecret: mlKemSharedSecret } = mlKemEncapsulate(
+            serverMlKemPublicKey,
+            this.mlKemVariant
+        );
 
         // Combine both shared secrets (concatenate)
         const combinedSecret = concatUint8Arrays(ecSharedSecret, mlKemSharedSecret);
@@ -143,11 +145,7 @@ export class HPKE_ECDH_KYBER {
         );
 
         // Perform ML-KEM decapsulation
-        const mlKemSharedSecret = mlKemDecapsulate(
-            mlKemEncapsulatedKey,
-            serverMlKemPrivateKey,
-            this.mlKemVariant
-        );
+        const mlKemSharedSecret = mlKemDecapsulate(mlKemEncapsulatedKey, serverMlKemPrivateKey, this.mlKemVariant);
 
         // Combine both shared secrets (concatenate)
         const combinedSecret = concatUint8Arrays(ecSharedSecret, mlKemSharedSecret);

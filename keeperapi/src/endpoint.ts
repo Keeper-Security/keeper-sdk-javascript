@@ -1,24 +1,28 @@
-import {KeeperError} from './configuration'
-import {Authentication, Push, SsoCloud} from './proto'
-import {platform} from './platform'
+import { KeeperError } from './configuration';
+import { Authentication, Push, SsoCloud } from './proto';
+import { platform } from './platform';
 import {
     formatTimeDiff,
     generateTransmissionKey,
     generateHpkeTransmissionKey,
     getKeeperUrl,
-    isTwoFactorResultCode, log,
+    isTwoFactorResultCode,
+    log,
     normal64Bytes,
-    webSafe64FromBytes
-} from './utils'
+    webSafe64FromBytes,
+} from './utils';
 import {
-    RestMessage, RestInMessage, RestOutMessage, RestActionMessage,
+    RestMessage,
+    RestInMessage,
+    RestOutMessage,
+    RestActionMessage,
     deviceMessage,
     preLoginMessage,
     registerDeviceMessage,
     registerDeviceInRegionMessage,
-    updateDeviceMessage
-} from './restMessages'
-import {ClientConfigurationInternal, TransmissionKey} from './configuration';
+    updateDeviceMessage,
+} from './restMessages';
+import { ClientConfigurationInternal, TransmissionKey } from './configuration';
 import ApiRequestPayload = Authentication.ApiRequestPayload;
 import ApiRequest = Authentication.ApiRequest;
 import IDeviceResponse = Authentication.IDeviceResponse;
@@ -26,94 +30,103 @@ import IPreLoginResponse = Authentication.IPreLoginResponse;
 import WssClientResponse = Push.WssClientResponse;
 import WssConnectionRequest = Push.WssConnectionRequest;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
-import {KeeperHttpResponse, RestCommand} from './commands'
-import {AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId} from './transmissionKeys'
+import { KeeperHttpResponse, RestCommand } from './commands';
+import { AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId } from './transmissionKeys';
 
 export type ExecuteRestOptions = {
-    skipRegionRedirect?: boolean
-}
+    skipRegionRedirect?: boolean;
+};
 
 export class KeeperEndpoint {
-    private _transmissionKey?: TransmissionKey
-    private locale?: string
-    public deviceToken?: Uint8Array | null
-    public clientVersion
+    private _transmissionKey?: TransmissionKey;
+    private locale?: string;
+    public deviceToken?: Uint8Array | null;
+    public clientVersion;
 
-    private onsitePrivateKey: Uint8Array | null = null
-    private onsitePublicKey: Uint8Array | null = null
+    private onsitePrivateKey: Uint8Array | null = null;
+    private onsitePublicKey: Uint8Array | null = null;
 
-    private useHpkeForTransmissionKey: boolean = false
+    private useHpkeForTransmissionKey: boolean = false;
 
     constructor(private options: ClientConfigurationInternal) {
         if (options.deviceToken) {
-            this.deviceToken = options.deviceToken
+            this.deviceToken = options.deviceToken;
         }
         if (options.locale) {
-            this.locale = options.locale
+            this.locale = options.locale;
         }
         if (options.useHpkeForTransmissionKey && options.deviceConfig.useHpkeTransmission !== false) {
-            this.useHpkeForTransmissionKey = true
+            this.useHpkeForTransmissionKey = true;
         }
     }
 
-    async getTransmissionKey():Promise<TransmissionKey> {
-        const DEFAULT_PROD_EC_KEY_ID = 10
-        const DEFAULT_PROD_ML_KEM_KEY_ID = 136
-        const deviceConfigTransmissionKeyId = this.options.deviceConfig.transmissionKeyId || DEFAULT_PROD_EC_KEY_ID
-        const deviceConfigMlKemKeyId = this.options.deviceConfig.mlKemPublicKeyId || DEFAULT_PROD_ML_KEM_KEY_ID
-        if(!this._transmissionKey && isAllowedEcKeyId(deviceConfigTransmissionKeyId) && isAllowedMlKemKeyId(deviceConfigMlKemKeyId)){
-            this._transmissionKey = await generateTransmissionKey(deviceConfigTransmissionKeyId, deviceConfigMlKemKeyId)
-        } else if(!this._transmissionKey){
-            this._transmissionKey = await generateTransmissionKey(DEFAULT_PROD_EC_KEY_ID, DEFAULT_PROD_ML_KEM_KEY_ID)
+    async getTransmissionKey(): Promise<TransmissionKey> {
+        const DEFAULT_PROD_EC_KEY_ID = 10;
+        const DEFAULT_PROD_ML_KEM_KEY_ID = 136;
+        const deviceConfigTransmissionKeyId = this.options.deviceConfig.transmissionKeyId || DEFAULT_PROD_EC_KEY_ID;
+        const deviceConfigMlKemKeyId = this.options.deviceConfig.mlKemPublicKeyId || DEFAULT_PROD_ML_KEM_KEY_ID;
+        if (
+            !this._transmissionKey &&
+            isAllowedEcKeyId(deviceConfigTransmissionKeyId) &&
+            isAllowedMlKemKeyId(deviceConfigMlKemKeyId)
+        ) {
+            this._transmissionKey = await generateTransmissionKey(
+                deviceConfigTransmissionKeyId,
+                deviceConfigMlKemKeyId
+            );
+        } else if (!this._transmissionKey) {
+            this._transmissionKey = await generateTransmissionKey(DEFAULT_PROD_EC_KEY_ID, DEFAULT_PROD_ML_KEM_KEY_ID);
         }
 
-        return this._transmissionKey
+        return this._transmissionKey;
     }
 
     getUrl(forPath: string): string {
-        return getKeeperUrl(this.options.host, forPath)
+        return getKeeperUrl(this.options.host, forPath);
     }
 
     async getDeviceToken(): Promise<IDeviceResponse> {
-        return this.executeRest(deviceMessage({
-            clientVersion: this.clientVersion,
-            deviceName: 'JS Keeper API'
-        }))
+        return this.executeRest(
+            deviceMessage({
+                clientVersion: this.clientVersion,
+                deviceName: 'JS Keeper API',
+            })
+        );
     }
 
     async getPreLogin(username: string): Promise<IPreLoginResponse> {
-
         if (!this.deviceToken) {
-            console.log('Obtaining device token...')
-            let deviceResponse = await this.getDeviceToken()
+            console.log('Obtaining device token...');
+            let deviceResponse = await this.getDeviceToken();
             if (!deviceResponse.encryptedDeviceToken) {
-                throw Error(`Device token was not created. Status: ${deviceResponse.status}`)
+                throw Error(`Device token was not created. Status: ${deviceResponse.status}`);
             }
-            this.deviceToken = deviceResponse.encryptedDeviceToken
+            this.deviceToken = deviceResponse.encryptedDeviceToken;
             if (this.options.onDeviceToken) {
-                this.options.onDeviceToken(this.deviceToken)
+                this.options.onDeviceToken(this.deviceToken);
             }
         }
 
         while (true) {
             try {
-                return await this.executeRest(preLoginMessage({
-                    authRequest: {
-                        clientVersion: this.clientVersion,
-                        username: username,
-                        encryptedDeviceToken: this.deviceToken
-                    },
-                    loginType: Authentication.LoginType.NORMAL
-                }))
+                return await this.executeRest(
+                    preLoginMessage({
+                        authRequest: {
+                            clientVersion: this.clientVersion,
+                            username: username,
+                            encryptedDeviceToken: this.deviceToken,
+                        },
+                        loginType: Authentication.LoginType.NORMAL,
+                    })
+                );
             } catch (e) {
-                if (!(e instanceof Error))
-                    throw(e)
-                let errorObj = JSON.parse(e.message)
+                if (!(e instanceof Error)) throw e;
+                let errorObj = JSON.parse(e.message);
                 if (errorObj.error === 'region_redirect') {
-                    this.options.host = errorObj.region_host
-                    console.log(`Redirecting to ${this.options.host}`)
+                    this.options.host = errorObj.region_host;
+                    console.log(`Redirecting to ${this.options.host}`);
                 } else {
-                    throw(e)
+                    throw e;
                 }
             }
         }
@@ -124,54 +137,66 @@ export class KeeperEndpoint {
         // Case 2 existing device on 14, edt but no keys - call device update
         // Case 3 existing device on 15+, has edt and keys - skip registration
 
-        const deviceConfig = this.options.deviceConfig
+        const deviceConfig = this.options.deviceConfig;
 
-        if (deviceConfig.deviceToken && deviceConfig.privateKey && deviceConfig.publicKey) {  // Case 1
-            return
+        if (deviceConfig.deviceToken && deviceConfig.privateKey && deviceConfig.publicKey) {
+            // Case 1
+            return;
         }
 
-        const ecdh = await platform.generateECKeyPair()
-        deviceConfig.publicKey = ecdh.publicKey
-        deviceConfig.privateKey = ecdh.privateKey
+        const ecdh = await platform.generateECKeyPair();
+        deviceConfig.publicKey = ecdh.publicKey;
+        deviceConfig.privateKey = ecdh.privateKey;
         if (deviceConfig.deviceToken) {
             const devUpdMsg = updateDeviceMessage({
                 encryptedDeviceToken: deviceConfig.deviceToken,
                 clientVersion: this.options.clientVersion,
                 deviceName: deviceConfig.deviceName,
                 devicePublicKey: deviceConfig.publicKey,
-            })
-            await this.executeRestAction(devUpdMsg)
+            });
+            await this.executeRestAction(devUpdMsg);
         } else {
             const devRegMsg = registerDeviceMessage({
                 clientVersion: this.options.clientVersion,
                 deviceName: deviceConfig.deviceName,
                 devicePublicKey: deviceConfig.publicKey,
-            })
-            const devRegResp = await this.executeRest(devRegMsg)
+            });
+            const devRegResp = await this.executeRest(devRegMsg);
             if (!devRegResp.encryptedDeviceToken) {
-                throw Error('Device token was not created')
+                throw Error('Device token was not created');
             }
-            deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
+            deviceConfig.deviceToken = devRegResp.encryptedDeviceToken;
         }
         if (this.options.onDeviceConfig) {
             await this.options.onDeviceConfig(deviceConfig, this.options.host);
         }
     }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut> {
+    async executeRest<TIn, TOut>(
+        message: RestOutMessage<TOut> | RestMessage<TIn, TOut>,
+        sessionToken?: string,
+        options?: ExecuteRestOptions
+    ): Promise<TOut> {
         // @ts-ignore
-        return this.executeRestInternal(message, sessionToken, options)
+        return this.executeRestInternal(message, sessionToken, options);
     }
 
-    async executeRestAction<TIn>(message: RestInMessage<TIn> | RestActionMessage, sessionToken?: string): Promise<void> {
-        return this.executeRestInternal(message, sessionToken)
+    async executeRestAction<TIn>(
+        message: RestInMessage<TIn> | RestActionMessage,
+        sessionToken?: string
+    ): Promise<void> {
+        return this.executeRestInternal(message, sessionToken);
     }
 
-    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut | void> {
-        this._transmissionKey = await this.getTransmissionKey()
+    private async executeRestInternal<TIn, TOut>(
+        message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage,
+        sessionToken?: string,
+        options?: ExecuteRestOptions
+    ): Promise<TOut | void> {
+        this._transmissionKey = await this.getTransmissionKey();
         while (true) {
-            const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
-            const apiVersion = message.apiVersion || 0
+            const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array();
+            const apiVersion = message.apiVersion || 0;
 
             const request = await prepareApiRequest({
                 payload,
@@ -179,277 +204,295 @@ export class KeeperEndpoint {
                 sessionToken,
                 locale: this.locale,
                 apiVersion,
-                useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
-            })
+                useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
+            });
             log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR');
-            const startTime = Date.now()
-            const response = await platform.post(this.getUrl(message.path), request)
-            log(` (${formatTimeDiff(new Date(Date.now() - startTime))})`, 'CR')
-            if (!response.data || response.data.length === 0 && response.statusCode === 200) {
+            const startTime = Date.now();
+            const response = await platform.post(this.getUrl(message.path), request);
+            log(` (${formatTimeDiff(new Date(Date.now() - startTime))})`, 'CR');
+            if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
                 if ('fromBytes' in message) {
-                    throw Error(`Missing expected a response for ${message.path}`)
+                    throw Error(`Missing expected a response for ${message.path}`);
                 }
-                return
+                return;
             }
             if (response.statusCode != 200) {
-                console.log("Response code:", response.statusCode);
+                console.log('Response code:', response.statusCode);
             }
             try {
-                const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
-                if ('fromBytes' in message) return message.fromBytes(decrypted)
-                return
+                const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key);
+                if ('fromBytes' in message) return message.fromBytes(decrypted);
+                return;
             } catch {
-                const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
+                const errorMessage = platform.bytesToString(response.data.slice(0, 1000));
                 try {
-                    const errorObj: KeeperError = JSON.parse(errorMessage)
+                    const errorObj: KeeperError = JSON.parse(errorMessage);
                     switch (errorObj.error) {
                         case 'key':
-                            let newEcKeyId: AllowedEcKeyIds
-                            let newMlKemKeyId: AllowedMlKemKeyIds
-                            let disableHpke = false
+                            let newEcKeyId: AllowedEcKeyIds;
+                            let newMlKemKeyId: AllowedMlKemKeyIds;
+                            let disableHpke = false;
 
                             if (errorObj.qrc_ec_key_id && errorObj.key_id && isAllowedEcKeyId(errorObj.qrc_ec_key_id)) {
                                 // Server provided both EC and ML-KEM key IDs (HPKE mode)
-                                newEcKeyId = errorObj.qrc_ec_key_id
-                                newMlKemKeyId = errorObj.key_id as AllowedMlKemKeyIds
-                                disableHpke = !isAllowedMlKemKeyId(errorObj.key_id) // disable if unknown ML-KEM key
+                                newEcKeyId = errorObj.qrc_ec_key_id;
+                                newMlKemKeyId = errorObj.key_id as AllowedMlKemKeyIds;
+                                disableHpke = !isAllowedMlKemKeyId(errorObj.key_id); // disable if unknown ML-KEM key
                             } else if (errorObj.key_id && isAllowedEcKeyId(errorObj.key_id) && this._transmissionKey) {
                                 // Server provided only EC key ID (non-HPKE mode or fallback)
-                                newEcKeyId = errorObj.key_id
-                                newMlKemKeyId = this._transmissionKey.mlKemKeyId as AllowedMlKemKeyIds // keep current ML-KEM key id
+                                newEcKeyId = errorObj.key_id;
+                                newMlKemKeyId = this._transmissionKey.mlKemKeyId as AllowedMlKemKeyIds; // keep current ML-KEM key id
                                 if (this.useHpkeForTransmissionKey) {
                                     // If we tried HPKE but server only provided EC key, disable HPKE
-                                    disableHpke = true
+                                    disableHpke = true;
                                 }
                             } else {
-                                throw new Error(`Invalid key rotation request: ${errorMessage}`)
+                                throw new Error(`Invalid key rotation request: ${errorMessage}`);
                             }
 
                             // Disable HPKE if server doesn't support it or provided unknown ML-KEM key
                             if (disableHpke) {
-                                this.useHpkeForTransmissionKey = false
-                                this.options.deviceConfig.useHpkeTransmission = false
+                                this.useHpkeForTransmissionKey = false;
+                                this.options.deviceConfig.useHpkeTransmission = false;
                                 if (this.options.onDeviceConfig) {
-                                    await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
+                                    await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
                                 }
                             }
 
-                            await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId)
-                            continue
+                            await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId);
+                            continue;
                         case 'region_redirect':
                             if (options?.skipRegionRedirect) {
-                                throw new Error('region_redirect')
+                                throw new Error('region_redirect');
                             }
-                            this.options.host = errorObj.region_host!
+                            this.options.host = errorObj.region_host!;
                             if (this.options.onRegionChanged) {
                                 await this.options.onRegionChanged(this.options.host);
                             }
-                            continue
+                            continue;
                         case 'device_not_registered': {
                             if (this.options.deviceConfig.deviceToken) {
-                                await this.executeRestInternal(registerDeviceInRegionMessage({
-                                    clientVersion: this.options.clientVersion,
-                                    deviceName: this.options.deviceConfig.deviceName,
-                                    devicePublicKey: this.options.deviceConfig.publicKey,
-                                    encryptedDeviceToken: this.options.deviceConfig.deviceToken
-                                }))
-                                continue
+                                await this.executeRestInternal(
+                                    registerDeviceInRegionMessage({
+                                        clientVersion: this.options.clientVersion,
+                                        deviceName: this.options.deviceConfig.deviceName,
+                                        devicePublicKey: this.options.deviceConfig.publicKey,
+                                        encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+                                    })
+                                );
+                                continue;
                             }
                         }
                     }
                     if (this.options.onCommandFailure) {
-                        this.options.onCommandFailure({ ...errorObj, ...{ path: message.path } })
+                        this.options.onCommandFailure({ ...errorObj, ...{ path: message.path } });
                     }
-                } catch {
-                }
-                throw(new Error(errorMessage))
+                } catch {}
+                throw new Error(errorMessage);
             }
         }
     }
 
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
-        this._transmissionKey = await this.getTransmissionKey()
-        command.baseRequest.client_version = this.clientVersion
+        this._transmissionKey = await this.getTransmissionKey();
+        command.baseRequest.client_version = this.clientVersion;
         const payload = {
             ...command.baseRequest,
             ...command.authorization,
-            ...command.request
-        }
-        const requestBytes = await this.prepareRequest(payload)
-        const response = await platform.post(this.getUrl('vault/execute_v2_command'), requestBytes)
-        let decrypted
+            ...command.request,
+        };
+        const requestBytes = await this.prepareRequest(payload);
+        const response = await platform.post(this.getUrl('vault/execute_v2_command'), requestBytes);
+        let decrypted;
         try {
-            decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
+            decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key);
         } catch (e) {
-            const error = platform.bytesToString(response.data)
-            throw(`Unable to decrypt response: ${error}`)
+            const error = platform.bytesToString(response.data);
+            throw `Unable to decrypt response: ${error}`;
         }
-        const json = JSON.parse(platform.bytesToString(decrypted))
+        const json = JSON.parse(platform.bytesToString(decrypted));
         if (json.result !== 'success' && !isTwoFactorResultCode(json.result_code)) {
-            throw(json)
+            throw json;
         }
-        return json as Response
+        return json as Response;
     }
 
     async get(path: string): Promise<KeeperHttpResponse> {
-        return platform.get(this.getUrl(path), {})
+        return platform.get(this.getUrl(path), {});
     }
 
     public async updateTransmissionKey(ecKeyId: AllowedEcKeyIds, mlKemKeyId: AllowedMlKemKeyIds) {
-        this._transmissionKey = await generateTransmissionKey(ecKeyId, mlKemKeyId)
+        this._transmissionKey = await generateTransmissionKey(ecKeyId, mlKemKeyId);
 
-        this.options.deviceConfig.transmissionKeyId = ecKeyId
-        this.options.deviceConfig.mlKemPublicKeyId = mlKemKeyId
+        this.options.deviceConfig.transmissionKeyId = ecKeyId;
+        this.options.deviceConfig.mlKemPublicKeyId = mlKemKeyId;
         if (this.options.onDeviceConfig) {
             await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
         }
     }
 
-    public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string, apiVersion?: number): Promise<Uint8Array> {
-        this._transmissionKey = await this.getTransmissionKey()
+    public async prepareRequest(
+        payload: Uint8Array | unknown,
+        sessionToken?: string,
+        apiVersion?: number
+    ): Promise<Uint8Array> {
+        this._transmissionKey = await this.getTransmissionKey();
         return prepareApiRequest({
             payload,
             transmissionKey: this._transmissionKey,
             sessionToken,
             locale: this.locale,
             apiVersion,
-            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
-        })
+            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
+        });
     }
 
     async decryptPushMessage(pushMessageData: Uint8Array): Promise<WssClientResponse> {
-        this._transmissionKey = await this.getTransmissionKey()
-        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessageData, this._transmissionKey.key)
-        return WssClientResponse.decode(decryptedPushMessage)
+        this._transmissionKey = await this.getTransmissionKey();
+        const decryptedPushMessage = await platform.aesGcmDecrypt(pushMessageData, this._transmissionKey.key);
+        return WssClientResponse.decode(decryptedPushMessage);
     }
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
-        this._transmissionKey = await this.getTransmissionKey()
-        return getPushConnectionRequest(messageSessionUid, this._transmissionKey, this.options.deviceConfig.deviceToken, this.locale)
+        this._transmissionKey = await this.getTransmissionKey();
+        return getPushConnectionRequest(
+            messageSessionUid,
+            this._transmissionKey,
+            this.options.deviceConfig.deviceToken,
+            this.locale
+        );
     }
 
-    public async prepareSsoPayload(messageSessionUid: Uint8Array, username: string = '', idpSessionId = ''): Promise<string> {
-        this._transmissionKey = await this.getTransmissionKey()
+    public async prepareSsoPayload(
+        messageSessionUid: Uint8Array,
+        username: string = '',
+        idpSessionId = ''
+    ): Promise<string> {
+        this._transmissionKey = await this.getTransmissionKey();
         const payload: SsoCloud.ISsoCloudRequest = {
-            "embedded": true,
-            "clientVersion": this.clientVersion,
-            "dest": "vault",
-            "forceLogin": false,
-            "messageSessionUid": messageSessionUid,
-            "idpSessionId": idpSessionId,
-            "username": username
-        }
+            embedded: true,
+            clientVersion: this.clientVersion,
+            dest: 'vault',
+            forceLogin: false,
+            messageSessionUid: messageSessionUid,
+            idpSessionId: idpSessionId,
+            username: username,
+        };
         const request = await prepareApiRequest({
             payload: SsoCloud.SsoCloudRequest.encode(payload).finish(),
             transmissionKey: this._transmissionKey,
             locale: this.locale,
-            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
-        })
-        return webSafe64FromBytes(request)
+            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
+        });
+        return webSafe64FromBytes(request);
     }
 
     public async decryptCloudSsoResponse(token: string): Promise<SsoCloudResponse> {
-        this._transmissionKey = await this.getTransmissionKey()
-        return decryptCloudSsoResponse(token, this._transmissionKey.key)
+        this._transmissionKey = await this.getTransmissionKey();
+        return decryptCloudSsoResponse(token, this._transmissionKey.key);
     }
 
-    public async getOnsitePublicKey(ecOnly:boolean): Promise<string> {
+    public async getOnsitePublicKey(ecOnly: boolean): Promise<string> {
         if (!this.onsitePublicKey || !this.onsitePrivateKey) {
-            if(ecOnly){
-                const {privateKey, publicKey} = await platform.generateECKeyPair()
+            if (ecOnly) {
+                const { privateKey, publicKey } = await platform.generateECKeyPair();
 
-                this.onsitePrivateKey = privateKey
-                this.onsitePublicKey = publicKey
+                this.onsitePrivateKey = privateKey;
+                this.onsitePublicKey = publicKey;
             } else {
-                const {privateKey, publicKey} = await platform.generateRSAKeyPair()
+                const { privateKey, publicKey } = await platform.generateRSAKeyPair();
 
-                this.onsitePrivateKey = privateKey
-                this.onsitePublicKey = publicKey
+                this.onsitePrivateKey = privateKey;
+                this.onsitePublicKey = publicKey;
             }
         }
 
-        return webSafe64FromBytes(this.onsitePublicKey)
+        return webSafe64FromBytes(this.onsitePublicKey);
     }
 
     public decryptOnsiteSsoPassword(password: string): string {
-        const encryptedPasswordBytes = normal64Bytes(password)
+        const encryptedPasswordBytes = normal64Bytes(password);
         if (!this.onsitePrivateKey) {
-            throw Error('onsitePrivateKey is missing')
+            throw Error('onsitePrivateKey is missing');
         }
-        const decryptedPassword = platform.privateDecrypt(encryptedPasswordBytes, this.onsitePrivateKey)
-        return platform.bytesToString(decryptedPassword)
+        const decryptedPassword = platform.privateDecrypt(encryptedPasswordBytes, this.onsitePrivateKey);
+        return platform.bytesToString(decryptedPassword);
     }
 }
 
-export async function getPushConnectionRequest(messageSessionUid: Uint8Array, transmissionKey: TransmissionKey, encryptedDeviceToken?: Uint8Array, locale?: string) {
+export async function getPushConnectionRequest(
+    messageSessionUid: Uint8Array,
+    transmissionKey: TransmissionKey,
+    encryptedDeviceToken?: Uint8Array,
+    locale?: string
+) {
     const connectionRequest = WssConnectionRequest.create({
         messageSessionUid: messageSessionUid,
         encryptedDeviceToken: encryptedDeviceToken,
-        deviceTimeStamp: new Date().getTime()
-    })
-    const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
+        deviceTimeStamp: new Date().getTime(),
+    });
+    const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish();
     const apiRequest = await prepareApiRequest({
         payload: connectionRequestBytes,
         transmissionKey,
         locale,
-        useHpkeForTransmissionKey: false // HPKE not currently supported for push
-    })
-    return webSafe64FromBytes(apiRequest)
+        useHpkeForTransmissionKey: false, // HPKE not currently supported for push
+    });
+    return webSafe64FromBytes(apiRequest);
 }
 
 type PrepareApiRequestParams = {
-    payload: Uint8Array | unknown,
-    transmissionKey: TransmissionKey,
-    sessionToken?: string,
-    locale?: string,
-    apiVersion?: number
-    useHpkeForTransmissionKey?: boolean
-}
+    payload: Uint8Array | unknown;
+    transmissionKey: TransmissionKey;
+    sessionToken?: string;
+    locale?: string;
+    apiVersion?: number;
+    useHpkeForTransmissionKey?: boolean;
+};
 
 export async function prepareApiRequest({
-  payload,
-  transmissionKey,
-  sessionToken,
-  locale,
-  apiVersion,
-  useHpkeForTransmissionKey
+    payload,
+    transmissionKey,
+    sessionToken,
+    locale,
+    apiVersion,
+    useHpkeForTransmissionKey,
 }: PrepareApiRequestParams): Promise<Uint8Array> {
-    const requestPayload = ApiRequestPayload.create()
+    const requestPayload = ApiRequestPayload.create();
     if (payload) {
-        requestPayload.payload = payload instanceof Uint8Array
-            ? payload
-            : platform.stringToBytes(JSON.stringify(payload))
+        requestPayload.payload =
+            payload instanceof Uint8Array ? payload : platform.stringToBytes(JSON.stringify(payload));
     }
     if (sessionToken) {
         requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
     }
-    requestPayload.apiVersion = apiVersion || 0
-    const requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
-    const encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key)
-    let apiRequest: Authentication.IApiRequest
+    requestPayload.apiVersion = apiVersion || 0;
+    const requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish();
+    const encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key);
+    let apiRequest: Authentication.IApiRequest;
 
     if (useHpkeForTransmissionKey) {
         const hpkeTransmissionKey = await generateHpkeTransmissionKey(
             transmissionKey,
-            true  // use optional data
-        )
+            true // use optional data
+        );
         apiRequest = ApiRequest.create({
             qrcMessageKey: hpkeTransmissionKey.qrcMessageKey,
             encryptedPayload: encryptedRequestPayload,
             publicKeyId: hpkeTransmissionKey.mlKemKeyId,
             encryptedTransmissionKey: hpkeTransmissionKey.optionalData || null,
-            locale: locale || 'en_US'
+            locale: locale || 'en_US',
         });
     } else {
         apiRequest = ApiRequest.create({
             encryptedTransmissionKey: transmissionKey.ecEncryptedKey,
             encryptedPayload: encryptedRequestPayload,
             publicKeyId: transmissionKey.ecKeyId,
-            locale: locale || 'en_US'
-        })
+            locale: locale || 'en_US',
+        });
     }
 
-    return ApiRequest.encode(apiRequest).finish()
+    return ApiRequest.encode(apiRequest).finish();
 }
 
 export async function decryptCloudSsoResponse(cloudResponseToken: string, key: Uint8Array): Promise<SsoCloudResponse> {
@@ -467,5 +510,3 @@ export enum KeeperEnvironment {
     QA_EU = 'qa.keepersecurity.eu',
     DEV_EU = 'dev.keepersecurity.eu',
 }
-
-

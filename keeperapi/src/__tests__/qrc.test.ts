@@ -102,11 +102,7 @@ describe('ML-KEM Operations', () => {
             const message = platform.getRandomBytes(32);
 
             // Encrypt using PEM-encoded ML-KEM public key
-            const result = await hpke.encrypt(
-                message,
-                serverEcKeyPair.publicKey,
-                pemMlKemPublicKey
-            );
+            const result = await hpke.encrypt(message, serverEcKeyPair.publicKey, pemMlKemPublicKey);
 
             expect(result.clientEcPublicKey.length).toBe(EC_PUBLIC_KEY_LENGTH);
             expect(result.mlKemEncapsulatedKey.length).toBe(ML_KEM_768_CIPHERTEXT_LENGTH);
@@ -138,11 +134,7 @@ describe('ML-KEM Operations', () => {
             const message = platform.getRandomBytes(32);
 
             // Encrypt using PEM-encoded ML-KEM public key
-            const result = await hpke.encrypt(
-                message,
-                serverEcKeyPair.publicKey,
-                pemMlKemPublicKey
-            );
+            const result = await hpke.encrypt(message, serverEcKeyPair.publicKey, pemMlKemPublicKey);
 
             expect(result.clientEcPublicKey.length).toBe(EC_PUBLIC_KEY_LENGTH);
             expect(result.mlKemEncapsulatedKey.length).toBe(ML_KEM_1024_CIPHERTEXT_LENGTH);
@@ -178,9 +170,8 @@ describe('ML-KEM Transmission Keys', () => {
             }
 
             const variant = getKeeperMlKemKeyVariant(keyId);
-            const expectedCiphertextLength = variant === MlKemVariant.ML_KEM_768
-                ? ML_KEM_768_CIPHERTEXT_LENGTH
-                : ML_KEM_1024_CIPHERTEXT_LENGTH;
+            const expectedCiphertextLength =
+                variant === MlKemVariant.ML_KEM_768 ? ML_KEM_768_CIPHERTEXT_LENGTH : ML_KEM_1024_CIPHERTEXT_LENGTH;
 
             // Encapsulate to verify the key can be decoded and used
             const { ciphertext, sharedSecret } = mlKemEncapsulate(keyData, variant);

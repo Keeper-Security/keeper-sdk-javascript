@@ -29,7 +29,7 @@ export function mlKemKeygen(variant: MlKemVariant, seed?: Uint8Array): MlKemKeyP
 
     return {
         publicKey: result.publicKey,
-        privateKey: result.secretKey
+        privateKey: result.secretKey,
     };
 }
 
@@ -39,10 +39,7 @@ export function mlKemKeygen(variant: MlKemVariant, seed?: Uint8Array): MlKemKeyP
  * @param variant - ML-KEM variant
  * @returns Encapsulation (ciphertext and shared secret)
  */
-export function mlKemEncapsulate(
-    publicKey: Uint8Array,
-    variant: MlKemVariant
-): MlKemEncapsulation {
+export function mlKemEncapsulate(publicKey: Uint8Array, variant: MlKemVariant): MlKemEncapsulation {
     // Extract raw public key from PEM format if needed
     const expectedLength = getMlKemPublicKeyLength(variant);
     const rawPublicKey = extractRawMlKemPublicKey(publicKey, expectedLength);
@@ -62,7 +59,7 @@ export function mlKemEncapsulate(
 
     return {
         ciphertext: result.cipherText,
-        sharedSecret: result.sharedSecret
+        sharedSecret: result.sharedSecret,
     };
 }
 
@@ -73,11 +70,7 @@ export function mlKemEncapsulate(
  * @param variant - ML-KEM variant
  * @returns Shared secret
  */
-export function mlKemDecapsulate(
-    ciphertext: Uint8Array,
-    privateKey: Uint8Array,
-    variant: MlKemVariant
-): Uint8Array {
+export function mlKemDecapsulate(ciphertext: Uint8Array, privateKey: Uint8Array, variant: MlKemVariant): Uint8Array {
     switch (variant) {
         case MlKemVariant.ML_KEM_768:
             return mlKem.ml_kem768.decapsulate(ciphertext, privateKey);

@@ -7,7 +7,7 @@
 function rng_get_bytes(ba) {
     let data = new Uint8Array(ba.length);
     crypto.getRandomValues(data);
-    for(let i = 0; i < ba.length; ++i) ba[i] = data[i];
+    for (let i = 0; i < ba.length; ++i) ba[i] = data[i];
 }
 
 export function SecureRandom() {}
