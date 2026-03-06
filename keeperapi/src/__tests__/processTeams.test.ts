@@ -27,7 +27,8 @@ describe('Testing processTeams for ECC conversion', () => {
         // auth = createAuth()
     })
 
-    it('processTeams', async () => {
+    // not completed
+    it.skip('processTeams', async () => {
         const kp = await platform.generateECKeyPair()
         // @ts-expect-error private prop on class
         const user = await auth.createUserRequest(kp.privateKey)

@@ -10,7 +10,7 @@ import {
 } from '../platform'
 import {_asnhex_getHexOfV_AtObj, _asnhex_getPosArrayOfChildren_AtObj} from "./asn1hex";
 import {RSAKey} from "./rsa";
-import {getKeeperKeys} from "../transmissionKeys";
+import {getKeeperKeys, getKeeperMlKemKeys} from "../transmissionKeys";
 import {normal64, normal64Bytes, webSafe64FromBytes} from "../utils";
 import {SocketProxy, socketSendMessage} from '../socket'
 import * as asmCrypto from 'asmcrypto.js'
@@ -45,6 +45,7 @@ export const browserPlatform: Platform = class {
     }
 
     static keys = getKeeperKeys(this.normal64Bytes);
+    static mlKemKeys = getKeeperMlKemKeys(this.base64ToBytes);
 
     static getRandomBytes(length: number): Uint8Array {
         let data = new Uint8Array(length);
@@ -540,6 +541,27 @@ export const browserPlatform: Platform = class {
         return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
     }
 
+    static async ecdhComputeSharedSecret(
+        senderPrivateKey: Uint8Array, 
+        recipientPublicKey: Uint8Array, 
+        senderPublicKey: Uint8Array
+    ): Promise<Uint8Array> {
+        const senderPrivateCryptoKey = await this.importPrivateKeyEC(senderPrivateKey, senderPublicKey)
+        const recipientPublicCryptoKey = await crypto.subtle.importKey(
+            'raw',
+            recipientPublicKey,
+            { name: 'ECDH', namedCurve: 'P-256' },
+            false,
+            []
+        )
+        const sharedSecretBuffer = await crypto.subtle.deriveBits(
+            { name: 'ECDH', public: recipientPublicCryptoKey },
+            senderPrivateCryptoKey,
+            256
+        )
+        return new Uint8Array(sharedSecretBuffer)
+    }
+
     static async deriveSharedSecretKey(ephemeralPublicKey: Uint8Array, privateKey: CryptoKey, id?: Uint8Array, useHKDF?: boolean): Promise<CryptoKey> {
         const pubCryptoKey = await crypto.subtle.importKey('raw', ephemeralPublicKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
         const sharedSecret = await crypto.subtle.deriveBits({ name: 'ECDH', public: pubCryptoKey }, privateKey, 256)
@@ -552,26 +574,34 @@ export const browserPlatform: Platform = class {
             const symmetricKeyBuffer = await crypto.subtle.digest('SHA-256', sharedSecretCombined)
             return this.aesGcmImportKey(new Uint8Array(symmetricKeyBuffer), false)
         } else {
-            const hkdfKey = await crypto.subtle.importKey(
-                'raw',
-                sharedSecret,
-                'HKDF',
-                false,
-                ['deriveBits']
-            )
-
-            const symmetricKeyBuffer = await crypto.subtle.deriveBits(
-                {
-                    name: 'HKDF',
-                    hash: 'SHA-256',
-                    salt: new Uint8Array(),
-                    info: id ?? new Uint8Array()
-                },
-                hkdfKey,
-                256
-            )
-            return this.aesGcmImportKey(new Uint8Array(symmetricKeyBuffer), false)
+            const symmetricKey = await this.hkdf(new Uint8Array(), new Uint8Array(sharedSecret), id ?? new Uint8Array(), 32)
+            return this.aesGcmImportKey(symmetricKey, false)
         }
+    }
+
+    static async hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array> {
+        // Import IKM as HKDF key
+        const hkdfKey = await crypto.subtle.importKey(
+            'raw',
+            ikm,
+            'HKDF',
+            false,
+            ['deriveBits']
+        );
+
+        // Derive bits using HKDF
+        const derivedBits = await crypto.subtle.deriveBits(
+            {
+                name: 'HKDF',
+                hash: 'SHA-256',
+                salt: salt,
+                info: info
+            },
+            hkdfKey,
+            length * 8 // bits
+        );
+
+        return new Uint8Array(derivedBits);
     }
 
     static async privateDecryptECWebCrypto(data: Uint8Array, privateKey: CryptoKey, id?: Uint8Array, useHKDF?: boolean): Promise<Uint8Array> {
@@ -808,7 +838,11 @@ export const browserPlatform: Platform = class {
     }
 
     static async calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
-        let digest = await crypto.subtle.digest("SHA-256", key);
+        return this.sha256(key);
+    }
+
+    static async sha256(data: Uint8Array): Promise<Uint8Array> {
+        const digest = await crypto.subtle.digest("SHA-256", data);
         return new Uint8Array(digest);
     }
 

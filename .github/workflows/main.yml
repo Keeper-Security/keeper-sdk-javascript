@@ -12,9 +12,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '24'
 
       - name: Lib - Install
         run: npm i
@@ -34,9 +34,9 @@ jobs:
         env:
           NPM_TOKEN: ""
 
-#      - name: Lib - Run Tests
-#        run: npm run test:ci
-#        working-directory: ./keeperapi
+      - name: Lib - Run Unit Tests
+        run: npm run test
+        working-directory: ./keeperapi
 
       - name: Examples (node) - Installation
         run: npm run link-local

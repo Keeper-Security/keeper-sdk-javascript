@@ -26,6 +26,7 @@ export interface ClientConfiguration {
     useSessionResumption?: boolean
     iterations?: number
     salt?: Uint8Array
+    useHpkeForTransmissionKey?: boolean
 }
 export interface ClientConfigurationInternal extends ClientConfiguration {
     deviceConfig: DeviceConfig // v15+ device config
@@ -39,6 +40,7 @@ export type KeeperError = {
     path?: string
     result_code?: string
     key_id?: number
+    qrc_ec_key_id?: number
     region_host?: string
 }
 
@@ -48,6 +50,15 @@ export interface DeviceConfig {
     privateKey?: Uint8Array
     publicKey?: Uint8Array
     transmissionKeyId?: number
+    mlKemPublicKeyId?: number
+    /**
+     * Overrides `ClientConfiguration.useHpkeForTransmissionKey` if set.
+     * Relevant for GovCloud, which at time of writing has no HPKE support.
+     * It's also possible that a region (again, most likely GovCloud)
+     * may tell the client NOT to use HPKE any more even after it once did,
+     * so this caches that state.
+     */
+    useHpkeTransmission?: boolean
 }
 
 export interface SessionStorage {
@@ -74,8 +85,24 @@ export interface VendorConfiguration {
 
 export interface TransmissionKey {
     key: Uint8Array
-    publicKeyId: number
-    encryptedKey: Uint8Array
+    ecKeyId: number
+    ecEncryptedKey: Uint8Array
+    mlKemKeyId: number
+}
+
+export interface QrcMessageKey {
+    clientEcPublicKey: Uint8Array
+    mlKemEncapsulatedKey: Uint8Array
+    data: Uint8Array
+    msgVersion: number
+    ecKeyId: number
+}
+
+export interface TransmissionKeyHpke {
+    key: Uint8Array
+    mlKemKeyId: number
+    qrcMessageKey: QrcMessageKey
+    optionalData?: Uint8Array
 }
 
 export interface AuthUI {

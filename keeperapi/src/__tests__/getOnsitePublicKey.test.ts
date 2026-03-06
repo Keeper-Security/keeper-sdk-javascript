@@ -10,13 +10,6 @@ import { nodePlatform } from '../node/platform'
 import { connectPlatform } from '../platform'
 // import NodeRSA from 'node-rsa';
 
-Object.defineProperty(global.self, 'crypto', {
-    value: {
-        subtle: crypto.webcrypto.subtle,
-        getRandomValues: (array: any) => crypto.randomBytes(array.length)
-    }
-})
-
 describe('getOnsitePublicKey', () => {
 
     let endpoint = new KeeperEndpoint({

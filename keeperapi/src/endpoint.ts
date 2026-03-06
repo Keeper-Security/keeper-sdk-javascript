@@ -4,6 +4,7 @@ import {platform} from './platform'
 import {
     formatTimeDiff,
     generateTransmissionKey,
+    generateHpkeTransmissionKey,
     getKeeperUrl,
     isTwoFactorResultCode, log,
     normal64Bytes,
@@ -26,7 +27,11 @@ import WssClientResponse = Push.WssClientResponse;
 import WssConnectionRequest = Push.WssConnectionRequest;
 import SsoCloudResponse = SsoCloud.SsoCloudResponse;
 import {KeeperHttpResponse, RestCommand} from './commands'
-import { AllowedNumbers, isAllowedNumber } from './transmissionKeys'
+import {AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId} from './transmissionKeys'
+
+export type ExecuteRestOptions = {
+    skipRegionRedirect?: boolean
+}
 
 export class KeeperEndpoint {
     private _transmissionKey?: TransmissionKey
@@ -37,21 +42,29 @@ export class KeeperEndpoint {
     private onsitePrivateKey: Uint8Array | null = null
     private onsitePublicKey: Uint8Array | null = null
 
-    constructor(private options: ClientConfigurationInternal) {       
+    private useHpkeForTransmissionKey: boolean = false
+
+    constructor(private options: ClientConfigurationInternal) {
         if (options.deviceToken) {
             this.deviceToken = options.deviceToken
-        } 
+        }
         if (options.locale) {
             this.locale = options.locale
+        }
+        if (options.useHpkeForTransmissionKey && options.deviceConfig.useHpkeTransmission !== false) {
+            this.useHpkeForTransmissionKey = true
         }
     }
 
     async getTransmissionKey():Promise<TransmissionKey> {
-        const deviceConfigTransmissionKeyId = this.options.deviceConfig.transmissionKeyId || 7
-        if(!this._transmissionKey && isAllowedNumber(deviceConfigTransmissionKeyId)){
-            this._transmissionKey = await generateTransmissionKey(deviceConfigTransmissionKeyId)
+        const DEFAULT_PROD_EC_KEY_ID = 10
+        const DEFAULT_PROD_ML_KEM_KEY_ID = 136
+        const deviceConfigTransmissionKeyId = this.options.deviceConfig.transmissionKeyId || DEFAULT_PROD_EC_KEY_ID
+        const deviceConfigMlKemKeyId = this.options.deviceConfig.mlKemPublicKeyId || DEFAULT_PROD_ML_KEM_KEY_ID
+        if(!this._transmissionKey && isAllowedEcKeyId(deviceConfigTransmissionKeyId) && isAllowedMlKemKeyId(deviceConfigMlKemKeyId)){
+            this._transmissionKey = await generateTransmissionKey(deviceConfigTransmissionKeyId, deviceConfigMlKemKeyId)
         } else if(!this._transmissionKey){
-            this._transmissionKey = await generateTransmissionKey(7)
+            this._transmissionKey = await generateTransmissionKey(DEFAULT_PROD_EC_KEY_ID, DEFAULT_PROD_ML_KEM_KEY_ID)
         }
 
         return this._transmissionKey
@@ -145,21 +158,29 @@ export class KeeperEndpoint {
         }
     }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string): Promise<TOut> {
+    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut> {
         // @ts-ignore
-        return this.executeRestInternal(message, sessionToken)
+        return this.executeRestInternal(message, sessionToken, options)
     }
 
     async executeRestAction<TIn>(message: RestInMessage<TIn> | RestActionMessage, sessionToken?: string): Promise<void> {
         return this.executeRestInternal(message, sessionToken)
     }
 
-    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string): Promise<TOut | void> {
+    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut | void> {
         this._transmissionKey = await this.getTransmissionKey()
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
             const apiVersion = message.apiVersion || 0
-            const request = await this.prepareRequest(payload, sessionToken, apiVersion)
+
+            const request = await prepareApiRequest({
+                payload,
+                transmissionKey: this._transmissionKey,
+                sessionToken,
+                locale: this.locale,
+                apiVersion,
+                useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+            })
             log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR');
             const startTime = Date.now()
             const response = await platform.post(this.getUrl(message.path), request)
@@ -183,13 +204,42 @@ export class KeeperEndpoint {
                     const errorObj: KeeperError = JSON.parse(errorMessage)
                     switch (errorObj.error) {
                         case 'key':
-                            if(isAllowedNumber(errorObj.key_id!)){
-                                await this.updateTransmissionKey(errorObj.key_id!)
+                            let newEcKeyId: AllowedEcKeyIds
+                            let newMlKemKeyId: AllowedMlKemKeyIds
+                            let disableHpke = false
+
+                            if (errorObj.qrc_ec_key_id && errorObj.key_id && isAllowedEcKeyId(errorObj.qrc_ec_key_id)) {
+                                // Server provided both EC and ML-KEM key IDs (HPKE mode)
+                                newEcKeyId = errorObj.qrc_ec_key_id
+                                newMlKemKeyId = errorObj.key_id as AllowedMlKemKeyIds
+                                disableHpke = !isAllowedMlKemKeyId(errorObj.key_id) // disable if unknown ML-KEM key
+                            } else if (errorObj.key_id && isAllowedEcKeyId(errorObj.key_id) && this._transmissionKey) {
+                                // Server provided only EC key ID (non-HPKE mode or fallback)
+                                newEcKeyId = errorObj.key_id
+                                newMlKemKeyId = this._transmissionKey.mlKemKeyId as AllowedMlKemKeyIds // keep current ML-KEM key id
+                                if (this.useHpkeForTransmissionKey) {
+                                    // If we tried HPKE but server only provided EC key, disable HPKE
+                                    disableHpke = true
+                                }
                             } else {
-                                throw new Error('Incorrect Transmission Key ID being used.')
+                                throw new Error(`Invalid key rotation request: ${errorMessage}`)
                             }
+
+                            // Disable HPKE if server doesn't support it or provided unknown ML-KEM key
+                            if (disableHpke) {
+                                this.useHpkeForTransmissionKey = false
+                                this.options.deviceConfig.useHpkeTransmission = false
+                                if (this.options.onDeviceConfig) {
+                                    await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
+                                }
+                            }
+
+                            await this.updateTransmissionKey(newEcKeyId, newMlKemKeyId)
                             continue
                         case 'region_redirect':
+                            if (options?.skipRegionRedirect) {
+                                throw new Error('region_redirect')
+                            }
                             this.options.host = errorObj.region_host!
                             if (this.options.onRegionChanged) {
                                 await this.options.onRegionChanged(this.options.host);
@@ -245,10 +295,11 @@ export class KeeperEndpoint {
         return platform.get(this.getUrl(path), {})
     }
 
-    public async updateTransmissionKey(keyNumber: AllowedNumbers) {
-        this._transmissionKey = await generateTransmissionKey(keyNumber)
+    public async updateTransmissionKey(ecKeyId: AllowedEcKeyIds, mlKemKeyId: AllowedMlKemKeyIds) {
+        this._transmissionKey = await generateTransmissionKey(ecKeyId, mlKemKeyId)
 
-        this.options.deviceConfig.transmissionKeyId = keyNumber
+        this.options.deviceConfig.transmissionKeyId = ecKeyId
+        this.options.deviceConfig.mlKemPublicKeyId = mlKemKeyId
         if (this.options.onDeviceConfig) {
             await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
         }
@@ -256,7 +307,14 @@ export class KeeperEndpoint {
 
     public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string, apiVersion?: number): Promise<Uint8Array> {
         this._transmissionKey = await this.getTransmissionKey()
-        return prepareApiRequest(payload, this._transmissionKey, sessionToken, this.locale, apiVersion)
+        return prepareApiRequest({
+            payload,
+            transmissionKey: this._transmissionKey,
+            sessionToken,
+            locale: this.locale,
+            apiVersion,
+            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+        })
     }
 
     async decryptPushMessage(pushMessageData: Uint8Array): Promise<WssClientResponse> {
@@ -281,7 +339,12 @@ export class KeeperEndpoint {
             "idpSessionId": idpSessionId,
             "username": username
         }
-        const request = await prepareApiRequest(SsoCloud.SsoCloudRequest.encode(payload).finish(), this._transmissionKey, undefined, this.locale)
+        const request = await prepareApiRequest({
+            payload: SsoCloud.SsoCloudRequest.encode(payload).finish(),
+            transmissionKey: this._transmissionKey,
+            locale: this.locale,
+            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+        })
         return webSafe64FromBytes(request)
     }
 
@@ -294,12 +357,12 @@ export class KeeperEndpoint {
         if (!this.onsitePublicKey || !this.onsitePrivateKey) {
             if(ecOnly){
                 const {privateKey, publicKey} = await platform.generateECKeyPair()
-    
+
                 this.onsitePrivateKey = privateKey
                 this.onsitePublicKey = publicKey
             } else {
                 const {privateKey, publicKey} = await platform.generateRSAKeyPair()
-    
+
                 this.onsitePrivateKey = privateKey
                 this.onsitePublicKey = publicKey
             }
@@ -325,11 +388,32 @@ export async function getPushConnectionRequest(messageSessionUid: Uint8Array, tr
         deviceTimeStamp: new Date().getTime()
     })
     const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
-    const apiRequest = await prepareApiRequest(connectionRequestBytes, transmissionKey, undefined, locale)
+    const apiRequest = await prepareApiRequest({
+        payload: connectionRequestBytes,
+        transmissionKey,
+        locale,
+        useHpkeForTransmissionKey: false // HPKE not currently supported for push
+    })
     return webSafe64FromBytes(apiRequest)
 }
 
-export async function prepareApiRequest(payload: Uint8Array | unknown, transmissionKey: TransmissionKey, sessionToken?: string, locale?: string, apiVersion?: number): Promise<Uint8Array> {
+type PrepareApiRequestParams = {
+    payload: Uint8Array | unknown,
+    transmissionKey: TransmissionKey,
+    sessionToken?: string,
+    locale?: string,
+    apiVersion?: number
+    useHpkeForTransmissionKey?: boolean
+}
+
+export async function prepareApiRequest({
+  payload,
+  transmissionKey,
+  sessionToken,
+  locale,
+  apiVersion,
+  useHpkeForTransmissionKey
+}: PrepareApiRequestParams): Promise<Uint8Array> {
     const requestPayload = ApiRequestPayload.create()
     if (payload) {
         requestPayload.payload = payload instanceof Uint8Array
@@ -340,14 +424,31 @@ export async function prepareApiRequest(payload: Uint8Array | unknown, transmiss
         requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
     }
     requestPayload.apiVersion = apiVersion || 0
-    let requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
-    let encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key)
-    let apiRequest = ApiRequest.create({
-        encryptedTransmissionKey: transmissionKey.encryptedKey,
-        encryptedPayload: encryptedRequestPayload,
-        publicKeyId: transmissionKey.publicKeyId,
-        locale: locale || 'en_US'
-    })
+    const requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
+    const encryptedRequestPayload = await platform.aesGcmEncrypt(requestPayloadBytes, transmissionKey.key)
+    let apiRequest: Authentication.IApiRequest
+
+    if (useHpkeForTransmissionKey) {
+        const hpkeTransmissionKey = await generateHpkeTransmissionKey(
+            transmissionKey,
+            true  // use optional data
+        )
+        apiRequest = ApiRequest.create({
+            qrcMessageKey: hpkeTransmissionKey.qrcMessageKey,
+            encryptedPayload: encryptedRequestPayload,
+            publicKeyId: hpkeTransmissionKey.mlKemKeyId,
+            encryptedTransmissionKey: hpkeTransmissionKey.optionalData || null,
+            locale: locale || 'en_US'
+        });
+    } else {
+        apiRequest = ApiRequest.create({
+            encryptedTransmissionKey: transmissionKey.ecEncryptedKey,
+            encryptedPayload: encryptedRequestPayload,
+            publicKeyId: transmissionKey.ecKeyId,
+            locale: locale || 'en_US'
+        })
+    }
+
     return ApiRequest.encode(apiRequest).finish()
 }
 

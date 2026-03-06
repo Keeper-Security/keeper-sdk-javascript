@@ -7,7 +7,7 @@ import {
     LoginError,
     TwoFactorChannelData
 } from './configuration'
-import {KeeperEndpoint, KeeperEnvironment} from "./endpoint";
+import {KeeperEndpoint, KeeperEnvironment, ExecuteRestOptions} from "./endpoint";
 import {KeyWrapper, platform} from "./platform";
 import {
     generateEncryptionKey,
@@ -33,6 +33,7 @@ import {
     ssoServiceProviderRequestMessage,
     startLoginMessage,
     startLoginMessageFromSessionToken,
+    switchAccountFromAuthenticated,
     twoFactorSend2FAPushMessage,
     twoFactorValidateMessage,
     twoFASendDuoMessage,
@@ -42,7 +43,6 @@ import {
 import {AccountSummary, Authentication} from './proto';
 import {RestCommand} from './commands'
 import {CloseReason, createAsyncSocket, SocketListener} from './socket';
-import IStartLoginRequest = Authentication.IStartLoginRequest;
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
 import TwoFactorExpiration = Authentication.TwoFactorExpiration;
 import TwoFactorPushType = Authentication.TwoFactorPushType;
@@ -51,6 +51,7 @@ import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
 import LoginType = Authentication.LoginType;
 import LoginMethod = Authentication.LoginMethod;
 import IAccountSummaryElements = AccountSummary.IAccountSummaryElements;
+import ITwoFactorChannelInfo = Authentication.ITwoFactorChannelInfo;
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
@@ -80,6 +81,8 @@ export type LoginPayload = {
     resumeSessionOnly?: boolean
     givenSessionToken?: string
     ecOnly?: boolean
+    primaryAccountSessionTokenForLinking?: Uint8Array | null
+    disableLinkingForAccountWithYubikey2fa?: boolean
 }
 
 export enum UserType {
@@ -110,6 +113,12 @@ export type EncryptionKeys = {
     dataKey: Uint8Array;
     privateKey?: Uint8Array;
     eccPrivateKey: Uint8Array;
+}
+
+export const enum LoginV3ResultEnum {
+    NOT_LOGGED_IN = 'notLoggedin',
+    LINKING_BLOCKED_BY_CROSS_REGION = 'linkingBlockedByCrossRegion',
+    LINKING_BLOCKED_BY_YUBIKEY_2FA = 'linkingBlockedByYubikey2fa',
 }
 
 export class Auth {
@@ -263,7 +272,13 @@ export class Auth {
     }
 
     /**
-     * useAlternate is to pass to the next function to use an alternate method, for testing a different path.
+     * @param {LoginPayload} payload - Options for login.
+     * @param {boolean} [payload.disableLinkingForAccountWithYubikey2fa] -
+     *        Opt-out flag for linking YubiKey 2FA accounts.
+     *        Normally, these accounts can be linked, but some clients
+     *        have technical issues that prevent them from supporting
+     *        the linking flow. When true, `loginV3` will block the
+     *        linking attempt and return `LINKING_BLOCKED_BY_YUBIKEY_2FA`.
      */
     async loginV3(
         {
@@ -276,8 +291,15 @@ export class Auth {
             resumeSessionOnly = false,
             givenSessionToken = undefined,
             ecOnly = false,
+            primaryAccountSessionTokenForLinking = undefined,
+            /*
+             * Prevents linking YubiKey 2FA accounts.
+             * Normally, these accounts can be linked, but some clients have technical issues
+             * that prevent them from supporting the linking flow, so they can opt out via this flag.
+             */
+            disableLinkingForAccountWithYubikey2fa,
         }: Partial<LoginPayload>
-    ) {
+    ): Promise<{result: LoginV3ResultEnum} | undefined> {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
 
         let wrappedPassword: KeyWrapper | undefined;
@@ -321,7 +343,8 @@ export class Auth {
                 messageSessionUid: this.messageSessionUid,
                 loginMethod: loginMethod,
                 cloneCode: await this.options.sessionStorage?.getCloneCode(this.options.host as KeeperEnvironment, this._username),
-                v2TwoFactorToken: v2TwoFactorToken
+                v2TwoFactorToken: v2TwoFactorToken,
+                fromSessionToken: primaryAccountSessionTokenForLinking,
             })
             if (loginType !== LoginType.NORMAL && !!loginType) {
                 startLoginRequest.loginType = loginType
@@ -354,7 +377,7 @@ export class Auth {
             }
             if (resumeSessionOnly && loginResponse && (loginResponse.loginState != Authentication.LoginState.LOGGED_IN)) {
                 return {
-                    result: 'notLoggedin'
+                    result: LoginV3ResultEnum.NOT_LOGGED_IN,
                 }
             }
             console.log(loginResponse)
@@ -392,7 +415,7 @@ export class Auth {
                     break;
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
                 case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
-                    if (givenSessionToken) return { result: 'notLoggedin' }
+                    if (givenSessionToken) return { result: LoginV3ResultEnum.NOT_LOGGED_IN }
                     try {
                         loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
                     } catch (e: any) {
@@ -404,6 +427,12 @@ export class Auth {
                     handleError('license_expired', loginResponse, new Error(loginResponse.message))
                     return;
                 case Authentication.LoginState.REGION_REDIRECT:
+                    if (!!primaryAccountSessionTokenForLinking) {
+                        return {
+                            result: LoginV3ResultEnum.LINKING_BLOCKED_BY_CROSS_REGION,
+                        }
+                    }
+
                     // TODO: put region_redirect in its own loop since
                     // its unique to the other states.
                     this.options.host = loginResponse.stateSpecificValue
@@ -454,6 +483,15 @@ export class Auth {
                     break;
                 case Authentication.LoginState.REQUIRES_2FA:
                     try{
+                        if (
+                          !!disableLinkingForAccountWithYubikey2fa &&
+                          !!primaryAccountSessionTokenForLinking &&
+                          hasYubikeyChannel(loginResponse.channels)
+                        ) {
+                            return {
+                                result: LoginV3ResultEnum.LINKING_BLOCKED_BY_YUBIKEY_2FA,
+                            }
+                        }
                         loginToken = await this.handleTwoFactor(loginResponse)
                     } catch(e: any){
                         if (e?.message && e.message == 'push_declined'){
@@ -503,6 +541,23 @@ export class Auth {
                     handleError('generic_error', loginResponse, new Error(`Unknown login state ${loginResponse.loginState}`))
                     return
             }
+        }
+    }
+
+    async switchToActiveAccount({username}: {username: string}): Promise<Authentication.LoginResponse | undefined> {
+        try {
+            const request = new Authentication.LoginAsUserRequest({username})
+            const response = await this.executeRest(switchAccountFromAuthenticated(request))
+            if (response.loginState !== Authentication.LoginState.LOGGED_IN) {
+                throw new Error('account switching failed')
+            }
+            if (response.cloneCode && response.cloneCode.length > 0) {
+                this.options.sessionStorage?.saveCloneCode(this.options.host as KeeperEnvironment, this._username, response.cloneCode)
+            }
+            return response
+        } catch (err) {
+            console.error(err)
+            return undefined
         }
     }
 
@@ -560,13 +615,13 @@ export class Auth {
         }
     }
 
-    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false) {
+    async getSsoProvider(ssoDomain: string, locale?: string, ecOnly = false, skipRegionRedirect = false) {
         let domainRequest: ISsoServiceProviderRequest = {
             name: ssoDomain.trim(),
             locale: locale,
             clientVersion: this.endpoint.clientVersion,
         }
-        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest))
+        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest), { skipRegionRedirect })
         const params = domainResponse.isCloud
             ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
             : '?embedded&key=' + await this._endpoint.getOnsitePublicKey(ecOnly)
@@ -1062,8 +1117,8 @@ export class Auth {
     //     return this.endpoint.executeV2Command(command);
     // }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>): Promise<TOut> {
-        return this.endpoint.executeRest(message, this._sessionToken);
+    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, options?: ExecuteRestOptions): Promise<TOut> {
+        return this.endpoint.executeRest(message, this._sessionToken, options);
     }
 
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
@@ -1318,3 +1373,5 @@ function chooseErrorMessage(loginState: Authentication.LoginState){
     }
 }
 
+const hasYubikeyChannel = (channels: Authentication.ITwoFactorChannelInfo[]): boolean =>
+  !!channels.find(({challenge, channelType}) => challenge && (channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F || channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN))

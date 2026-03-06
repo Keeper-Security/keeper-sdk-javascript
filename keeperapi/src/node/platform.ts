@@ -15,7 +15,7 @@ import {
     UnwrappedKeyType
 } from "../platform";
 import {RSA_PKCS1_PADDING} from "constants";
-import {getKeeperKeys} from "../transmissionKeys";
+import {getKeeperKeys, getKeeperMlKemKeys} from "../transmissionKeys";
 import {SocketProxy, socketSendMessage} from '../socket'
 import {normal64} from "../utils";
 import type {KeeperHttpResponse} from "../commands";
@@ -25,7 +25,7 @@ const base64ToBytes = (data: string): Uint8Array => {
 }
 
 export const nodePlatform: Platform = class {
-    // Unimplemented in NodeJS, worker threads did not appear to improve performance 
+    // Unimplemented in NodeJS, worker threads did not appear to improve performance
     static supportsConcurrency: boolean = false
 
     static base64ToBytes = base64ToBytes
@@ -33,16 +33,17 @@ export const nodePlatform: Platform = class {
     static normal64Bytes(source: string): Uint8Array {
         return base64ToBytes(normal64(source));
     }
-    
+
     static keys = getKeeperKeys(this.normal64Bytes);
-    
+    static mlKemKeys = getKeeperMlKemKeys(this.base64ToBytes);
+
     static getRandomBytes(length: number): Uint8Array {
         return crypto.randomBytes(length);
     }
 
     static bytesToBase64(data: Uint8Array): string {
         return Buffer.from(data).toString("base64");
-    }    
+    }
 
     static bytesToString(data: Uint8Array): string {
         return Buffer.from(data).toString();
@@ -231,6 +232,20 @@ export const nodePlatform: Platform = class {
         return await this.mainPublicEncryptEC(data, key, id)
     }
 
+    static async ecdhComputeSharedSecret(
+        senderPrivateKey: Uint8Array,
+        recipientPublicKey: Uint8Array,
+        senderPublicKey: Uint8Array
+    ): Promise<Uint8Array> {
+        const ecdh = createECDH('prime256v1')
+        ecdh.setPrivateKey(senderPrivateKey)
+        return ecdh.computeSecret(recipientPublicKey)
+    }
+
+    static async hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array> {
+        return Promise.resolve(Buffer.from(hkdfSync('sha256', ikm, salt, info, length)))
+    }
+
     static privateDecrypt(data: Uint8Array, key: Uint8Array): Uint8Array {
         const rsaPrivateKey = new NodeRSA(Buffer.from(key), 'pkcs1-private-der', {
           encryptionScheme: 'pkcs1'
@@ -305,7 +320,11 @@ export const nodePlatform: Platform = class {
     }
 
     static calcAuthVerifier(key: Uint8Array): Promise<Uint8Array> {
-        return Promise.resolve(crypto.createHash("SHA256").update(key).digest());
+        return this.sha256(key);
+    }
+
+    static sha256(data: Uint8Array): Promise<Uint8Array> {
+        return Promise.resolve(crypto.createHash("SHA256").update(data).digest());
     }
 
     static get(

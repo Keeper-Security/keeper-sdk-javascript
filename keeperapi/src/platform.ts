@@ -4,6 +4,7 @@ import type {CryptoWorkerPool, CryptoWorkerPoolConfig} from './cryptoWorker';
 
 export interface Platform {
     keys: Uint8Array[];
+    mlKemKeys: Uint8Array[];
 
     supportsConcurrency: boolean
 
@@ -57,6 +58,25 @@ export interface Platform {
 
     privateSign(data: Uint8Array, key: string): Promise<Uint8Array>;
 
+    /**
+     * Computes ECDH shared secret
+     * @param senderPrivateKey - Private key (32 bytes)
+     * @param recipientPublicKey - Public key (65 bytes, uncompressed)
+     * @param senderPublicKey - Sender's public key (65 bytes, uncompressed)
+     * @returns Shared secret (32 bytes)
+     */
+    ecdhComputeSharedSecret(senderPrivateKey: Uint8Array, recipientPublicKey: Uint8Array, senderPublicKey: Uint8Array): Promise<Uint8Array>;
+
+    /**
+     * Derives a key using HKDF-SHA256
+     * @param salt - Salt (can be empty)
+     * @param ikm - Input keying material
+     * @param info - Context information
+     * @param length - Output length in bytes
+     * @returns Derived key
+     */
+    hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array>;
+
     wrapKey(keyId: string, wrappingKeyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<Uint8Array>
 
     encrypt(data: Uint8Array, keyId: string, encryptionType: EncryptionType, storage?: KeyStorage): Promise<Uint8Array>
@@ -74,6 +94,8 @@ export interface Platform {
     deriveKeyV2(domain: string, password: KeyWrapper, saltBytes: Uint8Array, iterations: number): Promise<Uint8Array>;
 
     calcAuthVerifier(key: Uint8Array): Promise<Uint8Array>;
+
+    sha256(data: Uint8Array): Promise<Uint8Array>;
 
     get(url: string, headers: any): Promise<KeeperHttpResponse>;
 

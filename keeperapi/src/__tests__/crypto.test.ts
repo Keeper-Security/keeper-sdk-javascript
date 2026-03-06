@@ -7,17 +7,7 @@ import crypto from 'crypto'
 import {nodePlatform} from "../node/platform";
 import {browserPlatform} from "../browser/platform"
 import {publicKey, privateKey} from "./ecies-test-vectors";
-import {TextEncoder, TextDecoder} from 'util';
 import {connectPlatform, platform} from "../platform";
-
-Object.assign(global, {TextDecoder, TextEncoder})
-
-Object.defineProperty(global.self, 'crypto', {
-    value: {
-        subtle: crypto.webcrypto.subtle,
-        getRandomValues: (array: any) => crypto.randomBytes(array.length)
-    }
-})
 
 describe('crypto test', () => {
     it('node API encrypts a message under EC and then decrypts it (test key pair)', async () => {

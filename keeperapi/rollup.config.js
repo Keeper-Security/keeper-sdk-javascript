@@ -1,6 +1,5 @@
 import typescript from "rollup-plugin-typescript2"
 import pkg from './package.json'
-import sourcemaps from "rollup-plugin-sourcemaps";
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 
@@ -20,13 +19,13 @@ export default [
         ],
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "protobufjs/minimal"
+            "protobufjs/minimal",
+            "@noble/post-quantum/ml-kem.js"
         ],
         plugins: [
             typescript({
                 tsconfig: "tsconfig.rollup.json"
-            }),
-            sourcemaps()
+            })
         ]
     },
     {
@@ -41,8 +40,7 @@ export default [
                 tsconfig: "tsconfig.rollup.json"
             }),
             resolve(),
-            commonjs(),
-            sourcemaps()
+            commonjs()
         ]
     },
     {
@@ -56,13 +54,13 @@ export default [
         ],
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "crypto", "constants", "https", "protobufjs/minimal"
+            "crypto", "constants", "https", "protobufjs/minimal",
+            "@noble/post-quantum/ml-kem.js"
         ],
         plugins: [
             typescript({
                 tsconfig: "tsconfig.rollup.json"
-            }),
-            sourcemaps()
+            })
         ]
     }
 ];
