@@ -438,7 +438,7 @@ export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeA
 export const automatorAdminResetMessage = (data: Automator.AdminResetAutomatorRequest, url: string): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse)
 
-// begin shared folder change
+// Keeper Drive API
 export const folderAddMessage = (data: Folder.FolderAddRequest): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
     createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
 
