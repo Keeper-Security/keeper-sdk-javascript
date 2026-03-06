@@ -16,7 +16,8 @@ import {
     NotificationCenter,
     Folder,
     record,
-    records
+    records,
+    folder
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -462,4 +463,18 @@ export const V3RecordAccessMessage = (data: record.v3.details.RecordAccessReques
 
 export const RecordOwnershipTransferMessage = (data: Records.RecordsOnwershipTransferRequest): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
     createMessage(data, 'vault/records/v3/transfer', Records.RecordsOnwershipTransferRequest, Records.RecordsOnwershipTransferResponse)
+
+export const V3RecordRemoveMessage = (data: folder.v3.remove.RemoveRecordRequest): RestMessage<folder.v3.remove.RemoveRecordRequest, folder.v3.remove.RemoveResponse> =>
+    createMessage(data, 'vault/folders/v3/remove_record', folder.v3.remove.RemoveRecordRequest, folder.v3.remove.RemoveResponse)
+
+export const folderAccessMessage = (data: folder.v3.GetFolderAccessRequest): RestMessage<folder.v3.GetFolderAccessRequest, folder.v3.GetFolderAccessResponse> =>
+    createMessage(data, 'vault/folders/v3/access', folder.v3.GetFolderAccessRequest, folder.v3.GetFolderAccessResponse)
+
+export const folderRemoveFoldersMessage = (data: folder.v3.remove.RemoveFolderRequest): RestMessage<folder.v3.remove.RemoveFolderRequest, folder.v3.remove.RemoveResponse> =>
+    createMessage(data, 'vault/folders/v3/remove_folder', folder.v3.remove.RemoveFolderRequest, folder.v3.remove.RemoveResponse)
+
+export const RecordDetailsAccessAccessorMessage = (data: record.v3.details.RecordAccessorDetailsRequest): RestMessage<record.v3.details.RecordAccessorDetailsRequest, record.v3.details.RecordAccessorDetailsResponse> =>
+    createMessage(data, 'vault/records/v3/details/access/accessor', record.v3.details.RecordAccessorDetailsRequest, record.v3.details.RecordAccessorDetailsResponse)
+
+
 // end shared folder change
