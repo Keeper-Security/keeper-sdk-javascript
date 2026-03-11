@@ -8,6 +8,7 @@ import {
     BreachWatch,
     Automator,
     Enterprise,
+    GraphSync,
     Records,
     ServiceLogger,
     SsoCloud,
@@ -434,3 +435,15 @@ export const automatorAdminInitializeMessage = (data: Automator.AdminInitializeA
 
 export const automatorAdminResetMessage = (data: Automator.AdminResetAutomatorRequest, url: string): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse)
+
+
+/* -- PAM Router (DAG GraphSync) -- */
+
+export const pamSyncMessage = (data: GraphSync.IGraphSyncQuery): RestMessage<GraphSync.IGraphSyncQuery, GraphSync.IGraphSyncResult> =>
+    createMessage(data, 'api/user/graph-sync/pam/sync', GraphSync.GraphSyncQuery, GraphSync.GraphSyncResult)
+
+export const pamMultiSyncMessage = (data: GraphSync.IGraphSyncMultiQuery): RestMessage<GraphSync.IGraphSyncMultiQuery, GraphSync.IGraphSyncMultiResult> =>
+    createMessage(data, 'api/user/graph-sync/pam/multi_sync', GraphSync.GraphSyncMultiQuery, GraphSync.GraphSyncMultiResult)
+
+export const pamGetLeafsMessage = (data: GraphSync.IGraphSyncLeafsQuery): RestMessage<GraphSync.IGraphSyncLeafsQuery, GraphSync.IGraphSyncRefsResult> =>
+    createMessage(data, 'api/user/graph-sync/pam/get_leafs', GraphSync.GraphSyncLeafsQuery, GraphSync.GraphSyncRefsResult)

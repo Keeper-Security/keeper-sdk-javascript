@@ -1121,6 +1121,10 @@ export class Auth {
         return this.endpoint.executeRest(message, this._sessionToken, options);
     }
 
+    async executeRouterRest<TIn, TOut>(message: RestMessage<TIn, TOut>): Promise<TOut> {
+        return this.endpoint.executeRouterRest(message, this._sessionToken);
+    }
+
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
         if (!command.baseRequest.username) {
             command.baseRequest.username = this._username;

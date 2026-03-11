@@ -5,14 +5,15 @@
 import { KeeperEndpoint } from '../endpoint'
 import { platform, connectPlatform } from '../platform'
 import { browserPlatform } from '../browser/platform'
-import { ClientConfigurationInternal } from '../configuration'
+import { ClientConfigurationInternal, TransmissionKey } from '../configuration'
 import { AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId } from '../transmissionKeys'
 import { KeeperError } from '../configuration'
-import { Authentication } from '../proto'
-import { startLoginMessage } from '../restMessages'
+import { Authentication, Router, GraphSync } from '../proto'
+import { startLoginMessage, pamGetLeafsMessage } from '../restMessages'
 import { HPKE_ECDH_KYBER, Ciphersuite, MlKemVariant, mlKemKeygen, encodeMlKemPublicKeyToPem } from '../qrc'
 import { getKeeperMlKemKeyVariant } from '../transmissionKeys'
 import { KeeperHttpResponse } from '../commands'
+import { generateTransmissionKey } from '../utils'
 
 // Mock server key configuration
 interface MockServerKeys {
@@ -404,6 +405,173 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         await expect(endpoint.executeRest(startLoginRequest))
             .rejects
             .toThrow()
+    })
+})
+
+describe('executeRouterRest', () => {
+    let endpoint: KeeperEndpoint
+    let mockConfig: ClientConfigurationInternal
+    let knownTransmissionKey: TransmissionKey
+    const sessionToken = 'dGVzdC1zZXNzaW9uLXRva2Vu' // base64 "test-session-token"
+
+    beforeAll(async () => {
+        connectPlatform(browserPlatform)
+    })
+
+    beforeEach(async () => {
+        jest.clearAllMocks()
+
+        const ecdh = await platform.generateECKeyPair()
+        mockConfig = {
+            host: 'test.keepersecurity.com',
+            deviceConfig: {
+                deviceToken: new Uint8Array([1, 2, 3, 4, 5]),
+                privateKey: ecdh.privateKey,
+                publicKey: ecdh.publicKey,
+                deviceName: 'Test Device',
+                transmissionKeyId: 10,
+                mlKemPublicKeyId: 136,
+            },
+            clientVersion: 'ec17.6.0',
+            onDeviceConfig: jest.fn(),
+        }
+
+        endpoint = new KeeperEndpoint(mockConfig)
+
+        // Use a known transmission key so we can encrypt mock responses
+        knownTransmissionKey = await generateTransmissionKey(10, 136)
+        jest.spyOn(endpoint, 'getTransmissionKey').mockResolvedValue(knownTransmissionKey)
+    })
+
+    afterEach(() => {
+        jest.restoreAllMocks()
+    })
+
+    // Builds a valid RouterResponse with the given payload encrypted under knownTransmissionKey
+    async function makeSuccessResponse(responsePayloadBytes: Uint8Array): Promise<KeeperHttpResponse> {
+        const encryptedPayload = await platform.aesGcmEncrypt(responsePayloadBytes, knownTransmissionKey.key)
+        const routerResponseBytes = Router.RouterResponse.encode({
+            encryptedPayload,
+        }).finish()
+        return { data: routerResponseBytes, statusCode: 200, headers: new Headers() }
+    }
+
+    it('sets transmissionKey and Authorization headers correctly', async () => {
+        const message = pamGetLeafsMessage({ vertices: [] })
+        const responseBytes = GraphSync.GraphSyncRefsResult.encode({ refs: [] }).finish()
+        const postSpy = jest.spyOn(platform, 'post').mockResolvedValue(await makeSuccessResponse(responseBytes))
+
+        await endpoint.executeRouterRest(message, sessionToken)
+
+        expect(postSpy).toHaveBeenCalledTimes(1)
+        const [url, , headers] = postSpy.mock.calls[0]
+
+        // URL should use the router base URL
+        expect(url).toBe(`https://connect.test.keepersecurity.com/${message.path}`)
+
+        // TransmissionKey header should be the base64-encoded EC-encrypted key
+        expect(headers['TransmissionKey']).toBe(platform.bytesToBase64(knownTransmissionKey.ecEncryptedKey))
+
+        // Authorization header should be KeeperUser <base64>
+        expect(headers['Authorization']).toMatch(/^KeeperUser [A-Za-z0-9+/=_-]+$/)
+    })
+
+    it('encrypts payload with the configured transmissionKey', async () => {
+        const message = pamGetLeafsMessage({ vertices: [new Uint8Array([1, 2, 3])] })
+        const responseBytes = GraphSync.GraphSyncRefsResult.encode({ refs: [] }).finish()
+        const postSpy = jest.spyOn(platform, 'post').mockResolvedValue(await makeSuccessResponse(responseBytes))
+
+        await endpoint.executeRouterRest(message, sessionToken)
+
+        const [, requestBody] = postSpy.mock.calls[0]
+        const rawPayload = message.toBytes()
+
+        // The body posted should not be the raw plaintext
+        expect(Buffer.from(requestBody).toString('hex')).not.toBe(Buffer.from(rawPayload).toString('hex'))
+
+        // Decrypting with the transmission key should yield the original payload
+        const decrypted = await platform.aesGcmDecrypt(requestBody, knownTransmissionKey.key)
+        expect(decrypted).toEqual(new Uint8Array(rawPayload))
+    })
+
+    it('encodes and decodes protobufs message correctly', async () => {
+        const expectedRef: GraphSync.IGraphSyncRef = { value: new Uint8Array([2, 3]), name: 'test-ref' }
+        const responseBytes = GraphSync.GraphSyncRefsResult.encode({ refs: [expectedRef] }).finish()
+        jest.spyOn(platform, 'post').mockResolvedValue(await makeSuccessResponse(responseBytes))
+
+        const result = await endpoint.executeRouterRest(pamGetLeafsMessage({ vertices: [] }), sessionToken)
+
+        expect(result.refs).toHaveLength(1)
+        expect(result.refs![0].name).toBe(expectedRef.name)
+        expect(result.refs![0].value).toEqual(expectedRef.value)
+    })
+
+    it('throws JSON errors', async () => {
+        const errorObj: KeeperError = {
+            "path": "https://dev.keepersecurity.com/api/rest/router/user_auth, POST",
+            "additional_info": "",
+            "location": "default exception manager - api validation exception",
+            "error": "access_denied",
+            "message": "You do not have the required privilege to perform this operation."
+        }
+        jest.spyOn(platform, 'post').mockResolvedValue({
+            data: platform.stringToBytes(JSON.stringify(errorObj)),
+            statusCode: 401,
+            headers: new Headers(),
+        })
+
+        const message = pamGetLeafsMessage({ vertices: [] })
+        await expect(endpoint.executeRouterRest(message, sessionToken))
+            .rejects
+            .toMatchObject({ error: 'access_denied', message: 'You do not have the required privilege to perform this operation.' })
+    })
+
+    it('throws on empty response', async () => {
+        jest.spyOn(platform, 'post').mockResolvedValue({
+            data: new Uint8Array(0),
+            statusCode: 200,
+            headers: new Headers(),
+        })
+
+        const message = pamGetLeafsMessage({ vertices: [] })
+        await expect(endpoint.executeRouterRest(message, sessionToken))
+            .rejects
+            .toThrow(`Empty response from router for ${message.path}`)
+    })
+
+    it('throws KeeperError when RouterResponse has no encryptedPayload', async () => {
+        const routerResponseBytes = Router.RouterResponse.encode({
+            responseCode: Router.RouterResponseCode.RRC_CONTROLLER_DOWN,
+            errorMessage: 'controller unavailable',
+        }).finish()
+        jest.spyOn(platform, 'post').mockResolvedValue({
+            data: routerResponseBytes,
+            statusCode: 200,
+            headers: new Headers(),
+        })
+
+        const message = pamGetLeafsMessage({ vertices: [] })
+        await expect(endpoint.executeRouterRest(message, sessionToken))
+            .rejects
+            .toMatchObject({
+                response_code: Router.RouterResponseCode.RRC_CONTROLLER_DOWN,
+                path: message.path,
+                message: 'controller unavailable',
+            })
+    })
+
+    it('throws on string response (such as "no credentials included")', async () => {
+        const errorString = 'No credentials provided'
+        jest.spyOn(platform, 'post').mockResolvedValue({
+            data: platform.stringToBytes(errorString),
+            statusCode: 401,
+            headers: new Headers(),
+        })
+
+        const message = pamGetLeafsMessage({ vertices: [] })
+        await expect(endpoint.executeRouterRest(message, sessionToken))
+            .rejects
+            .toThrow(errorString)
     })
 })
 
