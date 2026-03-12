@@ -1,13 +1,12 @@
-import { EncryptionType, KeyStorage, platform, CryptoTask } from "./platform"
+import { EncryptionType, KeyStorage, platform, CryptoTask } from './platform'
 
 export type CryptoWorkerKeys = Record<string, Uint8Array>
 
-export type CryptoResults = 
-    Record<string, Uint8Array>
+export type CryptoResults = Record<string, Uint8Array>
 
 export type CryptoWorkerMessage = {
-   data: CryptoTask[]
-   keys: CryptoWorkerKeys
+    data: CryptoTask[]
+    keys: CryptoWorkerKeys
 }
 
 export interface CryptoWorkerPoolConfig {
@@ -17,7 +16,6 @@ export interface CryptoWorkerPoolConfig {
 }
 
 export class CryptoWorkerPool {
-
     private workers: CryptoWorker[] = []
 
     private config: CryptoWorkerPoolConfig
@@ -25,7 +23,7 @@ export class CryptoWorkerPool {
     constructor(config: CryptoWorkerPoolConfig) {
         this.config = config
     }
-    
+
     async open() {
         while (this.workers.length < this.config.numThreads) {
             const worker = await this.config.createWorker()
@@ -45,7 +43,7 @@ export class CryptoWorkerPool {
         const keys: CryptoWorkerKeys = {}
 
         for (const task of tasks) {
-            const {keyId, encryptionType} = task
+            const { keyId, encryptionType } = task
             if (keys[keyId]) continue
 
             try {
@@ -66,18 +64,18 @@ export class CryptoWorkerPool {
 
         // Issue concurrent requests
         const chunkedResults = await Promise.all(
-          chunks.map(async (chunk, index) => {
-            const worker: CryptoWorker = this.workers[index]
-            const keys = await this.getKeys(chunk)
-            return worker.sendMessage({ 
-                data: chunk, 
-                keys 
+            chunks.map(async (chunk, index) => {
+                const worker: CryptoWorker = this.workers[index]
+                const keys = await this.getKeys(chunk)
+                return worker.sendMessage({
+                    data: chunk,
+                    keys,
+                })
             })
-          })
         )
 
         // Merge and return results
-        return Object.assign({}, ...chunkedResults) 
+        return Object.assign({}, ...chunkedResults)
     }
 
     private chunk<T>(array: T[], chunkSize: number): T[][] {
@@ -94,34 +92,34 @@ export class CryptoWorkerPool {
 }
 
 export interface CryptoWorker {
-    
     sendMessage(message: CryptoWorkerMessage): Promise<CryptoResults>
 
     terminate(): Promise<void>
-
 }
 
 export async function handleCryptoWorkerMessage(message: CryptoWorkerMessage): Promise<CryptoResults> {
-    const {data, keys} = message
+    const { data, keys } = message
     const keyStorage: KeyStorage = {
         getKeyBytes: async (keyId) => {
             return keys[keyId]
         },
         saveKeyBytes: async (_keyId, _key) => {
             // unused
-        }
+        },
     }
 
     let results: CryptoResults = {}
-    await Promise.all(data.map(async (task) => {
-        const {data, dataId, keyId, encryptionType} = task
-        try {
-            const keyBytes = await platform.decrypt(data, keyId, encryptionType, keyStorage)
-            results[dataId] = keyBytes
-        } catch (e: any) {
-            console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
-        }
-    }))
+    await Promise.all(
+        data.map(async (task) => {
+            const { data, dataId, keyId, encryptionType } = task
+            try {
+                const keyBytes = await platform.decrypt(data, keyId, encryptionType, keyStorage)
+                results[dataId] = keyBytes
+            } catch (e: any) {
+                console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
+            }
+        })
+    )
 
     return results
 }

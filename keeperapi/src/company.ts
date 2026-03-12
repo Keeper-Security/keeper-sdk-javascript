@@ -1,4 +1,4 @@
-import {Auth} from "./auth";
+import { Auth } from './auth'
 // import {
 //     EnterpriseAllocateIdsCommand,
 //     EnterpriseDataInclude,
@@ -18,8 +18,8 @@ import {
     decryptKey,
     generateUid,
     generateEncryptionKey,
-} from "./utils";
-import {platform} from "./platform";
+} from './utils'
+import { platform } from './platform'
 
 // export class Company {
 //
@@ -240,4 +240,4 @@ import {platform} from "./platform";
 //     }
 // }
 
-export type EncryptedData = {displayname: string}
+export type EncryptedData = { displayname: string }

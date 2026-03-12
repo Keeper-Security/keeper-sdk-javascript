@@ -1,34 +1,38 @@
-import {KeeperError} from './configuration'
-import {Authentication, Push, Router, SsoCloud} from './proto'
-import {platform} from './platform'
+import { KeeperError } from './configuration'
+import { Authentication, Push, Router, SsoCloud } from './proto'
+import { platform } from './platform'
 import {
     formatTimeDiff,
     generateTransmissionKey,
     generateHpkeTransmissionKey,
     getKeeperRouterUrl,
     getKeeperUrl,
-    isTwoFactorResultCode, log,
+    isTwoFactorResultCode,
+    log,
     normal64Bytes,
-    webSafe64FromBytes
+    webSafe64FromBytes,
 } from './utils'
 import {
-    RestMessage, RestInMessage, RestOutMessage, RestActionMessage,
+    RestMessage,
+    RestInMessage,
+    RestOutMessage,
+    RestActionMessage,
     deviceMessage,
     preLoginMessage,
     registerDeviceMessage,
     registerDeviceInRegionMessage,
-    updateDeviceMessage
+    updateDeviceMessage,
 } from './restMessages'
-import {ClientConfigurationInternal, TransmissionKey} from './configuration';
-import ApiRequestPayload = Authentication.ApiRequestPayload;
-import ApiRequest = Authentication.ApiRequest;
-import IDeviceResponse = Authentication.IDeviceResponse;
-import IPreLoginResponse = Authentication.IPreLoginResponse;
-import WssClientResponse = Push.WssClientResponse;
-import WssConnectionRequest = Push.WssConnectionRequest;
-import SsoCloudResponse = SsoCloud.SsoCloudResponse;
-import {KeeperHttpResponse, RestCommand} from './commands'
-import {AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId} from './transmissionKeys'
+import { ClientConfigurationInternal, TransmissionKey } from './configuration'
+import ApiRequestPayload = Authentication.ApiRequestPayload
+import ApiRequest = Authentication.ApiRequest
+import IDeviceResponse = Authentication.IDeviceResponse
+import IPreLoginResponse = Authentication.IPreLoginResponse
+import WssClientResponse = Push.WssClientResponse
+import WssConnectionRequest = Push.WssConnectionRequest
+import SsoCloudResponse = SsoCloud.SsoCloudResponse
+import { KeeperHttpResponse, RestCommand } from './commands'
+import { AllowedEcKeyIds, AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId } from './transmissionKeys'
 
 export type ExecuteRestOptions = {
     skipRegionRedirect?: boolean
@@ -57,14 +61,18 @@ export class KeeperEndpoint {
         }
     }
 
-    async getTransmissionKey():Promise<TransmissionKey> {
+    async getTransmissionKey(): Promise<TransmissionKey> {
         const DEFAULT_PROD_EC_KEY_ID = 10
         const DEFAULT_PROD_ML_KEM_KEY_ID = 136
         const deviceConfigTransmissionKeyId = this.options.deviceConfig.transmissionKeyId || DEFAULT_PROD_EC_KEY_ID
         const deviceConfigMlKemKeyId = this.options.deviceConfig.mlKemPublicKeyId || DEFAULT_PROD_ML_KEM_KEY_ID
-        if(!this._transmissionKey && isAllowedEcKeyId(deviceConfigTransmissionKeyId) && isAllowedMlKemKeyId(deviceConfigMlKemKeyId)){
+        if (
+            !this._transmissionKey &&
+            isAllowedEcKeyId(deviceConfigTransmissionKeyId) &&
+            isAllowedMlKemKeyId(deviceConfigMlKemKeyId)
+        ) {
             this._transmissionKey = await generateTransmissionKey(deviceConfigTransmissionKeyId, deviceConfigMlKemKeyId)
-        } else if(!this._transmissionKey){
+        } else if (!this._transmissionKey) {
             this._transmissionKey = await generateTransmissionKey(DEFAULT_PROD_EC_KEY_ID, DEFAULT_PROD_ML_KEM_KEY_ID)
         }
 
@@ -76,14 +84,15 @@ export class KeeperEndpoint {
     }
 
     async getDeviceToken(): Promise<IDeviceResponse> {
-        return this.executeRest(deviceMessage({
-            clientVersion: this.clientVersion,
-            deviceName: 'JS Keeper API'
-        }))
+        return this.executeRest(
+            deviceMessage({
+                clientVersion: this.clientVersion,
+                deviceName: 'JS Keeper API',
+            })
+        )
     }
 
     async getPreLogin(username: string): Promise<IPreLoginResponse> {
-
         if (!this.deviceToken) {
             console.log('Obtaining device token...')
             let deviceResponse = await this.getDeviceToken()
@@ -98,23 +107,24 @@ export class KeeperEndpoint {
 
         while (true) {
             try {
-                return await this.executeRest(preLoginMessage({
-                    authRequest: {
-                        clientVersion: this.clientVersion,
-                        username: username,
-                        encryptedDeviceToken: this.deviceToken
-                    },
-                    loginType: Authentication.LoginType.NORMAL
-                }))
+                return await this.executeRest(
+                    preLoginMessage({
+                        authRequest: {
+                            clientVersion: this.clientVersion,
+                            username: username,
+                            encryptedDeviceToken: this.deviceToken,
+                        },
+                        loginType: Authentication.LoginType.NORMAL,
+                    })
+                )
             } catch (e) {
-                if (!(e instanceof Error))
-                    throw(e)
+                if (!(e instanceof Error)) throw e
                 let errorObj = JSON.parse(e.message)
                 if (errorObj.error === 'region_redirect') {
                     this.options.host = errorObj.region_host
                     console.log(`Redirecting to ${this.options.host}`)
                 } else {
-                    throw(e)
+                    throw e
                 }
             }
         }
@@ -127,7 +137,8 @@ export class KeeperEndpoint {
 
         const deviceConfig = this.options.deviceConfig
 
-        if (deviceConfig.deviceToken && deviceConfig.privateKey && deviceConfig.publicKey) {  // Case 1
+        if (deviceConfig.deviceToken && deviceConfig.privateKey && deviceConfig.publicKey) {
+            // Case 1
             return
         }
 
@@ -155,16 +166,23 @@ export class KeeperEndpoint {
             deviceConfig.deviceToken = devRegResp.encryptedDeviceToken
         }
         if (this.options.onDeviceConfig) {
-            await this.options.onDeviceConfig(deviceConfig, this.options.host);
+            await this.options.onDeviceConfig(deviceConfig, this.options.host)
         }
     }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut> {
+    async executeRest<TIn, TOut>(
+        message: RestOutMessage<TOut> | RestMessage<TIn, TOut>,
+        sessionToken?: string,
+        options?: ExecuteRestOptions
+    ): Promise<TOut> {
         // @ts-ignore
         return this.executeRestInternal(message, sessionToken, options)
     }
 
-    async executeRestAction<TIn>(message: RestInMessage<TIn> | RestActionMessage, sessionToken?: string): Promise<void> {
+    async executeRestAction<TIn>(
+        message: RestInMessage<TIn> | RestActionMessage,
+        sessionToken?: string
+    ): Promise<void> {
         return this.executeRestInternal(message, sessionToken)
     }
 
@@ -178,11 +196,11 @@ export class KeeperEndpoint {
         const encryptedSessionToken = await platform.aesGcmEncrypt(sessionTokenBytes, transmissionKey.key)
         const encryptedPayload = await platform.aesGcmEncrypt(message.toBytes(), transmissionKey.key)
         const headers = {
-            'TransmissionKey': platform.bytesToBase64(transmissionKey.ecEncryptedKey),
-            'Authorization': `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`
+            TransmissionKey: platform.bytesToBase64(transmissionKey.ecEncryptedKey),
+            Authorization: `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`,
         }
         const url = getKeeperRouterUrl(this.options.host, message.path)
-        log(`Calling KA Router URL: ${url}`, 'noCR');
+        log(`Calling KA Router URL: ${url}`, 'noCR')
         const response = await platform.post(url, encryptedPayload, headers)
         if (!response.data || response.data.length === 0) {
             throw new Error(`Empty response from router for ${message.path}`)
@@ -203,14 +221,18 @@ export class KeeperEndpoint {
             throw {
                 response_code: routerResponse.responseCode,
                 path: message.path,
-                message: routerResponse.errorMessage
+                message: routerResponse.errorMessage,
             } as KeeperError
         }
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
         return message.fromBytes(decryptedPayload)
     }
 
-    private async executeRestInternal<TIn, TOut>(message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage, sessionToken?: string, options?: ExecuteRestOptions): Promise<TOut | void> {
+    private async executeRestInternal<TIn, TOut>(
+        message: RestInMessage<TIn> | RestOutMessage<TOut> | RestMessage<TIn, TOut> | RestActionMessage,
+        sessionToken?: string,
+        options?: ExecuteRestOptions
+    ): Promise<TOut | void> {
         this._transmissionKey = await this.getTransmissionKey()
         while (true) {
             const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
@@ -222,20 +244,20 @@ export class KeeperEndpoint {
                 sessionToken,
                 locale: this.locale,
                 apiVersion,
-                useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+                useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
             })
-            log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR');
+            log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR')
             const startTime = Date.now()
             const response = await platform.post(this.getUrl(message.path), request)
             log(` (${formatTimeDiff(new Date(Date.now() - startTime))})`, 'CR')
-            if (!response.data || response.data.length === 0 && response.statusCode === 200) {
+            if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
                 if ('fromBytes' in message) {
                     throw Error(`Missing expected a response for ${message.path}`)
                 }
                 return
             }
             if (response.statusCode != 200) {
-                console.log("Response code:", response.statusCode);
+                console.log('Response code:', response.statusCode)
             }
             try {
                 const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
@@ -285,17 +307,19 @@ export class KeeperEndpoint {
                             }
                             this.options.host = errorObj.region_host!
                             if (this.options.onRegionChanged) {
-                                await this.options.onRegionChanged(this.options.host);
+                                await this.options.onRegionChanged(this.options.host)
                             }
                             continue
                         case 'device_not_registered': {
                             if (this.options.deviceConfig.deviceToken) {
-                                await this.executeRestInternal(registerDeviceInRegionMessage({
-                                    clientVersion: this.options.clientVersion,
-                                    deviceName: this.options.deviceConfig.deviceName,
-                                    devicePublicKey: this.options.deviceConfig.publicKey,
-                                    encryptedDeviceToken: this.options.deviceConfig.deviceToken
-                                }))
+                                await this.executeRestInternal(
+                                    registerDeviceInRegionMessage({
+                                        clientVersion: this.options.clientVersion,
+                                        deviceName: this.options.deviceConfig.deviceName,
+                                        devicePublicKey: this.options.deviceConfig.publicKey,
+                                        encryptedDeviceToken: this.options.deviceConfig.deviceToken,
+                                    })
+                                )
                                 continue
                             }
                         }
@@ -303,9 +327,8 @@ export class KeeperEndpoint {
                     if (this.options.onCommandFailure) {
                         this.options.onCommandFailure({ ...errorObj, ...{ path: message.path } })
                     }
-                } catch {
-                }
-                throw(new Error(errorMessage))
+                } catch {}
+                throw new Error(errorMessage)
             }
         }
     }
@@ -316,7 +339,7 @@ export class KeeperEndpoint {
         const payload = {
             ...command.baseRequest,
             ...command.authorization,
-            ...command.request
+            ...command.request,
         }
         const requestBytes = await this.prepareRequest(payload)
         const response = await platform.post(this.getUrl('vault/execute_v2_command'), requestBytes)
@@ -325,11 +348,11 @@ export class KeeperEndpoint {
             decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
         } catch (e) {
             const error = platform.bytesToString(response.data)
-            throw(`Unable to decrypt response: ${error}`)
+            throw `Unable to decrypt response: ${error}`
         }
         const json = JSON.parse(platform.bytesToString(decrypted))
         if (json.result !== 'success' && !isTwoFactorResultCode(json.result_code)) {
-            throw(json)
+            throw json
         }
         return json as Response
     }
@@ -344,11 +367,15 @@ export class KeeperEndpoint {
         this.options.deviceConfig.transmissionKeyId = ecKeyId
         this.options.deviceConfig.mlKemPublicKeyId = mlKemKeyId
         if (this.options.onDeviceConfig) {
-            await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host);
+            await this.options.onDeviceConfig(this.options.deviceConfig, this.options.host)
         }
     }
 
-    public async prepareRequest(payload: Uint8Array | unknown, sessionToken?: string, apiVersion?: number): Promise<Uint8Array> {
+    public async prepareRequest(
+        payload: Uint8Array | unknown,
+        sessionToken?: string,
+        apiVersion?: number
+    ): Promise<Uint8Array> {
         this._transmissionKey = await this.getTransmissionKey()
         return prepareApiRequest({
             payload,
@@ -356,7 +383,7 @@ export class KeeperEndpoint {
             sessionToken,
             locale: this.locale,
             apiVersion,
-            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
         })
     }
 
@@ -368,25 +395,34 @@ export class KeeperEndpoint {
 
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
         this._transmissionKey = await this.getTransmissionKey()
-        return getPushConnectionRequest(messageSessionUid, this._transmissionKey, this.options.deviceConfig.deviceToken, this.locale)
+        return getPushConnectionRequest(
+            messageSessionUid,
+            this._transmissionKey,
+            this.options.deviceConfig.deviceToken,
+            this.locale
+        )
     }
 
-    public async prepareSsoPayload(messageSessionUid: Uint8Array, username: string = '', idpSessionId = ''): Promise<string> {
+    public async prepareSsoPayload(
+        messageSessionUid: Uint8Array,
+        username: string = '',
+        idpSessionId = ''
+    ): Promise<string> {
         this._transmissionKey = await this.getTransmissionKey()
         const payload: SsoCloud.ISsoCloudRequest = {
-            "embedded": true,
-            "clientVersion": this.clientVersion,
-            "dest": "vault",
-            "forceLogin": false,
-            "messageSessionUid": messageSessionUid,
-            "idpSessionId": idpSessionId,
-            "username": username
+            embedded: true,
+            clientVersion: this.clientVersion,
+            dest: 'vault',
+            forceLogin: false,
+            messageSessionUid: messageSessionUid,
+            idpSessionId: idpSessionId,
+            username: username,
         }
         const request = await prepareApiRequest({
             payload: SsoCloud.SsoCloudRequest.encode(payload).finish(),
             transmissionKey: this._transmissionKey,
             locale: this.locale,
-            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey
+            useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
         })
         return webSafe64FromBytes(request)
     }
@@ -396,15 +432,15 @@ export class KeeperEndpoint {
         return decryptCloudSsoResponse(token, this._transmissionKey.key)
     }
 
-    public async getOnsitePublicKey(ecOnly:boolean): Promise<string> {
+    public async getOnsitePublicKey(ecOnly: boolean): Promise<string> {
         if (!this.onsitePublicKey || !this.onsitePrivateKey) {
-            if(ecOnly){
-                const {privateKey, publicKey} = await platform.generateECKeyPair()
+            if (ecOnly) {
+                const { privateKey, publicKey } = await platform.generateECKeyPair()
 
                 this.onsitePrivateKey = privateKey
                 this.onsitePublicKey = publicKey
             } else {
-                const {privateKey, publicKey} = await platform.generateRSAKeyPair()
+                const { privateKey, publicKey } = await platform.generateRSAKeyPair()
 
                 this.onsitePrivateKey = privateKey
                 this.onsitePublicKey = publicKey
@@ -424,47 +460,51 @@ export class KeeperEndpoint {
     }
 }
 
-export async function getPushConnectionRequest(messageSessionUid: Uint8Array, transmissionKey: TransmissionKey, encryptedDeviceToken?: Uint8Array, locale?: string) {
+export async function getPushConnectionRequest(
+    messageSessionUid: Uint8Array,
+    transmissionKey: TransmissionKey,
+    encryptedDeviceToken?: Uint8Array,
+    locale?: string
+) {
     const connectionRequest = WssConnectionRequest.create({
         messageSessionUid: messageSessionUid,
         encryptedDeviceToken: encryptedDeviceToken,
-        deviceTimeStamp: new Date().getTime()
+        deviceTimeStamp: new Date().getTime(),
     })
     const connectionRequestBytes = WssConnectionRequest.encode(connectionRequest).finish()
     const apiRequest = await prepareApiRequest({
         payload: connectionRequestBytes,
         transmissionKey,
         locale,
-        useHpkeForTransmissionKey: false // HPKE not currently supported for push
+        useHpkeForTransmissionKey: false, // HPKE not currently supported for push
     })
     return webSafe64FromBytes(apiRequest)
 }
 
 type PrepareApiRequestParams = {
-    payload: Uint8Array | unknown,
-    transmissionKey: TransmissionKey,
-    sessionToken?: string,
-    locale?: string,
+    payload: Uint8Array | unknown
+    transmissionKey: TransmissionKey
+    sessionToken?: string
+    locale?: string
     apiVersion?: number
     useHpkeForTransmissionKey?: boolean
 }
 
 export async function prepareApiRequest({
-  payload,
-  transmissionKey,
-  sessionToken,
-  locale,
-  apiVersion,
-  useHpkeForTransmissionKey
+    payload,
+    transmissionKey,
+    sessionToken,
+    locale,
+    apiVersion,
+    useHpkeForTransmissionKey,
 }: PrepareApiRequestParams): Promise<Uint8Array> {
     const requestPayload = ApiRequestPayload.create()
     if (payload) {
-        requestPayload.payload = payload instanceof Uint8Array
-            ? payload
-            : platform.stringToBytes(JSON.stringify(payload))
+        requestPayload.payload =
+            payload instanceof Uint8Array ? payload : platform.stringToBytes(JSON.stringify(payload))
     }
     if (sessionToken) {
-        requestPayload.encryptedSessionToken = normal64Bytes(sessionToken);
+        requestPayload.encryptedSessionToken = normal64Bytes(sessionToken)
     }
     requestPayload.apiVersion = apiVersion || 0
     const requestPayloadBytes = ApiRequestPayload.encode(requestPayload).finish()
@@ -474,21 +514,21 @@ export async function prepareApiRequest({
     if (useHpkeForTransmissionKey) {
         const hpkeTransmissionKey = await generateHpkeTransmissionKey(
             transmissionKey,
-            true  // use optional data
+            true // use optional data
         )
         apiRequest = ApiRequest.create({
             qrcMessageKey: hpkeTransmissionKey.qrcMessageKey,
             encryptedPayload: encryptedRequestPayload,
             publicKeyId: hpkeTransmissionKey.mlKemKeyId,
             encryptedTransmissionKey: hpkeTransmissionKey.optionalData || null,
-            locale: locale || 'en_US'
-        });
+            locale: locale || 'en_US',
+        })
     } else {
         apiRequest = ApiRequest.create({
             encryptedTransmissionKey: transmissionKey.ecEncryptedKey,
             encryptedPayload: encryptedRequestPayload,
             publicKeyId: transmissionKey.ecKeyId,
-            locale: locale || 'en_US'
+            locale: locale || 'en_US',
         })
     }
 
@@ -496,8 +536,8 @@ export async function prepareApiRequest({
 }
 
 export async function decryptCloudSsoResponse(cloudResponseToken: string, key: Uint8Array): Promise<SsoCloudResponse> {
-    const decryptedData = await platform.aesGcmDecrypt(normal64Bytes(cloudResponseToken), key);
-    return SsoCloudResponse.decode(decryptedData);
+    const decryptedData = await platform.aesGcmDecrypt(normal64Bytes(cloudResponseToken), key)
+    return SsoCloudResponse.decode(decryptedData)
 }
 
 export enum KeeperEnvironment {
@@ -510,5 +550,3 @@ export enum KeeperEnvironment {
     QA_EU = 'qa.keepersecurity.eu',
     DEV_EU = 'dev.keepersecurity.eu',
 }
-
-

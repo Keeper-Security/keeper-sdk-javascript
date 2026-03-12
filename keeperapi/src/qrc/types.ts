@@ -7,9 +7,9 @@
  */
 export interface MlKemKeyPair {
     /** ML-KEM public key (1184 or 1568 bytes depending on variant) */
-    publicKey: Uint8Array;
+    publicKey: Uint8Array
     /** ML-KEM private key (2400 or 3168 bytes depending on variant) */
-    privateKey: Uint8Array;
+    privateKey: Uint8Array
 }
 
 /**
@@ -17,13 +17,13 @@ export interface MlKemKeyPair {
  */
 export interface QrcEncryptionResult {
     /** Client's ephemeral EC public key */
-    clientEcPublicKey: Uint8Array;
+    clientEcPublicKey: Uint8Array
     /** ML-KEM encapsulated key (ciphertext) */
-    mlKemEncapsulatedKey: Uint8Array;
+    mlKemEncapsulatedKey: Uint8Array
     /** AES-GCM encrypted transmission key */
-    encryptedData: Uint8Array;
+    encryptedData: Uint8Array
     /** Protocol version (currently 1) */
-    msgVersion: number;
+    msgVersion: number
 }
 
 /**
@@ -31,7 +31,7 @@ export interface QrcEncryptionResult {
  */
 export interface MlKemEncapsulation {
     /** Encapsulated key (ciphertext) */
-    ciphertext: Uint8Array;
+    ciphertext: Uint8Array
     /** Shared secret */
-    sharedSecret: Uint8Array;
+    sharedSecret: Uint8Array
 }

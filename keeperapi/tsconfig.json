@@ -1,19 +1,13 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "noEmit": true,
-    "noImplicitAny": false,
-    "strict": true,
-    "target": "es2017",
-    "lib": [
-        "dom",
-        "esnext"
-    ],
-    "skipLibCheck": true
-  },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "module": "commonjs",
+        "noEmit": true,
+        "noImplicitAny": false,
+        "strict": true,
+        "target": "es2017",
+        "lib": ["dom", "esnext"],
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*", "test/**/*"],
+    "exclude": ["node_modules"]
 }

@@ -15,29 +15,36 @@ npm install keeperapi
 ```
 
 ```typescript
-    try {
-        let auth = new Auth({
-            host: KeeperEnvironment.DEV
-        });
-        await auth.login(username, password);
-        console.log("login successful");
-        let vault = new Vault(auth);
-        await vault.syncDown();
-        vault.records.forEach(x => console.log(JSON.stringify(x)));
-    } catch (e) {
-        console.log(e);
-    }
+try {
+  let auth = new Auth({
+    host: KeeperEnvironment.DEV,
+  });
+  await auth.login(username, password);
+  console.log("login successful");
+  let vault = new Vault(auth);
+  await vault.syncDown();
+  vault.records.forEach((x) => console.log(JSON.stringify(x)));
+} catch (e) {
+  console.log(e);
+}
 ```
 
-For local development, 
+For local development,
 
 ```bash
 npm run build
 ```
- from "keeperapi" folder, then
- 
+
+from "keeperapi" folder, then
+
 ```bash
 npm link ../../keeperapi
 ```
 
 from your client folder
+
+To ignore certain commits in git blame (like formatting commits), run this command:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
