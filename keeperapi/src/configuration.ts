@@ -1,10 +1,10 @@
-import {KeeperEnvironment} from "./endpoint";
-import {Authentication, Router} from './proto';
-import TwoFactorExpiration = Authentication.TwoFactorExpiration;
-import TwoFactorPushType = Authentication.TwoFactorPushType;
-import TwoFactorChannelType = Authentication.TwoFactorChannelType;
-import {KeyWrapper} from './platform';
-import {SessionParams} from "./auth";
+import { KeeperEnvironment } from './endpoint'
+import { Authentication, Router } from './proto'
+import TwoFactorExpiration = Authentication.TwoFactorExpiration
+import TwoFactorPushType = Authentication.TwoFactorPushType
+import TwoFactorChannelType = Authentication.TwoFactorChannelType
+import { KeyWrapper } from './platform'
+import { SessionParams } from './auth'
 
 export type KeeperHost = KeeperEnvironment | string
 
@@ -14,15 +14,15 @@ export interface ClientConfiguration {
     clientVersion?: string
     deviceConfig?: DeviceConfig // v15+ device config
     deviceToken?: Uint8Array // pre - v15 device token
-    host: KeeperHost,
+    host: KeeperHost
     locale?: string
-    onCommandFailure?: (error: KeeperError) => void,
+    onCommandFailure?: (error: KeeperError) => void
     onDeviceConfig?: (deviceConfig: DeviceConfig, host: KeeperHost) => Promise<void> // event to store device config
-    onDeviceToken?: (deviceToken: Uint8Array) => void  // event to store device token
-    onRegionChanged?: (newRegion: string) => Promise<void>,
+    onDeviceToken?: (deviceToken: Uint8Array) => void // event to store device token
+    onRegionChanged?: (newRegion: string) => Promise<void>
     onDeviceVerified?: (isDeviceVerified: boolean) => void
     sessionStorage?: SessionStorage
-    kvs?: KeyValueStorage;
+    kvs?: KeyValueStorage
     useSessionResumption?: boolean
     iterations?: number
     salt?: Uint8Array
@@ -63,25 +63,25 @@ export interface DeviceConfig {
 }
 
 export interface SessionStorage {
-    lastUsername?: string;
-    getCloneCode(host: KeeperEnvironment, username: string): Promise<Uint8Array | null>;
-    saveCloneCode(host: KeeperEnvironment, username: string, cloneCode: Uint8Array): Promise<void>;
-    getSessionParameters(): Promise<SessionParams | null>;
+    lastUsername?: string
+    getCloneCode(host: KeeperEnvironment, username: string): Promise<Uint8Array | null>
+    saveCloneCode(host: KeeperEnvironment, username: string, cloneCode: Uint8Array): Promise<void>
+    getSessionParameters(): Promise<SessionParams | null>
     /**
      * Important: implementation of this function should retain these values in memory only, never to disk.
      */
-    saveSessionParameters(sessionParams: Partial<SessionParams>): Promise<void>;
+    saveSessionParameters(sessionParams: Partial<SessionParams>): Promise<void>
 }
 
 export interface KeyValueStorage {
-    getValue(key: string): string | null;
-    saveValue(key: string, value: string): void;
+    getValue(key: string): string | null
+    saveValue(key: string, value: string): void
 }
 
 export interface VendorConfiguration {
-    host: KeeperHost;
-    vendorId: string;
-    privateKey: string;
+    host: KeeperHost
+    vendorId: string
+    privateKey: string
 }
 
 export interface TransmissionKey {
@@ -107,8 +107,8 @@ export interface TransmissionKeyHpke {
 }
 
 export interface AuthUI {
-    getTwoFactorCode(errorMessage?: string): Promise<string>;
-    displayDialog(): Promise<boolean>;
+    getTwoFactorCode(errorMessage?: string): Promise<string>
+    displayDialog(): Promise<boolean>
 }
 
 export interface AuthUI3 {
@@ -141,7 +141,7 @@ export type DeviceApprovalChannel = {
 }
 
 export type TwoFactorChannelData = {
-    availablePushes?: TwoFactorPushType[],
+    availablePushes?: TwoFactorPushType[]
     channel: Authentication.ITwoFactorChannelInfo
     sendPush?: (type: TwoFactorPushType) => void
     sendCode: (code: string) => void
@@ -149,6 +149,6 @@ export type TwoFactorChannelData = {
 }
 
 export type LoginError = {
-    error: string;
-    message: string;
+    error: string
+    message: string
 }

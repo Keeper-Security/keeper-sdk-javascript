@@ -17,7 +17,7 @@ const cryptoObj = {
         const randomData = crypto.randomBytes(array.length)
         array.set(randomData)
         return array
-    }
+    },
 }
 
 // Set up crypto for global.self (browser APIs) - only if self exists (jsdom environment)

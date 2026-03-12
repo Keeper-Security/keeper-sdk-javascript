@@ -18,21 +18,21 @@ import { generateTransmissionKey } from '../utils'
 // Mock server key configuration
 interface MockServerKeys {
     ecKeyId: number
-    mlKemKeyId?: number  // Optional: when undefined, server doesn't support HPKE
+    mlKemKeyId?: number // Optional: when undefined, server doesn't support HPKE
 }
 
 // Store test server keys (generated in beforeAll)
 const testServerKeys: {
     [keyId: number]: {
         publicKey: Uint8Array
-        privateKey: Uint8Array  // EC private key as raw bytes
+        privateKey: Uint8Array // EC private key as raw bytes
     }
 } = {}
 
 const testServerMlKemKeys: {
     [keyId: number]: {
         publicKey: Uint8Array
-        privateKey: Uint8Array  // ML-KEM private key
+        privateKey: Uint8Array // ML-KEM private key
     }
 } = {}
 
@@ -60,12 +60,12 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Generate our own EC key pairs for testing, since we need private keys
         const ecKeyIds = Object.keys(platform.keys)
             .map(Number)
-            .filter(id => !isNaN(id) && isAllowedEcKeyId(id))
+            .filter((id) => !isNaN(id) && isAllowedEcKeyId(id))
         for (const keyId of ecKeyIds) {
             const ecdh = await platform.generateECKeyPair()
             testServerKeys[keyId] = {
                 publicKey: ecdh.publicKey,
-                privateKey: ecdh.privateKey
+                privateKey: ecdh.privateKey,
             }
             platform.keys[keyId] = ecdh.publicKey
         }
@@ -73,13 +73,13 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Generate our own ML-KEM key pairs for testing
         const mlKemKeyIds = Object.keys(platform.mlKemKeys)
             .map(Number)
-            .filter(id => !isNaN(id) && isAllowedMlKemKeyId(id))
+            .filter((id) => !isNaN(id) && isAllowedMlKemKeyId(id))
         for (const keyId of mlKemKeyIds) {
             const variant = getKeeperMlKemKeyVariant(keyId as AllowedMlKemKeyIds)
             const mlKemKeyPair = mlKemKeygen(variant)
             testServerMlKemKeys[keyId] = {
                 publicKey: mlKemKeyPair.publicKey,
-                privateKey: mlKemKeyPair.privateKey
+                privateKey: mlKemKeyPair.privateKey,
             }
             const pemPublicKey = encodeMlKemPublicKeyToPem(mlKemKeyPair.publicKey, variant)
             platform.mlKemKeys[keyId] = pemPublicKey
@@ -275,7 +275,7 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Configure mock server to not support HPKE (no ML-KEM key)
         mockServerKeys = {
             ecKeyId: newEcKeyId,
-            mlKemKeyId: undefined,  // Server doesn't support HPKE
+            mlKemKeyId: undefined, // Server doesn't support HPKE
         }
 
         // Execute startLogin
@@ -284,10 +284,10 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Verify client switched to non-HPKE and updated EC key only
         expect(mockConfig.deviceConfig.transmissionKeyId).toBe(newEcKeyId)
         expect(mockConfig.deviceConfig.useHpkeTransmission).toBe(false)
-        expect(mockConfig.deviceConfig.mlKemPublicKeyId).toBe(defaultMlKemKeyId)  // ML-KEM key unchanged
+        expect(mockConfig.deviceConfig.mlKemPublicKeyId).toBe(defaultMlKemKeyId) // ML-KEM key unchanged
         // onDeviceConfig called twice: once to disable HPKE, once to update EC key
         expect(onDeviceConfigMock).toHaveBeenCalledTimes(2)
-        expect(postSpy).toHaveBeenCalledTimes(2)  // First HPKE fails, second non-HPKE succeeds
+        expect(postSpy).toHaveBeenCalledTimes(2) // First HPKE fails, second non-HPKE succeeds
 
         // Verify first call used HPKE and second used non-HPKE
         const firstCallArgs = postSpy.mock.calls[0]
@@ -302,7 +302,7 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
 
     it('should switch from HPKE to non-HPKE when returned qrc_ec_key_id is unknown to client', async () => {
         const validEcKeyId = 11
-        const unknownMlKemKeyId = 999  // ML-KEM key ID not in testServerMlKemKeys
+        const unknownMlKemKeyId = 999 // ML-KEM key ID not in testServerMlKemKeys
 
         // Enable HPKE for client
         mockConfig.useHpkeForTransmissionKey = true
@@ -312,7 +312,7 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Configure server with unknown ML-KEM key ID but valid EC key ID
         mockServerKeys = {
             ecKeyId: validEcKeyId,
-            mlKemKeyId: unknownMlKemKeyId,  // Unknown to client - will trigger fallback
+            mlKemKeyId: unknownMlKemKeyId, // Unknown to client - will trigger fallback
         }
 
         // Execute startLogin - client will try HPKE first, get unknown ML-KEM key, fall back to non-HPKE
@@ -343,8 +343,8 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Global config says use HPKE, but device config says don't
         // (e.g., server previously told us it doesn't support HPKE,
         // or the server told us to use an unknown ML-KEM key ID)
-        mockConfig.useHpkeForTransmissionKey = true  // Client: use/allow HPKE
-        mockConfig.deviceConfig.useHpkeTransmission = false  // Device: don't use HPKE
+        mockConfig.useHpkeForTransmissionKey = true // Client: use/allow HPKE
+        mockConfig.deviceConfig.useHpkeTransmission = false // Device: don't use HPKE
         endpoint = new KeeperEndpoint(mockConfig)
 
         // Configure mock server for non-HPKE (device config should take precedence)
@@ -359,7 +359,7 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         // Verify device config took precedence - client used non-HPKE
         expect(mockConfig.deviceConfig.transmissionKeyId).toBe(newEcKeyId)
         expect(mockConfig.deviceConfig.useHpkeTransmission).toBe(false)
-        expect(mockConfig.deviceConfig.mlKemPublicKeyId).toBe(defaultMlKemKeyId)  // ML-KEM key unchanged
+        expect(mockConfig.deviceConfig.mlKemPublicKeyId).toBe(defaultMlKemKeyId) // ML-KEM key unchanged
         expect(postSpy).toHaveBeenCalledTimes(2)
 
         // Verify non-HPKE was used (no qrcMessageKey)
@@ -375,20 +375,18 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
     })
 
     it('should throw an error if server returns unknown EC key ID (EC mode)', async () => {
-        const unknownEcKeyId = 999  // EC key ID not in testServerKeys
+        const unknownEcKeyId = 999 // EC key ID not in testServerKeys
 
         // Configure mock server to return unknown EC key ID
         mockServerKeys.ecKeyId = unknownEcKeyId
         mockServerKeys.mlKemKeyId = defaultMlKemKeyId
 
         // Execute startLogin and expect error
-        await expect(endpoint.executeRest(startLoginRequest))
-            .rejects
-            .toThrow()
+        await expect(endpoint.executeRest(startLoginRequest)).rejects.toThrow()
     })
 
     it('should throw an error if server returns unknown EC key ID (HPKE mode)', async () => {
-        const unknownEcKeyId = 999  // EC key ID not in testServerKeys
+        const unknownEcKeyId = 999 // EC key ID not in testServerKeys
         const newMlKemKeyId = 124
 
         // Clear device config keys to simulate newly registered device
@@ -402,9 +400,7 @@ describe('KeeperEndpoint - Transmission Key ID Rotation', () => {
         mockServerKeys.mlKemKeyId = newMlKemKeyId
 
         // Execute startLogin and expect error
-        await expect(endpoint.executeRest(startLoginRequest))
-            .rejects
-            .toThrow()
+        await expect(endpoint.executeRest(startLoginRequest)).rejects.toThrow()
     })
 })
 
@@ -508,11 +504,11 @@ describe('executeRouterRest', () => {
 
     it('throws JSON errors', async () => {
         const errorObj: KeeperError = {
-            "path": "https://dev.keepersecurity.com/api/rest/router/user_auth, POST",
-            "additional_info": "",
-            "location": "default exception manager - api validation exception",
-            "error": "access_denied",
-            "message": "You do not have the required privilege to perform this operation."
+            path: 'https://dev.keepersecurity.com/api/rest/router/user_auth, POST',
+            additional_info: '',
+            location: 'default exception manager - api validation exception',
+            error: 'access_denied',
+            message: 'You do not have the required privilege to perform this operation.',
         }
         jest.spyOn(platform, 'post').mockResolvedValue({
             data: platform.stringToBytes(JSON.stringify(errorObj)),
@@ -521,9 +517,10 @@ describe('executeRouterRest', () => {
         })
 
         const message = pamGetLeafsMessage({ vertices: [] })
-        await expect(endpoint.executeRouterRest(message, sessionToken))
-            .rejects
-            .toMatchObject({ error: 'access_denied', message: 'You do not have the required privilege to perform this operation.' })
+        await expect(endpoint.executeRouterRest(message, sessionToken)).rejects.toMatchObject({
+            error: 'access_denied',
+            message: 'You do not have the required privilege to perform this operation.',
+        })
     })
 
     it('throws on empty response', async () => {
@@ -534,9 +531,9 @@ describe('executeRouterRest', () => {
         })
 
         const message = pamGetLeafsMessage({ vertices: [] })
-        await expect(endpoint.executeRouterRest(message, sessionToken))
-            .rejects
-            .toThrow(`Empty response from router for ${message.path}`)
+        await expect(endpoint.executeRouterRest(message, sessionToken)).rejects.toThrow(
+            `Empty response from router for ${message.path}`
+        )
     })
 
     it('throws KeeperError when RouterResponse has no encryptedPayload', async () => {
@@ -551,13 +548,11 @@ describe('executeRouterRest', () => {
         })
 
         const message = pamGetLeafsMessage({ vertices: [] })
-        await expect(endpoint.executeRouterRest(message, sessionToken))
-            .rejects
-            .toMatchObject({
-                response_code: Router.RouterResponseCode.RRC_CONTROLLER_DOWN,
-                path: message.path,
-                message: 'controller unavailable',
-            })
+        await expect(endpoint.executeRouterRest(message, sessionToken)).rejects.toMatchObject({
+            response_code: Router.RouterResponseCode.RRC_CONTROLLER_DOWN,
+            path: message.path,
+            message: 'controller unavailable',
+        })
     })
 
     it('throws on string response (such as "no credentials included")', async () => {
@@ -569,9 +564,7 @@ describe('executeRouterRest', () => {
         })
 
         const message = pamGetLeafsMessage({ vertices: [] })
-        await expect(endpoint.executeRouterRest(message, sessionToken))
-            .rejects
-            .toThrow(errorString)
+        await expect(endpoint.executeRouterRest(message, sessionToken)).rejects.toThrow(errorString)
     })
 })
 
@@ -600,10 +593,7 @@ async function mockPlatformPost(_, requestBody): Promise<KeeperHttpResponse> {
         }
 
         // Server supports HPKE - check both EC and ML-KEM key IDs
-        if (
-            mlKemKeyId !== mockServerKeys.mlKemKeyId ||
-            ecKeyId !== mockServerKeys.ecKeyId
-        ) {
+        if (mlKemKeyId !== mockServerKeys.mlKemKeyId || ecKeyId !== mockServerKeys.ecKeyId) {
             const errorObj: KeeperError = {
                 key_id: mockServerKeys.mlKemKeyId,
                 qrc_ec_key_id: mockServerKeys.ecKeyId,
@@ -675,16 +665,19 @@ async function decryptApiRequestPayload(request: Authentication.ApiRequest) {
 
         // Get the correct variant for this ML-KEM key ID
         const variant = getKeeperMlKemKeyVariant(mlKemKeyId as AllowedMlKemKeyIds)
-        const ciphersuite = variant === MlKemVariant.ML_KEM_768
-            ? Ciphersuite.HPKE_MLKEM768_ECDHP256_HKDFSHA256_AESGCM256
-            : Ciphersuite.HPKE_MLKEM1024_ECDHP256_HKDFSHA256_AESGCM256
+        const ciphersuite =
+            variant === MlKemVariant.ML_KEM_768
+                ? Ciphersuite.HPKE_MLKEM768_ECDHP256_HKDFSHA256_AESGCM256
+                : Ciphersuite.HPKE_MLKEM1024_ECDHP256_HKDFSHA256_AESGCM256
         const hpke = new HPKE_ECDH_KYBER(ciphersuite)
 
         // Ensure all buffers are proper Uint8Arrays (protobuf may return Buffer objects)
         const clientEcPublicKey = new Uint8Array(qrcMessageKey.clientEcPublicKey!)
         const mlKemEncapsulatedKey = new Uint8Array(qrcMessageKey.mlKemEncapsulatedKey!)
         const data = new Uint8Array(qrcMessageKey.data!)
-        const optionalData = request.encryptedTransmissionKey ? new Uint8Array(request.encryptedTransmissionKey) : undefined
+        const optionalData = request.encryptedTransmissionKey
+            ? new Uint8Array(request.encryptedTransmissionKey)
+            : undefined
 
         // Decrypt the transmission key using HPKE
         const transmissionKey = await hpke.decrypt(
@@ -692,10 +685,10 @@ async function decryptApiRequestPayload(request: Authentication.ApiRequest) {
             mlKemEncapsulatedKey,
             data,
             qrcMessageKey.msgVersion as number,
-            testServerKeys[ecKeyId].privateKey,      // EC private key (raw bytes)
-            testServerKeys[ecKeyId].publicKey,        // EC public key
+            testServerKeys[ecKeyId].privateKey, // EC private key (raw bytes)
+            testServerKeys[ecKeyId].publicKey, // EC public key
             testServerMlKemKeys[mlKemKeyId].privateKey, // ML-KEM private key
-            optionalData          // optionalData
+            optionalData // optionalData
         )
 
         return transmissionKey
@@ -705,10 +698,9 @@ async function decryptApiRequestPayload(request: Authentication.ApiRequest) {
         const transmissionKey = await platform.privateDecryptEC(
             request.encryptedTransmissionKey!,
             testServerKeys[ecKeyId].privateKey,
-            testServerKeys[ecKeyId].publicKey  // Public key is required for EC decryption
+            testServerKeys[ecKeyId].publicKey // Public key is required for EC decryption
         )
 
         return transmissionKey
     }
 }
-

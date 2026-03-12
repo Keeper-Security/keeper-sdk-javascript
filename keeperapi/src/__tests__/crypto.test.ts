@@ -4,10 +4,10 @@
 
 // @ts-ignore
 import crypto from 'crypto'
-import {nodePlatform} from "../node/platform";
-import {browserPlatform} from "../browser/platform"
-import {publicKey, privateKey} from "./ecies-test-vectors";
-import {connectPlatform, platform} from "../platform";
+import { nodePlatform } from '../node/platform'
+import { browserPlatform } from '../browser/platform'
+import { publicKey, privateKey } from './ecies-test-vectors'
+import { connectPlatform, platform } from '../platform'
 
 describe('crypto test', () => {
     it('node API encrypts a message under EC and then decrypts it (test key pair)', async () => {

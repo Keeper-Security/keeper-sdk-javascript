@@ -3,7 +3,7 @@
  * Combines ECDH-P256 and ML-KEM for quantum-resistant encryption
  */
 
-import type { MlKemKeyPair, QrcEncryptionResult } from './types';
+import type { MlKemKeyPair, QrcEncryptionResult } from './types'
 import {
     Ciphersuite,
     MlKemVariant,
@@ -12,28 +12,28 @@ import {
     QRC_PROTOCOL_VERSION,
     AES_KEY_LENGTH,
     HKDF_SALT_LENGTH,
-} from './constants';
-import { mlKemKeygen, mlKemEncapsulate, mlKemDecapsulate } from './mlkem';
-import { buildContextInfo, validateContextInfoParams } from './context';
-import { concatUint8Arrays } from './utils';
-import { platform } from '../platform';
+} from './constants'
+import { mlKemKeygen, mlKemEncapsulate, mlKemDecapsulate } from './mlkem'
+import { buildContextInfo, validateContextInfoParams } from './context'
+import { concatUint8Arrays } from './utils'
+import { platform } from '../platform'
 
 /**
  * HPKE implementation with ECDH-P256 and ML-KEM
  */
 export class HPKE_ECDH_KYBER {
-    private readonly ciphersuite: Ciphersuite;
-    private readonly mlKemVariant: MlKemVariant;
-    private readonly mlKemCiphertextLength: number;
+    private readonly ciphersuite: Ciphersuite
+    private readonly mlKemVariant: MlKemVariant
+    private readonly mlKemCiphertextLength: number
 
     /**
      * Creates a new HPKE instance
      * @param ciphersuite - Ciphersuite to use (defaults to ML-KEM-1024)
      */
     constructor(ciphersuite: Ciphersuite = Ciphersuite.HPKE_MLKEM1024_ECDHP256_HKDFSHA256_AESGCM256) {
-        this.ciphersuite = ciphersuite;
-        this.mlKemVariant = getMlKemVariant(ciphersuite);
-        this.mlKemCiphertextLength = getMlKemCiphertextLength(this.mlKemVariant);
+        this.ciphersuite = ciphersuite
+        this.mlKemVariant = getMlKemVariant(ciphersuite)
+        this.mlKemCiphertextLength = getMlKemCiphertextLength(this.mlKemVariant)
     }
 
     /**
@@ -42,7 +42,7 @@ export class HPKE_ECDH_KYBER {
      * @returns ML-KEM key pair
      */
     generateMlKemKeys(seed?: Uint8Array): MlKemKeyPair {
-        return mlKemKeygen(this.mlKemVariant, seed);
+        return mlKemKeygen(this.mlKemVariant, seed)
     }
 
     /**
@@ -61,27 +61,29 @@ export class HPKE_ECDH_KYBER {
         optionalData?: Uint8Array
     ): Promise<QrcEncryptionResult> {
         // Generate ephemeral ECDH key pair
-        const ephemeralKeyPair = await platform.generateECKeyPair();
+        const ephemeralKeyPair = await platform.generateECKeyPair()
 
         // Perform ECDH with server's EC public key
         const ecSharedSecret = await platform.ecdhComputeSharedSecret(
             ephemeralKeyPair.privateKey,
             serverEcPublicKey,
             ephemeralKeyPair.publicKey
-        );
+        )
 
         // Perform ML-KEM encapsulation
-        const { ciphertext: mlKemCiphertext, sharedSecret: mlKemSharedSecret } =
-            mlKemEncapsulate(serverMlKemPublicKey, this.mlKemVariant);
+        const { ciphertext: mlKemCiphertext, sharedSecret: mlKemSharedSecret } = mlKemEncapsulate(
+            serverMlKemPublicKey,
+            this.mlKemVariant
+        )
 
         // Combine both shared secrets (concatenate)
-        const combinedSecret = concatUint8Arrays(ecSharedSecret, mlKemSharedSecret);
+        const combinedSecret = concatUint8Arrays(ecSharedSecret, mlKemSharedSecret)
 
         // Hash the ML-KEM ciphertext for context binding
-        const mlKemCiphertextHash = await platform.sha256(mlKemCiphertext);
+        const mlKemCiphertextHash = await platform.sha256(mlKemCiphertext)
 
         // Build context info for HKDF
-        validateContextInfoParams(serverEcPublicKey, ephemeralKeyPair.publicKey, mlKemCiphertextHash);
+        validateContextInfoParams(serverEcPublicKey, ephemeralKeyPair.publicKey, mlKemCiphertextHash)
         const contextInfo = buildContextInfo(
             this.ciphersuite,
             serverEcPublicKey,
@@ -89,14 +91,14 @@ export class HPKE_ECDH_KYBER {
             mlKemCiphertextHash,
             QRC_PROTOCOL_VERSION,
             optionalData
-        );
+        )
 
         // Derive AES key using HKDF
-        const salt = new Uint8Array(HKDF_SALT_LENGTH); // Empty salt (all zeros)
-        const aesKey = await platform.hkdf(salt, combinedSecret, contextInfo, AES_KEY_LENGTH);
+        const salt = new Uint8Array(HKDF_SALT_LENGTH) // Empty salt (all zeros)
+        const aesKey = await platform.hkdf(salt, combinedSecret, contextInfo, AES_KEY_LENGTH)
 
         // Encrypt data with AES-256-GCM
-        const encryptedData = await platform.aesGcmEncrypt(message, aesKey);
+        const encryptedData = await platform.aesGcmEncrypt(message, aesKey)
 
         // Return encryption result
         return {
@@ -104,7 +106,7 @@ export class HPKE_ECDH_KYBER {
             mlKemEncapsulatedKey: mlKemCiphertext,
             encryptedData: encryptedData,
             msgVersion: QRC_PROTOCOL_VERSION,
-        };
+        }
     }
 
     /**
@@ -132,7 +134,7 @@ export class HPKE_ECDH_KYBER {
     ): Promise<Uint8Array> {
         // Validate version
         if (msgVersion !== QRC_PROTOCOL_VERSION) {
-            throw new Error(`Unsupported QRC protocol version: ${msgVersion}, expected ${QRC_PROTOCOL_VERSION}`);
+            throw new Error(`Unsupported QRC protocol version: ${msgVersion}, expected ${QRC_PROTOCOL_VERSION}`)
         }
 
         // Perform ECDH with client's ephemeral public key
@@ -140,23 +142,19 @@ export class HPKE_ECDH_KYBER {
             serverEcPrivateKey,
             clientEcPublicKey,
             serverEcPublicKey
-        );
+        )
 
         // Perform ML-KEM decapsulation
-        const mlKemSharedSecret = mlKemDecapsulate(
-            mlKemEncapsulatedKey,
-            serverMlKemPrivateKey,
-            this.mlKemVariant
-        );
+        const mlKemSharedSecret = mlKemDecapsulate(mlKemEncapsulatedKey, serverMlKemPrivateKey, this.mlKemVariant)
 
         // Combine both shared secrets (concatenate)
-        const combinedSecret = concatUint8Arrays(ecSharedSecret, mlKemSharedSecret);
+        const combinedSecret = concatUint8Arrays(ecSharedSecret, mlKemSharedSecret)
 
         // Hash the ML-KEM ciphertext for context binding
-        const mlKemCiphertextHash = await platform.sha256(mlKemEncapsulatedKey);
+        const mlKemCiphertextHash = await platform.sha256(mlKemEncapsulatedKey)
 
         // Build context info for HKDF
-        validateContextInfoParams(serverEcPublicKey, clientEcPublicKey, mlKemCiphertextHash);
+        validateContextInfoParams(serverEcPublicKey, clientEcPublicKey, mlKemCiphertextHash)
         const contextInfo = buildContextInfo(
             this.ciphersuite,
             serverEcPublicKey,
@@ -164,15 +162,15 @@ export class HPKE_ECDH_KYBER {
             mlKemCiphertextHash,
             msgVersion,
             optionalData
-        );
+        )
 
         // Derive AES key using HKDF
-        const salt = new Uint8Array(HKDF_SALT_LENGTH); // Empty salt (all zeros)
-        const aesKey = await platform.hkdf(salt, combinedSecret, contextInfo, AES_KEY_LENGTH);
+        const salt = new Uint8Array(HKDF_SALT_LENGTH) // Empty salt (all zeros)
+        const aesKey = await platform.hkdf(salt, combinedSecret, contextInfo, AES_KEY_LENGTH)
 
         // Decrypt data with AES-256-GCM
-        const plaintext = await platform.aesGcmDecrypt(encryptedData, aesKey);
+        const plaintext = await platform.aesGcmDecrypt(encryptedData, aesKey)
 
-        return plaintext;
+        return plaintext
     }
 }
