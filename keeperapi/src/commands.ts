@@ -10,28 +10,28 @@ type AuthorizedRequest = {
 }
 
 export type SyncDataInclude =
-    | "record"               //*
-    | "typed_record"
-    | "app_record"
-    | "shared_folder"       //*
-    | "sfheaders"           //*
-    | "sfusers"
-    | "sfrecords"
-    | "folders"
-    | "teams"                //*
-    | "sharing_changes"     //*
-    | "non_shared_data"     //*
-    | "pending_shares"      //*
-    | "profile"
-    | "pending_team_users"
-    | "user_auth"
-    | "reused_passwords"
-    | "explicit"
+    | 'record' //*
+    | 'typed_record'
+    | 'app_record'
+    | 'shared_folder' //*
+    | 'sfheaders' //*
+    | 'sfusers'
+    | 'sfrecords'
+    | 'folders'
+    | 'teams' //*
+    | 'sharing_changes' //*
+    | 'non_shared_data' //*
+    | 'pending_shares' //*
+    | 'profile'
+    | 'pending_team_users'
+    | 'user_auth'
+    | 'reused_passwords'
+    | 'explicit'
 
 type SyncDownRequest = {
     revision: number
     client_time?: number
-    include: SyncDataInclude[];
+    include: SyncDataInclude[]
 }
 
 export type KeeperResponse = {
@@ -53,12 +53,16 @@ export type RestCommand<Request, Response> = {
     authorization?: AuthorizedRequest
 }
 
-function createCommand<Request, Response>(request: Request, command: string, noAuth: boolean = false): RestCommand<Request, Response> {
+function createCommand<Request, Response>(
+    request: Request,
+    command: string,
+    noAuth: boolean = false
+): RestCommand<Request, Response> {
     const restCommand: RestCommand<Request, Response> = {
         baseRequest: {
             command: command,
         },
-        request
+        request,
     }
     if (!noAuth) {
         restCommand.authorization = {}
@@ -67,119 +71,123 @@ function createCommand<Request, Response>(request: Request, command: string, noA
 }
 
 type NonSharedData = {
-    record_uid: string;
-    data: string;
+    record_uid: string
+    data: string
 }
 
 type UserPermission = {
-    owner: boolean;
-    shareable: boolean;
-    editable: boolean;
-    awaiting_approval: boolean;
-    username: string;
+    owner: boolean
+    shareable: boolean
+    editable: boolean
+    awaiting_approval: boolean
+    username: string
 }
 
 export type RecordData = {
-    record_uid: string;
-    version: number;
-    revision?: number;
-    client_modified_time?: number;
-    data?: string;
-    extra?: string;
-    udata?: { file_ids: string[] };
-    shared?: boolean;
-    user_permissions?: UserPermission[];
-    owner_uid?: string;
-    link_key?: string;
+    record_uid: string
+    version: number
+    revision?: number
+    client_modified_time?: number
+    data?: string
+    extra?: string
+    udata?: { file_ids: string[] }
+    shared?: boolean
+    user_permissions?: UserPermission[]
+    owner_uid?: string
+    link_key?: string
 }
 
 export type RecordMetaData = {
-    record_uid: string;
-    owner: boolean;
-    record_key: string;
-    can_share: boolean;
-    can_edit: boolean;
-    record_key_type: number;
+    record_uid: string
+    owner: boolean
+    record_key: string
+    can_share: boolean
+    can_edit: boolean
+    record_key_type: number
 }
 
 type SharedFolderRecord = {
-    record_uid: string;
-    record_key: string;
-    can_share: boolean;
-    can_edit: boolean;
+    record_uid: string
+    record_key: string
+    can_share: boolean
+    can_edit: boolean
 }
 
 export type SharedFolder = {
-    default_can_edit: boolean;
-    full_sync: boolean;
-    name: string;
-    data: string;
-    key_type: number;
-    records: SharedFolderRecord[];
-    default_can_share: boolean;
-    default_manage_records: boolean;
-    default_manage_users: boolean;
-    shared_folder_uid: string;
-    revision: number;
-    manage_users: boolean;
-    manage_records: boolean;
-    shared_folder_key: string;
+    default_can_edit: boolean
+    full_sync: boolean
+    name: string
+    data: string
+    key_type: number
+    records: SharedFolderRecord[]
+    default_can_share: boolean
+    default_manage_records: boolean
+    default_manage_users: boolean
+    shared_folder_uid: string
+    revision: number
+    manage_users: boolean
+    manage_records: boolean
+    shared_folder_key: string
 }
 
 type TeamSharedFolderKey = {
-    key_type: number;
-    shared_folder_key: string;
-    shared_folder_uid: string;
+    key_type: number
+    shared_folder_key: string
+    shared_folder_uid: string
 }
 
 type Team = {
-    restrict_edit: boolean;
-    team_private_key: string;
-    name: string;
-    team_key_type: number;
-    restrict_view: boolean;
-    team_key: string;
-    shared_folder_keys: TeamSharedFolderKey[];
-    team_uid: string;
-    restrict_share: boolean;
+    restrict_edit: boolean
+    team_private_key: string
+    name: string
+    team_key_type: number
+    restrict_view: boolean
+    team_key: string
+    shared_folder_keys: TeamSharedFolderKey[]
+    team_uid: string
+    restrict_share: boolean
 }
 
 type SyncDownResponse = KeeperResponse & {
-    full_sync: boolean;
-    non_shared_data: NonSharedData[];
-    records: RecordData[];
-    record_meta_data: RecordMetaData[];
-    removed_records: string[];
-    result_code: string;
-    revision: number;
-    shared_folders: SharedFolder[];
+    full_sync: boolean
+    non_shared_data: NonSharedData[]
+    records: RecordData[]
+    record_meta_data: RecordMetaData[]
+    removed_records: string[]
+    result_code: string
+    revision: number
+    shared_folders: SharedFolder[]
     shared_folder_folder_records: {
-        record_uid: string,
-        folder_uid: string,
-        shared_folder_uid: string,
+        record_uid: string
+        folder_uid: string
+        shared_folder_uid: string
         revision: number
     }[]
-    teams: Team[];
+    teams: Team[]
     user_folder_shared_folders: {
-        shared_folder_uid: string,
+        shared_folder_uid: string
         revision: number
     }[]
 }
 
 export const syncDownCommand = (request: SyncDownRequest): RestCommand<SyncDownRequest, SyncDownResponse> =>
-    createCommand({
-        ...request,
-        client_time: new Date().getTime()
-    }, 'sync_down')
+    createCommand(
+        {
+            ...request,
+            client_time: new Date().getTime(),
+        },
+        'sync_down'
+    )
 
 export type RoleEnforcementAddRequest = {
-    role_id: number,
-    enforcement: string,
+    role_id: number
+    enforcement: string
     value?: unknown
 }
 
-export const roleEnforcementAddCommand = (request: RoleEnforcementAddRequest): RestCommand<RoleEnforcementAddRequest, KeeperResponse> =>
-    createCommand(request, 'role_enforcement_add')
+export const roleEnforcementAddCommand = (
+    request: RoleEnforcementAddRequest
+): RestCommand<RoleEnforcementAddRequest, KeeperResponse> => createCommand(request, 'role_enforcement_add')
 
 export type MoveRequest = {
     to_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
@@ -204,7 +212,8 @@ export type TransitionKeyObject = {
     key: string
 }
 
-export const moveCommand = (request: MoveRequest): RestCommand<MoveRequest, KeeperResponse> => createCommand(request, 'move')
+export const moveCommand = (request: MoveRequest): RestCommand<MoveRequest, KeeperResponse> =>
+    createCommand(request, 'move')
 
 export type ShareAccountRequest = {
     to_role_id: number
@@ -212,7 +221,8 @@ export type ShareAccountRequest = {
     transfer_key?: string
 }
 
-export const shareAccountCommand = (request: ShareAccountRequest): RestCommand<ShareAccountRequest, KeeperResponse> => createCommand(request, 'share_account')
+export const shareAccountCommand = (request: ShareAccountRequest): RestCommand<ShareAccountRequest, KeeperResponse> =>
+    createCommand(request, 'share_account')
 
 export type RecordAddRequest = {
     record_uid: string
@@ -228,7 +238,8 @@ export type RecordAddRequest = {
     file_ids: string[]
 }
 
-export const recordAddCommand = (request: RecordAddRequest): RestCommand<RecordAddRequest, KeeperResponse> => createCommand(request, 'record_add')
+export const recordAddCommand = (request: RecordAddRequest): RestCommand<RecordAddRequest, KeeperResponse> =>
+    createCommand(request, 'record_add')
 
 export type RecordPreDeleteObject = {
     object_uid: string
@@ -257,25 +268,30 @@ export type RecordDeleteRequest = {
     pre_delete_token: string
 }
 
-export const recordPreDeleteCommand = (request: RecordPreDeleteRequest): RestCommand<RecordPreDeleteRequest, KeeperPreDeleteResponse> => createCommand(request, 'pre_delete')
-export const recordDeleteCommand = (request: RecordDeleteRequest): RestCommand<RecordDeleteRequest, KeeperResponse> => createCommand(request, 'delete')
+export const recordPreDeleteCommand = (
+    request: RecordPreDeleteRequest
+): RestCommand<RecordPreDeleteRequest, KeeperPreDeleteResponse> => createCommand(request, 'pre_delete')
+export const recordDeleteCommand = (request: RecordDeleteRequest): RestCommand<RecordDeleteRequest, KeeperResponse> =>
+    createCommand(request, 'delete')
 
 export type EnterpriseSettingInclude =
-    | "AuditSyncConfig"
-    | "AuditSyncContext"
-    | "AuditAlertsConfig"
-    | "BackupConfig"
-    | "AuditReportFilter"
-    | "AuditAlertFilter"
-    | "AuditAlertContext"
-    | "RDControllerConfig"
+    | 'AuditSyncConfig'
+    | 'AuditSyncContext'
+    | 'AuditAlertsConfig'
+    | 'BackupConfig'
+    | 'AuditReportFilter'
+    | 'AuditAlertFilter'
+    | 'AuditAlertContext'
+    | 'RDControllerConfig'
 
 export type PutEnterpriseSettingRequest = {
     type: EnterpriseSettingInclude
     settings: any
 }
 
-export const putEnterpriseSettingCommand = (request: PutEnterpriseSettingRequest): RestCommand<PutEnterpriseSettingRequest, KeeperResponse> => createCommand(request, 'put_enterprise_setting')
+export const putEnterpriseSettingCommand = (
+    request: PutEnterpriseSettingRequest
+): RestCommand<PutEnterpriseSettingRequest, KeeperResponse> => createCommand(request, 'put_enterprise_setting')
 
 /**
 export class KeeperCommand<Response extends KeeperResponse = KeeperResponse> {

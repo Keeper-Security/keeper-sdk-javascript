@@ -1,8 +1,8 @@
-import {Auth} from './auth'
-import {NN, syncDownMessage} from './restMessages'
-import {CryptoWorkerOptions, EncryptionType, KeyStorage, platform} from './platform'
-import {Records, Tokens, Vault} from './proto'
-import {formatTimeDiff, webSafe64FromBytes} from './utils'
+import { Auth } from './auth'
+import { NN, syncDownMessage } from './restMessages'
+import { CryptoWorkerOptions, EncryptionType, KeyStorage, platform } from './platform'
+import { Records, Tokens, Vault } from './proto'
+import { formatTimeDiff, webSafe64FromBytes } from './utils'
 import CacheStatus = Vault.CacheStatus
 import RecordKeyType = Records.RecordKeyType
 import IRecordMetaData = Vault.IRecordMetaData
@@ -17,14 +17,14 @@ import IUserFolder = Vault.IUserFolder
 import ITeam = Vault.ITeam
 import ISharedFolderKey = Vault.ISharedFolderKey
 import ISharedFolderFolder = Vault.ISharedFolderFolder
-import IUserFolderRecord = Vault.IUserFolderRecord;
-import ISharedFolderFolderRecord = Vault.ISharedFolderFolderRecord;
+import IUserFolderRecord = Vault.IUserFolderRecord
+import ISharedFolderFolderRecord = Vault.ISharedFolderFolderRecord
 import IUserFolderSharedFolder = Vault.IUserFolderSharedFolder
 import IReusedPasswords = Vault.IReusedPasswords
 import IProfile = Vault.IProfile
 import IBreachWatchRecord = Vault.IBreachWatchRecord
 import IBreachWatchSecurityData = Vault.IBreachWatchSecurityData
-import type {UnwrapKeyMap} from './platform'
+import type { UnwrapKeyMap } from './platform'
 
 export type VaultStorage = KeyStorage & {
     put(data: VaultStorageData): Promise<void>
@@ -36,18 +36,52 @@ export type VaultStorage = KeyStorage & {
     delete(kind: VaultStorageKind, uid: string | Uint8Array): Promise<void>
 }
 
-export type VaultStorageData = DProfilePic | DContinuationToken | DRecord | DRecordMetadata | DRecordNonSharedData | DTeam | DSharedFolder | DSharedFolderUser | DSharedFolderTeam | DSharedFolderRecord | DSharedFolderFolder | DUserFolder | DProfile | DReusedPasswords | DBWRecord | DBWSecurityData | DSecurityScoreData | DUser
+export type VaultStorageData =
+    | DProfilePic
+    | DContinuationToken
+    | DRecord
+    | DRecordMetadata
+    | DRecordNonSharedData
+    | DTeam
+    | DSharedFolder
+    | DSharedFolderUser
+    | DSharedFolderTeam
+    | DSharedFolderRecord
+    | DSharedFolderFolder
+    | DUserFolder
+    | DProfile
+    | DReusedPasswords
+    | DBWRecord
+    | DBWSecurityData
+    | DSecurityScoreData
+    | DUser
 
-export type VaultStorageKind = 'profilePic' | 'record' | 'metadata' | 'non_shared_data' | 'team' | 'shared_folder' | 'shared_folder_user' | 'shared_folder_team' | 'shared_folder_record' | 'shared_folder_folder' | 'user_folder' | 'profile' | 'continuationToken' | 'reused_passwords' | 'bw_record' | 'bw_security_data' | 'security_score_data' | 'user'
+export type VaultStorageKind =
+    | 'profilePic'
+    | 'record'
+    | 'metadata'
+    | 'non_shared_data'
+    | 'team'
+    | 'shared_folder'
+    | 'shared_folder_user'
+    | 'shared_folder_team'
+    | 'shared_folder_record'
+    | 'shared_folder_folder'
+    | 'user_folder'
+    | 'profile'
+    | 'continuationToken'
+    | 'reused_passwords'
+    | 'bw_record'
+    | 'bw_security_data'
+    | 'security_score_data'
+    | 'user'
 
-export type VaultStorageResult<T extends VaultStorageKind> = (
-    T extends 'continuationToken' ? DContinuationToken :
-    T extends 'record' ? DRecord :
-    never
-) | undefined
+export type VaultStorageResult<T extends VaultStorageKind> =
+    | (T extends 'continuationToken' ? DContinuationToken : T extends 'record' ? DRecord : never)
+    | undefined
 
 type MappedCounts<Type> = {
-  [Property in keyof Type]: number
+    [Property in keyof Type]: number
 }
 
 type SyncResponseCounts = MappedCounts<Vault.ISyncDownResponse>
@@ -103,7 +137,7 @@ export type DTeam = {
 export type DRecordNonSharedData = {
     kind: 'non_shared_data'
     uid: string
-    data: {[key: string]: any}
+    data: { [key: string]: any }
 }
 
 export type DSharedFolder = {
@@ -203,16 +237,16 @@ export type DBWSecurityData = {
 }
 
 export type DSecurityScoreData = {
-    kind: 'security_score_data',
-    uid: string,
-    data: any,
-    revision: number,
+    kind: 'security_score_data'
+    uid: string
+    data: any
+    revision: number
 }
 
 export type DUser = {
-    kind: 'user',
-    accountUid:Uint8Array,
-    username:string,
+    kind: 'user'
+    accountUid: Uint8Array
+    username: string
 }
 
 export type DContinuationToken = {
@@ -239,7 +273,7 @@ const addDependencies = (dependencies: Dependencies, parentUid: string, childUid
     children.add({
         kind: kind,
         uid: childUid,
-        parentUid: parentUid
+        parentUid: parentUid,
     })
 }
 
@@ -259,20 +293,20 @@ const getDependencies = async (folderUid: string, storage: VaultStorage, results
     const storageGetDependencies = await storage.getDependencies(folderUid)
     for await (const dependency of storageGetDependencies || []) {
         switch (dependency.kind) {
-            case "record":
+            case 'record':
                 results[dependency.parentUid] = dependency
-                break;
-            case "user_folder":
+                break
+            case 'user_folder':
                 results[dependency.parentUid] = dependency
                 await getDependencies(dependency.uid, storage, results)
-                break;
+                break
             default:
                 throw Error('Unexpected dependency: ' + dependency.kind)
         }
     }
 }
 
-const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryptionType: EncryptionType } | null => {
+const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string; encryptionType: EncryptionType } | null => {
     let keyId: string
     let encryptionType: EncryptionType
     switch (keyType) {
@@ -299,7 +333,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string, encryption
             console.error('Unknown record key type: ' + keyType)
             return null
     }
-    return {keyId, encryptionType}
+    return { keyId, encryptionType }
 }
 
 export const processUsers = async (users: Vault.IUser[], storage: VaultStorage) => {
@@ -322,7 +356,7 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
 
         const keyInfo = mapKeyType(team.teamKeyType)
         if (keyInfo) {
-            const {keyId, encryptionType} = keyInfo
+            const { keyId, encryptionType } = keyInfo
             teamKeys[teamUid] = {
                 data: team.teamKey,
                 dataId: teamUid,
@@ -332,7 +366,7 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             }
         }
 
-        if(team.teamPrivateKey?.length){
+        if (team.teamPrivateKey?.length) {
             teamPrivateKeys[teamUid + '_priv'] = {
                 data: team.teamPrivateKey,
                 dataId: teamUid + '_priv',
@@ -342,7 +376,7 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             }
         }
 
-        if(team.teamEccPublicKey?.length && team.teamEccPrivateKey?.length) {
+        if (team.teamEccPublicKey?.length && team.teamEccPrivateKey?.length) {
             teamPrivateKeys[teamUid + '_ecc'] = {
                 data: new Uint8Array([...team.teamEccPublicKey, ...team.teamEccPrivateKey]),
                 dataId: teamUid + '_ecc',
@@ -352,8 +386,10 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
             }
         }
 
-        if(!team.teamPrivateKey?.length && (!team.teamEccPublicKey?.length || !team.teamEccPrivateKey?.length)){
-            console.error(`Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`)
+        if (!team.teamPrivateKey?.length && (!team.teamEccPublicKey?.length || !team.teamEccPrivateKey?.length)) {
+            console.error(
+                `Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`
+            )
         }
 
         for (const folderKey of team.sharedFolderKeys as NN<ISharedFolderKey>[]) {
@@ -393,7 +429,9 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                     }
                     break
                 default:
-                    console.error(`Key ${folderKey.keyType} type for team folder key ${teamUid}/${folderUid} is not supported for team folder decryption`)
+                    console.error(
+                        `Key ${folderKey.keyType} type for team folder key ${teamUid}/${folderUid} is not supported for team folder decryption`
+                    )
                     break
             }
 
@@ -416,7 +454,12 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
     await platform.unwrapKeys(teamSharedFolderKeys, storage)
 }
 
-const processFolder = async (folderUid: string, fData: Uint8Array, shared: boolean, storage: VaultStorage): Promise<any | undefined> => {
+const processFolder = async (
+    folderUid: string,
+    fData: Uint8Array,
+    shared: boolean,
+    storage: VaultStorage
+): Promise<any | undefined> => {
     try {
         const decryptedData = await platform.decrypt(fData, folderUid, 'cbc', storage)
         return JSON.parse(platform.bytesToString(decryptedData))
@@ -429,18 +472,18 @@ const processUserFolders = async (folders: IUserFolder[], storage: VaultStorage,
     const folderKeys: UnwrapKeyMap = {}
 
     for (const folder of folders as NN<IUserFolder>[]) {
-        const {userFolderKey, keyType} = folder
+        const { userFolderKey, keyType } = folder
         const folderUid = webSafe64FromBytes(folder.folderUid)
 
         const keyInfo = mapKeyType(keyType)
         if (keyInfo) {
-            const {keyId, encryptionType} = keyInfo
+            const { keyId, encryptionType } = keyInfo
             folderKeys[folderUid] = {
                 data: userFolderKey,
                 dataId: folderUid,
                 keyId,
                 encryptionType,
-                unwrappedType: 'aes'
+                unwrappedType: 'aes',
             }
         }
     }
@@ -457,7 +500,7 @@ const processUserFolders = async (folders: IUserFolder[], storage: VaultStorage,
             kind: 'user_folder',
             uid: folderUid,
             data: folderData,
-            revision: <number>folder.revision
+            revision: <number>folder.revision,
         })
         if (folder.parentUid.length > 0) {
             addDependencies(dependencies, webSafe64FromBytes(folder.parentUid), folderUid, 'user_folder')
@@ -481,18 +524,18 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
     const sharedFolderKeys: UnwrapKeyMap = {}
 
     for (const folder of folders as NN<ISharedFolder>[]) {
-        const {sharedFolderKey, keyType} = folder
+        const { sharedFolderKey, keyType } = folder
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
 
         const keyInfo = mapKeyType(keyType)
         if (keyInfo) {
-            const {keyId, encryptionType} = keyInfo
+            const { keyId, encryptionType } = keyInfo
             sharedFolderKeys[sharedFolderUid] = {
                 data: sharedFolderKey,
                 dataId: sharedFolderUid,
                 keyId,
                 encryptionType,
-                unwrappedType: 'aes'
+                unwrappedType: 'aes',
             }
         }
     }
@@ -605,7 +648,8 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
 
 const processSharedFolderFolderRecords = async (records: ISharedFolderFolderRecord[], dependencies: Dependencies) => {
     for (const rec of records as NN<ISharedFolderFolderRecord>[]) {
-        const parentUid = rec.folderUid.length > 0 ? webSafe64FromBytes(rec.folderUid) : webSafe64FromBytes(rec.sharedFolderUid)
+        const parentUid =
+            rec.folderUid.length > 0 ? webSafe64FromBytes(rec.folderUid) : webSafe64FromBytes(rec.sharedFolderUid)
         addDependencies(dependencies, parentUid, webSafe64FromBytes(rec.recordUid), 'record')
     }
 }
@@ -625,7 +669,15 @@ const processRecordLinks = async (links: IRecordLink[], storage: VaultStorage) =
     for (const link of links as NN<IRecordLink>[]) {
         const recUid = webSafe64FromBytes(link.childRecordUid)
         try {
-            await platform.unwrapKey(link.recordKey, recUid, webSafe64FromBytes(link.parentRecordUid), 'gcm', 'aes', storage, true)
+            await platform.unwrapKey(
+                link.recordKey,
+                recUid,
+                webSafe64FromBytes(link.parentRecordUid),
+                'gcm',
+                'aes',
+                storage,
+                true
+            )
         } catch (e: any) {
             console.error(`The record link for ${recUid} cannot be decrypted (${e.message})`)
         }
@@ -702,7 +754,7 @@ const processNonSharedData = async (nonSharedData: INonSharedData[], storage: Va
                     break // exit on successful decryption
                 } catch (e) {
                     const message = e instanceof Error ? e.message : String(e)
-                    errorMessages.push(message)     
+                    errorMessages.push(message)
                 }
             }
             if (!decryptedNsData) throw new Error(errorMessages.join('\n'))
@@ -724,9 +776,9 @@ const processReusedPasswords = async (reusedPasswords: IReusedPasswords | null |
         if (!reusedPasswords) return
 
         await storage.put({
-          kind: 'reused_passwords',
-          count: <number>reusedPasswords.count,
-          revision: <number>reusedPasswords.revision
+            kind: 'reused_passwords',
+            count: <number>reusedPasswords.count,
+            revision: <number>reusedPasswords.revision,
         })
     } catch (e: any) {
         console.error(`Could not process reusedPasswords (${e.message})`)
@@ -737,7 +789,7 @@ const processProfile = async (profile: IProfile | null | undefined, storage: Vau
     try {
         if (!profile) return
 
-        const prof = profile as NN<IProfile> 
+        const prof = profile as NN<IProfile>
         const decryptedProfileData = await platform.decrypt(prof.data, 'data', 'cbc', storage)
         const profileData = JSON.parse(platform.bytesToString(decryptedProfileData))
         await storage.put({
@@ -753,19 +805,21 @@ const processProfile = async (profile: IProfile | null | undefined, storage: Vau
 
 const processProfilePic = async (profilePic, storage) => {
     try {
-        if (!profilePic)
-            return;
+        if (!profilePic) return
         await storage.put({
             kind: 'profilePic',
             data: profilePic,
-        });
+        })
+    } catch (e: any) {
+        console.error(`Profile picture cannot be decrypted (${e.message})`)
     }
-    catch (e: any) {
-        console.error(`Profile picture cannot be decrypted (${e.message})`);
-    }
-};
+}
 
-const processSharedFolderFolders = async (folders: ISharedFolderFolder[], storage: VaultStorage, dependencies: Dependencies) => {
+const processSharedFolderFolders = async (
+    folders: ISharedFolderFolder[],
+    storage: VaultStorage,
+    dependencies: Dependencies
+) => {
     for (const folder of folders as NN<ISharedFolderFolder>[]) {
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
         const folderUid = webSafe64FromBytes(folder.folderUid)
@@ -774,8 +828,15 @@ const processSharedFolderFolders = async (folders: ISharedFolderFolder[], storag
         if (!keyInfo) continue
 
         try {
-            const {encryptionType} = keyInfo
-            await platform.unwrapKey(folder.sharedFolderFolderKey, folderUid, sharedFolderUid, encryptionType, 'aes', storage)
+            const { encryptionType } = keyInfo
+            await platform.unwrapKey(
+                folder.sharedFolderFolderKey,
+                folderUid,
+                sharedFolderUid,
+                encryptionType,
+                'aes',
+                storage
+            )
         } catch (e: any) {
             console.error(`The shared folder folder key for ${folderUid} cannot be decrypted (${e.message})`)
         }
@@ -806,7 +867,11 @@ const processRemovedUserFolderRecords = (records: IUserFolderRecord[], dependenc
     }
 }
 
-const processRemovedSharedFolderFolders = async (folders: Vault.ISharedFolderFolder[], storage: VaultStorage, dependencies: RemovedDependencies) => {
+const processRemovedSharedFolderFolders = async (
+    folders: Vault.ISharedFolderFolder[],
+    storage: VaultStorage,
+    dependencies: RemovedDependencies
+) => {
     for (const folder of folders as NN<ISharedFolderFolder>[]) {
         const sharedFolderUid = webSafe64FromBytes(folder.sharedFolderUid)
         const folderUid = webSafe64FromBytes(folder.folderUid)
@@ -819,7 +884,10 @@ const processRemovedSharedFolderFolders = async (folders: Vault.ISharedFolderFol
     }
 }
 
-const processRemovedSharedFolderTeams = async (sharedFolderTeams: ISharedFolderTeam[], dependencies: RemovedDependencies) => {
+const processRemovedSharedFolderTeams = async (
+    sharedFolderTeams: ISharedFolderTeam[],
+    dependencies: RemovedDependencies
+) => {
     for (const sharedFolderTeam of sharedFolderTeams as NN<ISharedFolderTeam>[]) {
         const sharedFolderUid = webSafe64FromBytes(sharedFolderTeam.sharedFolderUid)
         const teamUid = webSafe64FromBytes(sharedFolderTeam.teamUid)
@@ -834,7 +902,11 @@ const processRemovedSharedFolderUsers = (users: ISharedFolderUser[], dependencie
     }
 }
 
-const processRemovedSharedFolderRecords = async (records: ISharedFolderRecord[], storage: VaultStorage, dependencies: RemovedDependencies) => {
+const processRemovedSharedFolderRecords = async (
+    records: ISharedFolderRecord[],
+    storage: VaultStorage,
+    dependencies: RemovedDependencies
+) => {
     for (const record of records as NN<ISharedFolderRecord>[]) {
         const sharedFolderUid = webSafe64FromBytes(record.sharedFolderUid)
         const recordUid = webSafe64FromBytes(record.recordUid)
@@ -842,7 +914,11 @@ const processRemovedSharedFolderRecords = async (records: ISharedFolderRecord[],
     }
 }
 
-const processRemovedSharedFolderFolderRecords = async (records: ISharedFolderFolderRecord[], storage: VaultStorage, dependencies: RemovedDependencies) => {
+const processRemovedSharedFolderFolderRecords = async (
+    records: ISharedFolderFolderRecord[],
+    storage: VaultStorage,
+    dependencies: RemovedDependencies
+) => {
     for (const record of records as NN<ISharedFolderFolderRecord>[]) {
         const sharedFolderFolderUid = webSafe64FromBytes(record.folderUid)
         const recordUid = webSafe64FromBytes(record.recordUid)
@@ -858,26 +934,26 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
         try {
             const keyInfo = mapKeyType(mData.recordKeyType)
             if (keyInfo) {
-                const {keyId, encryptionType} = keyInfo
+                const { keyId, encryptionType } = keyInfo
                 recordKeys[recUid] = {
                     data: mData.recordKey,
                     dataId: recUid,
                     keyId,
                     encryptionType,
-                    unwrappedType: 'aes'
+                    unwrappedType: 'aes',
                 }
             }
 
             const ownerUid = mData.ownerAccountUid ? webSafe64FromBytes(mData.ownerAccountUid) : undefined
             await storage.put({
-              kind: 'metadata',
-              uid: recUid,
-              canEdit: mData.canEdit,
-              canShare: mData.canShare,
-              owner: mData.owner,
-              recordKeyType: mData.recordKeyType,
-              ownerAccountUid: ownerUid,
-              ownerUsername: mData.ownerUsername,
+                kind: 'metadata',
+                uid: recUid,
+                canEdit: mData.canEdit,
+                canShare: mData.canShare,
+                owner: mData.owner,
+                recordKeyType: mData.recordKeyType,
+                ownerAccountUid: ownerUid,
+                ownerUsername: mData.ownerUsername,
             })
         } catch (e: any) {
             console.error(`The record metadata ${recUid} cannot be decrypted (${e.message})`)
@@ -893,22 +969,24 @@ const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storag
 
         const recUid = webSafe64FromBytes(bwRecord.recordUid)
         try {
-            const {data} = bwRecord
+            const { data } = bwRecord
             const decrypted = await platform.decrypt(data, recUid, 'gcm', storage)
             const decoded = Tokens.BreachWatchData.decode(decrypted)
             const obj = Tokens.BreachWatchData.toObject(decoded)
 
             await storage.put({
-              kind: 'bw_record',
-              uid: recUid,
-              data: obj,
-              scannedBy: bwRecord.scannedBy ? bwRecord.scannedBy : undefined,
-              scannedByAccountUid: bwRecord.scannedByAccountUid ? webSafe64FromBytes(bwRecord.scannedByAccountUid) : undefined,
-              type: 'RECORD',
-              revision: bwRecord.revision as number
+                kind: 'bw_record',
+                uid: recUid,
+                data: obj,
+                scannedBy: bwRecord.scannedBy ? bwRecord.scannedBy : undefined,
+                scannedByAccountUid: bwRecord.scannedByAccountUid
+                    ? webSafe64FromBytes(bwRecord.scannedByAccountUid)
+                    : undefined,
+                type: 'RECORD',
+                revision: bwRecord.revision as number,
             })
         } catch (e: any) {
-          console.error(`Breach watch record ${recUid} cannot be decrypted (${e.message})`)
+            console.error(`Breach watch record ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -919,9 +997,9 @@ const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurity
 
         try {
             await storage.put({
-              kind: 'bw_security_data',
-              uid,
-              revision: bwSecurityData.revision as number
+                kind: 'bw_security_data',
+                uid,
+                revision: bwSecurityData.revision as number,
             })
         } catch (e: any) {
             console.error(`Breach watch security data ${uid} cannot be processed (${e.message})`)
@@ -931,10 +1009,7 @@ const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurity
 
 const processSecurityScoreData = async (securityScoreDataList: Vault.ISecurityScoreData[], storage: VaultStorage) => {
     for (const securityScoreData of securityScoreDataList) {
-        if (
-          !securityScoreData.recordUid
-          || typeof securityScoreData.revision !== 'number'
-        ) continue
+        if (!securityScoreData.recordUid || typeof securityScoreData.revision !== 'number') continue
 
         const recUid = webSafe64FromBytes(securityScoreData.recordUid)
 
@@ -953,9 +1028,7 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
                 data: securityScoreDataObj,
             })
         } catch (e: any) {
-           console.error(
-             `The security score data ${recUid} cannot be decrypted (${e.message})`
-           )
+            console.error(`The security score data ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -982,7 +1055,7 @@ const logProtobuf = (data: any, format: SyncLogFormat, seqNo: number, counts: an
             }
             console.log({
                 seq: seqNo,
-                ...counts
+                ...counts,
             })
             break
     }
@@ -1008,7 +1081,7 @@ const addCounts = (totalCounts: SyncResponseCounts, counts: SyncResponseCounts) 
 }
 
 export type SyncDownOptions = {
-    auth: Auth,
+    auth: Auth
     storage: VaultStorage
     maxCalls?: number
     logFormat?: SyncLogFormat
@@ -1035,17 +1108,17 @@ export class SyncController {
 }
 
 // Intercepts all property access to given object abort execution if needed
-function wrapObjWithProxy<T extends object> (obj: T, controller?: SyncController): T {
+function wrapObjWithProxy<T extends object>(obj: T, controller?: SyncController): T {
     return new Proxy(obj, {
         get(target, prop, receiver) {
             controller?.throwIfAborted()
             return Reflect.get(target, prop, receiver)
-        }
+        },
     })
 }
 
 export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> => {
-    const {auth, useWorkers, controller} = options
+    const { auth, useWorkers, controller } = options
     const totalCounts = {}
     let result: SyncResult = {
         started: new Date(),
@@ -1061,12 +1134,18 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
         let continuationToken = dToken ? platform.base64ToBytes(dToken.token) : undefined
 
         await platform.importKey('data', auth.dataKey!, undefined, true)
-        await platform.importKeyEC('pk_ecc', new Uint8Array(auth.eccPrivateKey!), new Uint8Array(auth.eccPublicKey!), undefined, true)
+        await platform.importKeyEC(
+            'pk_ecc',
+            new Uint8Array(auth.eccPrivateKey!),
+            new Uint8Array(auth.eccPublicKey!),
+            undefined,
+            true
+        )
         await platform.importKeyRSA('pk_rsa', auth.privateKey!, undefined, true)
 
         while (true) {
             const msg = syncDownMessage({
-                continuationToken
+                continuationToken,
             })
             let requestTime = Date.now()
             const resp = wrapObjWithProxy(await auth.executeRest(msg), controller)
@@ -1124,8 +1203,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processReusedPasswords(resp.reusedPasswords, storage)
 
             await processProfile(resp.profile, storage)
-            
-            await processProfilePic(resp.profilePic, storage);
+
+            await processProfilePic(resp.profilePic, storage)
 
             await processBreachWatchRecords(resp.breachWatchRecords, storage)
 
@@ -1157,26 +1236,34 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRemovedSharedFolderTeams(resp.removedSharedFolderTeams, removedDependencies)
             processRemovedSharedFolderUsers(resp.removedSharedFolderUsers, removedDependencies)
             await processRemovedSharedFolderRecords(resp.removedSharedFolderRecords, storage, removedDependencies)
-            await processRemovedSharedFolderFolderRecords(resp.removedSharedFolderFolderRecords, storage, removedDependencies)
+            await processRemovedSharedFolderFolderRecords(
+                resp.removedSharedFolderFolderRecords,
+                storage,
+                removedDependencies
+            )
 
             const removedSFDependencies: DependencyMap = {}
             for await (const folder of resp.removedSharedFolders) {
                 const folderUid = webSafe64FromBytes(folder)
                 await getDependencies(folderUid, storage, removedSFDependencies)
-                if(!removedDependencies[folderUid] && !removedSFDependencies[folderUid]){
+                if (!removedDependencies[folderUid] && !removedSFDependencies[folderUid]) {
                     removedDependencies[folderUid] = '*'
                 }
                 await storage.delete('shared_folder', folderUid)
             }
             for await (const removedSFDependency of Object.values(removedSFDependencies)) {
                 switch (removedSFDependency.kind) {
-                    case "record":     
-                        addRemovedDependencies(removedDependencies, removedSFDependency.parentUid, removedSFDependency.uid)
-                        break;
-                    case "user_folder":
+                    case 'record':
+                        addRemovedDependencies(
+                            removedDependencies,
+                            removedSFDependency.parentUid,
+                            removedSFDependency.uid
+                        )
+                        break
+                    case 'user_folder':
                         removedDependencies[removedSFDependency.uid] = '*'
                         await storage.delete('user_folder', removedSFDependency.uid)
-                        break;
+                        break
                 }
             }
             for await (const user of resp.removedUsers) {
@@ -1191,7 +1278,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await storage.put({
                 kind: 'continuationToken',
                 token: respContinuationToken,
-                isSecurityDataFieldEmptyInFullSync: resp.cacheStatus === CacheStatus.CLEAR && resp.breachWatchSecurityData.length === 0,
+                isSecurityDataFieldEmptyInFullSync:
+                    resp.cacheStatus === CacheStatus.CLEAR && resp.breachWatchSecurityData.length === 0,
             })
             if (!resp.hasMore || (options.maxCalls && result.pageCount >= options.maxCalls)) {
                 break

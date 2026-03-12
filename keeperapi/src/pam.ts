@@ -1,7 +1,7 @@
-import {Auth} from './auth'
-import {GraphSync} from './proto'
-import {normal64Bytes, webSafe64FromBytes} from './utils'
-import {pamGetLeafsMessage, pamMultiSyncMessage, pamSyncMessage} from './restMessages'
+import { Auth } from './auth'
+import { GraphSync } from './proto'
+import { normal64Bytes, webSafe64FromBytes } from './utils'
+import { pamGetLeafsMessage, pamMultiSyncMessage, pamSyncMessage } from './restMessages'
 
 /**
  * Syncs the PAM link DAG for a single record UID.
@@ -20,11 +20,11 @@ export async function syncDagForPamRecord(
         return { results: [] }
     }
     const queries: GraphSync.IGraphSyncQuery[] = refs
-        .filter(ref => ref.value && ref.value.length > 0)
-        .map(ref => ({
+        .filter((ref) => ref.value && ref.value.length > 0)
+        .map((ref) => ({
             streamId: ref.value!,
             origin,
-            syncPoint: 0
+            syncPoint: 0,
         }))
     if (queries.length === 0) {
         return { results: [] }
@@ -60,7 +60,7 @@ export async function loadPamLinkDag(
     const uniqueConfigUidBytes = new Map<string, Uint8Array>()
 
     if (recordUids.length > 0) {
-        const vertices = recordUids.map(uid => normal64Bytes(uid))
+        const vertices = recordUids.map((uid) => normal64Bytes(uid))
         const leafsResult = await auth.executeRouterRest(pamGetLeafsMessage({ vertices }))
         for (const ref of leafsResult.refs ?? []) {
             if (ref.value && ref.value.length > 0) {
@@ -79,11 +79,11 @@ export async function loadPamLinkDag(
         return { results: [] }
     }
 
-    const queries: GraphSync.IGraphSyncQuery[] = Array.from(uniqueConfigUidBytes.values()).map(streamId => ({
+    const queries: GraphSync.IGraphSyncQuery[] = Array.from(uniqueConfigUidBytes.values()).map((streamId) => ({
         streamId,
         origin,
         syncPoint: 0,
-        maxCount: 500
+        maxCount: 500,
     }))
 
     return auth.executeRouterRest(pamMultiSyncMessage({ queries }))
@@ -98,7 +98,7 @@ export async function getConfigRootsForRecordUids(
     recordUids: string[]
 ): Promise<GraphSync.IGraphSyncRef[]> {
     if (recordUids.length === 0) return []
-    const vertices = recordUids.map(uid => normal64Bytes(uid))
+    const vertices = recordUids.map((uid) => normal64Bytes(uid))
     const result = await auth.executeRouterRest(pamGetLeafsMessage({ vertices }))
     return result.refs ?? []
 }

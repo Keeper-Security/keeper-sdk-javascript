@@ -1,7 +1,7 @@
-import { platform } from "./platform"
+import { platform } from './platform'
 
 export type CloseReason = {
-    code: number,
+    code: number
     reason: CloseReasonMessage
 }
 
@@ -13,8 +13,8 @@ enum CloseReasonCode {
 }
 
 type CloseReasonMessage = {
-    close_reason:string
-    key_id?:number
+    close_reason: string
+    key_id?: number
 }
 
 type SocketMessage = {
@@ -26,7 +26,7 @@ type SocketMessage = {
 export type SocketProxy = {
     onOpen: (callback: () => void) => void
     close: () => void
-    onClose: (callback: (e:Event) => void) => void
+    onClose: (callback: (e: Event) => void) => void
     onError: (callback: (e: Event | Error) => void) => void
     onMessage: (callback: (e: Uint8Array) => void) => void
     send: (message: any) => void
@@ -34,21 +34,21 @@ export type SocketProxy = {
 }
 
 export class SocketListener {
-    private socket?: SocketProxy;
+    private socket?: SocketProxy
     private url: string
     private getConnectionRequest?: (Uint8Array) => Promise<string>
     // Listeners that receive all messages
     private messageListeners: Array<(data: any) => void>
     // Listeners that receive a single message
     private singleMessageListeners: Array<{
-        resolve: (data: any) => void,
+        resolve: (data: any) => void
         reject: (errorMessage: string) => void
     }>
     // Listeners that receive all messages
     private closeListeners: Array<(data: any) => void>
     // Listeners that receive a single message
     private singleCloseListeners: Array<{
-        resolve: (data: any) => void,
+        resolve: (data: any) => void
         reject: (errorMessage: string) => void
     }>
     // Listeners that signal a re-connected socket
@@ -61,7 +61,11 @@ export class SocketListener {
     private currentBackoffSeconds: number = 0
     private isClosedByClient: boolean
 
-    constructor(url: string, messageSessionUid?: Uint8Array, getConnectionRequest?: (messageSessionUid:Uint8Array) => Promise<string>) {
+    constructor(
+        url: string,
+        messageSessionUid?: Uint8Array,
+        getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>
+    ) {
         console.log('Connecting to ' + url)
 
         this.url = url
@@ -75,12 +79,12 @@ export class SocketListener {
         this.isConnected = false
         if (getConnectionRequest) this.getConnectionRequest = getConnectionRequest
 
-        if (messageSessionUid){
+        if (messageSessionUid) {
             this.messageSessionUid = messageSessionUid
         }
     }
 
-    async createWebsocket(messageSessionUid?:Uint8Array) {
+    async createWebsocket(messageSessionUid?: Uint8Array) {
         if (this.getConnectionRequest && messageSessionUid) {
             const connectionRequest = await this.getConnectionRequest(messageSessionUid)
             this.socket = platform.createWebsocket(`${this.url}/${connectionRequest}`)
@@ -109,21 +113,21 @@ export class SocketListener {
                 reason = JSON.parse(event['reason'])
             } catch {
                 console.log('Connection closed - no close reason.')
-                this.handleClose({code: 0, reason: {close_reason: 'No close reason provided'}})
+                this.handleClose({ code: 0, reason: { close_reason: 'No close reason provided' } })
                 this.reconnect()
                 return
             }
 
-            switch (event['code']){
+            switch (event['code']) {
                 case CloseReasonCode.CANNOT_ACCEPT:
                     // Exact messages that can come from CANNOT_ACCEPT:
                     // - Push server is in progress of shutting down
                     // - Push server is not registered with KA
                     // - Cannot process encrypted message.xxxx
 
-                    if(reason && reason.close_reason.includes('Push server')){
+                    if (reason && reason.close_reason.includes('Push server')) {
                         // Tell User to try again
-                        this.handleClose({code:event['code'], reason})
+                        this.handleClose({ code: event['code'], reason })
                     } else {
                         // this would be an internal error and shouldnt reach here in production
                         console.error('Incorrect internal error: ', reason.close_reason)
@@ -153,7 +157,7 @@ export class SocketListener {
         this.socket!.onError((e: Event | Error) => {
             console.log('socket error: ' + e)
         })
-        this.socket!.onMessage(e => {
+        this.socket!.onMessage((e) => {
             this.handleMessage(e)
         })
 
@@ -190,13 +194,13 @@ export class SocketListener {
             callback(messageData)
         }
 
-        for (let {resolve} of this.singleMessageListeners) {
+        for (let { resolve } of this.singleMessageListeners) {
             resolve(messageData)
         }
         this.singleMessageListeners.length = 0
     }
 
-    private handleClose(messageData: {code: number, reason:CloseReasonMessage}): void {
+    private handleClose(messageData: { code: number; reason: CloseReasonMessage }): void {
         for (let callback of this.closeListeners) {
             callback(messageData)
         }
@@ -204,7 +208,7 @@ export class SocketListener {
         for (let { resolve } of this.singleCloseListeners) {
             resolve(messageData)
         }
-        
+
         this.singleCloseListeners.length = 0
     }
 
@@ -219,7 +223,7 @@ export class SocketListener {
     async getPushMessage(): Promise<any> {
         console.log('Awaiting web socket message...')
         return new Promise<any>((resolve, reject) => {
-            this.singleMessageListeners.push({resolve, reject})
+            this.singleMessageListeners.push({ resolve, reject })
         })
     }
 
@@ -259,26 +263,30 @@ export class SocketListener {
         this.singleMessageListeners.length = 0
     }
 
-    getIsConnected(){
+    getIsConnected() {
         return this.isConnected
     }
 }
 
 // Use this to create a websocket. Our way of creating transmission keys is asynchronous and the constructor of the socket required
-// these transmission keys to be made before operating on the socket. Instead use a helper to still create the object from the 
+// these transmission keys to be made before operating on the socket. Instead use a helper to still create the object from the
 // class and also create the necessary websocket before allowing other functions to operate on this.
-export async function createAsyncSocket(url: string, messageSessionUid?: Uint8Array, getConnectionRequest?: (messageSessionUid:Uint8Array) => Promise<string>):Promise<SocketListener | undefined>{
+export async function createAsyncSocket(
+    url: string,
+    messageSessionUid?: Uint8Array,
+    getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>
+): Promise<SocketListener | undefined> {
     const socket = new SocketListener(url, messageSessionUid, getConnectionRequest)
     await socket.createWebsocket(messageSessionUid)
     return socket
 }
 
-export function socketSendMessage(message: any, socket: WebSocket, createdSocket:any){
+export function socketSendMessage(message: any, socket: WebSocket, createdSocket: any) {
     switch (socket.readyState) {
-        case 0:// CONNECTING
+        case 0: // CONNECTING
             if (createdSocket.messageQueue.indexOf(message) === -1) createdSocket.messageQueue.push(message)
-            break;
-        case 1:// OPEN
+            break
+        case 1: // OPEN
             if (createdSocket.messageQueue.indexOf(message) === -1) createdSocket.messageQueue.push(message)
 
             if (createdSocket.messageQueue.length > 0) {
@@ -288,11 +296,11 @@ export function socketSendMessage(message: any, socket: WebSocket, createdSocket
             }
 
             createdSocket.messageQueue.length = 0
-            break;
-        case 2:// CLOSING
-        case 3:// CLOSED
+            break
+        case 2: // CLOSING
+        case 3: // CLOSED
             createdSocket.messageQueue.length = 0
             console.error('Trying to send a message while in the CLOSING or CLOSED state')
-            break;
+            break
     }
 }

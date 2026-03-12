@@ -5,10 +5,10 @@ import {
     DeviceVerificationMethods,
     KeeperError,
     LoginError,
-    TwoFactorChannelData
+    TwoFactorChannelData,
 } from './configuration'
-import {KeeperEndpoint, KeeperEnvironment, ExecuteRestOptions} from "./endpoint";
-import {KeyWrapper, platform} from "./platform";
+import { KeeperEndpoint, KeeperEnvironment, ExecuteRestOptions } from './endpoint'
+import { KeyWrapper, platform } from './platform'
 import {
     generateEncryptionKey,
     generateUidBytes,
@@ -16,8 +16,8 @@ import {
     normal64Bytes,
     resolvablePromise,
     webSafe64FromBytes,
-    wrapPassword
-} from "./utils";
+    wrapPassword,
+} from './utils'
 import {
     accountSummaryMessage,
     getEnterprisePublicKeyMessage,
@@ -38,45 +38,45 @@ import {
     twoFactorValidateMessage,
     twoFASendDuoMessage,
     validateAuthHashMessage,
-    validateDeviceVerificationCodeMessage
+    validateDeviceVerificationCodeMessage,
 } from './restMessages'
-import {AccountSummary, Authentication} from './proto';
-import {RestCommand} from './commands'
-import {CloseReason, createAsyncSocket, SocketListener} from './socket';
-import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest;
-import TwoFactorExpiration = Authentication.TwoFactorExpiration;
-import TwoFactorPushType = Authentication.TwoFactorPushType;
-import TwoFactorChannelType = Authentication.TwoFactorChannelType;
-import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest;
-import LoginType = Authentication.LoginType;
-import LoginMethod = Authentication.LoginMethod;
-import IAccountSummaryElements = AccountSummary.IAccountSummaryElements;
-import ITwoFactorChannelInfo = Authentication.ITwoFactorChannelInfo;
+import { AccountSummary, Authentication } from './proto'
+import { RestCommand } from './commands'
+import { CloseReason, createAsyncSocket, SocketListener } from './socket'
+import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest
+import TwoFactorExpiration = Authentication.TwoFactorExpiration
+import TwoFactorPushType = Authentication.TwoFactorPushType
+import TwoFactorChannelType = Authentication.TwoFactorChannelType
+import ISsoServiceProviderRequest = Authentication.ISsoServiceProviderRequest
+import LoginType = Authentication.LoginType
+import LoginMethod = Authentication.LoginMethod
+import IAccountSummaryElements = AccountSummary.IAccountSummaryElements
+import ITwoFactorChannelInfo = Authentication.ITwoFactorChannelInfo
 
 function unifyLoginError(e: any): LoginError {
     if (e instanceof Error) {
         try {
-            return JSON.parse(e.message);
+            return JSON.parse(e.message)
         } catch (jsonError) {
             return {
-                error: "unknown",
-                message: e.message
+                error: 'unknown',
+                message: e.message,
             }
         }
     } else {
         return {
             error: e.result_code,
-            message: e.result_code
+            message: e.result_code,
         }
     }
 }
 
 export type LoginPayload = {
-    username: string,
-    password?: string | KeyWrapper,
+    username: string
+    password?: string | KeyWrapper
     loginToken?: Uint8Array
     loginType: Authentication.LoginType | null
-    loginMethod?: Authentication.LoginMethod,
+    loginMethod?: Authentication.LoginMethod
     v2TwoFactorToken?: string
     resumeSessionOnly?: boolean
     givenSessionToken?: string
@@ -86,9 +86,9 @@ export type LoginPayload = {
 }
 
 export enum UserType {
-    normal = "normal",
-    onsiteSso = "onsite_sso",
-    cloudSso = "cloud_sso"
+    normal = 'normal',
+    onsiteSso = 'onsite_sso',
+    cloudSso = 'cloud_sso',
 }
 
 export type SessionParams = {
@@ -110,9 +110,9 @@ export type SessionParams = {
 }
 
 export type EncryptionKeys = {
-    dataKey: Uint8Array;
-    privateKey?: Uint8Array;
-    eccPrivateKey: Uint8Array;
+    dataKey: Uint8Array
+    privateKey?: Uint8Array
+    eccPrivateKey: Uint8Array
 }
 
 export const enum LoginV3ResultEnum {
@@ -125,25 +125,24 @@ export class Auth {
     ssoLogoutUrl: string = ''
     userType: UserType = UserType.normal
     ssoSessionId: string = ''
-    dataKey?: Uint8Array;
-    privateKey?: Uint8Array;
-    eccPrivateKey?: Uint8Array;
-    eccPublicKey?: Uint8Array;
-    enterprisePublicKey?: Uint8Array;
-    enterpriseEccPublicKey?: Uint8Array;
-    private _accountUid?: Uint8Array;
-    private _sessionToken: string = '';
-    private _sessionTokenType?: Authentication.SessionTokenType;
-    private _username: string = '';
-    private endpoint: KeeperEndpoint;
-    private managedCompanyId?: number;
-    private messageSessionUid: Uint8Array;
-    options: ClientConfigurationInternal;
-    private socket?: SocketListener;
-    public clientKey?: Uint8Array;
-    private _accountSummary?: IAccountSummaryElements;
+    dataKey?: Uint8Array
+    privateKey?: Uint8Array
+    eccPrivateKey?: Uint8Array
+    eccPublicKey?: Uint8Array
+    enterprisePublicKey?: Uint8Array
+    enterpriseEccPublicKey?: Uint8Array
+    private _accountUid?: Uint8Array
+    private _sessionToken: string = ''
+    private _sessionTokenType?: Authentication.SessionTokenType
+    private _username: string = ''
+    private endpoint: KeeperEndpoint
+    private managedCompanyId?: number
+    private messageSessionUid: Uint8Array
+    options: ClientConfigurationInternal
+    private socket?: SocketListener
+    public clientKey?: Uint8Array
+    private _accountSummary?: IAccountSummaryElements
     private _accountSummaryVersion: number = 1
-    
 
     constructor(options: ClientConfiguration) {
         if (options.deviceConfig && options.deviceToken) {
@@ -153,7 +152,7 @@ export class Auth {
         this.options = options as ClientConfigurationInternal
 
         if (!this.options.deviceConfig) {
-            this.options.deviceConfig = { }
+            this.options.deviceConfig = {}
         }
 
         if (!this.options.sessionStorage) {
@@ -162,29 +161,29 @@ export class Auth {
                 getCloneCode: () => Promise.resolve(null),
                 saveCloneCode: () => new Promise((res, rej) => {}),
                 getSessionParameters: () => Promise.resolve(null),
-                saveSessionParameters: () => Promise.resolve()
+                saveSessionParameters: () => Promise.resolve(),
             }
         }
 
-        this.endpoint = new KeeperEndpoint(this.options);
-        this.endpoint.clientVersion = this.options.clientVersion || "c14.0.0";
+        this.endpoint = new KeeperEndpoint(this.options)
+        this.endpoint.clientVersion = this.options.clientVersion || 'c14.0.0'
         this.messageSessionUid = generateUidBytes()
     }
 
     get _endpoint(): KeeperEndpoint {
-        return this.endpoint;
+        return this.endpoint
     }
 
     get accountUid(): Uint8Array | undefined {
-        return this._accountUid;
+        return this._accountUid
     }
 
     get clientVersion(): string {
-        return this.endpoint.clientVersion;
+        return this.endpoint.clientVersion
     }
 
     get sessionToken(): string {
-        return this._sessionToken;
+        return this._sessionToken
     }
 
     get sessionTokenType(): Authentication.SessionTokenType | undefined {
@@ -192,11 +191,11 @@ export class Auth {
     }
 
     get username(): string {
-        return this._username;
+        return this._username
     }
 
     getMessageSessionUid(): Uint8Array {
-        return this.messageSessionUid;
+        return this.messageSessionUid
     }
 
     get accountSummary(): IAccountSummaryElements | null {
@@ -208,32 +207,35 @@ export class Auth {
             throw Error('authUI3 is not configured')
         }
         if (this.userType == UserType.cloudSso) {
-            const payload = await this.endpoint.prepareSsoPayload(this.messageSessionUid, this.username, this.ssoSessionId)
+            const payload = await this.endpoint.prepareSsoPayload(
+                this.messageSessionUid,
+                this.username,
+                this.ssoSessionId
+            )
 
             const params = new URLSearchParams({
-                'payload': payload,
+                payload: payload,
             })
 
             const url = `${this.ssoLogoutUrl}?${String(params)}`
 
             try {
-                await this.options.authUI3.idpLogout(url);
+                await this.options.authUI3.idpLogout(url)
             } catch (e) {
                 console.log('Logout errored out: ' + e)
             }
-
         } else if (this.userType == UserType.onsiteSso) {
             const params = new URLSearchParams({
-                'embedded': 'true',
-                'username': this.username,
-                'session_id': this.ssoSessionId,
-                'dest': 'vault'
+                embedded: 'true',
+                username: this.username,
+                session_id: this.ssoSessionId,
+                dest: 'vault',
             })
 
             const url = `${this.ssoLogoutUrl}?${String(params)}`
 
             try {
-                await this.options.authUI3.idpLogout(url);
+                await this.options.authUI3.idpLogout(url)
             } catch (e) {
                 console.log('Logout errored out: ' + e)
             }
@@ -253,12 +255,12 @@ export class Auth {
         const getConnectionRequest = (messageSessionUid) => this.endpoint.getPushConnectionRequest(messageSessionUid)
 
         this.socket = await createAsyncSocket(url, this.messageSessionUid, getConnectionRequest)
-        console.log("Socket connected")
+        console.log('Socket connected')
         this.onCloseMessage((closeReason: CloseReason) => {
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
                     result_code: closeReason.code.toString(),
-                    message: closeReason.reason.close_reason
+                    message: closeReason.reason.close_reason,
                 })
             }
         })
@@ -280,41 +282,41 @@ export class Auth {
      *        the linking flow. When true, `loginV3` will block the
      *        linking attempt and return `LINKING_BLOCKED_BY_YUBIKEY_2FA`.
      */
-    async loginV3(
-        {
-            username = '',
-            password = undefined,
-            loginToken = undefined,
-            loginType = Authentication.LoginType.NORMAL,
-            loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
-            v2TwoFactorToken = undefined,
-            resumeSessionOnly = false,
-            givenSessionToken = undefined,
-            ecOnly = false,
-            primaryAccountSessionTokenForLinking = undefined,
-            /*
-             * Prevents linking YubiKey 2FA accounts.
-             * Normally, these accounts can be linked, but some clients have technical issues
-             * that prevent them from supporting the linking flow, so they can opt out via this flag.
-             */
-            disableLinkingForAccountWithYubikey2fa,
-        }: Partial<LoginPayload>
-    ): Promise<{result: LoginV3ResultEnum} | undefined> {
+    async loginV3({
+        username = '',
+        password = undefined,
+        loginToken = undefined,
+        loginType = Authentication.LoginType.NORMAL,
+        loginMethod = Authentication.LoginMethod.EXISTING_ACCOUNT,
+        v2TwoFactorToken = undefined,
+        resumeSessionOnly = false,
+        givenSessionToken = undefined,
+        ecOnly = false,
+        primaryAccountSessionTokenForLinking = undefined,
+        /*
+         * Prevents linking YubiKey 2FA accounts.
+         * Normally, these accounts can be linked, but some clients have technical issues
+         * that prevent them from supporting the linking flow, so they can opt out via this flag.
+         */
+        disableLinkingForAccountWithYubikey2fa,
+    }: Partial<LoginPayload>): Promise<{ result: LoginV3ResultEnum } | undefined> {
         this._username = username || this.options.sessionStorage?.lastUsername || ''
 
-        let wrappedPassword: KeyWrapper | undefined;
+        let wrappedPassword: KeyWrapper | undefined
 
         if (password) {
             if (typeof password === 'string') {
                 wrappedPassword = wrapPassword(password)
-            }
-            else
-                wrappedPassword = password
+            } else wrappedPassword = password
         }
 
         let needUserName = false
 
-        const handleError = (resultCode: string, loginResponse: NN<Authentication.ILoginResponse>, error: KeeperError) => {
+        const handleError = (
+            resultCode: string,
+            loginResponse: NN<Authentication.ILoginResponse>,
+            error: KeeperError
+        ) => {
             const errorMessage = chooseErrorMessage(loginResponse.loginState)
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
@@ -323,12 +325,11 @@ export class Auth {
                     error: error.message,
                 })
             } else {
-                throw error;
+                throw error
             }
-        };
+        }
 
         while (true) {
-
             if (!this.options.deviceConfig.deviceToken) {
                 await this.endpoint.registerDevice()
             }
@@ -342,7 +343,10 @@ export class Auth {
                 encryptedDeviceToken: this.options.deviceConfig.deviceToken ?? null,
                 messageSessionUid: this.messageSessionUid,
                 loginMethod: loginMethod,
-                cloneCode: await this.options.sessionStorage?.getCloneCode(this.options.host as KeeperEnvironment, this._username),
+                cloneCode: await this.options.sessionStorage?.getCloneCode(
+                    this.options.host as KeeperEnvironment,
+                    this._username
+                ),
                 v2TwoFactorToken: v2TwoFactorToken,
                 fromSessionToken: primaryAccountSessionTokenForLinking,
             })
@@ -359,29 +363,33 @@ export class Auth {
 
             console.log(startLoginRequest)
 
-            var loginResponse: NN<Authentication.ILoginResponse>;
-            if (givenSessionToken){
+            var loginResponse: NN<Authentication.ILoginResponse>
+            if (givenSessionToken) {
                 this._sessionToken = givenSessionToken
-                try{
+                try {
                     loginResponse = await this.executeRest(startLoginMessageFromSessionToken(startLoginRequest))
-                } catch(e: any){
+                } catch (e: any) {
                     console.error('Fails session token login. failed_login_from_existing_session_token')
-                    throw(e)
+                    throw e
                 }
             } else {
                 loginResponse = await this.executeRest(startLoginMessage(startLoginRequest))
             }
 
             if (loginResponse.cloneCode && loginResponse.cloneCode.length > 0) {
-                this.options.sessionStorage?.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResponse.cloneCode)
+                this.options.sessionStorage?.saveCloneCode(
+                    this.options.host as KeeperEnvironment,
+                    this._username,
+                    loginResponse.cloneCode
+                )
             }
-            if (resumeSessionOnly && loginResponse && (loginResponse.loginState != Authentication.LoginState.LOGGED_IN)) {
+            if (resumeSessionOnly && loginResponse && loginResponse.loginState != Authentication.LoginState.LOGGED_IN) {
                 return {
                     result: LoginV3ResultEnum.NOT_LOGGED_IN,
                 }
             }
             console.log(loginResponse)
-            console.log("login state =", loginResponse.loginState);
+            console.log('login state =', loginResponse.loginState)
 
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.ACCOUNT_LOCKED:
@@ -391,7 +399,11 @@ export class Auth {
                 case Authentication.LoginState.LOGIN_TOKEN_EXPIRED:
                 case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
                 case Authentication.LoginState.DEVICE_LOCKED:
-                    handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
+                    handleError(
+                        'generic_error',
+                        loginResponse,
+                        new Error(`Unable to login, login state = ${loginResponse.loginState}`)
+                    )
                     return
                 case Authentication.LoginState.REQUIRES_ACCOUNT_CREATION:
                     if (this.userType === UserType.cloudSso) {
@@ -402,30 +414,42 @@ export class Auth {
                         }
                         await this.createUser(this._username, wrappedPassword, ecOnly)
                     }
-                    break;
+                    break
                 case Authentication.LoginState.UPGRADE:
-                    handleError('generic_error', loginResponse, new Error(`Unable to login, login state = ${loginResponse.loginState}`))
-                    return;
+                    handleError(
+                        'generic_error',
+                        loginResponse,
+                        new Error(`Unable to login, login state = ${loginResponse.loginState}`)
+                    )
+                    return
                 case Authentication.LoginState.REQUIRES_USERNAME:
                     if (!this._username) {
-                        handleError('generic_error', loginResponse, new Error(`No username supplied, login state = ${loginResponse.loginState}`));
+                        handleError(
+                            'generic_error',
+                            loginResponse,
+                            new Error(`No username supplied, login state = ${loginResponse.loginState}`)
+                        )
                         return
                     }
                     needUserName = true
-                    break;
+                    break
                 case Authentication.LoginState.DEVICE_APPROVAL_REQUIRED:
                 case Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY:
                     if (givenSessionToken) return { result: LoginV3ResultEnum.NOT_LOGGED_IN }
                     try {
-                        loginToken = await this.verifyDevice(username, loginResponse.encryptedLoginToken, loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY)
+                        loginToken = await this.verifyDevice(
+                            username,
+                            loginResponse.encryptedLoginToken,
+                            loginResponse.loginState == Authentication.LoginState.REQUIRES_DEVICE_ENCRYPTED_DATA_KEY
+                        )
                     } catch (e: any) {
                         handleError('auth_failed', loginResponse, e)
                         return
                     }
-                    break;
+                    break
                 case Authentication.LoginState.LICENSE_EXPIRED:
                     handleError('license_expired', loginResponse, new Error(loginResponse.message))
-                    return;
+                    return
                 case Authentication.LoginState.REGION_REDIRECT:
                     if (!!primaryAccountSessionTokenForLinking) {
                         return {
@@ -442,13 +466,13 @@ export class Auth {
                     }
                     // Current socket no longer pointing to the right region
                     this.disconnect()
-                    break;
+                    break
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
-                    console.log("Cloud SSO Connect login");
+                    console.log('Cloud SSO Connect login')
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.cloudSso
                     let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
-                    let cloudSsoLoginUrl = loginResponse.url + "?payload=" + payload;
+                    let cloudSsoLoginUrl = loginResponse.url + '?payload=' + payload
                     if (this.options.authUI3?.redirectCallback) {
                         await this.options.authUI3.redirectCallback(cloudSsoLoginUrl)
                         return
@@ -460,9 +484,9 @@ export class Auth {
                         loginToken = cloudResp.encryptedLoginToken
                         loginMethod = LoginMethod.AFTER_SSO
                     }
-                    break;
+                    break
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
-                    console.log("SSO Connect login");
+                    console.log('SSO Connect login')
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.onsiteSso
 
@@ -480,21 +504,21 @@ export class Auth {
                         loginType = LoginType.SSO
                         loginMethod = LoginMethod.AFTER_SSO
                     }
-                    break;
+                    break
                 case Authentication.LoginState.REQUIRES_2FA:
-                    try{
+                    try {
                         if (
-                          !!disableLinkingForAccountWithYubikey2fa &&
-                          !!primaryAccountSessionTokenForLinking &&
-                          hasYubikeyChannel(loginResponse.channels)
+                            !!disableLinkingForAccountWithYubikey2fa &&
+                            !!primaryAccountSessionTokenForLinking &&
+                            hasYubikeyChannel(loginResponse.channels)
                         ) {
                             return {
                                 result: LoginV3ResultEnum.LINKING_BLOCKED_BY_YUBIKEY_2FA,
                             }
                         }
                         loginToken = await this.handleTwoFactor(loginResponse)
-                    } catch(e: any){
-                        if (e?.message && e.message == 'push_declined'){
+                    } catch (e: any) {
+                        if (e?.message && e.message == 'push_declined') {
                             handleError(e.message, loginResponse, e)
                         }
                     }
@@ -507,9 +531,7 @@ export class Auth {
                         if (password) {
                             if (typeof password === 'string') {
                                 wrappedPassword = wrapPassword(password)
-                            }
-                            else
-                                wrappedPassword = password
+                            } else wrappedPassword = password
                         }
                     }
                     if (!wrappedPassword) {
@@ -517,42 +539,55 @@ export class Auth {
                     }
 
                     try {
-                        await this.authHashLogin(loginResponse, username, wrappedPassword, loginType === LoginType.ALTERNATE)
-                        return;
+                        await this.authHashLogin(
+                            loginResponse,
+                            username,
+                            wrappedPassword,
+                            loginType === LoginType.ALTERNATE
+                        )
+                        return
                     } catch (e: any) {
                         wrappedPassword = undefined
                         handleError('auth_failed', loginResponse, e)
                         const error = e as Error
                         if (error.cause?.message === 'No alternate master password found') {
-                            return;
+                            return
                         }
-                        break;
+                        break
                     }
                 case Authentication.LoginState.LOGGED_IN:
                     try {
                         await this.loginSuccess(loginResponse, undefined)
-                        console.log("Exiting on loginState = LOGGED_IN");
-                        return;
+                        console.log('Exiting on loginState = LOGGED_IN')
+                        return
                     } catch (e) {
                         console.log('Error in Authentication.LoginState.LOGGED_IN: ', e)
-                        return;
+                        return
                     }
                 default:
-                    handleError('generic_error', loginResponse, new Error(`Unknown login state ${loginResponse.loginState}`))
+                    handleError(
+                        'generic_error',
+                        loginResponse,
+                        new Error(`Unknown login state ${loginResponse.loginState}`)
+                    )
                     return
             }
         }
     }
 
-    async switchToActiveAccount({username}: {username: string}): Promise<Authentication.LoginResponse | undefined> {
+    async switchToActiveAccount({ username }: { username: string }): Promise<Authentication.LoginResponse | undefined> {
         try {
-            const request = new Authentication.LoginAsUserRequest({username})
+            const request = new Authentication.LoginAsUserRequest({ username })
             const response = await this.executeRest(switchAccountFromAuthenticated(request))
             if (response.loginState !== Authentication.LoginState.LOGGED_IN) {
                 throw new Error('account switching failed')
             }
             if (response.cloneCode && response.cloneCode.length > 0) {
-                this.options.sessionStorage?.saveCloneCode(this.options.host as KeeperEnvironment, this._username, response.cloneCode)
+                this.options.sessionStorage?.saveCloneCode(
+                    this.options.host as KeeperEnvironment,
+                    this._username,
+                    response.cloneCode
+                )
             }
             return response
         } catch (err) {
@@ -611,7 +646,7 @@ export class Auth {
             userType: this.userType,
             ssoLogoutUrl: this.ssoLogoutUrl,
             ssoSessionId: this.ssoSessionId,
-            messageSessionUid: this.messageSessionUid
+            messageSessionUid: this.messageSessionUid,
         }
     }
 
@@ -621,10 +656,12 @@ export class Auth {
             locale: locale,
             clientVersion: this.endpoint.clientVersion,
         }
-        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest), { skipRegionRedirect })
+        const domainResponse = await this.executeRest(ssoServiceProviderRequestMessage(domainRequest), {
+            skipRegionRedirect,
+        })
         const params = domainResponse.isCloud
-            ? '?payload=' + await this._endpoint.prepareSsoPayload(this.messageSessionUid)
-            : '?embedded&key=' + await this._endpoint.getOnsitePublicKey(ecOnly)
+            ? '?payload=' + (await this._endpoint.prepareSsoPayload(this.messageSessionUid))
+            : '?embedded&key=' + (await this._endpoint.getOnsitePublicKey(ecOnly))
 
         this.userType = domainResponse.isCloud ? UserType.cloudSso : UserType.onsiteSso
         this.ssoLogoutUrl = domainResponse.spUrl.replace('login', 'logout')
@@ -651,82 +688,96 @@ export class Auth {
                     {
                         channel: DeviceVerificationMethods.Email,
                         sendApprovalRequest: async () => {
-                            await this.executeRestAction(requestDeviceVerificationMessage({
-                                username: username,
-                                verificationChannel: emailSent ? 'email_resend' : 'email',
-                                encryptedDeviceToken: deviceConfig.deviceToken,
-                                clientVersion: this.endpoint.clientVersion,
-                                messageSessionUid: this.messageSessionUid
-                            }))
+                            await this.executeRestAction(
+                                requestDeviceVerificationMessage({
+                                    username: username,
+                                    verificationChannel: emailSent ? 'email_resend' : 'email',
+                                    encryptedDeviceToken: deviceConfig.deviceToken,
+                                    clientVersion: this.endpoint.clientVersion,
+                                    messageSessionUid: this.messageSessionUid,
+                                })
+                            )
                             emailSent = true
                         },
                         validateCode: async (code) => {
-                            await this.executeRestAction(validateDeviceVerificationCodeMessage({
-                                verificationCode: code,
-                                username: username,
-                            }))
+                            await this.executeRestAction(
+                                validateDeviceVerificationCodeMessage({
+                                    verificationCode: code,
+                                    username: username,
+                                })
+                            )
                             resumeWithToken(loginToken)
-                        }
+                        },
                     },
                     {
                         channel: DeviceVerificationMethods.KeeperPush,
                         sendApprovalRequest: async () => {
-                            await this.executeRestAction(twoFactorSend2FAPushMessage({
-                                encryptedLoginToken: loginToken,
-                                pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                            }))
-                        }
+                            await this.executeRestAction(
+                                twoFactorSend2FAPushMessage({
+                                    encryptedLoginToken: loginToken,
+                                    pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER,
+                                })
+                            )
+                        },
                     },
                     {
                         channel: DeviceVerificationMethods.TFA,
                         sendApprovalRequest: async () => {
-                            await this.executeRestAction(twoFactorSend2FAPushMessage({
-                                encryptedLoginToken: loginToken,
-                            }))
+                            await this.executeRestAction(
+                                twoFactorSend2FAPushMessage({
+                                    encryptedLoginToken: loginToken,
+                                })
+                            )
                         },
                         validateCode: async (code) => {
                             const twoFactorValidateMsg = twoFactorValidateMessage({
                                 encryptedLoginToken: loginToken,
                                 value: code,
-                                expireIn: tfaExpiration
+                                expireIn: tfaExpiration,
                             })
                             const twoFactorValidateResp = await this.executeRest(twoFactorValidateMsg)
                             if (twoFactorValidateResp.encryptedLoginToken) {
                                 const wssRs: Record<string, any> = {
                                     event: 'received_totp',
-                                    encryptedLoginToken: platform.bytesToBase64(twoFactorValidateResp.encryptedLoginToken)
+                                    encryptedLoginToken: platform.bytesToBase64(
+                                        twoFactorValidateResp.encryptedLoginToken
+                                    ),
                                 }
                                 processPushNotification(wssRs)
                             }
                         },
-                        setExpiration: expiration => {
+                        setExpiration: (expiration) => {
                             tfaExpiration = expiration
-                        }
-                    }
-                ];
+                        },
+                    },
+                ]
             } else {
                 channels = [
                     {
                         channel: DeviceVerificationMethods.KeeperPush,
                         sendApprovalRequest: async () => {
-                            await this.executeRestAction(twoFactorSend2FAPushMessage({
-                                encryptedLoginToken: loginToken,
-                                pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER
-                            }))
-                        }
+                            await this.executeRestAction(
+                                twoFactorSend2FAPushMessage({
+                                    encryptedLoginToken: loginToken,
+                                    pushType: TwoFactorPushType.TWO_FA_PUSH_KEEPER,
+                                })
+                            )
+                        },
                     },
                     {
                         channel: DeviceVerificationMethods.AdminApproval,
                         sendApprovalRequest: async () => {
-                            await this.executeRestAction(requestDeviceAdminApprovalMessage({
-                                username: username,
-                                verificationChannel: emailSent ? 'email_resend' : 'email',
-                                encryptedDeviceToken: deviceConfig.deviceToken,
-                                clientVersion: this.endpoint.clientVersion,
-                                messageSessionUid: this.messageSessionUid
-                            }))
-                        }
-                    }
+                            await this.executeRestAction(
+                                requestDeviceAdminApprovalMessage({
+                                    username: username,
+                                    verificationChannel: emailSent ? 'email_resend' : 'email',
+                                    encryptedDeviceToken: deviceConfig.deviceToken,
+                                    clientVersion: this.endpoint.clientVersion,
+                                    messageSessionUid: this.messageSessionUid,
+                                })
+                            )
+                        },
+                    },
                 ]
             }
 
@@ -749,7 +800,7 @@ export class Auth {
                     }
                     // DNA
                     else if (wssRs.passcode) {
-                        const tfaChannel = channels.find(x => x.channel === DeviceVerificationMethods.TFA)
+                        const tfaChannel = channels.find((x) => x.channel === DeviceVerificationMethods.TFA)
                         if (tfaChannel && tfaChannel.validateCode) {
                             tfaChannel.validateCode(wssRs.passcode)
                         }
@@ -771,7 +822,8 @@ export class Auth {
             }
 
             // response from the client true - try again, false - cancel
-            this.options.authUI3.waitForDeviceApproval(channels, isCloud)
+            this.options.authUI3
+                .waitForDeviceApproval(channels, isCloud)
                 .then((ok) => {
                     if (ok) {
                         resumeWithToken(loginToken)
@@ -779,7 +831,7 @@ export class Auth {
                         rejectWithError(new Error('Canceled'))
                     }
                 })
-                .catch(reason => rejectWithError(reason))
+                .catch((reason) => rejectWithError(reason))
 
             // receive push notification
             ;(async () => {
@@ -795,7 +847,7 @@ export class Auth {
                         processPushNotification(wssRs)
                     }
                 }
-            })();
+            })()
         })
     }
 
@@ -814,7 +866,7 @@ export class Auth {
             }
 
             let done = false
-            let twoFactorWaitCancel = resolvablePromise();
+            let twoFactorWaitCancel = resolvablePromise()
             const resumeWithToken = (token: Uint8Array) => {
                 done = true
                 twoFactorWaitCancel.resolve()
@@ -828,7 +880,7 @@ export class Auth {
 
             let tfaExpiration = TwoFactorExpiration.TWO_FA_EXP_IMMEDIATELY
             const submitCode = async (channel: Authentication.TwoFactorChannelType, code: string) => {
-                const channelInfo = responseChannels.find(x => x.channelType === channel)
+                const channelInfo = responseChannels.find((x) => x.channelType === channel)
                 let valueType: Authentication.TwoFactorValueType | undefined
                 switch (channelInfo?.channelType) {
                     case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
@@ -874,9 +926,12 @@ export class Auth {
                 const sendPushRequest: ITwoFactorSendPushRequest = {
                     encryptedLoginToken: loginResponse.encryptedLoginToken,
                     pushType: pushType,
-                    expireIn: tfaExpiration
+                    expireIn: tfaExpiration,
                 }
-                if(channel === TwoFactorChannelType.TWO_FA_CT_DUO && [TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH, TwoFactorPushType.TWO_FA_PUSH_DUO_CALL].includes(pushType)) {                    
+                if (
+                    channel === TwoFactorChannelType.TWO_FA_CT_DUO &&
+                    [TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH, TwoFactorPushType.TWO_FA_PUSH_DUO_CALL].includes(pushType)
+                ) {
                     const tfaValidateResponse = await this.executeRest(twoFASendDuoMessage(sendPushRequest))
                     resumeWithToken(tfaValidateResponse.encryptedLoginToken)
                 } else {
@@ -894,13 +949,13 @@ export class Auth {
                         },
                         sendCode: async (code) => {
                             await submitCode(ch.channelType!, code)
-                        }
+                        },
                     }
                     switch (ch.channelType) {
                         case TwoFactorChannelType.TWO_FA_CT_U2F:
                         case TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
                             // add support for security key as push
-                            break;
+                            break
                         case TwoFactorChannelType.TWO_FA_CT_TOTP:
                         case TwoFactorChannelType.TWO_FA_CT_RSA:
                             break
@@ -914,7 +969,7 @@ export class Auth {
                         case TwoFactorChannelType.TWO_FA_CT_DUO:
                             if (ch.capabilities) {
                                 tfachannelData.availablePushes = ch.capabilities
-                                    .map(cap => {
+                                    .map((cap) => {
                                         switch (cap) {
                                             case 'push':
                                                 return TwoFactorPushType.TWO_FA_PUSH_DUO_PUSH
@@ -925,7 +980,9 @@ export class Auth {
                                             default:
                                                 return undefined
                                         }
-                                    }).filter(cap => !!cap).map(cap => cap!)
+                                    })
+                                    .filter((cap) => !!cap)
+                                    .map((cap) => cap!)
                             }
                             break
                     }
@@ -935,7 +992,9 @@ export class Auth {
                         }
                     }
                     return tfachannelData
-                }).filter((chd: TwoFactorChannelData | undefined) => !!chd).map(chd => chd!)
+                })
+                .filter((chd: TwoFactorChannelData | undefined) => !!chd)
+                .map((chd) => chd!)
 
             const processPushNotification = (wssRs: Record<string, any>) => {
                 if (wssRs.event === 'received_totp') {
@@ -946,7 +1005,7 @@ export class Auth {
                     }
                     // DNA
                     else if (wssRs.passcode) {
-                        (async () => {
+                        ;(async () => {
                             await submitCode(lastPushChannel, wssRs.passcode)
                         })()
                     } else {
@@ -955,15 +1014,16 @@ export class Auth {
                 }
             }
 
-            this.options.authUI3?.waitForTwoFactorCode(channels, twoFactorWaitCancel.promise)
-                .then(ok => {
+            this.options.authUI3
+                ?.waitForTwoFactorCode(channels, twoFactorWaitCancel.promise)
+                .then((ok) => {
                     if (ok) {
                         resumeWithToken(loginToken)
                     } else {
                         rejectWithError(new Error('Canceled'))
                     }
                 })
-                .catch(reason => rejectWithError(reason))
+                .catch((reason) => rejectWithError(reason))
 
             // receive push notification
             ;(async () => {
@@ -979,13 +1039,18 @@ export class Auth {
                         processPushNotification(wssRs)
                     }
                 }
-            })();
+            })()
         })
     }
 
-    async authHashLogin(loginResponse: NN<Authentication.ILoginResponse>, username: string, password: KeyWrapper, useAlternate: boolean = false) {
+    async authHashLogin(
+        loginResponse: NN<Authentication.ILoginResponse>,
+        username: string,
+        password: KeyWrapper,
+        useAlternate: boolean = false
+    ) {
         // TODO test for account transfer and account recovery
-        const salt = useAlternate ? loginResponse.salt.find(s => s.name === 'alternate') : loginResponse.salt[0]
+        const salt = useAlternate ? loginResponse.salt.find((s) => s.name === 'alternate') : loginResponse.salt[0]
         if (!salt?.salt || !salt?.iterations) {
             const error = new Error('Salt missing from API response')
             if (useAlternate && !salt) {
@@ -997,37 +1062,53 @@ export class Auth {
         this.options.salt = salt.salt
         this.options.iterations = salt.iterations
 
-        const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations);
-        let authHash = await platform.calcAuthVerifier(authHashKey);
+        const authHashKey = await platform.deriveKey(password, salt.salt, salt.iterations)
+        let authHash = await platform.calcAuthVerifier(authHashKey)
 
         const loginMsg = validateAuthHashMessage({
             authResponse: authHash,
-            encryptedLoginToken: loginResponse.encryptedLoginToken
+            encryptedLoginToken: loginResponse.encryptedLoginToken,
         })
         const loginResp = await this.executeRest(loginMsg)
         console.log(loginResp)
         if (loginResp.cloneCode && loginResp.cloneCode.length > 0) {
-            await this.options.sessionStorage?.saveCloneCode(this.options.host as KeeperEnvironment, this._username, loginResp.cloneCode)
+            await this.options.sessionStorage?.saveCloneCode(
+                this.options.host as KeeperEnvironment,
+                this._username,
+                loginResp.cloneCode
+            )
         }
         await this.loginSuccess(loginResp, password, salt)
     }
 
-    async loginSuccess(loginResponse: NN<Authentication.ILoginResponse>, password?: KeyWrapper, salt: Authentication.ISalt | undefined = undefined) {
+    async loginSuccess(
+        loginResponse: NN<Authentication.ILoginResponse>,
+        password?: KeyWrapper,
+        salt: Authentication.ISalt | undefined = undefined
+    ) {
         this._username = loginResponse.primaryUsername || this._username
-        this.setLoginParameters(webSafe64FromBytes(loginResponse.encryptedSessionToken), loginResponse.sessionTokenType ?? undefined, loginResponse.accountUid)
+        this.setLoginParameters(
+            webSafe64FromBytes(loginResponse.encryptedSessionToken),
+            loginResponse.sessionTokenType ?? undefined,
+            loginResponse.accountUid
+        )
         switch (loginResponse.encryptedDataKeyType) {
             case Authentication.EncryptedDataKeyType.BY_DEVICE_PUBLIC_KEY:
                 if (!this.options.deviceConfig.privateKey) {
                     throw Error('Private key is missing from the device config')
                 }
-                this.dataKey = await platform.privateDecryptEC(loginResponse.encryptedDataKey, this.options.deviceConfig.privateKey, this.options.deviceConfig.publicKey)
-                break;
+                this.dataKey = await platform.privateDecryptEC(
+                    loginResponse.encryptedDataKey,
+                    this.options.deviceConfig.privateKey,
+                    this.options.deviceConfig.publicKey
+                )
+                break
             case Authentication.EncryptedDataKeyType.BY_PASSWORD:
                 if (!password) {
                     throw Error('Password is missing, unable to continue')
                 }
-                this.dataKey = await decryptEncryptionParams(password, loginResponse.encryptedDataKey);
-                break;
+                this.dataKey = await decryptEncryptionParams(password, loginResponse.encryptedDataKey)
+                break
             case Authentication.EncryptedDataKeyType.BY_ALTERNATE:
                 if (!password || !salt) {
                     throw Error('Password or salt is missing, unable to continue')
@@ -1036,7 +1117,7 @@ export class Auth {
                     const encKey = await platform.deriveKeyV2('data_key', password, salt.salt!, salt.iterations!)
                     this.dataKey = await platform.aesGcmDecrypt(loginResponse.encryptedDataKey, encKey)
                 }
-                break;
+                break
             case Authentication.EncryptedDataKeyType.NO_KEY:
             case Authentication.EncryptedDataKeyType.BY_BIO:
                 throw new Error(`Data Key type ${loginResponse.encryptedDataKeyType} decryption not implemented`)
@@ -1065,10 +1146,16 @@ export class Auth {
 
             if (this.options.kvs) {
                 if (encryptedPrivateKey) {
-                    this.options.kvs.saveValue(`${this._username}/private_key`, platform.bytesToBase64(encryptedPrivateKey))
+                    this.options.kvs.saveValue(
+                        `${this._username}/private_key`,
+                        platform.bytesToBase64(encryptedPrivateKey)
+                    )
                 }
                 if (encryptedEccPrivateKey) {
-                    this.options.kvs.saveValue(`${this._username}/ecc_private_key`, platform.bytesToBase64(encryptedEccPrivateKey))
+                    this.options.kvs.saveValue(
+                        `${this._username}/ecc_private_key`,
+                        platform.bytesToBase64(encryptedEccPrivateKey)
+                    )
                 }
             }
         }
@@ -1093,9 +1180,11 @@ export class Auth {
     }
 
     async loadAccountSummary() {
-        this._accountSummary = await this.executeRest(accountSummaryMessage({
-            summaryVersion: this._accountSummaryVersion
-        }));
+        this._accountSummary = await this.executeRest(
+            accountSummaryMessage({
+                summaryVersion: this._accountSummaryVersion,
+            })
+        )
     }
 
     setAccountSummaryVersion(version: number) {
@@ -1117,40 +1206,47 @@ export class Auth {
     //     return this.endpoint.executeV2Command(command);
     // }
 
-    async executeRest<TIn, TOut>(message: RestOutMessage<TOut> | RestMessage<TIn, TOut>, options?: ExecuteRestOptions): Promise<TOut> {
-        return this.endpoint.executeRest(message, this._sessionToken, options);
+    async executeRest<TIn, TOut>(
+        message: RestOutMessage<TOut> | RestMessage<TIn, TOut>,
+        options?: ExecuteRestOptions
+    ): Promise<TOut> {
+        return this.endpoint.executeRest(message, this._sessionToken, options)
     }
 
     async executeRouterRest<TIn, TOut>(message: RestMessage<TIn, TOut>): Promise<TOut> {
-        return this.endpoint.executeRouterRest(message, this._sessionToken);
+        return this.endpoint.executeRouterRest(message, this._sessionToken)
     }
 
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
         if (!command.baseRequest.username) {
-            command.baseRequest.username = this._username;
+            command.baseRequest.username = this._username
         }
         if (command.authorization) {
             command.authorization.device_id = 'JS Keeper API'
             command.authorization.session_token = this.sessionToken
         }
-        return this.endpoint.executeRestCommand(command);
+        return this.endpoint.executeRestCommand(command)
     }
 
     async executeRestAction<TIn, TOut>(message: RestInMessage<TIn> | RestActionMessage): Promise<void> {
-        return this.endpoint.executeRestAction(message, this._sessionToken);
+        return this.endpoint.executeRestAction(message, this._sessionToken)
     }
 
     async get(path: string) {
         return this.endpoint.get(path)
     }
 
-    setLoginParameters(sessionToken: string, sessionTokenType?: Authentication.SessionTokenType, accountUid?: Uint8Array) {
-        this._sessionToken = sessionToken;
+    setLoginParameters(
+        sessionToken: string,
+        sessionTokenType?: Authentication.SessionTokenType,
+        accountUid?: Uint8Array
+    ) {
+        this._sessionToken = sessionToken
         this._sessionTokenType = sessionTokenType
-        this._accountUid = accountUid;
+        this._accountUid = accountUid
         if (!this.socket) {
             throw new Error('No socket available')
-        } 
+        }
         if (this.socket.getIsConnected()) {
             this.socket.registerLogin(this._sessionToken)
         }
@@ -1184,7 +1280,7 @@ export class Auth {
         this.socket.onPushMessage(callback)
     }
 
-    onCloseMessage(callback: (data:any) => void): void {
+    onCloseMessage(callback: (data: any) => void): void {
         if (!this.socket) {
             throw new Error('No socket available')
         }
@@ -1202,12 +1298,12 @@ export class Auth {
     }
 
     // we need to not include rsa keys at all when ecOnly is true
-    private async createUserRequest(dataKey: Uint8Array, ecOnly?:boolean): Promise<Authentication.ICreateUserRequest> {
-        if(ecOnly){
+    private async createUserRequest(dataKey: Uint8Array, ecOnly?: boolean): Promise<Authentication.ICreateUserRequest> {
+        if (ecOnly) {
             return this.createUserRequestECOnly(dataKey)
         } else {
             return this.createUserRequestRSAIncluded(dataKey)
-        }        
+        }
     }
 
     private async createUserRequestRSAIncluded(dataKey: Uint8Array): Promise<Authentication.ICreateUserRequest> {
@@ -1245,34 +1341,40 @@ export class Auth {
         }
     }
 
-    public async createUser(username: string, password: KeyWrapper, ecOnly?:boolean) {
+    public async createUser(username: string, password: KeyWrapper, ecOnly?: boolean) {
         const iterations = 100000
         const dataKey = generateEncryptionKey()
         const authVerifier = await createAuthVerifier(password, iterations)
         const encryptionParams = await createEncryptionParams(password, dataKey, iterations)
         const request = await this.createUserRequest(dataKey, ecOnly)
-        const regUserMsg = requestCreateUserMessage({
-            ...request,
-            username: username,
-            authVerifier: authVerifier,
-            encryptionParams: encryptionParams,
-        }, false)
+        const regUserMsg = requestCreateUserMessage(
+            {
+                ...request,
+                username: username,
+                authVerifier: authVerifier,
+                encryptionParams: encryptionParams,
+            },
+            false
+        )
         await this.executeRestAction(regUserMsg)
     }
 
-    private async createSsoUser(loginToken: Uint8Array, ecOnly?:boolean) {
+    private async createSsoUser(loginToken: Uint8Array, ecOnly?: boolean) {
         if (!this.options.deviceConfig.publicKey) {
             throw Error('Public key is missing')
         }
         const dataKey = generateEncryptionKey()
         const encryptedDeviceDataKey = await platform.publicEncryptEC(dataKey, this.options.deviceConfig.publicKey)
         const request = await this.createUserRequest(dataKey, ecOnly)
-        const regUserMsg = requestCreateUserMessage({
-            ...request,
-            username: this._username,
-            encryptedLoginToken: loginToken,
-            encryptedDeviceDataKey: encryptedDeviceDataKey
-        }, true)
+        const regUserMsg = requestCreateUserMessage(
+            {
+                ...request,
+                username: this._username,
+                encryptedLoginToken: loginToken,
+                encryptedDeviceDataKey: encryptedDeviceDataKey,
+            },
+            true
+        )
         await this.executeRestAction(regUserMsg)
     }
 
@@ -1286,22 +1388,22 @@ export class Auth {
         }
     }
 
-    public getKeys(ecOnly?:boolean): EncryptionKeys {
-        if(ecOnly){
+    public getKeys(ecOnly?: boolean): EncryptionKeys {
+        if (ecOnly) {
             if (!this.dataKey || !this.eccPrivateKey) {
                 throw Error('Encryption keys are missing')
             }
 
-            if(this.privateKey){
+            if (this.privateKey) {
                 return {
                     dataKey: this.dataKey,
                     privateKey: this.privateKey,
-                    eccPrivateKey: this.eccPrivateKey
+                    eccPrivateKey: this.eccPrivateKey,
                 }
             } else {
                 return {
                     dataKey: this.dataKey,
-                    eccPrivateKey: this.eccPrivateKey
+                    eccPrivateKey: this.eccPrivateKey,
                 }
             }
         } else {
@@ -1311,7 +1413,7 @@ export class Auth {
             return {
                 dataKey: this.dataKey,
                 privateKey: this.privateKey,
-                eccPrivateKey: this.eccPrivateKey
+                eccPrivateKey: this.eccPrivateKey,
             }
         }
     }
@@ -1327,17 +1429,21 @@ const iterationsToBytes = (iterations: number): Uint8Array => {
     const bytes = new Uint8Array(iterationBytes)
     bytes[0] = 1 // version
     return bytes
-};
+}
 
 export async function createAuthVerifier(password: KeyWrapper, iterations: number): Promise<Uint8Array> {
-    const salt = platform.getRandomBytes(16);
-    const authHashKey = await platform.deriveKey(password, salt, iterations);
+    const salt = platform.getRandomBytes(16)
+    const authHashKey = await platform.deriveKey(password, salt, iterations)
     return Uint8Array.of(...iterationsToBytes(iterations), ...salt, ...authHashKey)
 }
 
-export async function createEncryptionParams(password: KeyWrapper, dataKey: Uint8Array, iterations: number): Promise<Uint8Array> {
-    const salt = platform.getRandomBytes(16);
-    const authHashKey = await platform.deriveKey(password, salt, iterations);
+export async function createEncryptionParams(
+    password: KeyWrapper,
+    dataKey: Uint8Array,
+    iterations: number
+): Promise<Uint8Array> {
+    const salt = platform.getRandomBytes(16)
+    const authHashKey = await platform.deriveKey(password, salt, iterations)
     const doubledDataKey = Uint8Array.of(...dataKey, ...dataKey)
     const encryptedDoubledKey = await platform.aesCbcEncrypt(doubledDataKey, authHashKey, false)
     return Uint8Array.of(...iterationsToBytes(iterations), ...salt, ...encryptedDoubledKey)
@@ -1348,24 +1454,23 @@ async function decryptEncryptionParamsString(password: KeyWrapper, encryptionPar
 }
 
 export async function decryptEncryptionParams(password: KeyWrapper, encryptionParams: Uint8Array): Promise<Uint8Array> {
-    let corruptedEncryptionParametersMessage = "Corrupted encryption parameters";
-    if (encryptionParams[0] !== 1)
-        throw new Error(corruptedEncryptionParametersMessage);
-    let iterations = (encryptionParams[1] << 16) + (encryptionParams[2] << 8) + encryptionParams[3];
-    let saltBytes = encryptionParams.subarray(4, 20);
-    let masterKey = await platform.deriveKey(password, saltBytes, iterations);
-    let encryptedDoubledDataKey = encryptionParams.subarray(20);
-    let doubledDataKey = await platform.aesCbcDecrypt(encryptedDoubledDataKey, masterKey, false);
+    let corruptedEncryptionParametersMessage = 'Corrupted encryption parameters'
+    if (encryptionParams[0] !== 1) throw new Error(corruptedEncryptionParametersMessage)
+    let iterations = (encryptionParams[1] << 16) + (encryptionParams[2] << 8) + encryptionParams[3]
+    let saltBytes = encryptionParams.subarray(4, 20)
+    let masterKey = await platform.deriveKey(password, saltBytes, iterations)
+    let encryptedDoubledDataKey = encryptionParams.subarray(20)
+    let doubledDataKey = await platform.aesCbcDecrypt(encryptedDoubledDataKey, masterKey, false)
     for (let i = 0; i < 32; i++) {
         if (doubledDataKey[i] !== doubledDataKey[i + 32]) {
-            throw new Error(corruptedEncryptionParametersMessage);
+            throw new Error(corruptedEncryptionParametersMessage)
         }
     }
-    return doubledDataKey.slice(0, 32);
+    return doubledDataKey.slice(0, 32)
 }
 
-function chooseErrorMessage(loginState: Authentication.LoginState){
-    switch (loginState){
+function chooseErrorMessage(loginState: Authentication.LoginState) {
+    switch (loginState) {
         case Authentication.LoginState.ACCOUNT_LOCKED:
             return 'account_locked'
         case Authentication.LoginState.DEVICE_ACCOUNT_LOCKED:
@@ -1378,4 +1483,9 @@ function chooseErrorMessage(loginState: Authentication.LoginState){
 }
 
 const hasYubikeyChannel = (channels: Authentication.ITwoFactorChannelInfo[]): boolean =>
-  !!channels.find(({challenge, channelType}) => challenge && (channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F || channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN))
+    !!channels.find(
+        ({ challenge, channelType }) =>
+            challenge &&
+            (channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_U2F ||
+                channelType === Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN)
+    )
