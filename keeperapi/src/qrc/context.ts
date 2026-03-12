@@ -3,8 +3,8 @@
  * Critical for security - binds key derivation to specific parameters
  */
 
-import { concatUint8Arrays } from './utils';
-import { Ciphersuite, EC_PUBLIC_KEY_LENGTH } from './constants';
+import { concatUint8Arrays } from './utils'
+import { Ciphersuite, EC_PUBLIC_KEY_LENGTH } from './constants'
 
 /**
  * Builds the context info for HKDF key derivation
@@ -29,31 +29,31 @@ export function buildContextInfo(
     version: number,
     optionalData?: Uint8Array
 ): Uint8Array {
-    const parts: Uint8Array[] = [];
+    const parts: Uint8Array[] = []
 
     // Optional data (if present) comes first
     if (optionalData && optionalData.length > 0) {
-        parts.push(optionalData);
+        parts.push(optionalData)
     }
 
     // Ciphersuite string (UTF-8 encoded)
-    const ciphersuiteBytes = new TextEncoder().encode(ciphersuite);
-    parts.push(ciphersuiteBytes);
+    const ciphersuiteBytes = new TextEncoder().encode(ciphersuite)
+    parts.push(ciphersuiteBytes)
 
     // Server EC public key
-    parts.push(serverEcPublicKey);
+    parts.push(serverEcPublicKey)
 
     // Client ephemeral EC public key
-    parts.push(clientEphemeralEcPublicKey);
+    parts.push(clientEphemeralEcPublicKey)
 
     // SHA-256 hash of ML-KEM ciphertext
-    parts.push(mlKemCiphertextHash);
+    parts.push(mlKemCiphertextHash)
 
     // Protocol version (single byte)
-    parts.push(new Uint8Array([version]));
+    parts.push(new Uint8Array([version]))
 
     // Concatenate all parts
-    return concatUint8Arrays(...parts);
+    return concatUint8Arrays(...parts)
 }
 
 /**
@@ -69,14 +69,18 @@ export function validateContextInfoParams(
     mlKemCiphertextHash: Uint8Array
 ): void {
     if (serverEcPublicKey.length !== EC_PUBLIC_KEY_LENGTH) {
-        throw new Error(`Invalid server EC public key length: ${serverEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`);
+        throw new Error(
+            `Invalid server EC public key length: ${serverEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`
+        )
     }
 
     if (clientEphemeralEcPublicKey.length !== EC_PUBLIC_KEY_LENGTH) {
-        throw new Error(`Invalid client EC public key length: ${clientEphemeralEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`);
+        throw new Error(
+            `Invalid client EC public key length: ${clientEphemeralEcPublicKey.length}, expected ${EC_PUBLIC_KEY_LENGTH}`
+        )
     }
 
     if (mlKemCiphertextHash.length !== 32) {
-        throw new Error(`Invalid ML-KEM ciphertext hash length: ${mlKemCiphertextHash.length}, expected 32`);
+        throw new Error(`Invalid ML-KEM ciphertext hash length: ${mlKemCiphertextHash.length}, expected 32`)
     }
 }

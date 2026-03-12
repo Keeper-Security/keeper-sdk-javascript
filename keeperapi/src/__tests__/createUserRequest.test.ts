@@ -4,14 +4,13 @@
 
 // @ts-ignore
 import crypto from 'crypto'
-import {nodePlatform} from "../node/platform";
-import {browserPlatform} from "../browser/platform"
-import {KeyWrapper, connectPlatform, platform} from "../platform";
-import { Auth } from '../auth';
-import { KeeperEnvironment } from '../endpoint';
+import { nodePlatform } from '../node/platform'
+import { browserPlatform } from '../browser/platform'
+import { KeyWrapper, connectPlatform, platform } from '../platform'
+import { Auth } from '../auth'
+import { KeeperEnvironment } from '../endpoint'
 
 describe('create user request', () => {
-
     const username = 'username'
     const password = 'password'
     let auth: Auth
@@ -29,7 +28,15 @@ describe('create user request', () => {
         // @ts-expect-error private prop on class
         const user = await auth.createUserRequest(kp.privateKey)
 
-        const {rsaPublicKey, rsaEncryptedPrivateKey, eccPublicKey, eccEncryptedPrivateKey, encryptedDeviceToken, encryptedClientKey, clientVersion} = user
+        const {
+            rsaPublicKey,
+            rsaEncryptedPrivateKey,
+            eccPublicKey,
+            eccEncryptedPrivateKey,
+            encryptedDeviceToken,
+            encryptedClientKey,
+            clientVersion,
+        } = user
 
         expect(rsaPublicKey).toBeDefined()
         expect(rsaPublicKey && rsaPublicKey.length === 270).toBeTruthy()
@@ -43,7 +50,7 @@ describe('create user request', () => {
         expect(eccEncryptedPrivateKey).toBeDefined()
         expect(eccEncryptedPrivateKey && eccEncryptedPrivateKey.length === 60).toBeTruthy()
 
-        expect(encryptedDeviceToken).not.toBeDefined()        
+        expect(encryptedDeviceToken).not.toBeDefined()
 
         expect(encryptedClientKey).toBeDefined()
         expect(encryptedClientKey && encryptedClientKey.length === 64).toBeTruthy()
@@ -53,7 +60,7 @@ describe('create user request', () => {
     })
 })
 
-function createAuth(){
+function createAuth() {
     return new Auth({
         host: KeeperEnvironment.DEV,
         clientVersion: 'ec0.0.0',
