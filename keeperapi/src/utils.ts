@@ -231,4 +231,10 @@ export function resolvablePromise(): { promise: Promise<void>, resolve: () => vo
     }
 }
 
+export const isNil = <T>(value: T | null | undefined): value is null | undefined => {
+    return value == null;
+}
 
+export const toOptional = <T>(value: T | null | undefined): T | undefined => {
+    return value ?? undefined;
+}
