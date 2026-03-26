@@ -1,7 +1,8 @@
 import { Auth } from './auth'
 import { GraphSync } from './proto'
 import { normal64Bytes, webSafe64FromBytes } from './utils'
-import { pamGetLeafsMessage, pamMultiSyncMessage, pamSyncMessage } from './restMessages'
+import { pamGetLeafsMessage, pamGetOnlineControllersMessage, pamMultiSyncMessage, pamSyncMessage } from './restMessages'
+import { PAM } from './proto'
 
 /**
  * Syncs the PAM link DAG for a single record UID.
@@ -101,4 +102,14 @@ export async function getConfigRootsForRecordUids(
     const vertices = recordUids.map((uid) => normal64Bytes(uid))
     const result = await auth.executeRouterRest(pamGetLeafsMessage({ vertices }))
     return result.refs ?? []
+}
+
+/**
+ * Returns the UIDs of all PAM controllers that are accessible to the user.
+ */
+export async function getOnlinePamControllerUids(auth: Auth): Promise<string[]> {
+    const result = await auth.executeRouterRest(pamGetOnlineControllersMessage())
+    return (result.controllers ?? [])
+        .filter((c) => c.controllerUid && c.controllerUid.length > 0)
+        .map((c) => webSafe64FromBytes(c.controllerUid as Uint8Array))
 }

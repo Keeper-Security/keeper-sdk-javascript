@@ -9,6 +9,7 @@ import {
     Automator,
     Enterprise,
     GraphSync,
+    PAM,
     Records,
     ServiceLogger,
     SsoCloud,
@@ -866,3 +867,6 @@ export const pamGetLeafsMessage = (
         GraphSync.GraphSyncLeafsQuery,
         GraphSync.GraphSyncRefsResult
     )
+
+export const pamGetOnlineControllersMessage = (): RestMessage<PAM.IPAMOnlineControllers, PAM.PAMOnlineControllers> =>
+    createMessage({}, 'api/user/get_controllers', PAM.PAMOnlineControllers, PAM.PAMOnlineControllers)
