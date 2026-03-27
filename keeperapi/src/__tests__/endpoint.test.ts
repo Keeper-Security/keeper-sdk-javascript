@@ -8,8 +8,8 @@ import { browserPlatform } from '../browser/platform'
 import { ClientConfigurationInternal, TransmissionKey } from '../configuration'
 import { AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId } from '../transmissionKeys'
 import { KeeperError } from '../configuration'
-import { Authentication, Router, GraphSync } from '../proto'
-import { startLoginMessage, pamGetLeafsMessage } from '../restMessages'
+import { Authentication, Router, GraphSync, PAM } from '../proto'
+import { startLoginMessage, pamGetLeafsMessage, getControllers } from '../restMessages'
 import { HPKE_ECDH_KYBER, Ciphersuite, MlKemVariant, mlKemKeygen, encodeMlKemPublicKeyToPem } from '../qrc'
 import { getKeeperMlKemKeyVariant } from '../transmissionKeys'
 import { KeeperHttpResponse } from '../commands'
@@ -565,6 +565,45 @@ describe('executeRouterRest', () => {
 
         const message = pamGetLeafsMessage({ vertices: [] })
         await expect(endpoint.executeRouterRest(message, sessionToken)).rejects.toThrow(errorString)
+    })
+
+    it('sends empty body for RestOutMessage (getControllers)', async () => {
+        const responseBytes = PAM.PAMControllersResponse.encode({ controllers: [] }).finish()
+        const postSpy = jest.spyOn(platform, 'post').mockResolvedValue(await makeSuccessResponse(responseBytes))
+
+        const message = getControllers()
+        await endpoint.executeRouterRest(message, sessionToken)
+
+        expect(postSpy).toHaveBeenCalledTimes(1)
+        const [url, requestBody] = postSpy.mock.calls[0]
+
+        expect(url).toBe(`https://connect.test.keepersecurity.com/${message.path}`)
+
+        // RestOutMessage has no payload — body should be encrypted empty bytes
+        const decrypted = await platform.aesGcmDecrypt(requestBody, knownTransmissionKey.key)
+        expect(decrypted).toEqual(new Uint8Array(0))
+    })
+
+    it('decodes PAMControllersResponse correctly for getControllers', async () => {
+        const expectedController: PAM.IPAMController = {
+            controllerUid: new Uint8Array([10, 20, 30]),
+            controllerName: 'test-controller',
+            deviceName: 'my-device',
+        }
+        const responseBytes = PAM.PAMControllersResponse.encode({ controllers: [expectedController] }).finish()
+        jest.spyOn(platform, 'post').mockResolvedValue(await makeSuccessResponse(responseBytes))
+
+        const result = await endpoint.executeRouterRest(getControllers(), sessionToken)
+
+        expect(result.controllers).toHaveLength(1)
+        expect(result.controllers![0].controllerName).toBe(expectedController.controllerName)
+        expect(result.controllers![0].deviceName).toBe(expectedController.deviceName)
+        expect(result.controllers![0].controllerUid).toEqual(expectedController.controllerUid)
+    })
+
+    it('getControllers uses correct KA API path', () => {
+        const message = getControllers()
+        expect(message.path).toBe('pam/get_controllers')
     })
 })
 
