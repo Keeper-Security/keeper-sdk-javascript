@@ -841,6 +841,11 @@ export const automatorAdminResetMessage = (
 ): RestMessage<Automator.IAdminResetAutomatorRequest, Automator.IAdminResponse> =>
     createMessage(data, url, Automator.AdminResetAutomatorRequest, Automator.AdminResponse)
 
+/* -- PAM (KA API) -- */
+
+export const getControllers = (): RestOutMessage<PAM.IPAMControllersResponse> =>
+    createOutMessage('pam/get_controllers', PAM.PAMControllersResponse)
+
 /* -- PAM Router (DAG GraphSync) -- */
 
 export const pamSyncMessage = (
@@ -868,5 +873,5 @@ export const pamGetLeafsMessage = (
         GraphSync.GraphSyncRefsResult
     )
 
-export const pamGetOnlineControllersMessage = (): RestMessage<PAM.IPAMOnlineControllers, PAM.PAMOnlineControllers> =>
-    createMessage({}, 'api/user/get_controllers', PAM.PAMOnlineControllers, PAM.PAMOnlineControllers)
+export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
+    createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)

@@ -190,11 +190,15 @@ export class KeeperEndpoint {
      * Executes a request against the PAM router endpoint.
      * @see {@link https://keeper.atlassian.net/wiki/spaces/KA/pages/2925920257/Router+APIs}
      */
-    async executeRouterRest<TIn, TOut>(message: RestMessage<TIn, TOut>, sessionToken: string): Promise<TOut> {
+    async executeRouterRest<TIn, TOut>(
+        message: RestMessage<TIn, TOut> | RestOutMessage<TOut>,
+        sessionToken: string
+    ): Promise<TOut> {
         const transmissionKey = await this.getTransmissionKey()
         const sessionTokenBytes = normal64Bytes(sessionToken)
         const encryptedSessionToken = await platform.aesGcmEncrypt(sessionTokenBytes, transmissionKey.key)
-        const encryptedPayload = await platform.aesGcmEncrypt(message.toBytes(), transmissionKey.key)
+        const payload = 'toBytes' in message ? message.toBytes() : new Uint8Array()
+        const encryptedPayload = await platform.aesGcmEncrypt(payload, transmissionKey.key)
         const headers = {
             TransmissionKey: platform.bytesToBase64(transmissionKey.ecEncryptedKey),
             Authorization: `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`,

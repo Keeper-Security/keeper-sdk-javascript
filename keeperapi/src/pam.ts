@@ -109,6 +109,7 @@ export async function getConfigRootsForRecordUids(
  */
 export async function getOnlinePamControllerUids(auth: Auth): Promise<string[]> {
     const result = await auth.executeRouterRest(pamGetOnlineControllersMessage())
+    if (!result.controllers) return []
     const controllerUids: string[] = []
     for (const c of result.controllers) {
         if (c.controllerUid && c.controllerUid.length > 0) {

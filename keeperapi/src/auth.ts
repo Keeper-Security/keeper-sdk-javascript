@@ -1213,7 +1213,7 @@ export class Auth {
         return this.endpoint.executeRest(message, this._sessionToken, options)
     }
 
-    async executeRouterRest<TIn, TOut>(message: RestMessage<TIn, TOut>): Promise<TOut> {
+    async executeRouterRest<TIn, TOut>(message: RestMessage<TIn, TOut> | RestOutMessage<TOut>): Promise<TOut> {
         return this.endpoint.executeRouterRest(message, this._sessionToken)
     }
 
