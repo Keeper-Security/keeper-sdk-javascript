@@ -96,82 +96,89 @@ export type RemoveShareResult = {
 }
 
 export class ShareReportGenerator {
-    private records: DRecord[]
-    private metadata: DRecordMetadata[]
-    private sharedFolders: DSharedFolder[]
-    private sharedFolderUsers: DSharedFolderUser[]
-    private sharedFolderTeams: DSharedFolderTeam[]
-    private sharedFolderRecords: DSharedFolderRecord[]
-    private teams: DTeam[]
-    private currentUser: string
+    private readonly storage: InMemoryStorage
+    private readonly currentUser: string
+
+    private _sfUserMap: Map<string, DSharedFolderUser[]> | null = null
+    private _sfTeamMap: Map<string, DSharedFolderTeam[]> | null = null
+    private _sfRecordsByRecord: Map<string, DSharedFolderRecord[]> | null = null
 
     constructor(storage: InMemoryStorage, currentUser: string) {
-        this.records = storage.getAll<DRecord>(StorageType.Record)
-        this.metadata = storage.getAll<DRecordMetadata>(StorageType.Metadata)
-        this.sharedFolders = storage.getAll<DSharedFolder>(StorageType.SharedFolder)
-        this.sharedFolderUsers = storage.getAll<DSharedFolderUser>(StorageType.SharedFolderUser)
-        this.sharedFolderTeams = storage.getAll<DSharedFolderTeam>(StorageType.SharedFolderTeam)
-        this.sharedFolderRecords = storage.getAll<DSharedFolderRecord>(StorageType.SharedFolderRecord)
-        this.teams = storage.getAll<DTeam>(StorageType.Team)
+        this.storage = storage
         this.currentUser = currentUser
+    }
+
+    private get sfUserMap(): Map<string, DSharedFolderUser[]> {
+        if (!this._sfUserMap) {
+            this._sfUserMap = new Map()
+            for (const sfu of this.storage.getAll<DSharedFolderUser>(StorageType.SharedFolderUser)) {
+                const list = this._sfUserMap.get(sfu.sharedFolderUid) || []
+                list.push(sfu)
+                this._sfUserMap.set(sfu.sharedFolderUid, list)
+            }
+        }
+        return this._sfUserMap
+    }
+
+    private get sfTeamMap(): Map<string, DSharedFolderTeam[]> {
+        if (!this._sfTeamMap) {
+            this._sfTeamMap = new Map()
+            for (const sft of this.storage.getAll<DSharedFolderTeam>(StorageType.SharedFolderTeam)) {
+                const list = this._sfTeamMap.get(sft.sharedFolderUid) || []
+                list.push(sft)
+                this._sfTeamMap.set(sft.sharedFolderUid, list)
+            }
+        }
+        return this._sfTeamMap
+    }
+
+    private get sfRecordsByRecord(): Map<string, DSharedFolderRecord[]> {
+        if (!this._sfRecordsByRecord) {
+            this._sfRecordsByRecord = new Map()
+            for (const sfr of this.storage.getAll<DSharedFolderRecord>(StorageType.SharedFolderRecord)) {
+                const list = this._sfRecordsByRecord.get(sfr.recordUid) || []
+                list.push(sfr)
+                this._sfRecordsByRecord.set(sfr.recordUid, list)
+            }
+        }
+        return this._sfRecordsByRecord
     }
 
     public generateRecordsReport(): ShareReportEntry[] {
         const report: ShareReportEntry[] = []
-        const metaMap = new Map(this.metadata.map((m) => [m.uid, m]))
+        const records = this.storage.getAll<DRecord>(StorageType.Record)
+        const metadata = this.storage.getAll<DRecordMetadata>(StorageType.Metadata)
+        const metaMap = new Map(metadata.map((m) => [m.uid, m]))
 
-        const sfRecordsByRecord = new Map<string, DSharedFolderRecord[]>()
-        for (const sfr of this.sharedFolderRecords) {
-            const list = sfRecordsByRecord.get(sfr.recordUid) || []
-            list.push(sfr)
-            sfRecordsByRecord.set(sfr.recordUid, list)
-        }
-
-        const sfUserMap = new Map<string, DSharedFolderUser[]>()
-        for (const sfu of this.sharedFolderUsers) {
-            const list = sfUserMap.get(sfu.sharedFolderUid) || []
-            list.push(sfu)
-            sfUserMap.set(sfu.sharedFolderUid, list)
-        }
-
-        const sfTeamMap = new Map<string, DSharedFolderTeam[]>()
-        for (const sft of this.sharedFolderTeams) {
-            const list = sfTeamMap.get(sft.sharedFolderUid) || []
-            list.push(sft)
-            sfTeamMap.set(sft.sharedFolderUid, list)
-        }
-
-        for (const record of this.records) {
+        for (const record of records) {
             if (!record.shared) continue
 
             const meta = metaMap.get(record.uid)
             const owner = meta?.ownerUsername || (meta?.owner ? this.currentUser : '')
-            const sharedWith: string[] = []
+            const sharedWithSet = new Set<string>()
 
-            const sfRecords = sfRecordsByRecord.get(record.uid) || []
+            const sfRecords = this.sfRecordsByRecord.get(record.uid) || []
             const seenFolders = new Set<string>()
 
             for (const sfr of sfRecords) {
                 if (seenFolders.has(sfr.sharedFolderUid)) continue
                 seenFolders.add(sfr.sharedFolderUid)
 
-                const users = sfUserMap.get(sfr.sharedFolderUid) || []
+                const users = this.sfUserMap.get(sfr.sharedFolderUid) || []
                 for (const u of users) {
                     const name = u.accountUsername || u.accountUid || ''
-                    if (name && name !== this.currentUser && !sharedWith.includes(name)) {
-                        sharedWith.push(name)
+                    if (name && name !== this.currentUser) {
+                        sharedWithSet.add(name)
                     }
                 }
 
-                const teams = sfTeamMap.get(sfr.sharedFolderUid) || []
+                const teams = this.sfTeamMap.get(sfr.sharedFolderUid) || []
                 for (const t of teams) {
-                    const teamLabel = `(Team) ${t.name}`
-                    if (!sharedWith.includes(teamLabel)) {
-                        sharedWith.push(teamLabel)
-                    }
+                    sharedWithSet.add(`(Team) ${t.name}`)
                 }
             }
 
+            const sharedWith = Array.from(sharedWithSet)
             if (sharedWith.length > 0 || sfRecords.length > 0) {
                 report.push({
                     recordUid: record.uid,
@@ -188,14 +195,11 @@ export class ShareReportGenerator {
 
     public generateSharedFoldersReport(): SharedFolderReportEntry[] {
         const report: SharedFolderReportEntry[] = []
+        const sharedFolders = this.storage.getAll<DSharedFolder>(StorageType.SharedFolder)
 
-        for (const sf of this.sharedFolders) {
-            const users = this.sharedFolderUsers.filter(
-                (u) => u.sharedFolderUid === sf.uid
-            )
-            const teams = this.sharedFolderTeams.filter(
-                (t) => t.sharedFolderUid === sf.uid
-            )
+        for (const sf of sharedFolders) {
+            const users = this.sfUserMap.get(sf.uid) || []
+            const teams = this.sfTeamMap.get(sf.uid) || []
 
             const folderName = sf.name || sf.data?.name || sf.uid
 
@@ -224,15 +228,18 @@ export class ShareReportGenerator {
     public generateSummaryReport(): ShareSummaryEntry[] {
         const recordShares = new Map<string, Set<string>>()
         const folderShares = new Map<string, Set<string>>()
+        const sharedFolderRecords = this.storage.getAll<DSharedFolderRecord>(StorageType.SharedFolderRecord)
+        const sharedFolderUsers = this.storage.getAll<DSharedFolderUser>(StorageType.SharedFolderUser)
+        const sharedFolderTeams = this.storage.getAll<DSharedFolderTeam>(StorageType.SharedFolderTeam)
 
         const sfRecordMap = new Map<string, string[]>()
-        for (const sfr of this.sharedFolderRecords) {
+        for (const sfr of sharedFolderRecords) {
             const list = sfRecordMap.get(sfr.sharedFolderUid) || []
             list.push(sfr.recordUid)
             sfRecordMap.set(sfr.sharedFolderUid, list)
         }
 
-        for (const sfu of this.sharedFolderUsers) {
+        for (const sfu of sharedFolderUsers) {
             const name = sfu.accountUsername || sfu.accountUid || ''
             if (!name || name === this.currentUser) continue
 
@@ -244,7 +251,7 @@ export class ShareReportGenerator {
             for (const r of recs) recordShares.get(name)!.add(r)
         }
 
-        for (const sft of this.sharedFolderTeams) {
+        for (const sft of sharedFolderTeams) {
             const name = `(Team) ${sft.name}`
 
             if (!folderShares.has(name)) folderShares.set(name, new Set())
@@ -341,7 +348,6 @@ function uidToBytes(uid: string): Uint8Array {
     )
 }
 
-// Encrypts the record key with the recipient's public key (ECC preferred, RSA fallback).
 export async function shareRecord(
     auth: Auth,
     recordKey: Uint8Array,

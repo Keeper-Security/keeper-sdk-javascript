@@ -1,6 +1,6 @@
 import type { KeeperError } from '@keeper-security/keeperapi'
 
-export function isKeeperError(err: any): err is KeeperError {
+export function isKeeperError(err: unknown): err is KeeperError {
     return (
         err != null &&
         typeof err === 'object' &&
@@ -9,27 +9,40 @@ export function isKeeperError(err: any): err is KeeperError {
     )
 }
 
-export function extractResultCode(err: any): string | undefined {
+export function extractResultCode(err: unknown): string | undefined {
     if (isKeeperError(err)) {
         return err.result_code || err.error
     }
     if (err instanceof Error) {
-        try {
-            const parsed = JSON.parse(err.message)
-            return parsed.result_code || parsed.error
-        } catch {}
+        const msg = err.message
+        if (msg.length > 0 && (msg[0] === '{' || msg[0] === '[')) {
+            try {
+                const parsed = JSON.parse(msg)
+                return parsed.result_code || parsed.error
+            } catch {}
+        }
     }
     if (typeof err === 'string') return err
-    return err?.result_code || err?.error
+    if (typeof err === 'object' && err !== null) {
+        const obj = err as Record<string, unknown>
+        if (typeof obj.result_code === 'string') return obj.result_code
+        if (typeof obj.error === 'string') return obj.error
+    }
+    return undefined
 }
 
-export function extractErrorMessage(err: any): string {
+export function extractErrorMessage(err: unknown): string {
     if (isKeeperError(err)) {
         return err.message || err.result_code || err.error || 'Unknown Keeper error'
     }
     if (err instanceof Error) return err.message
     if (typeof err === 'string') return err
-    return err?.message || err?.result_code || String(err)
+    if (typeof err === 'object' && err !== null) {
+        const obj = err as Record<string, unknown>
+        if (typeof obj.message === 'string') return obj.message
+        if (typeof obj.result_code === 'string') return obj.result_code
+    }
+    return String(err)
 }
 
 export class KeeperSdkError extends Error {
@@ -43,7 +56,7 @@ export class KeeperSdkError extends Error {
         this.keeperError = keeperError
     }
 
-    static from(err: any): KeeperSdkError {
+    static from(err: unknown): KeeperSdkError {
         if (err instanceof KeeperSdkError) return err
         if (isKeeperError(err)) {
             return new KeeperSdkError(

@@ -15,6 +15,7 @@ export class InMemoryStorage implements VaultStorage {
     private objects = new Map<string, any>()
     private store = new Map<string, Map<string, VaultStorageData>>()
     private deps = new Map<string, Dependency[]>()
+    private arrayCache = new Map<string, VaultStorageData[]>()
 
     public async getKeyBytes(keyId: string): Promise<Uint8Array | undefined> {
         return this.keys.get(keyId)
@@ -39,6 +40,7 @@ export class InMemoryStorage implements VaultStorage {
         }
         const uid = this.extractUid(item)
         this.store.get(kind)!.set(uid, item)
+        this.arrayCache.delete(kind)
     }
 
     public async get<T extends VaultStorageKind>(kind: T, uid?: string): Promise<VaultStorageResult<T>> {
@@ -53,8 +55,11 @@ export class InMemoryStorage implements VaultStorage {
     }
 
     public async delete(kind: VaultStorageKind, uid: string | Uint8Array): Promise<void> {
-        const uidStr = typeof uid === 'string' ? uid : ''
+        const uidStr = typeof uid === 'string'
+            ? uid
+            : Buffer.from(uid).toString('base64url')
         this.store.get(kind)?.delete(uidStr)
+        this.arrayCache.delete(kind)
     }
 
     public async clear(): Promise<void> {
@@ -62,6 +67,7 @@ export class InMemoryStorage implements VaultStorage {
         this.keys.clear()
         this.objects.clear()
         this.deps.clear()
+        this.arrayCache.clear()
     }
 
     public async getDependencies(uid: string): Promise<Dependency[] | undefined> {
@@ -74,8 +80,12 @@ export class InMemoryStorage implements VaultStorage {
                 this.deps.set(parentUid, [])
             }
             const existing = this.deps.get(parentUid)!
+            const seen = new Set(existing.map(d => d.uid))
             for (const child of children) {
-                existing.push(child)
+                if (!seen.has(child.uid)) {
+                    existing.push(child)
+                    seen.add(child.uid)
+                }
             }
         }
     }
@@ -98,13 +108,27 @@ export class InMemoryStorage implements VaultStorage {
     }
 
     public getAll<T extends VaultStorageData>(kind: VaultStorageKind): T[] {
+        const cached = this.arrayCache.get(kind)
+        if (cached) return cached as T[]
+
         const kindMap = this.store.get(kind)
         if (!kindMap) return []
-        return Array.from(kindMap.values()) as T[]
+
+        const arr = Array.from(kindMap.values())
+        this.arrayCache.set(kind, arr)
+        return arr as T[]
     }
 
     public getRecords(): DRecord[] {
         return this.getAll<DRecord>('record')
+    }
+
+    public getByUid<T extends VaultStorageData>(kind: VaultStorageKind, uid: string): T | undefined {
+        return this.store.get(kind)?.get(uid) as T | undefined
+    }
+
+    public getCount(kind: VaultStorageKind): number {
+        return this.store.get(kind)?.size ?? 0
     }
 
     private extractUid(item: VaultStorageData): string {

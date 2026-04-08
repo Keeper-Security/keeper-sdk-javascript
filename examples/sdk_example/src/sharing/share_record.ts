@@ -1,4 +1,5 @@
-import { login, cleanup, prompt, getRecordTitle, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, suppressLogs, prompt, getRecordTitle, logger } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
 
 async function shareRecordExample() {
     const vault = await login()
@@ -35,12 +36,20 @@ async function shareRecordExample() {
         logger.info(`  Can Edit: ${canEdit}`)
         logger.info(`  Can Share: ${canShare}`)
 
-        const result = await vault.shareRecord({
-            recordUid: record.uid,
-            email,
-            canEdit,
-            canShare,
-        })
+        let result
+        {
+            const restore = suppressLogs()
+            try {
+                result = await vault.shareRecord({
+                    recordUid: record.uid,
+                    email,
+                    canEdit,
+                    canShare,
+                })
+            } finally {
+                restore()
+            }
+        }
 
         if (result.success) {
             logger.info(`\nRecord "${title}" shared with ${email} successfully.`)
@@ -50,13 +59,8 @@ async function shareRecordExample() {
             logger.error(`Status: ${result.status}`)
         }
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-shareRecordExample()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(shareRecordExample)

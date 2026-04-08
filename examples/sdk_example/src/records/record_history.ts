@@ -1,5 +1,7 @@
-import { login, cleanup, prompt, getRecordTitle, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, prompt, getRecordTitle, logger } from 'keeper-sdk'
 import type { HistoryEntry } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
+import { padRight, formatFieldValue } from '../utils/format'
 
 async function recordHistory() {
     const vault = await login()
@@ -66,7 +68,7 @@ async function recordHistory() {
 
         displayRevision(rev, `V.${revNum}`)
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
@@ -87,18 +89,7 @@ function displayRevision(entry: HistoryEntry, label: string) {
     for (const field of fields) {
         const fieldLabel = field.label || field.type
         const values = Array.isArray(field.value) ? field.value : [field.value]
-        let displayVal: string
-
-        if (field.type === 'password') {
-            displayVal = values[0] ? '*'.repeat(String(values[0]).length) : '(empty)'
-        } else {
-            displayVal = values
-                .map((v: any) => (typeof v === 'string' ? v : JSON.stringify(v)))
-                .filter(Boolean)
-                .join(', ') || '(empty)'
-        }
-
-        logger.info(`  ${fieldLabel}: ${displayVal}`)
+        logger.info(`  ${fieldLabel}: ${formatFieldValue({ type: field.type, value: values })}`)
     }
 
     if (entry.data.notes) {
@@ -113,13 +104,4 @@ function displayRevision(entry: HistoryEntry, label: string) {
     logger.info('-'.repeat(50))
 }
 
-function padRight(str: string, len: number): string {
-    return str.length >= len ? str.substring(0, len) : str + ' '.repeat(len - str.length)
-}
-
-recordHistory()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(recordHistory)

@@ -1,17 +1,22 @@
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import { login, cleanup, prompt, getRecordTitle, getRecordPassword, logger, extractErrorMessage } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
+
+const CLIPBOARD_TIMEOUT_MS = 3000
 
 function copyToClipboard(text: string): boolean {
+    const opts = { input: text, timeout: CLIPBOARD_TIMEOUT_MS }
     try {
         if (process.platform === 'darwin') {
-            execSync('pbcopy', { input: text })
+            execFileSync('pbcopy', [], opts)
         } else if (process.platform === 'win32') {
-            execSync('clip', { input: text })
+            execFileSync('clip', [], opts)
         } else {
-            execSync('xclip -selection clipboard', { input: text })
+            execFileSync('xclip', ['-selection', 'clipboard'], opts)
         }
         return true
-    } catch {
+    } catch (err) {
+        logger.debug('Clipboard copy failed:', extractErrorMessage(err))
         return false
     }
 }
@@ -45,13 +50,8 @@ async function findPassword() {
             logger.error('Failed to copy to clipboard.')
         }
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-findPassword()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(findPassword)

@@ -28,6 +28,7 @@ import type {
     BaseRequest,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError } from '../utils/errors'
+import { logger } from '../utils/Logger'
 import { RecordVersion } from './RecordUtils'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 
@@ -57,7 +58,6 @@ enum CommandName {
 const MIN_RECORD_PAD_BYTES = 384
 const PAD_BLOCK_SIZE = 16
 
-// Pads JSON to minimum 384 bytes, rounded up to nearest multiple of 16.
 function getPaddedJsonBytes(data: Record<string, any>): Uint8Array {
     const json = JSON.stringify(data)
     const paddedLength = Math.ceil(Math.max(MIN_RECORD_PAD_BYTES, json.length) / PAD_BLOCK_SIZE) * PAD_BLOCK_SIZE
@@ -120,7 +120,6 @@ export async function addRecord(
     return addTypedRecord(auth, input.data, input.folderUid)
 }
 
-// v2 PasswordRecord via JSON command API, record key encrypted with AES-CBC.
 async function addPasswordRecord(
     auth: Auth,
     data: PasswordRecordData,
@@ -175,7 +174,6 @@ async function addPasswordRecord(
     }
 }
 
-// v3 TypedRecord via protobuf REST API, record key encrypted with AES-GCM.
 async function addTypedRecord(
     auth: Auth,
     data: TypedRecordData,
@@ -280,7 +278,6 @@ export async function updateRecord(
     }
 }
 
-// Uses the v2 pre_delete → delete two-step flow.
 export async function deleteRecord(
     auth: Auth,
     recordUid: string
@@ -354,7 +351,6 @@ type RecordHistoryResponse = KeeperResponse & {
     history?: RecordHistoryResponseEntry[]
 }
 
-// Decrypts each revision using v2 AES-CBC or v3 AES-GCM based on version.
 export async function getRecordHistory(
     auth: Auth,
     recordUid: string,
@@ -397,7 +393,8 @@ export async function getRecordHistory(
                 }
 
                 decryptedData = JSON.parse(platform.bytesToString(decrypted))
-            } catch {
+            } catch (err) {
+                logger.debug(`Failed to decrypt history revision ${entry.revision}:`, extractErrorMessage(err))
                 decryptedData = null
             }
         }
@@ -445,18 +442,15 @@ function resolveFolder(uid: string, storage: InMemoryStorage): FolderInfo {
         return { uid: '', folderType: FolderType.UserFolder, scopeUid: '' }
     }
 
-    const userFolders = storage.getAll<DUserFolder>(FolderType.UserFolder)
-    if (userFolders.find((f) => f.uid === uid)) {
+    if (storage.getByUid<DUserFolder>(FolderType.UserFolder, uid)) {
         return { uid, folderType: FolderType.UserFolder, scopeUid: '' }
     }
 
-    const sharedFolders = storage.getAll<DSharedFolder>(FolderType.SharedFolder)
-    if (sharedFolders.find((f) => f.uid === uid)) {
+    if (storage.getByUid<DSharedFolder>(FolderType.SharedFolder, uid)) {
         return { uid, folderType: FolderType.SharedFolder, scopeUid: uid }
     }
 
-    const sfFolders = storage.getAll<DSharedFolderFolder>(FolderType.SharedFolderFolder)
-    const sfFolder = sfFolders.find((f) => f.uid === uid)
+    const sfFolder = storage.getByUid<DSharedFolderFolder>(FolderType.SharedFolderFolder, uid)
     if (sfFolder) {
         return { uid, folderType: FolderType.SharedFolderFolder, scopeUid: sfFolder.sharedFolderUid }
     }
@@ -477,7 +471,6 @@ function findRecordSourceFolder(
     return { folderUid: '', folderType: FolderType.UserFolder }
 }
 
-// When moving across folder scopes, the record key is re-encrypted with the destination folder's key.
 export async function moveRecord(
     auth: Auth,
     storage: InMemoryStorage,
@@ -530,7 +523,7 @@ export async function moveRecord(
             return { recordUid, success: false, message: 'Destination folder key not found' }
         }
 
-        const record = storage.getAll<DRecord>(ObjectType.Record).find((r) => r.uid === recordUid)
+        const record = storage.getByUid<DRecord>(ObjectType.Record, recordUid)
         const version = record?.version || RecordVersion.Typed
 
         let encryptedKey: Uint8Array

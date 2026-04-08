@@ -1,4 +1,5 @@
-import { login, cleanup, prompt, getRecordTitle, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, prompt, getRecordTitle, logger } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
 
 async function deleteRecord() {
     const vault = await login()
@@ -17,9 +18,9 @@ async function deleteRecord() {
         }
 
         const title = getRecordTitle(record)
-        const confirm = await prompt(`\nAre you sure you want to delete "${title}" (${record.uid})? [y/N]: `)
+        const answer = await prompt(`\nAre you sure you want to delete "${title}" (${record.uid})? [y/N]: `)
 
-        if (confirm.toLowerCase() !== 'y') {
+        if (answer.toLowerCase() !== 'y') {
             logger.info('Delete cancelled.')
             return
         }
@@ -33,13 +34,8 @@ async function deleteRecord() {
             logger.error(`Failed to delete record: ${result.message || 'Unknown error'}`)
         }
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-deleteRecord()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(deleteRecord)

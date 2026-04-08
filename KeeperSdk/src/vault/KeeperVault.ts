@@ -9,7 +9,7 @@ import {
     DUserFolder,
     Authentication,
 } from '@keeper-security/keeperapi'
-import type { SyncResult, SyncLogFormat, VaultStorage } from '@keeper-security/keeperapi'
+import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
 import { ConsoleAuthUI } from '../auth/ConsoleAuthUI'
@@ -45,9 +45,8 @@ import type {
     RemoveShareInput,
     RemoveShareResult,
 } from '../sharing/Sharing'
-import { logger, LogLevel } from '../utils/Logger'
-import type { Logger } from '../utils/Logger'
-import { KeeperSdkError } from '../utils/errors'
+import { Logger, LogLevel } from '../utils/Logger'
+import { KeeperSdkError, extractErrorMessage } from '../utils/errors'
 import { SdkDefaults } from '../utils/constants'
 
 enum VaultStatus {
@@ -62,6 +61,10 @@ export type KeeperVaultConfig = {
     useConsoleAuth?: boolean
     logFormat?: SyncLogFormat
     logLevel?: LogLevel
+    autoSync?: boolean
+    storage?: InMemoryStorage
+    sessionStorage?: SessionManager
+    authUI?: AuthUI3
 }
 
 export type VaultSummary = {
@@ -75,45 +78,53 @@ export class KeeperVault {
     private auth: Auth | null = null
     private readonly storage: InMemoryStorage
     private readonly sessionManager: SessionManager
-    private readonly authUI: ConsoleAuthUI
-    private readonly config: Required<KeeperVaultConfig>
+    private readonly authUI: AuthUI3
+    private readonly config: Required<Omit<KeeperVaultConfig, 'storage' | 'sessionStorage' | 'authUI'>>
     private readonly log: Logger
     private synced = false
+    private batchDepth = 0
+    private _reportGenerator: ShareReportGenerator | null = null
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
             host: config?.host || KeeperEnvironment.Prod,
             clientVersion: config?.clientVersion || SdkDefaults.CLIENT_VERSION,
-            configDir: config?.configDir || '',
+            configDir: config?.configDir ?? '',
             useConsoleAuth: config?.useConsoleAuth !== false,
             logFormat: config?.logFormat || SdkDefaults.LOG_FORMAT,
             logLevel: config?.logLevel ?? LogLevel.INFO,
+            autoSync: config?.autoSync !== false,
         }
 
-        if (config?.logLevel !== undefined) {
-            logger.setLevel(config.logLevel)
-        }
-
-        this.log = logger
-        this.storage = new InMemoryStorage()
-        this.sessionManager = new SessionManager(this.config.configDir || undefined)
-        this.authUI = new ConsoleAuthUI()
+        this.log = new Logger(this.config.logLevel)
+        this.storage = config?.storage || new InMemoryStorage()
+        this.sessionManager = config?.sessionStorage || new SessionManager(this.config.configDir || undefined)
+        this.authUI = config?.authUI || new ConsoleAuthUI()
     }
 
     private createAuth(options?: { useSessionResumption?: boolean }): Auth {
         const host = this.config.host
-        const deviceConfig = this.sessionManager.getDeviceConfig(host)
-
-        if (!deviceConfig.deviceName) {
-            deviceConfig.deviceName = SdkDefaults.DEVICE_NAME
+        const baseDeviceConfig = this.sessionManager.getDeviceConfig(host)
+        const deviceConfig = {
+            ...baseDeviceConfig,
+            deviceName: baseDeviceConfig.deviceName || SdkDefaults.DEVICE_NAME,
         }
+
+        const sessionStorage: SessionStorage = options?.useSessionResumption === false
+            ? {
+                getCloneCode: async () => null,
+                saveCloneCode: (h, u, c) => this.sessionManager.saveCloneCode(h, u, c),
+                getSessionParameters: () => this.sessionManager.getSessionParameters(),
+                saveSessionParameters: (p) => this.sessionManager.saveSessionParameters(p),
+            }
+            : this.sessionManager
 
         return new Auth({
             host,
             clientVersion: this.config.clientVersion,
             deviceConfig,
             authUI3: this.config.useConsoleAuth ? this.authUI : undefined,
-            sessionStorage: this.sessionManager,
+            sessionStorage,
             onDeviceConfig: this.sessionManager.createOnDeviceConfig(host),
             useSessionResumption: options?.useSessionResumption,
         })
@@ -126,9 +137,8 @@ export class KeeperVault {
         return this.auth
     }
 
-    // Handles device registration, 2FA, and device approval via console prompts when useConsoleAuth is enabled.
     public async login(username: string, password: string): Promise<void> {
-        this.auth = this.createAuth()
+        this.auth = this.createAuth({ useSessionResumption: false })
         this.sessionManager.setLastUsername(username)
 
         await this.auth.loginV3({
@@ -142,7 +152,6 @@ export class KeeperVault {
         this.log.info(`Logged in as ${username}`)
     }
 
-    // Device must already be registered and approved for this host via a prior normal login.
     public async loginWithSessionToken(username: string, sessionToken: string): Promise<void> {
         const deviceConfig = this.sessionManager.getDeviceConfig(this.config.host)
 
@@ -179,17 +188,46 @@ export class KeeperVault {
     }
 
     public async resumeSession(): Promise<void> {
+        const username = this.sessionManager.lastUsername
+        if (!username) {
+            throw new KeeperSdkError(
+                'No previous login found. Perform a normal login first.',
+                'no_previous_login'
+            )
+        }
+
+        const deviceConfig = this.sessionManager.getDeviceConfig(this.config.host)
+        if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {
+            throw new KeeperSdkError(
+                'Device is not registered for this host. Perform a normal login first.',
+                'device_not_registered'
+            )
+        }
+
+        const cloneCode = await this.sessionManager.getCloneCode(this.config.host, username)
+        if (!cloneCode) {
+            throw new KeeperSdkError(
+                'No clone code found. Persistent login not enabled or clone code expired. Perform a normal login.',
+                'no_clone_code'
+            )
+        }
+
         this.auth = this.createAuth({ useSessionResumption: true })
-        const username = this.sessionManager.lastUsername || ''
 
         await this.auth.loginV3({
-            username,
             loginType: Authentication.LoginType.NORMAL,
             resumeSessionOnly: true,
         })
 
+        if (!this.auth.sessionToken) {
+            throw new KeeperSdkError(
+                'Persistent login failed — clone code may be expired or persistent login not enabled. Perform a normal login.',
+                'persistent_login_failed'
+            )
+        }
+
         this.synced = false
-        this.log.info(`Session resumed for ${username}`)
+        this.log.info(`Session resumed for ${username} (persistent login)`)
     }
 
     public async sync(): Promise<SyncResult> {
@@ -202,7 +240,32 @@ export class KeeperVault {
         })
 
         this.synced = true
+        this._reportGenerator = null
         return result
+    }
+
+    public async batch(fn: () => Promise<void>): Promise<void> {
+        this.batchDepth++
+        try {
+            await fn()
+        } finally {
+            this.batchDepth--
+            if (this.batchDepth === 0 && this.config.autoSync) {
+                await this.sync()
+            }
+        }
+    }
+
+    private async syncIfNeeded(): Promise<void> {
+        if (this.batchDepth > 0) {
+            this.synced = false
+            return
+        }
+        if (this.config.autoSync) {
+            await this.sync()
+        } else {
+            this.synced = false
+        }
     }
 
     public getRecords(): DRecord[] {
@@ -210,17 +273,15 @@ export class KeeperVault {
     }
 
     public getRecordByUid(uid: string): DRecord | undefined {
-        return this.getRecords().find((r) => r.uid === uid)
+        return this.storage.getByUid<DRecord>('record', uid)
     }
 
-    // Tries exact UID match first, then case-insensitive title match.
     public findRecord(uidOrTitle: string): DRecord | undefined {
-        const records = this.getRecords()
-        const byUid = records.find((r) => r.uid === uidOrTitle)
+        const byUid = this.getRecordByUid(uidOrTitle)
         if (byUid) return byUid
 
         const needle = uidOrTitle.toLowerCase()
-        return records.find((r) => getRecordTitle(r).toLowerCase() === needle)
+        return this.getRecords().find((r) => getRecordTitle(r).toLowerCase() === needle)
     }
 
     public findRecords(criteria: string): DRecord[] {
@@ -240,7 +301,7 @@ export class KeeperVault {
     }
 
     public getRecordMetadataByUid(uid: string): DRecordMetadata | undefined {
-        return this.getRecordMetadata().find((m) => m.uid === uid)
+        return this.storage.getByUid<DRecordMetadata>('metadata', uid)
     }
 
     public getSharedFolders(): DSharedFolder[] {
@@ -257,10 +318,10 @@ export class KeeperVault {
 
     public getSummary(): VaultSummary {
         return {
-            recordCount: this.getRecords().length,
-            sharedFolderCount: this.getSharedFolders().length,
-            teamCount: this.getTeams().length,
-            folderCount: this.getUserFolders().length,
+            recordCount: this.storage.getCount('record'),
+            sharedFolderCount: this.storage.getCount('shared_folder'),
+            teamCount: this.storage.getCount('team'),
+            folderCount: this.storage.getCount('user_folder'),
         }
     }
 
@@ -279,7 +340,7 @@ export class KeeperVault {
     public async addRecord(input: NewRecordInput): Promise<AddRecordResult> {
         const auth = this.getAuthOrThrow()
         const result = await addRecordOp(auth, input)
-        if (result.success) await this.sync()
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 
@@ -297,21 +358,21 @@ export class KeeperVault {
         }
 
         const result = await updateRecordOp(auth, recordUid, data, record.revision, keyBytes)
-        if (result.success) await this.sync()
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 
     public async deleteRecord(recordUid: string): Promise<DeleteRecordResult> {
         const auth = this.getAuthOrThrow()
         const result = await deleteRecordOp(auth, recordUid)
-        if (result.success) await this.sync()
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 
     public async moveRecord(input: MoveRecordInput): Promise<MoveRecordResult> {
         const auth = this.getAuthOrThrow()
         const result = await moveRecordOp(auth, this.storage, input)
-        if (result.success) await this.sync()
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 
@@ -321,15 +382,23 @@ export class KeeperVault {
     }
 
     public getSharedRecordsReport(): ShareReportEntry[] {
-        return this.createShareReportGenerator().generateRecordsReport()
+        return this.getOrCreateReportGenerator().generateRecordsReport()
     }
 
     public getSharedFoldersReport(): SharedFolderReportEntry[] {
-        return this.createShareReportGenerator().generateSharedFoldersReport()
+        return this.getOrCreateReportGenerator().generateSharedFoldersReport()
     }
 
     public getShareSummaryReport(): ShareSummaryEntry[] {
-        return this.createShareReportGenerator().generateSummaryReport()
+        return this.getOrCreateReportGenerator().generateSummaryReport()
+    }
+
+    private getOrCreateReportGenerator(): ShareReportGenerator {
+        if (!this._reportGenerator) {
+            const auth = this.getAuthOrThrow()
+            this._reportGenerator = new ShareReportGenerator(this.storage, auth.username || '')
+        }
+        return this._reportGenerator
     }
 
     public async shareRecord(input: ShareRecordInput): Promise<ShareRecordResult> {
@@ -359,14 +428,14 @@ export class KeeperVault {
         }
 
         const result = await shareRecordOp(auth, keyBytes, { ...input, recordUid: record.uid })
-        if (result.success) await this.sync()
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 
     public async removeRecordShare(input: RemoveShareInput): Promise<RemoveShareResult> {
         const auth = this.getAuthOrThrow()
         const result = await removeRecordShareOp(auth, input)
-        if (result.success) await this.sync()
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 
@@ -389,14 +458,28 @@ export class KeeperVault {
         return this.getAuthOrThrow()
     }
 
-    public async logout(): Promise<void> {
+    public disconnect(): void {
         if (this.auth) {
-            try { this.auth.disconnect() } catch {}
-            try { await this.auth.logout() } catch {}
+            try { this.auth.disconnect() } catch (err) {
+                this.log.debug('disconnect error:', extractErrorMessage(err))
+            }
             this.auth = null
         }
         this.synced = false
+    }
+
+    public async logout(): Promise<void> {
+        if (this.auth) {
+            try { await this.auth.logout() } catch (err) {
+                this.log.debug('logout error:', extractErrorMessage(err))
+            }
+        }
+        this.disconnect()
         this.log.info('Logged out.')
+    }
+
+    public get host(): string {
+        return this.config.host
     }
 
     public get isLoggedIn(): boolean {

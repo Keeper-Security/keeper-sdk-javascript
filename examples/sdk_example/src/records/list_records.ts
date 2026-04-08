@@ -1,4 +1,5 @@
-import { login, cleanup, formatRecord, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, formatRecord, logger } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
 
 async function listRecords() {
     const vault = await login()
@@ -17,13 +18,8 @@ async function listRecords() {
         }
         logger.info('-'.repeat(50))
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-listRecords()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(listRecords)

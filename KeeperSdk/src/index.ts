@@ -1,5 +1,6 @@
 export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
-export { SessionManager } from './auth/SessionManager'
+export { SessionManager, FileConfigLoader } from './auth/SessionManager'
+export type { KeeperJsonConfig, ConfigLoader } from './auth/SessionManager'
 export {
     login,
     cleanup,
@@ -22,11 +23,13 @@ export {
     getRecordTitle,
     getRecordType,
     getRecordFields,
+    getRecordSummary,
     getRecordPassword,
     getRecordLogin,
     getRecordUrl,
     RecordVersion,
 } from './records/RecordUtils'
+export type { RecordSummary } from './records/RecordUtils'
 export { addRecord, updateRecord, deleteRecord, getRecordHistory, moveRecord } from './records/RecordOperations'
 export type {
     PasswordRecordData,

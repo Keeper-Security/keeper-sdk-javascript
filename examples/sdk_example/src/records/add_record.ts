@@ -1,4 +1,5 @@
-import { login, cleanup, suppressLogs, formatRecord, getRecordTitle, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, suppressLogs, formatRecord, getRecordTitle, logger } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
 
 async function addRecord() {
     const vault = await login()
@@ -7,19 +8,27 @@ async function addRecord() {
         logger.info('Adding new record to vault...')
         logger.info('-'.repeat(50))
 
-        const result = await vault.addRecord({
-            version: 3,
-            data: {
-                type: 'login',
-                title: 'Example SDK Record',
-                fields: [
-                    { type: 'login', value: ['userSDK@example.com'] },
-                    { type: 'password', value: ['SecureSDKPassword123!'] },
-                    { type: 'url', value: ['https://SDKexample.com'] },
-                ],
-                notes: 'This is an example record created using the Keeper SDK',
-            },
-        })
+        let result
+        {
+            const restore = suppressLogs()
+            try {
+                result = await vault.addRecord({
+                    version: 3,
+                    data: {
+                        type: 'login',
+                        title: 'Example SDK Record',
+                        fields: [
+                            { type: 'login', value: ['userSDK@example.com'] },
+                            { type: 'password', value: ['SecureSDKPassword123!'] },
+                            { type: 'url', value: ['https://SDKexample.com'] },
+                        ],
+                        notes: 'This is an example record created using the Keeper SDK',
+                    },
+                })
+            } finally {
+                restore()
+            }
+        }
 
         if (result.success) {
             logger.info('Successfully added record!')
@@ -42,13 +51,8 @@ async function addRecord() {
             logger.error(`Error adding record: ${result.status}`)
         }
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-addRecord()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(addRecord)

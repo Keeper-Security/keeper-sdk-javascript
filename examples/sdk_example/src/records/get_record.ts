@@ -9,8 +9,9 @@ import {
     getRecordPassword,
     getRecordUrl,
     logger,
-    extractErrorMessage,
 } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
+import { formatFieldValue, LEGACY_RECORD_MAX_VERSION } from '../utils/format'
 
 async function getRecord() {
     const vault = await login()
@@ -23,11 +24,11 @@ async function getRecord() {
             return
         }
 
-        let searchInput = await prompt('Enter record UID or title: ')
+        const searchInput = await prompt('Enter record UID or title: ')
 
         if (!searchInput) {
-            searchInput = records[0].uid
-            logger.info(`No input provided. Using first record: ${searchInput}`)
+            logger.info('No input provided. Exiting.')
+            return
         }
 
         const record = vault.findRecord(searchInput)
@@ -50,77 +51,68 @@ async function getRecord() {
         logger.info(`  Revision:   ${record.revision}`)
         logger.info(`  Shared:     ${record.shared}`)
 
-        if (version <= 2) {
-            logger.info(`  Type:       password (legacy v${version})`)
-            const loginVal = getRecordLogin(record)
-            const password = getRecordPassword(record)
-            const url = getRecordUrl(record)
-
-            if (loginVal) logger.info(`  Login:      ${loginVal}`)
-            if (password) logger.info(`  Password:   ${'*'.repeat(password.length)}`)
-            if (url) logger.info(`  URL:        ${url}`)
-
-            const data = record.data
-            if (data?.notes) logger.info(`  Notes:      ${data.notes}`)
-
-            if (data?.custom && Array.isArray(data.custom)) {
-                logger.info('\n  Custom Fields:')
-                for (const cf of data.custom) {
-                    logger.info(`    ${cf.name || cf.type || 'custom'}: ${cf.value}`)
-                }
-            }
+        if (version <= LEGACY_RECORD_MAX_VERSION) {
+            displayLegacyRecord(record)
         } else {
-            logger.info(`  Type:       ${type} (v${version})`)
-
-            const fields = getRecordFields(record)
-            if (fields.length > 0) {
-                logger.info('\n  Fields:')
-                for (const field of fields) {
-                    const label = field.label || field.type
-                    let displayValue: string
-
-                    if (field.type === 'password') {
-                        const pw = field.value[0]
-                        displayValue = pw ? '*'.repeat(String(pw).length) : '(empty)'
-                    } else if (field.type === 'fileRef') {
-                        displayValue = `[${field.value.length} file(s)]`
-                    } else {
-                        displayValue = field.value
-                            .map((v: any) => {
-                                if (typeof v === 'string') return v
-                                if (v && typeof v === 'object') return JSON.stringify(v)
-                                return String(v)
-                            })
-                            .filter(Boolean)
-                            .join(', ') || '(empty)'
-                    }
-
-                    logger.info(`    ${label}: ${displayValue}`)
-                }
-            }
-
-            if (record.data?.notes) {
-                logger.info(`\n  Notes:      ${record.data.notes}`)
-            }
+            displayTypedRecord(record, type)
         }
 
-        const meta = vault.getRecordMetadataByUid(record.uid)
-        if (meta) {
-            logger.info('\n  Permissions:')
-            logger.info(`    Owner:     ${meta.owner}`)
-            logger.info(`    Can Share: ${meta.canShare}`)
-            logger.info(`    Can Edit:  ${meta.canEdit}`)
-        }
-
+        displayMetadata(vault, record.uid)
         logger.info('-'.repeat(50))
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-getRecord()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+function displayLegacyRecord(record: { data?: Record<string, unknown> }): void {
+    const version = (record as { version: number }).version
+    logger.info(`  Type:       password (legacy v${version})`)
+    const loginVal = getRecordLogin(record as Parameters<typeof getRecordLogin>[0])
+    const password = getRecordPassword(record as Parameters<typeof getRecordPassword>[0])
+    const url = getRecordUrl(record as Parameters<typeof getRecordUrl>[0])
+
+    if (loginVal) logger.info(`  Login:      ${loginVal}`)
+    if (password) logger.info(`  Password:   ${'*'.repeat(password.length)}`)
+    if (url) logger.info(`  URL:        ${url}`)
+
+    const data = record.data as Record<string, unknown> | undefined
+    if (data?.notes) logger.info(`  Notes:      ${data.notes}`)
+
+    if (data?.custom && Array.isArray(data.custom)) {
+        logger.info('\n  Custom Fields:')
+        for (const cf of data.custom) {
+            const entry = cf as { name?: string; type?: string; value?: string }
+            logger.info(`    ${entry.name || entry.type || 'custom'}: ${entry.value}`)
+        }
+    }
+}
+
+function displayTypedRecord(record: Parameters<typeof getRecordFields>[0], type: string): void {
+    logger.info(`  Type:       ${type} (v${(record as { version: number }).version})`)
+
+    const fields = getRecordFields(record)
+    if (fields.length > 0) {
+        logger.info('\n  Fields:')
+        for (const field of fields) {
+            const label = field.label || field.type
+            logger.info(`    ${label}: ${formatFieldValue(field)}`)
+        }
+    }
+
+    const data = (record as { data?: { notes?: string } }).data
+    if (data?.notes) {
+        logger.info(`\n  Notes:      ${data.notes}`)
+    }
+}
+
+function displayMetadata(vault: { getRecordMetadataByUid: (uid: string) => { owner: boolean; canShare: boolean; canEdit: boolean } | undefined }, uid: string): void {
+    const meta = vault.getRecordMetadataByUid(uid)
+    if (meta) {
+        logger.info('\n  Permissions:')
+        logger.info(`    Owner:     ${meta.owner}`)
+        logger.info(`    Can Share: ${meta.canShare}`)
+        logger.info(`    Can Edit:  ${meta.canEdit}`)
+    }
+}
+
+runExample(getRecord)

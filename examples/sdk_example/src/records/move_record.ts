@@ -1,4 +1,5 @@
-import { login, cleanup, prompt, getRecordTitle, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, suppressLogs, prompt, getRecordTitle, logger } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
 
 async function moveRecord() {
     const vault = await login()
@@ -38,10 +39,18 @@ async function moveRecord() {
 
         logger.info(`\nMoving "${title}" to ${dstFolderUid || '(root)'}...`)
 
-        const result = await vault.moveRecord({
-            recordUid: record.uid,
-            dstFolderUid: dstFolderUid || '',
-        })
+        let result
+        {
+            const restore = suppressLogs()
+            try {
+                result = await vault.moveRecord({
+                    recordUid: record.uid,
+                    dstFolderUid: dstFolderUid || '',
+                })
+            } finally {
+                restore()
+            }
+        }
 
         if (result.success) {
             logger.info(`Record "${title}" moved successfully.`)
@@ -49,13 +58,8 @@ async function moveRecord() {
             logger.error(`Failed to move record: ${result.message}`)
         }
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-moveRecord()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(moveRecord)

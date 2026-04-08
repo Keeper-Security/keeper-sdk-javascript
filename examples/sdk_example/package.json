@@ -14,7 +14,6 @@
         "records:find-password": "ts-node src/records/find_password.ts",
         "records:move": "ts-node src/records/move_record.ts",
         "sharing:share-record": "ts-node src/sharing/share_record.ts",
-        "sharing:report": "ts-node src/sharing/share_report.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

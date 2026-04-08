@@ -1,14 +1,21 @@
 import {
     login,
     cleanup,
+    suppressLogs,
     prompt,
     getRecordTitle,
     getRecordType,
     getRecordFields,
     logger,
-    extractErrorMessage,
 } from 'keeper-sdk'
 import type { TypedRecordData, RecordFieldInput } from 'keeper-sdk'
+import { runExample } from '../utils/runner'
+
+const LEGACY_TYPE_MAPPING: Record<string, string> = { legacy: 'login' }
+
+function normalizeRecordType(type: string): string {
+    return LEGACY_TYPE_MAPPING[type] || type
+}
 
 async function updateRecord() {
     const vault = await login()
@@ -57,13 +64,21 @@ async function updateRecord() {
         }
 
         const updateData: TypedRecordData = {
-            type: currentType === 'legacy' ? 'login' : currentType,
+            type: normalizeRecordType(currentType),
             title: newTitle,
             fields: newFields,
         }
 
         logger.info('\nUpdating record...')
-        const result = await vault.updateRecord(record.uid, updateData)
+        let result
+        {
+            const restore = suppressLogs()
+            try {
+                result = await vault.updateRecord(record.uid, updateData)
+            } finally {
+                restore()
+            }
+        }
 
         if (result.success) {
             logger.info('Record updated successfully!')
@@ -73,13 +88,8 @@ async function updateRecord() {
             logger.error(`Failed to update record: ${result.status}`)
         }
     } finally {
-        await cleanup(vault)
+        cleanup(vault)
     }
 }
 
-updateRecord()
-    .then(() => process.exit(0))
-    .catch((err) => {
-        logger.error('Error:', extractErrorMessage(err))
-        process.exit(1)
-    })
+runExample(updateRecord)

@@ -19,14 +19,13 @@ type RecordField = {
     label?: string
 }
 
-// Handles both legacy (v1/v2) and modern (v3+) record formats.
 export function getRecordTitle(record: DRecord): string {
     if (!record.data) return '(no data)'
     if (typeof record.data === 'string') {
         try {
             const parsed = JSON.parse(record.data)
             return parsed.title || parsed.name || '(untitled)'
-        } catch {
+        } catch (_err) {
             return '(parse error)'
         }
     }
@@ -39,7 +38,6 @@ export function getRecordType(record: DRecord): string {
     return record.data.type || 'unknown'
 }
 
-// Returns an empty array for legacy records.
 export function getRecordFields(record: DRecord): RecordField[] {
     if (!record.data) return []
 
@@ -75,42 +73,55 @@ export function getRecordFields(record: DRecord): RecordField[] {
     return fields
 }
 
-export function getRecordPassword(record: DRecord): string | undefined {
-    if (record.version <= RecordVersion.Legacy) {
-        return record.data?.secret2
-    }
+export type RecordSummary = {
+    login?: string
+    password?: string
+    url?: string
+    fields: RecordField[]
+}
+
+export function getRecordSummary(record: DRecord): RecordSummary {
     const fields = getRecordFields(record)
-    const pwField = fields.find((f) => f.type === FieldType.Password)
-    if (pwField && pwField.value.length > 0) {
-        return String(pwField.value[0])
+    if (record.version <= RecordVersion.Legacy) {
+        return {
+            login: record.data?.secret1,
+            password: record.data?.secret2,
+            url: record.data?.link,
+            fields,
+        }
     }
-    return undefined
+
+    let login: string | undefined
+    let password: string | undefined
+    let url: string | undefined
+
+    for (const f of fields) {
+        if (!login && f.type === FieldType.Login && f.value.length > 0) {
+            login = String(f.value[0])
+        } else if (!password && f.type === FieldType.Password && f.value.length > 0) {
+            password = String(f.value[0])
+        } else if (!url && f.type === FieldType.Url && f.value.length > 0) {
+            const val = f.value[0]
+            url = typeof val === 'string' ? val : val?.value || val?.url
+        }
+    }
+
+    return { login, password, url, fields }
+}
+
+export function getRecordPassword(record: DRecord): string | undefined {
+    return getRecordSummary(record).password
 }
 
 export function getRecordLogin(record: DRecord): string | undefined {
-    if (record.version <= RecordVersion.Legacy) {
-        return record.data?.secret1
-    }
-    const fields = getRecordFields(record)
-    const loginField = fields.find((f) => f.type === FieldType.Login)
-    if (loginField && loginField.value.length > 0) {
-        return String(loginField.value[0])
-    }
-    return undefined
+    return getRecordSummary(record).login
 }
 
 export function getRecordUrl(record: DRecord): string | undefined {
-    if (record.version <= RecordVersion.Legacy) {
-        return record.data?.link
-    }
-    const fields = getRecordFields(record)
-    const urlField = fields.find((f) => f.type === FieldType.Url)
-    if (urlField && urlField.value.length > 0) {
-        const val = urlField.value[0]
-        return typeof val === 'string' ? val : val?.value || val?.url
-    }
-    return undefined
+    return getRecordSummary(record).url
 }
+
+const wordCache = new WeakMap<DRecord, string[]>()
 
 export function searchRecords(records: DRecord[], criteria: string): DRecord[] {
     if (!criteria.trim()) return records
@@ -118,8 +129,12 @@ export function searchRecords(records: DRecord[], criteria: string): DRecord[] {
     const searchWords = criteria.toLowerCase().split(/\s+/)
 
     return records.filter((record) => {
-        const words = collectRecordWords(record)
-        return searchWords.every((sw) => words.some((w) => w.includes(sw)))
+        let words = wordCache.get(record)
+        if (!words) {
+            words = collectRecordWords(record)
+            wordCache.set(record, words)
+        }
+        return searchWords.every((sw) => words!.some((w) => w.includes(sw)))
     })
 }
 
@@ -150,6 +165,7 @@ function collectRecordWords(record: DRecord): string[] {
 export function formatRecord(record: DRecord, showDetails = false): string {
     const title = getRecordTitle(record)
     const type = getRecordType(record)
+    const summary = getRecordSummary(record)
     const lines: string[] = []
 
     lines.push('-'.repeat(50))
@@ -157,15 +173,11 @@ export function formatRecord(record: DRecord, showDetails = false): string {
     lines.push(`Record UID: ${record.uid}`)
     lines.push(`Record Type: ${type}`)
 
-    const login = getRecordLogin(record)
-    const url = getRecordUrl(record)
-
-    if (login) lines.push(`Username: ${login}`)
-    if (url) lines.push(`URL: ${url}`)
+    if (summary.login) lines.push(`Username: ${summary.login}`)
+    if (summary.url) lines.push(`URL: ${summary.url}`)
 
     if (showDetails) {
-        const fields = getRecordFields(record)
-        for (const field of fields) {
+        for (const field of summary.fields) {
             if (field.type === FieldType.Login || field.type === FieldType.Url) continue
             const label = field.label || field.type
             const value = field.type === FieldType.Password ? '********' : field.value.join(', ')
