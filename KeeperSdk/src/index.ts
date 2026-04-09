@@ -45,11 +45,8 @@ export type {
     MoveRecordResult,
 } from './records/RecordOperations'
 
-export { ShareReportGenerator, shareRecord, removeRecordShare } from './sharing/Sharing'
+export { shareRecord, removeRecordShare } from './sharing/Sharing'
 export type {
-    ShareReportEntry,
-    SharedFolderReportEntry,
-    ShareSummaryEntry,
     ShareRecordInput,
     ShareRecordResult,
     RemoveShareInput,

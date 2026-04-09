@@ -32,14 +32,10 @@ import type {
     MoveRecordResult,
 } from '../records/RecordOperations'
 import {
-    ShareReportGenerator,
     shareRecord as shareRecordOp,
     removeRecordShare as removeRecordShareOp,
 } from '../sharing/Sharing'
 import type {
-    ShareReportEntry,
-    SharedFolderReportEntry,
-    ShareSummaryEntry,
     ShareRecordInput,
     ShareRecordResult,
     RemoveShareInput,
@@ -83,7 +79,6 @@ export class KeeperVault {
     private readonly log: Logger
     private synced = false
     private batchDepth = 0
-    private _reportGenerator: ShareReportGenerator | null = null
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -240,7 +235,6 @@ export class KeeperVault {
         })
 
         this.synced = true
-        this._reportGenerator = null
         return result
     }
 
@@ -374,31 +368,6 @@ export class KeeperVault {
         const result = await moveRecordOp(auth, this.storage, input)
         if (result.success) await this.syncIfNeeded()
         return result
-    }
-
-    public createShareReportGenerator(): ShareReportGenerator {
-        const auth = this.getAuthOrThrow()
-        return new ShareReportGenerator(this.storage, auth.username || '')
-    }
-
-    public getSharedRecordsReport(): ShareReportEntry[] {
-        return this.getOrCreateReportGenerator().generateRecordsReport()
-    }
-
-    public getSharedFoldersReport(): SharedFolderReportEntry[] {
-        return this.getOrCreateReportGenerator().generateSharedFoldersReport()
-    }
-
-    public getShareSummaryReport(): ShareSummaryEntry[] {
-        return this.getOrCreateReportGenerator().generateSummaryReport()
-    }
-
-    private getOrCreateReportGenerator(): ShareReportGenerator {
-        if (!this._reportGenerator) {
-            const auth = this.getAuthOrThrow()
-            this._reportGenerator = new ShareReportGenerator(this.storage, auth.username || '')
-        }
-        return this._reportGenerator
     }
 
     public async shareRecord(input: ShareRecordInput): Promise<ShareRecordResult> {
