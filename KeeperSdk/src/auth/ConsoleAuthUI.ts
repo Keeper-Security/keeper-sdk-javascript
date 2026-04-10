@@ -1,74 +1,65 @@
-import readline from 'readline'
+import readline from 'readline/promises'
+import { setTimeout as delay } from 'timers/promises'
 import type { AuthUI3, DeviceApprovalChannel, TwoFactorChannelData } from '@keeper-security/keeperapi'
 import { Authentication } from '@keeper-security/keeperapi'
 import { logger } from '../utils/Logger'
 import { extractErrorMessage } from '../utils/errors'
-
-const APPROVAL_TIMEOUT_MS = 60_000
-const CODE_VALIDATION_DELAY_MS = 2_000
-
-enum DeviceVerificationMethod {
-    Email = 0,
-    KeeperPush = 1,
-    TFA = 2,
-    AdminApproval = 3,
-}
-
-function channelName(channel: number): string {
-    switch (channel) {
-        case DeviceVerificationMethod.Email:
-            return 'Email Verification'
-        case DeviceVerificationMethod.KeeperPush:
-            return 'Keeper Push'
-        case DeviceVerificationMethod.TFA:
-            return 'Two-Factor Authentication'
-        case DeviceVerificationMethod.AdminApproval:
-            return 'Admin Approval'
-        default:
-            return `Channel ${channel}`
-    }
-}
-
-function twoFactorChannelName(channelType: Authentication.TwoFactorChannelType): string {
-    switch (channelType) {
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
-            return 'Authenticator App (TOTP)'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_SMS:
-            return 'SMS'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_DUO:
-            return 'Duo Security'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
-            return 'RSA SecurID'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
-            return 'Keeper DNA'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
-            return 'U2F Security Key'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
-            return 'WebAuthn Security Key'
-        case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
-            return 'Keeper'
-        default:
-            return `2FA Channel ${channelType}`
-    }
-}
-
-function askQuestion(rl: readline.Interface, question: string): Promise<string> {
-    return new Promise((resolve) => {
-        rl.question(question, (answer) => resolve(answer.trim()))
-    })
-}
-
-function waitWithCancel(timeoutMs: number, cancel?: Promise<void>): Promise<void> {
-    return new Promise<void>((resolve) => {
-        const timer = setTimeout(resolve, timeoutMs)
-        cancel?.then(() => {
-            clearTimeout(timer)
-            resolve()
-        })
-    })
-}
+import { AuthDefaults } from '../utils/constants'
 
 export class ConsoleAuthUI implements AuthUI3 {
+    private static readonly DEVICE_VERIFICATION = {
+        Email: 0,
+        KeeperPush: 1,
+        TFA: 2,
+        AdminApproval: 3,
+    } as const
+
+    private static channelName(channel: number): string {
+        switch (channel) {
+            case ConsoleAuthUI.DEVICE_VERIFICATION.Email:
+                return 'Email Verification'
+            case ConsoleAuthUI.DEVICE_VERIFICATION.KeeperPush:
+                return 'Keeper Push'
+            case ConsoleAuthUI.DEVICE_VERIFICATION.TFA:
+                return 'Two-Factor Authentication'
+            case ConsoleAuthUI.DEVICE_VERIFICATION.AdminApproval:
+                return 'Admin Approval'
+            default:
+                return `Channel ${channel}`
+        }
+    }
+
+    private static twoFactorChannelName(channelType: Authentication.TwoFactorChannelType): string {
+        switch (channelType) {
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_TOTP:
+                return 'Authenticator App (TOTP)'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_SMS:
+                return 'SMS'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_DUO:
+                return 'Duo Security'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_RSA:
+                return 'RSA SecurID'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_DNA:
+                return 'Keeper DNA'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_U2F:
+                return 'U2F Security Key'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_WEBAUTHN:
+                return 'WebAuthn Security Key'
+            case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
+                return 'Keeper'
+            default:
+                return `2FA Channel ${channelType}`
+        }
+    }
+
+    private static async waitWithCancel(timeoutMs: number, cancel?: Promise<void>): Promise<void> {
+        if (!cancel) {
+            await delay(timeoutMs)
+            return
+        }
+        await Promise.race([delay(timeoutMs), cancel])
+    }
+
     public async waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean> {
         const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -77,10 +68,10 @@ export class ConsoleAuthUI implements AuthUI3 {
             logger.info('This device needs to be approved before you can log in.')
             logger.info('Available verification methods:')
             channels.forEach((ch, i) => {
-                logger.info(`  ${i + 1}. ${channelName(ch.channel)}`)
+                logger.info(`  ${i + 1}. ${ConsoleAuthUI.channelName(ch.channel)}`)
             })
 
-            const choice = await askQuestion(rl, '\nSelect method (number): ')
+            const choice = (await rl.question('\nSelect method (number): ')).trim()
             const idx = parseInt(choice, 10) - 1
 
             if (isNaN(idx) || idx < 0 || idx >= channels.length) {
@@ -89,16 +80,16 @@ export class ConsoleAuthUI implements AuthUI3 {
             }
 
             const selected = channels[idx]
-            logger.info(`\nSending ${channelName(selected.channel)} request...`)
+            logger.info(`\nSending ${ConsoleAuthUI.channelName(selected.channel)} request...`)
             await selected.sendApprovalRequest()
 
             if (selected.validateCode) {
-                const code = await askQuestion(rl, 'Enter verification code: ')
+                const code = (await rl.question('Enter verification code: ')).trim()
                 if (!code) return false
                 await selected.validateCode(code)
             } else {
                 logger.info('Approval request sent. Waiting for approval on your other device...')
-                await waitWithCancel(APPROVAL_TIMEOUT_MS)
+                await ConsoleAuthUI.waitWithCancel(AuthDefaults.APPROVAL_TIMEOUT_MS)
             }
 
             return true
@@ -117,11 +108,11 @@ export class ConsoleAuthUI implements AuthUI3 {
             logger.info('\n--- Two-Factor Authentication Required ---')
             logger.info('Available 2FA methods:')
             channels.forEach((ch, i) => {
-                const name = twoFactorChannelName(ch.channel.channelType!)
+                const name = ConsoleAuthUI.twoFactorChannelName(ch.channel.channelType!)
                 logger.info(`  ${i + 1}. ${name}`)
             })
 
-            const choice = await askQuestion(rl, '\nSelect method (number): ')
+            const choice = (await rl.question('\nSelect method (number): ')).trim()
             const idx = parseInt(choice, 10) - 1
 
             if (isNaN(idx) || idx < 0 || idx >= channels.length) {
@@ -130,23 +121,23 @@ export class ConsoleAuthUI implements AuthUI3 {
             }
 
             const selected = channels[idx]
-            const name = twoFactorChannelName(selected.channel.channelType!)
+            const name = ConsoleAuthUI.twoFactorChannelName(selected.channel.channelType!)
 
             if (selected.availablePushes && selected.availablePushes.length > 0) {
-                const pushChoice = await askQuestion(rl, `Send push notification for ${name}? (y/n): `)
+                const pushChoice = (await rl.question(`Send push notification for ${name}? (y/n): `)).trim()
                 if (pushChoice.toLowerCase() === 'y' && selected.sendPush) {
                     selected.sendPush(selected.availablePushes[0])
                     logger.info('Push sent. Waiting for approval...')
-                    await waitWithCancel(APPROVAL_TIMEOUT_MS, cancel)
+                    await ConsoleAuthUI.waitWithCancel(AuthDefaults.APPROVAL_TIMEOUT_MS, cancel)
                     return true
                 }
             }
 
-            const code = await askQuestion(rl, `Enter ${name} code: `)
+            const code = (await rl.question(`Enter ${name} code: `)).trim()
             if (!code) return false
 
             selected.sendCode(code)
-            await waitWithCancel(CODE_VALIDATION_DELAY_MS, cancel)
+            await ConsoleAuthUI.waitWithCancel(AuthDefaults.CODE_VALIDATION_DELAY_MS, cancel)
             return true
         } catch (e) {
             logger.error('2FA error:', extractErrorMessage(e))
@@ -160,7 +151,7 @@ export class ConsoleAuthUI implements AuthUI3 {
         const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
         try {
             const label = isAlternate ? 'alternate master password' : 'master password'
-            return await askQuestion(rl, `Enter your ${label}: `)
+            return (await rl.question(`Enter your ${label}: `)).trim()
         } finally {
             rl.close()
         }

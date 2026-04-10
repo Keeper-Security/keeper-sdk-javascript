@@ -1,6 +1,12 @@
 export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
 export { SessionManager, FileConfigLoader } from './auth/SessionManager'
-export type { KeeperJsonConfig, ConfigLoader } from './auth/SessionManager'
+export type {
+    KeeperJsonConfig,
+    ConfigLoader,
+    ConfigurationUser,
+    ConfigurationServerConfig,
+    ConfigurationDeviceConfig,
+} from './auth/SessionManager'
 export {
     login,
     cleanup,
@@ -13,9 +19,10 @@ export {
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
 
-export { Logger, LogLevel, logger } from './utils/Logger'
+export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger } from './utils/Logger'
+export type { ILogger } from './utils/Logger'
 export { KeeperSdkError, isKeeperError, extractErrorMessage, extractResultCode } from './utils/errors'
-export { SdkDefaults } from './utils/constants'
+export { SdkDefaults, AuthDefaults } from './utils/constants'
 
 export {
     searchRecords,

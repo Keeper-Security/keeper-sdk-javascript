@@ -15,7 +15,7 @@ import { runExample } from '../utils/runner'
 const MAX_ATTEMPTS = 5
 
 async function passwordLogin() {
-    const config = loadKeeperConfig()
+    const config = await loadKeeperConfig()
     const defaultUsername = config.last_login || config.user || ''
 
     let username: string

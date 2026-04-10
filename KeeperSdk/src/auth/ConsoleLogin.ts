@@ -1,12 +1,11 @@
-import readline from 'readline'
+import readline from 'readline/promises'
 import { KeeperVault } from '../vault/KeeperVault'
 import { logger } from '../utils/Logger'
 import { extractResultCode, extractErrorMessage, KeeperSdkError } from '../utils/errors'
-import { SdkDefaults } from '../utils/constants'
+import { SdkDefaults, AuthDefaults } from '../utils/constants'
 import { FileConfigLoader } from './SessionManager'
 import type { KeeperJsonConfig } from './SessionManager'
 
-const MAX_LOGIN_ATTEMPTS = 5
 const defaultConfigLoader = new FileConfigLoader()
 
 let rlManager: ReadlineManager | null = null
@@ -43,11 +42,10 @@ class ReadlineManager {
         })
     }
 
-    public question(query: string): Promise<string> {
+    public async question(query: string): Promise<string> {
         const rl = this.getOrCreate()
-        return new Promise((resolve) => {
-            rl.question(query, (answer) => resolve(answer.trim()))
-        })
+        const answer = await rl.question(query)
+        return answer.trim()
     }
 
     public close(): void {
@@ -122,12 +120,12 @@ export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
     GOV: 'govcloud.keepersecurity.us',
 }
 
-export function loadKeeperConfig(): KeeperJsonConfig {
+export async function loadKeeperConfig(): Promise<KeeperJsonConfig> {
     return defaultConfigLoader.load()
 }
 
 export async function resolveServer(username?: string, preloadedConfig?: KeeperJsonConfig): Promise<string> {
-    const config = preloadedConfig || loadKeeperConfig()
+    const config = preloadedConfig || await loadKeeperConfig()
     const configServer = config.last_server || config.server
 
     if (username) {
@@ -206,7 +204,7 @@ async function withSuppressedOutput<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 export async function login(): Promise<KeeperVault> {
-    const config = loadKeeperConfig()
+    const config = await loadKeeperConfig()
     const defaultUsername = config.last_login || config.user || ''
 
     const host = defaultUsername
@@ -251,7 +249,7 @@ async function tryPersistentLogin(host: string, username: string): Promise<Keepe
 async function interactiveLogin(host: string, username: string): Promise<KeeperVault> {
     const vault = new KeeperVault({ host, clientVersion: SdkDefaults.CLIENT_VERSION })
 
-    for (let attempt = 1; attempt <= MAX_LOGIN_ATTEMPTS; attempt++) {
+    for (let attempt = 1; attempt <= AuthDefaults.MAX_LOGIN_ATTEMPTS; attempt++) {
         const password = await prompt('Password: ', true)
 
         if (!password) {
@@ -265,13 +263,13 @@ async function interactiveLogin(host: string, username: string): Promise<KeeperV
         } catch (err) {
             const resultCode = extractResultCode(err)
             if (resultCode === 'invalid_credentials') {
-                const remaining = MAX_LOGIN_ATTEMPTS - attempt
+                const remaining = AuthDefaults.MAX_LOGIN_ATTEMPTS - attempt
                 if (remaining > 0) {
                     logger.warn(`Invalid credentials (${remaining} attempt${remaining === 1 ? '' : 's'} remaining)`)
                     continue
                 }
                 throw new KeeperSdkError(
-                    `Maximum login attempts (${MAX_LOGIN_ATTEMPTS}) exceeded.`,
+                    `Maximum login attempts (${AuthDefaults.MAX_LOGIN_ATTEMPTS}) exceeded.`,
                     'max_attempts_exceeded'
                 )
             }
@@ -280,7 +278,7 @@ async function interactiveLogin(host: string, username: string): Promise<KeeperV
     }
 
     throw new KeeperSdkError(
-        `Maximum login attempts (${MAX_LOGIN_ATTEMPTS}) exceeded.`,
+        `Maximum login attempts (${AuthDefaults.MAX_LOGIN_ATTEMPTS}) exceeded.`,
         'max_attempts_exceeded'
     )
 }

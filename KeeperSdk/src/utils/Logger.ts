@@ -6,7 +6,14 @@ export enum LogLevel {
     NONE = 4,
 }
 
-export class Logger {
+export interface ILogger {
+    debug(...args: unknown[]): void
+    info(...args: unknown[]): void
+    warn(...args: unknown[]): void
+    error(...args: unknown[]): void
+}
+
+export class ConsoleLogger implements ILogger {
     private level: LogLevel
 
     constructor(level: LogLevel = LogLevel.INFO) {
@@ -21,21 +28,44 @@ export class Logger {
         return this.level
     }
 
-    public debug(...args: any[]): void {
+    public debug(...args: unknown[]): void {
         if (this.level <= LogLevel.DEBUG) console.debug(...args)
     }
 
-    public info(...args: any[]): void {
+    public info(...args: unknown[]): void {
         if (this.level <= LogLevel.INFO) console.log(...args)
     }
 
-    public warn(...args: any[]): void {
+    public warn(...args: unknown[]): void {
         if (this.level <= LogLevel.WARN) console.warn(...args)
     }
 
-    public error(...args: any[]): void {
+    public error(...args: unknown[]): void {
         if (this.level <= LogLevel.ERROR) console.error(...args)
     }
 }
 
-export const logger = new Logger()
+let globalLogger: ILogger = new ConsoleLogger()
+
+export function setLogger(newLogger: ILogger): void {
+    globalLogger = newLogger
+}
+
+export function getLogger(): ILogger {
+    return globalLogger
+}
+
+export function resetLogger(level: LogLevel = LogLevel.INFO): ConsoleLogger {
+    const c = new ConsoleLogger(level)
+    globalLogger = c
+    return c
+}
+
+export const logger: ILogger = {
+    debug: (...args) => globalLogger.debug(...args),
+    info: (...args) => globalLogger.info(...args),
+    warn: (...args) => globalLogger.warn(...args),
+    error: (...args) => globalLogger.error(...args),
+}
+
+export { ConsoleLogger as Logger }

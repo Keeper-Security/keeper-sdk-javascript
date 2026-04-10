@@ -1,10 +1,27 @@
-import fs from 'fs'
+import fs from 'fs/promises'
 import path from 'path'
 import os from 'os'
 import type { DeviceConfig, SessionStorage, KeeperHost, SessionParams } from '@keeper-security/keeperapi'
 import { logger } from '../utils/Logger'
 import { extractErrorMessage } from '../utils/errors'
 import { SdkDefaults } from '../utils/constants'
+
+export type ConfigurationUser = {
+    user?: string
+    server?: string
+    last_device?: { device_token?: string }
+}
+
+export type ConfigurationServerConfig = {
+    server?: string
+    clone_code?: string
+}
+
+export type ConfigurationDeviceConfig = {
+    device_token?: string
+    private_key?: string
+    server_info?: Array<ConfigurationServerConfig>
+}
 
 export type KeeperJsonConfig = {
     last_login?: string
@@ -14,30 +31,19 @@ export type KeeperJsonConfig = {
     device_token?: string
     private_key?: string
     clone_code?: string
-    users?: Array<{
-        user?: string
-        server?: string
-        last_device?: { device_token?: string }
-    }>
-    devices?: Array<{
-        device_token?: string
-        private_key?: string
-        server_info?: Array<{
-            server?: string
-            clone_code?: string
-        }>
-    }>
+    users?: Array<ConfigurationUser>
+    devices?: Array<ConfigurationDeviceConfig>
 }
 
 type ResolvedDevice = {
     deviceToken: Buffer
     privateKey: Buffer
-    serverInfo: Array<{ server: string; clone_code: string }>
+    serverInfo: Array<Required<ConfigurationServerConfig>>
 }
 
 export interface ConfigLoader {
-    load(): KeeperJsonConfig
-    save(config: KeeperJsonConfig): void
+    load(): Promise<KeeperJsonConfig>
+    save(config: KeeperJsonConfig): Promise<void>
     readonly configDir: string
 }
 
@@ -48,14 +54,13 @@ export class FileConfigLoader implements ConfigLoader {
         this.configDir = configDir || path.join(os.homedir(), SdkDefaults.CONFIG_DIR)
     }
 
-    load(): KeeperJsonConfig {
+    async load(): Promise<KeeperJsonConfig> {
         const configPath = path.join(this.configDir, 'config.json')
         try {
-            if (fs.existsSync(configPath)) {
-                const parsed: unknown = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
-                if (SessionManager.isValidKeeperConfig(parsed)) {
-                    return parsed
-                }
+            const content = await fs.readFile(configPath, 'utf-8')
+            const parsed: unknown = JSON.parse(content)
+            if (SessionManager.isValidKeeperConfig(parsed)) {
+                return parsed
             }
         } catch (err) {
             logger.debug('Failed to load keeper config:', extractErrorMessage(err))
@@ -63,9 +68,9 @@ export class FileConfigLoader implements ConfigLoader {
         return {}
     }
 
-    save(config: KeeperJsonConfig): void {
+    async save(config: KeeperJsonConfig): Promise<void> {
         const configPath = path.join(this.configDir, 'config.json')
-        fs.writeFileSync(configPath, JSON.stringify(config, null, 2), { mode: 0o600 })
+        await fs.writeFile(configPath, JSON.stringify(config, null, 2), { mode: 0o600 })
     }
 }
 
@@ -93,15 +98,19 @@ export class SessionManager implements SessionStorage {
     }
 
     public get lastUsername(): string | undefined {
+        return this._lastUsername
+    }
+
+    public async getLastUsername(): Promise<string | undefined> {
         if (this._lastUsername) return this._lastUsername
-        const kc = this.loadKeeperConfig()
+        const kc = await this.loadKeeperConfig()
         return kc.last_login || kc.user || undefined
     }
 
-    public getDeviceConfig(host: string): DeviceConfig {
-        const username = this.lastUsername
+    public async getDeviceConfig(host: string): Promise<DeviceConfig> {
+        const username = await this.getLastUsername()
         if (username) {
-            const device = this.findDeviceInKeeperConfig(username)
+            const device = await this.findDeviceInKeeperConfig(username)
             if (device) {
                 return {
                     deviceToken: device.deviceToken,
@@ -130,7 +139,7 @@ export class SessionManager implements SessionStorage {
         const sessionCode = this.sessionCloneCodes.get(key)
         if (sessionCode) return sessionCode
 
-        const device = this.findDeviceInKeeperConfig(username)
+        const device = await this.findDeviceInKeeperConfig(username)
         if (device) {
             const serverInfo = device.serverInfo.find(si => si.server === hostStr)
             if (serverInfo) {
@@ -144,12 +153,12 @@ export class SessionManager implements SessionStorage {
     public async saveCloneCode(host: KeeperHost, username: string, cloneCode: Uint8Array): Promise<void> {
         const key = this.cloneCodeKey(host, username)
         this.sessionCloneCodes.set(key, cloneCode)
-        this.updateKeeperConfigCloneCode(String(host), username, cloneCode)
+        await this.updateKeeperConfigCloneCode(String(host), username, cloneCode)
     }
 
-    private updateKeeperConfigCloneCode(host: string, username: string, cloneCode: Uint8Array): void {
+    private async updateKeeperConfigCloneCode(host: string, username: string, cloneCode: Uint8Array): Promise<void> {
         try {
-            const parsed = this.configLoader.load()
+            const parsed = await this.configLoader.load()
             if (!parsed || Object.keys(parsed).length === 0) return
 
             let updated = false
@@ -178,7 +187,7 @@ export class SessionManager implements SessionStorage {
             }
 
             if (updated) {
-                this.configLoader.save(parsed)
+                await this.configLoader.save(parsed)
                 this._keeperConfig = null
                 this._deviceCache = null
             }
@@ -202,28 +211,28 @@ export class SessionManager implements SessionStorage {
         this._lastUsername = username
     }
 
-    private loadKeeperConfig(): KeeperJsonConfig {
+    private async loadKeeperConfig(): Promise<KeeperJsonConfig> {
         if (this._keeperConfig) return this._keeperConfig
-        this._keeperConfig = this.configLoader.load()
+        this._keeperConfig = await this.configLoader.load()
         return this._keeperConfig
     }
 
-    private findDeviceInKeeperConfig(username: string): ResolvedDevice | null {
+    private async findDeviceInKeeperConfig(username: string): Promise<ResolvedDevice | null> {
         const normalizedUsername = username.toLowerCase()
         if (this._deviceCache?.username === normalizedUsername) {
             return this._deviceCache.device
         }
 
-        const device = this.lookupDeviceInKeeperConfig(normalizedUsername)
+        const device = await this.lookupDeviceInKeeperConfig(normalizedUsername)
         this._deviceCache = { username: normalizedUsername, device }
         return device
     }
 
-    private lookupDeviceInKeeperConfig(normalizedUsername: string): ResolvedDevice | null {
-        const kc = this.loadKeeperConfig()
+    private async lookupDeviceInKeeperConfig(normalizedUsername: string): Promise<ResolvedDevice | null> {
+        const kc = await this.loadKeeperConfig()
 
         if (kc.device_token && kc.private_key && kc.user?.toLowerCase() === normalizedUsername) {
-            const serverInfo: Array<{ server: string; clone_code: string }> = []
+            const serverInfo: Array<Required<ConfigurationServerConfig>> = []
             const server = kc.last_server || kc.server
             if (server && kc.clone_code) {
                 serverInfo.push({ server, clone_code: kc.clone_code })
@@ -245,7 +254,7 @@ export class SessionManager implements SessionStorage {
                         deviceToken: SessionManager.base64urlDecode(deviceTokenStr),
                         privateKey: SessionManager.base64urlDecode(device.private_key),
                         serverInfo: (device.server_info || [])
-                            .filter((si): si is { server: string; clone_code: string } =>
+                            .filter((si): si is Required<ConfigurationServerConfig> =>
                                 !!si.server && !!si.clone_code
                             ),
                     }

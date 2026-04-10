@@ -1,4 +1,4 @@
-import { login, cleanup, prompt, getRecordTitle, logger } from 'keeper-sdk'
+import { login, cleanup, prompt, suppressLogs, getRecordTitle, logger } from 'keeper-sdk'
 import { runExample } from '../utils/runner'
 
 async function deleteRecord() {
@@ -26,7 +26,15 @@ async function deleteRecord() {
         }
 
         logger.info('Deleting record...')
-        const result = await vault.deleteRecord(record.uid)
+        let result
+        {
+            const restore = suppressLogs()
+            try {
+                result = await vault.deleteRecord(record.uid)
+            } finally {
+                restore()
+            }
+        }
 
         if (result.success) {
             logger.info(`Record "${title}" deleted successfully.`)

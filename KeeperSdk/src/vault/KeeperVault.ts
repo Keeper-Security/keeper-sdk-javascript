@@ -41,7 +41,8 @@ import type {
     RemoveShareInput,
     RemoveShareResult,
 } from '../sharing/Sharing'
-import { Logger, LogLevel } from '../utils/Logger'
+import { ConsoleLogger, LogLevel } from '../utils/Logger'
+import type { ILogger } from '../utils/Logger'
 import { KeeperSdkError, extractErrorMessage } from '../utils/errors'
 import { SdkDefaults } from '../utils/constants'
 
@@ -76,7 +77,7 @@ export class KeeperVault {
     private readonly sessionManager: SessionManager
     private readonly authUI: AuthUI3
     private readonly config: Required<Omit<KeeperVaultConfig, 'storage' | 'sessionStorage' | 'authUI'>>
-    private readonly log: Logger
+    private readonly log: ILogger
     private synced = false
     private batchDepth = 0
 
@@ -91,15 +92,15 @@ export class KeeperVault {
             autoSync: config?.autoSync !== false,
         }
 
-        this.log = new Logger(this.config.logLevel)
+        this.log = new ConsoleLogger(this.config.logLevel)
         this.storage = config?.storage || new InMemoryStorage()
         this.sessionManager = config?.sessionStorage || new SessionManager(this.config.configDir || undefined)
         this.authUI = config?.authUI || new ConsoleAuthUI()
     }
 
-    private createAuth(options?: { useSessionResumption?: boolean }): Auth {
+    private async createAuth(options?: { useSessionResumption?: boolean }): Promise<Auth> {
         const host = this.config.host
-        const baseDeviceConfig = this.sessionManager.getDeviceConfig(host)
+        const baseDeviceConfig = await this.sessionManager.getDeviceConfig(host)
         const deviceConfig = {
             ...baseDeviceConfig,
             deviceName: baseDeviceConfig.deviceName || SdkDefaults.DEVICE_NAME,
@@ -133,7 +134,7 @@ export class KeeperVault {
     }
 
     public async login(username: string, password: string): Promise<void> {
-        this.auth = this.createAuth({ useSessionResumption: false })
+        this.auth = await this.createAuth({ useSessionResumption: false })
         this.sessionManager.setLastUsername(username)
 
         await this.auth.loginV3({
@@ -148,7 +149,7 @@ export class KeeperVault {
     }
 
     public async loginWithSessionToken(username: string, sessionToken: string): Promise<void> {
-        const deviceConfig = this.sessionManager.getDeviceConfig(this.config.host)
+        const deviceConfig = await this.sessionManager.getDeviceConfig(this.config.host)
 
         if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {
             throw new KeeperSdkError(
@@ -157,7 +158,7 @@ export class KeeperVault {
             )
         }
 
-        this.auth = this.createAuth()
+        this.auth = await this.createAuth()
         this.sessionManager.setLastUsername(username)
 
         await this.auth.loginV3({
@@ -183,7 +184,7 @@ export class KeeperVault {
     }
 
     public async resumeSession(): Promise<void> {
-        const username = this.sessionManager.lastUsername
+        const username = await this.sessionManager.getLastUsername()
         if (!username) {
             throw new KeeperSdkError(
                 'No previous login found. Perform a normal login first.',
@@ -191,7 +192,7 @@ export class KeeperVault {
             )
         }
 
-        const deviceConfig = this.sessionManager.getDeviceConfig(this.config.host)
+        const deviceConfig = await this.sessionManager.getDeviceConfig(this.config.host)
         if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {
             throw new KeeperSdkError(
                 'Device is not registered for this host. Perform a normal login first.',
@@ -207,7 +208,7 @@ export class KeeperVault {
             )
         }
 
-        this.auth = this.createAuth({ useSessionResumption: true })
+        this.auth = await this.createAuth({ useSessionResumption: true })
 
         await this.auth.loginV3({
             loginType: Authentication.LoginType.NORMAL,

@@ -4,7 +4,12 @@
     "description": "High-level wrapper for Keeper Security JavaScript SDK",
     "main": "src/index.ts",
     "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf dist",
         "link-local": "npm link ../keeperapi",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "test": "jest",
         "types": "tsc --watch",
         "types:ci": "tsc"
     },
