@@ -30,8 +30,8 @@ Examples use `~/.keeper/config.json` for saved credentials and persistent login.
 
 | Command | Description |
 |---|---|
-| `npm run auth:login` | Password-based login with vault sync |
-| `npm run auth:session-token` | Login using an existing session token |
+| `npm run auth:login` | Master password login with retry logic, masked input, and vault sync. Automatically attempts persistent login (via clone code from `~/.keeper/config.json`) before falling back to the password prompt. |
+| `npm run auth:session-token` | Login using an existing session token for pre-authenticated workflows. Prompts for username, host, and session token. |
 
 ### Records
 
