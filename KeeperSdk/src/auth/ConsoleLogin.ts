@@ -32,16 +32,6 @@ class ReadlineManager {
         return this.rl
     }
 
-    public reopen(): void {
-        if (this.rl) {
-            this.rl.close()
-        }
-        this.rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        })
-    }
-
     public async question(query: string): Promise<string> {
         const rl = this.getOrCreate()
         const answer = await rl.question(query)
@@ -82,7 +72,6 @@ export function prompt(question: string, masked = false): Promise<string> {
             process.stdin.setRawMode(false)
             process.stdin.pause()
             process.stdin.removeListener('data', onData)
-            mgr.reopen()
         }
 
         const onData = (str: string) => {
