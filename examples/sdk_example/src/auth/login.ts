@@ -9,6 +9,7 @@ import {
     logger,
     extractResultCode,
     SdkDefaults,
+    ResultCodes,
 } from 'keeper-sdk'
 import { runExample } from '../utils/runner'
 
@@ -24,7 +25,7 @@ async function passwordLogin() {
         username = defaultUsername
     } else {
         username = await prompt('Username (email): ')
-        if (!username) throw new KeeperSdkError('Username is required.', 'missing_username')
+        if (!username) throw new KeeperSdkError('Username is required.', ResultCodes.MISSING_USERNAME)
     }
 
     const host = await resolveServer(username)
@@ -33,7 +34,7 @@ async function passwordLogin() {
     try {
         for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             const password = await prompt('Password: ', true)
-            if (!password) throw new KeeperSdkError('Password is required.', 'missing_password')
+            if (!password) throw new KeeperSdkError('Password is required.', ResultCodes.MISSING_PASSWORD)
 
             const restore = suppressLogs()
             try {
@@ -43,13 +44,13 @@ async function passwordLogin() {
             } catch (err) {
                 restore()
                 const resultCode = extractResultCode(err)
-                if (resultCode === 'invalid_credentials') {
+                if (resultCode === ResultCodes.INVALID_CREDENTIALS) {
                     const remaining = MAX_ATTEMPTS - attempt
                     if (remaining > 0) {
                         logger.warn(`Incorrect Password (${remaining} attempt${remaining === 1 ? '' : 's'} remaining)`)
                         continue
                     }
-                    throw new KeeperSdkError(`Maximum login attempts (${MAX_ATTEMPTS}) exceeded.`, 'max_attempts_exceeded')
+                    throw new KeeperSdkError(`Maximum login attempts (${MAX_ATTEMPTS}) exceeded.`, ResultCodes.MAX_ATTEMPTS_EXCEEDED)
                 }
                 throw KeeperSdkError.from(err)
             }

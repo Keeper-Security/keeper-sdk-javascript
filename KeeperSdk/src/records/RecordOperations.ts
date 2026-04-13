@@ -27,8 +27,7 @@ import type {
     RestCommand,
     BaseRequest,
 } from '@keeper-security/keeperapi'
-import { extractErrorMessage, KeeperSdkError } from '../utils/errors'
-import { logger } from '../utils/Logger'
+import { extractErrorMessage, KeeperSdkError, logger } from '../utils'
 import { RecordVersion } from './RecordUtils'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 
@@ -114,6 +113,12 @@ export async function addRecord(
     auth: Auth,
     input: NewRecordInput
 ): Promise<AddRecordResult> {
+    if (!input.data.title || !input.data.title.trim()) {
+        throw new KeeperSdkError('Record title is required.', 'missing_record_title')
+    }
+    if (input.version === 3 && !input.data.type?.trim()) {
+        throw new KeeperSdkError('Record type is required for v3 records.', 'missing_record_type')
+    }
     if (input.version === 2) {
         return addPasswordRecord(auth, input.data, input.folderUid)
     }
@@ -236,6 +241,12 @@ export async function updateRecord(
     revision: number,
     recordKey: Uint8Array
 ): Promise<UpdateRecordResult> {
+    if (!data.title || !data.title.trim()) {
+        throw new KeeperSdkError('Record title is required.', 'missing_record_title')
+    }
+    if (!data.type?.trim()) {
+        throw new KeeperSdkError('Record type is required.', 'missing_record_type')
+    }
     const recordUidBytes = platform.base64ToBytes(recordUid)
 
     const recordPayload = {

@@ -41,10 +41,8 @@ import type {
     RemoveShareInput,
     RemoveShareResult,
 } from '../sharing/Sharing'
-import { ConsoleLogger, LogLevel } from '../utils/Logger'
-import type { ILogger } from '../utils/Logger'
-import { KeeperSdkError, extractErrorMessage } from '../utils/errors'
-import { SdkDefaults } from '../utils/constants'
+import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
+import type { ILogger } from '../utils'
 
 enum VaultStatus {
     RecordNotFound = 'RECORD_NOT_FOUND',
@@ -128,7 +126,7 @@ export class KeeperVault {
 
     private getAuthOrThrow(): Auth {
         if (!this.auth || !this.auth.sessionToken) {
-            throw new KeeperSdkError('Not logged in. Call login() first.', 'not_logged_in')
+            throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
         }
         return this.auth
     }
@@ -154,7 +152,7 @@ export class KeeperVault {
         if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {
             throw new KeeperSdkError(
                 'Device is not registered for this host. Perform a normal login first to register the device before using session token login.',
-                'device_not_registered'
+                ResultCodes.DEVICE_NOT_REGISTERED
             )
         }
 
@@ -171,7 +169,7 @@ export class KeeperVault {
         if (!this.auth.sessionToken) {
             throw new KeeperSdkError(
                 'Session token login failed — token may be expired or invalid.',
-                'session_token_expired'
+                ResultCodes.SESSION_TOKEN_EXPIRED
             )
         }
 
@@ -188,7 +186,7 @@ export class KeeperVault {
         if (!username) {
             throw new KeeperSdkError(
                 'No previous login found. Perform a normal login first.',
-                'no_previous_login'
+                ResultCodes.NO_PREVIOUS_LOGIN
             )
         }
 
@@ -196,7 +194,7 @@ export class KeeperVault {
         if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {
             throw new KeeperSdkError(
                 'Device is not registered for this host. Perform a normal login first.',
-                'device_not_registered'
+                ResultCodes.DEVICE_NOT_REGISTERED
             )
         }
 
@@ -204,7 +202,7 @@ export class KeeperVault {
         if (!cloneCode) {
             throw new KeeperSdkError(
                 'No clone code found. Persistent login not enabled or clone code expired. Perform a normal login.',
-                'no_clone_code'
+                ResultCodes.NO_CLONE_CODE
             )
         }
 
@@ -218,7 +216,7 @@ export class KeeperVault {
         if (!this.auth.sessionToken) {
             throw new KeeperSdkError(
                 'Persistent login failed — clone code may be expired or persistent login not enabled. Perform a normal login.',
-                'persistent_login_failed'
+                ResultCodes.PERSISTENT_LOGIN_FAILED
             )
         }
 

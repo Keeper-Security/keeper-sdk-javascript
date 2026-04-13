@@ -2,9 +2,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import os from 'os'
 import type { DeviceConfig, SessionStorage, KeeperHost, SessionParams } from '@keeper-security/keeperapi'
-import { logger } from '../utils/Logger'
-import { extractErrorMessage } from '../utils/errors'
-import { SdkDefaults } from '../utils/constants'
+import { logger, extractErrorMessage, SdkDefaults } from '../utils'
 
 export type ConfigurationUser = {
     user?: string

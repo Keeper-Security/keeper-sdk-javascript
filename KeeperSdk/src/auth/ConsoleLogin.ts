@@ -1,8 +1,15 @@
 import readline from 'readline/promises'
 import { KeeperVault } from '../vault/KeeperVault'
-import { logger } from '../utils/Logger'
-import { extractResultCode, extractErrorMessage, KeeperSdkError } from '../utils/errors'
-import { SdkDefaults, AuthDefaults } from '../utils/constants'
+import {
+    logger,
+    extractResultCode,
+    extractErrorMessage,
+    KeeperSdkError,
+    SdkDefaults,
+    AuthDefaults,
+    ResultCodes,
+    KEEPER_PUBLIC_HOSTS,
+} from '../utils'
 import { FileConfigLoader } from './SessionManager'
 import type { KeeperJsonConfig } from './SessionManager'
 
@@ -18,6 +25,20 @@ let originals: {
     stdoutWrite: typeof process.stdout.write
     stderrWrite: typeof process.stderr.write
 } | null = null
+
+enum CliCharAction {
+    Submit,
+    Cancel,
+    Backspace,
+    Append,
+}
+
+function classifyInputChar(ch: string): CliCharAction {
+    if (ch === '\n' || ch === '\r') return CliCharAction.Submit
+    if (ch === '\u0003') return CliCharAction.Cancel
+    if (ch === '\u007F' || ch === '\b') return CliCharAction.Backspace
+    return CliCharAction.Append
+}
 
 class ReadlineManager {
     private rl: readline.Interface | null = null
@@ -76,22 +97,25 @@ export function prompt(question: string, masked = false): Promise<string> {
 
         const onData = (str: string) => {
             for (const ch of str) {
-                if (ch === '\n' || ch === '\r') {
-                    exitRawMode()
-                    resolve(buf.trim())
-                    return
-                } else if (ch === '\u0003') {
-                    exitRawMode()
-                    reject(new KeeperSdkError('Operation cancelled by user.', 'user_cancelled'))
-                    return
-                } else if (ch === '\u007F' || ch === '\b') {
-                    if (buf.length > 0) {
-                        buf = buf.slice(0, -1)
-                        process.stdout.write('\b \b')
-                    }
-                } else {
-                    buf += ch
-                    process.stdout.write('*')
+                switch (classifyInputChar(ch)) {
+                    case CliCharAction.Submit:
+                        exitRawMode()
+                        resolve(buf.trim())
+                        return
+                    case CliCharAction.Cancel:
+                        exitRawMode()
+                        reject(new KeeperSdkError('Operation cancelled by user.', ResultCodes.USER_CANCELLED))
+                        return
+                    case CliCharAction.Backspace:
+                        if (buf.length > 0) {
+                            buf = buf.slice(0, -1)
+                            process.stdout.write('\b \b')
+                        }
+                        break
+                    case CliCharAction.Append:
+                        buf += ch
+                        process.stdout.write('*')
+                        break
                 }
             }
         }
@@ -100,21 +124,13 @@ export function prompt(question: string, masked = false): Promise<string> {
     })
 }
 
-export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
-    US: 'keepersecurity.com',
-    EU: 'keepersecurity.eu',
-    AU: 'keepersecurity.com.au',
-    CA: 'keepersecurity.ca',
-    JP: 'keepersecurity.jp',
-    GOV: 'govcloud.keepersecurity.us',
-}
-
-export async function loadKeeperConfig(): Promise<KeeperJsonConfig> {
+export async function loadKeeperConfig(preloaded?: KeeperJsonConfig): Promise<KeeperJsonConfig> {
+    if (preloaded) return preloaded
     return defaultConfigLoader.load()
 }
 
 export async function resolveServer(username?: string, preloadedConfig?: KeeperJsonConfig): Promise<string> {
-    const config = preloadedConfig || await loadKeeperConfig()
+    const config = await loadKeeperConfig(preloadedConfig)
     const configServer = config.last_server || config.server
 
     if (username) {
@@ -214,7 +230,7 @@ export async function login(): Promise<KeeperVault> {
     }
 
     if (!username) {
-        throw new KeeperSdkError('Username is required.', 'missing_username')
+        throw new KeeperSdkError('Username is required.', ResultCodes.MISSING_USERNAME)
     }
 
     const resolvedHost = host || await resolveServer(username, config)
@@ -242,7 +258,7 @@ async function interactiveLogin(host: string, username: string): Promise<KeeperV
         const password = await prompt('Password: ', true)
 
         if (!password) {
-            throw new KeeperSdkError('Password is required.', 'missing_password')
+            throw new KeeperSdkError('Password is required.', ResultCodes.MISSING_PASSWORD)
         }
 
         try {
@@ -251,7 +267,7 @@ async function interactiveLogin(host: string, username: string): Promise<KeeperV
             return await syncVault(vault)
         } catch (err) {
             const resultCode = extractResultCode(err)
-            if (resultCode === 'invalid_credentials') {
+            if (resultCode === ResultCodes.INVALID_CREDENTIALS) {
                 const remaining = AuthDefaults.MAX_LOGIN_ATTEMPTS - attempt
                 if (remaining > 0) {
                     logger.warn(`Invalid credentials (${remaining} attempt${remaining === 1 ? '' : 's'} remaining)`)
@@ -259,7 +275,7 @@ async function interactiveLogin(host: string, username: string): Promise<KeeperV
                 }
                 throw new KeeperSdkError(
                     `Maximum login attempts (${AuthDefaults.MAX_LOGIN_ATTEMPTS}) exceeded.`,
-                    'max_attempts_exceeded'
+                    ResultCodes.MAX_ATTEMPTS_EXCEEDED
                 )
             }
             throw KeeperSdkError.from(err)
@@ -268,7 +284,7 @@ async function interactiveLogin(host: string, username: string): Promise<KeeperV
 
     throw new KeeperSdkError(
         `Maximum login attempts (${AuthDefaults.MAX_LOGIN_ATTEMPTS}) exceeded.`,
-        'max_attempts_exceeded'
+        ResultCodes.MAX_ATTEMPTS_EXCEEDED
     )
 }
 

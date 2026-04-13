@@ -2,9 +2,7 @@ import readline from 'readline/promises'
 import { setTimeout as delay } from 'timers/promises'
 import type { AuthUI3, DeviceApprovalChannel, TwoFactorChannelData } from '@keeper-security/keeperapi'
 import { Authentication } from '@keeper-security/keeperapi'
-import { logger } from '../utils/Logger'
-import { extractErrorMessage } from '../utils/errors'
-import { AuthDefaults } from '../utils/constants'
+import { logger, extractErrorMessage, KeeperSdkError, AuthDefaults, ResultCodes } from '../utils'
 
 export class ConsoleAuthUI implements AuthUI3 {
     private static readonly DEVICE_VERIFICATION = {
@@ -48,7 +46,7 @@ export class ConsoleAuthUI implements AuthUI3 {
             case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
                 return 'Keeper'
             default:
-                return `2FA Channel ${channelType}`
+                throw new KeeperSdkError(`Unsupported 2FA channel type: ${channelType}`, ResultCodes.UNSUPPORTED_2FA_CHANNEL)
         }
     }
 

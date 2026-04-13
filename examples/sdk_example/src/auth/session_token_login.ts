@@ -1,9 +1,9 @@
-import { KeeperVault, prompt, suppressLogs, cleanup, logger, KeeperSdkError, SdkDefaults } from 'keeper-sdk'
+import { KeeperVault, prompt, suppressLogs, cleanup, logger, KeeperSdkError, SdkDefaults, ResultCodes } from 'keeper-sdk'
 import { runExample } from '../utils/runner'
 
 async function main() {
     const username = await prompt('Username (email): ')
-    if (!username) throw new KeeperSdkError('Username is required.', 'missing_username')
+    if (!username) throw new KeeperSdkError('Username is required.', ResultCodes.MISSING_USERNAME)
 
     const host = await prompt('Host [keepersecurity.com]: ')
 

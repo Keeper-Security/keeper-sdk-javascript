@@ -14,15 +14,16 @@ export {
     suppressLogs,
     loadKeeperConfig,
     resolveServer,
-    KEEPER_PUBLIC_HOSTS
 } from './auth/ConsoleLogin'
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
 
-export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger } from './utils/Logger'
-export type { ILogger } from './utils/Logger'
-export { KeeperSdkError, isKeeperError, extractErrorMessage, extractResultCode } from './utils/errors'
-export { SdkDefaults, AuthDefaults } from './utils/constants'
+export {
+    Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger,
+    KeeperSdkError, isKeeperError, extractErrorMessage, extractResultCode,
+    SdkDefaults, AuthDefaults, ResultCodes, KEEPER_PUBLIC_HOSTS,
+} from './utils'
+export type { ILogger } from './utils'
 
 export {
     searchRecords,
