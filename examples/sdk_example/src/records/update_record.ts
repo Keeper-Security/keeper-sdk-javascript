@@ -7,8 +7,8 @@ import {
     getRecordType,
     getRecordFields,
     logger,
-} from 'keeper-sdk'
-import type { TypedRecordData, RecordFieldInput } from 'keeper-sdk'
+} from '@keeper-security/keeper-sdk-javascript'
+import type { TypedRecordData, RecordFieldInput } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 
 const LEGACY_TYPE_MAPPING: Record<string, string> = { legacy: 'login' }

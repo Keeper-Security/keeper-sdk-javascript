@@ -189,6 +189,7 @@ export class KeeperVault {
                 ResultCodes.NO_PREVIOUS_LOGIN
             )
         }
+        this.sessionManager.setLastUsername(username)
 
         const deviceConfig = await this.sessionManager.getDeviceConfig(this.config.host)
         if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {

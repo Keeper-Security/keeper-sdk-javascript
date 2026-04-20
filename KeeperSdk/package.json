@@ -1,5 +1,5 @@
 {
-    "name": "keeper-sdk",
+    "name": "@keeper-security/keeper-sdk-javascript",
     "version": "1.0.0",
     "description": "High-level wrapper for Keeper Security JavaScript SDK",
     "main": "src/index.ts",

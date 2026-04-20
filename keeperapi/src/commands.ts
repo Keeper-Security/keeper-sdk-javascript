@@ -274,6 +274,27 @@ export const recordPreDeleteCommand = (
 export const recordDeleteCommand = (request: RecordDeleteRequest): RestCommand<RecordDeleteRequest, KeeperResponse> =>
     createCommand(request, 'delete')
 
+export type GetRecordHistoryRequest = {
+    record_uid: string
+    client_time: number
+}
+
+export type GetRecordHistoryHistoryEntry = {
+    revision: number
+    version: number
+    user_name?: string
+    client_modified_time?: number
+    data?: string
+}
+
+export type GetRecordHistoryResponse = KeeperResponse & {
+    history?: GetRecordHistoryHistoryEntry[]
+}
+
+export const getRecordHistoryCommand = (
+    request: GetRecordHistoryRequest
+): RestCommand<GetRecordHistoryRequest, GetRecordHistoryResponse> => createCommand(request, 'get_record_history')
+
 export type EnterpriseSettingInclude =
     | 'AuditSyncConfig'
     | 'AuditSyncContext'

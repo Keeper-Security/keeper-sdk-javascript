@@ -5,6 +5,8 @@ import {
     platform,
     getPublicKeysMessage,
     webSafe64FromBytes,
+    recordsShareUpdateMessage,
+    normal64Bytes,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError } from '../utils/errors'
 
@@ -15,8 +17,6 @@ enum ShareStatus {
     Error = 'error',
     Unknown = 'unknown',
 }
-
-const SHARE_UPDATE_PATH = 'vault/records_share_update'
 
 export type ShareRecordInput = {
     recordUid: string
@@ -44,20 +44,6 @@ export type RemoveShareResult = {
     success: boolean
     status: string
     message: string
-}
-
-function recordsShareUpdateMessage(data: Records.IRecordShareUpdateRequest) {
-    return {
-        path: SHARE_UPDATE_PATH,
-        toBytes(): Uint8Array {
-            return Records.RecordShareUpdateRequest.encode(
-                Records.RecordShareUpdateRequest.create(data)
-            ).finish()
-        },
-        fromBytes(resp: Uint8Array): Records.IRecordShareUpdateResponse {
-            return Records.RecordShareUpdateResponse.decode(resp)
-        },
-    }
 }
 
 type UserKeys = {
@@ -102,13 +88,6 @@ async function loadUserPublicKey(auth: Auth, email: string): Promise<UserKeys> {
     }
 }
 
-function uidToBytes(uid: string): Uint8Array {
-    return platform.base64ToBytes(
-        uid.replace(/-/g, '+').replace(/_/g, '/')
-            + '=='.substring(0, (3 * uid.length) % 4)
-    )
-}
-
 export async function shareRecord(
     auth: Auth,
     recordKey: Uint8Array,
@@ -140,7 +119,7 @@ export async function shareRecord(
 
     const sharedRecord: Records.ISharedRecord = {
         toUsername: email,
-        recordUid: uidToBytes(recordUid),
+        recordUid: normal64Bytes(recordUid),
         recordKey: encryptedRecordKey,
         editable: canEdit,
         shareable: canShare,
@@ -181,7 +160,7 @@ export async function removeRecordShare(
     const msg = recordsShareUpdateMessage({
         removeSharedRecord: [{
             toUsername: email,
-            recordUid: uidToBytes(recordUid),
+            recordUid: normal64Bytes(recordUid),
         }],
     })
 

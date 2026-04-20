@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 import os from 'os'
-import type { DeviceConfig, SessionStorage, KeeperHost, SessionParams } from '@keeper-security/keeperapi'
+import { normal64Bytes, type DeviceConfig, type SessionStorage, type KeeperHost, type SessionParams } from '@keeper-security/keeperapi'
 import { logger, extractErrorMessage, SdkDefaults } from '../utils'
 
 export type ConfigurationUser = {
@@ -34,8 +34,8 @@ export type KeeperJsonConfig = {
 }
 
 type ResolvedDevice = {
-    deviceToken: Buffer
-    privateKey: Buffer
+    deviceToken: Uint8Array
+    privateKey: Uint8Array
     serverInfo: Array<Required<ConfigurationServerConfig>>
 }
 
@@ -141,7 +141,7 @@ export class SessionManager implements SessionStorage {
         if (device) {
             const serverInfo = device.serverInfo.find(si => si.server === hostStr)
             if (serverInfo) {
-                return SessionManager.base64urlDecode(serverInfo.clone_code)
+                return normal64Bytes(serverInfo.clone_code)
             }
         }
 
@@ -229,19 +229,8 @@ export class SessionManager implements SessionStorage {
     private async lookupDeviceInKeeperConfig(normalizedUsername: string): Promise<ResolvedDevice | null> {
         const kc = await this.loadKeeperConfig()
 
-        if (kc.device_token && kc.private_key && kc.user?.toLowerCase() === normalizedUsername) {
-            const serverInfo: Array<Required<ConfigurationServerConfig>> = []
-            const server = kc.last_server || kc.server
-            if (server && kc.clone_code) {
-                serverInfo.push({ server, clone_code: kc.clone_code })
-            }
-            return {
-                deviceToken: SessionManager.base64urlDecode(kc.device_token),
-                privateKey: SessionManager.base64urlDecode(kc.private_key),
-                serverInfo,
-            }
-        }
-
+        // Prefer explicit user->last_device mapping first when present.
+        // In mixed configs the top-level device fields can point to an older device.
         if (kc.users && kc.devices) {
             const user = kc.users.find(u => u.user?.toLowerCase() === normalizedUsername)
             if (user?.last_device?.device_token) {
@@ -249,14 +238,27 @@ export class SessionManager implements SessionStorage {
                 const device = kc.devices.find(d => d.device_token === deviceTokenStr)
                 if (device?.private_key) {
                     return {
-                        deviceToken: SessionManager.base64urlDecode(deviceTokenStr),
-                        privateKey: SessionManager.base64urlDecode(device.private_key),
+                        deviceToken: normal64Bytes(deviceTokenStr),
+                        privateKey: normal64Bytes(device.private_key),
                         serverInfo: (device.server_info || [])
                             .filter((si): si is Required<ConfigurationServerConfig> =>
                                 !!si.server && !!si.clone_code
                             ),
                     }
                 }
+            }
+        }
+
+        if (kc.device_token && kc.private_key && kc.user?.toLowerCase() === normalizedUsername) {
+            const serverInfo: Array<Required<ConfigurationServerConfig>> = []
+            const server = kc.last_server || kc.server
+            if (server && kc.clone_code) {
+                serverInfo.push({ server, clone_code: kc.clone_code })
+            }
+            return {
+                deviceToken: normal64Bytes(kc.device_token),
+                privateKey: normal64Bytes(kc.private_key),
+                serverInfo,
             }
         }
 
@@ -271,7 +273,4 @@ export class SessionManager implements SessionStorage {
         return true
     }
 
-    private static base64urlDecode(str: string): Buffer {
-        return Buffer.from(str.replace(/-/g, '+').replace(/_/g, '/'), 'base64')
-    }
 }

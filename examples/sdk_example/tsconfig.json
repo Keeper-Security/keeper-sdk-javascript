@@ -9,12 +9,13 @@
         "types": ["node"],
         "baseUrl": ".",
         "paths": {
-            "keeper-sdk": ["../../KeeperSdk/src"],
-            "keeper-sdk/*": ["../../KeeperSdk/src/*"]
+            "@keeper-security/keeper-sdk-javascript": ["../../KeeperSdk/src"],
+            "@keeper-security/keeper-sdk-javascript/*": ["../../KeeperSdk/src/*"]
         }
     },
     "exclude": ["node_modules"],
     "ts-node": {
-        "require": ["tsconfig-paths/register"]
+        "require": ["tsconfig-paths/register"],
+        "preferTsExts": true
     }
 }

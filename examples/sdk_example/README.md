@@ -4,7 +4,7 @@ Interactive examples demonstrating the Keeper JavaScript SDK.
 
 ## Prerequisites
 
-- Node.js 16+
+- Node.js 20 LTS or newer (aligned with `@types/node` in this repo)
 - A Keeper account with credentials
 
 ## Setup

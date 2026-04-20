@@ -11,6 +11,8 @@ import {
     recordDeleteCommand,
     recordAddCommand,
     moveCommand,
+    getRecordHistoryCommand,
+    normal64Bytes,
 } from '@keeper-security/keeperapi'
 import type {
     DSharedFolder,
@@ -18,14 +20,12 @@ import type {
     DSharedFolderRecord,
     DUserFolder,
     DRecord,
-    KeeperResponse,
     KeeperPreDeleteResponse,
     MoveObject,
     MoveRequest,
     TransitionKeyObject,
     RecordPreDeleteObject,
-    RestCommand,
-    BaseRequest,
+    GetRecordHistoryResponse,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, logger } from '../utils'
 import { RecordVersion } from './RecordUtils'
@@ -48,10 +48,6 @@ enum DeleteResolution {
 enum ResultCode {
     Success = 'success',
     OK = 'OK',
-}
-
-enum CommandName {
-    GetRecordHistory = 'get_record_history',
 }
 
 const MIN_RECORD_PAD_BYTES = 384
@@ -209,7 +205,7 @@ async function addTypedRecord(
     }
 
     if (folderUid) {
-        recordAdd.folderUid = platform.base64ToBytes(folderUid)
+        recordAdd.folderUid = normal64Bytes(folderUid)
     }
 
     const request: Records.IRecordsAddRequest = {
@@ -247,7 +243,7 @@ export async function updateRecord(
     if (!data.type?.trim()) {
         throw new KeeperSdkError('Record type is required.', 'missing_record_type')
     }
-    const recordUidBytes = platform.base64ToBytes(recordUid)
+    const recordUidBytes = normal64Bytes(recordUid)
 
     const recordPayload = {
         type: data.type,
@@ -345,38 +341,17 @@ export type RecordHistoryResult = {
     history: HistoryEntry[]
 }
 
-type RecordHistoryRequest = {
-    record_uid: string
-    client_time: number
-}
-
-type RecordHistoryResponseEntry = {
-    revision: number
-    version: number
-    user_name?: string
-    client_modified_time?: number
-    data?: string
-}
-
-type RecordHistoryResponse = KeeperResponse & {
-    history?: RecordHistoryResponseEntry[]
-}
-
 export async function getRecordHistory(
     auth: Auth,
     recordUid: string,
     recordKey: Uint8Array
 ): Promise<RecordHistoryResult> {
-    const cmd: RestCommand<RecordHistoryRequest, RecordHistoryResponse> = {
-        baseRequest: { command: CommandName.GetRecordHistory } as BaseRequest,
-        request: {
-            record_uid: recordUid,
-            client_time: Date.now(),
-        },
-        authorization: {},
-    }
+    const cmd = getRecordHistoryCommand({
+        record_uid: recordUid,
+        client_time: Date.now(),
+    })
 
-    let response: RecordHistoryResponse
+    let response: GetRecordHistoryResponse
     try {
         response = await auth.executeRestCommand(cmd)
     } catch (err) {
@@ -391,9 +366,7 @@ export async function getRecordHistory(
 
         if (entry.data) {
             try {
-                const dataBytes = platform.base64ToBytes(
-                    normalizeBase64(entry.data)
-                )
+                const dataBytes = normal64Bytes(entry.data)
                 const version = entry.version || 0
                 let decrypted: Uint8Array
 
@@ -420,11 +393,6 @@ export async function getRecordHistory(
     }
 
     return { recordUid, history }
-}
-
-function normalizeBase64(source: string): string {
-    return source.replace(/-/g, '+').replace(/_/g, '/')
-        + '=='.substring(0, (3 * source.length) % 4)
 }
 
 export type MoveRecordInput = {

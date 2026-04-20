@@ -17,6 +17,43 @@ type RecordField = {
     type: string
     value: any[]
     label?: string
+    required?: boolean
+    privacyScreen?: boolean
+    enforceGeneration?: boolean
+    complexity?: {
+        length?: number
+        caps?: number
+        lowercase?: number
+        digits?: number
+        special?: number
+    }
+}
+
+function getLegacyExtraFields(record: DRecord): RecordField[] {
+    const raw = record.extra
+    if (raw == null) return []
+    let extra: { fields?: { type?: string; value?: unknown; label?: string }[] }
+    if (typeof raw === 'string') {
+        try {
+            extra = JSON.parse(raw)
+        } catch {
+            return []
+        }
+    } else if (typeof raw === 'object') {
+        extra = raw
+    } else {
+        return []
+    }
+    if (!Array.isArray(extra.fields)) return []
+    const out: RecordField[] = []
+    for (const f of extra.fields) {
+        out.push({
+            type: f.type || FieldType.Text,
+            value: Array.isArray(f.value) ? f.value : f.value != null ? [f.value] : [],
+            label: f.label,
+        })
+    }
+    return out
 }
 
 export function getRecordTitle(record: DRecord): string {
@@ -24,12 +61,12 @@ export function getRecordTitle(record: DRecord): string {
     if (typeof record.data === 'string') {
         try {
             const parsed = JSON.parse(record.data)
-            return parsed.title || parsed.name || '(untitled)'
+            return parsed.title || '(untitled)'
         } catch (_err) {
             return '(parse error)'
         }
     }
-    return record.data.title || record.data.name || '(untitled)'
+    return record.data.title || '(untitled)'
 }
 
 export function getRecordType(record: DRecord): string {
@@ -48,6 +85,8 @@ export function getRecordFields(record: DRecord): RecordField[] {
         if (d.secret2) fields.push({ type: FieldType.Password, value: [d.secret2] })
         if (d.link) fields.push({ type: FieldType.Url, value: [d.link] })
         if (d.notes) fields.push({ type: FieldType.Note, value: [d.notes] })
+        const extraFields = getLegacyExtraFields(record)
+        fields.push(...extraFields)
         return fields
     }
 
@@ -58,6 +97,10 @@ export function getRecordFields(record: DRecord): RecordField[] {
                 type: f.type || FieldType.Text,
                 value: Array.isArray(f.value) ? f.value : [f.value],
                 label: f.label,
+                required: f.required,
+                privacyScreen: f.privacyScreen,
+                enforceGeneration: f.enforceGeneration,
+                complexity: f.complexity,
             })
         }
     }
@@ -67,6 +110,10 @@ export function getRecordFields(record: DRecord): RecordField[] {
                 type: f.type || FieldType.Text,
                 value: Array.isArray(f.value) ? f.value : [f.value],
                 label: f.label,
+                required: f.required,
+                privacyScreen: f.privacyScreen,
+                enforceGeneration: f.enforceGeneration,
+                complexity: f.complexity,
             })
         }
     }

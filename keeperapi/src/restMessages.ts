@@ -444,6 +444,16 @@ export const recordsUpdateMessage = (
 ): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records_update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
+export const recordsShareUpdateMessage = (
+    data: Records.IRecordShareUpdateRequest
+): RestMessage<Records.IRecordShareUpdateRequest, Records.IRecordShareUpdateResponse> =>
+    createMessage(
+        data,
+        'vault/records_share_update',
+        Records.RecordShareUpdateRequest,
+        Records.RecordShareUpdateResponse
+    )
+
 export const recordsRevertMessage = (
     data: Records.IRecordsRevertRequest
 ): RestMessage<Records.IRecordsRevertRequest, Records.IRecordsModifyResponse> =>

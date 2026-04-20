@@ -1,4 +1,4 @@
-import { login, cleanup, suppressLogs, formatRecord, getRecordTitle, logger } from 'keeper-sdk'
+import { login, cleanup, suppressLogs, formatRecord, getRecordTitle, logger } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 
 async function addRecord() {

@@ -1,5 +1,5 @@
 import { execFileSync } from 'child_process'
-import { login, cleanup, prompt, getRecordTitle, getRecordPassword, logger, extractErrorMessage } from 'keeper-sdk'
+import { login, cleanup, prompt, getRecordTitle, getRecordPassword, logger, extractErrorMessage } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 
 const CLIPBOARD_TIMEOUT_MS = 3000

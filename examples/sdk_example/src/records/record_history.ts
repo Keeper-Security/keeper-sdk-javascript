@@ -1,5 +1,5 @@
-import { login, cleanup, prompt, getRecordTitle, logger } from 'keeper-sdk'
-import type { HistoryEntry } from 'keeper-sdk'
+import { login, cleanup, prompt, getRecordTitle, logger } from '@keeper-security/keeper-sdk-javascript'
+import type { HistoryEntry } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 import { padRight, formatFieldValue } from '../utils/format'
 

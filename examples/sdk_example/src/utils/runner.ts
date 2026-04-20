@@ -1,4 +1,4 @@
-import { logger, extractErrorMessage } from 'keeper-sdk'
+import { logger, extractErrorMessage } from '@keeper-security/keeper-sdk-javascript'
 
 export function runExample(fn: () => Promise<void>): void {
     fn()

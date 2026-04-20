@@ -10,7 +10,7 @@ import {
     extractResultCode,
     SdkDefaults,
     ResultCodes,
-} from 'keeper-sdk'
+} from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 
 const MAX_ATTEMPTS = 5

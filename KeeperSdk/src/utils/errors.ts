@@ -1,5 +1,19 @@
 import type { KeeperError } from '@keeper-security/keeperapi'
 
+function parseJsonObjectIfPresent(s: string): Record<string, unknown> | null {
+    const t = s.trim()
+    if (t.length === 0 || (t[0] !== '{' && t[0] !== '[')) return null
+    try {
+        const parsed: unknown = JSON.parse(s)
+        if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+            return parsed as Record<string, unknown>
+        }
+    } catch {
+        /* not JSON */
+    }
+    return null
+}
+
 export function isKeeperError(err: unknown): err is KeeperError {
     return (
         err != null &&
@@ -22,7 +36,14 @@ export function extractResultCode(err: unknown): string | undefined {
             } catch {}
         }
     }
-    if (typeof err === 'string') return err
+    if (typeof err === 'string') {
+        const parsed = parseJsonObjectIfPresent(err)
+        if (parsed) {
+            if (typeof parsed.result_code === 'string') return parsed.result_code
+            if (typeof parsed.error === 'string') return parsed.error
+        }
+        return err
+    }
     if (typeof err === 'object' && err !== null) {
         const obj = err as Record<string, unknown>
         if (typeof obj.result_code === 'string') return obj.result_code
@@ -35,8 +56,24 @@ export function extractErrorMessage(err: unknown): string {
     if (isKeeperError(err)) {
         return err.message || err.result_code || err.error || 'Unknown Keeper error'
     }
-    if (err instanceof Error) return err.message
-    if (typeof err === 'string') return err
+    if (err instanceof Error) {
+        const parsed = parseJsonObjectIfPresent(err.message)
+        if (parsed) {
+            if (typeof parsed.message === 'string') return parsed.message
+            if (typeof parsed.result_code === 'string') return parsed.result_code
+            if (typeof parsed.error === 'string') return parsed.error
+        }
+        return err.message
+    }
+    if (typeof err === 'string') {
+        const parsed = parseJsonObjectIfPresent(err)
+        if (parsed) {
+            if (typeof parsed.message === 'string') return parsed.message
+            if (typeof parsed.result_code === 'string') return parsed.result_code
+            if (typeof parsed.error === 'string') return parsed.error
+        }
+        return err
+    }
     if (typeof err === 'object' && err !== null) {
         const obj = err as Record<string, unknown>
         if (typeof obj.message === 'string') return obj.message
@@ -66,6 +103,6 @@ export class KeeperSdkError extends Error {
             )
         }
         if (err instanceof Error) return new KeeperSdkError(err.message)
-        return new KeeperSdkError(String(err))
+        return new KeeperSdkError(extractErrorMessage(err))
     }
 }

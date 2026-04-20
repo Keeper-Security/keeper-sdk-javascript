@@ -9,7 +9,7 @@ import {
     getRecordPassword,
     getRecordUrl,
     logger,
-} from 'keeper-sdk'
+} from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 import { formatFieldValue, LEGACY_RECORD_MAX_VERSION } from '../utils/format'
 

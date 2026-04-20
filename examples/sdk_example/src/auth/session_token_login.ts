@@ -1,4 +1,4 @@
-import { KeeperVault, prompt, suppressLogs, cleanup, logger, KeeperSdkError, SdkDefaults, ResultCodes } from 'keeper-sdk'
+import { KeeperVault, prompt, suppressLogs, cleanup, logger, KeeperSdkError, SdkDefaults, ResultCodes } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 
 async function main() {
