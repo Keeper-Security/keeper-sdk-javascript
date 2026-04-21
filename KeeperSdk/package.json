@@ -11,12 +11,15 @@
         "format:check": "prettier --check .",
         "test": "jest",
         "types": "tsc --watch",
-        "types:ci": "tsc"
+        "types:ci": "tsc",
+        "prepublishOnly": "npm run build"
     },
     "dependencies": {
         "@keeper-security/keeperapi": "17.1.0",
-        "@types/node": "^20.9.1",
         "ts-node": "^10.7.0",
         "typescript": "^4.6.3"
+    },
+    "devDependencies": {
+        "@types/node": "^25.6.0"
     }
 }
