@@ -1328,6 +1328,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             }
             result.pageCount += 1
             networkTime += requestTime
+            // safety check in case keeperDriveData is undefined
+            resp.keeperDriveData = resp.keeperDriveData || {}
             const dependencies = {}
 
             await processUsers(resp.users, storage)
@@ -1440,7 +1442,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             processKdRemovedFolderRecords(removedDependencies, resp.keeperDriveData.removedFolderRecords)
 
-            processKdRevokedRecordAccesses(storage)
+            await processKdRevokedRecordAccesses(storage, resp.keeperDriveData.revokedRecordAccesses)
 
             await storage.removeDependencies(removedDependencies)
 
