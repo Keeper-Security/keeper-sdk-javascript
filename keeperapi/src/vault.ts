@@ -1328,8 +1328,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             }
             result.pageCount += 1
             networkTime += requestTime
-            // safety check in case keeperDriveData is undefined
-            resp.keeperDriveData = resp.keeperDriveData || {}
+            const keeperDriveData = resp.keeperDriveData ?? {}
             const dependencies = {}
 
             await processUsers(resp.users, storage)
@@ -1374,13 +1373,13 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processSecurityScoreData(resp.securityScoreData, storage)
 
-            await processKdRecordAccess(storage, resp.keeperDriveData.recordAccesses)
+            await processKdRecordAccess(storage, keeperDriveData.recordAccesses)
 
-            await processKdFolderRecords(storage, dependencies, resp.keeperDriveData.folderRecords)
+            await processKdFolderRecords(storage, dependencies, keeperDriveData.folderRecords)
 
-            await processKdRecords(storage, resp.keeperDriveData.recordData, resp.keeperDriveData.records)
+            await processKdRecords(storage, keeperDriveData.recordData, keeperDriveData.records)
 
-            await processKdRecordSharingStates(storage, resp.keeperDriveData.recordSharingStates)
+            await processKdRecordSharingStates(storage, keeperDriveData.recordSharingStates)
 
             await storage.addDependencies(dependencies)
 
@@ -1440,9 +1439,9 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                 await storage.delete('user', user)
             }
 
-            processKdRemovedFolderRecords(removedDependencies, resp.keeperDriveData.removedFolderRecords)
+            processKdRemovedFolderRecords(removedDependencies, keeperDriveData.removedFolderRecords)
 
-            await processKdRevokedRecordAccesses(storage, resp.keeperDriveData.revokedRecordAccesses)
+            await processKdRevokedRecordAccesses(storage, keeperDriveData.revokedRecordAccesses)
 
             await storage.removeDependencies(removedDependencies)
 
