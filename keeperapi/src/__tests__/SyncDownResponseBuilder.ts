@@ -77,6 +77,7 @@ export class SyncDownResponseBuilder {
             removedSharedFolderFolderRecords: [],
             removedSharedFolders: [],
             removedUsers: [],
+            keeperDriveData: {},
         }
     }
 
