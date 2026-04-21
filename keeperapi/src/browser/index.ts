@@ -14,6 +14,7 @@ export * from '../proto'
 export * from '../cryptoWorker'
 export * from '../qrc'
 export * from '../pam'
+export * from '../syncDown'
 import { connectPlatform } from '../platform'
 import { browserPlatform } from './platform'
 
