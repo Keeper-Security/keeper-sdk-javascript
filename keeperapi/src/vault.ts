@@ -25,8 +25,16 @@ import IProfile = Vault.IProfile
 import IBreachWatchRecord = Vault.IBreachWatchRecord
 import IBreachWatchSecurityData = Vault.IBreachWatchSecurityData
 import type { UnwrapKeyMap } from './platform'
-import { DKdFolderRecord, DKdRecordAccess, DKdRecordSharingState } from './syncDown/types'
-import { createKdRecordAccessCompositeKey } from './syncDown'
+import {
+    createKdRecordAccessCompositeKey,
+    DKdFolderRecord,
+    DKdRecordAccess,
+    DKdRecordSharingState,
+    DKdFolder,
+    DKdFolderAccess,
+    DKdFolderSharingState,
+    mapTeamKeyType,
+} from './syncDown'
 
 export type VaultStorage = KeyStorage & {
     put(data: VaultStorageData): Promise<void>
@@ -60,6 +68,9 @@ export type VaultStorageData =
     | DKdFolderRecord
     | DKdRecordAccess
     | DKdRecordSharingState
+    | DKdFolder
+    | DKdFolderSharingState
+    | DKdFolderAccess
 
 export type VaultStorageKind = VaultStorageData['kind']
 
@@ -1030,6 +1041,175 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
 
 // Keeper Drive Processors Start
 
+const processKdRevokedFolderAccesses = async (
+    storage: VaultStorage,
+    keeperDriveRevokedFolderAccesses?: Folder.IRevokedAccess[] | null
+) => {
+    if (!keeperDriveRevokedFolderAccesses) return
+    for (const revokedAccess of keeperDriveRevokedFolderAccesses) {
+        if (!revokedAccess.actorUid || !revokedAccess.folderUid) continue
+        const actorUid = webSafe64FromBytes(revokedAccess.actorUid)
+        const folderUid = webSafe64FromBytes(revokedAccess.folderUid)
+        await storage.delete('keeper_drive_folder_access', `${folderUid}:${actorUid}`)
+    }
+}
+
+const processKdRemovedFolders = async (
+    storage: VaultStorage,
+    keeperDriveRemovedFolders?: Folder.IFolderRemoved[] | null
+) => {
+    if (!keeperDriveRemovedFolders) return
+    for (const removedFolder of keeperDriveRemovedFolders) {
+        if (!removedFolder.folderUid) continue
+        const folderUid = webSafe64FromBytes(removedFolder.folderUid)
+        await storage.delete('keeper_drive_folder', folderUid)
+    }
+}
+
+const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IFolderKey[] | null) => {
+    if (!folderKeys) return
+    const encryptedByDataKeyMap: UnwrapKeyMap = {}
+    const encryptedByParentKeyMap: UnwrapKeyMap = {}
+    const encryptedByDataKey = folderKeys.filter(
+        (key) => key.encryptedBy === Folder.FolderKeyEncryptionType.ENCRYPTED_BY_USER_KEY
+    )
+    const encryptedByParentKey = folderKeys.filter(
+        (key) => key.encryptedBy === Folder.FolderKeyEncryptionType.ENCRYPTED_BY_PARENT_KEY
+    )
+    for (const key of encryptedByDataKey) {
+        if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
+        const folderUid = webSafe64FromBytes(key.folderUid)
+        const parentUid = webSafe64FromBytes(key.parentUid)
+        encryptedByDataKeyMap[folderUid] = {
+            data: key.folderKey,
+            dataId: folderUid,
+            keyId: 'data',
+            encryptionType: 'gcm',
+            unwrappedType: 'aes',
+        }
+    }
+    await platform.unwrapKeys(encryptedByDataKeyMap, storage)
+    for (const key of encryptedByParentKey) {
+        if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
+        const folderUid = webSafe64FromBytes(key.folderUid)
+        const parentUid = webSafe64FromBytes(key.parentUid)
+        encryptedByParentKeyMap[folderUid] = {
+            data: key.folderKey,
+            dataId: folderUid,
+            keyId: parentUid,
+            encryptionType: 'gcm',
+            unwrappedType: 'aes',
+        }
+    }
+    await platform.unwrapKeys(encryptedByParentKeyMap, storage)
+}
+
+const processKdFolderAccesses = async (
+    storage: VaultStorage,
+    keeperDriveFolderAccesses?: Folder.IFolderAccessData[] | null
+) => {
+    if (!keeperDriveFolderAccesses) return
+    const folderKeyMap: UnwrapKeyMap = {}
+    for (const folderAccess of keeperDriveFolderAccesses) {
+        const folderUid = webSafe64FromBytes(folderAccess.folderUid!)
+        if (
+            !folderAccess.folderUid ||
+            !folderAccess.accessTypeUid ||
+            !folderAccess.accessRoleType ||
+            !folderAccess.accessType ||
+            !folderAccess.permissions
+        )
+            continue
+        const accessTypeUid = webSafe64FromBytes(folderAccess.accessTypeUid)
+        const permission = folderAccess.permissions
+        // for child folders, they're only encrypted by their parent folder key
+        if (
+            folderAccess.folderKey &&
+            folderAccess.folderKey.encryptedKey &&
+            !isNil(folderAccess.folderKey.encryptedKeyType)
+        ) {
+            const keyInfo =
+                folderAccess.accessType === Folder.AccessType.AT_USER
+                    ? mapKeyType(folderAccess.folderKey.encryptedKeyType)
+                    : folderAccess.accessType === Folder.AccessType.AT_TEAM
+                      ? mapTeamKeyType(folderAccess.folderKey.encryptedKeyType, accessTypeUid)
+                      : null
+            if (!keyInfo) continue
+            folderKeyMap[folderUid] = {
+                data: folderAccess.folderKey.encryptedKey,
+                dataId: folderUid,
+                keyId: keyInfo.keyId,
+                encryptionType: keyInfo.encryptionType,
+                unwrappedType: 'aes',
+            }
+        }
+        await storage.put({
+            kind: 'keeper_drive_folder_access',
+            uid: folderUid,
+            accessTypeUid,
+            accessType: folderAccess.accessType,
+            accessRoleType: folderAccess.accessRoleType,
+            permission,
+        })
+    }
+    await platform.unwrapKeys(folderKeyMap, storage)
+}
+
+const processKdFolderSharingState = async (
+    storage: VaultStorage,
+    keeperDriveFolderSharingStates?: Vault.IFolderSharingState[] | null
+) => {
+    if (!keeperDriveFolderSharingStates) return
+    for (const folderSharingState of keeperDriveFolderSharingStates) {
+        if (!folderSharingState.folderUid) continue
+        await storage.put({
+            kind: 'keeper_drive_folder_sharing_state',
+            folderUid: webSafe64FromBytes(folderSharingState.folderUid),
+            shared: toOptional(folderSharingState.shared),
+            count: toOptional(folderSharingState.count),
+        })
+    }
+}
+
+const processKdFolders = async (storage: VaultStorage, keeperDriveFolders?: Folder.IFolderData[] | null) => {
+    if (!keeperDriveFolders) return
+    for (const folder of keeperDriveFolders || []) {
+        if (
+            !folder.folderUid ||
+            !folder.folderKey ||
+            !folder.data ||
+            !folder.ownerInfo ||
+            folder.type !== Folder.FolderUsageType.UT_NORMAL
+        )
+            continue
+        const folderUid = webSafe64FromBytes(folder.folderUid)
+        const parentUid =
+            folder.parentUid && folder.parentUid.length > 0 ? webSafe64FromBytes(folder.parentUid) : undefined
+        try {
+            const folderData = JSON.parse(
+                platform.bytesToString(await platform.decrypt(folder.data, folderUid, 'gcm', storage))
+            )
+            await storage.put({
+                kind: 'keeper_drive_folder',
+                uid: folderUid,
+                data: folderData,
+                parentUid,
+                ownerInfo: {
+                    accountUid: folder.ownerInfo.accountUid
+                        ? webSafe64FromBytes(folder.ownerInfo.accountUid)
+                        : undefined,
+                    username: toOptional(folder.ownerInfo.username),
+                },
+                lastModified: <number>toOptional(folder.lastModified),
+                type: toOptional(folder.type),
+                inheritUserPermissions: toOptional(folder.inheritUserPermissions),
+            })
+        } catch (err: any) {
+            console.error(`[ks] folder ${folderUid} cannot be decrypted (${err.message})`)
+        }
+    }
+}
+
 const processKdRecordAccess = async (storage: VaultStorage, kdRecordAccesses?: Folder.IRecordAccessData[] | null) => {
     if (!kdRecordAccesses) return
     for (const recordAccess of kdRecordAccesses) {
@@ -1373,6 +1553,14 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processSecurityScoreData(resp.securityScoreData, storage)
 
+            await processKdFolderAccesses(storage, keeperDriveData.folderAccesses)
+
+            await processKdFolderKeys(storage, keeperDriveData.folderKeys)
+
+            await processKdFolders(storage, keeperDriveData.folders)
+
+            await processKdFolderSharingState(storage, keeperDriveData.folderSharingState)
+
             await processKdRecordAccess(storage, keeperDriveData.recordAccesses)
 
             await processKdFolderRecords(storage, dependencies, keeperDriveData.folderRecords)
@@ -1438,6 +1626,10 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             for await (const user of resp.removedUsers) {
                 await storage.delete('user', user)
             }
+
+            await processKdRevokedFolderAccesses(storage, keeperDriveData.revokedFolderAccesses)
+
+            await processKdRemovedFolders(storage, keeperDriveData.removedFolders)
 
             processKdRemovedFolderRecords(removedDependencies, keeperDriveData.removedFolderRecords)
 
