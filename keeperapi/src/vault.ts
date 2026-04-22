@@ -1080,7 +1080,6 @@ const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IF
         if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
         const folderUid = webSafe64FromBytes(key.folderUid)
         const parentUid = webSafe64FromBytes(key.parentUid)
-        console.log(`[ks] parentUid: ${parentUid}`)
         encryptedByDataKeyMap[folderUid] = {
             data: key.folderKey,
             dataId: folderUid,
