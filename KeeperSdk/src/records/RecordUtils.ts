@@ -29,10 +29,24 @@ type RecordField = {
     }
 }
 
+type LegacyExtraField = {
+    type?: string
+    field_type?: string
+    value?: unknown
+    data?: unknown
+    label?: string
+    field_title?: string
+}
+
+function toFieldValueArray(v: unknown): any[] {
+    if (v == null) return []
+    return Array.isArray(v) ? v : [v]
+}
+
 function getLegacyExtraFields(record: DRecord): RecordField[] {
     const raw = record.extra
     if (raw == null) return []
-    let extra: { fields?: { type?: string; value?: unknown; label?: string }[] }
+    let extra: { fields?: LegacyExtraField[] }
     if (typeof raw === 'string') {
         try {
             extra = JSON.parse(raw)
@@ -47,10 +61,12 @@ function getLegacyExtraFields(record: DRecord): RecordField[] {
     if (!Array.isArray(extra.fields)) return []
     const out: RecordField[] = []
     for (const f of extra.fields) {
+        const typeName = f.type || f.field_type || FieldType.Text
+        const rawVal = f.value !== undefined && f.value !== null ? f.value : f.data
         out.push({
-            type: f.type || FieldType.Text,
-            value: Array.isArray(f.value) ? f.value : f.value != null ? [f.value] : [],
-            label: f.label,
+            type: typeName,
+            value: toFieldValueArray(rawVal),
+            label: f.label || f.field_title,
         })
     }
     return out
@@ -85,6 +101,16 @@ export function getRecordFields(record: DRecord): RecordField[] {
         if (d.secret2) fields.push({ type: FieldType.Password, value: [d.secret2] })
         if (d.link) fields.push({ type: FieldType.Url, value: [d.link] })
         if (d.notes) fields.push({ type: FieldType.Note, value: [d.notes] })
+        if (Array.isArray(d.custom)) {
+            for (const c of d.custom) {
+                if (!c) continue
+                fields.push({
+                    type: c.type || FieldType.Text,
+                    value: c.value != null && c.value !== '' ? [c.value] : [],
+                    label: c.name,
+                })
+            }
+        }
         const extraFields = getLegacyExtraFields(record)
         fields.push(...extraFields)
         return fields

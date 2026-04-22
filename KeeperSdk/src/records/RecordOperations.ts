@@ -67,6 +67,25 @@ export type PasswordRecordData = {
     url?: string
     notes?: string
     custom?: { name: string; value: string; type?: string }[]
+    totp?: string
+}
+
+function buildLegacyPasswordExtra(data: PasswordRecordData, recordUid: string): Record<string, unknown> {
+    const totp = data.totp?.trim()
+    if (!totp) {
+        return {}
+    }
+    return {
+        files: [],
+        fields: [
+            {
+                id: recordUid,
+                field_type: 'totp',
+                field_title: 'One-Time Password',
+                data: totp,
+            },
+        ],
+    }
 }
 
 export type RecordFieldInput = {
@@ -143,7 +162,7 @@ async function addPasswordRecord(
         })),
     })
 
-    const extraJson = JSON.stringify({})
+    const extraJson = JSON.stringify(buildLegacyPasswordExtra(data, recordUid))
 
     const dataBytes = new TextEncoder().encode(recordDataJson)
     const extraBytes = new TextEncoder().encode(extraJson)
