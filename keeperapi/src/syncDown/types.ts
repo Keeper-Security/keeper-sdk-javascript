@@ -1,5 +1,39 @@
 import { Folder, common } from '../proto'
 
+export type DKdFolder = {
+    kind: 'keeper_drive_folder'
+    uid: string
+    data: {
+        name: string
+    }
+    parentUid?: string
+    ownerInfo: {
+        accountUid?: string
+        username?: string
+    }
+    lastModified?: number
+    type?: Folder.FolderUsageType
+    inheritUserPermissions?: Folder.SetBooleanValue
+}
+
+export type DKdFolderAccess = {
+    kind: 'keeper_drive_folder_access'
+    uid: string
+    accessTypeUid: string
+    accessType: Folder.AccessType
+    accessRoleType: Folder.AccessRoleType
+    permission: Folder.IFolderPermissions
+    inherited?: boolean
+    hidden?: boolean
+}
+
+export type DKdFolderSharingState = {
+    kind: 'keeper_drive_folder_sharing_state'
+    folderUid: string
+    count?: number
+    shared?: boolean
+}
+
 export type DKdFolderRecord = {
     kind: 'keeper_drive_folder_record'
     folderUid: string
