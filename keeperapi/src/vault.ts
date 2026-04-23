@@ -34,6 +34,7 @@ import {
     DKdFolderAccess,
     DKdFolderSharingState,
     mapTeamKeyType,
+    DKdRecordLink,
 } from './syncDown'
 
 export type VaultStorage = KeyStorage & {
@@ -71,6 +72,7 @@ export type VaultStorageData =
     | DKdFolder
     | DKdFolderSharingState
     | DKdFolderAccess
+    | DKdRecordLink
 
 export type VaultStorageKind = VaultStorageData['kind']
 
@@ -1041,6 +1043,28 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
 
 // Keeper Drive Processors Start
 
+const processKdRecordLinks = async (storage: VaultStorage, keeperDriveRecordLinks?: Vault.IRecordLink[] | null) => {
+    if (!keeperDriveRecordLinks) return
+    for (const link of keeperDriveRecordLinks) {
+        if (!link.childRecordUid || !link.parentRecordUid || !link.recordKey) continue
+        const childRecordUid = webSafe64FromBytes(link.childRecordUid)
+        const parentRecordUid = webSafe64FromBytes(link.parentRecordUid)
+
+        try {
+            await platform.unwrapKey(link.recordKey, childRecordUid, parentRecordUid, 'gcm', 'aes', storage, true)
+            await storage.put({
+                kind: 'keeper_drive_record_link',
+                childRecordUid,
+                parentRecordUid,
+            })
+        } catch (e: any) {
+            console.error(
+                `[ks] The record link for ${childRecordUid} cannot be decrypted by ${parentRecordUid} (${e.message})`
+            )
+        }
+    }
+}
+
 const processKdRevokedFolderAccesses = async (
     storage: VaultStorage,
     keeperDriveRevokedFolderAccesses?: Folder.IRevokedAccess[] | null
@@ -1564,6 +1588,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processKdRecordAccess(storage, keeperDriveData.recordAccesses)
 
             await processKdFolderRecords(storage, dependencies, keeperDriveData.folderRecords)
+
+            await processKdRecordLinks(storage, keeperDriveData.recordLinks)
 
             await processKdRecords(storage, keeperDriveData.recordData, keeperDriveData.records)
 
