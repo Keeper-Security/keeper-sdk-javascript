@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2018",
+        "sourceMap": true,
+        "strict": false,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "types": ["node"],
+        "baseUrl": ".",
+        "paths": {
+            "@keeper-security/keeper-sdk-javascript": ["../../KeeperSdk/src"],
+            "@keeper-security/keeper-sdk-javascript/*": ["../../KeeperSdk/src/*"]
+        }
+    },
+    "exclude": ["node_modules"],
+    "ts-node": {
+        "require": ["tsconfig-paths/register"],
+        "preferTsExts": true
+    }
+}

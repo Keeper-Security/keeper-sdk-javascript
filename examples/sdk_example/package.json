@@ -1,0 +1,28 @@
+{
+    "name": "sdk-example",
+    "version": "1.0.0",
+    "description": "Example usage of the KeeperSdk wrapper — mirrors Python SDK examples",
+    "scripts": {
+        "auth:login": "ts-node src/auth/login.ts",
+        "auth:session-token": "ts-node src/auth/session_token_login.ts",
+        "records:list": "ts-node src/records/list_records.ts",
+        "records:get": "ts-node src/records/get_record.ts",
+        "records:add": "ts-node src/records/add_record.ts",
+        "records:update": "ts-node src/records/update_record.ts",
+        "records:delete": "ts-node src/records/delete_record.ts",
+        "records:history": "ts-node src/records/record_history.ts",
+        "records:find-password": "ts-node src/records/find_password.ts",
+        "records:move": "ts-node src/records/move_record.ts",
+        "sharing:share-record": "ts-node src/sharing/share_record.ts",
+        "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
+        "types": "tsc --watch",
+        "types:ci": "tsc"
+    },
+    "dependencies": {
+        "@keeper-security/keeperapi": "17.1.0",
+        "@types/node": "^20.9.1",
+        "ts-node": "^10.7.0",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^4.6.3"
+    }
+}
