@@ -71,3 +71,9 @@ export type DKdRecordSharingState = {
     isIndirectlyShared?: boolean
     isShared?: boolean
 }
+
+export type DKdRecordLink = {
+    kind: 'keeper_drive_record_link'
+    parentRecordUid: string
+    childRecordUid: string
+}
