@@ -229,8 +229,6 @@ export class SessionManager implements SessionStorage {
     private async lookupDeviceInKeeperConfig(normalizedUsername: string): Promise<ResolvedDevice | null> {
         const kc = await this.loadKeeperConfig()
 
-        // Prefer explicit user->last_device mapping first when present.
-        // In mixed configs the top-level device fields can point to an older device.
         if (kc.users && kc.devices) {
             const user = kc.users.find(u => u.user?.toLowerCase() === normalizedUsername)
             if (user?.last_device?.device_token) {

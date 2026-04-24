@@ -11,8 +11,6 @@ import {
     recordDeleteCommand,
     recordAddCommand,
     moveCommand,
-    getRecordHistoryCommand,
-    normal64Bytes,
 } from '@keeper-security/keeperapi'
 import type {
     DSharedFolder,
@@ -20,12 +18,14 @@ import type {
     DSharedFolderRecord,
     DUserFolder,
     DRecord,
+    KeeperResponse,
     KeeperPreDeleteResponse,
     MoveObject,
     MoveRequest,
     TransitionKeyObject,
     RecordPreDeleteObject,
-    GetRecordHistoryResponse,
+    RestCommand,
+    BaseRequest,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, logger } from '../utils'
 import { RecordVersion } from './RecordUtils'
@@ -50,6 +50,10 @@ enum ResultCode {
     OK = 'OK',
 }
 
+enum CommandName {
+    GetRecordHistory = 'get_record_history',
+}
+
 const MIN_RECORD_PAD_BYTES = 384
 const PAD_BLOCK_SIZE = 16
 
@@ -67,25 +71,6 @@ export type PasswordRecordData = {
     url?: string
     notes?: string
     custom?: { name: string; value: string; type?: string }[]
-    totp?: string
-}
-
-function buildLegacyPasswordExtra(data: PasswordRecordData, recordUid: string): Record<string, unknown> {
-    const totp = data.totp?.trim()
-    if (!totp) {
-        return {}
-    }
-    return {
-        files: [],
-        fields: [
-            {
-                id: recordUid,
-                field_type: 'totp',
-                field_title: 'One-Time Password',
-                data: totp,
-            },
-        ],
-    }
 }
 
 export type RecordFieldInput = {
@@ -162,7 +147,7 @@ async function addPasswordRecord(
         })),
     })
 
-    const extraJson = JSON.stringify(buildLegacyPasswordExtra(data, recordUid))
+    const extraJson = JSON.stringify({})
 
     const dataBytes = new TextEncoder().encode(recordDataJson)
     const extraBytes = new TextEncoder().encode(extraJson)
@@ -224,7 +209,7 @@ async function addTypedRecord(
     }
 
     if (folderUid) {
-        recordAdd.folderUid = normal64Bytes(folderUid)
+        recordAdd.folderUid = platform.base64ToBytes(folderUid)
     }
 
     const request: Records.IRecordsAddRequest = {
@@ -262,7 +247,7 @@ export async function updateRecord(
     if (!data.type?.trim()) {
         throw new KeeperSdkError('Record type is required.', 'missing_record_type')
     }
-    const recordUidBytes = normal64Bytes(recordUid)
+    const recordUidBytes = platform.base64ToBytes(recordUid)
 
     const recordPayload = {
         type: data.type,
@@ -360,17 +345,38 @@ export type RecordHistoryResult = {
     history: HistoryEntry[]
 }
 
+type RecordHistoryRequest = {
+    record_uid: string
+    client_time: number
+}
+
+type RecordHistoryResponseEntry = {
+    revision: number
+    version: number
+    user_name?: string
+    client_modified_time?: number
+    data?: string
+}
+
+type RecordHistoryResponse = KeeperResponse & {
+    history?: RecordHistoryResponseEntry[]
+}
+
 export async function getRecordHistory(
     auth: Auth,
     recordUid: string,
     recordKey: Uint8Array
 ): Promise<RecordHistoryResult> {
-    const cmd = getRecordHistoryCommand({
-        record_uid: recordUid,
-        client_time: Date.now(),
-    })
+    const cmd: RestCommand<RecordHistoryRequest, RecordHistoryResponse> = {
+        baseRequest: { command: CommandName.GetRecordHistory } as BaseRequest,
+        request: {
+            record_uid: recordUid,
+            client_time: Date.now(),
+        },
+        authorization: {},
+    }
 
-    let response: GetRecordHistoryResponse
+    let response: RecordHistoryResponse
     try {
         response = await auth.executeRestCommand(cmd)
     } catch (err) {
@@ -385,7 +391,9 @@ export async function getRecordHistory(
 
         if (entry.data) {
             try {
-                const dataBytes = normal64Bytes(entry.data)
+                const dataBytes = platform.base64ToBytes(
+                    normalizeBase64(entry.data)
+                )
                 const version = entry.version || 0
                 let decrypted: Uint8Array
 
@@ -412,6 +420,11 @@ export async function getRecordHistory(
     }
 
     return { recordUid, history }
+}
+
+function normalizeBase64(source: string): string {
+    return source.replace(/-/g, '+').replace(/_/g, '/')
+        + '=='.substring(0, (3 * source.length) % 4)
 }
 
 export type MoveRecordInput = {
