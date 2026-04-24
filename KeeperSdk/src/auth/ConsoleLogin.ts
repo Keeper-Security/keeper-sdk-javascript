@@ -12,6 +12,7 @@ import {
 } from "../utils";
 import { FileConfigLoader } from "./SessionManager";
 import type { KeeperJsonConfig } from "./SessionManager";
+import process from "process";
 
 const defaultConfigLoader = new FileConfigLoader();
 
