@@ -41,6 +41,37 @@ import type {
     RemoveShareInput,
     RemoveShareResult,
 } from '../sharing/Sharing'
+import { listFolder as listFolderFromStorage } from '../folders/listFolder'
+import type { ListFolderOptions, ListFolderResult } from '../folders/listFolder'
+import {
+    changeDirectory as changeDirectoryOp,
+    createVaultFolderSession,
+    getWorkingFolderDisplayName,
+} from '../folders/changeDirectory'
+import type { ChangeDirectoryResult, VaultFolderSession } from '../folders/changeDirectory'
+import { addFolder as addFolderOp, mkdir as mkdirOp } from '../folders/addFolder'
+import type { AddFolderInput, AddFolderResult, MkdirOptions } from '../folders/addFolder'
+import {
+    updateFolder as updateFolderOp,
+    renameFolder as renameFolderOp,
+    updateSharedFolderPermissions as updateSharedFolderPermissionsOp,
+} from '../folders/updateFolder'
+import type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from '../folders/updateFolder'
+import {
+    deleteVaultObjects as deleteVaultObjectsOp,
+    rmdir as rmdirOp,
+} from '../folders/deleteVaultObjects'
+import type { DeleteVaultObjectsResult, RmdirOptions } from '../folders/deleteVaultObjects'
+import { folderTreeAscii } from '../folders/folderTree'
+import type { FolderTreeBuildOptions } from '../folders/folderTree'
+import { getKeeperObject as getKeeperObjectFromStorage } from '../folders/getKeeperObject'
+import type { GetKeeperObjectOptions, GetKeeperObjectResult } from '../folders/getKeeperObject'
+import { listSharedFolders as listSharedFoldersFromStorage } from '../sharedFolders/listSharedFolders'
+import type { ListSharedFolderRow, ListSharedFoldersOptions } from '../sharedFolders/listSharedFolders'
+import { shareFolderUsers as shareFolderUsersOp } from '../sharedFolders/shareFolderUsers'
+import type { ShareFolderUsersInput, ShareFolderUsersResult } from '../sharedFolders/shareFolderUsers'
+import { shareFolderRecords as shareFolderRecordsOp } from '../sharedFolders/shareFolderRecords'
+import type { ShareFolderRecordsInput, ShareFolderRecordsResult } from '../sharedFolders/shareFolderRecords'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
 
@@ -78,6 +109,7 @@ export class KeeperVault {
     private readonly log: ILogger
     private synced = false
     private batchDepth = 0
+    private readonly folderSession: VaultFolderSession = createVaultFolderSession()
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -189,6 +221,9 @@ export class KeeperVault {
                 ResultCodes.NO_PREVIOUS_LOGIN
             )
         }
+
+        this.sessionManager.setLastUsername(username)
+
 
         const deviceConfig = await this.sessionManager.getDeviceConfig(this.config.host)
         if (!deviceConfig.deviceToken || !deviceConfig.privateKey) {
@@ -307,6 +342,143 @@ export class KeeperVault {
 
     public getUserFolders(): DUserFolder[] {
         return this.storage.getAll<DUserFolder>('user_folder')
+    }
+
+    /** List folder contents from the last sync (local storage only, no API calls). */
+    public async listFolder(options?: ListFolderOptions): Promise<ListFolderResult> {
+        return listFolderFromStorage(this.storage, options ?? {})
+    }
+
+    /** List shared folders from the last sync (local storage only; no API calls). */
+    public listSharedFolders(options?: ListSharedFoldersOptions): ListSharedFolderRow[] {
+        return listSharedFoldersFromStorage(this.storage, options ?? {})
+    }
+
+    /**
+     * Add, update, or remove people on shared folders (`shared_folder_update`), and/or set default user
+     * permissions on shared folders (`folder_update` via `updateSharedFolderPermissions`).
+     */
+    public async shareFolderUsers(input: ShareFolderUsersInput): Promise<ShareFolderUsersResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await shareFolderUsersOp(auth, this.storage, input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /**
+     * Set default record permissions (`folder_update`) and/or per-record `can_edit` / `can_share`
+     * (in-place `move` within the shared folder, plus `shared_folder_update` for removes where used).
+     */
+    public async shareFolderRecords(input: ShareFolderRecordsInput): Promise<ShareFolderRecordsResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await shareFolderRecordsOp(auth, this.storage, input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /**
+     * Change the working folder for path-based commands (`ls`, etc.). Client-side only (no API calls).
+     * `null` working folder means vault root (see `getCurrentFolderUid()`).
+     */
+    public async changeDirectory(path: string): Promise<ChangeDirectoryResult> {
+        return changeDirectoryOp(this.storage, this.folderSession, path)
+    }
+
+    /** Current folder UID, or `null` at vault root. */
+    public getCurrentFolderUid(): string | null {
+        return this.folderSession.currentFolderUid
+    }
+
+    /** Folder name for prompts (`My Vault` at root). */
+    public getWorkingFolderDisplayName(): string {
+        return getWorkingFolderDisplayName(this.storage, this.folderSession.currentFolderUid)
+    }
+
+    /** Resolve a record, folder, shared folder, or team by UID or name (local sync data only; no API calls). */
+    public async getKeeperObject(uidOrTitle: string, options?: GetKeeperObjectOptions): Promise<GetKeeperObjectResult> {
+        return getKeeperObjectFromStorage(this.storage, uidOrTitle, options ?? {})
+    }
+
+    /**
+     * Create a folder via `folder_add`. For path-based creation (including nested segments), use `mkdir`.
+     */
+    public async addFolder(input: AddFolderInput): Promise<AddFolderResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await addFolderOp(auth, this.storage, input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /**
+     * Create folders from a path (CLI-style `mkdir`). Resolves the path from the current working folder,
+     * creates missing intermediate folders as personal folders, and applies shared-folder options to the last segment only.
+     */
+    public async mkdir(path: string, options?: MkdirOptions): Promise<{ folderUid: string; success: boolean; message?: string }> {
+        const auth = this.getAuthOrThrow()
+        const result = await mkdirOp(auth, this.storage, this.folderSession, path, options ?? {})
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /** Update folder name and/or shared-folder defaults (`folder_update`). */
+    public async updateFolder(input: UpdateFolderInput): Promise<UpdateFolderResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await updateFolderOp(auth, this.storage, input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /** Rename a folder by path, name, or UID (CLI-style `updatedir`). */
+    public async renameFolder(folderPath: string, newName: string): Promise<RenameFolderResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await renameFolderOp(auth, this.storage, this.folderSession, folderPath, newName)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /** Update default permissions on a shared folder (SDK-only). */
+    public async updateSharedFolderPermissions(
+        sharedFolderUid: string,
+        permissions: {
+            manageUsers?: boolean | null
+            manageRecords?: boolean | null
+            canShare?: boolean | null
+            canEdit?: boolean | null
+        }
+    ): Promise<UpdateFolderResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await updateSharedFolderPermissionsOp(auth, this.storage, sharedFolderUid, permissions)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /**
+     * Delete folders and/or records (`pre_delete` + `delete`). Pass `confirm` to approve after reading the server summary.
+     */
+    public async deleteVaultObjects(
+        refs: string[],
+        confirm?: (summary: string) => boolean | Promise<boolean> | null
+    ): Promise<DeleteVaultObjectsResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await deleteVaultObjectsOp(auth, this.storage, refs, confirm ?? null)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /**
+     * Remove folders by path, UID, name, or glob (CLI `rmdir`). Requires `confirm` unless `force` is true.
+     */
+    public async rmdir(patterns: string[], options?: RmdirOptions): Promise<DeleteVaultObjectsResult> {
+        const auth = this.getAuthOrThrow()
+        const result = await rmdirOp(auth, this.storage, this.folderSession, patterns, options ?? {})
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    /** Print folder structure from synced data (no API calls). */
+    public async tree(options?: FolderTreeBuildOptions): Promise<string> {
+        this.getAuthOrThrow()
+        return folderTreeAscii(this.storage, this.folderSession, options ?? {})
     }
 
     public getSummary(): VaultSummary {
@@ -434,6 +606,7 @@ export class KeeperVault {
             this.auth = null
         }
         this.synced = false
+        this.folderSession.currentFolderUid = null
     }
 
     public async logout(): Promise<void> {
