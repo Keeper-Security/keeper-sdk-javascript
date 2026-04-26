@@ -21,9 +21,8 @@
         "folders:updatedir": "ts-node src/folders/updatedir.ts",
         "folders:removedir": "ts-node src/folders/removedir.ts",
         "folders:tree": "ts-node src/folders/tree.ts",
-        "shared-folders:list-sf": "ts-node src/sharedFolders/list-sf.ts",
-        "shared-folders:sf-user": "ts-node src/sharedFolders/sf-user.ts",
-        "shared-folders:sf-record": "ts-node src/sharedFolders/sf-record.ts",
+        "shared-folders:list-sf": "ts-node src/sharedFolders/list_sf.ts",
+        "shared-folders:share-folder": "ts-node src/sharedFolders/share_folder.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

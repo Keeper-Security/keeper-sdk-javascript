@@ -7,17 +7,8 @@ import type {
 import { InMemoryStorage } from "../storage/InMemoryStorage";
 
 export type ListSharedFoldersOptions = {
-  /** Search pattern (tokenized substring match on UID and name) */
   pattern?: string | null;
-  /**
-   * When true, table columns are not width-limited (see `formatSharedFoldersTable`).
-   * @default false
-   */
   verbose?: boolean;
-  /**
-   * Include record / user / team counts and default permission flags from the full `DSharedFolder` graph.
-   * @default false
-   */
   includeDetails?: boolean;
 };
 
@@ -39,11 +30,7 @@ function sharedFolderDisplayName(folder: DSharedFolder): string {
   return (folder.name || folder.uid).trim() || folder.uid;
 }
 
-/**
- * Search shared folders by pattern (tokenized substring matching).
- * Matches if any search word is a substring of a token in the folder UID or display name.
- */
-export function findSharedFolders(
+function findSharedFolders(
   storage: InMemoryStorage,
   pattern: string,
 ): DSharedFolder[] {
@@ -60,14 +47,7 @@ export function findSharedFolders(
   return out;
 }
 
-/**
- * Tokenized substring matching (aligns with Python `VaultData._match_entity`):
- * any search word with length ≤ an entity word must be contained in that entity word.
- */
-export function matchEntity(
-  entityWords: string[],
-  searchWords: string[],
-): boolean {
+function matchEntity(entityWords: string[], searchWords: string[]): boolean {
   if (!searchWords || searchWords.length === 0) return true;
   if (!entityWords || entityWords.length === 0) return false;
   for (const entityWord of entityWords) {
@@ -83,8 +63,7 @@ export function matchEntity(
   return false;
 }
 
-/** Split a string into searchable words (whitespace and common punctuation). */
-export function tokenize(text: string): string[] {
+function tokenize(text: string): string[] {
   return text
     .split(/[\s\-_.,;:!?@#$%^&*()[\]{}|\\/<>]+/)
     .filter((w) => w.length > 0);
@@ -131,10 +110,6 @@ function countRecordsForFolder(
   );
 }
 
-/**
- * List shared folders from the last sync (local storage only; no API calls).
- * Equivalent in spirit to the Python CLI `list-sf` / `lsf` command.
- */
 export function listSharedFolders(
   storage: InMemoryStorage,
   options: ListSharedFoldersOptions = {},
@@ -162,9 +137,7 @@ export function listSharedFolders(
 }
 
 export type FormattedSharedFoldersTable = {
-  /** `#`, then title-cased field labels for the two main columns. */
   headers: string[];
-  /** One row per folder: [rowNumber, shared_folder_uid, name, ...] */
   rows: string[][];
 };
 
@@ -175,9 +148,6 @@ function truncateText(str: string, maxLen: number): string {
   return `${str.slice(0, maxLen - 3)}...`;
 }
 
-/**
- * Build a simple table of shared folder UID and name, with optional column truncation (40 unless `verbose`).
- */
 export function formatSharedFoldersTable(
   rows: ListSharedFolderRow[],
   options: { verbose?: boolean; columnWidth?: number } = {},
@@ -196,7 +166,6 @@ export function formatSharedFoldersTable(
   return { headers, rows: outRows };
 }
 
-/** Plain-text table with a header rule row (suitable for console or log output). */
 export function renderSharedFoldersAsciiTable(
   table: FormattedSharedFoldersTable,
   options: { minColWidth?: number } = {},

@@ -113,9 +113,6 @@ export type {
 
 export {
   listSharedFolders,
-  findSharedFolders,
-  matchEntity,
-  tokenize,
   formatSharedFoldersTable,
   renderSharedFoldersAsciiTable,
 } from "./sharedFolders/listSharedFolders";
@@ -125,23 +122,13 @@ export type {
   FormattedSharedFoldersTable,
 } from "./sharedFolders/listSharedFolders";
 
-export {
-  shareFolderUsers,
-  runShareFolderUsers,
-} from "./sharedFolders/shareFolderUsers";
+export { shareFolder } from "./sharedFolders/shareFolder";
 export type {
-  ShareFolderUsersInput,
-  ShareFolderUsersResult,
-} from "./sharedFolders/shareFolderUsers";
-
-export {
-  shareFolderRecords,
-  runShareFolderRecords,
-} from "./sharedFolders/shareFolderRecords";
-export type {
-  ShareFolderRecordsInput,
-  ShareFolderRecordsResult,
-} from "./sharedFolders/shareFolderRecords";
+  ShareFolderAction,
+  ShareFolderInput,
+  ShareFolderResult,
+  ShareFolderUserStatus,
+} from "./sharedFolders/shareFolder";
 
 export {
   changeDirectory,
