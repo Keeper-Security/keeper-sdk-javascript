@@ -25,11 +25,8 @@ import {
 
 export type AddFolderInput = {
   folderName: string;
-  /** Create a shared folder (only under a personal `user_folder` parent, including vault root). */
   isSharedFolder?: boolean;
-  /** Parent folder UID; omit or `null` for vault root. */
   parentUid?: string | null;
-  /** Default permissions for shared folders only. */
   manageUsers?: boolean;
   manageRecords?: boolean;
   canShare?: boolean;
@@ -43,11 +40,8 @@ export type AddFolderResult = {
 };
 
 export type MkdirOptions = {
-  /** `-sf` — create a shared folder (only valid for the last segment under a user-folder parent). */
   sharedFolder?: boolean;
-  /** `-uf` — force a personal user folder (mutually exclusive with `sharedFolder` when both set). */
   userFolder?: boolean;
-  /** `-a` — grant all default shared-folder permissions (manage users/records, edit, share). */
   grantAll?: boolean;
   manageUsers?: boolean;
   manageRecords?: boolean;
@@ -174,9 +168,6 @@ async function findChildFolderUidByName(
   return undefined;
 }
 
-/**
- * Create a folder via `folder_add` (server API). Triggers a sync so the folder appears in local storage.
- */
 export async function addFolder(
   auth: Auth,
   storage: InMemoryStorage,
@@ -213,7 +204,7 @@ export async function addFolder(
     sharedScope,
   );
 
-  const dataJson = JSON.stringify({ title: name });
+  const dataJson = JSON.stringify({ name, title: name });
   const dataBytes = new TextEncoder().encode(dataJson);
   const encryptedData = await platform.aesCbcEncrypt(
     dataBytes,
@@ -274,10 +265,6 @@ export async function addFolder(
   }
 }
 
-/**
- * Create a folder from a path (CLI `mkdir`). Walks existing parents and creates missing segments as personal folders;
- * the last segment uses `sharedFolder` / permission flags when applicable.
- */
 export async function mkdir(
   auth: Auth,
   storage: InMemoryStorage,
@@ -361,18 +348,7 @@ export async function mkdir(
       continue;
     }
 
-    let isShared = false;
-    if (isLast) {
-      if (options.sharedFolder) {
-        isShared = true;
-      } else if (options.userFolder) {
-        isShared = false;
-      } else {
-        isShared = false;
-      }
-    } else {
-      isShared = false;
-    }
+    const isShared = isLast && options.sharedFolder === true;
 
     const parentCtx = resolveParentContext(storage, currentParent);
     if (

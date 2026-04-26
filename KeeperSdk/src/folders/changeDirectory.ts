@@ -5,10 +5,14 @@ import type {
 } from "@keeper-security/keeperapi";
 import { InMemoryStorage } from "../storage/InMemoryStorage";
 import { KeeperSdkError } from "../utils";
-import { listFolder } from "./listFolder";
+import { listFolder, listRootUserFolders } from "./listFolder";
 import type { ListFolderFolderSimple } from "./listFolder";
+import {
+  sharedFolderFolderName,
+  sharedFolderName,
+  userFolderName,
+} from "./folderHelpers";
 
-/** `currentFolderUid === null` means vault root (same convention as `listFolder` `folderUid`). */
 export type VaultFolderSession = {
   currentFolderUid: string | null;
 };
@@ -20,20 +24,6 @@ export type ChangeDirectoryResult = {
 
 export function createVaultFolderSession(): VaultFolderSession {
   return { currentFolderUid: null };
-}
-
-function userFolderName(folder: DUserFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderFolderName(folder: DSharedFolderFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderName(folder: DSharedFolder): string {
-  return (folder.name || folder.uid).trim() || folder.uid;
 }
 
 function getFolderEntryByUid(
@@ -63,40 +53,13 @@ function getFolderEntryByUid(
   return undefined;
 }
 
-async function getUserFolderParentMap(
-  storage: InMemoryStorage,
-): Promise<Map<string, string>> {
-  const folders = storage.getAll<DUserFolder>("user_folder");
-  const childToParent = new Map<string, string>();
-  for (const f of folders) {
-    const deps = (await storage.getDependencies(f.uid)) || [];
-    for (const c of deps) {
-      if (c.kind === "user_folder") {
-        childToParent.set(c.uid, f.uid);
-      }
-    }
-  }
-  return childToParent;
-}
-
-async function listRootUserFolderUids(
-  storage: InMemoryStorage,
-): Promise<Set<string>> {
-  const folders = storage.getAll<DUserFolder>("user_folder");
-  const childToParent = await getUserFolderParentMap(storage);
-  return new Set(
-    folders.filter((f) => !childToParent.has(f.uid)).map((f) => f.uid),
-  );
-}
-
-/**
- * Parent folder UID for navigation (`cd ..`). `null` means vault root (no parent in the user-folder tree).
- */
 export async function findParentFolderUid(
   storage: InMemoryStorage,
   folderUid: string,
 ): Promise<string | null> {
-  const roots = await listRootUserFolderUids(storage);
+  const roots = new Set(
+    (await listRootUserFolders(storage)).map((f) => f.uid),
+  );
   if (roots.has(folderUid)) return null;
 
   const parentKinds = [
@@ -151,7 +114,6 @@ function findChildFolder(
   return children.find((ch) => ch.name.trim().toLowerCase() === lower);
 }
 
-/** Split a path with `//` segments preserved as literal `/` in names. */
 export function splitPathComponents(path: string): string[] {
   const escaped = path.replace(/\/\//g, "\x00");
   return escaped.split("/").map((s) => s.replace(/\x00/g, "/"));
@@ -162,10 +124,6 @@ export type TryResolvePathResult = {
   remaining: string;
 };
 
-/**
- * Resolve a path relative to `session.currentFolderUid` (or vault root when null).
- * No API calls — uses synced storage only.
- */
 export async function tryResolvePath(
   storage: InMemoryStorage,
   session: VaultFolderSession,
@@ -225,9 +183,6 @@ export async function tryResolvePath(
   return { folderUid, remaining: "" };
 }
 
-/**
- * Resolve a single folder from a path, name, or UID. Throws if empty, unresolved, or leftover path.
- */
 export async function resolveSingleFolder(
   storage: InMemoryStorage,
   session: VaultFolderSession,
@@ -269,9 +224,6 @@ export async function resolveSingleFolder(
   return { folderUid: entry.uid, name: entry.name };
 }
 
-/**
- * Update session working folder (client-side only, no API calls).
- */
 export async function changeDirectory(
   storage: InMemoryStorage,
   session: VaultFolderSession,
@@ -282,7 +234,6 @@ export async function changeDirectory(
   return resolved;
 }
 
-/** Display name for CLI prompt (`My Vault` at root). */
 export function getWorkingFolderDisplayName(
   storage: InMemoryStorage,
   currentFolderUid: string | null,

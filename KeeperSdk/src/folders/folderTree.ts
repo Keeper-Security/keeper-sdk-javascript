@@ -4,36 +4,36 @@ import type {
   DSharedFolderFolder,
   DSharedFolderTeam,
   DSharedFolderUser,
+  DUser,
   DUserFolder,
 } from "@keeper-security/keeperapi";
+import { webSafe64FromBytes } from "@keeper-security/keeperapi";
 import { InMemoryStorage } from "../storage/InMemoryStorage";
 import { getRecordTitle } from "../records/RecordUtils";
-import { listFolder, listRootUserFolders } from "./listFolder";
-import type { ListFolderFolderSimple } from "./listFolder";
+import { listFolder, listVaultRootFolders } from "./listFolder";
 import {
-  findParentFolderUid,
   resolveSingleFolder,
   type VaultFolderSession,
 } from "./changeDirectory";
+import {
+  sharedFolderFolderName,
+  sharedFolderName,
+  userFolderName,
+} from "./folderHelpers";
 
 export type FolderTreeBuildOptions = {
-  /** Starting folder path, name, or UID; omit to use `session.currentFolderUid`, or vault root when that is null. */
   folderPath?: string | null;
   verbose?: boolean;
   showRecords?: boolean;
   showShares?: boolean;
-  /** Omit `[User]` / `[Team]` suffixes on share lines when `showShares` is true. */
   hideSharesKey?: boolean;
-  /** Printed on its own line above the tree. */
   title?: string | null;
 };
 
 export type FolderTreeNode = {
   displayName: string;
   children: FolderTreeNode[];
-  /** Only when `showShares` on a shared folder. */
   permissions?: { display: string }[];
-  /** Only when `showRecords`. */
   records?: { display: string }[];
 };
 
@@ -41,20 +41,6 @@ export type FolderTreeResult = {
   title?: string | null;
   root: FolderTreeNode;
 };
-
-function userFolderName(folder: DUserFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderFolderName(folder: DSharedFolderFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderName(folder: DSharedFolder): string {
-  return (folder.name || folder.uid).trim() || folder.uid;
-}
 
 export function userPermissionToText(
   manageUsers: boolean,
@@ -76,34 +62,75 @@ export function recordPermissionToText(
   return "View Only";
 }
 
+function buildAccountUidEmailMap(storage: InMemoryStorage): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const u of storage.getAll<DUser>("user")) {
+    const uid = u.accountUid ? webSafe64FromBytes(u.accountUid) : "";
+    const email = (u.username || "").trim();
+    if (uid && email) map.set(uid, email);
+  }
+  return map;
+}
+
+function resolveUserDisplayName(
+  accountUid: string | undefined,
+  accountUsername: string | undefined,
+  emailMap: Map<string, string>,
+): string {
+  const explicit = (accountUsername || "").trim();
+  if (explicit) return explicit;
+  if (accountUid) {
+    const fromMap = emailMap.get(accountUid);
+    if (fromMap) return fromMap;
+    return accountUid;
+  }
+  return "unknown";
+}
+
 async function collectSharedFolderPermissions(
   storage: InMemoryStorage,
-  sharedFolderUid: string,
+  sharedFolder: DSharedFolder,
   verbose: boolean,
   hideSharesKey: boolean,
+  emailMap: Map<string, string>,
 ): Promise<{ display: string }[]> {
   const rows: { display: string; sortKey: string }[] = [];
+  const seenUserUids = new Set<string>();
 
   for (const u of storage.getAll<DSharedFolderUser>("shared_folder_user")) {
-    if (u.sharedFolderUid !== sharedFolderUid) continue;
+    if (u.sharedFolderUid !== sharedFolder.uid) continue;
+    if (u.accountUid) seenUserUids.add(u.accountUid);
     const permText = userPermissionToText(u.manageUsers, u.manageRecords);
-    let name = u.accountUsername || u.accountUid || "unknown";
+    let name = resolveUserDisplayName(u.accountUid, u.accountUsername, emailMap);
     if (verbose && u.accountUid) name += ` (${u.accountUid})`;
-    const type = "User";
-    const suffix = hideSharesKey ? "" : ` [${type}]`;
+    const suffix = hideSharesKey ? "" : ` [User]`;
     rows.push({
       display: `${name}: ${permText}${suffix}`,
       sortKey: name.toLowerCase(),
     });
   }
 
+  if (sharedFolder.ownerAccountUid && !seenUserUids.has(sharedFolder.ownerAccountUid)) {
+    const ownerName = resolveUserDisplayName(
+      sharedFolder.ownerAccountUid,
+      sharedFolder.ownerUsername,
+      emailMap,
+    );
+    let display = ownerName;
+    if (verbose) display += ` (${sharedFolder.ownerAccountUid})`;
+    const suffix = hideSharesKey ? "" : ` [User]`;
+    rows.push({
+      display: `${display}: ${userPermissionToText(true, true)}${suffix}`,
+      sortKey: ownerName.toLowerCase(),
+    });
+  }
+
   for (const t of storage.getAll<DSharedFolderTeam>("shared_folder_team")) {
-    if (t.sharedFolderUid !== sharedFolderUid) continue;
+    if (t.sharedFolderUid !== sharedFolder.uid) continue;
     const permText = userPermissionToText(t.manageUsers, t.manageRecords);
     let name = t.name || `(${t.teamUid})`;
     if (verbose && t.teamUid) name += ` (${t.teamUid})`;
-    const type = "Team";
-    const suffix = hideSharesKey ? "" : ` [${type}]`;
+    const suffix = hideSharesKey ? "" : ` [Team]`;
     rows.push({
       display: `${name}: ${permText}${suffix}`,
       sortKey: name.toLowerCase(),
@@ -120,99 +147,9 @@ type BuildOpts = Required<
     "verbose" | "showRecords" | "showShares" | "hideSharesKey"
   >
 > & {
-  /** Folder UIDs shown at vault root but omitted when listing their previous parent (matches CLI `tree`). */
   promotedRootSharedUids?: Set<string>;
+  accountUidEmailMap: Map<string, string>;
 };
-
-/**
- * Vault root listing: same sources as `listFolder` at `''`, plus shared folders linked from root user folders,
- * plus every `shared_folder` whose parent is not inside another shared folder / shared-folder-folder (so nested
- * shared folders like `Gear-5th` under `StrawHatz` stay in the subtree, while folders linked only under nested
- * user folders still appear at the vault root like the Python CLI).
- */
-async function collectVaultRootFolderRows(storage: InMemoryStorage): Promise<{
-  rows: ListFolderFolderSimple[];
-  promotedRootSharedUids: Set<string>;
-}> {
-  const listed = await listFolder(storage, {
-    folderUid: undefined,
-    showFolders: true,
-    showRecords: false,
-  });
-  const seen = new Set<string>();
-  const rows: ListFolderFolderSimple[] = [];
-  for (const f of listed.folders) {
-    if (seen.has(f.uid)) continue;
-    seen.add(f.uid);
-    rows.push(f);
-  }
-
-  const promotedRootSharedUids = new Set<string>();
-  const roots = await listRootUserFolders(storage);
-  for (const uf of roots) {
-    const deps = (await storage.getDependencies(uf.uid)) || [];
-    for (const d of deps) {
-      if (d.kind !== "shared_folder" && d.kind !== "shared_folder_folder")
-        continue;
-      if (d.kind === "shared_folder") {
-        const sf = storage.getByUid<DSharedFolder>("shared_folder", d.uid);
-        if (!sf) continue;
-        const row: ListFolderFolderSimple = {
-          uid: sf.uid,
-          name: sharedFolderName(sf),
-          folderKind: "shared_folder",
-        };
-        if (seen.has(row.uid)) continue;
-        seen.add(row.uid);
-        promotedRootSharedUids.add(row.uid);
-        rows.push(row);
-      } else {
-        const sff = storage.getByUid<DSharedFolderFolder>(
-          "shared_folder_folder",
-          d.uid,
-        );
-        if (!sff) continue;
-        const row: ListFolderFolderSimple = {
-          uid: sff.uid,
-          name: sharedFolderFolderName(sff),
-          folderKind: "shared_folder_folder",
-        };
-        if (seen.has(row.uid)) continue;
-        seen.add(row.uid);
-        promotedRootSharedUids.add(row.uid);
-        rows.push(row);
-      }
-    }
-  }
-
-  for (const sf of storage.getAll<DSharedFolder>("shared_folder")) {
-    if (seen.has(sf.uid)) continue;
-    const parentUid = await findParentFolderUid(storage, sf.uid);
-    if (parentUid !== null) {
-      const underSharedHierarchy =
-        !!storage.getByUid<DSharedFolder>("shared_folder", parentUid) ||
-        !!storage.getByUid<DSharedFolderFolder>(
-          "shared_folder_folder",
-          parentUid,
-        );
-      if (underSharedHierarchy) {
-        continue;
-      }
-    }
-    seen.add(sf.uid);
-    promotedRootSharedUids.add(sf.uid);
-    rows.push({
-      uid: sf.uid,
-      name: sharedFolderName(sf),
-      folderKind: "shared_folder",
-    });
-  }
-
-  rows.sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-  );
-  return { rows, promotedRootSharedUids };
-}
 
 async function buildFolderSubtree(
   storage: InMemoryStorage,
@@ -247,9 +184,10 @@ async function buildFolderSubtree(
   if (opts.showShares && sf) {
     node.permissions = await collectSharedFolderPermissions(
       storage,
-      sf.uid,
+      sf,
       opts.verbose,
       opts.hideSharesKey,
+      opts.accountUidEmailMap,
     );
   }
 
@@ -284,9 +222,9 @@ async function buildVaultRootTree(
   storage: InMemoryStorage,
   opts: BuildOpts,
 ): Promise<FolderTreeNode> {
-  const node: FolderTreeNode = { displayName: "My Vault", children: [] };
+  const node: FolderTreeNode = { displayName: "", children: [] };
   const { rows, promotedRootSharedUids } =
-    await collectVaultRootFolderRows(storage);
+    await listVaultRootFolders(storage);
   const optsWithPromoted: BuildOpts = { ...opts, promotedRootSharedUids };
   for (const f of rows) {
     node.children.push(
@@ -325,9 +263,6 @@ async function resolveTreeStart(
   return { folderUid: session.currentFolderUid ?? null };
 }
 
-/**
- * Build a folder tree from synced local storage (no API calls).
- */
 export async function buildFolderTree(
   storage: InMemoryStorage,
   session: VaultFolderSession,
@@ -338,6 +273,7 @@ export async function buildFolderTree(
     showRecords: options.showRecords === true,
     showShares: options.showShares === true,
     hideSharesKey: options.hideSharesKey === true,
+    accountUidEmailMap: buildAccountUidEmailMap(storage),
   };
 
   const { folderUid } = await resolveTreeStart(
@@ -377,9 +313,6 @@ function gatherItems(node: FolderTreeNode): Item[] {
   return items;
 }
 
-/**
- * Render a folder tree as ASCII (similar to Python `asciitree` LeftAligned).
- */
 export function renderFolderTreeAscii(result: FolderTreeResult): string {
   const lines: string[] = [];
   if (result.title) {
@@ -397,7 +330,9 @@ function renderNode(
   isLast: boolean,
 ): void {
   if (isRoot) {
-    lines.push(node.displayName);
+    if (node.displayName) {
+      lines.push(node.displayName);
+    }
   } else {
     const connector = isLast ? "\\-- " : "+-- ";
     lines.push(prefix + connector + node.displayName);
@@ -417,9 +352,6 @@ function renderNode(
   }
 }
 
-/**
- * Build and render in one step.
- */
 export async function folderTreeAscii(
   storage: InMemoryStorage,
   session: VaultFolderSession,

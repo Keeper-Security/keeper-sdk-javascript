@@ -17,6 +17,10 @@ import {
   RecordVersion,
 } from "../records/RecordUtils";
 import { findParentFolderUid } from "./changeDirectory";
+import {
+  sharedFolderFolderName,
+  userFolderName,
+} from "./folderHelpers";
 
 export const KEEPER_SENSITIVE_FIELD_TYPES = new Set([
   "password",
@@ -31,7 +35,6 @@ export const KEEPER_SENSITIVE_FIELD_TYPES = new Set([
 
 export type GetKeeperObjectFormat = "detail" | "json" | "password" | "fields";
 
-/** `-f` → shared folder first, then user/shared-folder-folder; `-t` team; `-r` record */
 export type GetKeeperObjectForceType = "folder" | "team" | "record";
 
 export type GetKeeperObjectOptions = {
@@ -124,16 +127,6 @@ export type GetKeeperTeamResult = {
   restrict_share: boolean;
   json?: Record<string, unknown>;
 };
-
-function userFolderName(folder: DUserFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderFolderName(folder: DSharedFolderFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
 
 function findSharedFolder(
   storage: InMemoryStorage,
@@ -549,9 +542,6 @@ async function buildRecordResult(
   return base;
 }
 
-/**
- * Look up a record, folder, shared folder, or team by UID or name (CLI `get`). Uses locally synced storage only — no API calls.
- */
 export async function getKeeperObject(
   storage: InMemoryStorage,
   uidOrTitle: string,

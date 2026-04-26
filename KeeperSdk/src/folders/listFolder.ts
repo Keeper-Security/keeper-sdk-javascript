@@ -4,16 +4,22 @@ import type {
   DSharedFolder,
   DSharedFolderFolder,
   DUserFolder,
+  VaultStorageData,
+  VaultStorageKind,
 } from "@keeper-security/keeperapi";
-import type { VaultStorageKind } from "@keeper-security/keeperapi";
 import { InMemoryStorage } from "../storage/InMemoryStorage";
 import { KeeperSdkError } from "../utils";
 import { getRecordTitle, getRecordType } from "../records/RecordUtils";
+import {
+  getUserFolderParentMap,
+  globToRegex,
+  sharedFolderFolderName,
+  sharedFolderName,
+  userFolderName,
+} from "./folderHelpers";
 
 export type ListFolderOptions = {
-  /** Vault root when null, undefined, or empty string */
   folderUid?: string | null;
-  /** Glob-style filter (*, ?) on names and UIDs (records: title only) */
   pattern?: string | null;
   showFolders?: boolean;
   showRecords?: boolean;
@@ -58,26 +64,6 @@ export type ListFolderResult =
       records: ListFolderRecordSimple[];
     };
 
-function userFolderName(folder: DUserFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderFolderName(folder: DSharedFolderFolder): string {
-  const d = folder.data as { title?: string; name?: string } | undefined;
-  return (d?.title || d?.name || folder.uid).trim() || folder.uid;
-}
-
-function sharedFolderName(folder: DSharedFolder): string {
-  return (folder.name || folder.uid).trim() || folder.uid;
-}
-
-function globToRegex(pattern: string): RegExp {
-  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&");
-  const body = escaped.replace(/\*/g, ".*").replace(/\?/g, ".");
-  return new RegExp(`^${body}$`, "i");
-}
-
 function recordHasAttachments(record: DRecord): boolean {
   const ids = record.udata?.file_ids;
   if (Array.isArray(ids) && ids.length > 0) return true;
@@ -102,29 +88,117 @@ function buildRecordFlags(
   return `r${owner ? "O" : "-"}${attach ? "A" : "-"}${shared ? "S" : "-"}`;
 }
 
-async function getUserFolderParentMap(
-  storage: InMemoryStorage,
-): Promise<Map<string, string>> {
-  const folders = storage.getAll<DUserFolder>("user_folder");
-  const childToParent = new Map<string, string>();
-  for (const f of folders) {
-    const deps = (await storage.getDependencies(f.uid)) || [];
-    for (const c of deps) {
-      if (c.kind === "user_folder") {
-        childToParent.set(c.uid, f.uid);
-      }
-    }
-  }
-  return childToParent;
-}
-
-/** Root-level user folders (no parent in the user-folder tree). Exported for `tree` and similar. */
 export async function listRootUserFolders(
   storage: InMemoryStorage,
 ): Promise<DUserFolder[]> {
   const folders = storage.getAll<DUserFolder>("user_folder");
   const childToParent = await getUserFolderParentMap(storage);
   return folders.filter((f) => !childToParent.has(f.uid));
+}
+
+async function buildFolderParentMap(
+  storage: InMemoryStorage,
+): Promise<Map<string, { uid: string; kind: VaultStorageKind }>> {
+  const result = new Map<string, { uid: string; kind: VaultStorageKind }>();
+  const parentKinds: VaultStorageKind[] = [
+    "user_folder",
+    "shared_folder",
+    "shared_folder_folder",
+  ];
+  for (const kind of parentKinds) {
+    for (const item of storage.getAll<{ uid: string } & VaultStorageData>(
+      kind,
+    )) {
+      const puid = (item as { uid: string }).uid;
+      if (!puid) continue;
+      const deps = (await storage.getDependencies(puid)) || [];
+      for (const d of deps) {
+        if (
+          d.kind === "user_folder" ||
+          d.kind === "shared_folder" ||
+          d.kind === "shared_folder_folder"
+        ) {
+          if (!result.has(d.uid)) {
+            result.set(d.uid, { uid: puid, kind });
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
+
+export async function listVaultRootFolders(
+  storage: InMemoryStorage,
+): Promise<{
+  rows: ListFolderFolderSimple[];
+  promotedRootSharedUids: Set<string>;
+}> {
+  const rows: ListFolderFolderSimple[] = [];
+  const seen = new Set<string>();
+  const promotedRootSharedUids = new Set<string>();
+
+  for (const uf of await listRootUserFolders(storage)) {
+    if (seen.has(uf.uid)) continue;
+    seen.add(uf.uid);
+    rows.push({
+      uid: uf.uid,
+      name: userFolderName(uf),
+      folderKind: "user_folder",
+    });
+  }
+
+  const rootDeps = (await storage.getDependencies("")) || [];
+  for (const d of rootDeps) {
+    if (d.kind === "shared_folder") {
+      const sf = storage.getByUid<DSharedFolder>("shared_folder", d.uid);
+      if (!sf || seen.has(sf.uid)) continue;
+      seen.add(sf.uid);
+      rows.push({
+        uid: sf.uid,
+        name: sharedFolderName(sf),
+        folderKind: "shared_folder",
+      });
+    } else if (d.kind === "shared_folder_folder") {
+      const sff = storage.getByUid<DSharedFolderFolder>(
+        "shared_folder_folder",
+        d.uid,
+      );
+      if (!sff || seen.has(sff.uid)) continue;
+      seen.add(sff.uid);
+      rows.push({
+        uid: sff.uid,
+        name: sharedFolderFolderName(sff),
+        folderKind: "shared_folder_folder",
+      });
+    }
+  }
+
+  const parentMap = await buildFolderParentMap(storage);
+  for (const sf of storage.getAll<DSharedFolder>("shared_folder")) {
+    if (seen.has(sf.uid)) continue;
+    const parent = parentMap.get(sf.uid);
+    if (
+      parent &&
+      (parent.kind === "shared_folder" ||
+        parent.kind === "shared_folder_folder")
+    ) {
+      continue;
+    }
+    seen.add(sf.uid);
+    promotedRootSharedUids.add(sf.uid);
+    rows.push({
+      uid: sf.uid,
+      name: sharedFolderName(sf),
+      folderKind: "shared_folder",
+    });
+  }
+
+  rows.sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+  );
+
+  return { rows, promotedRootSharedUids };
 }
 
 function resolveFolderContainer(
@@ -205,9 +279,6 @@ async function countFolderChildren(
   return { records, subfolders };
 }
 
-/**
- * List contents of a vault folder from synced local storage (no API calls).
- */
 export async function listFolder(
   storage: InMemoryStorage,
   options: ListFolderOptions = {},
@@ -229,13 +300,10 @@ export async function listFolder(
     parentKey = resolveFolderContainer(storage, folderUidOpt).uid;
   }
 
-  const recordDepsAtRoot = (await storage.getDependencies("")) || [];
   const deps =
     parentKey === null
-      ? recordDepsAtRoot
+      ? (await storage.getDependencies("")) || []
       : (await storage.getDependencies(parentKey)) || [];
-  const rootUserFolders =
-    parentKey === null ? await listRootUserFolders(storage) : [];
 
   const folderRows: ListFolderFolderSimple[] = [];
   const recordRows: ListFolderRecordSimple[] = [];
@@ -246,10 +314,10 @@ export async function listFolder(
   };
 
   if (showFolders && parentKey === null) {
-    for (const uf of rootUserFolders) {
-      const name = userFolderName(uf);
-      if (!matches(name, uf.uid)) continue;
-      folderRows.push({ uid: uf.uid, name, folderKind: "user_folder" });
+    const { rows } = await listVaultRootFolders(storage);
+    for (const row of rows) {
+      if (!matches(row.name, row.uid)) continue;
+      folderRows.push(row);
     }
   }
 
@@ -260,13 +328,21 @@ export async function listFolder(
       const name = userFolderName(uf);
       if (!matches(name, uf.uid)) continue;
       folderRows.push({ uid: uf.uid, name, folderKind: "user_folder" });
-    } else if (d.kind === "shared_folder" && showFolders) {
+    } else if (
+      d.kind === "shared_folder" &&
+      showFolders &&
+      parentKey !== null
+    ) {
       const sf = storage.getByUid<DSharedFolder>("shared_folder", d.uid);
       if (!sf) continue;
       const name = sharedFolderName(sf);
       if (!matches(name, sf.uid)) continue;
       folderRows.push({ uid: sf.uid, name, folderKind: "shared_folder" });
-    } else if (d.kind === "shared_folder_folder" && showFolders) {
+    } else if (
+      d.kind === "shared_folder_folder" &&
+      showFolders &&
+      parentKey !== null
+    ) {
       const sff = storage.getByUid<DSharedFolderFolder>(
         "shared_folder_folder",
         d.uid,

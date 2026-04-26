@@ -1,6 +1,8 @@
 /**
  * Args for `ts-node` examples: `process.argv.slice(2)` often includes the entry script
  * (e.g. `src/sharedFolders/sf-user.ts`) as the first element. Skip it so positionals and flags match `npm run … -- …`.
+ *
+ * Records and folders examples are fully prompt-driven and do not call this helper.
  */
 export function getScriptArgs(): string[] {
     const a = process.argv.slice(2)

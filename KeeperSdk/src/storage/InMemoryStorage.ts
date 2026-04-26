@@ -147,20 +147,27 @@ export class InMemoryStorage implements VaultStorage {
       token?: string;
       sharedFolderUid?: string;
       recordUid?: string;
-      accountUid?: string;
+      accountUid?: string | Uint8Array;
       teamUid?: string;
     };
+    const accountUidStr =
+      typeof record.accountUid === "string"
+        ? record.accountUid
+        : record.accountUid instanceof Uint8Array
+        ? Buffer.from(record.accountUid).toString("base64url")
+        : undefined;
     if (record.uid) return record.uid;
     if (record.token) return record.token;
     if (record.sharedFolderUid && record.recordUid) {
       return `${record.sharedFolderUid}:${record.recordUid}`;
     }
-    if (record.sharedFolderUid && record.accountUid) {
-      return `${record.sharedFolderUid}:${record.accountUid}`;
+    if (record.sharedFolderUid && accountUidStr) {
+      return `${record.sharedFolderUid}:${accountUidStr}`;
     }
     if (record.sharedFolderUid && record.teamUid) {
       return `${record.sharedFolderUid}:${record.teamUid}`;
     }
+    if (item.kind === "user" && accountUidStr) return accountUidStr;
     return "_singleton_";
   }
 }

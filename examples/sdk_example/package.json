@@ -1,7 +1,7 @@
 {
     "name": "sdk-example",
     "version": "1.0.0",
-    "description": "Example usage of the KeeperSdk wrapper — mirrors Python SDK examples",
+    "description": "Example usage of the KeeperSdk wrapper",
     "scripts": {
         "auth:login": "ts-node src/auth/login.ts",
         "auth:session-token": "ts-node src/auth/session_token_login.ts",
@@ -14,9 +14,9 @@
         "records:find-password": "ts-node src/records/find_password.ts",
         "records:move": "ts-node src/records/move_record.ts",
         "sharing:share-record": "ts-node src/sharing/share_record.ts",
-        "folders:ls": "ts-node src/folders/ls.ts",
-        "folders:cd": "ts-node src/folders/cd.ts",
-        "folders:get": "ts-node src/folders/get.ts",
+        "folders:ls": "ts-node src/folders/list_folder.ts",
+        "folders:cd": "ts-node src/folders/change_directory.ts",
+        "folders:get": "ts-node src/folders/get_folder.ts",
         "folders:mkdir": "ts-node src/folders/mkdir.ts",
         "folders:updatedir": "ts-node src/folders/updatedir.ts",
         "folders:removedir": "ts-node src/folders/removedir.ts",

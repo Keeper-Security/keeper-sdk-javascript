@@ -9,7 +9,6 @@ import type {
 } from "@keeper-security/keeperapi";
 import type { RestCommand } from "@keeper-security/keeperapi";
 
-/** Matches keeperapi `DeleteObject` (folder/record unlink payload for `pre_delete`). */
 export type VaultDeleteObject = {
   object_uid: string;
   object_type:
@@ -31,6 +30,12 @@ import {
   findParentFolderUid,
   type VaultFolderSession,
 } from "./changeDirectory";
+import {
+  globToRegex,
+  sharedFolderFolderName,
+  sharedFolderName,
+  userFolderName,
+} from "./folderHelpers";
 
 export type DeleteVaultObjectsResult = {
   success: boolean;
@@ -39,19 +44,10 @@ export type DeleteVaultObjectsResult = {
 };
 
 export type RmdirOptions = {
-  /** Skip confirmation (still runs `pre_delete`). */
   force?: boolean;
-  /** Suppress listing folder paths before confirm (CLI). */
   quiet?: boolean;
-  /** Called with server deletion summary; return false to cancel. Not used when `force` is true. */
   confirm?: (summary: string) => boolean | Promise<boolean>;
 };
-
-function globToRegex(pattern: string): RegExp {
-  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&");
-  const body = escaped.replace(/\*/g, ".*").replace(/\?/g, ".");
-  return new RegExp(`^${body}$`, "i");
-}
 
 function folderKindOfUid(
   storage: InMemoryStorage,
@@ -79,26 +75,17 @@ async function listFolderChildrenFolders(
 
 function folderDisplayName(storage: InMemoryStorage, uid: string): string {
   const uf = storage.getByUid<DUserFolder>("user_folder", uid);
-  if (uf) {
-    const d = uf.data as { title?: string; name?: string } | undefined;
-    return (d?.title || d?.name || uf.uid).trim() || uf.uid;
-  }
+  if (uf) return userFolderName(uf);
   const sf = storage.getByUid<DSharedFolder>("shared_folder", uid);
-  if (sf) return (sf.name || sf.uid).trim() || sf.uid;
+  if (sf) return sharedFolderName(sf);
   const sff = storage.getByUid<DSharedFolderFolder>(
     "shared_folder_folder",
     uid,
   );
-  if (sff) {
-    const d = sff.data as { title?: string; name?: string } | undefined;
-    return (d?.title || d?.name || sff.uid).trim() || sff.uid;
-  }
+  if (sff) return sharedFolderFolderName(sff);
   return uid;
 }
 
-/**
- * Build `pre_delete` object for a folder (user, shared, or shared-folder subfolder).
- */
 export async function buildFolderDeleteObject(
   storage: InMemoryStorage,
   folderUid: string,
@@ -258,10 +245,6 @@ function preDeleteCommandFlexible(
   };
 }
 
-/**
- * Delete vault objects via `pre_delete` then `delete` (two-step protocol).
- * Resolves each string as folder UID, record UID, or record title.
- */
 export async function deleteVaultObjects(
   auth: Auth,
   storage: InMemoryStorage,
@@ -320,9 +303,6 @@ export async function deleteVaultObjects(
   return { success: true };
 }
 
-/**
- * Remove child folders matching path / name / UID / glob (CLI `rmdir`).
- */
 export async function resolveRmdirPatternsToFolderUids(
   storage: InMemoryStorage,
   session: VaultFolderSession,
@@ -380,9 +360,6 @@ async function dedupeNestedFolderDeletes(
   }
 }
 
-/**
- * Remove folders by path, UID, name, or glob (`rmdir`). Uses `deleteVaultObjects` with folder UIDs only.
- */
 export async function rmdir(
   auth: Auth,
   storage: InMemoryStorage,

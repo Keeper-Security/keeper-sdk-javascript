@@ -18,9 +18,7 @@ import {
 
 export type UpdateFolderInput = {
   folderUid: string;
-  /** New display name (required for `user_folder` and `shared_folder_folder` updates). */
   folderName?: string | null;
-  /** Shared folders only — omit or `null` to keep existing defaults. */
   manageUsers?: boolean | null;
   manageRecords?: boolean | null;
   canShare?: boolean | null;
@@ -88,10 +86,6 @@ function mergeFolderData(
   return base;
 }
 
-/**
- * Update a folder (`folder_update`): rename and/or shared-folder default permissions.
- * Local storage holds decrypted folder `data`; it is merged, re-encrypted with the folder key, and sent to the server.
- */
 export async function updateFolder(
   auth: Auth,
   storage: InMemoryStorage,
@@ -141,17 +135,11 @@ export async function updateFolder(
     }
   }
 
-  let merged: Record<string, unknown>;
-  if (resolved.kind === "shared_folder") {
-    const sf = resolved.folder;
-    merged = nameTrim
-      ? mergeFolderData(sf.data, nameTrim)
-      : mergeFolderData(sf.data, sf.name ?? undefined);
-  } else if (resolved.kind === "user_folder") {
-    merged = mergeFolderData(resolved.folder.data, nameTrim);
-  } else {
-    merged = mergeFolderData(resolved.folder.data, nameTrim);
-  }
+  const effectiveName =
+    resolved.kind === "shared_folder"
+      ? nameTrim || resolved.folder.name || undefined
+      : nameTrim;
+  const merged = mergeFolderData(resolved.folder.data, effectiveName);
 
   const payloadJson = JSON.stringify(merged);
   const payloadBytes = new TextEncoder().encode(payloadJson);
@@ -213,9 +201,6 @@ export async function updateFolder(
   }
 }
 
-/**
- * Rename a folder by path, name, or UID (CLI `updatedir`). Cannot rename vault root.
- */
 export async function renameFolder(
   auth: Auth,
   storage: InMemoryStorage,
@@ -257,9 +242,6 @@ export async function renameFolder(
   };
 }
 
-/**
- * Update default permissions for a shared folder (SDK-only; no CLI equivalent).
- */
 export async function updateSharedFolderPermissions(
   auth: Auth,
   storage: InMemoryStorage,
