@@ -1,7 +1,4 @@
-import {
-    createKdRecordAccessCompositeKey,
-    createKdFolderAccessCompositeKey,
-} from '../../syncDown/utils'
+import { createKdRecordAccessCompositeKey, createKdFolderAccessCompositeKey } from '../../syncDown'
 
 describe('createKdRecordAccessCompositeKey', () => {
     it('produces actorUid:recordUid format', () => {
