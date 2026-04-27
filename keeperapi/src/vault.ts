@@ -36,7 +36,12 @@ import {
     DKdFolderSharingState,
     mapTeamKeyType,
     DKdRecordLink,
+    createKdFolderAccessCompositeKey,
 } from './syncDown'
+
+export type VaultStorageDeleteOption =
+    | { kind: 'keeper_drive_record_access'; actorUid: string; recordUid: string }
+    | { kind: 'keeper_drive_folder_access'; folderUid: string; actorUid: string }
 
 export type VaultStorage = KeyStorage & {
     put(data: VaultStorageData): Promise<void>
@@ -45,7 +50,7 @@ export type VaultStorage = KeyStorage & {
     removeDependencies(dependencies: RemovedDependencies): Promise<void>
     clear(): Promise<void>
     get<T extends VaultStorageKind>(kind: T, uid?: string): Promise<VaultStorageResult<T>>
-    delete(kind: VaultStorageKind, uid: string | Uint8Array): Promise<void>
+    delete(kind: VaultStorageKind, uid: string | Uint8Array, option?: VaultStorageDeleteOption): Promise<void>
 }
 
 export type VaultStorageData =
@@ -1098,7 +1103,11 @@ const processKdRevokedFolderAccesses = async (
         if (!revokedAccess.actorUid || !revokedAccess.folderUid) continue
         const actorUid = webSafe64FromBytes(revokedAccess.actorUid)
         const folderUid = webSafe64FromBytes(revokedAccess.folderUid)
-        await storage.delete('keeper_drive_folder_access', `${folderUid}:${actorUid}`)
+        await storage.delete('keeper_drive_folder_access', createKdFolderAccessCompositeKey(actorUid, folderUid), {
+            kind: 'keeper_drive_folder_access',
+            actorUid,
+            folderUid,
+        })
     }
 }
 
@@ -1415,7 +1424,11 @@ const processKdRevokedRecordAccesses = async (
         if (!revokedAccess.actorUid || !revokedAccess.recordUid) continue
         const actorUid = webSafe64FromBytes(revokedAccess.actorUid)
         const recordUid = webSafe64FromBytes(revokedAccess.recordUid)
-        await storage.delete('keeper_drive_record_access', createKdRecordAccessCompositeKey(actorUid, recordUid))
+        await storage.delete('keeper_drive_record_access', createKdRecordAccessCompositeKey(actorUid, recordUid), {
+            kind: 'keeper_drive_record_access',
+            actorUid,
+            recordUid,
+        })
     }
 }
 
