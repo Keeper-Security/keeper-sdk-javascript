@@ -55,6 +55,7 @@ export type VaultStorageData =
     | DBWSecurityData
     | DSecurityScoreData
     | DUser
+    | DRecordRotation
 
 export type VaultStorageKind =
     | 'profilePic'
@@ -75,6 +76,7 @@ export type VaultStorageKind =
     | 'bw_security_data'
     | 'security_score_data'
     | 'user'
+    | 'record_rotation'
 
 export type VaultStorageResult<T extends VaultStorageKind> =
     | (T extends 'continuationToken' ? DContinuationToken : T extends 'record' ? DRecord : never)
@@ -247,6 +249,28 @@ export type DUser = {
     kind: 'user'
     accountUid: Uint8Array
     username: string
+}
+
+export type DPwdComplexity = {
+    length: number
+    caps: number
+    lowercase: number
+    digits: number
+    special: number
+    specialChars?: string
+}
+
+export type DRecordRotation = {
+    kind: 'record_rotation'
+    uid: string
+    revision: number
+    configurationUid: string
+    resourceUid: string
+    schedule: string
+    lastRotation?: number
+    lastRotationStatus?: Vault.RecordRotationStatus
+    pwdComplexity?: DPwdComplexity
+    disabled: boolean
 }
 
 export type DContinuationToken = {
@@ -1093,6 +1117,34 @@ export type SyncDownOptions = {
     controller?: SyncController
 }
 
+const processRecordRotations = async (rotations: Vault.IRecordRotation[] | null | undefined, storage: VaultStorage) => {
+    if (!rotations?.length) return
+    for (const r of rotations) {
+        if (!r.recordUid) continue
+        const uid = webSafe64FromBytes(r.recordUid)
+        try {
+            const pwdComplexityData = r.pwdComplexity?.byteLength
+                ? await platform.decrypt(r.pwdComplexity, uid, 'gcm', storage)
+                : undefined
+            const pwdComplexity = pwdComplexityData ? JSON.parse(platform.bytesToString(pwdComplexityData)) : undefined
+            await storage.put({
+                kind: 'record_rotation',
+                uid,
+                revision: r.revision ? Number(r.revision) : 0,
+                configurationUid: r.configurationUid ? webSafe64FromBytes(r.configurationUid) : '',
+                resourceUid: r.resourceUid ? webSafe64FromBytes(r.resourceUid) : '',
+                schedule: r.schedule || '',
+                lastRotation: r.lastRotation ? Number(r.lastRotation) : undefined,
+                lastRotationStatus: r.lastRotationStatus ?? undefined,
+                pwdComplexity,
+                disabled: r.disabled === true,
+            })
+        } catch {
+            console.error(`The record rotation ${uid} could not be processed`)
+        }
+    }
+}
+
 export class SyncController {
     aborted: boolean = false
 
@@ -1195,6 +1247,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processRecordLinks(resp.recordLinks, storage)
 
             await processRecords(resp.records, storage)
+
+            await processRecordRotations(resp.recordRotations, storage)
 
             await processNonSharedData(resp.nonSharedData, storage)
 
