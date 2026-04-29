@@ -1,4 +1,12 @@
-import { login, cleanup, logger, prompt, extractErrorMessage } from '@keeper-security/keeper-sdk-javascript'
+import {
+    cleanup,
+    extractErrorMessage,
+    FolderObjectType,
+    GetFolderFormat,
+    login,
+    logger,
+    prompt,
+} from '@keeper-security/keeper-sdk-javascript'
 import type { GetFolderResult } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 import { isYes } from '../utils/format'
@@ -10,11 +18,11 @@ function row(label: string, value: string | number | boolean): void {
 }
 
 function printFolder(result: GetFolderResult): void {
-    if (result.objectType === 'folder') {
+    if (result.objectType === FolderObjectType.Folder) {
         row('Folder UID:', result.folder_uid)
         row('Folder Type:', result.folder_type)
         row('Name:', result.name)
-        row('Parent Folder UID:', result.parent_uid ?? '(root)')
+        row('Parent Folder UID:', result.parent_uid || '(root)')
         if (result.shared_folder_scope_uid) {
             row('Shared Folder UID:', result.shared_folder_scope_uid)
         }
@@ -29,15 +37,17 @@ function printFolder(result: GetFolderResult): void {
     row('Default Manage Users:', result.default_manage_users)
     if (result.record_permissions?.length) {
         logger.info('Record permissions:')
-        for (const r of result.record_permissions) {
-            logger.info(`  ${r.record_uid}  edit=${r.can_edit} share=${r.can_share} owner=${r.owner}`)
+        for (const recordPermission of result.record_permissions) {
+            logger.info(
+                `  ${recordPermission.record_uid}  edit=${recordPermission.can_edit} share=${recordPermission.can_share} owner=${recordPermission.owner}`
+            )
         }
     }
     if (result.user_permissions?.length) {
         logger.info('User permissions:')
-        for (const u of result.user_permissions) {
+        for (const userPermission of result.user_permissions) {
             logger.info(
-                `  ${u.account_username ?? '?'}  manage_records=${u.manage_records} manage_users=${u.manage_users}`
+                `  ${userPermission.account_username || '?'}  manage_records=${userPermission.manage_records} manage_users=${userPermission.manage_users}`
             )
         }
     }
@@ -57,11 +67,11 @@ async function getCommand() {
 
         try {
             const result = await vault.getFolder(target, {
-                format: asJson ? 'json' : 'detail',
+                format: asJson ? GetFolderFormat.JSON : GetFolderFormat.Detail,
             })
             logger.info('')
             if (asJson) {
-                logger.info(JSON.stringify(result.json ?? result, null, 2))
+                logger.info(JSON.stringify(result.json || result, null, 2))
             } else {
                 printFolder(result)
             }

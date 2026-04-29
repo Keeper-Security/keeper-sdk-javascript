@@ -39,17 +39,17 @@ function truncateLabel(label: string, verbose: boolean, max = 40): string {
 
 function printColumnar(cells: string[], termWidth: number): void {
     if (cells.length === 0) return
-    const maxLen = Math.max(...cells.map((c) => c.length), 1)
+    const maxCellLength = Math.max(...cells.map((cell) => cell.length), 1)
     const gap = 2
-    const colWidth = maxLen + gap
-    const cols = Math.max(1, Math.floor((termWidth + gap) / colWidth))
-    const rows = Math.ceil(cells.length / cols)
-    for (let r = 0; r < rows; r++) {
+    const colWidth = maxCellLength + gap
+    const columnCount = Math.max(1, Math.floor((termWidth + gap) / colWidth))
+    const rowCount = Math.ceil(cells.length / columnCount)
+    for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
         const parts: string[] = []
-        for (let c = 0; c < cols; c++) {
-            const idx = r * cols + c
-            if (idx >= cells.length) break
-            parts.push(cells[idx].padEnd(maxLen))
+        for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+            const cellIndex = rowIndex * columnCount + columnIndex
+            if (cellIndex >= cells.length) break
+            parts.push(cells[cellIndex].padEnd(maxCellLength))
         }
         logger.info(parts.join('  '))
     }
@@ -66,12 +66,16 @@ function printDetail(result: ListFolderResult): void {
     logger.info('')
     logger.info('#  Flags  UID                                    Name                      Type')
     logger.info('-  -----  ------------------------------------  ------------------------  ----------')
-    let n = 1
-    for (const f of result.folders) {
-        logger.info(`${String(n++).padStart(2)}  ${f.flags}   ${formatUidCell(f.uid)}  ${f.name}`.trimEnd())
+    let rowNumber = 1
+    for (const folder of result.folders) {
+        logger.info(
+            `${String(rowNumber++).padStart(2)}  ${folder.flags}   ${formatUidCell(folder.uid)}  ${folder.name}`.trimEnd()
+        )
     }
-    for (const r of result.records) {
-        logger.info(`${String(n++).padStart(2)}  ${r.flags}   ${formatUidCell(r.uid)}  ${r.name.padEnd(24)}  ${r.type}`)
+    for (const record of result.records) {
+        logger.info(
+            `${String(rowNumber++).padStart(2)}  ${record.flags}   ${formatUidCell(record.uid)}  ${record.name.padEnd(24)}  ${record.type}`
+        )
     }
 }
 
@@ -119,8 +123,8 @@ async function lsCommand() {
         if (result.detail) {
             printDetail(result)
         } else {
-            const folderCells = result.folders.map((f) => `${truncateLabel(f.name, verbose)}/`)
-            const recordCells = result.records.map((r) => truncateLabel(r.name, verbose))
+            const folderCells = result.folders.map((folder) => `${truncateLabel(folder.name, verbose)}/`)
+            const recordCells = result.records.map((record) => truncateLabel(record.name, verbose))
             printColumnar([...folderCells, ...recordCells], width)
         }
     } finally {

@@ -36,7 +36,7 @@ async function removedirCommand() {
             if (result.success) {
                 logger.info('Removal completed.')
             } else {
-                logger.error(`Failed: ${result.message ?? 'unknown error'}`)
+                logger.error(`Failed: ${result.message || 'unknown error'}`)
                 process.exitCode = 1
             }
         } catch (err) {

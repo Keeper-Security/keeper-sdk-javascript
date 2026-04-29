@@ -7,8 +7,9 @@ import {
 } from '@keeper-security/keeperapi'
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
-import { KeeperSdkError, extractErrorMessage } from '../utils'
+import { anyIsBoolean, isBoolean, isObject, KeeperSdkError, extractErrorMessage } from '../utils'
 import { resolveSingleFolder, type VaultFolderSession } from './changeDirectory'
+import { FolderKind, FolderResultStatus } from './folderHelpers'
 
 export type UpdateFolderInput = {
     folderUid: string
@@ -34,25 +35,22 @@ export type RenameFolderResult = {
 }
 
 type ResolvedFolder =
-    | { kind: 'user_folder'; folder: DUserFolder }
-    | { kind: 'shared_folder'; folder: DSharedFolder }
-    | { kind: 'shared_folder_folder'; folder: DSharedFolderFolder }
+    | { kind: FolderKind.UserFolder; folder: DUserFolder }
+    | { kind: FolderKind.SharedFolder; folder: DSharedFolder }
+    | { kind: FolderKind.SharedFolderFolder; folder: DSharedFolderFolder }
 
 function resolveFolderEntity(storage: InMemoryStorage, folderUid: string): ResolvedFolder | undefined {
-    const uf = storage.getByUid<DUserFolder>('user_folder', folderUid)
-    if (uf) return { kind: 'user_folder', folder: uf }
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', folderUid)
-    if (sf) return { kind: 'shared_folder', folder: sf }
-    const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', folderUid)
-    if (sff) return { kind: 'shared_folder_folder', folder: sff }
+    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, folderUid)
+    if (userFolder) return { kind: FolderKind.UserFolder, folder: userFolder }
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, folderUid)
+    if (sharedFolder) return { kind: FolderKind.SharedFolder, folder: sharedFolder }
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, folderUid)
+    if (sharedFolderFolder) return { kind: FolderKind.SharedFolderFolder, folder: sharedFolderFolder }
     return undefined
 }
 
 function mergeFolderData(existing: unknown, folderName: string | null | undefined): Record<string, unknown> {
-    const base =
-        existing && typeof existing === 'object' && !Array.isArray(existing)
-            ? { ...(existing as Record<string, unknown>) }
-            : {}
+    const base = isObject(existing) ? { ...existing } : {}
     const trimmed = folderName?.trim()
     if (trimmed) {
         base.title = trimmed
@@ -80,20 +78,21 @@ export async function updateFolder(
         )
     }
 
-    const nameTrim = input.folderName?.trim() ?? ''
+    const trimmedName = input.folderName?.trim() || ''
 
-    const hasPerm =
-        typeof input.manageUsers === 'boolean' ||
-        typeof input.manageRecords === 'boolean' ||
-        typeof input.canShare === 'boolean' ||
-        typeof input.canEdit === 'boolean'
+    const hasPermissionUpdate = anyIsBoolean(
+        input.manageUsers,
+        input.manageRecords,
+        input.canShare,
+        input.canEdit
+    )
 
-    if (resolved.kind === 'user_folder' || resolved.kind === 'shared_folder_folder') {
-        if (!nameTrim) {
+    if (resolved.kind === FolderKind.UserFolder || resolved.kind === FolderKind.SharedFolderFolder) {
+        if (!trimmedName) {
             throw new KeeperSdkError('Folder name is required.', 'folder_name_required')
         }
-    } else if (resolved.kind === 'shared_folder') {
-        if (!nameTrim && !hasPerm) {
+    } else if (resolved.kind === FolderKind.SharedFolder) {
+        if (!trimmedName && !hasPermissionUpdate) {
             throw new KeeperSdkError(
                 'Provide a new name or at least one permission to update.',
                 'shared_folder_update_empty'
@@ -101,36 +100,46 @@ export async function updateFolder(
         }
     }
 
-    const effectiveName = resolved.kind === 'shared_folder' ? nameTrim || resolved.folder.name || undefined : nameTrim
-    const merged = mergeFolderData(resolved.folder.data, effectiveName)
+    const effectiveName =
+        resolved.kind === FolderKind.SharedFolder ? trimmedName || resolved.folder.name || undefined : trimmedName
+    const mergedData = mergeFolderData(resolved.folder.data, effectiveName)
 
-    const rq: FolderUpdateRequest = {
+    const request: FolderUpdateRequest = {
         folder_uid: folderUid,
         folder_type: resolved.kind,
-        data: await encryptObjectForStorage(merged, folderKey),
+        data: await encryptObjectForStorage(mergedData, folderKey),
     }
 
-    if (resolved.kind === 'shared_folder') {
-        const sf = resolved.folder
-        const displayName = nameTrim || sf.name || folderUid
-        rq.shared_folder_uid = folderUid
-        rq.name = await encryptForStorage(platform.stringToBytes(displayName), folderKey)
-        rq.manage_users = typeof input.manageUsers === 'boolean' ? input.manageUsers : sf.defaultManageUsers
-        rq.manage_records = typeof input.manageRecords === 'boolean' ? input.manageRecords : sf.defaultManageRecords
-        rq.can_edit = typeof input.canEdit === 'boolean' ? input.canEdit : sf.defaultCanEdit
-        rq.can_share = typeof input.canShare === 'boolean' ? input.canShare : sf.defaultCanShare
-    } else if (resolved.kind === 'shared_folder_folder') {
-        rq.shared_folder_uid = resolved.folder.sharedFolderUid
+    if (resolved.kind === FolderKind.SharedFolder) {
+        const sharedFolder = resolved.folder
+        const displayName = trimmedName || sharedFolder.name || folderUid
+        request.shared_folder_uid = folderUid
+        request.name = await encryptForStorage(platform.stringToBytes(displayName), folderKey)
+        request.manage_users = isBoolean(input.manageUsers) ? input.manageUsers : sharedFolder.defaultManageUsers
+        request.manage_records = isBoolean(input.manageRecords)
+            ? input.manageRecords
+            : sharedFolder.defaultManageRecords
+        request.can_edit = isBoolean(input.canEdit) ? input.canEdit : sharedFolder.defaultCanEdit
+        request.can_share = isBoolean(input.canShare) ? input.canShare : sharedFolder.defaultCanShare
+    } else if (resolved.kind === FolderKind.SharedFolderFolder) {
+        request.shared_folder_uid = resolved.folder.sharedFolderUid
     }
+
+    const folderLabel = effectiveName || folderUid
 
     try {
-        const response = await auth.executeRestCommand(folderUpdateCommand(rq))
-        const ok = response.result === 'success' || response.result_code === 'success'
-        if (!ok) {
+        const response = await auth.executeRestCommand(folderUpdateCommand(request))
+        const succeeded =
+            response.result === FolderResultStatus.Success || response.result_code === FolderResultStatus.Success
+        if (!succeeded) {
+            const reason =
+                response.message ||
+                response.result_code ||
+                `folder_update failed for "${folderLabel}" (uid=${folderUid}, type=${resolved.kind}): server returned no message or result_code`
             return {
                 folderUid,
                 success: false,
-                message: response.message || response.result_code || 'folder_update failed',
+                message: reason,
             }
         }
         return { folderUid, success: true }
@@ -138,7 +147,7 @@ export async function updateFolder(
         return {
             folderUid,
             success: false,
-            message: extractErrorMessage(err),
+            message: `folder_update failed for "${folderLabel}" (uid=${folderUid}, type=${resolved.kind}): ${extractErrorMessage(err)}`,
         }
     }
 }
@@ -189,8 +198,8 @@ export async function updateSharedFolderPermissions(
         canEdit?: boolean | null
     }
 ): Promise<UpdateFolderResult> {
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', sharedFolderUid)
-    if (!sf) {
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, sharedFolderUid)
+    if (!sharedFolder) {
         throw new KeeperSdkError(`"${sharedFolderUid}" is not a shared folder.`, 'not_shared_folder')
     }
     return updateFolder(auth, storage, {

@@ -6,7 +6,14 @@ import { KeeperSdkError, extractErrorMessage, logger } from '../utils'
 import { listFolder } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
 import { tryResolvePath, findParentFolderUid, type VaultFolderSession } from './changeDirectory'
-import { globToRegex, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+import {
+    DeleteResolution,
+    FolderKind,
+    globToRegex,
+    sharedFolderFolderName,
+    sharedFolderName,
+    userFolderName,
+} from './folderHelpers'
 import { findFolder } from './getFolder'
 
 export type DeleteFolderResult = {
@@ -21,14 +28,11 @@ export type RmdirOptions = {
     confirm?: (summary: string) => boolean | Promise<boolean>
 }
 
-function folderKindOfUid(
-    storage: InMemoryStorage,
-    uid: string
-): 'user_folder' | 'shared_folder' | 'shared_folder_folder' {
-    if (storage.getByUid<DUserFolder>('user_folder', uid)) return 'user_folder'
-    if (storage.getByUid<DSharedFolder>('shared_folder', uid)) return 'shared_folder'
-    if (storage.getByUid<DSharedFolderFolder>('shared_folder_folder', uid)) return 'shared_folder_folder'
-    return 'user_folder'
+function folderKindOfUid(storage: InMemoryStorage, uid: string): FolderKind {
+    if (storage.getByUid<DUserFolder>(FolderKind.UserFolder, uid)) return FolderKind.UserFolder
+    if (storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, uid)) return FolderKind.SharedFolder
+    if (storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, uid)) return FolderKind.SharedFolderFolder
+    return FolderKind.UserFolder
 }
 
 async function listFolderChildrenFolders(
@@ -44,12 +48,12 @@ async function listFolderChildrenFolders(
 }
 
 function folderDisplayName(storage: InMemoryStorage, uid: string): string {
-    const uf = storage.getByUid<DUserFolder>('user_folder', uid)
-    if (uf) return userFolderName(uf)
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', uid)
-    if (sf) return sharedFolderName(sf)
-    const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', uid)
-    if (sff) return sharedFolderFolderName(sff)
+    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, uid)
+    if (userFolder) return userFolderName(userFolder)
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, uid)
+    if (sharedFolder) return sharedFolderName(sharedFolder)
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, uid)
+    if (sharedFolderFolder) return sharedFolderFolderName(sharedFolderFolder)
     return uid
 }
 
@@ -57,57 +61,57 @@ export async function buildFolderDeleteObject(
     storage: InMemoryStorage,
     folderUid: string
 ): Promise<DeleteObject | null> {
-    const uf = storage.getByUid<DUserFolder>('user_folder', folderUid)
-    if (uf) {
+    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, folderUid)
+    if (userFolder) {
         const parentUid = await findParentFolderUid(storage, folderUid)
-        const o: DeleteObject = {
-            delete_resolution: 'unlink',
+        const deleteObject: DeleteObject = {
+            delete_resolution: DeleteResolution.Unlink,
             object_uid: folderUid,
-            object_type: 'user_folder',
-            from_type: 'user_folder',
+            object_type: FolderKind.UserFolder,
+            from_type: FolderKind.UserFolder,
         }
         if (parentUid) {
-            o.from_uid = parentUid
-            o.from_type = folderKindOfUid(storage, parentUid)
+            deleteObject.from_uid = parentUid
+            deleteObject.from_type = folderKindOfUid(storage, parentUid)
         } else {
-            o.from_uid = ''
+            deleteObject.from_uid = ''
         }
-        return o
+        return deleteObject
     }
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', folderUid)
-    if (sf) {
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, folderUid)
+    if (sharedFolder) {
         const parentUid = await findParentFolderUid(storage, folderUid)
-        const o: DeleteObject = {
-            delete_resolution: 'unlink',
+        const deleteObject: DeleteObject = {
+            delete_resolution: DeleteResolution.Unlink,
             object_uid: folderUid,
-            object_type: 'shared_folder',
-            from_type: 'user_folder',
+            object_type: FolderKind.SharedFolder,
+            from_type: FolderKind.UserFolder,
         }
         if (parentUid) {
-            o.from_uid = parentUid
-            o.from_type = folderKindOfUid(storage, parentUid)
+            deleteObject.from_uid = parentUid
+            deleteObject.from_type = folderKindOfUid(storage, parentUid)
         } else {
-            o.from_uid = ''
+            deleteObject.from_uid = ''
         }
-        return o
+        return deleteObject
     }
-    const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', folderUid)
-    if (sff) {
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, folderUid)
+    if (sharedFolderFolder) {
         const parentUid = await findParentFolderUid(storage, folderUid)
-        const o: DeleteObject = {
-            delete_resolution: 'unlink',
+        const deleteObject: DeleteObject = {
+            delete_resolution: DeleteResolution.Unlink,
             object_uid: folderUid,
-            object_type: 'shared_folder_folder',
-            from_type: 'shared_folder',
+            object_type: FolderKind.SharedFolderFolder,
+            from_type: FolderKind.SharedFolder,
         }
         if (parentUid) {
-            o.from_uid = parentUid
-            o.from_type = folderKindOfUid(storage, parentUid)
+            deleteObject.from_uid = parentUid
+            deleteObject.from_type = folderKindOfUid(storage, parentUid)
         } else {
-            o.from_uid = sff.sharedFolderUid
-            o.from_type = 'shared_folder'
+            deleteObject.from_uid = sharedFolderFolder.sharedFolderUid
+            deleteObject.from_type = FolderKind.SharedFolder
         }
-        return o
+        return deleteObject
     }
     return null
 }
@@ -135,8 +139,8 @@ export async function deleteFolder(
 ): Promise<DeleteFolderResult> {
     const objects: DeleteObject[] = []
     for (const ref of folderRefs) {
-        const obj = await buildDeleteObjectForFolderRef(storage, ref)
-        if (obj) objects.push(obj)
+        const deleteObject = await buildDeleteObjectForFolderRef(storage, ref)
+        if (deleteObject) objects.push(deleteObject)
     }
     if (objects.length === 0) {
         throw new KeeperSdkError(
@@ -145,29 +149,38 @@ export async function deleteFolder(
         )
     }
 
+    const targetUids = objects.map((deleteObject) => deleteObject.object_uid).join(', ')
+
     let preResp: KeeperPreDeleteResponse
     try {
         preResp = await auth.executeRestCommand(preDeleteCommand({ objects }))
     } catch (err) {
-        return { success: false, message: extractErrorMessage(err) }
+        return {
+            success: false,
+            message: `pre_delete failed for [${targetUids}]: ${extractErrorMessage(err)}`,
+        }
     }
 
     const inner = preResp.pre_delete_response
     const token = inner?.pre_delete_token
     if (!token) {
+        const reason =
+            preResp.message ||
+            preResp.result_code ||
+            `pre_delete failed for [${targetUids}]: server did not return a pre_delete_token`
         return {
             success: false,
-            message: preResp.message || preResp.result_code || 'pre_delete failed: no token',
+            message: reason,
         }
     }
 
     if (confirm) {
-        const wd = inner?.would_delete
-        const list = wd?.deletion_summary
-        if (Array.isArray(list) && list.length > 0) {
-            const summary = list.join('\n')
-            const ok = await confirm(summary)
-            if (!ok) {
+        const wouldDelete = inner?.would_delete
+        const summaryItems = wouldDelete?.deletion_summary
+        if (Array.isArray(summaryItems) && summaryItems.length > 0) {
+            const summary = summaryItems.join('\n')
+            const confirmed = await confirm(summary)
+            if (!confirmed) {
                 return { success: false, cancelled: true, message: 'Cancelled.' }
             }
         }
@@ -176,7 +189,10 @@ export async function deleteFolder(
     try {
         await auth.executeRestCommand(recordDeleteCommand({ pre_delete_token: token }))
     } catch (err) {
-        return { success: false, message: extractErrorMessage(err) }
+        return {
+            success: false,
+            message: `record_delete failed for [${targetUids}]: ${extractErrorMessage(err)}`,
+        }
     }
 
     return { success: true }
@@ -187,34 +203,34 @@ export async function resolveRmdirPatternsToFolderUids(
     session: VaultFolderSession,
     pattern: string
 ): Promise<Set<string>> {
-    const out = new Set<string>()
-    const trimmed = pattern.trim()
-    if (!trimmed) return out
+    const matchedUids = new Set<string>()
+    const trimmedPattern = pattern.trim()
+    if (!trimmedPattern) return matchedUids
 
-    const { folderUid: baseUid, remaining } = await tryResolvePath(storage, session, trimmed)
-    const rest = remaining.trim()
+    const { folderUid: baseUid, remaining } = await tryResolvePath(storage, session, trimmedPattern)
+    const remainingPattern = remaining.trim()
 
-    if (!rest) {
+    if (!remainingPattern) {
         if (baseUid !== null) {
-            out.add(baseUid)
+            matchedUids.add(baseUid)
         }
-        return out
+        return matchedUids
     }
 
     const children = await listFolderChildrenFolders(storage, baseUid)
-    const direct = children.find((c) => c.uid === rest)
-    if (direct) {
-        out.add(direct.uid)
-        return out
+    const exactChild = children.find((child) => child.uid === remainingPattern)
+    if (exactChild) {
+        matchedUids.add(exactChild.uid)
+        return matchedUids
     }
 
-    const regex = globToRegex(rest)
-    for (const ch of children) {
-        if (regex.test(ch.name.trim())) {
-            out.add(ch.uid)
+    const matcher = globToRegex(remainingPattern)
+    for (const child of children) {
+        if (matcher.test(child.name.trim())) {
+            matchedUids.add(child.uid)
         }
     }
-    return out
+    return matchedUids
 }
 
 async function dedupeNestedFolderDeletes(storage: InMemoryStorage, folderUids: Set<string>): Promise<void> {
@@ -248,12 +264,12 @@ export async function rmdir(
     }
     const folderUids = new Set<string>()
 
-    for (const p of patterns) {
-        const part = p.trim()
-        if (!part) continue
-        const resolved = await resolveRmdirPatternsToFolderUids(storage, session, part)
-        for (const u of resolved) {
-            folderUids.add(u)
+    for (const pattern of patterns) {
+        const trimmedPattern = pattern.trim()
+        if (!trimmedPattern) continue
+        const resolved = await resolveRmdirPatternsToFolderUids(storage, session, trimmedPattern)
+        for (const matchedUid of resolved) {
+            folderUids.add(matchedUid)
         }
     }
 
@@ -265,7 +281,7 @@ export async function rmdir(
 
     const sortedNames = [...folderUids]
         .map((uid) => folderDisplayName(storage, uid))
-        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+        .sort((nameA, nameB) => nameA.localeCompare(nameB, undefined, { sensitivity: 'base' }))
 
     if (!quiet || !force) {
         logger.info(`\nThe following folder(s) will be removed:\n${sortedNames.join(', ')}\n`)

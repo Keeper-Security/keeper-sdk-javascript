@@ -9,6 +9,7 @@ import {
     type SessionParams,
 } from '@keeper-security/keeperapi'
 import { logger, extractErrorMessage, SdkDefaults } from '../utils'
+import type { Nullable } from '../utils'
 
 export type ConfigurationUser = {
     user?: string
@@ -43,6 +44,11 @@ type ResolvedDevice = {
     deviceToken: Uint8Array
     privateKey: Uint8Array
     serverInfo: Array<Required<ConfigurationServerConfig>>
+}
+
+type DeviceCacheEntry = {
+    username: string
+    device: Nullable<ResolvedDevice>
 }
 
 export interface ConfigLoader {
@@ -82,13 +88,10 @@ export class FileConfigLoader implements ConfigLoader {
 
 export class SessionManager implements SessionStorage {
     private readonly configLoader: ConfigLoader
-    private sessionParams: SessionParams | null = null
+    private sessionParams: Nullable<SessionParams> = null
     private _lastUsername?: string
-    private _keeperConfig: KeeperJsonConfig | null = null
-    private _deviceCache: {
-        username: string
-        device: ResolvedDevice | null
-    } | null = null
+    private _keeperConfig: Nullable<KeeperJsonConfig> = null
+    private _deviceCache: Nullable<DeviceCacheEntry> = null
     private sessionDevices = new Map<string, DeviceConfig>()
     private sessionCloneCodes = new Map<string, Uint8Array>()
 
@@ -141,7 +144,7 @@ export class SessionManager implements SessionStorage {
         return `${host}::${username}`
     }
 
-    public async getCloneCode(host: KeeperHost, username: string): Promise<Uint8Array | null> {
+    public async getCloneCode(host: KeeperHost, username: string): Promise<Nullable<Uint8Array>> {
         const hostStr = String(host)
 
         const key = this.cloneCodeKey(host, username)
@@ -201,7 +204,7 @@ export class SessionManager implements SessionStorage {
         }
     }
 
-    public async getSessionParameters(): Promise<SessionParams | null> {
+    public async getSessionParameters(): Promise<Nullable<SessionParams>> {
         return this.sessionParams
     }
 
@@ -222,7 +225,7 @@ export class SessionManager implements SessionStorage {
         return this._keeperConfig
     }
 
-    private async findDeviceInKeeperConfig(username: string): Promise<ResolvedDevice | null> {
+    private async findDeviceInKeeperConfig(username: string): Promise<Nullable<ResolvedDevice>> {
         const normalizedUsername = username.toLowerCase()
         if (this._deviceCache?.username === normalizedUsername) {
             return this._deviceCache.device
@@ -233,7 +236,7 @@ export class SessionManager implements SessionStorage {
         return device
     }
 
-    private async lookupDeviceInKeeperConfig(normalizedUsername: string): Promise<ResolvedDevice | null> {
+    private async lookupDeviceInKeeperConfig(normalizedUsername: string): Promise<Nullable<ResolvedDevice>> {
         const kc = await this.loadKeeperConfig()
 
         if (kc.users && kc.devices) {

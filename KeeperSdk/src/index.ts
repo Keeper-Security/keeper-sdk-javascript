@@ -27,8 +27,18 @@ export {
     AuthDefaults,
     ResultCodes,
     KEEPER_PUBLIC_HOSTS,
+    isBoolean,
+    isString,
+    isNonEmptyString,
+    isNumber,
+    isObject,
+    anyIsBoolean,
+    EMAIL_PATTERN,
+    EMAIL_LIST_SEPARATOR_PATTERN,
+    isValidEmail,
+    escapeRegExp,
 } from './utils'
-export type { ILogger } from './utils'
+export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
 
 export {
     searchRecords,
@@ -75,15 +85,26 @@ export type {
 export { KeeperVault } from './vault/KeeperVault'
 export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
 
-export { getFolder, findFolder } from './folders/getFolder'
+export { getFolder, findFolder, GetFolderFormat } from './folders/getFolder'
 export type {
     GetFolderOptions,
     GetFolderResult,
     GetFolderResultFolder,
     GetFolderResultSharedFolder,
-    GetFolderFormat,
+    GetFolderFormatInput,
     FoundFolder,
 } from './folders/getFolder'
+
+export {
+    FolderKind,
+    ParentFolderKind,
+    FolderObjectType,
+    FolderResultStatus,
+    DeleteResolution,
+    DeleteObjectType,
+    folderKindFromString,
+} from './folders/folderHelpers'
+export type { FolderKindOrLiteral } from './folders/folderHelpers'
 
 export { listFolder, findFolderUidByNameOrUid, listRootUserFolders } from './folders/listFolder'
 export type {
@@ -106,9 +127,9 @@ export type {
     FormattedSharedFoldersTable,
 } from './sharedFolders/listSharedFolders'
 
-export { shareFolder } from './sharedFolders/shareFolder'
+export { shareFolder, ShareFolderAction, ShareFolderUserResultStatus } from './sharedFolders/shareFolder'
 export type {
-    ShareFolderAction,
+    ShareFolderActionInput,
     ShareFolderInput,
     ShareFolderResult,
     ShareFolderUserStatus,
@@ -147,6 +168,11 @@ export {
     recordPermissionToText,
 } from './folders/folderTree'
 export type { FolderTreeBuildOptions, FolderTreeNode, FolderTreeResult } from './folders/folderTree'
+
+export { FolderManager } from './folders/FolderManager'
+export type { AuthProvider, SharedFolderPermissionsInput } from './folders/FolderManager'
+
+export { SharedFolderManager } from './sharedFolders/SharedFolderManager'
 
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 

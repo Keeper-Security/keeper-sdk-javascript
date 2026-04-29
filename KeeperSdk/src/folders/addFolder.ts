@@ -9,9 +9,12 @@ import {
 } from '@keeper-security/keeperapi'
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
-import { KeeperSdkError, extractErrorMessage } from '../utils'
+import { isBoolean, KeeperSdkError, extractErrorMessage } from '../utils'
 import { listFolder } from './listFolder'
 import { tryResolvePath, splitPathComponents, type VaultFolderSession } from './changeDirectory'
+import { FolderKind, FolderResultStatus, ParentFolderKind } from './folderHelpers'
+
+type NewFolderKind = FolderKind
 
 export type AddFolderInput = {
     folderName: string
@@ -40,68 +43,65 @@ export type MkdirOptions = {
 }
 
 type ParentContext = {
-    kind: 'virtual_root' | 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    kind: ParentFolderKind
     sharedScopeUid: string | null
 }
 
 function resolveParentContext(storage: InMemoryStorage, parentUid: string | null): ParentContext {
     if (parentUid === null || parentUid === '') {
-        return { kind: 'virtual_root', sharedScopeUid: null }
+        return { kind: ParentFolderKind.VirtualRoot, sharedScopeUid: null }
     }
-    if (storage.getByUid<DUserFolder>('user_folder', parentUid)) {
-        return { kind: 'user_folder', sharedScopeUid: null }
+    if (storage.getByUid<DUserFolder>(FolderKind.UserFolder, parentUid)) {
+        return { kind: ParentFolderKind.UserFolder, sharedScopeUid: null }
     }
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', parentUid)
-    if (sf) {
-        return { kind: 'shared_folder', sharedScopeUid: sf.uid }
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, parentUid)
+    if (sharedFolder) {
+        return { kind: ParentFolderKind.SharedFolder, sharedScopeUid: sharedFolder.uid }
     }
-    const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', parentUid)
-    if (sff) {
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, parentUid)
+    if (sharedFolderFolder) {
         return {
-            kind: 'shared_folder_folder',
-            sharedScopeUid: sff.sharedFolderUid,
+            kind: ParentFolderKind.SharedFolderFolder,
+            sharedScopeUid: sharedFolderFolder.sharedFolderUid,
         }
     }
     throw new KeeperSdkError(`Parent folder "${parentUid}" not found`, 'folder_not_found')
 }
 
-function decideNewFolderType(
-    parent: ParentContext,
-    isSharedFolder: boolean
-): 'user_folder' | 'shared_folder' | 'shared_folder_folder' {
+function decideNewFolderType(parent: ParentContext, isSharedFolder: boolean): NewFolderKind {
     if (isSharedFolder) {
-        if (parent.kind !== 'user_folder' && parent.kind !== 'virtual_root') {
+        if (parent.kind !== ParentFolderKind.UserFolder && parent.kind !== ParentFolderKind.VirtualRoot) {
             throw new KeeperSdkError(
                 'Shared folders cannot be nested inside other shared folders.',
                 'shared_folder_nested'
             )
         }
-        return 'shared_folder'
+        return FolderKind.SharedFolder
     }
-    if (parent.kind === 'virtual_root' || parent.kind === 'user_folder') {
-        return 'user_folder'
+    if (parent.kind === ParentFolderKind.VirtualRoot || parent.kind === ParentFolderKind.UserFolder) {
+        return FolderKind.UserFolder
     }
-    return 'shared_folder_folder'
+    return FolderKind.SharedFolderFolder
 }
 
 async function getEncryptionKeyForNewFolder(
     auth: Auth,
     storage: InMemoryStorage,
-    folderType: 'user_folder' | 'shared_folder' | 'shared_folder_folder',
+    folderType: NewFolderKind,
     sharedScopeUid: string | null
 ): Promise<Uint8Array> {
-    if (folderType === 'shared_folder_folder') {
+    if (folderType === FolderKind.SharedFolderFolder) {
         if (!sharedScopeUid) {
             throw new KeeperSdkError('Shared folder scope could not be resolved.', 'shared_folder_scope_missing')
         }
-        const k = await storage.getKeyBytes(sharedScopeUid)
-        if (!k) {
+        const sharedFolderKey = await storage.getKeyBytes(sharedScopeUid)
+        if (!sharedFolderKey) {
             throw new KeeperSdkError(
                 'Shared folder encryption key not available. Sync the vault and try again.',
                 'shared_folder_key_missing'
             )
         }
-        return k
+        return sharedFolderKey
     }
     if (!auth.dataKey) {
         throw new KeeperSdkError('Data key not available. Ensure you are logged in.', 'data_key_missing')
@@ -120,11 +120,11 @@ async function findChildFolderUidByName(
         showRecords: false,
     })
     const needle = name.trim()
-    const lower = needle.toLowerCase()
-    for (const f of result.folders) {
-        if (f.uid === needle) return f.uid
-        if (f.name.trim() === needle) return f.uid
-        if (f.name.trim().toLowerCase() === lower) return f.uid
+    const lowerNeedle = needle.toLowerCase()
+    for (const folder of result.folders) {
+        if (folder.uid === needle) return folder.uid
+        if (folder.name.trim() === needle) return folder.uid
+        if (folder.name.trim().toLowerCase() === lowerNeedle) return folder.uid
     }
     return undefined
 }
@@ -144,11 +144,11 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
     const folderUid = generateUid()
     const folderKey = generateEncryptionKey()
 
-    const sharedScope = folderType === 'shared_folder_folder' ? parent.sharedScopeUid : null
+    const sharedScope = folderType === FolderKind.SharedFolderFolder ? parent.sharedScopeUid : null
 
     const encryptionKey = await getEncryptionKeyForNewFolder(auth, storage, folderType, sharedScope)
 
-    const rq: FolderAddRequest = {
+    const request: FolderAddRequest = {
         folder_uid: folderUid,
         folder_type: folderType,
         key: await encryptForStorage(folderKey, encryptionKey),
@@ -157,28 +157,33 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
     }
 
     if (parentUid) {
-        rq.parent_uid = parentUid
+        request.parent_uid = parentUid
     }
-    if (folderType === 'shared_folder_folder' && sharedScope) {
-        rq.shared_folder_uid = sharedScope
+    if (folderType === FolderKind.SharedFolderFolder && sharedScope) {
+        request.shared_folder_uid = sharedScope
     }
 
-    if (folderType === 'shared_folder') {
-        rq.name = await encryptForStorage(platform.stringToBytes(name), folderKey)
-        rq.manage_users = input.manageUsers ?? false
-        rq.manage_records = input.manageRecords ?? false
-        rq.can_edit = input.canEdit ?? false
-        rq.can_share = input.canShare ?? false
+    if (folderType === FolderKind.SharedFolder) {
+        request.name = await encryptForStorage(platform.stringToBytes(name), folderKey)
+        request.manage_users = isBoolean(input.manageUsers) ? input.manageUsers : false
+        request.manage_records = isBoolean(input.manageRecords) ? input.manageRecords : false
+        request.can_edit = isBoolean(input.canEdit) ? input.canEdit : false
+        request.can_share = isBoolean(input.canShare) ? input.canShare : false
     }
 
     try {
-        const response = await auth.executeRestCommand(folderAddCommand(rq))
-        const ok = response.result === 'success' || response.result_code === 'success'
-        if (!ok) {
+        const response = await auth.executeRestCommand(folderAddCommand(request))
+        const succeeded =
+            response.result === FolderResultStatus.Success || response.result_code === FolderResultStatus.Success
+        if (!succeeded) {
+            const reason =
+                response.message ||
+                response.result_code ||
+                `folder_add failed for "${name}" (uid=${folderUid}, type=${folderType}): server returned no message or result_code`
             return {
                 folderUid,
                 success: false,
-                message: response.message || response.result_code || 'folder_add failed',
+                message: reason,
             }
         }
         return { folderUid, success: true }
@@ -186,7 +191,7 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
         return {
             folderUid,
             success: false,
-            message: extractErrorMessage(err),
+            message: `folder_add failed for "${name}" (uid=${folderUid}, type=${folderType}): ${extractErrorMessage(err)}`,
         }
     }
 }
@@ -212,11 +217,11 @@ export async function mkdir(
         throw new KeeperSdkError(`Folder "${trimmed}" already exists.`, 'folder_already_exists')
     }
 
-    let grantAll = options.grantAll === true
-    let manageUsers = options.manageUsers ?? false
-    let manageRecords = options.manageRecords ?? false
-    let canShare = options.canShare ?? false
-    let canEdit = options.canEdit ?? false
+    const grantAll = options.grantAll === true
+    let manageUsers = isBoolean(options.manageUsers) ? options.manageUsers : false
+    let manageRecords = isBoolean(options.manageRecords) ? options.manageRecords : false
+    let canShare = isBoolean(options.canShare) ? options.canShare : false
+    let canEdit = isBoolean(options.canEdit) ? options.canEdit : false
     if (grantAll) {
         manageUsers = true
         manageRecords = true
@@ -225,8 +230,8 @@ export async function mkdir(
     }
 
     const segments = splitPathComponents(remaining)
-        .map((s) => s.trim())
-        .filter((s) => s !== '' && s !== '.')
+        .map((segment) => segment.trim())
+        .filter((segment) => segment !== '' && segment !== '.')
 
     if (segments.length === 0) {
         throw new KeeperSdkError(`Folder "${trimmed}" already exists.`, 'folder_already_exists')
@@ -239,22 +244,26 @@ export async function mkdir(
         message: 'not run',
     }
 
-    for (let i = 0; i < segments.length; i++) {
-        const seg = segments[i]
-        const isLast = i === segments.length - 1
-        const existing = await findChildFolderUidByName(storage, currentParent, seg)
-        if (existing) {
-            if (isLast) {
-                throw new KeeperSdkError(`Folder "${seg}" already exists.`, 'folder_already_exists')
+    for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
+        const segment = segments[segmentIndex]
+        const isLastSegment = segmentIndex === segments.length - 1
+        const existingChildUid = await findChildFolderUidByName(storage, currentParent, segment)
+        if (existingChildUid) {
+            if (isLastSegment) {
+                throw new KeeperSdkError(`Folder "${segment}" already exists.`, 'folder_already_exists')
             }
-            currentParent = existing
+            currentParent = existingChildUid
             continue
         }
 
-        const isShared = isLast && options.sharedFolder === true
+        const createAsSharedFolder = isLastSegment && options.sharedFolder === true
 
-        const parentCtx = resolveParentContext(storage, currentParent)
-        if (isShared && parentCtx.kind !== 'user_folder' && parentCtx.kind !== 'virtual_root') {
+        const parentContext = resolveParentContext(storage, currentParent)
+        if (
+            createAsSharedFolder &&
+            parentContext.kind !== ParentFolderKind.UserFolder &&
+            parentContext.kind !== ParentFolderKind.VirtualRoot
+        ) {
             throw new KeeperSdkError(
                 'Shared folders can only be created under a personal folder.',
                 'shared_folder_invalid_parent'
@@ -262,13 +271,13 @@ export async function mkdir(
         }
 
         lastResult = await addFolder(auth, storage, {
-            folderName: seg,
+            folderName: segment,
             parentUid: currentParent,
-            isSharedFolder: isShared,
-            manageUsers: isLast && isShared ? manageUsers : undefined,
-            manageRecords: isLast && isShared ? manageRecords : undefined,
-            canShare: isLast && isShared ? canShare : undefined,
-            canEdit: isLast && isShared ? canEdit : undefined,
+            isSharedFolder: createAsSharedFolder,
+            manageUsers: isLastSegment && createAsSharedFolder ? manageUsers : undefined,
+            manageRecords: isLastSegment && createAsSharedFolder ? manageRecords : undefined,
+            canShare: isLastSegment && createAsSharedFolder ? canShare : undefined,
+            canEdit: isLastSegment && createAsSharedFolder ? canEdit : undefined,
         })
 
         if (!lastResult.success) {

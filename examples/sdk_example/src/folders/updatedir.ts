@@ -29,7 +29,7 @@ async function updatedirCommand() {
                 logger.info(`Folder "${result.oldName}" has been renamed to "${result.newName}"`)
                 logger.info(`  UID: ${result.folderUid}`)
             } else {
-                logger.error(`Failed: ${result.message ?? 'unknown error'}`)
+                logger.error(`Failed: ${result.message || 'unknown error'}`)
                 process.exitCode = 1
             }
         } catch (err) {

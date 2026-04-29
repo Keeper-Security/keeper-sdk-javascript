@@ -12,7 +12,7 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { getRecordTitle } from '../records/RecordUtils'
 import { listFolder, listVaultRootFolders } from './listFolder'
 import { resolveSingleFolder, type VaultFolderSession } from './changeDirectory'
-import { sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+import { FolderKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
 
 export type FolderTreeBuildOptions = {
     folderPath?: string | null
@@ -50,13 +50,13 @@ export function recordPermissionToText(canEdit: boolean, canShare: boolean): str
 }
 
 function buildAccountUidEmailMap(storage: InMemoryStorage): Map<string, string> {
-    const map = new Map<string, string>()
-    for (const u of storage.getAll<DUser>('user')) {
-        const uid = u.accountUid ? webSafe64FromBytes(u.accountUid) : ''
-        const email = (u.username || '').trim()
-        if (uid && email) map.set(uid, email)
+    const accountUidToEmail = new Map<string, string>()
+    for (const user of storage.getAll<DUser>('user')) {
+        const uid = user.accountUid ? webSafe64FromBytes(user.accountUid) : ''
+        const email = (user.username || '').trim()
+        if (uid && email) accountUidToEmail.set(uid, email)
     }
-    return map
+    return accountUidToEmail
 }
 
 function resolveUserDisplayName(
@@ -84,15 +84,15 @@ async function collectSharedFolderPermissions(
     const rows: { display: string; sortKey: string }[] = []
     const seenUserUids = new Set<string>()
 
-    for (const u of storage.getAll<DSharedFolderUser>('shared_folder_user')) {
-        if (u.sharedFolderUid !== sharedFolder.uid) continue
-        if (u.accountUid) seenUserUids.add(u.accountUid)
-        const permText = userPermissionToText(u.manageUsers, u.manageRecords)
-        let name = resolveUserDisplayName(u.accountUid, u.accountUsername, emailMap)
-        if (verbose && u.accountUid) name += ` (${u.accountUid})`
+    for (const sharedUser of storage.getAll<DSharedFolderUser>('shared_folder_user')) {
+        if (sharedUser.sharedFolderUid !== sharedFolder.uid) continue
+        if (sharedUser.accountUid) seenUserUids.add(sharedUser.accountUid)
+        const permissionText = userPermissionToText(sharedUser.manageUsers, sharedUser.manageRecords)
+        let name = resolveUserDisplayName(sharedUser.accountUid, sharedUser.accountUsername, emailMap)
+        if (verbose && sharedUser.accountUid) name += ` (${sharedUser.accountUid})`
         const suffix = hideSharesKey ? '' : ` [User]`
         rows.push({
-            display: `${name}: ${permText}${suffix}`,
+            display: `${name}: ${permissionText}${suffix}`,
             sortKey: name.toLowerCase(),
         })
     }
@@ -108,20 +108,20 @@ async function collectSharedFolderPermissions(
         })
     }
 
-    for (const t of storage.getAll<DSharedFolderTeam>('shared_folder_team')) {
-        if (t.sharedFolderUid !== sharedFolder.uid) continue
-        const permText = userPermissionToText(t.manageUsers, t.manageRecords)
-        let name = t.name || `(${t.teamUid})`
-        if (verbose && t.teamUid) name += ` (${t.teamUid})`
+    for (const sharedTeam of storage.getAll<DSharedFolderTeam>('shared_folder_team')) {
+        if (sharedTeam.sharedFolderUid !== sharedFolder.uid) continue
+        const permissionText = userPermissionToText(sharedTeam.manageUsers, sharedTeam.manageRecords)
+        let name = sharedTeam.name || `(${sharedTeam.teamUid})`
+        if (verbose && sharedTeam.teamUid) name += ` (${sharedTeam.teamUid})`
         const suffix = hideSharesKey ? '' : ` [Team]`
         rows.push({
-            display: `${name}: ${permText}${suffix}`,
+            display: `${name}: ${permissionText}${suffix}`,
             sortKey: name.toLowerCase(),
         })
     }
 
-    rows.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
-    return rows.map((r) => ({ display: r.display }))
+    rows.sort((rowA, rowB) => rowA.sortKey.localeCompare(rowB.sortKey))
+    return rows.map((row) => ({ display: row.display }))
 }
 
 type BuildOpts = Required<Pick<FolderTreeBuildOptions, 'verbose' | 'showRecords' | 'showShares' | 'hideSharesKey'>> & {
@@ -134,32 +134,32 @@ async function buildFolderSubtree(
     folderUid: string,
     opts: BuildOpts
 ): Promise<FolderTreeNode> {
-    const uf = storage.getByUid<DUserFolder>('user_folder', folderUid)
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', folderUid)
-    const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', folderUid)
-    if (!uf && !sf && !sff) {
+    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, folderUid)
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, folderUid)
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, folderUid)
+    if (!userFolder && !sharedFolder && !sharedFolderFolder) {
         return { displayName: `(missing folder ${folderUid})`, children: [] }
     }
 
     let baseName: string
-    if (uf) baseName = userFolderName(uf)
-    else if (sf) baseName = sharedFolderName(sf)
-    else baseName = sharedFolderFolderName(sff!)
+    if (userFolder) baseName = userFolderName(userFolder)
+    else if (sharedFolder) baseName = sharedFolderName(sharedFolder)
+    else baseName = sharedFolderFolderName(sharedFolderFolder!)
 
     let displayName = baseName
     if (opts.verbose) {
         displayName = `${baseName} (${folderUid})`
     }
-    if (sf) {
+    if (sharedFolder) {
         displayName += ' [Shared]'
     }
 
     const node: FolderTreeNode = { displayName, children: [] }
 
-    if (opts.showShares && sf) {
+    if (opts.showShares && sharedFolder) {
         node.permissions = await collectSharedFolderPermissions(
             storage,
-            sf,
+            sharedFolder,
             opts.verbose,
             opts.hideSharesKey,
             opts.accountUidEmailMap
@@ -172,18 +172,18 @@ async function buildFolderSubtree(
         showRecords: opts.showRecords,
     })
 
-    for (const f of listed.folders) {
-        if (opts.promotedRootSharedUids?.has(f.uid)) continue
-        node.children.push(await buildFolderSubtree(storage, f.uid, opts))
+    for (const childFolder of listed.folders) {
+        if (opts.promotedRootSharedUids?.has(childFolder.uid)) continue
+        node.children.push(await buildFolderSubtree(storage, childFolder.uid, opts))
     }
 
     if (opts.showRecords && 'records' in listed) {
-        const recs = listed.records
-        node.records = recs.map((r) => {
-            const rec = storage.getByUid<DRecord>('record', r.uid)
-            const title = rec ? getRecordTitle(rec) : r.name
-            const suffix = opts.verbose && rec ? `${title} (${r.uid}) [Record]` : `${title} [Record]`
-            return { display: suffix }
+        const records = listed.records
+        node.records = records.map((recordRow) => {
+            const record = storage.getByUid<DRecord>('record', recordRow.uid)
+            const title = record ? getRecordTitle(record) : recordRow.name
+            const display = opts.verbose && record ? `${title} (${recordRow.uid}) [Record]` : `${title} [Record]`
+            return { display }
         })
     }
 
@@ -194,8 +194,8 @@ async function buildVaultRootTree(storage: InMemoryStorage, opts: BuildOpts): Pr
     const node: FolderTreeNode = { displayName: '', children: [] }
     const { rows, promotedRootSharedUids } = await listVaultRootFolders(storage)
     const optsWithPromoted: BuildOpts = { ...opts, promotedRootSharedUids }
-    for (const f of rows) {
-        node.children.push(await buildFolderSubtree(storage, f.uid, optsWithPromoted))
+    for (const folderRow of rows) {
+        node.children.push(await buildFolderSubtree(storage, folderRow.uid, optsWithPromoted))
     }
     const listed = await listFolder(storage, {
         folderUid: undefined,
@@ -203,11 +203,11 @@ async function buildVaultRootTree(storage: InMemoryStorage, opts: BuildOpts): Pr
         showRecords: opts.showRecords,
     })
     if (opts.showRecords && listed.records?.length) {
-        node.records = listed.records.map((r) => {
-            const rec = storage.getByUid<DRecord>('record', r.uid)
-            const title = rec ? getRecordTitle(rec) : r.name
-            const suffix = opts.verbose && rec ? `${title} (${r.uid}) [Record]` : `${title} [Record]`
-            return { display: suffix }
+        node.records = listed.records.map((recordRow) => {
+            const record = storage.getByUid<DRecord>('record', recordRow.uid)
+            const title = record ? getRecordTitle(record) : recordRow.name
+            const display = opts.verbose && record ? `${title} (${recordRow.uid}) [Record]` : `${title} [Record]`
+            return { display }
         })
     }
     return node
@@ -218,12 +218,12 @@ async function resolveTreeStart(
     session: VaultFolderSession,
     folderPath?: string | null
 ): Promise<{ folderUid: string | null }> {
-    const fp = folderPath?.trim()
-    if (fp) {
-        const r = await resolveSingleFolder(storage, session, fp)
-        return { folderUid: r.folderUid }
+    const trimmedPath = folderPath?.trim()
+    if (trimmedPath) {
+        const resolved = await resolveSingleFolder(storage, session, trimmedPath)
+        return { folderUid: resolved.folderUid }
     }
-    return { folderUid: session.currentFolderUid ?? null }
+    return { folderUid: session.currentFolderUid || null }
 }
 
 export async function buildFolderTree(
@@ -246,27 +246,27 @@ export async function buildFolderTree(
             ? await buildVaultRootTree(storage, opts)
             : await buildFolderSubtree(storage, folderUid, opts)
 
-    return { title: options.title ?? undefined, root }
+    return { title: options.title || undefined, root }
 }
 
-type Item =
+type TreeItem =
     | { kind: 'perm'; display: string }
     | { kind: 'record'; display: string }
     | { kind: 'folder'; node: FolderTreeNode }
 
-function gatherItems(node: FolderTreeNode): Item[] {
-    const items: Item[] = []
+function gatherItems(node: FolderTreeNode): TreeItem[] {
+    const items: TreeItem[] = []
     if (node.permissions) {
-        for (const p of node.permissions) {
-            items.push({ kind: 'perm', display: p.display })
+        for (const permission of node.permissions) {
+            items.push({ kind: 'perm', display: permission.display })
         }
     }
-    for (const c of node.children) {
-        items.push({ kind: 'folder', node: c })
+    for (const child of node.children) {
+        items.push({ kind: 'folder', node: child })
     }
     if (node.records) {
-        for (const r of node.records) {
-            items.push({ kind: 'record', display: r.display })
+        for (const record of node.records) {
+            items.push({ kind: 'record', display: record.display })
         }
     }
     return items
@@ -293,14 +293,14 @@ function renderNode(node: FolderTreeNode, lines: string[], isRoot: boolean, pref
 
     const childBase = isRoot ? ' ' : prefix + (isLast ? '    ' : '|   ')
     const items = gatherItems(node)
-    for (let i = 0; i < items.length; i++) {
-        const last = i === items.length - 1
-        const item = items[i]
+    for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+        const isLastItem = itemIndex === items.length - 1
+        const item = items[itemIndex]
         if (item.kind === 'perm' || item.kind === 'record') {
-            const conn = last ? '\\-- ' : '+-- '
-            lines.push(childBase + conn + item.display)
+            const connector = isLastItem ? '\\-- ' : '+-- '
+            lines.push(childBase + connector + item.display)
         } else {
-            renderNode(item.node, lines, false, childBase, last)
+            renderNode(item.node, lines, false, childBase, isLastItem)
         }
     }
 }
@@ -310,6 +310,6 @@ export async function folderTreeAscii(
     session: VaultFolderSession,
     options?: FolderTreeBuildOptions
 ): Promise<string> {
-    const built = await buildFolderTree(storage, session, options ?? {})
+    const built = await buildFolderTree(storage, session, options || {})
     return renderFolderTreeAscii(built)
 }

@@ -8,21 +8,26 @@ import type {
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
 import { findParentFolderUid } from './changeDirectory'
-import { sharedFolderFolderName, userFolderName } from './folderHelpers'
+import { FolderKind, FolderObjectType, sharedFolderFolderName, userFolderName } from './folderHelpers'
 
-export type GetFolderFormat = 'detail' | 'json'
+export enum GetFolderFormat {
+    Detail = 'detail',
+    JSON = 'json',
+}
+
+export type GetFolderFormatInput = GetFolderFormat | `${GetFolderFormat}`
 
 export type GetFolderOptions = {
-    format?: GetFolderFormat
+    format?: GetFolderFormatInput
 }
 
 export type GetFolderResult = GetFolderResultFolder | GetFolderResultSharedFolder
 
 export type GetFolderResultFolder = {
-    objectType: 'folder'
+    objectType: FolderObjectType.Folder
     format: GetFolderFormat
     folder_uid: string
-    folder_type: 'user_folder' | 'shared_folder_folder'
+    folder_type: FolderKind.UserFolder | FolderKind.SharedFolderFolder
     name: string
     parent_uid: string | null
     shared_folder_scope_uid?: string
@@ -30,7 +35,7 @@ export type GetFolderResultFolder = {
 }
 
 export type GetFolderResultSharedFolder = {
-    objectType: 'shared_folder'
+    objectType: FolderObjectType.SharedFolder
     format: GetFolderFormat
     shared_folder_uid: string
     name: string
@@ -53,59 +58,59 @@ export type GetFolderResultSharedFolder = {
 }
 
 export type FoundFolder =
-    | { kind: 'user_folder'; folder: DUserFolder }
-    | { kind: 'shared_folder'; folder: DSharedFolder }
-    | { kind: 'shared_folder_folder'; folder: DSharedFolderFolder }
+    | { kind: FolderKind.UserFolder; folder: DUserFolder }
+    | { kind: FolderKind.SharedFolder; folder: DSharedFolder }
+    | { kind: FolderKind.SharedFolderFolder; folder: DSharedFolderFolder }
 
 function findByUidOrName<T>(
     items: Iterable<T>,
     needle: string,
-    getUid: (t: T) => string,
-    getName: (t: T) => string
+    getUid: (item: T) => string,
+    getName: (item: T) => string
 ): T | undefined {
-    const t = needle.trim()
-    if (!t) return undefined
-    const lower = t.toLowerCase()
+    const trimmedNeedle = needle.trim()
+    if (!trimmedNeedle) return undefined
+    const lowerNeedle = trimmedNeedle.toLowerCase()
     let exactNameHit: T | undefined
     let lowerNameHit: T | undefined
     for (const item of items) {
-        if (getUid(item) === t) return item
+        if (getUid(item) === trimmedNeedle) return item
         if (!exactNameHit) {
-            const n = getName(item)
-            if (n === t) {
+            const itemName = getName(item)
+            if (itemName === trimmedNeedle) {
                 exactNameHit = item
-            } else if (!lowerNameHit && n.toLowerCase() === lower) {
+            } else if (!lowerNameHit && itemName.toLowerCase() === lowerNeedle) {
                 lowerNameHit = item
             }
         }
     }
-    return exactNameHit ?? lowerNameHit
+    return exactNameHit || lowerNameHit
 }
 
 function findSharedFolder(storage: InMemoryStorage, needle: string): DSharedFolder | undefined {
     return findByUidOrName(
-        storage.getAll<DSharedFolder>('shared_folder'),
+        storage.getAll<DSharedFolder>(FolderKind.SharedFolder),
         needle,
-        (sf) => sf.uid,
-        (sf) => (sf.name || '').trim()
+        (sharedFolder) => sharedFolder.uid,
+        (sharedFolder) => (sharedFolder.name || '').trim()
     )
 }
 
 function findUserFolder(storage: InMemoryStorage, needle: string): DUserFolder | undefined {
     return findByUidOrName(
-        storage.getAll<DUserFolder>('user_folder'),
+        storage.getAll<DUserFolder>(FolderKind.UserFolder),
         needle,
-        (f) => f.uid,
-        (f) => userFolderName(f)
+        (userFolder) => userFolder.uid,
+        (userFolder) => userFolderName(userFolder)
     )
 }
 
 function findSharedFolderFolder(storage: InMemoryStorage, needle: string): DSharedFolderFolder | undefined {
     return findByUidOrName(
-        storage.getAll<DSharedFolderFolder>('shared_folder_folder'),
+        storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder),
         needle,
-        (f) => f.uid,
-        (f) => sharedFolderFolderName(f)
+        (sharedFolderFolder) => sharedFolderFolder.uid,
+        (sharedFolderFolder) => sharedFolderFolderName(sharedFolderFolder)
     )
 }
 
@@ -113,14 +118,14 @@ export function findFolder(storage: InMemoryStorage, needle: string): FoundFolde
     const trimmed = needle.trim()
     if (!trimmed) return undefined
 
-    const sf = findSharedFolder(storage, trimmed)
-    if (sf) return { kind: 'shared_folder', folder: sf }
+    const sharedFolder = findSharedFolder(storage, trimmed)
+    if (sharedFolder) return { kind: FolderKind.SharedFolder, folder: sharedFolder }
 
-    const uf = findUserFolder(storage, trimmed)
-    if (uf) return { kind: 'user_folder', folder: uf }
+    const userFolder = findUserFolder(storage, trimmed)
+    if (userFolder) return { kind: FolderKind.UserFolder, folder: userFolder }
 
-    const sff = findSharedFolderFolder(storage, trimmed)
-    if (sff) return { kind: 'shared_folder_folder', folder: sff }
+    const sharedFolderFolder = findSharedFolderFolder(storage, trimmed)
+    if (sharedFolderFolder) return { kind: FolderKind.SharedFolderFolder, folder: sharedFolderFolder }
 
     return undefined
 }
@@ -130,14 +135,16 @@ async function formatRegularFolder(
     folder: DUserFolder | DSharedFolderFolder,
     format: GetFolderFormat
 ): Promise<GetFolderResultFolder> {
-    const isUser = folder.kind === 'user_folder'
+    const isUser = folder.kind === FolderKind.UserFolder
     const folder_uid = folder.uid
-    const folder_type: GetFolderResultFolder['folder_type'] = isUser ? 'user_folder' : 'shared_folder_folder'
+    const folder_type: GetFolderResultFolder['folder_type'] = isUser
+        ? FolderKind.UserFolder
+        : FolderKind.SharedFolderFolder
     const name = isUser ? userFolderName(folder) : sharedFolderFolderName(folder)
     const parent_uid = await findParentFolderUid(storage, folder_uid)
 
     const base: GetFolderResultFolder = {
-        objectType: 'folder',
+        objectType: FolderObjectType.Folder,
         format,
         folder_uid,
         folder_type,
@@ -147,52 +154,57 @@ async function formatRegularFolder(
     if (!isUser) {
         base.shared_folder_scope_uid = (folder as DSharedFolderFolder).sharedFolderUid
     }
-    if (format === 'json') {
-        base.json = { ...base, objectType: 'folder' }
+    if (format === GetFolderFormat.JSON) {
+        base.json = { ...base, objectType: FolderObjectType.Folder }
     }
     return base
 }
 
 function formatSharedFolder(
     storage: InMemoryStorage,
-    sf: DSharedFolder,
+    sharedFolder: DSharedFolder,
     format: GetFolderFormat
 ): GetFolderResultSharedFolder {
-    const sfUid = sf.uid
-    const recordPerms = storage
+    const sharedFolderUid = sharedFolder.uid
+    const recordPermissions = storage
         .getAll<DSharedFolderRecord>('shared_folder_record')
-        .filter((r) => r.sharedFolderUid === sfUid)
-        .map((r) => ({
-            record_uid: r.recordUid,
-            can_edit: r.canEdit,
-            can_share: r.canShare,
-            owner: r.owner,
+        .filter((record) => record.sharedFolderUid === sharedFolderUid)
+        .map((record) => ({
+            record_uid: record.recordUid,
+            can_edit: record.canEdit,
+            can_share: record.canShare,
+            owner: record.owner,
         }))
-    const userPerms = storage
+    const userPermissions = storage
         .getAll<DSharedFolderUser>('shared_folder_user')
-        .filter((u) => u.sharedFolderUid === sfUid)
-        .map((u) => ({
-            account_username: u.accountUsername,
-            manage_records: u.manageRecords,
-            manage_users: u.manageUsers,
+        .filter((user) => user.sharedFolderUid === sharedFolderUid)
+        .map((user) => ({
+            account_username: user.accountUsername,
+            manage_records: user.manageRecords,
+            manage_users: user.manageUsers,
         }))
 
     const base: GetFolderResultSharedFolder = {
-        objectType: 'shared_folder',
+        objectType: FolderObjectType.SharedFolder,
         format,
-        shared_folder_uid: sf.uid,
-        name: (sf.name || '').trim() || sf.uid,
-        default_can_edit: sf.defaultCanEdit,
-        default_can_share: sf.defaultCanShare,
-        default_manage_records: sf.defaultManageRecords,
-        default_manage_users: sf.defaultManageUsers,
-        record_permissions: recordPerms.length ? recordPerms : undefined,
-        user_permissions: userPerms.length ? userPerms : undefined,
+        shared_folder_uid: sharedFolder.uid,
+        name: (sharedFolder.name || '').trim() || sharedFolder.uid,
+        default_can_edit: sharedFolder.defaultCanEdit,
+        default_can_share: sharedFolder.defaultCanShare,
+        default_manage_records: sharedFolder.defaultManageRecords,
+        default_manage_users: sharedFolder.defaultManageUsers,
+        record_permissions: recordPermissions.length ? recordPermissions : undefined,
+        user_permissions: userPermissions.length ? userPermissions : undefined,
     }
-    if (format === 'json') {
-        base.json = { ...base, objectType: 'shared_folder' }
+    if (format === GetFolderFormat.JSON) {
+        base.json = { ...base, objectType: FolderObjectType.SharedFolder }
     }
     return base
+}
+
+function normalizeFormat(format: GetFolderFormatInput | undefined): GetFolderFormat {
+    if (format === GetFolderFormat.JSON) return GetFolderFormat.JSON
+    return GetFolderFormat.Detail
 }
 
 export async function getFolder(
@@ -210,13 +222,13 @@ export async function getFolder(
         throw new KeeperSdkError(`"${trimmed}" not found as a folder or shared folder`, 'folder_not_found')
     }
 
-    const format: GetFolderFormat = options.format ?? 'detail'
+    const format: GetFolderFormat = normalizeFormat(options.format)
 
     switch (found.kind) {
-        case 'shared_folder':
+        case FolderKind.SharedFolder:
             return formatSharedFolder(storage, found.folder, format)
-        case 'user_folder':
-        case 'shared_folder_folder':
+        case FolderKind.UserFolder:
+        case FolderKind.SharedFolderFolder:
             return formatRegularFolder(storage, found.folder, format)
     }
 }

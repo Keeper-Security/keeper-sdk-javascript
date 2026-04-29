@@ -11,6 +11,7 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
 import { getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
+    FolderKind,
     getUserFolderParentMap,
     globToRegex,
     sharedFolderFolderName,
@@ -29,7 +30,7 @@ export type ListFolderOptions = {
 export type ListFolderFolderSimple = {
     uid: string
     name: string
-    folderKind: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    folderKind: FolderKind
 }
 
 export type ListFolderRecordSimple = {
@@ -65,50 +66,58 @@ export type ListFolderResult =
       }
 
 function recordHasAttachments(record: DRecord): boolean {
-    const ids = record.udata?.file_ids
-    if (Array.isArray(ids) && ids.length > 0) return true
+    const fileIds = record.udata?.file_ids
+    if (Array.isArray(fileIds) && fileIds.length > 0) return true
     const files = (record.extra as { files?: unknown[] } | undefined)?.files
     return Array.isArray(files) && files.length > 0
 }
 
 function buildFolderFlags(folderKind: ListFolderFolderSimple['folderKind']): string {
-    const shared = folderKind !== 'user_folder'
-    return `f--${shared ? 'S' : '-'}`
+    const isShared = folderKind !== FolderKind.UserFolder
+    return `f--${isShared ? 'S' : '-'}`
 }
 
-function buildRecordFlags(record: DRecord, meta: DRecordMetadata | undefined): string {
-    const owner = meta?.owner === true
-    const attach = recordHasAttachments(record)
-    const shared = !!record.shared
-    return `r${owner ? 'O' : '-'}${attach ? 'A' : '-'}${shared ? 'S' : '-'}`
+function buildRecordFlags(record: DRecord, metadata: DRecordMetadata | undefined): string {
+    const isOwner = metadata?.owner === true
+    const hasAttachments = recordHasAttachments(record)
+    const isShared = !!record.shared
+    return `r${isOwner ? 'O' : '-'}${hasAttachments ? 'A' : '-'}${isShared ? 'S' : '-'}`
 }
 
 export async function listRootUserFolders(storage: InMemoryStorage): Promise<DUserFolder[]> {
-    const folders = storage.getAll<DUserFolder>('user_folder')
+    const userFolders = storage.getAll<DUserFolder>(FolderKind.UserFolder)
     const childToParent = await getUserFolderParentMap(storage)
-    return folders.filter((f) => !childToParent.has(f.uid))
+    return userFolders.filter((userFolder) => !childToParent.has(userFolder.uid))
 }
 
 async function buildFolderParentMap(
     storage: InMemoryStorage
 ): Promise<Map<string, { uid: string; kind: VaultStorageKind }>> {
-    const result = new Map<string, { uid: string; kind: VaultStorageKind }>()
-    const parentKinds: VaultStorageKind[] = ['user_folder', 'shared_folder', 'shared_folder_folder']
+    const childToParent = new Map<string, { uid: string; kind: VaultStorageKind }>()
+    const parentKinds: VaultStorageKind[] = [
+        FolderKind.UserFolder,
+        FolderKind.SharedFolder,
+        FolderKind.SharedFolderFolder,
+    ]
     for (const kind of parentKinds) {
-        for (const item of storage.getAll<{ uid: string } & VaultStorageData>(kind)) {
-            const puid = (item as { uid: string }).uid
-            if (!puid) continue
-            const deps = (await storage.getDependencies(puid)) || []
-            for (const d of deps) {
-                if (d.kind === 'user_folder' || d.kind === 'shared_folder' || d.kind === 'shared_folder_folder') {
-                    if (!result.has(d.uid)) {
-                        result.set(d.uid, { uid: puid, kind })
+        for (const candidate of storage.getAll<{ uid: string } & VaultStorageData>(kind)) {
+            const candidateUid = (candidate as { uid: string }).uid
+            if (!candidateUid) continue
+            const dependencies = (await storage.getDependencies(candidateUid)) || []
+            for (const dependency of dependencies) {
+                if (
+                    dependency.kind === FolderKind.UserFolder ||
+                    dependency.kind === FolderKind.SharedFolder ||
+                    dependency.kind === FolderKind.SharedFolderFolder
+                ) {
+                    if (!childToParent.has(dependency.uid)) {
+                        childToParent.set(dependency.uid, { uid: candidateUid, kind })
                     }
                 }
             }
         }
     }
-    return result
+    return childToParent
 }
 
 export async function listVaultRootFolders(storage: InMemoryStorage): Promise<{
@@ -119,69 +128,72 @@ export async function listVaultRootFolders(storage: InMemoryStorage): Promise<{
     const seen = new Set<string>()
     const promotedRootSharedUids = new Set<string>()
 
-    for (const uf of await listRootUserFolders(storage)) {
-        if (seen.has(uf.uid)) continue
-        seen.add(uf.uid)
+    for (const userFolder of await listRootUserFolders(storage)) {
+        if (seen.has(userFolder.uid)) continue
+        seen.add(userFolder.uid)
         rows.push({
-            uid: uf.uid,
-            name: userFolderName(uf),
-            folderKind: 'user_folder',
+            uid: userFolder.uid,
+            name: userFolderName(userFolder),
+            folderKind: FolderKind.UserFolder,
         })
     }
 
-    const rootDeps = (await storage.getDependencies('')) || []
-    for (const d of rootDeps) {
-        if (d.kind === 'shared_folder') {
-            const sf = storage.getByUid<DSharedFolder>('shared_folder', d.uid)
-            if (!sf || seen.has(sf.uid)) continue
-            seen.add(sf.uid)
+    const rootDependencies = (await storage.getDependencies('')) || []
+    for (const dependency of rootDependencies) {
+        if (dependency.kind === FolderKind.SharedFolder) {
+            const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, dependency.uid)
+            if (!sharedFolder || seen.has(sharedFolder.uid)) continue
+            seen.add(sharedFolder.uid)
             rows.push({
-                uid: sf.uid,
-                name: sharedFolderName(sf),
-                folderKind: 'shared_folder',
+                uid: sharedFolder.uid,
+                name: sharedFolderName(sharedFolder),
+                folderKind: FolderKind.SharedFolder,
             })
-        } else if (d.kind === 'shared_folder_folder') {
-            const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', d.uid)
-            if (!sff || seen.has(sff.uid)) continue
-            seen.add(sff.uid)
+        } else if (dependency.kind === FolderKind.SharedFolderFolder) {
+            const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(
+                FolderKind.SharedFolderFolder,
+                dependency.uid
+            )
+            if (!sharedFolderFolder || seen.has(sharedFolderFolder.uid)) continue
+            seen.add(sharedFolderFolder.uid)
             rows.push({
-                uid: sff.uid,
-                name: sharedFolderFolderName(sff),
-                folderKind: 'shared_folder_folder',
+                uid: sharedFolderFolder.uid,
+                name: sharedFolderFolderName(sharedFolderFolder),
+                folderKind: FolderKind.SharedFolderFolder,
             })
         }
     }
 
     const parentMap = await buildFolderParentMap(storage)
-    for (const sf of storage.getAll<DSharedFolder>('shared_folder')) {
-        if (seen.has(sf.uid)) continue
-        const parent = parentMap.get(sf.uid)
-        if (parent && (parent.kind === 'shared_folder' || parent.kind === 'shared_folder_folder')) {
+    for (const sharedFolder of storage.getAll<DSharedFolder>(FolderKind.SharedFolder)) {
+        if (seen.has(sharedFolder.uid)) continue
+        const parent = parentMap.get(sharedFolder.uid)
+        if (parent && (parent.kind === FolderKind.SharedFolder || parent.kind === FolderKind.SharedFolderFolder)) {
             continue
         }
-        seen.add(sf.uid)
-        promotedRootSharedUids.add(sf.uid)
+        seen.add(sharedFolder.uid)
+        promotedRootSharedUids.add(sharedFolder.uid)
         rows.push({
-            uid: sf.uid,
-            name: sharedFolderName(sf),
-            folderKind: 'shared_folder',
+            uid: sharedFolder.uid,
+            name: sharedFolderName(sharedFolder),
+            folderKind: FolderKind.SharedFolder,
         })
     }
 
-    rows.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+    rows.sort((rowA, rowB) => rowA.name.localeCompare(rowB.name, undefined, { sensitivity: 'base' }))
 
     return { rows, promotedRootSharedUids }
 }
 
 function resolveFolderContainer(storage: InMemoryStorage, folderUid: string): { kind: VaultStorageKind; uid: string } {
-    if (storage.getByUid<DUserFolder>('user_folder', folderUid)) {
-        return { kind: 'user_folder', uid: folderUid }
+    if (storage.getByUid<DUserFolder>(FolderKind.UserFolder, folderUid)) {
+        return { kind: FolderKind.UserFolder, uid: folderUid }
     }
-    if (storage.getByUid<DSharedFolder>('shared_folder', folderUid)) {
-        return { kind: 'shared_folder', uid: folderUid }
+    if (storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, folderUid)) {
+        return { kind: FolderKind.SharedFolder, uid: folderUid }
     }
-    if (storage.getByUid<DSharedFolderFolder>('shared_folder_folder', folderUid)) {
-        return { kind: 'shared_folder_folder', uid: folderUid }
+    if (storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, folderUid)) {
+        return { kind: FolderKind.SharedFolderFolder, uid: folderUid }
     }
     throw new KeeperSdkError(`Folder "${folderUid}" not found`, 'folder_not_found')
 }
@@ -195,22 +207,22 @@ export function findFolderUidByNameOrUid(storage: InMemoryStorage, needle: strin
     if (!trimmed) return undefined
 
     if (
-        storage.getByUid<DUserFolder>('user_folder', trimmed) ||
-        storage.getByUid<DSharedFolder>('shared_folder', trimmed) ||
-        storage.getByUid<DSharedFolderFolder>('shared_folder_folder', trimmed)
+        storage.getByUid<DUserFolder>(FolderKind.UserFolder, trimmed) ||
+        storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, trimmed) ||
+        storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmed)
     ) {
         return trimmed
     }
 
-    const lower = trimmed.toLowerCase()
-    for (const f of storage.getAll<DUserFolder>('user_folder')) {
-        if (userFolderName(f).toLowerCase() === lower) return f.uid
+    const lowerNeedle = trimmed.toLowerCase()
+    for (const userFolder of storage.getAll<DUserFolder>(FolderKind.UserFolder)) {
+        if (userFolderName(userFolder).toLowerCase() === lowerNeedle) return userFolder.uid
     }
-    for (const sf of storage.getAll<DSharedFolder>('shared_folder')) {
-        if (sharedFolderName(sf).toLowerCase() === lower) return sf.uid
+    for (const sharedFolder of storage.getAll<DSharedFolder>(FolderKind.SharedFolder)) {
+        if (sharedFolderName(sharedFolder).toLowerCase() === lowerNeedle) return sharedFolder.uid
     }
-    for (const sff of storage.getAll<DSharedFolderFolder>('shared_folder_folder')) {
-        if (sharedFolderFolderName(sff).toLowerCase() === lower) return sff.uid
+    for (const sharedFolderFolder of storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder)) {
+        if (sharedFolderFolderName(sharedFolderFolder).toLowerCase() === lowerNeedle) return sharedFolderFolder.uid
     }
     return undefined
 }
@@ -219,12 +231,16 @@ async function countFolderChildren(
     storage: InMemoryStorage,
     uid: string
 ): Promise<{ records: number; subfolders: number }> {
-    const deps = (await storage.getDependencies(uid)) || []
+    const dependencies = (await storage.getDependencies(uid)) || []
     let records = 0
     let subfolders = 0
-    for (const c of deps) {
-        if (c.kind === 'record') records++
-        else if (c.kind === 'user_folder' || c.kind === 'shared_folder' || c.kind === 'shared_folder_folder') {
+    for (const dependency of dependencies) {
+        if (dependency.kind === 'record') records++
+        else if (
+            dependency.kind === FolderKind.UserFolder ||
+            dependency.kind === FolderKind.SharedFolder ||
+            dependency.kind === FolderKind.SharedFolderFolder
+        ) {
             subfolders++
         }
     }
@@ -266,44 +282,47 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
         }
     }
 
-    for (const d of deps) {
-        if (d.kind === 'user_folder' && showFolders && parentKey !== null) {
-            const uf = storage.getByUid<DUserFolder>('user_folder', d.uid)
-            if (!uf) continue
-            const name = userFolderName(uf)
-            if (!matches(name, uf.uid)) continue
-            folderRows.push({ uid: uf.uid, name, folderKind: 'user_folder' })
-        } else if (d.kind === 'shared_folder' && showFolders && parentKey !== null) {
-            const sf = storage.getByUid<DSharedFolder>('shared_folder', d.uid)
-            if (!sf) continue
-            const name = sharedFolderName(sf)
-            if (!matches(name, sf.uid)) continue
-            folderRows.push({ uid: sf.uid, name, folderKind: 'shared_folder' })
-        } else if (d.kind === 'shared_folder_folder' && showFolders && parentKey !== null) {
-            const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', d.uid)
-            if (!sff) continue
-            const name = sharedFolderFolderName(sff)
-            if (!matches(name, sff.uid)) continue
+    for (const dependency of deps) {
+        if (dependency.kind === FolderKind.UserFolder && showFolders && parentKey !== null) {
+            const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, dependency.uid)
+            if (!userFolder) continue
+            const name = userFolderName(userFolder)
+            if (!matches(name, userFolder.uid)) continue
+            folderRows.push({ uid: userFolder.uid, name, folderKind: FolderKind.UserFolder })
+        } else if (dependency.kind === FolderKind.SharedFolder && showFolders && parentKey !== null) {
+            const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, dependency.uid)
+            if (!sharedFolder) continue
+            const name = sharedFolderName(sharedFolder)
+            if (!matches(name, sharedFolder.uid)) continue
+            folderRows.push({ uid: sharedFolder.uid, name, folderKind: FolderKind.SharedFolder })
+        } else if (dependency.kind === FolderKind.SharedFolderFolder && showFolders && parentKey !== null) {
+            const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(
+                FolderKind.SharedFolderFolder,
+                dependency.uid
+            )
+            if (!sharedFolderFolder) continue
+            const name = sharedFolderFolderName(sharedFolderFolder)
+            if (!matches(name, sharedFolderFolder.uid)) continue
             folderRows.push({
-                uid: sff.uid,
+                uid: sharedFolderFolder.uid,
                 name,
-                folderKind: 'shared_folder_folder',
+                folderKind: FolderKind.SharedFolderFolder,
             })
-        } else if (d.kind === 'record' && showRecords) {
-            const rec = storage.getByUid<DRecord>('record', d.uid)
-            if (!rec || (rec.version !== 2 && rec.version !== 3)) continue
-            const title = getRecordTitle(rec)
-            if (!matches(title, rec.uid)) continue
+        } else if (dependency.kind === 'record' && showRecords) {
+            const record = storage.getByUid<DRecord>('record', dependency.uid)
+            if (!record || (record.version !== 2 && record.version !== 3)) continue
+            const title = getRecordTitle(record)
+            if (!matches(title, record.uid)) continue
             recordRows.push({
-                uid: rec.uid,
+                uid: record.uid,
                 name: title,
-                type: getRecordType(rec),
+                type: getRecordType(record),
             })
         }
     }
 
-    folderRows.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
-    recordRows.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+    folderRows.sort((rowA, rowB) => rowA.name.localeCompare(rowB.name, undefined, { sensitivity: 'base' }))
+    recordRows.sort((rowA, rowB) => rowA.name.localeCompare(rowB.name, undefined, { sensitivity: 'base' }))
 
     if (!detail) {
         return { detail: false, folders: folderRows, records: recordRows }
@@ -322,15 +341,15 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
     )
 
     const recordDetails: ListFolderRecordDetail[] = recordRows.map((row) => {
-        const rec = storage.getByUid<DRecord>('record', row.uid)!
-        const meta = getRecordMetadata(storage, row.uid)
+        const record = storage.getByUid<DRecord>('record', row.uid)!
+        const metadata = getRecordMetadata(storage, row.uid)
         return {
             ...row,
-            flags: buildRecordFlags(rec, meta),
-            version: rec.version,
-            isOwner: meta?.owner === true,
-            hasAttachments: recordHasAttachments(rec),
-            isShared: !!rec.shared,
+            flags: buildRecordFlags(record, metadata),
+            version: record.version,
+            isOwner: metadata?.owner === true,
+            hasAttachments: recordHasAttachments(record),
+            isShared: !!record.shared,
         }
     })
 

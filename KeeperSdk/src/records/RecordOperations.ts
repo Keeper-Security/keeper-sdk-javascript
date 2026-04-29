@@ -30,19 +30,10 @@ import type {
 import { extractErrorMessage, KeeperSdkError, logger } from '../utils'
 import { RecordVersion } from './RecordUtils'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
-
-enum FolderType {
-    UserFolder = 'user_folder',
-    SharedFolder = 'shared_folder',
-    SharedFolderFolder = 'shared_folder_folder',
-}
+import { DeleteResolution, FolderKind } from '../folders/folderHelpers'
 
 enum ObjectType {
     Record = 'record',
-}
-
-enum DeleteResolution {
-    Unlink = 'unlink',
 }
 
 enum ResultCode {
@@ -175,7 +166,7 @@ async function addPasswordRecord(
         record_uid: recordUid,
         record_key: webSafe64FromBytes(encryptedRecordKey),
         record_type: 'password',
-        folder_type: FolderType.UserFolder,
+        folder_type: FolderKind.UserFolder,
         how_long_ago: 0,
         folder_uid: folderUid || '',
         folder_key: '',
@@ -314,7 +305,7 @@ export async function deleteRecord(
                 object_uid: recordUid,
                 object_type: ObjectType.Record,
                 from_uid: '',
-                from_type: FolderType.UserFolder,
+                from_type: FolderKind.UserFolder,
                 delete_resolution: DeleteResolution.Unlink,
             } as RecordPreDeleteObject,
         ],
@@ -431,36 +422,36 @@ export type MoveRecordResult = {
 
 type FolderInfo = {
     uid: string
-    folderType: FolderType
+    folderType: FolderKind
     scopeUid: string
 }
 
 function resolveFolder(uid: string, storage: InMemoryStorage): FolderInfo {
     if (!uid) {
-        return { uid: '', folderType: FolderType.UserFolder, scopeUid: '' }
+        return { uid: '', folderType: FolderKind.UserFolder, scopeUid: '' }
     }
 
-    if (storage.getByUid<DUserFolder>(FolderType.UserFolder, uid)) {
-        return { uid, folderType: FolderType.UserFolder, scopeUid: '' }
+    if (storage.getByUid<DUserFolder>(FolderKind.UserFolder, uid)) {
+        return { uid, folderType: FolderKind.UserFolder, scopeUid: '' }
     }
 
-    if (storage.getByUid<DSharedFolder>(FolderType.SharedFolder, uid)) {
-        return { uid, folderType: FolderType.SharedFolder, scopeUid: uid }
+    if (storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, uid)) {
+        return { uid, folderType: FolderKind.SharedFolder, scopeUid: uid }
     }
 
-    const sfFolder = storage.getByUid<DSharedFolderFolder>(FolderType.SharedFolderFolder, uid)
+    const sfFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, uid)
     if (sfFolder) {
-        return { uid, folderType: FolderType.SharedFolderFolder, scopeUid: sfFolder.sharedFolderUid }
+        return { uid, folderType: FolderKind.SharedFolderFolder, scopeUid: sfFolder.sharedFolderUid }
     }
 
-    return { uid, folderType: FolderType.UserFolder, scopeUid: '' }
+    return { uid, folderType: FolderKind.UserFolder, scopeUid: '' }
 }
 
 async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorage): Promise<string> {
     const folderKinds = [
-        FolderType.UserFolder,
-        FolderType.SharedFolder,
-        FolderType.SharedFolderFolder,
+        FolderKind.UserFolder,
+        FolderKind.SharedFolder,
+        FolderKind.SharedFolderFolder,
     ] as const
 
     for (const kind of folderKinds) {

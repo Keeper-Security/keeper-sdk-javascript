@@ -3,7 +3,11 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
 import { listFolder, listRootUserFolders } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
-import { sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+import { FolderKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+
+const VAULT_ROOT_DISPLAY_NAME = 'My Vault'
+
+const ESCAPED_SEPARATOR_PLACEHOLDER = '\x00'
 
 export type VaultFolderSession = {
     currentFolderUid: string | null
@@ -19,38 +23,51 @@ export function createVaultFolderSession(): VaultFolderSession {
 }
 
 function getFolderEntryByUid(storage: InMemoryStorage, uid: string): ListFolderFolderSimple | undefined {
-    const uf = storage.getByUid<DUserFolder>('user_folder', uid)
-    if (uf) return { uid: uf.uid, name: userFolderName(uf), folderKind: 'user_folder' }
-    const sf = storage.getByUid<DSharedFolder>('shared_folder', uid)
-    if (sf)
+    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, uid)
+    if (userFolder) {
+        return { uid: userFolder.uid, name: userFolderName(userFolder), folderKind: FolderKind.UserFolder }
+    }
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, uid)
+    if (sharedFolder) {
         return {
-            uid: sf.uid,
-            name: sharedFolderName(sf),
-            folderKind: 'shared_folder',
+            uid: sharedFolder.uid,
+            name: sharedFolderName(sharedFolder),
+            folderKind: FolderKind.SharedFolder,
         }
-    const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', uid)
-    if (sff)
+    }
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, uid)
+    if (sharedFolderFolder) {
         return {
-            uid: sff.uid,
-            name: sharedFolderFolderName(sff),
-            folderKind: 'shared_folder_folder',
+            uid: sharedFolderFolder.uid,
+            name: sharedFolderFolderName(sharedFolderFolder),
+            folderKind: FolderKind.SharedFolderFolder,
         }
+    }
     return undefined
 }
 
 export async function findParentFolderUid(storage: InMemoryStorage, folderUid: string): Promise<string | null> {
-    const roots = new Set((await listRootUserFolders(storage)).map((f) => f.uid))
-    if (roots.has(folderUid)) return null
+    const rootFolderUids = new Set((await listRootUserFolders(storage)).map((folder) => folder.uid))
+    if (rootFolderUids.has(folderUid)) return null
 
-    const parentKinds = ['user_folder', 'shared_folder', 'shared_folder_folder', 'team'] as const
+    const parentKinds = [
+        FolderKind.UserFolder,
+        FolderKind.SharedFolder,
+        FolderKind.SharedFolderFolder,
+        'team',
+    ] as const
     for (const kind of parentKinds) {
-        for (const item of storage.getAll(kind)) {
-            const puid = (item as { uid: string }).uid
-            const deps = (await storage.getDependencies(puid)) || []
-            for (const d of deps) {
-                if (d.uid !== folderUid) continue
-                if (d.kind === 'user_folder' || d.kind === 'shared_folder' || d.kind === 'shared_folder_folder') {
-                    return puid
+        for (const candidate of storage.getAll(kind)) {
+            const candidateUid = (candidate as { uid: string }).uid
+            const dependencies = (await storage.getDependencies(candidateUid)) || []
+            for (const dependency of dependencies) {
+                if (dependency.uid !== folderUid) continue
+                if (
+                    dependency.kind === FolderKind.UserFolder ||
+                    dependency.kind === FolderKind.SharedFolder ||
+                    dependency.kind === FolderKind.SharedFolderFolder
+                ) {
+                    return candidateUid
                 }
             }
         }
@@ -71,20 +88,23 @@ async function listFolderChildrenForCd(
     return result.folders
 }
 
-function findChildFolder(children: ListFolderFolderSimple[], component: string): ListFolderFolderSimple | undefined {
-    const c = component.trim()
-    if (!c) return undefined
-    const byUid = children.find((ch) => ch.uid === c)
-    if (byUid) return byUid
-    const exact = children.find((ch) => ch.name.trim() === c)
-    if (exact) return exact
-    const lower = c.toLowerCase()
-    return children.find((ch) => ch.name.trim().toLowerCase() === lower)
+function findChildFolder(
+    children: ListFolderFolderSimple[],
+    component: string
+): ListFolderFolderSimple | undefined {
+    const trimmedComponent = component.trim()
+    if (!trimmedComponent) return undefined
+    const matchByUid = children.find((child) => child.uid === trimmedComponent)
+    if (matchByUid) return matchByUid
+    const exactNameMatch = children.find((child) => child.name.trim() === trimmedComponent)
+    if (exactNameMatch) return exactNameMatch
+    const lowerComponent = trimmedComponent.toLowerCase()
+    return children.find((child) => child.name.trim().toLowerCase() === lowerComponent)
 }
 
 export function splitPathComponents(path: string): string[] {
-    const escaped = path.replace(/\/\//g, '\x00')
-    return escaped.split('/').map((s) => s.replace(/\x00/g, '/'))
+    const escaped = path.replace(/\/\//g, ESCAPED_SEPARATOR_PLACEHOLDER)
+    return escaped.split('/').map((segment) => segment.replace(/\x00/g, '/'))
 }
 
 export type TryResolvePathResult = {
@@ -111,7 +131,7 @@ export async function tryResolvePath(
     const pathToWalk = absolute ? trimmed.slice(1) : trimmed
     const components = splitPathComponents(pathToWalk)
 
-    let folderUid: string | null = absolute ? null : (session.currentFolderUid ?? null)
+    let folderUid: string | null = absolute ? null : session.currentFolderUid || null
 
     if (!absolute && folderUid !== null) {
         if (!getFolderEntryByUid(storage, folderUid)) {
@@ -119,10 +139,10 @@ export async function tryResolvePath(
         }
     }
 
-    let i = 0
-    while (i < components.length) {
-        let component = components[i]
-        i++
+    let componentIndex = 0
+    while (componentIndex < components.length) {
+        const component = components[componentIndex]
+        componentIndex++
 
         if (component === '' || component === '.') {
             continue
@@ -141,7 +161,7 @@ export async function tryResolvePath(
         if (match) {
             folderUid = match.uid
         } else {
-            const remaining = [component, ...components.slice(i)].join('/')
+            const remaining = [component, ...components.slice(componentIndex)].join('/')
             return { folderUid, remaining }
         }
     }
@@ -170,7 +190,7 @@ export async function resolveSingleFolder(
     }
 
     if (folderUid === null) {
-        return { folderUid: null, name: 'My Vault' }
+        return { folderUid: null, name: VAULT_ROOT_DISPLAY_NAME }
     }
 
     const entry = getFolderEntryByUid(storage, folderUid)
@@ -191,7 +211,7 @@ export async function changeDirectory(
 }
 
 export function getWorkingFolderDisplayName(storage: InMemoryStorage, currentFolderUid: string | null): string {
-    if (currentFolderUid === null) return 'My Vault'
+    if (currentFolderUid === null) return VAULT_ROOT_DISPLAY_NAME
     const entry = getFolderEntryByUid(storage, currentFolderUid)
-    return entry?.name ?? 'My Vault'
+    return entry?.name || VAULT_ROOT_DISPLAY_NAME
 }

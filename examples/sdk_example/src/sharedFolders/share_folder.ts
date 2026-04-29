@@ -1,16 +1,18 @@
 import {
     cleanup,
     extractErrorMessage,
+    FolderKind,
+    FolderObjectType,
     login,
     logger,
     prompt,
+    ShareFolderAction,
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import type {
     GetFolderResult,
     GetFolderResultFolder,
     GetFolderResultSharedFolder,
-    ShareFolderAction,
     ShareFolderInput,
     ShareFolderResult,
 } from '@keeper-security/keeper-sdk-javascript'
@@ -19,16 +21,16 @@ import { isYes, parseEmails } from '../utils/format'
 
 type SharedFolderTarget =
     | GetFolderResultSharedFolder
-    | (GetFolderResultFolder & { folder_type: 'shared_folder_folder' })
+    | (GetFolderResultFolder & { folder_type: FolderKind.SharedFolderFolder })
 
 function isSharedTarget(obj: GetFolderResult): obj is SharedFolderTarget {
-    if (obj.objectType === 'shared_folder') return true
-    if (obj.objectType === 'folder' && obj.folder_type === 'shared_folder_folder') return true
+    if (obj.objectType === FolderObjectType.SharedFolder) return true
+    if (obj.objectType === FolderObjectType.Folder && obj.folder_type === FolderKind.SharedFolderFolder) return true
     return false
 }
 
 function describeTarget(obj: SharedFolderTarget): string {
-    if (obj.objectType === 'shared_folder') {
+    if (obj.objectType === FolderObjectType.SharedFolder) {
         return `shared folder "${obj.name}" (${obj.shared_folder_uid})`
     }
     return `subfolder of a shared folder "${obj.name}" (${obj.folder_uid})`
@@ -39,26 +41,28 @@ function summarize(result: ShareFolderResult): void {
         if (result.message) logger.info(result.message)
         return
     }
-    const succeeded = result.results.filter((r) => r.success)
-    const failed = result.results.filter((r) => !r.success)
+    const succeeded = result.results.filter((userResult) => userResult.success)
+    const failed = result.results.filter((userResult) => !userResult.success)
 
     if (succeeded.length > 0) {
         logger.info(`Succeeded (${succeeded.length}):`)
-        for (const r of succeeded) {
-            logger.info(`  ${r.email}  status=${r.status}`)
+        for (const userResult of succeeded) {
+            logger.info(`  ${userResult.email}  status=${userResult.status}`)
         }
     }
     if (failed.length > 0) {
         logger.error(`Failed (${failed.length}):`)
-        for (const r of failed) {
-            logger.error(`  ${r.email}  status=${r.status}${r.message ? ` - ${r.message}` : ''}`)
+        for (const userResult of failed) {
+            logger.error(
+                `  ${userResult.email}  status=${userResult.status}${userResult.message ? ` - ${userResult.message}` : ''}`
+            )
         }
     }
 }
 
 async function promptAction(): Promise<ShareFolderAction> {
     const raw = (await prompt('Action [grant/remove] (default grant): ')).trim().toLowerCase()
-    return raw === 'remove' ? 'remove' : 'grant'
+    return raw === ShareFolderAction.Remove ? ShareFolderAction.Remove : ShareFolderAction.Grant
 }
 
 async function shareFolderCommand() {
@@ -66,7 +70,7 @@ async function shareFolderCommand() {
 
     try {
         const action = await promptAction()
-        const verb = action === 'remove' ? 'remove users from' : 'share'
+        const verb = action === ShareFolderAction.Remove ? 'remove users from' : 'share'
         const folderInput = (await prompt(`Folder name or UID to ${verb}: `)).trim()
         if (!folderInput) {
             logger.info('No folder given.')
@@ -112,7 +116,7 @@ async function shareFolderCommand() {
             action,
         }
 
-        if (action === 'grant') {
+        if (action === ShareFolderAction.Grant) {
             input.manageRecords = isYes(
                 await prompt('Allow these users to add/remove records (manage_records)? [y/N]: '),
             )
@@ -129,7 +133,7 @@ async function shareFolderCommand() {
             restore()
         }
 
-        const opLabel = action === 'remove' ? 'Remove' : 'Share'
+        const opLabel = action === ShareFolderAction.Remove ? 'Remove' : 'Share'
         if (result.success) {
             logger.info(`${opLabel} completed for shared folder ${result.sharedFolderUid}.`)
         } else {

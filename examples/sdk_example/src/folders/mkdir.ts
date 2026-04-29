@@ -32,7 +32,7 @@ async function mkdirCommand() {
             if (result.success) {
                 logger.info(`Created folder UID: ${result.folderUid}`)
             } else {
-                logger.error(`Failed: ${result.message ?? 'unknown error'}`)
+                logger.error(`Failed: ${result.message || 'unknown error'}`)
                 process.exitCode = 1
             }
         } catch (err) {
