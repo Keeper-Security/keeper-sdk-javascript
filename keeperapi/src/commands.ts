@@ -286,9 +286,8 @@ export type PreDeleteRequest = {
     objects: DeleteObject[]
 }
 
-export const preDeleteCommand = (
-    request: PreDeleteRequest
-): RestCommand<PreDeleteRequest, KeeperPreDeleteResponse> => createCommand(request, 'pre_delete')
+export const preDeleteCommand = (request: PreDeleteRequest): RestCommand<PreDeleteRequest, KeeperPreDeleteResponse> =>
+    createCommand(request, 'pre_delete')
 
 export type FolderAddRequest = {
     folder_uid: string
@@ -305,9 +304,8 @@ export type FolderAddRequest = {
     can_share?: boolean
 }
 
-export const folderAddCommand = (
-    request: FolderAddRequest
-): RestCommand<FolderAddRequest, KeeperResponse> => createCommand(request, 'folder_add')
+export const folderAddCommand = (request: FolderAddRequest): RestCommand<FolderAddRequest, KeeperResponse> =>
+    createCommand(request, 'folder_add')
 
 export type FolderUpdateRequest = {
     folder_uid: string
@@ -322,9 +320,8 @@ export type FolderUpdateRequest = {
     can_share?: boolean
 }
 
-export const folderUpdateCommand = (
-    request: FolderUpdateRequest
-): RestCommand<FolderUpdateRequest, KeeperResponse> => createCommand(request, 'folder_update')
+export const folderUpdateCommand = (request: FolderUpdateRequest): RestCommand<FolderUpdateRequest, KeeperResponse> =>
+    createCommand(request, 'folder_update')
 
 export type GetRecordHistoryRequest = {
     record_uid: string
