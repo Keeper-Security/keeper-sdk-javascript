@@ -1,10 +1,6 @@
 import { login, cleanup, logger, prompt, extractErrorMessage } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-
-function isYes(answer: string): boolean {
-    const a = answer.trim().toLowerCase()
-    return a === 'y' || a === 'yes'
-}
+import { isYes } from '../utils/format'
 
 async function treeCommand() {
     const vault = await login()
@@ -18,7 +14,7 @@ async function treeCommand() {
             ? isYes(await prompt('Hide [User]/[Team] suffix on share lines? [y/N]: '))
             : false
         const titleInput = (await prompt('Custom title above the tree (Enter to skip): ')).trim()
-
+        logger.info('')
         try {
             const ascii = await vault.tree({
                 folderPath: folder || undefined,
@@ -33,6 +29,7 @@ async function treeCommand() {
             logger.error(`Failed to render tree: ${extractErrorMessage(err)}`)
             process.exitCode = 1
         }
+        logger.info('')
     } finally {
         cleanup(vault)
     }

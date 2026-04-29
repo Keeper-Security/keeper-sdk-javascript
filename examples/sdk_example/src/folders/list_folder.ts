@@ -20,6 +20,9 @@ const MODE_BY_INPUT: Record<string, LsMode> = {
     'folders': 'folders',
 }
 
+const UID_COL_WIDTH = 36
+const UID_TRUNCATED_PREFIX = 18
+
 function parseMode(input: string): LsMode {
     const mode = MODE_BY_INPUT[input.trim().toLowerCase()]
     if (!mode) {
@@ -52,6 +55,12 @@ function printColumnar(cells: string[], termWidth: number): void {
     }
 }
 
+function formatUidCell(uid: string): string {
+    return uid.length > UID_COL_WIDTH
+        ? `${uid.slice(0, UID_TRUNCATED_PREFIX)}...`
+        : uid.padEnd(UID_COL_WIDTH)
+}
+
 function printDetail(result: ListFolderResult): void {
     if (!result.detail) return
     logger.info('')
@@ -59,12 +68,10 @@ function printDetail(result: ListFolderResult): void {
     logger.info('-  -----  ------------------------------------  ------------------------  ----------')
     let n = 1
     for (const f of result.folders) {
-        const uid = f.uid.length > 36 ? `${f.uid.slice(0, 18)}...` : f.uid.padEnd(36)
-        logger.info(`${String(n++).padStart(2)}  ${f.flags}   ${uid}  ${f.name}`.trimEnd())
+        logger.info(`${String(n++).padStart(2)}  ${f.flags}   ${formatUidCell(f.uid)}  ${f.name}`.trimEnd())
     }
     for (const r of result.records) {
-        const uid = r.uid.length > 36 ? `${r.uid.slice(0, 18)}...` : r.uid.padEnd(36)
-        logger.info(`${String(n++).padStart(2)}  ${r.flags}   ${uid}  ${r.name.padEnd(24)}  ${r.type}`)
+        logger.info(`${String(n++).padStart(2)}  ${r.flags}   ${formatUidCell(r.uid)}  ${r.name.padEnd(24)}  ${r.type}`)
     }
 }
 

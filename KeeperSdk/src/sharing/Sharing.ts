@@ -4,6 +4,7 @@ import {
     Authentication,
     platform,
     getPublicKeysMessage,
+    getRecordsDetailsMessage,
     webSafe64FromBytes,
     recordsShareUpdateMessage,
     normal64Bytes,
@@ -203,4 +204,79 @@ export async function removeRecordShare(auth: Auth, input: RemoveShareInput): Pr
         status: ShareStatus.Success,
         message: 'Share removed successfully',
     }
+}
+
+export type RecordUserPermission = {
+    username: string
+    accountUid?: string
+    owner: boolean
+    shareAdmin: boolean
+    shareable: boolean
+    editable: boolean
+    awaitingApproval: boolean
+    expiration?: number
+}
+
+export type RecordSharedFolderPermission = {
+    sharedFolderUid: string
+    resharable: boolean
+    editable: boolean
+    revision?: number
+    expiration?: number
+}
+
+export type RecordShareInfo = {
+    recordUid: string
+    userPermissions: RecordUserPermission[]
+    sharedFolderPermissions: RecordSharedFolderPermission[]
+}
+
+function bytesToUid(bytes: Uint8Array | null | undefined): string | undefined {
+    return bytes && bytes.length > 0 ? webSafe64FromBytes(bytes) : undefined
+}
+
+function longToNumber(value: number | { toNumber: () => number } | null | undefined): number | undefined {
+    if (value == null) return undefined
+    return typeof value === 'number' ? value : value.toNumber()
+}
+
+export async function getRecordShareInfo(auth: Auth, recordUid: string): Promise<RecordShareInfo | null> {
+    const msg = getRecordsDetailsMessage({
+        clientTime: Date.now(),
+        recordUid: [normal64Bytes(recordUid)],
+        recordDetailsInclude: Records.RecordDetailsInclude.SHARE_ONLY,
+    })
+
+    let response: Records.IGetRecordDataWithAccessInfoResponse
+    try {
+        response = await auth.executeRest(msg)
+    } catch (err) {
+        throw new KeeperSdkError(
+            `Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`
+        )
+    }
+
+    const detail = response.recordDataWithAccessInfo?.[0]
+    if (!detail) return null
+
+    const userPermissions: RecordUserPermission[] = (detail.userPermission ?? []).map((u) => ({
+        username: u.username || '',
+        accountUid: bytesToUid(u.accountUid),
+        owner: !!u.owner,
+        shareAdmin: !!u.shareAdmin,
+        shareable: !!u.sharable,
+        editable: !!u.editable,
+        awaitingApproval: !!u.awaitingApproval,
+        expiration: longToNumber(u.expiration as number | null | undefined),
+    }))
+
+    const sharedFolderPermissions: RecordSharedFolderPermission[] = (detail.sharedFolderPermission ?? []).map((s) => ({
+        sharedFolderUid: bytesToUid(s.sharedFolderUid) ?? '',
+        resharable: !!s.resharable,
+        editable: !!s.editable,
+        revision: longToNumber(s.revision as number | null | undefined),
+        expiration: longToNumber(s.expiration as number | null | undefined),
+    }))
+
+    return { recordUid, userPermissions, sharedFolderPermissions }
 }

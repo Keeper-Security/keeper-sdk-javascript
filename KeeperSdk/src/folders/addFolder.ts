@@ -1,5 +1,12 @@
-import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
-import { platform, generateEncryptionKey, generateUidBytes, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import type { Auth, FolderAddRequest } from '@keeper-security/keeperapi'
+import {
+    encryptForStorage,
+    encryptObjectForStorage,
+    folderAddCommand,
+    generateEncryptionKey,
+    generateUid,
+    platform,
+} from '@keeper-security/keeperapi'
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, extractErrorMessage } from '../utils'
@@ -35,14 +42,6 @@ export type MkdirOptions = {
 type ParentContext = {
     kind: 'virtual_root' | 'user_folder' | 'shared_folder' | 'shared_folder_folder'
     sharedScopeUid: string | null
-}
-
-function folderAddCommand(request: Record<string, unknown>): RestCommand<Record<string, unknown>, KeeperResponse> {
-    return {
-        baseRequest: { command: 'folder_add' },
-        request,
-        authorization: {},
-    }
 }
 
 function resolveParentContext(storage: InMemoryStorage, parentUid: string | null): ParentContext {
@@ -142,24 +141,18 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
     const isShared = input.isSharedFolder === true
     const folderType = decideNewFolderType(parent, isShared)
 
-    const folderUidBytes = generateUidBytes()
-    const folderUid = webSafe64FromBytes(folderUidBytes)
+    const folderUid = generateUid()
     const folderKey = generateEncryptionKey()
 
     const sharedScope = folderType === 'shared_folder_folder' ? parent.sharedScopeUid : null
 
     const encryptionKey = await getEncryptionKeyForNewFolder(auth, storage, folderType, sharedScope)
 
-    const dataJson = JSON.stringify({ name, title: name })
-    const dataBytes = new TextEncoder().encode(dataJson)
-    const encryptedData = await platform.aesCbcEncrypt(dataBytes, folderKey, true)
-    const encryptedFolderKey = await platform.aesCbcEncrypt(folderKey, encryptionKey, true)
-
-    const rq: Record<string, unknown> = {
+    const rq: FolderAddRequest = {
         folder_uid: folderUid,
         folder_type: folderType,
-        key: webSafe64FromBytes(encryptedFolderKey),
-        data: webSafe64FromBytes(encryptedData),
+        key: await encryptForStorage(folderKey, encryptionKey),
+        data: await encryptObjectForStorage({ name, title: name }, folderKey),
         link: false,
     }
 
@@ -171,9 +164,7 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
     }
 
     if (folderType === 'shared_folder') {
-        const nameBytes = new TextEncoder().encode(name)
-        const encName = await platform.aesCbcEncrypt(nameBytes, folderKey, true)
-        rq.name = webSafe64FromBytes(encName)
+        rq.name = await encryptForStorage(platform.stringToBytes(name), folderKey)
         rq.manage_users = input.manageUsers ?? false
         rq.manage_records = input.manageRecords ?? false
         rq.can_edit = input.canEdit ?? false
@@ -181,8 +172,7 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
     }
 
     try {
-        const cmd = folderAddCommand(rq)
-        const response = await auth.executeRestCommand(cmd)
+        const response = await auth.executeRestCommand(folderAddCommand(rq))
         const ok = response.result === 'success' || response.result_code === 'success'
         if (!ok) {
             return {

@@ -2,116 +2,108 @@ import {
     login,
     cleanup,
     prompt,
+    suppressLogs,
     getRecordTitle,
     getRecordType,
-    getRecordFields,
     getRecordLogin,
     getRecordPassword,
     getRecordUrl,
+    getRecordTotpUrl,
+    getTotpCode,
+    extractErrorMessage,
     logger,
 } from '@keeper-security/keeper-sdk-javascript'
+import type { DRecord, KeeperVault, RecordUserPermission } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-import { formatFieldValue, LEGACY_RECORD_MAX_VERSION } from '../utils/format'
+import { isYes } from '../utils/format'
+
+const MASKED_VALUE = '********'
+const LABEL_WIDTH = 20
+
+function formatRow(label: string, value: string): string {
+    return `${label.padStart(LABEL_WIDTH)}: ${value}`
+}
+
+function displayRecord(record: DRecord, unmask: boolean): void {
+    logger.info(`UID: ${record.uid}`)
+    logger.info(formatRow('Type', getRecordType(record)))
+    logger.info(formatRow('Title', getRecordTitle(record)))
+
+    const loginVal = getRecordLogin(record)
+    const password = getRecordPassword(record)
+    const url = getRecordUrl(record)
+
+    if (loginVal) logger.info(formatRow('login', loginVal))
+    if (password) logger.info(formatRow('password', unmask ? password : MASKED_VALUE))
+    if (url) logger.info(formatRow('url', url))
+
+    const totpUrl = getRecordTotpUrl(record)
+    if (totpUrl) {
+        logger.info(formatRow('TOTP URL', unmask ? totpUrl : MASKED_VALUE))
+        const code = getTotpCode(totpUrl)
+        if (code) {
+            logger.info(formatRow('Two Factor Code', `${code.code}    valid for ${code.secondsRemaining} sec`))
+        }
+    }
+}
+
+async function displayUserPermissions(vault: KeeperVault, uid: string): Promise<void> {
+    const restore = suppressLogs()
+    let info
+    try {
+        info = await vault.getRecordShareInfo(uid)
+    } catch (err) {
+        logger.warn(`\nCould not load share information: ${extractErrorMessage(err)}`)
+        return
+    } finally {
+        restore()
+    }
+
+    if (!info || info.userPermissions.length === 0) return
+
+    logger.info('\nUser Permissions:')
+    for (const u of info.userPermissions) {
+        printUserPermission(u)
+    }
+}
+
+function printUserPermission(u: RecordUserPermission): void {
+    logger.info('')
+    if (u.username) logger.info(`User: ${u.username}`)
+    if (u.accountUid) logger.info(`User UID: ${u.accountUid}`)
+    if (u.owner) logger.info('Owner: Yes')
+    logger.info(`Shareable: ${u.shareable ? 'Yes' : 'No'}`)
+    logger.info(`Read-Only: ${u.editable ? 'No' : 'Yes'}`)
+}
 
 async function getRecord() {
     const vault = await login()
 
     try {
-        const records = vault.getRecords()
-
-        if (records.length === 0) {
+        if (vault.getRecords().length === 0) {
             logger.info('No records found in vault.')
             return
         }
 
         const searchInput = await prompt('Enter record UID or title: ')
-
         if (!searchInput) {
             logger.info('No input provided. Exiting.')
             return
         }
 
         const record = vault.findRecord(searchInput)
-
         if (!record) {
             logger.info(`\nRecord "${searchInput}" not found.`)
             return
         }
 
-        const title = getRecordTitle(record)
-        const type = getRecordType(record)
-        const version = record.version
+        const unmask = isYes(await prompt('Unmask sensitive fields? [y/N]: '))
 
-        logger.info('\n' + '-'.repeat(50))
-        logger.info('Record Details')
-        logger.info('-'.repeat(50))
-        logger.info(`  Title:      ${title}`)
-        logger.info(`  Record UID: ${record.uid}`)
-        logger.info(`  Version:    ${version}`)
-        logger.info(`  Revision:   ${record.revision}`)
-        logger.info(`  Shared:     ${record.shared}`)
-
-        if (version <= LEGACY_RECORD_MAX_VERSION) {
-            displayLegacyRecord(record)
-        } else {
-            displayTypedRecord(record, type)
-        }
-
-        displayMetadata(vault, record.uid)
-        logger.info('-'.repeat(50))
+        logger.info('')
+        displayRecord(record, unmask)
+        await displayUserPermissions(vault, record.uid)
     } finally {
         cleanup(vault)
-    }
-}
-
-function displayLegacyRecord(record: { data?: Record<string, unknown> }): void {
-    const version = (record as { version: number }).version
-    logger.info(`  Type:       password (legacy v${version})`)
-    const loginVal = getRecordLogin(record as Parameters<typeof getRecordLogin>[0])
-    const password = getRecordPassword(record as Parameters<typeof getRecordPassword>[0])
-    const url = getRecordUrl(record as Parameters<typeof getRecordUrl>[0])
-
-    if (loginVal) logger.info(`  Login:      ${loginVal}`)
-    if (password) logger.info(`  Password:   ${'*'.repeat(password.length)}`)
-    if (url) logger.info(`  URL:        ${url}`)
-
-    const data = record.data as Record<string, unknown> | undefined
-    if (data?.notes) logger.info(`  Notes:      ${data.notes}`)
-
-    if (data?.custom && Array.isArray(data.custom)) {
-        logger.info('\n  Custom Fields:')
-        for (const cf of data.custom) {
-            const entry = cf as { name?: string; type?: string; value?: string }
-            logger.info(`    ${entry.name || entry.type || 'custom'}: ${entry.value}`)
-        }
-    }
-}
-
-function displayTypedRecord(record: Parameters<typeof getRecordFields>[0], type: string): void {
-    logger.info(`  Type:       ${type} (v${(record as { version: number }).version})`)
-
-    const fields = getRecordFields(record)
-    if (fields.length > 0) {
-        logger.info('\n  Fields:')
-        for (const field of fields) {
-            const label = field.label || field.type
-            logger.info(`    ${label}: ${formatFieldValue(field)}`)
-        }
-    }
-
-    const data = (record as { data?: { notes?: string } }).data
-    if (data?.notes) {
-        logger.info(`\n  Notes:      ${data.notes}`)
-    }
-}
-
-function displayMetadata(vault: { getRecordMetadataByUid: (uid: string) => { owner: boolean; canShare: boolean; canEdit: boolean } | undefined }, uid: string): void {
-    const meta = vault.getRecordMetadataByUid(uid)
-    if (meta) {
-        logger.info('\n  Permissions:')
-        logger.info(`    Owner:     ${meta.owner}`)
-        logger.info(`    Can Share: ${meta.canShare}`)
-        logger.info(`    Can Edit:  ${meta.canEdit}`)
     }
 }
 

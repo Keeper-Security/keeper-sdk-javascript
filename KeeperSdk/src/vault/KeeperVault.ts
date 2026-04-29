@@ -31,8 +31,18 @@ import type {
     MoveRecordInput,
     MoveRecordResult,
 } from '../records/RecordOperations'
-import { shareRecord as shareRecordOp, removeRecordShare as removeRecordShareOp } from '../sharing/Sharing'
-import type { ShareRecordInput, ShareRecordResult, RemoveShareInput, RemoveShareResult } from '../sharing/Sharing'
+import {
+    shareRecord as shareRecordOp,
+    removeRecordShare as removeRecordShareOp,
+    getRecordShareInfo as getRecordShareInfoOp,
+} from '../sharing/Sharing'
+import type {
+    ShareRecordInput,
+    ShareRecordResult,
+    RemoveShareInput,
+    RemoveShareResult,
+    RecordShareInfo,
+} from '../sharing/Sharing'
 import { listFolder as listFolderFromStorage } from '../folders/listFolder'
 import type { ListFolderOptions, ListFolderResult } from '../folders/listFolder'
 import {
@@ -49,12 +59,12 @@ import {
     updateSharedFolderPermissions as updateSharedFolderPermissionsOp,
 } from '../folders/updateFolder'
 import type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from '../folders/updateFolder'
-import { deleteVaultObjects as deleteVaultObjectsOp, rmdir as rmdirOp } from '../folders/deleteVaultObjects'
-import type { DeleteVaultObjectsResult, RmdirOptions } from '../folders/deleteVaultObjects'
+import { deleteFolder as deleteFolderOp, rmdir as rmdirOp } from '../folders/deleteFolder'
+import type { DeleteFolderResult, RmdirOptions } from '../folders/deleteFolder'
 import { folderTreeAscii } from '../folders/folderTree'
 import type { FolderTreeBuildOptions } from '../folders/folderTree'
-import { getKeeperObject as getKeeperObjectFromStorage } from '../folders/getKeeperObject'
-import type { GetKeeperObjectOptions, GetKeeperObjectResult } from '../folders/getKeeperObject'
+import { getFolder as getFolderFromStorage } from '../folders/getFolder'
+import type { GetFolderOptions, GetFolderResult } from '../folders/getFolder'
 import { listSharedFolders as listSharedFoldersFromStorage } from '../sharedFolders/listSharedFolders'
 import type { ListSharedFolderRow, ListSharedFoldersOptions } from '../sharedFolders/listSharedFolders'
 import { shareFolder as shareFolderOp } from '../sharedFolders/shareFolder'
@@ -351,8 +361,8 @@ export class KeeperVault {
         return getWorkingFolderDisplayName(this.storage, this.folderSession.currentFolderUid)
     }
 
-    public async getKeeperObject(uidOrTitle: string, options?: GetKeeperObjectOptions): Promise<GetKeeperObjectResult> {
-        return getKeeperObjectFromStorage(this.storage, uidOrTitle, options ?? {})
+    public async getFolder(uidOrName: string, options?: GetFolderOptions): Promise<GetFolderResult> {
+        return getFolderFromStorage(this.storage, uidOrName, options ?? {})
     }
 
     public async addFolder(input: AddFolderInput): Promise<AddFolderResult> {
@@ -401,17 +411,17 @@ export class KeeperVault {
         return result
     }
 
-    public async deleteVaultObjects(
-        refs: string[],
-        confirm?: (summary: string) => boolean | Promise<boolean> | null
-    ): Promise<DeleteVaultObjectsResult> {
+    public async deleteFolder(
+        folderRefs: string[],
+        confirm?: (summary: string) => boolean | Promise<boolean>
+    ): Promise<DeleteFolderResult> {
         const auth = this.getAuthOrThrow()
-        const result = await deleteVaultObjectsOp(auth, this.storage, refs, confirm ?? null)
+        const result = await deleteFolderOp(auth, this.storage, folderRefs, confirm)
         if (result.success) await this.syncIfNeeded()
         return result
     }
 
-    public async rmdir(patterns: string[], options?: RmdirOptions): Promise<DeleteVaultObjectsResult> {
+    public async rmdir(patterns: string[], options?: RmdirOptions): Promise<DeleteFolderResult> {
         const auth = this.getAuthOrThrow()
         const result = await rmdirOp(auth, this.storage, this.folderSession, patterns, options ?? {})
         if (result.success) await this.syncIfNeeded()
@@ -525,6 +535,11 @@ export class KeeperVault {
         const result = await removeRecordShareOp(auth, input)
         if (result.success) await this.syncIfNeeded()
         return result
+    }
+
+    public async getRecordShareInfo(recordUid: string): Promise<RecordShareInfo | null> {
+        const auth = this.getAuthOrThrow()
+        return getRecordShareInfoOp(auth, recordUid)
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {

@@ -1,5 +1,6 @@
 import { login, cleanup, logger, prompt, suppressLogs, extractErrorMessage } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
+import { isYes } from '../utils/format'
 
 async function removedirCommand() {
     const vault = await login()
@@ -19,8 +20,7 @@ async function removedirCommand() {
                     restore()
                     try {
                         logger.info(summary)
-                        const ans = (await prompt('Do you want to proceed? (y/n) ')).trim().toLowerCase()
-                        return ans === 'y' || ans === 'yes'
+                        return isYes(await prompt('Do you want to proceed? (y/n) '))
                     } finally {
                         restore = suppressLogs()
                     }

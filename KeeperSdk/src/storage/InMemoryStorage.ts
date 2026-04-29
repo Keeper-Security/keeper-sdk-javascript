@@ -8,6 +8,7 @@ import type {
     RemovedDependencies,
     DRecord,
 } from '@keeper-security/keeperapi'
+import { webSafe64FromBytes } from '@keeper-security/keeperapi'
 
 export class InMemoryStorage implements VaultStorage {
     private keys = new Map<string, Uint8Array>()
@@ -55,7 +56,7 @@ export class InMemoryStorage implements VaultStorage {
     }
 
     public async delete(kind: VaultStorageKind, uid: string | Uint8Array): Promise<void> {
-        const uidStr = typeof uid === 'string' ? uid : Buffer.from(uid).toString('base64url')
+        const uidStr = typeof uid === 'string' ? uid : webSafe64FromBytes(uid)
         this.store.get(kind)?.delete(uidStr)
         this.arrayCache.delete(kind)
     }
@@ -142,7 +143,7 @@ export class InMemoryStorage implements VaultStorage {
             typeof record.accountUid === 'string'
                 ? record.accountUid
                 : record.accountUid instanceof Uint8Array
-                  ? Buffer.from(record.accountUid).toString('base64url')
+                  ? webSafe64FromBytes(record.accountUid)
                   : undefined
         if (record.uid) return record.uid
         if (record.token) return record.token

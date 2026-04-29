@@ -40,9 +40,12 @@ export {
     getRecordPassword,
     getRecordLogin,
     getRecordUrl,
+    getRecordTotpUrl,
     RecordVersion,
 } from './records/RecordUtils'
 export type { RecordSummary } from './records/RecordUtils'
+export { parseTotpUrl, getTotpCode } from './records/Totp'
+export type { TotpAlgorithm, TotpParams, TotpCode } from './records/Totp'
 export { addRecord, updateRecord, deleteRecord, getRecordHistory, moveRecord } from './records/RecordOperations'
 export type {
     PasswordRecordData,
@@ -58,23 +61,29 @@ export type {
     MoveRecordResult,
 } from './records/RecordOperations'
 
-export { shareRecord, removeRecordShare } from './sharing/Sharing'
-export type { ShareRecordInput, ShareRecordResult, RemoveShareInput, RemoveShareResult } from './sharing/Sharing'
+export { shareRecord, removeRecordShare, getRecordShareInfo } from './sharing/Sharing'
+export type {
+    ShareRecordInput,
+    ShareRecordResult,
+    RemoveShareInput,
+    RemoveShareResult,
+    RecordShareInfo,
+    RecordUserPermission,
+    RecordSharedFolderPermission,
+} from './sharing/Sharing'
 
 export { KeeperVault } from './vault/KeeperVault'
 export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
 
-export { getKeeperObject, KEEPER_SENSITIVE_FIELD_TYPES } from './folders/getKeeperObject'
+export { getFolder, findFolder } from './folders/getFolder'
 export type {
-    GetKeeperObjectOptions,
-    GetKeeperObjectResult,
-    GetKeeperObjectFormat,
-    GetKeeperObjectForceType,
-    GetKeeperRecordResult,
-    GetKeeperFolderResult,
-    GetKeeperSharedFolderResult,
-    GetKeeperTeamResult,
-} from './folders/getKeeperObject'
+    GetFolderOptions,
+    GetFolderResult,
+    GetFolderResultFolder,
+    GetFolderResultSharedFolder,
+    GetFolderFormat,
+    FoundFolder,
+} from './folders/getFolder'
 
 export { listFolder, findFolderUidByNameOrUid, listRootUserFolders } from './folders/listFolder'
 export type {
@@ -123,12 +132,12 @@ export { updateFolder, renameFolder, updateSharedFolderPermissions } from './fol
 export type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from './folders/updateFolder'
 
 export {
-    deleteVaultObjects,
+    deleteFolder,
     rmdir,
     resolveRmdirPatternsToFolderUids,
     buildFolderDeleteObject,
-} from './folders/deleteVaultObjects'
-export type { DeleteVaultObjectsResult, RmdirOptions, VaultDeleteObject } from './folders/deleteVaultObjects'
+} from './folders/deleteFolder'
+export type { DeleteFolderResult, RmdirOptions } from './folders/deleteFolder'
 
 export {
     buildFolderTree,

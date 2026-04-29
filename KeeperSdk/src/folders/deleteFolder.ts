@@ -1,30 +1,15 @@
-import type { Auth, KeeperPreDeleteResponse } from '@keeper-security/keeperapi'
-import { recordDeleteCommand } from '@keeper-security/keeperapi'
-import type {
-    DRecord,
-    DSharedFolder,
-    DSharedFolderFolder,
-    DSharedFolderRecord,
-    DUserFolder,
-} from '@keeper-security/keeperapi'
-import type { RestCommand } from '@keeper-security/keeperapi'
-
-export type VaultDeleteObject = {
-    object_uid: string
-    object_type: 'record' | 'user_folder' | 'shared_folder' | 'shared_folder_folder'
-    from_uid?: string
-    from_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
-    delete_resolution: 'unlink'
-}
+import type { Auth, DeleteObject, KeeperPreDeleteResponse } from '@keeper-security/keeperapi'
+import { preDeleteCommand, recordDeleteCommand } from '@keeper-security/keeperapi'
+import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, extractErrorMessage, logger } from '../utils'
-import { getRecordTitle } from '../records/RecordUtils'
 import { listFolder } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
 import { tryResolvePath, findParentFolderUid, type VaultFolderSession } from './changeDirectory'
 import { globToRegex, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+import { findFolder } from './getFolder'
 
-export type DeleteVaultObjectsResult = {
+export type DeleteFolderResult = {
     success: boolean
     message?: string
     cancelled?: boolean
@@ -71,10 +56,11 @@ function folderDisplayName(storage: InMemoryStorage, uid: string): string {
 export async function buildFolderDeleteObject(
     storage: InMemoryStorage,
     folderUid: string
-): Promise<VaultDeleteObject | null> {
-    if (storage.getByUid<DUserFolder>('user_folder', folderUid)) {
+): Promise<DeleteObject | null> {
+    const uf = storage.getByUid<DUserFolder>('user_folder', folderUid)
+    if (uf) {
         const parentUid = await findParentFolderUid(storage, folderUid)
-        const o: VaultDeleteObject = {
+        const o: DeleteObject = {
             delete_resolution: 'unlink',
             object_uid: folderUid,
             object_type: 'user_folder',
@@ -88,9 +74,10 @@ export async function buildFolderDeleteObject(
         }
         return o
     }
-    if (storage.getByUid<DSharedFolder>('shared_folder', folderUid)) {
+    const sf = storage.getByUid<DSharedFolder>('shared_folder', folderUid)
+    if (sf) {
         const parentUid = await findParentFolderUid(storage, folderUid)
-        const o: VaultDeleteObject = {
+        const o: DeleteObject = {
             delete_resolution: 'unlink',
             object_uid: folderUid,
             object_type: 'shared_folder',
@@ -107,7 +94,7 @@ export async function buildFolderDeleteObject(
     const sff = storage.getByUid<DSharedFolderFolder>('shared_folder_folder', folderUid)
     if (sff) {
         const parentUid = await findParentFolderUid(storage, folderUid)
-        const o: VaultDeleteObject = {
+        const o: DeleteObject = {
             delete_resolution: 'unlink',
             object_uid: folderUid,
             object_type: 'shared_folder_folder',
@@ -125,120 +112,42 @@ export async function buildFolderDeleteObject(
     return null
 }
 
-async function findRecordFolderContext(
+async function buildDeleteObjectForFolderRef(
     storage: InMemoryStorage,
-    recordUid: string
-): Promise<{
-    from_uid: string
-    from_type: VaultDeleteObject['from_type']
-} | null> {
-    for (const uf of storage.getAll<DUserFolder>('user_folder')) {
-        const deps = (await storage.getDependencies(uf.uid)) || []
-        if (deps.some((d) => d.kind === 'record' && d.uid === recordUid)) {
-            return { from_uid: uf.uid, from_type: 'user_folder' }
-        }
-    }
-    for (const sf of storage.getAll<DSharedFolder>('shared_folder')) {
-        const deps = (await storage.getDependencies(sf.uid)) || []
-        if (deps.some((d) => d.kind === 'record' && d.uid === recordUid)) {
-            return { from_uid: sf.uid, from_type: 'shared_folder' }
-        }
-    }
-    for (const sff of storage.getAll<DSharedFolderFolder>('shared_folder_folder')) {
-        const deps = (await storage.getDependencies(sff.uid)) || []
-        if (deps.some((d) => d.kind === 'record' && d.uid === recordUid)) {
-            return { from_uid: sff.uid, from_type: 'shared_folder_folder' }
-        }
-    }
-    const sfr = storage.getAll<DSharedFolderRecord>('shared_folder_record').find((r) => r.recordUid === recordUid)
-    if (sfr) {
-        return { from_uid: sfr.sharedFolderUid, from_type: 'shared_folder' }
-    }
-    return null
-}
-
-async function buildDeleteObjectForRef(storage: InMemoryStorage, toDelete: string): Promise<VaultDeleteObject | null> {
-    const trimmed = toDelete.trim()
+    ref: string
+): Promise<DeleteObject | null> {
+    const trimmed = ref.trim()
     if (!trimmed) return null
 
-    const folderObj = await buildFolderDeleteObject(storage, trimmed)
-    if (folderObj) return folderObj
+    const direct = await buildFolderDeleteObject(storage, trimmed)
+    if (direct) return direct
 
-    const record = storage.getByUid<DRecord>('record', trimmed)
-    if (record) {
-        const ctx = await findRecordFolderContext(storage, trimmed)
-        const o: VaultDeleteObject = {
-            delete_resolution: 'unlink',
-            object_uid: trimmed,
-            object_type: 'record',
-            from_type: 'user_folder',
-        }
-        if (ctx) {
-            o.from_uid = ctx.from_uid
-            o.from_type = ctx.from_type
-        } else {
-            o.from_uid = ''
-        }
-        return o
-    }
-
-    const lower = trimmed.toLowerCase()
-    for (const r of storage.getAll<DRecord>('record')) {
-        if (r.version !== 2 && r.version !== 3) continue
-        const title = getRecordTitle(r)
-        if (title.trim().toLowerCase() === lower) {
-            const ctx = await findRecordFolderContext(storage, r.uid)
-            const o: VaultDeleteObject = {
-                delete_resolution: 'unlink',
-                object_uid: r.uid,
-                object_type: 'record',
-                from_type: 'user_folder',
-            }
-            if (ctx) {
-                o.from_uid = ctx.from_uid
-                o.from_type = ctx.from_type
-            } else {
-                o.from_uid = ''
-            }
-            return o
-        }
-    }
-
-    return null
+    const found = findFolder(storage, trimmed)
+    if (!found) return null
+    return buildFolderDeleteObject(storage, found.folder.uid)
 }
 
-function preDeleteCommandFlexible(
-    objects: VaultDeleteObject[]
-): RestCommand<{ objects: VaultDeleteObject[] }, KeeperPreDeleteResponse> {
-    return {
-        baseRequest: { command: 'pre_delete' },
-        request: { objects },
-        authorization: {},
-    }
-}
-
-export async function deleteVaultObjects(
+export async function deleteFolder(
     auth: Auth,
     storage: InMemoryStorage,
-    refs: string[],
-    confirm?: (summary: string) => boolean | Promise<boolean> | null
-): Promise<DeleteVaultObjectsResult> {
-    const objects: VaultDeleteObject[] = []
-    for (const ref of refs) {
-        const obj = await buildDeleteObjectForRef(storage, ref)
+    folderRefs: string[],
+    confirm?: (summary: string) => boolean | Promise<boolean>
+): Promise<DeleteFolderResult> {
+    const objects: DeleteObject[] = []
+    for (const ref of folderRefs) {
+        const obj = await buildDeleteObjectForFolderRef(storage, ref)
         if (obj) objects.push(obj)
     }
     if (objects.length === 0) {
         throw new KeeperSdkError(
-            'No objects found to delete (not a folder UID, record UID, or record title).',
+            'No folders found to delete (not a folder UID or name).',
             'delete_nothing'
         )
     }
 
     let preResp: KeeperPreDeleteResponse
     try {
-        const cmd = preDeleteCommandFlexible(objects)
-        preResp = await auth.executeRestCommand(cmd)
+        preResp = await auth.executeRestCommand(preDeleteCommand({ objects }))
     } catch (err) {
         return { success: false, message: extractErrorMessage(err) }
     }
@@ -265,8 +174,7 @@ export async function deleteVaultObjects(
     }
 
     try {
-        const deleteCmd = recordDeleteCommand({ pre_delete_token: token })
-        await auth.executeRestCommand(deleteCmd)
+        await auth.executeRestCommand(recordDeleteCommand({ pre_delete_token: token }))
     } catch (err) {
         return { success: false, message: extractErrorMessage(err) }
     }
@@ -330,7 +238,7 @@ export async function rmdir(
     session: VaultFolderSession,
     patterns: string[],
     options: RmdirOptions = {}
-): Promise<DeleteVaultObjectsResult> {
+): Promise<DeleteFolderResult> {
     const { force = false, quiet = false, confirm } = options
     if (!force && !confirm) {
         throw new KeeperSdkError(
@@ -363,7 +271,7 @@ export async function rmdir(
         logger.info(`\nThe following folder(s) will be removed:\n${sortedNames.join(', ')}\n`)
     }
 
-    const confirmFn = force ? null : (confirm ?? null)
+    const confirmFn = force ? undefined : confirm
 
-    return deleteVaultObjects(auth, storage, [...folderUids], confirmFn)
+    return deleteFolder(auth, storage, [...folderUids], confirmFn)
 }

@@ -1,11 +1,7 @@
 import { login, cleanup, logger, prompt, suppressLogs, extractErrorMessage } from '@keeper-security/keeper-sdk-javascript'
 import type { MkdirOptions } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-
-function isYes(answer: string): boolean {
-    const a = answer.trim().toLowerCase()
-    return a === 'y' || a === 'yes'
-}
+import { isYes } from '../utils/format'
 
 async function mkdirCommand() {
     const vault = await login()

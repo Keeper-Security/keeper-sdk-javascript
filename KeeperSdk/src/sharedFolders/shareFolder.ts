@@ -5,9 +5,14 @@ import type {
     DSharedFolderFolder,
     DSharedFolderUser,
     DUserFolder,
-    RestMessage,
 } from '@keeper-security/keeperapi'
-import { Folder, getPublicKeysMessage, normal64Bytes, platform } from '@keeper-security/keeperapi'
+import {
+    Folder,
+    getPublicKeysMessage,
+    normal64Bytes,
+    platform,
+    sharedFolderUpdateV3Message,
+} from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError } from '../utils'
 
@@ -64,21 +69,6 @@ function toSetBoolean(value: boolean | undefined): Folder.SetBooleanValue {
     if (value === true) return Folder.SetBooleanValue.BOOLEAN_TRUE
     if (value === false) return Folder.SetBooleanValue.BOOLEAN_FALSE
     return Folder.SetBooleanValue.BOOLEAN_NO_CHANGE
-}
-
-function sharedFolderUpdateV3Message(
-    data: Folder.ISharedFolderUpdateV3RequestV2
-): RestMessage<Folder.ISharedFolderUpdateV3RequestV2, Folder.ISharedFolderUpdateV3ResponseV2> {
-    return {
-        path: 'vault/shared_folder_update_v3',
-        apiVersion: 1,
-        toBytes(): Uint8Array {
-            return Folder.SharedFolderUpdateV3RequestV2.encode(data).finish()
-        },
-        fromBytes(bytes: Uint8Array): Folder.ISharedFolderUpdateV3ResponseV2 {
-            return Folder.SharedFolderUpdateV3ResponseV2.decode(bytes)
-        },
-    }
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

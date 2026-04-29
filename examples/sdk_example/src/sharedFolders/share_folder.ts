@@ -7,46 +7,21 @@ import {
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import type {
-    GetKeeperObjectResult,
+    GetFolderResult,
+    GetFolderResultFolder,
+    GetFolderResultSharedFolder,
     ShareFolderAction,
     ShareFolderInput,
     ShareFolderResult,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-function isYes(answer: string): boolean {
-    const a = answer.trim().toLowerCase()
-    return a === 'y' || a === 'yes'
-}
-
-function parseEmails(raw: string): { emails: string[]; invalid: string[] } {
-    const tokens = raw
-        .split(/[\s,;]+/)
-        .map((t) => t.trim())
-        .filter((t) => t.length > 0)
-    const emails: string[] = []
-    const invalid: string[] = []
-    const seen = new Set<string>()
-    for (const t of tokens) {
-        const lower = t.toLowerCase()
-        if (seen.has(lower)) continue
-        seen.add(lower)
-        if (EMAIL_PATTERN.test(t)) {
-            emails.push(t)
-        } else {
-            invalid.push(t)
-        }
-    }
-    return { emails, invalid }
-}
+import { isYes, parseEmails } from '../utils/format'
 
 type SharedFolderTarget =
-    | Extract<GetKeeperObjectResult, { objectType: 'shared_folder' }>
-    | (Extract<GetKeeperObjectResult, { objectType: 'folder' }> & { folder_type: 'shared_folder_folder' })
+    | GetFolderResultSharedFolder
+    | (GetFolderResultFolder & { folder_type: 'shared_folder_folder' })
 
-function isSharedTarget(obj: GetKeeperObjectResult): obj is SharedFolderTarget {
+function isSharedTarget(obj: GetFolderResult): obj is SharedFolderTarget {
     if (obj.objectType === 'shared_folder') return true
     if (obj.objectType === 'folder' && obj.folder_type === 'shared_folder_folder') return true
     return false
@@ -98,9 +73,9 @@ async function shareFolderCommand() {
             return
         }
 
-        let target: GetKeeperObjectResult
+        let target: GetFolderResult
         try {
-            target = await vault.getKeeperObject(folderInput, { type: 'folder' })
+            target = await vault.getFolder(folderInput)
         } catch (err) {
             logger.error(`Folder lookup failed: ${extractErrorMessage(err)}`)
             process.exitCode = 1

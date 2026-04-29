@@ -1,5 +1,10 @@
-import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
-import { platform, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import type { Auth, FolderUpdateRequest } from '@keeper-security/keeperapi'
+import {
+    encryptForStorage,
+    encryptObjectForStorage,
+    folderUpdateCommand,
+    platform,
+} from '@keeper-security/keeperapi'
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, extractErrorMessage } from '../utils'
@@ -32,14 +37,6 @@ type ResolvedFolder =
     | { kind: 'user_folder'; folder: DUserFolder }
     | { kind: 'shared_folder'; folder: DSharedFolder }
     | { kind: 'shared_folder_folder'; folder: DSharedFolderFolder }
-
-function folderUpdateCommand(request: Record<string, unknown>): RestCommand<Record<string, unknown>, KeeperResponse> {
-    return {
-        baseRequest: { command: 'folder_update' },
-        request,
-        authorization: {},
-    }
-}
 
 function resolveFolderEntity(storage: InMemoryStorage, folderUid: string): ResolvedFolder | undefined {
     const uf = storage.getByUid<DUserFolder>('user_folder', folderUid)
@@ -107,23 +104,17 @@ export async function updateFolder(
     const effectiveName = resolved.kind === 'shared_folder' ? nameTrim || resolved.folder.name || undefined : nameTrim
     const merged = mergeFolderData(resolved.folder.data, effectiveName)
 
-    const payloadJson = JSON.stringify(merged)
-    const payloadBytes = new TextEncoder().encode(payloadJson)
-    const encryptedData = await platform.aesCbcEncrypt(payloadBytes, folderKey, true)
-
-    const rq: Record<string, unknown> = {
+    const rq: FolderUpdateRequest = {
         folder_uid: folderUid,
         folder_type: resolved.kind,
-        data: webSafe64FromBytes(encryptedData),
+        data: await encryptObjectForStorage(merged, folderKey),
     }
 
     if (resolved.kind === 'shared_folder') {
         const sf = resolved.folder
         const displayName = nameTrim || sf.name || folderUid
-        const nameBytes = new TextEncoder().encode(displayName)
-        const encName = await platform.aesCbcEncrypt(nameBytes, folderKey, true)
         rq.shared_folder_uid = folderUid
-        rq.name = webSafe64FromBytes(encName)
+        rq.name = await encryptForStorage(platform.stringToBytes(displayName), folderKey)
         rq.manage_users = typeof input.manageUsers === 'boolean' ? input.manageUsers : sf.defaultManageUsers
         rq.manage_records = typeof input.manageRecords === 'boolean' ? input.manageRecords : sf.defaultManageRecords
         rq.can_edit = typeof input.canEdit === 'boolean' ? input.canEdit : sf.defaultCanEdit
@@ -133,8 +124,7 @@ export async function updateFolder(
     }
 
     try {
-        const cmd = folderUpdateCommand(rq)
-        const response = await auth.executeRestCommand(cmd)
+        const response = await auth.executeRestCommand(folderUpdateCommand(rq))
         const ok = response.result === 'success' || response.result_code === 'success'
         if (!ok) {
             return {
