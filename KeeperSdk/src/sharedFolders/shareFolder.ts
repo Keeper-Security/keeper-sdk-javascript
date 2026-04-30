@@ -15,7 +15,7 @@ import {
 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { extractErrorMessage, isBoolean, isObject, isValidEmail, KeeperSdkError } from '../utils'
-import { FolderKind, FolderResultStatus } from '../folders/folderHelpers'
+import { FolderKind, FolderResultStatus, VaultObjectKind } from '../folders/folderHelpers'
 
 export enum ShareFolderAction {
     Grant = 'grant',
@@ -92,11 +92,11 @@ function dataName(data: unknown): string {
     return ''
 }
 
-function resolveFolder(storage: InMemoryStorage, ref: string): ResolvedFolder | undefined {
-    const trimmed = ref.trim()
-    if (!trimmed) return undefined
+function resolveFolder(storage: InMemoryStorage, nameOrUid: string): ResolvedFolder | undefined {
+    const trimmedNameOrUid = nameOrUid.trim()
+    if (!trimmedNameOrUid) return undefined
 
-    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, trimmed)
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, trimmedNameOrUid)
     if (sharedFolder) {
         return {
             kind: FolderKind.SharedFolder,
@@ -105,7 +105,7 @@ function resolveFolder(storage: InMemoryStorage, ref: string): ResolvedFolder | 
             displayName: (sharedFolder.name || sharedFolder.uid).trim() || sharedFolder.uid,
         }
     }
-    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmed)
+    const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmedNameOrUid)
     if (sharedFolderFolder) {
         return {
             kind: FolderKind.SharedFolderFolder,
@@ -114,7 +114,7 @@ function resolveFolder(storage: InMemoryStorage, ref: string): ResolvedFolder | 
             displayName: dataName(sharedFolderFolder.data) || sharedFolderFolder.uid,
         }
     }
-    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, trimmed)
+    const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, trimmedNameOrUid)
     if (userFolder) {
         return {
             kind: FolderKind.UserFolder,
@@ -123,34 +123,34 @@ function resolveFolder(storage: InMemoryStorage, ref: string): ResolvedFolder | 
         }
     }
 
-    const lowerNeedle = trimmed.toLowerCase()
-    for (const candidate of storage.getAll<DSharedFolder>(FolderKind.SharedFolder)) {
-        if ((candidate.name || '').trim().toLowerCase() === lowerNeedle) {
+    const lowerNameOrUid = trimmedNameOrUid.toLowerCase()
+    for (const candidateSharedFolder of storage.getAll<DSharedFolder>(FolderKind.SharedFolder)) {
+        if ((candidateSharedFolder.name || '').trim().toLowerCase() === lowerNameOrUid) {
             return {
                 kind: FolderKind.SharedFolder,
-                folderUid: candidate.uid,
-                sharedFolderUid: candidate.uid,
-                displayName: candidate.name || candidate.uid,
+                folderUid: candidateSharedFolder.uid,
+                sharedFolderUid: candidateSharedFolder.uid,
+                displayName: candidateSharedFolder.name || candidateSharedFolder.uid,
             }
         }
     }
-    for (const candidate of storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder)) {
-        const candidateName = dataName(candidate.data)
-        if (candidateName && candidateName.toLowerCase() === lowerNeedle) {
+    for (const candidateSharedFolderFolder of storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder)) {
+        const candidateName = dataName(candidateSharedFolderFolder.data)
+        if (candidateName && candidateName.toLowerCase() === lowerNameOrUid) {
             return {
                 kind: FolderKind.SharedFolderFolder,
-                folderUid: candidate.uid,
-                sharedFolderUid: candidate.sharedFolderUid,
+                folderUid: candidateSharedFolderFolder.uid,
+                sharedFolderUid: candidateSharedFolderFolder.sharedFolderUid,
                 displayName: candidateName,
             }
         }
     }
-    for (const candidate of storage.getAll<DUserFolder>(FolderKind.UserFolder)) {
-        const candidateName = dataName(candidate.data)
-        if (candidateName && candidateName.toLowerCase() === lowerNeedle) {
+    for (const candidateUserFolder of storage.getAll<DUserFolder>(FolderKind.UserFolder)) {
+        const candidateName = dataName(candidateUserFolder.data)
+        if (candidateName && candidateName.toLowerCase() === lowerNameOrUid) {
             return {
                 kind: FolderKind.UserFolder,
-                folderUid: candidate.uid,
+                folderUid: candidateUserFolder.uid,
                 displayName: candidateName,
             }
         }
@@ -288,7 +288,7 @@ async function shareWithSharedFolder(
     }
 
     const existingMembers = new Set<string>()
-    for (const sharedFolderUser of storage.getAll<DSharedFolderUser>('shared_folder_user')) {
+    for (const sharedFolderUser of storage.getAll<DSharedFolderUser>(VaultObjectKind.SharedFolderUser)) {
         if (sharedFolderUser.sharedFolderUid === sharedFolder.uid && sharedFolderUser.accountUsername) {
             existingMembers.add(sharedFolderUser.accountUsername.toLowerCase())
         }

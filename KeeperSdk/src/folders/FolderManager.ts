@@ -87,12 +87,12 @@ export class FolderManager {
         return listVaultRootFolders(this.storage)
     }
 
-    public findFolderUidByNameOrUid(needle: string): string | undefined {
-        return findFolderUidByNameOrUid(this.storage, needle)
+    public findFolderUidByNameOrUid(nameOrUid: string): string | undefined {
+        return findFolderUidByNameOrUid(this.storage, nameOrUid)
     }
 
-    public findFolder(needle: string): FoundFolder | undefined {
-        return findFolder(this.storage, needle)
+    public findFolder(nameOrUid: string): FoundFolder | undefined {
+        return findFolder(this.storage, nameOrUid)
     }
 
     public async findParentFolderUid(folderUid: string): Promise<string | null> {

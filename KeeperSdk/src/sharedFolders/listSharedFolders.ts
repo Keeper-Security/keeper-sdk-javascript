@@ -5,7 +5,8 @@ import type {
     DSharedFolderUser,
 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
-import { FolderKind } from '../folders/folderHelpers'
+import { TOKEN_SEPARATOR_PATTERN } from '../utils'
+import { FolderKind, VaultObjectKind } from '../folders/folderHelpers'
 
 export type ListSharedFoldersOptions = {
     pattern?: string | null
@@ -27,8 +28,6 @@ export type ListSharedFolderRow = {
 
 const DEFAULT_COLUMN_WIDTH = 40
 const MIN_TRUNCATE_PREFIX = 3
-
-const TOKEN_SEPARATOR_PATTERN = /[\s\-_.,;:!?@#$%^&*()[\]{}|\\/<>]+/
 
 function sharedFolderDisplayName(folder: DSharedFolder): string {
     return (folder.name || folder.uid).trim() || folder.uid
@@ -74,15 +73,18 @@ function countBySharedFolderUid<T extends { sharedFolderUid: string }>(items: T[
 }
 
 function countTeamsForFolder(storage: InMemoryStorage, sharedFolderUid: string): number {
-    return countBySharedFolderUid(storage.getAll<DSharedFolderTeam>('shared_folder_team'), sharedFolderUid)
+    return countBySharedFolderUid(storage.getAll<DSharedFolderTeam>(VaultObjectKind.SharedFolderTeam), sharedFolderUid)
 }
 
 function countUsersForFolder(storage: InMemoryStorage, sharedFolderUid: string): number {
-    return countBySharedFolderUid(storage.getAll<DSharedFolderUser>('shared_folder_user'), sharedFolderUid)
+    return countBySharedFolderUid(storage.getAll<DSharedFolderUser>(VaultObjectKind.SharedFolderUser), sharedFolderUid)
 }
 
 function countRecordsForFolder(storage: InMemoryStorage, sharedFolderUid: string): number {
-    return countBySharedFolderUid(storage.getAll<DSharedFolderRecord>('shared_folder_record'), sharedFolderUid)
+    return countBySharedFolderUid(
+        storage.getAll<DSharedFolderRecord>(VaultObjectKind.SharedFolderRecord),
+        sharedFolderUid
+    )
 }
 
 export function listSharedFolders(

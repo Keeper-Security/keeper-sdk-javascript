@@ -12,6 +12,7 @@ import { KeeperSdkError } from '../utils'
 import { getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
     FolderKind,
+    VaultObjectKind,
     getUserFolderParentMap,
     globToRegex,
     sharedFolderFolderName,
@@ -199,30 +200,30 @@ function resolveFolderContainer(storage: InMemoryStorage, folderUid: string): { 
 }
 
 function getRecordMetadata(storage: InMemoryStorage, recordUid: string): DRecordMetadata | undefined {
-    return storage.getByUid<DRecordMetadata>('metadata', recordUid)
+    return storage.getByUid<DRecordMetadata>(VaultObjectKind.Metadata, recordUid)
 }
 
-export function findFolderUidByNameOrUid(storage: InMemoryStorage, needle: string): string | undefined {
-    const trimmed = needle.trim()
-    if (!trimmed) return undefined
+export function findFolderUidByNameOrUid(storage: InMemoryStorage, nameOrUid: string): string | undefined {
+    const trimmedNameOrUid = nameOrUid.trim()
+    if (!trimmedNameOrUid) return undefined
 
     if (
-        storage.getByUid<DUserFolder>(FolderKind.UserFolder, trimmed) ||
-        storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, trimmed) ||
-        storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmed)
+        storage.getByUid<DUserFolder>(FolderKind.UserFolder, trimmedNameOrUid) ||
+        storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, trimmedNameOrUid) ||
+        storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmedNameOrUid)
     ) {
-        return trimmed
+        return trimmedNameOrUid
     }
 
-    const lowerNeedle = trimmed.toLowerCase()
+    const lowerNameOrUid = trimmedNameOrUid.toLowerCase()
     for (const userFolder of storage.getAll<DUserFolder>(FolderKind.UserFolder)) {
-        if (userFolderName(userFolder).toLowerCase() === lowerNeedle) return userFolder.uid
+        if (userFolderName(userFolder).toLowerCase() === lowerNameOrUid) return userFolder.uid
     }
     for (const sharedFolder of storage.getAll<DSharedFolder>(FolderKind.SharedFolder)) {
-        if (sharedFolderName(sharedFolder).toLowerCase() === lowerNeedle) return sharedFolder.uid
+        if (sharedFolderName(sharedFolder).toLowerCase() === lowerNameOrUid) return sharedFolder.uid
     }
     for (const sharedFolderFolder of storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder)) {
-        if (sharedFolderFolderName(sharedFolderFolder).toLowerCase() === lowerNeedle) return sharedFolderFolder.uid
+        if (sharedFolderFolderName(sharedFolderFolder).toLowerCase() === lowerNameOrUid) return sharedFolderFolder.uid
     }
     return undefined
 }
@@ -235,7 +236,7 @@ async function countFolderChildren(
     let records = 0
     let subfolders = 0
     for (const dependency of dependencies) {
-        if (dependency.kind === 'record') records++
+        if (dependency.kind === VaultObjectKind.Record) records++
         else if (
             dependency.kind === FolderKind.UserFolder ||
             dependency.kind === FolderKind.SharedFolder ||
@@ -261,7 +262,7 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
         parentKey = resolveFolderContainer(storage, folderUidOpt).uid
     }
 
-    const deps =
+    const dependencies =
         parentKey === null
             ? (await storage.getDependencies('')) || []
             : (await storage.getDependencies(parentKey)) || []
@@ -282,7 +283,7 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
         }
     }
 
-    for (const dependency of deps) {
+    for (const dependency of dependencies) {
         if (dependency.kind === FolderKind.UserFolder && showFolders && parentKey !== null) {
             const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, dependency.uid)
             if (!userFolder) continue
@@ -308,8 +309,8 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
                 name,
                 folderKind: FolderKind.SharedFolderFolder,
             })
-        } else if (dependency.kind === 'record' && showRecords) {
-            const record = storage.getByUid<DRecord>('record', dependency.uid)
+        } else if (dependency.kind === VaultObjectKind.Record && showRecords) {
+            const record = storage.getByUid<DRecord>(VaultObjectKind.Record, dependency.uid)
             if (!record || (record.version !== 2 && record.version !== 3)) continue
             const title = getRecordTitle(record)
             if (!matches(title, record.uid)) continue
@@ -341,7 +342,7 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
     )
 
     const recordDetails: ListFolderRecordDetail[] = recordRows.map((row) => {
-        const record = storage.getByUid<DRecord>('record', row.uid)!
+        const record = storage.getByUid<DRecord>(VaultObjectKind.Record, row.uid)!
         const metadata = getRecordMetadata(storage, row.uid)
         return {
             ...row,

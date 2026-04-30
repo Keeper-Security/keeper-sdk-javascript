@@ -9,13 +9,14 @@ import type {
     DRecord,
 } from '@keeper-security/keeperapi'
 import { webSafe64FromBytes } from '@keeper-security/keeperapi'
+import { VaultObjectKind } from '../folders/folderHelpers'
 
 export class InMemoryStorage implements VaultStorage {
     private keys = new Map<string, Uint8Array>()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- KeyStorage.saveObject<T> is unconstrained
     private objects = new Map<string, any>()
     private store = new Map<string, Map<string, VaultStorageData>>()
-    private deps = new Map<string, Dependency[]>()
+    private dependenciesByParent = new Map<string, Dependency[]>()
     private arrayCache = new Map<string, VaultStorageData[]>()
 
     public async getKeyBytes(keyId: string): Promise<Uint8Array | undefined> {
@@ -65,25 +66,25 @@ export class InMemoryStorage implements VaultStorage {
         this.store.clear()
         this.keys.clear()
         this.objects.clear()
-        this.deps.clear()
+        this.dependenciesByParent.clear()
         this.arrayCache.clear()
     }
 
     public async getDependencies(uid: string): Promise<Dependency[] | undefined> {
-        return this.deps.get(uid)
+        return this.dependenciesByParent.get(uid)
     }
 
     public async addDependencies(dependencies: Dependencies): Promise<void> {
         for (const [parentUid, children] of Object.entries(dependencies)) {
-            if (!this.deps.has(parentUid)) {
-                this.deps.set(parentUid, [])
+            if (!this.dependenciesByParent.has(parentUid)) {
+                this.dependenciesByParent.set(parentUid, [])
             }
-            const existing = this.deps.get(parentUid)!
-            const seen = new Set(existing.map((d) => d.uid))
+            const existing = this.dependenciesByParent.get(parentUid)!
+            const seenChildUids = new Set(existing.map((dependency) => dependency.uid))
             for (const child of children) {
-                if (!seen.has(child.uid)) {
+                if (!seenChildUids.has(child.uid)) {
                     existing.push(child)
-                    seen.add(child.uid)
+                    seenChildUids.add(child.uid)
                 }
             }
         }
@@ -92,14 +93,14 @@ export class InMemoryStorage implements VaultStorage {
     public async removeDependencies(dependencies: RemovedDependencies): Promise<void> {
         for (const [parentUid, children] of Object.entries(dependencies)) {
             if (children === '*') {
-                this.deps.delete(parentUid)
+                this.dependenciesByParent.delete(parentUid)
             } else {
-                const existing = this.deps.get(parentUid)
+                const existing = this.dependenciesByParent.get(parentUid)
                 if (existing) {
                     const removeSet = children as Set<string>
-                    this.deps.set(
+                    this.dependenciesByParent.set(
                         parentUid,
-                        existing.filter((d) => !removeSet.has(d.uid))
+                        existing.filter((dependency) => !removeSet.has(dependency.uid))
                     )
                 }
             }
@@ -119,7 +120,7 @@ export class InMemoryStorage implements VaultStorage {
     }
 
     public getRecords(): DRecord[] {
-        return this.getAll<DRecord>('record')
+        return this.getAll<DRecord>(VaultObjectKind.Record)
     }
 
     public getByUid<T extends VaultStorageData>(kind: VaultStorageKind, uid: string): T | undefined {
@@ -156,7 +157,7 @@ export class InMemoryStorage implements VaultStorage {
         if (record.sharedFolderUid && record.teamUid) {
             return `${record.sharedFolderUid}:${record.teamUid}`
         }
-        if (item.kind === 'user' && accountUidStr) return accountUidStr
+        if (item.kind === VaultObjectKind.User && accountUidStr) return accountUidStr
         return '_singleton_'
     }
 }

@@ -30,11 +30,7 @@ import type {
 import { extractErrorMessage, KeeperSdkError, logger } from '../utils'
 import { RecordVersion } from './RecordUtils'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
-import { DeleteResolution, FolderKind } from '../folders/folderHelpers'
-
-enum ObjectType {
-    Record = 'record',
-}
+import { DeleteResolution, FolderKind, VaultObjectKind } from '../folders/folderHelpers'
 
 enum ResultCode {
     Success = 'success',
@@ -303,7 +299,7 @@ export async function deleteRecord(
         objects: [
             {
                 object_uid: recordUid,
-                object_type: ObjectType.Record,
+                object_type: VaultObjectKind.Record,
                 from_uid: '',
                 from_type: FolderKind.UserFolder,
                 delete_resolution: DeleteResolution.Unlink,
@@ -456,17 +452,21 @@ async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorag
 
     for (const kind of folderKinds) {
         for (const folder of storage.getAll<DUserFolder | DSharedFolder | DSharedFolderFolder>(kind)) {
-            const deps = (await storage.getDependencies(folder.uid)) || []
-            if (deps.some((d) => d.kind === ObjectType.Record && d.uid === recordUid)) {
+            const dependencies = (await storage.getDependencies(folder.uid)) || []
+            if (
+                dependencies.some(
+                    (dependency) => dependency.kind === VaultObjectKind.Record && dependency.uid === recordUid
+                )
+            ) {
                 return folder.uid
             }
         }
     }
 
-    const sfr = storage
-        .getAll<DSharedFolderRecord>('shared_folder_record')
-        .find((r) => r.recordUid === recordUid)
-    return sfr ? sfr.sharedFolderUid : ''
+    const sharedFolderRecord = storage
+        .getAll<DSharedFolderRecord>(VaultObjectKind.SharedFolderRecord)
+        .find((candidate) => candidate.recordUid === recordUid)
+    return sharedFolderRecord ? sharedFolderRecord.sharedFolderUid : ''
 }
 
 export async function moveRecord(
@@ -490,7 +490,7 @@ export async function moveRecord(
 
     const moveObj: MoveObject = {
         uid: recordUid,
-        type: ObjectType.Record,
+        type: VaultObjectKind.Record,
         cascade: false,
         from_type: src.folderType,
         from_uid: src.uid || undefined,
@@ -517,7 +517,7 @@ export async function moveRecord(
             return { recordUid, success: false, message: 'Destination folder key not found' }
         }
 
-        const record = storage.getByUid<DRecord>(ObjectType.Record, recordUid)
+        const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid)
         const version = record?.version || RecordVersion.Typed
 
         let encryptedKey: Uint8Array

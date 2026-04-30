@@ -8,7 +8,7 @@ import type {
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
 import { findParentFolderUid } from './changeDirectory'
-import { FolderKind, FolderObjectType, sharedFolderFolderName, userFolderName } from './folderHelpers'
+import { FolderKind, FolderObjectType, VaultObjectKind, sharedFolderFolderName, userFolderName } from './folderHelpers'
 
 export enum GetFolderFormat {
     Detail = 'detail',
@@ -64,22 +64,22 @@ export type FoundFolder =
 
 function findByUidOrName<T>(
     items: Iterable<T>,
-    needle: string,
+    nameOrUid: string,
     getUid: (item: T) => string,
     getName: (item: T) => string
 ): T | undefined {
-    const trimmedNeedle = needle.trim()
-    if (!trimmedNeedle) return undefined
-    const lowerNeedle = trimmedNeedle.toLowerCase()
+    const trimmedNameOrUid = nameOrUid.trim()
+    if (!trimmedNameOrUid) return undefined
+    const lowerNameOrUid = trimmedNameOrUid.toLowerCase()
     let exactNameHit: T | undefined
     let lowerNameHit: T | undefined
     for (const item of items) {
-        if (getUid(item) === trimmedNeedle) return item
+        if (getUid(item) === trimmedNameOrUid) return item
         if (!exactNameHit) {
             const itemName = getName(item)
-            if (itemName === trimmedNeedle) {
+            if (itemName === trimmedNameOrUid) {
                 exactNameHit = item
-            } else if (!lowerNameHit && itemName.toLowerCase() === lowerNeedle) {
+            } else if (!lowerNameHit && itemName.toLowerCase() === lowerNameOrUid) {
                 lowerNameHit = item
             }
         }
@@ -87,44 +87,44 @@ function findByUidOrName<T>(
     return exactNameHit || lowerNameHit
 }
 
-function findSharedFolder(storage: InMemoryStorage, needle: string): DSharedFolder | undefined {
+function findSharedFolder(storage: InMemoryStorage, nameOrUid: string): DSharedFolder | undefined {
     return findByUidOrName(
         storage.getAll<DSharedFolder>(FolderKind.SharedFolder),
-        needle,
+        nameOrUid,
         (sharedFolder) => sharedFolder.uid,
         (sharedFolder) => (sharedFolder.name || '').trim()
     )
 }
 
-function findUserFolder(storage: InMemoryStorage, needle: string): DUserFolder | undefined {
+function findUserFolder(storage: InMemoryStorage, nameOrUid: string): DUserFolder | undefined {
     return findByUidOrName(
         storage.getAll<DUserFolder>(FolderKind.UserFolder),
-        needle,
+        nameOrUid,
         (userFolder) => userFolder.uid,
         (userFolder) => userFolderName(userFolder)
     )
 }
 
-function findSharedFolderFolder(storage: InMemoryStorage, needle: string): DSharedFolderFolder | undefined {
+function findSharedFolderFolder(storage: InMemoryStorage, nameOrUid: string): DSharedFolderFolder | undefined {
     return findByUidOrName(
         storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder),
-        needle,
+        nameOrUid,
         (sharedFolderFolder) => sharedFolderFolder.uid,
         (sharedFolderFolder) => sharedFolderFolderName(sharedFolderFolder)
     )
 }
 
-export function findFolder(storage: InMemoryStorage, needle: string): FoundFolder | undefined {
-    const trimmed = needle.trim()
-    if (!trimmed) return undefined
+export function findFolder(storage: InMemoryStorage, nameOrUid: string): FoundFolder | undefined {
+    const trimmedNameOrUid = nameOrUid.trim()
+    if (!trimmedNameOrUid) return undefined
 
-    const sharedFolder = findSharedFolder(storage, trimmed)
+    const sharedFolder = findSharedFolder(storage, trimmedNameOrUid)
     if (sharedFolder) return { kind: FolderKind.SharedFolder, folder: sharedFolder }
 
-    const userFolder = findUserFolder(storage, trimmed)
+    const userFolder = findUserFolder(storage, trimmedNameOrUid)
     if (userFolder) return { kind: FolderKind.UserFolder, folder: userFolder }
 
-    const sharedFolderFolder = findSharedFolderFolder(storage, trimmed)
+    const sharedFolderFolder = findSharedFolderFolder(storage, trimmedNameOrUid)
     if (sharedFolderFolder) return { kind: FolderKind.SharedFolderFolder, folder: sharedFolderFolder }
 
     return undefined
@@ -167,7 +167,7 @@ function formatSharedFolder(
 ): GetFolderResultSharedFolder {
     const sharedFolderUid = sharedFolder.uid
     const recordPermissions = storage
-        .getAll<DSharedFolderRecord>('shared_folder_record')
+        .getAll<DSharedFolderRecord>(VaultObjectKind.SharedFolderRecord)
         .filter((record) => record.sharedFolderUid === sharedFolderUid)
         .map((record) => ({
             record_uid: record.recordUid,
@@ -176,7 +176,7 @@ function formatSharedFolder(
             owner: record.owner,
         }))
     const userPermissions = storage
-        .getAll<DSharedFolderUser>('shared_folder_user')
+        .getAll<DSharedFolderUser>(VaultObjectKind.SharedFolderUser)
         .filter((user) => user.sharedFolderUid === sharedFolderUid)
         .map((user) => ({
             account_username: user.accountUsername,

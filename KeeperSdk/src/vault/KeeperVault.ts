@@ -44,7 +44,7 @@ import type {
     RecordShareInfo,
 } from '../sharing/Sharing'
 import type { ListFolderOptions, ListFolderResult } from '../folders/listFolder'
-import { FolderKind } from '../folders/folderHelpers'
+import { FolderKind, VaultObjectKind } from '../folders/folderHelpers'
 import type { ChangeDirectoryResult, VaultFolderSession } from '../folders/changeDirectory'
 import type { AddFolderInput, AddFolderResult, MkdirOptions } from '../folders/addFolder'
 import type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from '../folders/updateFolder'
@@ -299,15 +299,15 @@ export class KeeperVault {
     }
 
     public getRecordByUid(uid: string): DRecord | undefined {
-        return this.storage.getByUid<DRecord>('record', uid)
+        return this.storage.getByUid<DRecord>(VaultObjectKind.Record, uid)
     }
 
     public findRecord(uidOrTitle: string): DRecord | undefined {
         const byUid = this.getRecordByUid(uidOrTitle)
         if (byUid) return byUid
 
-        const needle = uidOrTitle.toLowerCase()
-        return this.getRecords().find((r) => getRecordTitle(r).toLowerCase() === needle)
+        const lowerUidOrTitle = uidOrTitle.toLowerCase()
+        return this.getRecords().find((record) => getRecordTitle(record).toLowerCase() === lowerUidOrTitle)
     }
 
     public findRecords(criteria: string): DRecord[] {
@@ -315,19 +315,19 @@ export class KeeperVault {
     }
 
     public getRecordsByVersion(version: number): DRecord[] {
-        return this.getRecords().filter((r) => r.version === version)
+        return this.getRecords().filter((record) => record.version === version)
     }
 
     public getRecordsByType(recordType: string): DRecord[] {
-        return this.getRecords().filter((r) => getRecordType(r) === recordType)
+        return this.getRecords().filter((record) => getRecordType(record) === recordType)
     }
 
     public getRecordMetadata(): DRecordMetadata[] {
-        return this.storage.getAll<DRecordMetadata>('metadata')
+        return this.storage.getAll<DRecordMetadata>(VaultObjectKind.Metadata)
     }
 
     public getRecordMetadataByUid(uid: string): DRecordMetadata | undefined {
-        return this.storage.getByUid<DRecordMetadata>('metadata', uid)
+        return this.storage.getByUid<DRecordMetadata>(VaultObjectKind.Metadata, uid)
     }
 
     public getSharedFolders(): DSharedFolder[] {
@@ -335,7 +335,7 @@ export class KeeperVault {
     }
 
     public getTeams(): DTeam[] {
-        return this.storage.getAll<DTeam>('team')
+        return this.storage.getAll<DTeam>(VaultObjectKind.Team)
     }
 
     public getUserFolders(): DUserFolder[] {
@@ -424,9 +424,9 @@ export class KeeperVault {
 
     public getSummary(): VaultSummary {
         return {
-            recordCount: this.storage.getCount('record'),
+            recordCount: this.storage.getCount(VaultObjectKind.Record),
             sharedFolderCount: this.storage.getCount(FolderKind.SharedFolder),
-            teamCount: this.storage.getCount('team'),
+            teamCount: this.storage.getCount(VaultObjectKind.Team),
             folderCount: this.storage.getCount(FolderKind.UserFolder),
         }
     }

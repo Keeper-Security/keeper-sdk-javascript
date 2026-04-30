@@ -36,7 +36,6 @@ export {
     EMAIL_PATTERN,
     EMAIL_LIST_SEPARATOR_PATTERN,
     isValidEmail,
-    escapeRegExp,
 } from './utils'
 export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
 

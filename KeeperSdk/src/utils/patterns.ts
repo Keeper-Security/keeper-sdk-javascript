@@ -3,6 +3,9 @@ export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 /** Splits user-entered email lists on whitespace, commas, and semicolons. */
 export const EMAIL_LIST_SEPARATOR_PATTERN = /[\s,;]+/
 
+/** Splits free-form text into search tokens on whitespace and common punctuation. */
+export const TOKEN_SEPARATOR_PATTERN = /[\s\-_.,;:!?@#$%^&*()[\]{}|\\/<>]+/
+
 /** Characters that must be escaped when embedding user input into a RegExp. */
 export const REGEX_ESCAPE_PATTERN = /[.+^${}()|[\]\\]/g
 

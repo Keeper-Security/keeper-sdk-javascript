@@ -1,5 +1,5 @@
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
-import { InMemoryStorage } from '../storage/InMemoryStorage'
+import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { escapeRegExp } from '../utils'
 
 export enum FolderKind {
@@ -35,6 +35,17 @@ export enum FolderResultStatus {
     Success = 'success',
     Invited = 'invited',
     Unknown = 'unknown',
+}
+
+export enum VaultObjectKind {
+    Record = 'record',
+    Metadata = 'metadata',
+    NonSharedData = 'non_shared_data',
+    Team = 'team',
+    User = 'user',
+    SharedFolderUser = 'shared_folder_user',
+    SharedFolderTeam = 'shared_folder_team',
+    SharedFolderRecord = 'shared_folder_record',
 }
 
 export type FolderKindOrLiteral = FolderKind | `${FolderKind}`

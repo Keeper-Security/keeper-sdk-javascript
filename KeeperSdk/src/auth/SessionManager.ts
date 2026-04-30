@@ -115,8 +115,8 @@ export class SessionManager implements SessionStorage {
 
     public async getLastUsername(): Promise<string | undefined> {
         if (this._lastUsername) return this._lastUsername
-        const kc = await this.loadKeeperConfig()
-        return kc.last_login || kc.user || undefined
+        const keeperConfig = await this.loadKeeperConfig()
+        return keeperConfig.last_login || keeperConfig.user || undefined
     }
 
     public async getDeviceConfig(host: string): Promise<DeviceConfig> {
@@ -153,7 +153,7 @@ export class SessionManager implements SessionStorage {
 
         const device = await this.findDeviceInKeeperConfig(username)
         if (device) {
-            const serverInfo = device.serverInfo.find((si) => si.server === hostStr)
+            const serverInfo = device.serverInfo.find((entry) => entry.server === hostStr)
             if (serverInfo) {
                 return normal64Bytes(serverInfo.clone_code)
             }
@@ -182,11 +182,15 @@ export class SessionManager implements SessionStorage {
                 updated = true
             }
 
-            const user = (parsed.users || []).find((u) => u.user?.toLowerCase() === username.toLowerCase())
+            const user = (parsed.users || []).find(
+                (configUser) => configUser.user?.toLowerCase() === username.toLowerCase()
+            )
             if (user?.last_device?.device_token) {
-                const device = (parsed.devices || []).find((d) => d.device_token === user.last_device.device_token)
+                const device = (parsed.devices || []).find(
+                    (configDevice) => configDevice.device_token === user.last_device.device_token
+                )
                 if (device?.server_info) {
-                    const serverInfo = device.server_info.find((si) => si.server === host)
+                    const serverInfo = device.server_info.find((entry) => entry.server === host)
                     if (serverInfo) {
                         serverInfo.clone_code = encodedCloneCode
                         updated = true
@@ -237,34 +241,41 @@ export class SessionManager implements SessionStorage {
     }
 
     private async lookupDeviceInKeeperConfig(normalizedUsername: string): Promise<Nullable<ResolvedDevice>> {
-        const kc = await this.loadKeeperConfig()
+        const keeperConfig = await this.loadKeeperConfig()
 
-        if (kc.users && kc.devices) {
-            const user = kc.users.find((u) => u.user?.toLowerCase() === normalizedUsername)
+        if (keeperConfig.users && keeperConfig.devices) {
+            const user = keeperConfig.users.find(
+                (configUser) => configUser.user?.toLowerCase() === normalizedUsername
+            )
             if (user?.last_device?.device_token) {
                 const deviceTokenStr = user.last_device.device_token
-                const device = kc.devices.find((d) => d.device_token === deviceTokenStr)
+                const device = keeperConfig.devices.find((configDevice) => configDevice.device_token === deviceTokenStr)
                 if (device?.private_key) {
                     return {
                         deviceToken: normal64Bytes(deviceTokenStr),
                         privateKey: normal64Bytes(device.private_key),
                         serverInfo: (device.server_info || []).filter(
-                            (si): si is Required<ConfigurationServerConfig> => !!si.server && !!si.clone_code
+                            (entry): entry is Required<ConfigurationServerConfig> =>
+                                !!entry.server && !!entry.clone_code
                         ),
                     }
                 }
             }
         }
 
-        if (kc.device_token && kc.private_key && kc.user?.toLowerCase() === normalizedUsername) {
+        if (
+            keeperConfig.device_token &&
+            keeperConfig.private_key &&
+            keeperConfig.user?.toLowerCase() === normalizedUsername
+        ) {
             const serverInfo: Array<Required<ConfigurationServerConfig>> = []
-            const server = kc.last_server || kc.server
-            if (server && kc.clone_code) {
-                serverInfo.push({ server, clone_code: kc.clone_code })
+            const server = keeperConfig.last_server || keeperConfig.server
+            if (server && keeperConfig.clone_code) {
+                serverInfo.push({ server, clone_code: keeperConfig.clone_code })
             }
             return {
-                deviceToken: normal64Bytes(kc.device_token),
-                privateKey: normal64Bytes(kc.private_key),
+                deviceToken: normal64Bytes(keeperConfig.device_token),
+                privateKey: normal64Bytes(keeperConfig.private_key),
                 serverInfo,
             }
         }

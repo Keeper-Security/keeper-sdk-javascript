@@ -3,7 +3,7 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
 import { listFolder, listRootUserFolders } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
-import { FolderKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+import { FolderKind, VaultObjectKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
 
 const VAULT_ROOT_DISPLAY_NAME = 'My Vault'
 
@@ -54,7 +54,7 @@ export async function findParentFolderUid(storage: InMemoryStorage, folderUid: s
         FolderKind.UserFolder,
         FolderKind.SharedFolder,
         FolderKind.SharedFolderFolder,
-        'team',
+        VaultObjectKind.Team,
     ] as const
     for (const kind of parentKinds) {
         for (const candidate of storage.getAll(kind)) {

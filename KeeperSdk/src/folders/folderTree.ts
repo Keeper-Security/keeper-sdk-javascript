@@ -12,7 +12,13 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { getRecordTitle } from '../records/RecordUtils'
 import { listFolder, listVaultRootFolders } from './listFolder'
 import { resolveSingleFolder, type VaultFolderSession } from './changeDirectory'
-import { FolderKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+import { FolderKind, VaultObjectKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
+
+enum TreeItemKind {
+    Permission = 'perm',
+    Record = 'record',
+    Folder = 'folder',
+}
 
 export type FolderTreeBuildOptions = {
     folderPath?: string | null
@@ -51,7 +57,7 @@ export function recordPermissionToText(canEdit: boolean, canShare: boolean): str
 
 function buildAccountUidEmailMap(storage: InMemoryStorage): Map<string, string> {
     const accountUidToEmail = new Map<string, string>()
-    for (const user of storage.getAll<DUser>('user')) {
+    for (const user of storage.getAll<DUser>(VaultObjectKind.User)) {
         const uid = user.accountUid ? webSafe64FromBytes(user.accountUid) : ''
         const email = (user.username || '').trim()
         if (uid && email) accountUidToEmail.set(uid, email)
@@ -84,7 +90,7 @@ async function collectSharedFolderPermissions(
     const rows: { display: string; sortKey: string }[] = []
     const seenUserUids = new Set<string>()
 
-    for (const sharedUser of storage.getAll<DSharedFolderUser>('shared_folder_user')) {
+    for (const sharedUser of storage.getAll<DSharedFolderUser>(VaultObjectKind.SharedFolderUser)) {
         if (sharedUser.sharedFolderUid !== sharedFolder.uid) continue
         if (sharedUser.accountUid) seenUserUids.add(sharedUser.accountUid)
         const permissionText = userPermissionToText(sharedUser.manageUsers, sharedUser.manageRecords)
@@ -108,7 +114,7 @@ async function collectSharedFolderPermissions(
         })
     }
 
-    for (const sharedTeam of storage.getAll<DSharedFolderTeam>('shared_folder_team')) {
+    for (const sharedTeam of storage.getAll<DSharedFolderTeam>(VaultObjectKind.SharedFolderTeam)) {
         if (sharedTeam.sharedFolderUid !== sharedFolder.uid) continue
         const permissionText = userPermissionToText(sharedTeam.manageUsers, sharedTeam.manageRecords)
         let name = sharedTeam.name || `(${sharedTeam.teamUid})`
@@ -180,7 +186,7 @@ async function buildFolderSubtree(
     if (opts.showRecords && 'records' in listed) {
         const records = listed.records
         node.records = records.map((recordRow) => {
-            const record = storage.getByUid<DRecord>('record', recordRow.uid)
+            const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordRow.uid)
             const title = record ? getRecordTitle(record) : recordRow.name
             const display = opts.verbose && record ? `${title} (${recordRow.uid}) [Record]` : `${title} [Record]`
             return { display }
@@ -204,7 +210,7 @@ async function buildVaultRootTree(storage: InMemoryStorage, opts: BuildOpts): Pr
     })
     if (opts.showRecords && listed.records?.length) {
         node.records = listed.records.map((recordRow) => {
-            const record = storage.getByUid<DRecord>('record', recordRow.uid)
+            const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordRow.uid)
             const title = record ? getRecordTitle(record) : recordRow.name
             const display = opts.verbose && record ? `${title} (${recordRow.uid}) [Record]` : `${title} [Record]`
             return { display }
@@ -250,23 +256,23 @@ export async function buildFolderTree(
 }
 
 type TreeItem =
-    | { kind: 'perm'; display: string }
-    | { kind: 'record'; display: string }
-    | { kind: 'folder'; node: FolderTreeNode }
+    | { kind: TreeItemKind.Permission; display: string }
+    | { kind: TreeItemKind.Record; display: string }
+    | { kind: TreeItemKind.Folder; node: FolderTreeNode }
 
 function gatherItems(node: FolderTreeNode): TreeItem[] {
     const items: TreeItem[] = []
     if (node.permissions) {
         for (const permission of node.permissions) {
-            items.push({ kind: 'perm', display: permission.display })
+            items.push({ kind: TreeItemKind.Permission, display: permission.display })
         }
     }
     for (const child of node.children) {
-        items.push({ kind: 'folder', node: child })
+        items.push({ kind: TreeItemKind.Folder, node: child })
     }
     if (node.records) {
         for (const record of node.records) {
-            items.push({ kind: 'record', display: record.display })
+            items.push({ kind: TreeItemKind.Record, display: record.display })
         }
     }
     return items
@@ -296,7 +302,7 @@ function renderNode(node: FolderTreeNode, lines: string[], isRoot: boolean, pref
     for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
         const isLastItem = itemIndex === items.length - 1
         const item = items[itemIndex]
-        if (item.kind === 'perm' || item.kind === 'record') {
+        if (item.kind === TreeItemKind.Permission || item.kind === TreeItemKind.Record) {
             const connector = isLastItem ? '\\-- ' : '+-- '
             lines.push(childBase + connector + item.display)
         } else {

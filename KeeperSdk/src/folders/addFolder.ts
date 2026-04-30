@@ -119,12 +119,12 @@ async function findChildFolderUidByName(
         showFolders: true,
         showRecords: false,
     })
-    const needle = name.trim()
-    const lowerNeedle = needle.toLowerCase()
+    const trimmedName = name.trim()
+    const lowerName = trimmedName.toLowerCase()
     for (const folder of result.folders) {
-        if (folder.uid === needle) return folder.uid
-        if (folder.name.trim() === needle) return folder.uid
-        if (folder.name.trim().toLowerCase() === lowerNeedle) return folder.uid
+        if (folder.uid === trimmedName) return folder.uid
+        if (folder.name.trim() === trimmedName) return folder.uid
+        if (folder.name.trim().toLowerCase() === lowerName) return folder.uid
     }
     return undefined
 }
