@@ -83,6 +83,8 @@ function counterToBuffer(counter: number): Buffer {
 export function getTotpCode(urlOrParams: string | TotpParams, now: number = Date.now()): TotpCode | null {
     const params = typeof urlOrParams === 'string' ? parseTotpUrl(urlOrParams) : urlOrParams
     if (!params) return null
+    if (!Number.isFinite(params.period) || params.period <= 0) return null
+    if (!Number.isFinite(params.digits) || params.digits <= 0) return null
 
     let key: Uint8Array
     try {
@@ -100,7 +102,9 @@ export function getTotpCode(urlOrParams: string | TotpParams, now: number = Date
         .update(counterToBuffer(counter))
         .digest()
 
+    if (digest.length === 0) return null
     const offset = digest[digest.length - 1] & 0x0f
+    if (offset + 3 >= digest.length) return null
     const binary =
         ((digest[offset] & 0x7f) << 24) |
         ((digest[offset + 1] & 0xff) << 16) |

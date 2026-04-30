@@ -301,10 +301,12 @@ async function shareWithSharedFolder(
     const usersToUpdate: Folder.ISharedFolderUpdateUser[] = []
     const userResults: ShareFolderUserStatus[] = []
 
-    const effectiveManageRecords = isBoolean(input.manageRecords)
+    const newUserManageRecords = isBoolean(input.manageRecords)
         ? input.manageRecords
         : sharedFolder.defaultManageRecords
-    const effectiveManageUsers = isBoolean(input.manageUsers) ? input.manageUsers : sharedFolder.defaultManageUsers
+    const newUserManageUsers = isBoolean(input.manageUsers)
+        ? input.manageUsers
+        : sharedFolder.defaultManageUsers
 
     for (const email of emails) {
         if (existingMembers.has(email)) {
@@ -357,8 +359,8 @@ async function shareWithSharedFolder(
 
         usersToAdd.push({
             username: email,
-            manageRecords: toSetBoolean(effectiveManageRecords),
-            manageUsers: toSetBoolean(effectiveManageUsers),
+            manageRecords: toSetBoolean(newUserManageRecords),
+            manageUsers: toSetBoolean(newUserManageUsers),
             typedSharedFolderKey: { encryptedKey, encryptedKeyType },
         })
     }
