@@ -1072,6 +1072,19 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
 
 // Keeper Drive Processors Start
 
+const processKdRemovedRecordLinks = async (
+    removedDependencies: RemovedDependencies,
+    keeperDriveRemovedRecordLinks?: Vault.IRecordLink[] | null
+) => {
+    if (!keeperDriveRemovedRecordLinks) return
+    for (const link of keeperDriveRemovedRecordLinks) {
+        if (!link.childRecordUid || !link.parentRecordUid) continue
+        const childRecordUid = webSafe64FromBytes(link.childRecordUid)
+        const parentRecordUid = webSafe64FromBytes(link.parentRecordUid)
+        addRemovedDependencies(removedDependencies, parentRecordUid, childRecordUid)
+    }
+}
+
 const processKdRecordLinks = async (storage: VaultStorage, keeperDriveRecordLinks?: Vault.IRecordLink[] | null) => {
     if (!keeperDriveRecordLinks) return
     for (const link of keeperDriveRecordLinks) {
@@ -1720,13 +1733,15 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                 await storage.delete('user', user)
             }
 
-            await processKdRevokedFolderAccesses(storage, keeperDriveData.revokedFolderAccesses)
-
             await processKdRemovedFolders(storage, keeperDriveData.removedFolders)
+
+            await processKdRevokedFolderAccesses(storage, keeperDriveData.revokedFolderAccesses)
 
             processKdRemovedFolderRecords(removedDependencies, keeperDriveData.removedFolderRecords)
 
             await processKdRevokedRecordAccesses(storage, keeperDriveData.revokedRecordAccesses)
+
+            await processKdRemovedRecordLinks(removedDependencies, keeperDriveData.removedRecordLinks)
 
             await storage.removeDependencies(removedDependencies)
 
