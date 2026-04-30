@@ -46,7 +46,10 @@ export class ConsoleAuthUI implements AuthUI3 {
             case Authentication.TwoFactorChannelType.TWO_FA_CT_KEEPER:
                 return 'Keeper'
             default:
-                throw new KeeperSdkError(`Unsupported 2FA channel type: ${channelType}`, ResultCodes.UNSUPPORTED_2FA_CHANNEL)
+                throw new KeeperSdkError(
+                    `Unsupported 2FA channel type: ${channelType}`,
+                    ResultCodes.UNSUPPORTED_2FA_CHANNEL
+                )
         }
     }
 
@@ -59,7 +62,10 @@ export class ConsoleAuthUI implements AuthUI3 {
     }
 
     public async waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean> {
-        const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        })
 
         try {
             logger.info('\n--- Device Approval Required ---')
@@ -100,7 +106,10 @@ export class ConsoleAuthUI implements AuthUI3 {
     }
 
     public async waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean> {
-        const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        })
 
         try {
             logger.info('\n--- Two-Factor Authentication Required ---')
@@ -146,7 +155,10 @@ export class ConsoleAuthUI implements AuthUI3 {
     }
 
     public async getPassword(isAlternate: boolean): Promise<string> {
-        const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        })
         try {
             const label = isAlternate ? 'alternate master password' : 'master password'
             return (await rl.question(`Enter your ${label}: `)).trim()

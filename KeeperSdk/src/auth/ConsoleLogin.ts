@@ -1,4 +1,5 @@
 import readline from 'readline/promises'
+import type { AuthUI3 } from '@keeper-security/keeperapi'
 import { KeeperVault } from '../vault/KeeperVault'
 import {
     logger,
@@ -10,27 +11,54 @@ import {
     ResultCodes,
     KEEPER_PUBLIC_HOSTS,
 } from '../utils'
+import { ConsoleAuthUI } from './ConsoleAuthUI'
 import { FileConfigLoader } from './SessionManager'
 import type { KeeperJsonConfig } from './SessionManager'
 
-const defaultConfigLoader = new FileConfigLoader()
-
-let rlManager: ReadlineManager | null = null
-let suppressionDepth = 0
-let originals: {
-    log: typeof console.log
-    warn: typeof console.warn
-    debug: typeof console.debug
-    error: typeof console.error
-    stdoutWrite: typeof process.stdout.write
-    stderrWrite: typeof process.stderr.write
-} | null = null
+const DEFAULT_REGION = 'US'
+const MASK_CHAR = '*'
+const NOOP_WRITE = (() => true) as typeof process.stdout.write
 
 enum CliCharAction {
     Submit,
     Cancel,
     Backspace,
     Append,
+}
+
+type ConsoleHandlers = {
+    log: typeof console.log
+    warn: typeof console.warn
+    debug: typeof console.debug
+    error: typeof console.error
+    stdoutWrite: typeof process.stdout.write
+    stderrWrite: typeof process.stderr.write
+}
+
+const defaultConfigLoader = new FileConfigLoader()
+
+let rlManager: ReadlineManager | null = null
+let suppressionDepth = 0
+let originals: ConsoleHandlers | null = null
+
+function captureConsoleHandlers(): ConsoleHandlers {
+    return {
+        log: console.log,
+        warn: console.warn,
+        debug: console.debug,
+        error: console.error,
+        stdoutWrite: process.stdout.write.bind(process.stdout),
+        stderrWrite: process.stderr.write.bind(process.stderr),
+    }
+}
+
+function applyConsoleHandlers(h: ConsoleHandlers): void {
+    console.log = h.log
+    console.warn = h.warn
+    console.debug = h.debug
+    console.error = h.error
+    process.stdout.write = h.stdoutWrite
+    process.stderr.write = h.stderrWrite
 }
 
 function classifyInputChar(ch: string): CliCharAction {
@@ -114,7 +142,7 @@ export function prompt(question: string, masked = false): Promise<string> {
                         break
                     case CliCharAction.Append:
                         buf += ch
-                        process.stdout.write('*')
+                        process.stdout.write(MASK_CHAR)
                         break
                 }
             }
@@ -135,9 +163,7 @@ export async function resolveServer(username?: string, preloadedConfig?: KeeperJ
 
     if (username) {
         const users = config.users || []
-        const userEntry = users.find(
-            (u) => u.user?.toLowerCase() === username.toLowerCase()
-        )
+        const userEntry = users.find((u) => u.user?.toLowerCase() === username.toLowerCase())
         if (userEntry?.server) return userEntry.server
     }
 
@@ -150,35 +176,26 @@ export async function resolveServer(username?: string, preloadedConfig?: KeeperJ
     })
     logger.info(`  Or enter a hostname directly (e.g. dev.keepersecurity.com)`)
 
-    const choice = await prompt('Region [1 = US]: ')
-
-    if (!choice) return KEEPER_PUBLIC_HOSTS.US
+    const choice = await prompt(`Region [1 = ${DEFAULT_REGION}]: `)
+    if (!choice) return KEEPER_PUBLIC_HOSTS[DEFAULT_REGION]
 
     const idx = parseInt(choice, 10) - 1
     if (idx >= 0 && idx < entries.length) return entries[idx][1]
 
-    const byName = KEEPER_PUBLIC_HOSTS[choice.toUpperCase()]
-    if (byName) return byName
-
-    return choice
+    return KEEPER_PUBLIC_HOSTS[choice.toUpperCase()] || choice
 }
 
 export function suppressLogs(): () => void {
     if (suppressionDepth === 0) {
-        originals = {
-            log: console.log,
-            warn: console.warn,
-            debug: console.debug,
-            error: console.error,
-            stdoutWrite: process.stdout.write.bind(process.stdout),
-            stderrWrite: process.stderr.write.bind(process.stderr),
-        }
-        console.log = () => {}
-        console.warn = () => {}
-        console.debug = () => {}
-        console.error = () => {}
-        process.stdout.write = (() => true) as typeof process.stdout.write
-        process.stderr.write = (() => true) as typeof process.stderr.write
+        originals = captureConsoleHandlers()
+        applyConsoleHandlers({
+            log: () => {},
+            warn: () => {},
+            debug: () => {},
+            error: () => {},
+            stdoutWrite: NOOP_WRITE,
+            stderrWrite: NOOP_WRITE,
+        })
     }
     suppressionDepth++
 
@@ -188,12 +205,7 @@ export function suppressLogs(): () => void {
         restored = true
         suppressionDepth--
         if (suppressionDepth === 0 && originals) {
-            console.log = originals.log
-            console.warn = originals.warn
-            console.debug = originals.debug
-            console.error = originals.error
-            process.stdout.write = originals.stdoutWrite
-            process.stderr.write = originals.stderrWrite
+            applyConsoleHandlers(originals)
             originals = null
         }
     }
@@ -208,13 +220,43 @@ async function withSuppressedOutput<T>(fn: () => Promise<T>): Promise<T> {
     }
 }
 
+function unsuppressLogs(): () => void {
+    if (suppressionDepth === 0 || !originals) return () => {}
+
+    const overrides = captureConsoleHandlers()
+    applyConsoleHandlers(originals)
+
+    let restored = false
+    return () => {
+        if (restored) return
+        restored = true
+        applyConsoleHandlers(overrides)
+    }
+}
+
+function unsuppressedAuthUI(): AuthUI3 {
+    const ui = new ConsoleAuthUI()
+    const wrap = <A extends unknown[], R>(fn: (...args: A) => Promise<R>) =>
+        async (...args: A): Promise<R> => {
+            const restore = unsuppressLogs()
+            try {
+                return await fn(...args)
+            } finally {
+                restore()
+            }
+        }
+    return {
+        waitForDeviceApproval: wrap(ui.waitForDeviceApproval.bind(ui)),
+        waitForTwoFactorCode: wrap(ui.waitForTwoFactorCode.bind(ui)),
+        getPassword: wrap(ui.getPassword.bind(ui)),
+    }
+}
+
 export async function login(): Promise<KeeperVault> {
     const config = await loadKeeperConfig()
     const defaultUsername = config.last_login || config.user || ''
 
-    const host = defaultUsername
-        ? await resolveServer(defaultUsername, config)
-        : undefined
+    const host = defaultUsername ? await resolveServer(defaultUsername, config) : undefined
 
     if (defaultUsername && host) {
         const vault = await tryPersistentLogin(host, defaultUsername)
@@ -233,12 +275,16 @@ export async function login(): Promise<KeeperVault> {
         throw new KeeperSdkError('Username is required.', ResultCodes.MISSING_USERNAME)
     }
 
-    const resolvedHost = host || await resolveServer(username, config)
+    const resolvedHost = host || (await resolveServer(username, config))
     return await interactiveLogin(resolvedHost, username)
 }
 
 async function tryPersistentLogin(host: string, username: string): Promise<KeeperVault | null> {
-    const vault = new KeeperVault({ host, clientVersion: SdkDefaults.CLIENT_VERSION })
+    const vault = new KeeperVault({
+        host,
+        clientVersion: SdkDefaults.CLIENT_VERSION,
+        authUI: unsuppressedAuthUI(),
+    })
     try {
         await withSuppressedOutput(() => vault.resumeSession())
         logger.info(`Logging in to Keeper as ${username}`)
@@ -252,7 +298,11 @@ async function tryPersistentLogin(host: string, username: string): Promise<Keepe
 }
 
 async function interactiveLogin(host: string, username: string): Promise<KeeperVault> {
-    const vault = new KeeperVault({ host, clientVersion: SdkDefaults.CLIENT_VERSION })
+    const vault = new KeeperVault({
+        host,
+        clientVersion: SdkDefaults.CLIENT_VERSION,
+        authUI: unsuppressedAuthUI(),
+    })
 
     for (let attempt = 1; attempt <= AuthDefaults.MAX_LOGIN_ATTEMPTS; attempt++) {
         const password = await prompt('Password: ', true)

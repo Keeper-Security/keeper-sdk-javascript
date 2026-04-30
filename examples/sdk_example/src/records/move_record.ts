@@ -20,24 +20,24 @@ async function moveRecord() {
         const title = getRecordTitle(record)
         logger.info(`\nRecord: "${title}" (${record.uid})`)
 
-        const folders = vault.getSharedFolders()
+        const sharedFolders = vault.getSharedFolders()
         const userFolders = vault.getUserFolders()
 
-        if (folders.length > 0 || userFolders.length > 0) {
+        if (sharedFolders.length > 0 || userFolders.length > 0) {
             logger.info('\nAvailable folders:')
-            for (const uf of userFolders) {
-                const name = uf.data?.name || uf.uid
-                logger.info(`  [User]   ${uf.uid}  ${name}`)
+            for (const userFolder of userFolders) {
+                const name = userFolder.data?.name || userFolder.uid
+                logger.info(`  [User]   ${userFolder.uid}  ${name}`)
             }
-            for (const sf of folders) {
-                const name = sf.name || sf.data?.name || sf.uid
-                logger.info(`  [Shared] ${sf.uid}  ${name}`)
+            for (const sharedFolder of sharedFolders) {
+                const name = sharedFolder.name || sharedFolder.data?.name || sharedFolder.uid
+                logger.info(`  [Shared] ${sharedFolder.uid}  ${name}`)
             }
         }
 
-        const dstFolderUid = await prompt('\nEnter destination folder UID (empty for root): ')
+        const destinationFolderUid = await prompt('\nEnter destination folder UID (empty for root): ')
 
-        logger.info(`\nMoving "${title}" to ${dstFolderUid || '(root)'}...`)
+        logger.info(`\nMoving "${title}" to ${destinationFolderUid || '(root)'}...`)
 
         let result
         {
@@ -45,7 +45,7 @@ async function moveRecord() {
             try {
                 result = await vault.moveRecord({
                     recordUid: record.uid,
-                    dstFolderUid: dstFolderUid || '',
+                    dstFolderUid: destinationFolderUid || '',
                 })
             } finally {
                 restore()

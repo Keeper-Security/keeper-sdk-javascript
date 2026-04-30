@@ -6,4 +6,7 @@ export function runExample(fn: () => Promise<void>): void {
             logger.error('Error:', extractErrorMessage(err))
             process.exitCode = 1
         })
+        .finally(() => {
+            process.exit(process.exitCode ?? 0)
+        })
 }
