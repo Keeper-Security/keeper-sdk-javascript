@@ -1215,6 +1215,7 @@ const processKdFolderAccesses = async (
         }
         await storage.put({
             kind: 'keeper_drive_folder_access',
+            accessUid: createKdFolderAccessCompositeKey(accessTypeUid, folderUid),
             uid: folderUid,
             accessTypeUid,
             accessType: folderAccess.accessType,
