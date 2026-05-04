@@ -22,7 +22,10 @@ const DEFAULT_ALGORITHM: TotpAlgorithm = 'SHA1'
 const UINT32_MAX = 0x100000000
 
 function decodeBase32(input: string): Uint8Array {
-    const cleaned = input.replace(/=+$/g, '').replace(/\s+/g, '').toUpperCase()
+    const noWhitespace = input.replace(/\s+/g, '')
+    let endIndex = noWhitespace.length
+    while (endIndex > 0 && noWhitespace.charCodeAt(endIndex - 1) === 0x3d) endIndex--
+    const cleaned = noWhitespace.slice(0, endIndex).toUpperCase()
     const out: number[] = []
     let buffer = 0
     let bits = 0

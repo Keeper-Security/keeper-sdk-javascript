@@ -24,6 +24,10 @@ function formatRow(label: string, value: string): string {
     return `${label.padStart(LABEL_WIDTH)}: ${value}`
 }
 
+function writeSecretLine(label: string, value: string): void {
+    process.stdout.write(`${formatRow(label, value)}\n`)
+}
+
 function displayRecord(record: DRecord, unmask: boolean): void {
     logger.info(`UID: ${record.uid}`)
     logger.info(formatRow('Type', getRecordType(record)))
@@ -34,12 +38,16 @@ function displayRecord(record: DRecord, unmask: boolean): void {
     const url = getRecordUrl(record)
 
     if (loginVal) logger.info(formatRow('login', loginVal))
-    if (password) logger.info(formatRow('password', unmask ? password : MASKED_VALUE))
+    if (password) {
+        if (unmask) writeSecretLine('password', password)
+        else logger.info(formatRow('password', MASKED_VALUE))
+    }
     if (url) logger.info(formatRow('url', url))
 
     const totpUrl = getRecordTotpUrl(record)
     if (totpUrl) {
-        logger.info(formatRow('TOTP URL', unmask ? totpUrl : MASKED_VALUE))
+        if (unmask) writeSecretLine('TOTP URL', totpUrl)
+        else logger.info(formatRow('TOTP URL', MASKED_VALUE))
         const code = getTotpCode(totpUrl)
         if (code) {
             logger.info(formatRow('Two Factor Code', `${code.code}    valid for ${code.secondsRemaining} sec`))
