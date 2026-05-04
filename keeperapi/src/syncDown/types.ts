@@ -19,7 +19,7 @@ export type DKdFolder = {
 export type DKdFolderAccess = {
     kind: 'keeper_drive_folder_access'
     accessUid: string
-    uid: string
+    folderUid: string
     accessTypeUid: string
     accessType: Folder.AccessType
     accessRoleType: Folder.AccessRoleType
