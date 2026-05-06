@@ -151,7 +151,7 @@ export function teamViewTable(table: FormattedTeamViewTable): string {
                 const idCell = padRight(row.idLines[lineIndex] ?? '', idWidth)
                 cells.push(idCell)
             }
-            lines.push(cells.join('  ').replace(/\s+$/, ''))
+            lines.push(cells.join('  ').trimEnd())
         }
     }
     return lines.join('\n')
