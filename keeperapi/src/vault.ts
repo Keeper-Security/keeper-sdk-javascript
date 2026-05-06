@@ -290,9 +290,14 @@ export type Dependency = {
     parentUid: string
     uid: string
 }
+export type RemovedDependency = {
+    parentKind: VaultStorageKind
+    childKind: VaultStorageKind
+    childUid: string
+}
 export type DependencyMap = Record<string, Dependency>
 export type Dependencies = Record<string, Set<Dependency>>
-export type RemovedDependencies = Record<string, Set<string> | '*'>
+export type RemovedDependencies = Record<string, Set<string | RemovedDependency> | '*'>
 
 const addDependencies = (dependencies: Dependencies, parentUid: string, childUid: string, kind: VaultStorageKind) => {
     let children = dependencies[parentUid]
@@ -307,13 +312,17 @@ const addDependencies = (dependencies: Dependencies, parentUid: string, childUid
     })
 }
 
-const addRemovedDependencies = (dependencies: RemovedDependencies, parentUid: string, childUid: string) => {
+const addRemovedDependencies = (
+    dependencies: RemovedDependencies,
+    parentUid: string,
+    childUid: string | RemovedDependency
+) => {
     let children = dependencies[parentUid]
     if (children === '*') {
         return
     }
     if (!children) {
-        children = new Set<string>()
+        children = new Set<string | RemovedDependency>()
         dependencies[parentUid] = children
     }
     children.add(childUid)
@@ -1216,7 +1225,7 @@ const processKdFolderAccesses = async (
         await storage.put({
             kind: 'keeper_drive_folder_access',
             accessUid: createKdFolderAccessCompositeKey(accessTypeUid, folderUid),
-            uid: folderUid,
+            folderUid,
             accessTypeUid,
             accessType: folderAccess.accessType,
             accessRoleType: folderAccess.accessRoleType,
@@ -1425,7 +1434,11 @@ const processKdRemovedFolderRecords = (
         if (!folderRecord.recordUid || !folderRecord.folderUid) continue
         const recordUid = webSafe64FromBytes(folderRecord.recordUid)
         const folderUid = webSafe64FromBytes(folderRecord.folderUid)
-        addRemovedDependencies(removedDependencies, folderUid, recordUid)
+        addRemovedDependencies(removedDependencies, folderUid, {
+            parentKind: 'keeper_drive_folder',
+            childKind: 'record',
+            childUid: recordUid,
+        })
     }
 }
 
