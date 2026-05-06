@@ -23,6 +23,8 @@
         "folders:tree": "ts-node src/folders/tree.ts",
         "shared-folders:list-sf": "ts-node src/sharedFolders/list_sf.ts",
         "shared-folders:share-folder": "ts-node src/sharedFolders/share_folder.ts",
+        "teams:list": "ts-node src/teams/list_teams.ts",
+        "teams:view": "ts-node src/teams/view_team.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

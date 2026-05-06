@@ -24,6 +24,9 @@ export const ResultCodes = {
     PERSISTENT_LOGIN_FAILED: 'persistent_login_failed',
     SESSION_TOKEN_EXPIRED: 'session_token_expired',
     UNSUPPORTED_2FA_CHANNEL: 'unsupported_2fa_channel',
+    TEAM_REQUIRED: 'team_required',
+    TEAM_NOT_FOUND: 'team_not_found',
+    MULTIPLE_TEAM_MATCHES: 'multiple_team_matches',
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
