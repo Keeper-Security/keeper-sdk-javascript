@@ -34,13 +34,28 @@ import type {
 import {
     shareRecord as shareRecordOp,
     removeRecordShare as removeRecordShareOp,
+    getRecordShareInfo as getRecordShareInfoOp,
 } from '../sharing/Sharing'
 import type {
     ShareRecordInput,
     ShareRecordResult,
     RemoveShareInput,
     RemoveShareResult,
+    RecordShareInfo,
 } from '../sharing/Sharing'
+import type { ListFolderOptions, ListFolderResult } from '../folders/listFolder'
+import { FolderKind, VaultObjectKind } from '../folders/folderHelpers'
+import type { ChangeDirectoryResult, VaultFolderSession } from '../folders/changeDirectory'
+import type { AddFolderInput, AddFolderResult, MkdirOptions } from '../folders/addFolder'
+import type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from '../folders/updateFolder'
+import type { DeleteFolderResult, RmdirOptions } from '../folders/deleteFolder'
+import type { FolderTreeBuildOptions } from '../folders/folderTree'
+import type { GetFolderOptions, GetFolderResult } from '../folders/getFolder'
+import type { ListSharedFolderRow, ListSharedFoldersOptions } from '../sharedFolders/listSharedFolders'
+import type { ShareFolderInput, ShareFolderResult } from '../sharedFolders/shareFolder'
+import { FolderManager } from '../folders/FolderManager'
+import type { SharedFolderPermissionsInput } from '../folders/FolderManager'
+import { SharedFolderManager } from '../sharedFolders/SharedFolderManager'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
 
@@ -78,6 +93,9 @@ export class KeeperVault {
     private readonly log: ILogger
     private synced = false
     private batchDepth = 0
+    private readonly folderSession: VaultFolderSession = FolderManager.createSession()
+    private readonly folderManager: FolderManager
+    private readonly sharedFolderManager: SharedFolderManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -94,6 +112,18 @@ export class KeeperVault {
         this.storage = config?.storage || new InMemoryStorage()
         this.sessionManager = config?.sessionStorage || new SessionManager(this.config.configDir || undefined)
         this.authUI = config?.authUI || new ConsoleAuthUI()
+
+        const authProvider = () => this.getAuthOrThrow()
+        this.folderManager = new FolderManager(this.storage, this.folderSession, authProvider)
+        this.sharedFolderManager = new SharedFolderManager(this.storage, authProvider)
+    }
+
+    public getFolderManager(): FolderManager {
+        return this.folderManager
+    }
+
+    public getSharedFolderManager(): SharedFolderManager {
+        return this.sharedFolderManager
     }
 
     private async createAuth(options?: { useSessionResumption?: boolean }): Promise<Auth> {
@@ -104,14 +134,15 @@ export class KeeperVault {
             deviceName: baseDeviceConfig.deviceName || SdkDefaults.DEVICE_NAME,
         }
 
-        const sessionStorage: SessionStorage = options?.useSessionResumption === false
-            ? {
-                getCloneCode: async () => null,
-                saveCloneCode: (h, u, c) => this.sessionManager.saveCloneCode(h, u, c),
-                getSessionParameters: () => this.sessionManager.getSessionParameters(),
-                saveSessionParameters: (p) => this.sessionManager.saveSessionParameters(p),
-            }
-            : this.sessionManager
+        const sessionStorage: SessionStorage =
+            options?.useSessionResumption === false
+                ? {
+                      getCloneCode: async () => null,
+                      saveCloneCode: (h, u, c) => this.sessionManager.saveCloneCode(h, u, c),
+                      getSessionParameters: () => this.sessionManager.getSessionParameters(),
+                      saveSessionParameters: (p) => this.sessionManager.saveSessionParameters(p),
+                  }
+                : this.sessionManager
 
         return new Auth({
             host,
@@ -189,6 +220,7 @@ export class KeeperVault {
                 ResultCodes.NO_PREVIOUS_LOGIN
             )
         }
+
         this.sessionManager.setLastUsername(username)
 
         const deviceConfig = await this.sessionManager.getDeviceConfig(this.config.host)
@@ -267,15 +299,15 @@ export class KeeperVault {
     }
 
     public getRecordByUid(uid: string): DRecord | undefined {
-        return this.storage.getByUid<DRecord>('record', uid)
+        return this.storage.getByUid<DRecord>(VaultObjectKind.Record, uid)
     }
 
     public findRecord(uidOrTitle: string): DRecord | undefined {
         const byUid = this.getRecordByUid(uidOrTitle)
         if (byUid) return byUid
 
-        const needle = uidOrTitle.toLowerCase()
-        return this.getRecords().find((r) => getRecordTitle(r).toLowerCase() === needle)
+        const lowerUidOrTitle = uidOrTitle.toLowerCase()
+        return this.getRecords().find((record) => getRecordTitle(record).toLowerCase() === lowerUidOrTitle)
     }
 
     public findRecords(criteria: string): DRecord[] {
@@ -283,39 +315,119 @@ export class KeeperVault {
     }
 
     public getRecordsByVersion(version: number): DRecord[] {
-        return this.getRecords().filter((r) => r.version === version)
+        return this.getRecords().filter((record) => record.version === version)
     }
 
     public getRecordsByType(recordType: string): DRecord[] {
-        return this.getRecords().filter((r) => getRecordType(r) === recordType)
+        return this.getRecords().filter((record) => getRecordType(record) === recordType)
     }
 
     public getRecordMetadata(): DRecordMetadata[] {
-        return this.storage.getAll<DRecordMetadata>('metadata')
+        return this.storage.getAll<DRecordMetadata>(VaultObjectKind.Metadata)
     }
 
     public getRecordMetadataByUid(uid: string): DRecordMetadata | undefined {
-        return this.storage.getByUid<DRecordMetadata>('metadata', uid)
+        return this.storage.getByUid<DRecordMetadata>(VaultObjectKind.Metadata, uid)
     }
 
     public getSharedFolders(): DSharedFolder[] {
-        return this.storage.getAll<DSharedFolder>('shared_folder')
+        return this.storage.getAll<DSharedFolder>(FolderKind.SharedFolder)
     }
 
     public getTeams(): DTeam[] {
-        return this.storage.getAll<DTeam>('team')
+        return this.storage.getAll<DTeam>(VaultObjectKind.Team)
     }
 
     public getUserFolders(): DUserFolder[] {
-        return this.storage.getAll<DUserFolder>('user_folder')
+        return this.storage.getAll<DUserFolder>(FolderKind.UserFolder)
+    }
+
+    public async listFolder(options?: ListFolderOptions): Promise<ListFolderResult> {
+        return this.folderManager.listFolder(options ?? {})
+    }
+
+    public listSharedFolders(options?: ListSharedFoldersOptions): ListSharedFolderRow[] {
+        return this.sharedFolderManager.listSharedFolders(options ?? {})
+    }
+
+    public async changeDirectory(path: string): Promise<ChangeDirectoryResult> {
+        return this.folderManager.changeDirectory(path)
+    }
+
+    public getCurrentFolderUid(): string | null {
+        return this.folderManager.getCurrentFolderUid()
+    }
+
+    public getWorkingFolderDisplayName(): string {
+        return this.folderManager.getWorkingFolderDisplayName()
+    }
+
+    public async getFolder(uidOrName: string, options?: GetFolderOptions): Promise<GetFolderResult> {
+        return this.folderManager.getFolder(uidOrName, options ?? {})
+    }
+
+    public async addFolder(input: AddFolderInput): Promise<AddFolderResult> {
+        const result = await this.folderManager.addFolder(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async mkdir(
+        path: string,
+        options?: MkdirOptions
+    ): Promise<{ folderUid: string; success: boolean; message?: string }> {
+        const result = await this.folderManager.mkdir(path, options ?? {})
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async updateFolder(input: UpdateFolderInput): Promise<UpdateFolderResult> {
+        const result = await this.folderManager.updateFolder(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async renameFolder(folderPath: string, newName: string): Promise<RenameFolderResult> {
+        const result = await this.folderManager.renameFolder(folderPath, newName)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async updateSharedFolderPermissions(
+        sharedFolderUid: string,
+        permissions: SharedFolderPermissionsInput
+    ): Promise<UpdateFolderResult> {
+        const result = await this.folderManager.updateSharedFolderPermissions(sharedFolderUid, permissions)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async deleteFolder(
+        folderRefs: string[],
+        confirm?: (summary: string) => boolean | Promise<boolean>
+    ): Promise<DeleteFolderResult> {
+        const result = await this.folderManager.deleteFolder(folderRefs, confirm)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async rmdir(patterns: string[], options?: RmdirOptions): Promise<DeleteFolderResult> {
+        const result = await this.folderManager.rmdir(patterns, options ?? {})
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async tree(options?: FolderTreeBuildOptions): Promise<string> {
+        this.getAuthOrThrow()
+        return this.folderManager.folderTreeAscii(options ?? {})
     }
 
     public getSummary(): VaultSummary {
         return {
-            recordCount: this.storage.getCount('record'),
-            sharedFolderCount: this.storage.getCount('shared_folder'),
-            teamCount: this.storage.getCount('team'),
-            folderCount: this.storage.getCount('user_folder'),
+            recordCount: this.storage.getCount(VaultObjectKind.Record),
+            sharedFolderCount: this.storage.getCount(FolderKind.SharedFolder),
+            teamCount: this.storage.getCount(VaultObjectKind.Team),
+            folderCount: this.storage.getCount(FolderKind.UserFolder),
         }
     }
 
@@ -348,7 +460,11 @@ export class KeeperVault {
 
         const keyBytes = await this.storage.getKeyBytes(recordUid)
         if (!keyBytes) {
-            return { recordUid, success: false, status: VaultStatus.RecordKeyNotFound }
+            return {
+                recordUid,
+                success: false,
+                status: VaultStatus.RecordKeyNotFound,
+            }
         }
 
         const result = await updateRecordOp(auth, recordUid, data, record.revision, keyBytes)
@@ -373,8 +489,7 @@ export class KeeperVault {
     public async shareRecord(input: ShareRecordInput): Promise<ShareRecordResult> {
         const auth = this.getAuthOrThrow()
 
-        const record = this.getRecordByUid(input.recordUid)
-            || this.findRecord(input.recordUid)
+        const record = this.getRecordByUid(input.recordUid) || this.findRecord(input.recordUid)
         if (!record) {
             return {
                 recordUid: input.recordUid,
@@ -396,7 +511,10 @@ export class KeeperVault {
             }
         }
 
-        const result = await shareRecordOp(auth, keyBytes, { ...input, recordUid: record.uid })
+        const result = await shareRecordOp(auth, keyBytes, {
+            ...input,
+            recordUid: record.uid,
+        })
         if (result.success) await this.syncIfNeeded()
         return result
     }
@@ -404,6 +522,17 @@ export class KeeperVault {
     public async removeRecordShare(input: RemoveShareInput): Promise<RemoveShareResult> {
         const auth = this.getAuthOrThrow()
         const result = await removeRecordShareOp(auth, input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async getRecordShareInfo(recordUid: string): Promise<RecordShareInfo | null> {
+        const auth = this.getAuthOrThrow()
+        return getRecordShareInfoOp(auth, recordUid)
+    }
+
+    public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
+        const result = await this.sharedFolderManager.shareFolder(input)
         if (result.success) await this.syncIfNeeded()
         return result
     }
@@ -429,17 +558,22 @@ export class KeeperVault {
 
     public disconnect(): void {
         if (this.auth) {
-            try { this.auth.disconnect() } catch (err) {
+            try {
+                this.auth.disconnect()
+            } catch (err) {
                 this.log.debug('disconnect error:', extractErrorMessage(err))
             }
             this.auth = null
         }
         this.synced = false
+        this.folderSession.currentFolderUid = null
     }
 
     public async logout(): Promise<void> {
         if (this.auth) {
-            try { await this.auth.logout() } catch (err) {
+            try {
+                await this.auth.logout()
+            } catch (err) {
                 this.log.debug('logout error:', extractErrorMessage(err))
             }
         }

@@ -1,4 +1,5 @@
 import type { DRecord } from '@keeper-security/keeperapi'
+import { getTotpCode } from './Totp'
 
 enum FieldType {
     Login = 'login',
@@ -12,6 +13,10 @@ export enum RecordVersion {
     Legacy = 2,
     Typed = 3,
 }
+
+const TOTP_FIELD_TYPES = new Set<string>(['totp', 'oneTimeCode', 'otp'])
+const MASKED_VALUE = '********'
+const RECORD_SEPARATOR = '-'.repeat(50)
 
 type RecordField = {
     type: string
@@ -78,7 +83,7 @@ export function getRecordTitle(record: DRecord): string {
         try {
             const parsed = JSON.parse(record.data)
             return parsed.title || '(untitled)'
-        } catch (_err) {
+        } catch {
             return '(parse error)'
         }
     }
@@ -182,6 +187,16 @@ export function getRecordSummary(record: DRecord): RecordSummary {
     return { login, password, url, fields }
 }
 
+export function getRecordTotpUrl(record: DRecord): string | undefined {
+    for (const field of getRecordFields(record)) {
+        if (!TOTP_FIELD_TYPES.has(field.type)) continue
+        for (const v of field.value) {
+            if (typeof v === 'string' && v.trim()) return v.trim()
+        }
+    }
+    return undefined
+}
+
 export function getRecordPassword(record: DRecord): string | undefined {
     return getRecordSummary(record).password
 }
@@ -236,15 +251,13 @@ function collectRecordWords(record: DRecord): string[] {
 }
 
 export function formatRecord(record: DRecord, showDetails = false): string {
-    const title = getRecordTitle(record)
-    const type = getRecordType(record)
     const summary = getRecordSummary(record)
-    const lines: string[] = []
-
-    lines.push('-'.repeat(50))
-    lines.push(`Title: ${title}`)
-    lines.push(`Record UID: ${record.uid}`)
-    lines.push(`Record Type: ${type}`)
+    const lines: string[] = [
+        RECORD_SEPARATOR,
+        `Title: ${getRecordTitle(record)}`,
+        `Record UID: ${record.uid}`,
+        `Record Type: ${getRecordType(record)}`,
+    ]
 
     if (summary.login) lines.push(`Username: ${summary.login}`)
     if (summary.url) lines.push(`URL: ${summary.url}`)
@@ -252,9 +265,16 @@ export function formatRecord(record: DRecord, showDetails = false): string {
     if (showDetails) {
         for (const field of summary.fields) {
             if (field.type === FieldType.Login || field.type === FieldType.Url) continue
-            const label = field.label || field.type
-            const value = field.type === FieldType.Password ? '********' : field.value.join(', ')
-            lines.push(`${label}: ${value}`)
+            const isTotp = TOTP_FIELD_TYPES.has(field.type)
+            const isSensitive = field.type === FieldType.Password || isTotp
+            const label = isTotp ? 'TOTP URL' : field.label || field.type
+            lines.push(`${label}: ${isSensitive ? MASKED_VALUE : field.value.join(', ')}`)
+        }
+
+        const totpUrl = getRecordTotpUrl(record)
+        const code = totpUrl ? getTotpCode(totpUrl) : null
+        if (code) {
+            lines.push(`Two Factor Code: ${code.code}    valid for ${code.secondsRemaining} sec`)
         }
     }
 

@@ -8,6 +8,7 @@ import {
     BreachWatch,
     Automator,
     Enterprise,
+    Folder,
     GraphSync,
     PAM,
     Records,
@@ -452,6 +453,17 @@ export const recordsShareUpdateMessage = (
         'vault/records_share_update',
         Records.RecordShareUpdateRequest,
         Records.RecordShareUpdateResponse
+    )
+
+export const sharedFolderUpdateV3Message = (
+    data: Folder.ISharedFolderUpdateV3RequestV2
+): RestMessage<Folder.ISharedFolderUpdateV3RequestV2, Folder.ISharedFolderUpdateV3ResponseV2> =>
+    createMessage(
+        data,
+        'vault/shared_folder_update_v3',
+        Folder.SharedFolderUpdateV3RequestV2,
+        Folder.SharedFolderUpdateV3ResponseV2,
+        1
     )
 
 export const recordsRevertMessage = (

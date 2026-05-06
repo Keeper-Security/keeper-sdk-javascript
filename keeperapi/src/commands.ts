@@ -274,6 +274,55 @@ export const recordPreDeleteCommand = (
 export const recordDeleteCommand = (request: RecordDeleteRequest): RestCommand<RecordDeleteRequest, KeeperResponse> =>
     createCommand(request, 'delete')
 
+export interface DeleteObject {
+    object_uid: string
+    object_type: 'record' | 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    from_uid?: string
+    from_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    delete_resolution: 'unlink'
+}
+
+export type PreDeleteRequest = {
+    objects: DeleteObject[]
+}
+
+export const preDeleteCommand = (request: PreDeleteRequest): RestCommand<PreDeleteRequest, KeeperPreDeleteResponse> =>
+    createCommand(request, 'pre_delete')
+
+export type FolderAddRequest = {
+    folder_uid: string
+    folder_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    key: string
+    data: string
+    link: boolean
+    parent_uid?: string
+    shared_folder_uid?: string
+    name?: string
+    manage_users?: boolean
+    manage_records?: boolean
+    can_edit?: boolean
+    can_share?: boolean
+}
+
+export const folderAddCommand = (request: FolderAddRequest): RestCommand<FolderAddRequest, KeeperResponse> =>
+    createCommand(request, 'folder_add')
+
+export type FolderUpdateRequest = {
+    folder_uid: string
+    folder_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
+    data: string
+    parent_uid?: string
+    shared_folder_uid?: string
+    name?: string
+    manage_users?: boolean
+    manage_records?: boolean
+    can_edit?: boolean
+    can_share?: boolean
+}
+
+export const folderUpdateCommand = (request: FolderUpdateRequest): RestCommand<FolderUpdateRequest, KeeperResponse> =>
+    createCommand(request, 'folder_update')
+
 export type GetRecordHistoryRequest = {
     record_uid: string
     client_time: number

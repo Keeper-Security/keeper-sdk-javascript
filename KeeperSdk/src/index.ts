@@ -7,23 +7,37 @@ export type {
     ConfigurationServerConfig,
     ConfigurationDeviceConfig,
 } from './auth/SessionManager'
-export {
-    login,
-    cleanup,
-    prompt,
-    suppressLogs,
-    loadKeeperConfig,
-    resolveServer,
-} from './auth/ConsoleLogin'
+export { login, cleanup, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
 
 export {
-    Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger,
-    KeeperSdkError, isKeeperError, extractErrorMessage, extractResultCode,
-    SdkDefaults, AuthDefaults, ResultCodes, KEEPER_PUBLIC_HOSTS,
+    Logger,
+    ConsoleLogger,
+    LogLevel,
+    logger,
+    setLogger,
+    getLogger,
+    resetLogger,
+    KeeperSdkError,
+    isKeeperError,
+    extractErrorMessage,
+    extractResultCode,
+    SdkDefaults,
+    AuthDefaults,
+    ResultCodes,
+    KEEPER_PUBLIC_HOSTS,
+    isBoolean,
+    isString,
+    isNonEmptyString,
+    isNumber,
+    isObject,
+    anyIsBoolean,
+    EMAIL_PATTERN,
+    EMAIL_LIST_SEPARATOR_PATTERN,
+    isValidEmail,
 } from './utils'
-export type { ILogger } from './utils'
+export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
 
 export {
     searchRecords,
@@ -35,9 +49,12 @@ export {
     getRecordPassword,
     getRecordLogin,
     getRecordUrl,
+    getRecordTotpUrl,
     RecordVersion,
 } from './records/RecordUtils'
 export type { RecordSummary } from './records/RecordUtils'
+export { parseTotpUrl, getTotpCode } from './records/Totp'
+export type { TotpAlgorithm, TotpParams, TotpCode } from './records/Totp'
 export { addRecord, updateRecord, deleteRecord, getRecordHistory, moveRecord } from './records/RecordOperations'
 export type {
     PasswordRecordData,
@@ -53,23 +70,110 @@ export type {
     MoveRecordResult,
 } from './records/RecordOperations'
 
-export { shareRecord, removeRecordShare } from './sharing/Sharing'
+export { shareRecord, removeRecordShare, getRecordShareInfo } from './sharing/Sharing'
 export type {
     ShareRecordInput,
     ShareRecordResult,
     RemoveShareInput,
     RemoveShareResult,
+    RecordShareInfo,
+    RecordUserPermission,
+    RecordSharedFolderPermission,
 } from './sharing/Sharing'
 
 export { KeeperVault } from './vault/KeeperVault'
 export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
 
+export { getFolder, findFolder, GetFolderFormat } from './folders/getFolder'
+export type {
+    GetFolderOptions,
+    GetFolderResult,
+    GetFolderResultFolder,
+    GetFolderResultSharedFolder,
+    GetFolderFormatInput,
+    FoundFolder,
+} from './folders/getFolder'
+
 export {
-    Auth,
-    KeeperEnvironment,
-    syncDown,
-    Authentication,
-} from '@keeper-security/keeperapi'
+    FolderKind,
+    ParentFolderKind,
+    FolderObjectType,
+    FolderResultStatus,
+    DeleteResolution,
+    DeleteObjectType,
+    folderKindFromString,
+} from './folders/folderHelpers'
+export type { FolderKindOrLiteral } from './folders/folderHelpers'
+
+export { listFolder, findFolderUidByNameOrUid, listRootUserFolders } from './folders/listFolder'
+export type {
+    ListFolderOptions,
+    ListFolderResult,
+    ListFolderFolderSimple,
+    ListFolderRecordSimple,
+    ListFolderFolderDetail,
+    ListFolderRecordDetail,
+} from './folders/listFolder'
+
+export {
+    listSharedFolders,
+    formatSharedFoldersTable,
+    renderSharedFoldersAsciiTable,
+} from './sharedFolders/listSharedFolders'
+export type {
+    ListSharedFoldersOptions,
+    ListSharedFolderRow,
+    FormattedSharedFoldersTable,
+} from './sharedFolders/listSharedFolders'
+
+export { shareFolder, ShareFolderAction, ShareFolderUserResultStatus } from './sharedFolders/shareFolder'
+export type {
+    ShareFolderActionInput,
+    ShareFolderInput,
+    ShareFolderResult,
+    ShareFolderUserStatus,
+} from './sharedFolders/shareFolder'
+
+export {
+    changeDirectory,
+    createVaultFolderSession,
+    tryResolvePath,
+    resolveSingleFolder,
+    getWorkingFolderDisplayName,
+    findParentFolderUid,
+    splitPathComponents,
+} from './folders/changeDirectory'
+export type { VaultFolderSession, ChangeDirectoryResult, TryResolvePathResult } from './folders/changeDirectory'
+
+export { addFolder, mkdir } from './folders/addFolder'
+export type { AddFolderInput, AddFolderResult, MkdirOptions } from './folders/addFolder'
+
+export { updateFolder, renameFolder, updateSharedFolderPermissions } from './folders/updateFolder'
+export type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from './folders/updateFolder'
+
+export {
+    deleteFolder,
+    rmdir,
+    resolveRmdirPatternsToFolderUids,
+    buildFolderDeleteObject,
+} from './folders/deleteFolder'
+export type { DeleteFolderResult, RmdirOptions } from './folders/deleteFolder'
+
+export {
+    buildFolderTree,
+    renderFolderTreeAscii,
+    folderTreeAscii,
+    userPermissionToText,
+    recordPermissionToText,
+} from './folders/folderTree'
+export type { FolderTreeBuildOptions, FolderTreeNode, FolderTreeResult } from './folders/folderTree'
+
+export { FolderManager } from './folders/FolderManager'
+export type { AuthProvider, SharedFolderPermissionsInput } from './folders/FolderManager'
+
+export { SharedFolderManager } from './sharedFolders/SharedFolderManager'
+
+export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 
 export type {
     DRecord,

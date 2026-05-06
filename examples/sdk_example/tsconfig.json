@@ -3,6 +3,7 @@
         "module": "commonjs",
         "target": "es2018",
         "sourceMap": true,
+        "noEmit": true,
         "strict": false,
         "skipLibCheck": true,
         "esModuleInterop": true,
