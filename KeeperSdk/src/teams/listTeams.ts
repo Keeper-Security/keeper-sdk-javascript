@@ -2,8 +2,7 @@ import type { Auth } from '@keeper-security/keeperapi'
 import { isNumber, TOKEN_SEPARATOR_PATTERN } from '../utils'
 import {
     EnterpriseDataInclude,
-    getEnterpriseData,
-    getEnterpriseDisplayNames,
+    EnterpriseDataManager,
     getNodePath,
     type DecryptedRoleNames,
     type EnterpriseDisplayNames,
@@ -94,10 +93,11 @@ export async function listTeams(auth: Auth, options: ListTeamsOptions = {}): Pro
     const includes = includesForColumns(columns)
     const wantsDisplayNames = columns.includes(TeamColumn.Node) || columns.includes(TeamColumn.Roles)
 
+    const enterpriseData = new EnterpriseDataManager(auth)
     const emptyDisplayNames: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
     const [response, displayNames] = await Promise.all([
-        getEnterpriseData(auth, includes),
-        wantsDisplayNames ? getEnterpriseDisplayNames(auth) : Promise.resolve(emptyDisplayNames),
+        enterpriseData.getData(includes),
+        wantsDisplayNames ? enterpriseData.getDisplayNames() : Promise.resolve(emptyDisplayNames),
     ])
 
     const teams = response.teams || []

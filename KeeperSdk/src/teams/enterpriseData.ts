@@ -129,10 +129,53 @@ type LegacyEnterpriseDataRole = {
 
 type LegacyEnterpriseDataResponse = {
     tree_key?: string
-    /** See {@link LegacyEnterpriseKeyType}. */
     key_type_id?: LegacyEnterpriseKeyType
     nodes?: LegacyEnterpriseDataNode[]
     roles?: LegacyEnterpriseDataRole[]
+}
+
+export class EnterpriseDataManager {
+    private readonly auth: Auth
+    private displayNamesPromise: Promise<EnterpriseDisplayNames> | null = null
+    private readonly dataCache = new Map<string, Promise<GetEnterpriseDataResponse>>()
+
+    constructor(auth: Auth) {
+        this.auth = auth
+    }
+    
+    public async getData(includes: EnterpriseDataInclude[]): Promise<GetEnterpriseDataResponse> {
+        const key = cacheKeyForIncludes(includes)
+        let promise = this.dataCache.get(key)
+        if (!promise) {
+            promise = getEnterpriseData(this.auth, includes)
+            this.dataCache.set(key, promise)
+        }
+        return promise
+    }
+    
+    public async getDisplayNames(): Promise<EnterpriseDisplayNames> {
+        if (!this.displayNamesPromise) {
+            this.displayNamesPromise = getEnterpriseDisplayNames(this.auth)
+        }
+        return this.displayNamesPromise
+    }
+    
+    public clearCache(): void {
+        this.dataCache.clear()
+        this.displayNamesPromise = null
+    }
+    
+    public static getNodePath(
+        nodes: EnterpriseNode[],
+        nodeId: number,
+        options?: NodePathOptions
+    ): string {
+        return getNodePath(nodes, nodeId, options)
+    }
+}
+
+function cacheKeyForIncludes(includes: EnterpriseDataInclude[]): string {
+    return [...includes].sort().join(',')
 }
 
 export function getNodePath(

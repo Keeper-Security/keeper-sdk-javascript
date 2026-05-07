@@ -195,6 +195,7 @@ export type {
 
 export {
     EnterpriseDataInclude,
+    EnterpriseDataManager,
     getEnterpriseData,
     getEnterpriseDisplayNames,
     getNodePath,

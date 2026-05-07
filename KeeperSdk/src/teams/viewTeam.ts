@@ -2,8 +2,7 @@ import type { Auth } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
-    getEnterpriseData,
-    getEnterpriseDisplayNames,
+    EnterpriseDataManager,
     getNodePath,
     type EnterpriseDisplayNames,
     type EnterpriseRoleTeamLink,
@@ -60,9 +59,10 @@ export type FormattedTeamViewTable = {
 }
 
 export async function viewTeam(auth: Auth, identifier: string): Promise<TeamView> {
+    const enterpriseData = new EnterpriseDataManager(auth)
     const [response, displayNames] = await Promise.all([
-        getEnterpriseData(auth, VIEW_TEAM_INCLUDES),
-        getEnterpriseDisplayNames(auth),
+        enterpriseData.getData(VIEW_TEAM_INCLUDES),
+        enterpriseData.getDisplayNames(),
     ])
 
     const team = resolveTeam(response.teams || [], identifier)
