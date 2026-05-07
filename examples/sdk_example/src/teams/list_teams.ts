@@ -37,8 +37,7 @@ async function listTeamsExample() {
             return
         }
 
-        const verbose = isYes(await prompt('Show full UIDs/names without truncation? [y/N]: '))
-        const table = formatTeamsTable(rows, { verbose })
+        const table = formatTeamsTable(rows)
         logger.info('')
         logger.info(renderTeamsAsciiTable(table))
         logger.info('')

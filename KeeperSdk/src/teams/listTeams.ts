@@ -36,8 +36,6 @@ export const DEFAULT_TEAM_COLUMNS: readonly TeamColumn[] = [
 ]
 
 const NODE_PATH_SEPARATOR = '\\'
-const DEFAULT_COLUMN_WIDTH = 40
-const MIN_TRUNCATE_PREFIX = 3
 const MIN_ASCII_COL_WIDTH = 2
 const ALL_COLUMNS_WILDCARD = '*'
 
@@ -72,8 +70,6 @@ export type FormattedTeamsTable = {
 }
 
 export type FormatTeamsTableOptions = {
-    verbose?: boolean
-    columnWidth?: number
     columns?: ListTeamsOptions['columns']
 }
 
@@ -136,16 +132,12 @@ export function formatTeamsTable(
     rows: ListTeamRow[],
     options: FormatTeamsTableOptions = {}
 ): FormattedTeamsTable {
-    const { verbose = false, columnWidth = DEFAULT_COLUMN_WIDTH } = options
-    const maxWidth = verbose ? null : columnWidth
     const columns = resolveColumns(options.columns)
     const headers: string[] = ['#', 'Team UID', 'Name', ...columns.map((column) => HEADER_BY_COLUMN[column])]
 
     const outRows: string[][] = rows.map((row, rowIndex) => {
-        const uid = maxWidth == null ? row.team_uid : truncateText(row.team_uid, maxWidth)
-        const name = maxWidth == null ? row.name : truncateText(row.name, maxWidth)
-        const cells: string[] = [String(rowIndex + 1), uid, name]
-        for (const column of columns) cells.push(formatCell(row, column, maxWidth))
+        const cells: string[] = [String(rowIndex + 1), row.team_uid, row.name]
+        for (const column of columns) cells.push(formatCell(row, column))
         return cells
     })
 
@@ -356,20 +348,12 @@ function decorateRow(
     }
 }
 
-function truncateText(text: string, maxLength: number): string {
-    if (!text) return ''
-    if (text.length <= maxLength) return text
-    if (maxLength <= MIN_TRUNCATE_PREFIX) return text.slice(0, maxLength)
-    return `${text.slice(0, maxLength - MIN_TRUNCATE_PREFIX)}...`
-}
-
-function formatListCell(values: string[] | undefined, maxWidth: number | null): string {
+function formatListCell(values: string[] | undefined): string {
     if (!values || values.length === 0) return ''
-    if (maxWidth == null) return values.join('\n')
-    return values.map((value) => truncateText(value, maxWidth)).join('\n')
+    return values.join('\n')
 }
 
-function formatCell(row: ListTeamRow, column: TeamColumn, maxWidth: number | null): string {
+function formatCell(row: ListTeamRow, column: TeamColumn): string {
     switch (column) {
         case TeamColumn.Restricts:
             return row.restricts ?? ''
@@ -378,10 +362,10 @@ function formatCell(row: ListTeamRow, column: TeamColumn, maxWidth: number | nul
         case TeamColumn.UserCount:
             return row.user_count == null ? '' : String(row.user_count)
         case TeamColumn.Users:
-            return formatListCell(row.users, maxWidth)
+            return formatListCell(row.users)
         case TeamColumn.RoleCount:
             return row.role_count == null ? '' : String(row.role_count)
         case TeamColumn.Roles:
-            return formatListCell(row.roles, maxWidth)
+            return formatListCell(row.roles)
     }
 }

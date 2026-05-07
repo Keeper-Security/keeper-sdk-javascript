@@ -9,12 +9,11 @@ import {
     type Auth,
     type RestCommand,
 } from '@keeper-security/keeperapi'
-import {isNumber, isString } from '../utils'
+import { isNumber } from '../utils'
 
 const DEFAULT_NODE_PATH_SEPARATOR = '\\'
 const MAX_CONTINUATIONS = 50
 const LEGACY_ENTERPRISE_DATA_COMMAND = 'get_enterprise_data'
-const FALLBACK_CLIENT_VERSIONS = ['c16.4.0', 'c16.0.0']
 
 export enum EnterpriseDataInclude {
     Nodes = 'nodes',
@@ -135,8 +134,6 @@ type LegacyEnterpriseDataResponse = {
     nodes?: LegacyEnterpriseDataNode[]
     roles?: LegacyEnterpriseDataRole[]
 }
-
-type EndpointWithVersion = { clientVersion: string }
 
 export function getNodePath(
     nodes: EnterpriseNode[],
@@ -328,26 +325,16 @@ export async function getEnterpriseData(
 }
 
 async function fetchLegacyEnterpriseData(auth: Auth): Promise<LegacyEnterpriseDataResponse | null> {
-    const endpoint = (auth as unknown as { _endpoint?: EndpointWithVersion })._endpoint
-    if (!endpoint || !isString(endpoint.clientVersion)) return null
-
     const command: RestCommand<{ include: string[] }, LegacyEnterpriseDataResponse> = {
         baseRequest: { command: LEGACY_ENTERPRISE_DATA_COMMAND },
         request: { include: [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Roles] },
         authorization: {},
     }
 
-    const previousVersion = endpoint.clientVersion
-    for (const candidate of FALLBACK_CLIENT_VERSIONS) {
-        try {
-            endpoint.clientVersion = candidate
-            const response = await auth.executeRestCommand(command)
-            if (response && (response.tree_key || response.nodes || response.roles)) return response
-        } catch {
-         
-        } finally {
-            endpoint.clientVersion = previousVersion
-        }
+    try {
+        const response = await auth.executeRestCommand(command)
+        if (response && (response.tree_key || response.nodes || response.roles)) return response
+    } catch {
     }
     return null
 }
