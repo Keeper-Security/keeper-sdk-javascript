@@ -193,14 +193,9 @@ export type {
     FormatTeamsTableOptions,
 } from './teams/listTeams'
 
-export {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-    getEnterpriseData,
-    getEnterpriseDisplayNames,
-    getNodePath,
-} from './teams/enterpriseData'
+export { EnterpriseDataInclude, EnterpriseDataManager } from './teams/enterpriseData'
 export type {
+    EnterpriseDataManagerApi,
     GetEnterpriseDataResponse,
     EnterpriseTeamRecord,
     EnterpriseTeamUserLink,

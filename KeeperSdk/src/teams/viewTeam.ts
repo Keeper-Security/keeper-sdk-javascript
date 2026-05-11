@@ -3,8 +3,8 @@ import { KeeperSdkError, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
-    getNodePath,
     type EnterpriseDisplayNames,
+    type EnterpriseNode,
     type EnterpriseRoleTeamLink,
     type EnterpriseTeamRecord,
     type EnterpriseTeamUserLink,
@@ -179,7 +179,7 @@ function resolveTeam(teams: EnterpriseTeamRecord[], identifier: string): Enterpr
 }
 
 function resolveNodePath(
-    nodes: Parameters<typeof getNodePath>[0],
+    nodes: EnterpriseNode[],
     displayNames: EnterpriseDisplayNames,
     nodeId: number
 ): string {
@@ -189,7 +189,7 @@ function resolveNodePath(
             if (display) node.displayName = display
         }
     }
-    return getNodePath(nodes, nodeId, { omitRoot: false, separator: NODE_PATH_SEPARATOR })
+    return EnterpriseDataManager.getNodePath(nodes, nodeId, { omitRoot: false, separator: NODE_PATH_SEPARATOR })
 }
 
 function buildTeamUsers(

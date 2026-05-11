@@ -3,7 +3,6 @@ import { isNumber, TOKEN_SEPARATOR_PATTERN } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
-    getNodePath,
     type DecryptedRoleNames,
     type EnterpriseDisplayNames,
     type EnterpriseNode,
@@ -256,7 +255,10 @@ function applyDecryptedNodeNames(nodes: EnterpriseNode[], decrypted: Map<number,
 
 function buildNodePathLookup(nodes: EnterpriseNode[]): Map<number, string> {
     return new Map(
-        nodes.map((node) => [node.node_id, getNodePath(nodes, node.node_id, { separator: NODE_PATH_SEPARATOR })])
+        nodes.map((node) => [
+            node.node_id,
+            EnterpriseDataManager.getNodePath(nodes, node.node_id, { separator: NODE_PATH_SEPARATOR }),
+        ])
     )
 }
 
