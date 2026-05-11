@@ -11,19 +11,46 @@ export const AuthDefaults = {
     CODE_VALIDATION_DELAY_MS: 2_000,
 } as const
 
+export enum AuthErrorCode {
+    InvalidCredentials = 'invalid_credentials',
+    MissingUsername = 'missing_username',
+    MissingPassword = 'missing_password',
+    MaxAttemptsExceeded = 'max_attempts_exceeded',
+    UserCancelled = 'user_cancelled',
+    Unsupported2FAChannel = 'unsupported_2fa_channel',
+}
+
+export enum SessionErrorCode {
+    NotLoggedIn = 'not_logged_in',
+    DeviceNotRegistered = 'device_not_registered',
+    NoPreviousLogin = 'no_previous_login',
+    NoCloneCode = 'no_clone_code',
+    PersistentLoginFailed = 'persistent_login_failed',
+    SessionTokenExpired = 'session_token_expired',
+}
+
+export enum TeamErrorCode {
+    TeamRequired = 'team_required',
+    TeamNotFound = 'team_not_found',
+    MultipleTeamMatches = 'multiple_team_matches',
+}
+
 export const ResultCodes = {
-    INVALID_CREDENTIALS: 'invalid_credentials',
-    MISSING_USERNAME: 'missing_username',
-    MISSING_PASSWORD: 'missing_password',
-    MAX_ATTEMPTS_EXCEEDED: 'max_attempts_exceeded',
-    USER_CANCELLED: 'user_cancelled',
-    NOT_LOGGED_IN: 'not_logged_in',
-    DEVICE_NOT_REGISTERED: 'device_not_registered',
-    NO_PREVIOUS_LOGIN: 'no_previous_login',
-    NO_CLONE_CODE: 'no_clone_code',
-    PERSISTENT_LOGIN_FAILED: 'persistent_login_failed',
-    SESSION_TOKEN_EXPIRED: 'session_token_expired',
-    UNSUPPORTED_2FA_CHANNEL: 'unsupported_2fa_channel',
+    INVALID_CREDENTIALS: AuthErrorCode.InvalidCredentials,
+    MISSING_USERNAME: AuthErrorCode.MissingUsername,
+    MISSING_PASSWORD: AuthErrorCode.MissingPassword,
+    MAX_ATTEMPTS_EXCEEDED: AuthErrorCode.MaxAttemptsExceeded,
+    USER_CANCELLED: AuthErrorCode.UserCancelled,
+    UNSUPPORTED_2FA_CHANNEL: AuthErrorCode.Unsupported2FAChannel,
+    NOT_LOGGED_IN: SessionErrorCode.NotLoggedIn,
+    DEVICE_NOT_REGISTERED: SessionErrorCode.DeviceNotRegistered,
+    NO_PREVIOUS_LOGIN: SessionErrorCode.NoPreviousLogin,
+    NO_CLONE_CODE: SessionErrorCode.NoCloneCode,
+    PERSISTENT_LOGIN_FAILED: SessionErrorCode.PersistentLoginFailed,
+    SESSION_TOKEN_EXPIRED: SessionErrorCode.SessionTokenExpired,
+    TEAM_REQUIRED: TeamErrorCode.TeamRequired,
+    TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
+    MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

@@ -56,6 +56,9 @@ import type { ShareFolderInput, ShareFolderResult } from '../sharedFolders/share
 import { FolderManager } from '../folders/FolderManager'
 import type { SharedFolderPermissionsInput } from '../folders/FolderManager'
 import { SharedFolderManager } from '../sharedFolders/SharedFolderManager'
+import { TeamManager } from '../teams/TeamManager'
+import type { ListTeamRow, ListTeamsOptions } from '../teams/listTeams'
+import type { TeamView } from '../teams/viewTeam'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
 
@@ -96,6 +99,7 @@ export class KeeperVault {
     private readonly folderSession: VaultFolderSession = FolderManager.createSession()
     private readonly folderManager: FolderManager
     private readonly sharedFolderManager: SharedFolderManager
+    private readonly teamManager: TeamManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -116,6 +120,7 @@ export class KeeperVault {
         const authProvider = () => this.getAuthOrThrow()
         this.folderManager = new FolderManager(this.storage, this.folderSession, authProvider)
         this.sharedFolderManager = new SharedFolderManager(this.storage, authProvider)
+        this.teamManager = new TeamManager(authProvider)
     }
 
     public getFolderManager(): FolderManager {
@@ -124,6 +129,10 @@ export class KeeperVault {
 
     public getSharedFolderManager(): SharedFolderManager {
         return this.sharedFolderManager
+    }
+
+    public getTeamManager(): TeamManager {
+        return this.teamManager
     }
 
     private async createAuth(options?: { useSessionResumption?: boolean }): Promise<Auth> {
@@ -348,6 +357,14 @@ export class KeeperVault {
 
     public listSharedFolders(options?: ListSharedFoldersOptions): ListSharedFolderRow[] {
         return this.sharedFolderManager.listSharedFolders(options ?? {})
+    }
+
+    public async listTeams(options?: ListTeamsOptions): Promise<ListTeamRow[]> {
+        return this.teamManager.listTeams(options ?? {})
+    }
+
+    public async viewTeam(identifier: string): Promise<TeamView> {
+        return this.teamManager.viewTeam(identifier)
     }
 
     public async changeDirectory(path: string): Promise<ChangeDirectoryResult> {
