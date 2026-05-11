@@ -77,7 +77,12 @@ export class SyncDownResponseBuilder {
             removedSharedFolderFolderRecords: [],
             removedSharedFolders: [],
             removedUsers: [],
+            recordRotations: [],
         }
+    }
+
+    addRecordRotation(recordRotation: Vault.IRecordRotation) {
+        this.data.recordRotations?.push(recordRotation)
     }
 
     addUserFolderRecord(userFolderRecord: Vault.IUserFolderRecord) {

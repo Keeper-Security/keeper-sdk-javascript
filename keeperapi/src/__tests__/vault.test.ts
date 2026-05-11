@@ -2145,4 +2145,102 @@ describe('Sync Down', () => {
             it('does nothing when a linked record is deleted - shared linked record', async () => {})
         })
     })
+    describe('Record Rotations', () => {
+        it('saves the rotation data when record rotations are included in the sync', async () => {
+            const enabledRecordUid = platform.getRandomBytes(16)
+            const enabledRecordUidStr = webSafe64FromBytes(enabledRecordUid)
+            const enabledConfigurationUid = platform.getRandomBytes(16)
+            const enabledResourceUid = platform.getRandomBytes(16)
+            const enabledRevision = Date.now()
+            const enabledSchedule = '[{"type":"DAILY","time":"02:00:00","tz":"America/Los_Angeles","intervalCount":1}]'
+            syncDownResponseBuilder.addRecordRotation({
+                recordUid: enabledRecordUid,
+                revision: enabledRevision,
+                configurationUid: enabledConfigurationUid,
+                resourceUid: enabledResourceUid,
+                schedule: enabledSchedule,
+                lastRotation: 1700000000,
+                lastRotationStatus: Vault.RecordRotationStatus.RRST_SUCCESS,
+                disabled: false,
+            })
+            const disabledRecordUid = platform.getRandomBytes(16)
+            const disabledRecordUidStr = webSafe64FromBytes(disabledRecordUid)
+            const disabledConfigurationUid = platform.getRandomBytes(16)
+            const disabledResourceUid = platform.getRandomBytes(16)
+            const disabledRevision = Date.now()
+            const disabledSchedule =
+                '[{"type":"WEEKLY","weekday":"MONDAY","intervalCount":2,"time":"17:00:00","tz":"Europe/Amsterdam"},{"type":"WEEKLY","weekday":"FRIDAY","intervalCount":2,"time":"17:00:00","tz":"Europe/Amsterdam"}]'
+            syncDownResponseBuilder.addRecordRotation({
+                recordUid: disabledRecordUid,
+                revision: disabledRevision,
+                configurationUid: disabledConfigurationUid,
+                resourceUid: disabledResourceUid,
+                schedule: disabledSchedule,
+                lastRotation: 1700000001,
+                lastRotationStatus: Vault.RecordRotationStatus.RRST_FAILURE,
+                disabled: true,
+            })
+            mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+            await syncDown({ auth, storage })
+            expect(storage.put).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    kind: 'record_rotation',
+                    uid: enabledRecordUidStr,
+                    revision: enabledRevision,
+                    configurationUid: webSafe64FromBytes(enabledConfigurationUid),
+                    resourceUid: webSafe64FromBytes(enabledResourceUid),
+                    schedule: enabledSchedule,
+                    lastRotation: 1700000000,
+                    lastRotationStatus: Vault.RecordRotationStatus.RRST_SUCCESS,
+                    disabled: false,
+                })
+            )
+            expect(storage.put).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    kind: 'record_rotation',
+                    uid: disabledRecordUidStr,
+                    revision: disabledRevision,
+                    configurationUid: webSafe64FromBytes(disabledConfigurationUid),
+                    resourceUid: webSafe64FromBytes(disabledResourceUid),
+                    schedule: disabledSchedule,
+                    lastRotation: 1700000001,
+                    lastRotationStatus: Vault.RecordRotationStatus.RRST_FAILURE,
+                    disabled: true,
+                })
+            )
+        })
+        it('decrypts pwdComplexity when present', async () => {
+            const recordUid = platform.getRandomBytes(16)
+            const recordUidStr = webSafe64FromBytes(recordUid)
+            const recordKey = platform.getRandomBytes(32)
+            await platform.importKey(recordUidStr, recordKey)
+            const pwdComplexity = {
+                length: 20,
+                caps: 4,
+                lowercase: 4,
+                digits: 4,
+                special: 4,
+            }
+            const encryptedPwdComplexity = await platform.aesGcmEncrypt(
+                platform.stringToBytes(JSON.stringify(pwdComplexity)),
+                recordKey
+            )
+            syncDownResponseBuilder.addRecordRotation({
+                recordUid,
+                revision: Date.now(),
+                schedule: '[{"type":"CRON","cron":"0 0 0 1 1/3 ?","tz":"America/Los_Angeles"}]',
+                pwdComplexity: encryptedPwdComplexity,
+                disabled: false,
+            })
+            mockSyncDownCommand.mockResolvedValue(syncDownResponseBuilder.build())
+            await syncDown({ auth, storage })
+            expect(storage.put).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    kind: 'record_rotation',
+                    uid: recordUidStr,
+                    pwdComplexity,
+                })
+            )
+        })
+    })
 })
