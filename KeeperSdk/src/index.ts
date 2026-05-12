@@ -26,6 +26,9 @@ export {
     SdkDefaults,
     AuthDefaults,
     ResultCodes,
+    AuthErrorCode,
+    SessionErrorCode,
+    TeamErrorCode,
     KEEPER_PUBLIC_HOSTS,
     isBoolean,
     isString,
@@ -172,6 +175,52 @@ export { FolderManager } from './folders/FolderManager'
 export type { AuthProvider, SharedFolderPermissionsInput } from './folders/FolderManager'
 
 export { SharedFolderManager } from './sharedFolders/SharedFolderManager'
+
+export {
+    listTeams,
+    formatTeamsTable,
+    renderTeamsAsciiTable,
+    formatTeamRestricts,
+    TeamColumn,
+    SUPPORTED_TEAM_COLUMNS,
+    DEFAULT_TEAM_COLUMNS,
+} from './teams/listTeams'
+export type {
+    ListTeamsOptions,
+    ListTeamRow,
+    TeamColumnInput,
+    FormattedTeamsTable,
+    FormatTeamsTableOptions,
+} from './teams/listTeams'
+
+export { EnterpriseDataInclude, EnterpriseDataManager } from './teams/enterpriseData'
+export type {
+    EnterpriseDataManagerApi,
+    GetEnterpriseDataResponse,
+    EnterpriseTeamRecord,
+    EnterpriseTeamUserLink,
+    EnterpriseRoleUserLink,
+    EnterpriseRoleTeamLink,
+    EnterpriseUser,
+    EnterpriseRole,
+    EnterpriseNode,
+    DecryptedNodeNames,
+    DecryptedRoleNames,
+    EnterpriseDisplayNames,
+    NodePathOptions,
+} from './teams/enterpriseData'
+
+export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'
+export type {
+    TeamView,
+    TeamRoleInfo,
+    TeamUserInfo,
+    FormatTeamViewOptions,
+    FormattedTeamViewTable,
+    TeamViewTableRow,
+} from './teams/viewTeam'
+
+export { TeamManager } from './teams/TeamManager'
 
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 
