@@ -542,6 +542,16 @@ export const getEnterpriseDataForUserMessage = (
         Enterprise.EnterpriseDataResponse
     )
 
+export const getEnterpriseDataKeysMessage = (
+    data: Enterprise.IGetEnterpriseDataKeysRequest = {}
+): RestMessage<Enterprise.IGetEnterpriseDataKeysRequest, Enterprise.IGetEnterpriseDataKeysResponse> =>
+    createMessage(
+        data,
+        'enterprise/get_enterprise_data_keys',
+        Enterprise.GetEnterpriseDataKeysRequest,
+        Enterprise.GetEnterpriseDataKeysResponse
+    )
+
 export const setEnterpriseDataKeyMessage = (
     data: Enterprise.IEnterpriseUserDataKey
 ): RestInMessage<Enterprise.IEnterpriseUserDataKey> =>

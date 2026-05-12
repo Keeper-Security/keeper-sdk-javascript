@@ -33,6 +33,20 @@ export enum TeamErrorCode {
     TeamRequired = 'team_required',
     TeamNotFound = 'team_not_found',
     MultipleTeamMatches = 'multiple_team_matches',
+    NoTeamsToAdd = 'no_teams_to_add',
+    NoTeamsToUpdate = 'no_teams_to_update',
+    NoTeamsToDelete = 'no_teams_to_delete',
+    ParentNodeRequired = 'parent_node_required',
+    ParentNodeNotFound = 'parent_node_not_found',
+    MultipleParentNodeMatches = 'multiple_parent_node_matches',
+    EnterprisePublicKeyMissing = 'enterprise_public_key_missing',
+    EnterpriseTreeKeyUnavailable = 'enterprise_tree_key_unavailable',
+    DataKeyMissing = 'data_key_missing',
+    TeamAddFailed = 'team_add_failed',
+    TeamUpdateFailed = 'team_update_failed',
+    TeamDeleteFailed = 'team_delete_failed',
+    MultipleTeamRenameNotAllowed = 'multiple_team_rename_not_allowed',
+    QueuedTeamNotFound = 'queued_team_not_found',
 }
 
 export const ResultCodes = {
@@ -51,6 +65,20 @@ export const ResultCodes = {
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,
+    NO_TEAMS_TO_ADD: TeamErrorCode.NoTeamsToAdd,
+    NO_TEAMS_TO_UPDATE: TeamErrorCode.NoTeamsToUpdate,
+    NO_TEAMS_TO_DELETE: TeamErrorCode.NoTeamsToDelete,
+    PARENT_NODE_REQUIRED: TeamErrorCode.ParentNodeRequired,
+    PARENT_NODE_NOT_FOUND: TeamErrorCode.ParentNodeNotFound,
+    MULTIPLE_PARENT_NODE_MATCHES: TeamErrorCode.MultipleParentNodeMatches,
+    ENTERPRISE_PUBLIC_KEY_MISSING: TeamErrorCode.EnterprisePublicKeyMissing,
+    ENTERPRISE_TREE_KEY_UNAVAILABLE: TeamErrorCode.EnterpriseTreeKeyUnavailable,
+    DATA_KEY_MISSING: TeamErrorCode.DataKeyMissing,
+    TEAM_ADD_FAILED: TeamErrorCode.TeamAddFailed,
+    TEAM_UPDATE_FAILED: TeamErrorCode.TeamUpdateFailed,
+    TEAM_DELETE_FAILED: TeamErrorCode.TeamDeleteFailed,
+    MULTIPLE_TEAM_RENAME_NOT_ALLOWED: TeamErrorCode.MultipleTeamRenameNotAllowed,
+    QUEUED_TEAM_NOT_FOUND: TeamErrorCode.QueuedTeamNotFound,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
