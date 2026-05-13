@@ -93,7 +93,14 @@ export async function updateTeams(auth: Auth, input: UpdateTeamInput): Promise<U
 
     let overrideNodeId: number | null = null
     if (parentIdentifier !== undefined && parentIdentifier !== null && parentIdentifier !== '') {
-        overrideNodeId = resolveParentNode(nodes, parentIdentifier).node_id
+        try {
+            overrideNodeId = resolveParentNode(nodes, parentIdentifier).node_id
+        } catch (err) {
+            throw new KeeperSdkError(
+                extractErrorMessage(err),
+                ResultCodes.PARENT_NODE_NOT_FOUND
+            )
+        }
     }
 
     const items: UpdateTeamItemResult[] = []

@@ -120,12 +120,6 @@ export type EnterpriseDisplayNames = {
 
 type LongLike = number | { toNumber: () => number; toString: () => string } | undefined | null
 
-type AuthKeyMaterial = {
-    dataKey?: Uint8Array
-    privateKey?: Uint8Array
-    eccPrivateKey?: Uint8Array
-}
-
 export interface EnterpriseDataManagerApi {
     getData(includes: EnterpriseDataInclude[]): Promise<GetEnterpriseDataResponse>
     getDisplayNames(): Promise<EnterpriseDisplayNames>
@@ -332,25 +326,24 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         if (!treeKey.treeKey) return null
         const encrypted = normal64Bytes(treeKey.treeKey)
         const keyType = (treeKey.keyTypeId ?? 0) as Enterprise.BackupKeyType
-        const authKeys = this.auth as unknown as AuthKeyMaterial
 
         try {
             switch (keyType) {
                 case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY: {
-                    if (!authKeys.dataKey) return null
-                    return await platform.aesCbcDecrypt(encrypted, authKeys.dataKey, true)
+                    if (!this.auth.dataKey) return null
+                    return await platform.aesCbcDecrypt(encrypted, this.auth.dataKey, true)
                 }
                 case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY_GCM: {
-                    if (!authKeys.dataKey) return null
-                    return await platform.aesGcmDecrypt(encrypted, authKeys.dataKey)
+                    if (!this.auth.dataKey) return null
+                    return await platform.aesGcmDecrypt(encrypted, this.auth.dataKey)
                 }
                 case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY: {
-                    if (!authKeys.privateKey) return null
-                    return platform.privateDecrypt(encrypted, authKeys.privateKey)
+                    if (!this.auth.privateKey) return null
+                    return platform.privateDecrypt(encrypted, this.auth.privateKey)
                 }
                 case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC: {
-                    if (!authKeys.eccPrivateKey) return null
-                    return await platform.privateDecryptEC(encrypted, authKeys.eccPrivateKey)
+                    if (!this.auth.eccPrivateKey) return null
+                    return await platform.privateDecryptEC(encrypted, this.auth.eccPrivateKey)
                 }
                 default:
                     logger.debug(`Unsupported tree-key keyTypeId=${keyType}`)

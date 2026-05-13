@@ -98,10 +98,6 @@ type ResolvedRequest =
           queued: EnterpriseQueuedTeamRecord
       }
 
-type AuthInternals = {
-    dataKey?: Uint8Array
-}
-
 type TeamAddRequestPayload = {
     team_uid: string
     team_name: string
@@ -230,7 +226,7 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
             ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
         )
     }
-    const dataKey = (auth as unknown as AuthInternals).dataKey
+    const dataKey = auth.dataKey
     if (!dataKey) {
         throw new KeeperSdkError(
             'Data key not available. Ensure you are logged in.',
