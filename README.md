@@ -1,49 +1,33 @@
 ![Keeper Javascript SDK Header](https://github.com/user-attachments/assets/45eba9d8-9afc-49e6-b05b-fd1600bd495a)
 
-### Keeper Javascript SDK
+# Keeper Javascript SDK
 
-This Javascript SDK allows you to interact with the Keeper backend API service - login, sync Vault, manage data etc.
+This repository contains npm packages for interacting with the Keeper backend from JavaScript or TypeScript.
 
-This SDK can be used from Node or from the browser
+[`@keeper-security/keeper-sdk-javascript`](KeeperSdk) has an easy-to-use API with high-level helpers for auth, records, folders, sharing, and teams, plus runnable examples.
 
-[![NPM](https://img.shields.io/npm/v/@keeper-security/keeperapi?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/@keeper-security/keeperapi)
+[`@keeper-security/keeperapi`](keeperapi) is the underlying core API client. Direct use is not recommended.
 
-Usage:
+[![keeper-sdk-javascript on npm](https://img.shields.io/npm/v/@keeper-security/keeper-sdk-javascript?label=%40keeper-security%2Fkeeper-sdk-javascript&style=flat-square&logo=npm&logoColor=white)](https://www.npmjs.com/package/@keeper-security/keeper-sdk-javascript)
+[![keeperapi on npm](https://img.shields.io/npm/v/@keeper-security/keeperapi?label=%40keeper-security%2Fkeeperapi&style=flat-square&logo=npm&logoColor=white)](https://www.npmjs.com/package/@keeper-security/keeperapi)
 
-```bash
-npm install keeperapi
+## Repository layout
+
+```
+KeeperSdk/         # JS SDK (@keeper-security/keeper-sdk-javascript)
+keeperapi/         # core API client (@keeper-security/keeperapi)
+examples/
+└── sdk_example/   # runnable scripts demonstrating the SDK
 ```
 
-```typescript
-try {
-  let auth = new Auth({
-    host: KeeperEnvironment.DEV,
-  });
-  await auth.login(username, password);
-  console.log("login successful");
-  let vault = new Vault(auth);
-  await vault.syncDown();
-  vault.records.forEach((x) => console.log(JSON.stringify(x)));
-} catch (e) {
-  console.log(e);
-}
-```
+See each package's README for installation and usage:
 
-For local development,
+- [`KeeperSdk/README.md`](KeeperSdk/README.md)
+- [`keeperapi/README.md`](keeperapi/README.md)
 
-```bash
-npm run build
-```
+## Contributing
 
-from "keeperapi" folder, then
-
-```bash
-npm link ../../keeperapi
-```
-
-from your client folder
-
-To ignore certain commits in git blame (like formatting commits), run this command:
+To ignore formatting-only commits in `git blame`, run:
 
 ```bash
 git config blame.ignoreRevsFile .git-blame-ignore-revs
