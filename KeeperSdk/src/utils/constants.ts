@@ -47,6 +47,7 @@ export enum TeamErrorCode {
     TeamDeleteFailed = 'team_delete_failed',
     MultipleTeamRenameNotAllowed = 'multiple_team_rename_not_allowed',
     QueuedTeamNotFound = 'queued_team_not_found',
+    TeamNameTooLong = 'team_name_too_long',
 }
 
 export const ResultCodes = {
@@ -79,6 +80,7 @@ export const ResultCodes = {
     TEAM_DELETE_FAILED: TeamErrorCode.TeamDeleteFailed,
     MULTIPLE_TEAM_RENAME_NOT_ALLOWED: TeamErrorCode.MultipleTeamRenameNotAllowed,
     QUEUED_TEAM_NOT_FOUND: TeamErrorCode.QueuedTeamNotFound,
+    TEAM_NAME_TOO_LONG: TeamErrorCode.TeamNameTooLong,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

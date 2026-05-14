@@ -3,8 +3,8 @@ import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
-    type EnterpriseTeamRecord,
 } from './enterpriseData'
+import { resolveExistingTeams, TEAM_TABLE_HEADERS } from './teamUtils'
 
 const TEAM_DELETE_COMMAND = 'team_delete'
 const DELETE_TEAM_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Teams]
@@ -75,52 +75,6 @@ export async function deleteTeams(auth: Auth, input: DeleteTeamInput): Promise<D
     return finalizeResult(items)
 }
 
-function resolveExistingTeams(
-    teams: EnterpriseTeamRecord[],
-    identifiers: string[]
-): EnterpriseTeamRecord[] {
-    const byUid = new Map<string, EnterpriseTeamRecord>()
-    const byLowerName = new Map<string, EnterpriseTeamRecord[]>()
-    for (const team of teams) {
-        if (team.team_uid) byUid.set(team.team_uid, team)
-        const key = (team.name || '').trim().toLowerCase()
-        if (!key) continue
-        const existing = byLowerName.get(key)
-        if (existing) existing.push(team)
-        else byLowerName.set(key, [team])
-    }
-
-    const found = new Map<string, EnterpriseTeamRecord>()
-    const missing: string[] = []
-    for (const identifier of identifiers) {
-        const uidMatch = byUid.get(identifier)
-        if (uidMatch) {
-            found.set(uidMatch.team_uid, uidMatch)
-            continue
-        }
-        const nameMatches = byLowerName.get(identifier.toLowerCase())
-        if (!nameMatches || nameMatches.length === 0) {
-            missing.push(identifier)
-            continue
-        }
-        if (nameMatches.length > 1) {
-            throw new KeeperSdkError(
-                `Team name "${identifier}" is not unique. Use Team UID.`,
-                ResultCodes.MULTIPLE_TEAM_MATCHES
-            )
-        }
-        found.set(nameMatches[0].team_uid, nameMatches[0])
-    }
-
-    if (missing.length > 0) {
-        throw new KeeperSdkError(
-            `Team name(s) "${missing.join(', ')}" could not be resolved.`,
-            ResultCodes.TEAM_NOT_FOUND
-        )
-    }
-    return Array.from(found.values())
-}
-
 async function sendTeamDelete(auth: Auth, teamUid: string): Promise<void> {
     const command: RestCommand<TeamDeleteRequestPayload, KeeperResponse> = {
         baseRequest: { command: TEAM_DELETE_COMMAND },
@@ -164,8 +118,6 @@ export type FormattedDeleteTeamTable = {
     summary: string
 }
 
-const DELETE_TEAM_HEADERS = ['#', 'Status', 'Team Name', 'Team UID', 'Node ID', 'Detail']
-
 export function formatDeleteTeamResult(result: DeleteTeamResult): FormattedDeleteTeamTable {
     const rows = result.items.map((item, index) => [
         String(index + 1),
@@ -177,7 +129,7 @@ export function formatDeleteTeamResult(result: DeleteTeamResult): FormattedDelet
     ])
 
     return {
-        headers: [...DELETE_TEAM_HEADERS],
+        headers: [...TEAM_TABLE_HEADERS],
         rows,
         summary: `Deleted: ${result.deleted}  Failed: ${result.failed}`,
     }
