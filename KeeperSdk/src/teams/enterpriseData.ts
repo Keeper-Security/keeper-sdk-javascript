@@ -23,6 +23,8 @@ export enum EnterpriseDataInclude {
     Teams = 'teams',
     TeamUsers = 'team_users',
     QueuedTeams = 'queued_teams',
+    QueuedTeamUsers = 'queued_team_users',
+    UserAliases = 'user_aliases',
 }
 
 const INCLUDE_TO_ENTITY: Record<EnterpriseDataInclude, Enterprise.EnterpriseDataEntity> = {
@@ -34,6 +36,8 @@ const INCLUDE_TO_ENTITY: Record<EnterpriseDataInclude, Enterprise.EnterpriseData
     [EnterpriseDataInclude.Teams]: Enterprise.EnterpriseDataEntity.TEAMS,
     [EnterpriseDataInclude.TeamUsers]: Enterprise.EnterpriseDataEntity.TEAM_USERS,
     [EnterpriseDataInclude.QueuedTeams]: Enterprise.EnterpriseDataEntity.QUEUED_TEAMS,
+    [EnterpriseDataInclude.QueuedTeamUsers]: Enterprise.EnterpriseDataEntity.QUEUED_TEAM_USERS,
+    [EnterpriseDataInclude.UserAliases]: Enterprise.EnterpriseDataEntity.USER_ALIASES,
 }
 
 export type EnterpriseNode = {
@@ -51,6 +55,9 @@ export type EnterpriseUser = {
     encrypted_data?: string
     full_name?: string
     job_title?: string
+    lock?: number
+    account_share_expiration?: number
+    tfa_enabled?: boolean
 }
 
 export type EnterpriseRole = {
@@ -94,6 +101,16 @@ export type EnterpriseQueuedTeamRecord = {
     encrypted_data?: string
 }
 
+export type EnterpriseQueuedTeamUserLink = {
+    team_uid: string
+    enterprise_user_id: number
+}
+
+export type EnterpriseUserAliasLink = {
+    enterprise_user_id: number
+    username: string
+}
+
 export type GetEnterpriseDataResponse = {
     enterprise_name?: string
     nodes?: EnterpriseNode[]
@@ -104,6 +121,8 @@ export type GetEnterpriseDataResponse = {
     role_users?: EnterpriseRoleUserLink[]
     role_teams?: EnterpriseRoleTeamLink[]
     queued_teams?: EnterpriseQueuedTeamRecord[]
+    queued_team_users?: EnterpriseQueuedTeamUserLink[]
+    user_aliases?: EnterpriseUserAliasLink[]
 }
 
 export type NodePathOptions = {
@@ -412,6 +431,11 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         if (message.encryptedData) out.encrypted_data = message.encryptedData
         if (message.fullName) out.full_name = message.fullName
         if (message.jobTitle) out.job_title = message.jobTitle
+        if (message.lock != null) out.lock = message.lock
+        if (message.accountShareExpiration != null) {
+            out.account_share_expiration = EnterpriseDataManager.toNumber(message.accountShareExpiration)
+        }
+        if (message.tfaEnabled != null) out.tfa_enabled = message.tfaEnabled
         return out
     }
 
@@ -463,6 +487,25 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         }
     }
 
+    private static decodeQueuedTeamChunk(bytes: Uint8Array): EnterpriseQueuedTeamRecord {
+        const message = Enterprise.QueuedTeam.decode(bytes)
+        const out: EnterpriseQueuedTeamRecord = {
+            team_uid: EnterpriseDataManager.toUid(message.teamUid),
+            name: message.name || '',
+            node_id: EnterpriseDataManager.toNumber(message.nodeId),
+        }
+        if (message.encryptedData) out.encrypted_data = message.encryptedData
+        return out
+    }
+
+    private static decodeUserAliasChunk(bytes: Uint8Array): EnterpriseUserAliasLink {
+        const message = Enterprise.UserAlias.decode(bytes)
+        return {
+            enterprise_user_id: EnterpriseDataManager.toNumber(message.enterpriseUserId),
+            username: message.username || '',
+        }
+    }
+
     private static applyChunk(
         chunk: Enterprise.IEnterpriseData,
         target: GetEnterpriseDataResponse
@@ -504,6 +547,34 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             case Enterprise.EnterpriseDataEntity.ROLE_TEAMS:
                 target.role_teams = (target.role_teams || []).concat(
                     EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeRoleTeamChunk)
+                )
+                break
+            case Enterprise.EnterpriseDataEntity.QUEUED_TEAMS:
+                target.queued_teams = (target.queued_teams || []).concat(
+                    EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeQueuedTeamChunk)
+                )
+                break
+            case Enterprise.EnterpriseDataEntity.QUEUED_TEAM_USERS: {
+                const flatLinks: EnterpriseQueuedTeamUserLink[] = []
+                for (const bytes of data) {
+                    try {
+                        const message = Enterprise.QueuedTeamUser.decode(bytes)
+                        const teamUid = EnterpriseDataManager.toUid(message.teamUid)
+                        if (!teamUid) continue
+                        for (const userId of message.users || []) {
+                            flatLinks.push({
+                                team_uid: teamUid,
+                                enterprise_user_id: EnterpriseDataManager.toNumber(userId),
+                            })
+                        }
+                    } catch {}
+                }
+                target.queued_team_users = (target.queued_team_users || []).concat(flatLinks)
+                break
+            }
+            case Enterprise.EnterpriseDataEntity.USER_ALIASES:
+                target.user_aliases = (target.user_aliases || []).concat(
+                    EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeUserAliasChunk)
                 )
                 break
             default:

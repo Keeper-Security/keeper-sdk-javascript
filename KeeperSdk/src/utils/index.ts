@@ -5,6 +5,7 @@ export {
     AuthErrorCode,
     SessionErrorCode,
     TeamErrorCode,
+    UserErrorCode,
     KEEPER_PUBLIC_HOSTS,
 } from './constants'
 export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger } from './Logger'
