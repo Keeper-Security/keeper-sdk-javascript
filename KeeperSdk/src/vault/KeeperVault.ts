@@ -59,6 +59,9 @@ import { SharedFolderManager } from '../sharedFolders/SharedFolderManager'
 import { TeamManager } from '../teams/TeamManager'
 import type { ListTeamRow, ListTeamsOptions } from '../teams/listTeams'
 import type { TeamView } from '../teams/viewTeam'
+import type { AddTeamInput, AddTeamResult } from '../teams/addTeam'
+import type { UpdateTeamInput, UpdateTeamResult } from '../teams/updateTeam'
+import type { DeleteTeamInput, DeleteTeamResult } from '../teams/deleteTeam'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
 
@@ -365,6 +368,24 @@ export class KeeperVault {
 
     public async viewTeam(identifier: string): Promise<TeamView> {
         return this.teamManager.viewTeam(identifier)
+    }
+
+    public async addTeams(input: AddTeamInput): Promise<AddTeamResult> {
+        const result = await this.teamManager.addTeams(input)
+        if (result.created > 0) await this.syncIfNeeded()
+        return result
+    }
+
+    public async updateTeams(input: UpdateTeamInput): Promise<UpdateTeamResult> {
+        const result = await this.teamManager.updateTeams(input)
+        if (result.updated > 0) await this.syncIfNeeded()
+        return result
+    }
+
+    public async deleteTeams(input: DeleteTeamInput): Promise<DeleteTeamResult> {
+        const result = await this.teamManager.deleteTeams(input)
+        if (result.deleted > 0) await this.syncIfNeeded()
+        return result
     }
 
     public async changeDirectory(path: string): Promise<ChangeDirectoryResult> {

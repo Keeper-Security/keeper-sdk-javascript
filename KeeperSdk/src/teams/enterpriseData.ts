@@ -1,19 +1,18 @@
 import {
-    decryptFromStorage,
     decryptObjectFromStorage,
     Enterprise,
     getEnterpriseDataForUserMessage,
+    getEnterpriseDataKeysMessage,
     normal64Bytes,
     platform,
     webSafe64FromBytes,
     type Auth,
-    type RestCommand,
 } from '@keeper-security/keeperapi'
-import { isNumber } from '../utils'
+import { extractErrorMessage, isNumber, logger } from '../utils'
 
 const DEFAULT_NODE_PATH_SEPARATOR = '\\'
 const MAX_CONTINUATIONS = 50
-const LEGACY_ENTERPRISE_DATA_COMMAND = 'get_enterprise_data'
+
 
 export enum EnterpriseDataInclude {
     Nodes = 'nodes',
@@ -23,11 +22,7 @@ export enum EnterpriseDataInclude {
     RoleTeams = 'role_teams',
     Teams = 'teams',
     TeamUsers = 'team_users',
-}
-
-enum LegacyEnterpriseKeyType {
-    EncryptedByDataKey = 1,
-    EncryptedByPublicKey = 2,
+    QueuedTeams = 'queued_teams',
 }
 
 const INCLUDE_TO_ENTITY: Record<EnterpriseDataInclude, Enterprise.EnterpriseDataEntity> = {
@@ -38,6 +33,7 @@ const INCLUDE_TO_ENTITY: Record<EnterpriseDataInclude, Enterprise.EnterpriseData
     [EnterpriseDataInclude.RoleTeams]: Enterprise.EnterpriseDataEntity.ROLE_TEAMS,
     [EnterpriseDataInclude.Teams]: Enterprise.EnterpriseDataEntity.TEAMS,
     [EnterpriseDataInclude.TeamUsers]: Enterprise.EnterpriseDataEntity.TEAM_USERS,
+    [EnterpriseDataInclude.QueuedTeams]: Enterprise.EnterpriseDataEntity.QUEUED_TEAMS,
 }
 
 export type EnterpriseNode = {
@@ -91,6 +87,13 @@ export type EnterpriseRoleTeamLink = {
     team_uid: string
 }
 
+export type EnterpriseQueuedTeamRecord = {
+    team_uid: string
+    name: string
+    node_id: number
+    encrypted_data?: string
+}
+
 export type GetEnterpriseDataResponse = {
     enterprise_name?: string
     nodes?: EnterpriseNode[]
@@ -100,6 +103,7 @@ export type GetEnterpriseDataResponse = {
     team_users?: EnterpriseTeamUserLink[]
     role_users?: EnterpriseRoleUserLink[]
     role_teams?: EnterpriseRoleTeamLink[]
+    queued_teams?: EnterpriseQueuedTeamRecord[]
 }
 
 export type NodePathOptions = {
@@ -116,33 +120,18 @@ export type EnterpriseDisplayNames = {
 
 type LongLike = number | { toNumber: () => number; toString: () => string } | undefined | null
 
-type LegacyEnterpriseDataNode = {
-    node_id: number
-    parent_id?: number
-    encrypted_data?: string
-}
-
-type LegacyEnterpriseDataRole = {
-    role_id: number
-    encrypted_data?: string
-}
-
-type LegacyEnterpriseDataResponse = {
-    tree_key?: string
-    key_type_id?: LegacyEnterpriseKeyType
-    nodes?: LegacyEnterpriseDataNode[]
-    roles?: LegacyEnterpriseDataRole[]
-}
-
 export interface EnterpriseDataManagerApi {
     getData(includes: EnterpriseDataInclude[]): Promise<GetEnterpriseDataResponse>
     getDisplayNames(): Promise<EnterpriseDisplayNames>
+    getTreeKey(): Promise<Uint8Array | null>
+    decryptNodeNames(nodes: EnterpriseNode[]): Promise<number>
     clearCache(): void
 }
 
 export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     private readonly auth: Auth
     private displayNamesPromise: Promise<EnterpriseDisplayNames> | null = null
+    private treeKeyPromise: Promise<Uint8Array | null> | null = null
     private readonly dataCache = new Map<string, Promise<GetEnterpriseDataResponse>>()
 
     constructor(auth: Auth) {
@@ -166,9 +155,52 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         return this.displayNamesPromise
     }
 
+    public async decryptNodeNames(nodes: EnterpriseNode[]): Promise<number> {
+        if (!nodes || nodes.length === 0) return 0
+
+        const needsDecrypt = nodes.some(
+            (node) => !!node.encrypted_data && !(node.displayName || '').trim()
+        )
+        if (!needsDecrypt) return 0
+
+        const displayNames = await this.getDisplayNames()
+        if (displayNames.nodes.size > 0) {
+            for (const node of nodes) {
+                if ((node.displayName || '').trim()) continue
+                const cached = displayNames.nodes.get(node.node_id)
+                if (cached) node.displayName = cached
+            }
+        }
+
+        const treeKey = await this.getTreeKey()
+        if (!treeKey) {
+            logger.warn(
+                'Enterprise node names unavailable: could not decrypt enterprise tree key. ' +
+                    'Use numeric node IDs (visible in error listings).'
+            )
+            return 0
+        }
+
+        let decryptedCount = 0
+        for (const node of nodes) {
+            if ((node.displayName || '').trim()) continue
+            if (!node.encrypted_data) continue
+            const display = await EnterpriseDataManager.decryptDisplayName(node.encrypted_data, treeKey)
+            if (display) {
+                node.displayName = display
+                decryptedCount++
+            }
+        }
+        if (decryptedCount > 0) {
+            logger.debug(`Decrypted ${decryptedCount} enterprise node name(s) using tree key.`)
+        }
+        return decryptedCount
+    }
+
     public clearCache(): void {
         this.dataCache.clear()
         this.displayNamesPromise = null
+        this.treeKeyPromise = null
     }
 
     public static getNodePath(
@@ -238,14 +270,14 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
 
     private async fetchDisplayNames(): Promise<EnterpriseDisplayNames> {
         const empty: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
-        const response = await this.fetchLegacyEnterpriseData()
-        if (!response) return empty
 
-        const treeKey = await this.decryptTreeKey(response)
+        const treeKey = await this.getTreeKey()
         if (!treeKey) return empty
 
+        const data = await this.getData([EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Roles])
+
         const nodes: DecryptedNodeNames = new Map()
-        for (const node of response.nodes || []) {
+        for (const node of data.nodes || []) {
             if (!isNumber(node.node_id)) continue
             if (!node.encrypted_data) continue
             const display = await EnterpriseDataManager.decryptDisplayName(node.encrypted_data, treeKey)
@@ -253,7 +285,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         }
 
         const roles: DecryptedRoleNames = new Map()
-        for (const role of response.roles || []) {
+        for (const role of data.roles || []) {
             if (!isNumber(role.role_id)) continue
             if (!role.encrypted_data) continue
             const display = await EnterpriseDataManager.decryptDisplayName(role.encrypted_data, treeKey)
@@ -263,36 +295,64 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         return { nodes, roles }
     }
 
-    private async fetchLegacyEnterpriseData(): Promise<LegacyEnterpriseDataResponse | null> {
-        const command: RestCommand<{ include: string[] }, LegacyEnterpriseDataResponse> = {
-            baseRequest: { command: LEGACY_ENTERPRISE_DATA_COMMAND },
-            request: { include: [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Roles] },
-            authorization: {},
+    public async getTreeKey(): Promise<Uint8Array | null> {
+        if (!this.treeKeyPromise) {
+            this.treeKeyPromise = this.fetchAndDecryptTreeKey()
         }
-
-        try {
-            const response = await this.auth.executeRestCommand(command)
-            if (response && (response.tree_key || response.nodes || response.roles)) return response
-        } catch {
-        }
-        return null
+        return this.treeKeyPromise
     }
 
-    private async decryptTreeKey(response: LegacyEnterpriseDataResponse): Promise<Uint8Array | null> {
-        const treeKey = response.tree_key
-        if (!treeKey) return null
+    private async fetchAndDecryptTreeKey(): Promise<Uint8Array | null> {
+        let response: Enterprise.IGetEnterpriseDataKeysResponse
+        try {
+            response = await this.auth.executeRest(getEnterpriseDataKeysMessage())
+        } catch (err) {
+            logger.debug(`enterprise/get_enterprise_data_keys failed: ${extractErrorMessage(err)}`)
+            return null
+        }
+
+        const treeKey = response.treeKey
+        if (!treeKey || !treeKey.treeKey) {
+            logger.debug(
+                `enterprise/get_enterprise_data_keys: no tree key returned (user is likely not an enterprise admin)`
+            )
+            return null
+        }
+
+        return this.decryptTreeKey(treeKey)
+    }
+
+    private async decryptTreeKey(treeKey: Enterprise.ITreeKey): Promise<Uint8Array | null> {
+        if (!treeKey.treeKey) return null
+        const encrypted = normal64Bytes(treeKey.treeKey)
+        const keyType = (treeKey.keyTypeId ?? 0) as Enterprise.BackupKeyType
 
         try {
-            if (response.key_type_id === LegacyEnterpriseKeyType.EncryptedByDataKey) {
-                const dataKey = (this.auth as unknown as { dataKey?: Uint8Array }).dataKey
-                if (!dataKey) return null
-                return await decryptFromStorage(treeKey, dataKey)
+            switch (keyType) {
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY: {
+                    if (!this.auth.dataKey) return null
+                    return await platform.aesCbcDecrypt(encrypted, this.auth.dataKey, true)
+                }
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY_GCM: {
+                    if (!this.auth.dataKey) return null
+                    return await platform.aesGcmDecrypt(encrypted, this.auth.dataKey)
+                }
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY: {
+                    if (!this.auth.privateKey) return null
+                    return platform.privateDecrypt(encrypted, this.auth.privateKey)
+                }
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC: {
+                    if (!this.auth.eccPrivateKey) return null
+                    return await platform.privateDecryptEC(encrypted, this.auth.eccPrivateKey)
+                }
+                default:
+                    logger.debug(`Unsupported tree-key keyTypeId=${keyType}`)
+                    return null
             }
-
-            const privateKey = (this.auth as unknown as { privateKey?: Uint8Array }).privateKey
-            if (!privateKey) return null
-            return platform.privateDecrypt(normal64Bytes(treeKey), privateKey)
-        } catch {
+        } catch (err) {
+            logger.debug(
+                `Tree-key decryption failed (keyTypeId=${keyType}): ${extractErrorMessage(err)}`
+            )
             return null
         }
     }

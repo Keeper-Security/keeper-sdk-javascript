@@ -193,7 +193,10 @@ export type {
     FormatTeamsTableOptions,
 } from './teams/listTeams'
 
-export { EnterpriseDataInclude, EnterpriseDataManager } from './teams/enterpriseData'
+export {
+    EnterpriseDataInclude,
+    EnterpriseDataManager,
+} from './teams/enterpriseData'
 export type {
     EnterpriseDataManagerApi,
     GetEnterpriseDataResponse,
@@ -201,6 +204,7 @@ export type {
     EnterpriseTeamUserLink,
     EnterpriseRoleUserLink,
     EnterpriseRoleTeamLink,
+    EnterpriseQueuedTeamRecord,
     EnterpriseUser,
     EnterpriseRole,
     EnterpriseNode,
@@ -219,6 +223,55 @@ export type {
     FormattedTeamViewTable,
     TeamViewTableRow,
 } from './teams/viewTeam'
+
+export {
+    addTeams,
+    formatAddTeamResult,
+    renderAddTeamAsciiTable,
+    AddTeamSourceKind,
+    AddTeamSkipReason,
+    AddTeamStatus,
+    TeamRestriction,
+} from './teams/addTeam'
+export type {
+    AddTeamInput,
+    AddTeamResult,
+    AddTeamItemResult,
+    AddTeamConfirm,
+    AddTeamConflictPrompt,
+    TeamRestrictionInput,
+    FormatAddTeamResultOptions,
+    FormattedAddTeamTable,
+    FormattedAddTeamRow,
+} from './teams/addTeam'
+
+export {
+    updateTeams,
+    formatUpdateTeamResult,
+    renderUpdateTeamAsciiTable,
+    UpdateTeamStatus,
+} from './teams/updateTeam'
+export type {
+    UpdateTeamInput,
+    UpdateTeamResult,
+    UpdateTeamItemResult,
+    FormattedUpdateTeamTable,
+    FormattedUpdateTeamRow,
+} from './teams/updateTeam'
+
+export {
+    deleteTeams,
+    formatDeleteTeamResult,
+    renderDeleteTeamAsciiTable,
+    DeleteTeamStatus,
+} from './teams/deleteTeam'
+export type {
+    DeleteTeamInput,
+    DeleteTeamResult,
+    DeleteTeamItemResult,
+    FormattedDeleteTeamTable,
+    FormattedDeleteTeamRow,
+} from './teams/deleteTeam'
 
 export { TeamManager } from './teams/TeamManager'
 
