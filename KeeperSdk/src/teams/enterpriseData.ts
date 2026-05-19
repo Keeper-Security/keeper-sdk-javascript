@@ -414,42 +414,42 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
 
     private static decodeNodeChunk(bytes: Uint8Array): EnterpriseNode {
         const message = Enterprise.Node.decode(bytes)
-        const out: EnterpriseNode = { node_id: EnterpriseDataManager.toNumber(message.nodeId) }
-        if (message.parentId != null) out.parent_id = EnterpriseDataManager.toNumber(message.parentId)
-        if (message.encryptedData) out.encrypted_data = message.encryptedData
-        return out
+        const node: EnterpriseNode = { node_id: EnterpriseDataManager.toNumber(message.nodeId) }
+        if (message.parentId != null) node.parent_id = EnterpriseDataManager.toNumber(message.parentId)
+        if (message.encryptedData) node.encrypted_data = message.encryptedData
+        return node
     }
 
     private static decodeUserChunk(bytes: Uint8Array): EnterpriseUser {
         const message = Enterprise.User.decode(bytes)
-        const out: EnterpriseUser = {
+        const user: EnterpriseUser = {
             enterprise_user_id: EnterpriseDataManager.toNumber(message.enterpriseUserId),
             username: message.username || '',
         }
-        if (message.status) out.status = message.status
-        if (message.nodeId != null) out.node_id = EnterpriseDataManager.toNumber(message.nodeId)
-        if (message.encryptedData) out.encrypted_data = message.encryptedData
-        if (message.fullName) out.full_name = message.fullName
-        if (message.jobTitle) out.job_title = message.jobTitle
-        if (message.lock != null) out.lock = message.lock
+        if (message.status) user.status = message.status
+        if (message.nodeId != null) user.node_id = EnterpriseDataManager.toNumber(message.nodeId)
+        if (message.encryptedData) user.encrypted_data = message.encryptedData
+        if (message.fullName) user.full_name = message.fullName
+        if (message.jobTitle) user.job_title = message.jobTitle
+        if (message.lock != null) user.lock = message.lock
         if (message.accountShareExpiration != null) {
-            out.account_share_expiration = EnterpriseDataManager.toNumber(message.accountShareExpiration)
+            user.account_share_expiration = EnterpriseDataManager.toNumber(message.accountShareExpiration)
         }
-        if (message.tfaEnabled != null) out.tfa_enabled = message.tfaEnabled
-        return out
+        if (message.tfaEnabled != null) user.tfa_enabled = message.tfaEnabled
+        return user
     }
 
     private static decodeRoleChunk(bytes: Uint8Array): EnterpriseRole {
         const message = Enterprise.Role.decode(bytes)
-        const out: EnterpriseRole = { role_id: EnterpriseDataManager.toNumber(message.roleId) }
-        if (message.nodeId != null) out.node_id = EnterpriseDataManager.toNumber(message.nodeId)
-        if (message.encryptedData) out.encrypted_data = message.encryptedData
-        return out
+        const role: EnterpriseRole = { role_id: EnterpriseDataManager.toNumber(message.roleId) }
+        if (message.nodeId != null) role.node_id = EnterpriseDataManager.toNumber(message.nodeId)
+        if (message.encryptedData) role.encrypted_data = message.encryptedData
+        return role
     }
 
     private static decodeTeamChunk(bytes: Uint8Array): EnterpriseTeamRecord {
         const message = Enterprise.Team.decode(bytes)
-        const out: EnterpriseTeamRecord = {
+        const team: EnterpriseTeamRecord = {
             team_uid: EnterpriseDataManager.toUid(message.teamUid),
             name: message.name || '',
             node_id: EnterpriseDataManager.toNumber(message.nodeId),
@@ -457,18 +457,18 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             restrict_edit: message.restrictEdit === true,
             restrict_share: message.restrictShare === true,
         }
-        if (message.encryptedData) out.encrypted_data = message.encryptedData
-        return out
+        if (message.encryptedData) team.encrypted_data = message.encryptedData
+        return team
     }
 
     private static decodeTeamUserChunk(bytes: Uint8Array): EnterpriseTeamUserLink {
         const message = Enterprise.TeamUser.decode(bytes)
-        const out: EnterpriseTeamUserLink = {
+        const teamUser: EnterpriseTeamUserLink = {
             team_uid: EnterpriseDataManager.toUid(message.teamUid),
             enterprise_user_id: EnterpriseDataManager.toNumber(message.enterpriseUserId),
         }
-        if (message.userType) out.user_type = message.userType
-        return out
+        if (message.userType) teamUser.user_type = message.userType
+        return teamUser
     }
 
     private static decodeRoleUserChunk(bytes: Uint8Array): EnterpriseRoleUserLink {
@@ -489,13 +489,13 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
 
     private static decodeQueuedTeamChunk(bytes: Uint8Array): EnterpriseQueuedTeamRecord {
         const message = Enterprise.QueuedTeam.decode(bytes)
-        const out: EnterpriseQueuedTeamRecord = {
+        const queuedTeam: EnterpriseQueuedTeamRecord = {
             team_uid: EnterpriseDataManager.toUid(message.teamUid),
             name: message.name || '',
             node_id: EnterpriseDataManager.toNumber(message.nodeId),
         }
-        if (message.encryptedData) out.encrypted_data = message.encryptedData
-        return out
+        if (message.encryptedData) queuedTeam.encrypted_data = message.encryptedData
+        return queuedTeam
     }
 
     private static decodeUserAliasChunk(bytes: Uint8Array): EnterpriseUserAliasLink {

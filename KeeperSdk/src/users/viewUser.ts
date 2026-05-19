@@ -176,7 +176,7 @@ function resolveUser(users: EnterpriseUser[], identifier: string): EnterpriseUse
     }
 
     const numericId = Number(trimmed)
-    if (Number.isFinite(numericId) && Number.isInteger(numericId)) {
+    if (Number.isInteger(numericId)) {
         const byId = users.find((u) => u.enterprise_user_id === numericId)
         if (byId) return byId
     }
@@ -272,7 +272,8 @@ async function fetchShareAdmins(auth: Auth, username: string): Promise<string[]>
             .filter((email) => email.length > 0)
             .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
     } catch (err) {
-        logger.debug(`get_sharing_admins failed for ${username}: ${extractErrorMessage(err)}`)
+        const masked = username.includes('@') ? `***@${username.split('@')[1]}` : '***'
+        logger.warn(`get_sharing_admins failed for ${masked}: ${extractErrorMessage(err)}`)
         return []
     }
 }

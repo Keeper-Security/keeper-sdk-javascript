@@ -202,6 +202,10 @@ export type FormattedDeleteUserTable = {
     summary: string
 }
 
+export function normalizeEmailInputs(emails: string[] | undefined): string[] {
+    return (emails || []).map((e) => e.trim()).filter((e) => e.length > 0)
+}
+
 export function resolveExistingUsers(users: EnterpriseUser[], identifiers: string[]): EnterpriseUser[] {
     const byEmail = new Map<string, EnterpriseUser>()
     const byId = new Map<number, EnterpriseUser>()
@@ -218,7 +222,7 @@ export function resolveExistingUsers(users: EnterpriseUser[], identifiers: strin
         const numericId = Number(trimmed)
         let user: EnterpriseUser | undefined
 
-        if (Number.isFinite(numericId) && Number.isInteger(numericId)) {
+        if (Number.isInteger(numericId)) {
             user = byId.get(numericId)
         }
         if (!user) {

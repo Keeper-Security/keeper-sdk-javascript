@@ -18,6 +18,7 @@ import {
     resolveParentNode,
 } from '../teams/teamUtils'
 import {
+    normalizeEmailInputs,
     resolveExistingUsers,
     UpdateUserStatus,
     type UpdateUserInput,
@@ -66,9 +67,7 @@ type RoleUserRemovePayload = {
 }
 
 export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<UpdateUserResult> {
-    const rawEmails = (input.emails || [])
-        .map((e) => (typeof e === 'string' ? e.trim() : ''))
-        .filter((e) => e.length > 0)
+    const rawEmails = normalizeEmailInputs(input.emails)
 
     if (rawEmails.length === 0) {
         throw new KeeperSdkError('No users provided for update.', ResultCodes.NO_USERS_TO_UPDATE)
@@ -94,10 +93,10 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
 
     const resolvedUsers = resolveExistingUsers(response.users || [], rawEmails)
 
-    let overrideNodeId: number | null = null
-    if (parentIdentifier !== null && parentIdentifier !== '' && parentIdentifier !== undefined) {
-        overrideNodeId = resolveParentNode(nodes, parentIdentifier).node_id
-    }
+    const overrideNodeId: number | null =
+        parentIdentifier !== null && parentIdentifier !== ''
+            ? resolveParentNode(nodes, parentIdentifier).node_id
+            : null
 
     const treeKey = hasProfileChange ? await enterpriseData.getTreeKey() : null
     if (hasProfileChange && !treeKey) {
@@ -110,17 +109,18 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     const removeTeamUids = resolveTeamUids(input.removeTeam || [], response.teams || [], response.queued_teams || [])
     const removeRoleIds = resolveRoleIds(input.removeRole || [], response.roles || [], displayNames.roles)
 
+    const fullName = (input.fullName || '').trim() || undefined
+    const jobTitle = (input.jobTitle || '').trim() || undefined
+
     const items: UpdateUserItemResult[] = []
 
     for (const user of resolvedUsers) {
         const targetNodeId = overrideNodeId ?? (user.node_id ?? 0)
-        const fullName = (input.fullName || '').trim() || undefined
-        const jobTitle = (input.jobTitle || '').trim() || undefined
 
         try {
-            if (hasProfileChange) {
+            if (hasProfileChange && treeKey !== null) {
                 const encryptedData = fullName !== undefined
-                    ? await encryptObjectForStorage({ displayname: fullName }, treeKey!)
+                    ? await encryptObjectForStorage({ displayname: fullName }, treeKey)
                     : undefined
                 await sendUserUpdate(auth, {
                     enterprise_user_id: user.enterprise_user_id,
@@ -221,25 +221,36 @@ function resolveTeamUids(
 ): string[] {
     if (identifiers.length === 0) return []
 
-    const byUid = new Map<string, string>()
+    const uidSet = new Set<string>()
     const byLowerName = new Map<string, string>()
 
-    for (const t of [...teams, ...queuedTeams]) {
+    for (const t of teams) {
         if (t.team_uid) {
-            byUid.set(t.team_uid, t.team_uid)
+            uidSet.add(t.team_uid)
+            const lower = (t.name || '').trim().toLowerCase()
+            if (lower && !byLowerName.has(lower)) byLowerName.set(lower, t.team_uid)
+        }
+    }
+    for (const t of queuedTeams) {
+        if (t.team_uid) {
+            uidSet.add(t.team_uid)
             const lower = (t.name || '').trim().toLowerCase()
             if (lower && !byLowerName.has(lower)) byLowerName.set(lower, t.team_uid)
         }
     }
 
+    const seen = new Set<string>()
     const result: string[] = []
     for (const id of identifiers) {
         const trimmed = id.trim()
-        const uid = byUid.get(trimmed) || byLowerName.get(trimmed.toLowerCase())
+        const uid = (uidSet.has(trimmed) ? trimmed : undefined) ?? byLowerName.get(trimmed.toLowerCase())
         if (!uid) {
             throw new KeeperSdkError(`Team "${trimmed}" does not exist.`, ResultCodes.TEAM_NOT_FOUND)
         }
-        result.push(uid)
+        if (!seen.has(uid)) {
+            seen.add(uid)
+            result.push(uid)
+        }
     }
     return result
 }
@@ -251,35 +262,42 @@ function resolveRoleIds(
 ): number[] {
     if (identifiers.length === 0) return []
 
-    const byId = new Map<number, number>()
+    const idSet = new Set<number>()
     const byLowerName = new Map<string, number>()
 
     for (const r of roles) {
         if (!isNumber(r.role_id)) continue
-        byId.set(r.role_id, r.role_id)
+        idSet.add(r.role_id)
         const lower = (decryptedRoleNames.get(r.role_id) || '').trim().toLowerCase()
         if (lower && !byLowerName.has(lower)) byLowerName.set(lower, r.role_id)
     }
 
+    const seen = new Set<number>()
     const result: number[] = []
     for (const id of identifiers) {
         const trimmed = id.trim()
         const numericId = Number(trimmed)
         let roleId: number | undefined
 
-        if (Number.isFinite(numericId) && Number.isInteger(numericId)) roleId = byId.get(numericId)
+        if (Number.isInteger(numericId)) roleId = idSet.has(numericId) ? numericId : undefined
         if (roleId === undefined) roleId = byLowerName.get(trimmed.toLowerCase())
         if (roleId === undefined) {
             throw new KeeperSdkError(`Role "${trimmed}" does not exist.`, ResultCodes.ROLE_NOT_FOUND)
         }
-        result.push(roleId)
+        if (!seen.has(roleId)) {
+            seen.add(roleId)
+            result.push(roleId)
+        }
     }
     return result
 }
 
 function finalizeResult(items: UpdateUserItemResult[]): UpdateUserResult {
-    const updated = items.filter((i) => i.status === UpdateUserStatus.Updated).length
-    const failed = items.filter((i) => i.status === UpdateUserStatus.Failed).length
+    let updated = 0, failed = 0
+    for (const item of items) {
+        if (item.status === UpdateUserStatus.Updated) updated++
+        else failed++
+    }
     return { success: failed === 0 && updated > 0, items, updated, failed }
 }
 

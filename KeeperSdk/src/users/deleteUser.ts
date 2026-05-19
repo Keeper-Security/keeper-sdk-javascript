@@ -9,6 +9,7 @@ import {
     EnterpriseDataManager,
 } from '../teams/enterpriseData'
 import {
+    normalizeEmailInputs,
     resolveExistingUsers,
     DeleteUserStatus,
     type DeleteUserInput,
@@ -29,9 +30,7 @@ type UserDeletePayload = {
 }
 
 export async function deleteUsers(auth: Auth, input: DeleteUserInput): Promise<DeleteUserResult> {
-    const rawEmails = (input.emails || [])
-        .map((e) => (typeof e === 'string' ? e.trim() : ''))
-        .filter((e) => e.length > 0)
+    const rawEmails = normalizeEmailInputs(input.emails)
 
     if (rawEmails.length === 0) {
         throw new KeeperSdkError('No users provided for deletion.', ResultCodes.NO_USERS_TO_DELETE)
@@ -84,14 +83,12 @@ async function sendUserDelete(auth: Auth, enterpriseUserId: number): Promise<voi
 }
 
 function finalizeResult(items: DeleteUserItemResult[]): DeleteUserResult {
-    const deleted = items.filter((i) => i.status === DeleteUserStatus.Deleted).length
-    const failed = items.filter((i) => i.status === DeleteUserStatus.Failed).length
-    return {
-        success: failed === 0 && deleted > 0,
-        items,
-        deleted,
-        failed,
+    let deleted = 0, failed = 0
+    for (const item of items) {
+        if (item.status === DeleteUserStatus.Deleted) deleted++
+        else failed++
     }
+    return { success: failed === 0 && deleted > 0, items, deleted, failed }
 }
 
 const USER_DELETE_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Detail']

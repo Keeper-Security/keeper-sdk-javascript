@@ -17,6 +17,7 @@ import {
     resolveParentNode,
 } from '../teams/teamUtils'
 import {
+    normalizeEmailInputs,
     AddUserStatus,
     AddUserSkipReason,
     type AddUserInput,
@@ -37,6 +38,8 @@ const ADD_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Users,
 ]
 
+const USER_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Node ID', 'Detail']
+
 type UserAddPayload = {
     enterprise_user_id: number
     enterprise_user_username: string
@@ -55,10 +58,17 @@ type AllocateIdsResponse = KeeperResponse & {
     number_allocated: number
 }
 
+type UserAddResponse = KeeperResponse & {
+    verification_code?: string
+}
+
 export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUserResult> {
-    const rawEmails = (input.emails || [])
-        .map((e) => (typeof e === 'string' ? e.trim() : ''))
-        .filter((e) => e.length > 0)
+    const rawEmails = [
+        ...new Map(
+            normalizeEmailInputs(input.emails)
+                .map((e) => [e.toLowerCase(), e] as const)
+        ).values(),
+    ]
 
     if (rawEmails.length === 0) {
         throw new KeeperSdkError('No emails provided.', ResultCodes.NO_USERS_TO_ADD)
@@ -114,11 +124,12 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
             continue
         }
 
-        if (existingByEmail.has(email)) {
+        const existing = existingByEmail.get(email)
+        if (existing) {
             items.push({
                 username: raw,
-                enterpriseUserId: existingByEmail.get(email)!.enterprise_user_id,
-                nodeId: existingByEmail.get(email)!.node_id,
+                enterpriseUserId: existing.enterprise_user_id,
+                nodeId: existing.node_id,
                 status: AddUserStatus.Skipped,
                 skipReason: AddUserSkipReason.AlreadyExists,
                 message: `User "${raw}" already exists.`,
@@ -128,10 +139,7 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
 
         try {
             const enterpriseUserId = await allocateEnterpriseId(auth)
-            const encryptedData = await encryptObjectForStorage(
-                { displayname: fullName || '' },
-                treeKey
-            )
+            const encryptedData = await encryptObjectForStorage({ displayname: fullName || '' }, treeKey)
             await sendUserAdd(auth, {
                 enterprise_user_id: enterpriseUserId,
                 enterprise_user_username: email,
@@ -179,7 +187,7 @@ async function allocateEnterpriseId(auth: Auth): Promise<number> {
 }
 
 async function sendUserAdd(auth: Auth, payload: UserAddPayload): Promise<void> {
-    const command: RestCommand<UserAddPayload, KeeperResponse> = {
+    const command: RestCommand<UserAddPayload, UserAddResponse> = {
         baseRequest: { command: USER_ADD_COMMAND },
         request: payload,
         authorization: {},
@@ -209,30 +217,21 @@ function finalizeResult(
     parentNodeId: number,
     parentNodeName: string
 ): AddUserResult {
-    const added = items.filter((i) => i.status === AddUserStatus.Added).length
-    const skipped = items.filter((i) => i.status === AddUserStatus.Skipped).length
-    const failed = items.filter((i) => i.status === AddUserStatus.Failed).length
-    return {
-        success: failed === 0 && added > 0,
-        parentNodeId,
-        parentNodeName,
-        items,
-        added,
-        skipped,
-        failed,
+    let added = 0, skipped = 0, failed = 0
+    for (const item of items) {
+        if (item.status === AddUserStatus.Added) added++
+        else if (item.status === AddUserStatus.Skipped) skipped++
+        else failed++
     }
+    return { success: failed === 0 && added > 0, parentNodeId, parentNodeName, items, added, skipped, failed }
 }
-
-const USER_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Node ID', 'Detail']
 
 export function formatAddUserResult(
     result: AddUserResult,
     options: FormatAddUserResultOptions = {}
 ): FormattedAddUserTable {
     const showSkipped = options.showSkipped !== false
-    const visible = result.items.filter(
-        (item) => showSkipped || item.status !== AddUserStatus.Skipped
-    )
+    const visible = result.items.filter((item) => showSkipped || item.status !== AddUserStatus.Skipped)
 
     const rows = visible.map((item, index) => [
         String(index + 1),
@@ -240,7 +239,7 @@ export function formatAddUserResult(
         item.username,
         item.enterpriseUserId != null ? String(item.enterpriseUserId) : '',
         item.nodeId != null ? String(item.nodeId) : '',
-        item.message || (item.skipReason ? item.skipReason : ''),
+        item.message || item.skipReason || '',
     ])
 
     return {

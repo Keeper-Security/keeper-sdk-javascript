@@ -5,6 +5,7 @@
     "scripts": {
         "auth:login": "ts-node src/auth/login.ts",
         "auth:session-token": "ts-node src/auth/session_token_login.ts",
+        "auth:register-device": "ts-node src/auth/register_device.ts",
         "records:list": "ts-node src/records/list_records.ts",
         "records:get": "ts-node src/records/get_record.ts",
         "records:add": "ts-node src/records/add_record.ts",
