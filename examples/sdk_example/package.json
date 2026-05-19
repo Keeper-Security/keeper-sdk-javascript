@@ -5,6 +5,7 @@
     "scripts": {
         "auth:login": "ts-node src/auth/login.ts",
         "auth:session-token": "ts-node src/auth/session_token_login.ts",
+        "auth:register-device": "ts-node src/auth/register_device.ts",
         "records:list": "ts-node src/records/list_records.ts",
         "records:get": "ts-node src/records/get_record.ts",
         "records:add": "ts-node src/records/add_record.ts",
@@ -28,6 +29,11 @@
         "teams:add": "ts-node src/teams/add_team.ts",
         "teams:update": "ts-node src/teams/update_team.ts",
         "teams:delete": "ts-node src/teams/delete_team.ts",
+        "users:list": "ts-node src/users/list_users.ts",
+        "users:view": "ts-node src/users/view_user.ts",
+        "users:add": "ts-node src/users/add_user.ts",
+        "users:update": "ts-node src/users/update_user.ts",
+        "users:delete": "ts-node src/users/delete_user.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

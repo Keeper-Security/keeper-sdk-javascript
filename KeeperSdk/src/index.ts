@@ -29,6 +29,7 @@ export {
     AuthErrorCode,
     SessionErrorCode,
     TeamErrorCode,
+    UserErrorCode,
     KEEPER_PUBLIC_HOSTS,
     isBoolean,
     isString,
@@ -205,6 +206,8 @@ export type {
     EnterpriseRoleUserLink,
     EnterpriseRoleTeamLink,
     EnterpriseQueuedTeamRecord,
+    EnterpriseQueuedTeamUserLink,
+    EnterpriseUserAliasLink,
     EnterpriseUser,
     EnterpriseRole,
     EnterpriseNode,
@@ -274,6 +277,68 @@ export type {
 } from './teams/deleteTeam'
 
 export { TeamManager } from './teams/TeamManager'
+
+export {
+    listUsers,
+    formatUsersTable,
+    renderUsersAsciiTable,
+    UserColumn,
+    SUPPORTED_USER_COLUMNS,
+    DEFAULT_USER_COLUMNS,
+} from './users/listUsers'
+
+export { viewUser, formatUserView, userViewTable } from './users/viewUser'
+
+export {
+    addUsers,
+    formatAddUserResult,
+    renderAddUserAsciiTable,
+    AddUserStatus,
+    AddUserSkipReason,
+} from './users/addUser'
+
+export {
+    updateUsers,
+    formatUpdateUserResult,
+    renderUpdateUserAsciiTable,
+    UpdateUserStatus,
+} from './users/updateUser'
+
+export {
+    deleteUsers,
+    formatDeleteUserResult,
+    renderDeleteUserAsciiTable,
+    DeleteUserStatus,
+} from './users/deleteUser'
+
+export type {
+    UserColumnInput,
+    ListUsersOptions,
+    ListUserRow,
+    FormattedUsersTable,
+    FormatUsersTableOptions,
+    UserTeamInfo,
+    UserRoleInfo,
+    UserView,
+    FormatUserViewOptions,
+    FormattedUserViewTable,
+    UserViewTableRow,
+    AddUserInput,
+    AddUserItemResult,
+    AddUserResult,
+    FormatAddUserResultOptions,
+    FormattedAddUserTable,
+    UpdateUserInput,
+    UpdateUserItemResult,
+    UpdateUserResult,
+    FormattedUpdateUserTable,
+    DeleteUserInput,
+    DeleteUserItemResult,
+    DeleteUserResult,
+    FormattedDeleteUserTable,
+} from './users/userTypes'
+
+export { UserManager } from './users/UserManager'
 
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 

@@ -50,6 +50,18 @@ export enum TeamErrorCode {
     TeamNameTooLong = 'team_name_too_long',
 }
 
+export enum UserErrorCode {
+    NoUsersToUpdate = 'no_users_to_update',
+    NoUsersToAdd = 'no_users_to_add',
+    NoUsersToDelete = 'no_users_to_delete',
+    UserNotFound = 'user_not_found',
+    MultipleUserMatches = 'multiple_user_matches',
+    UserAddFailed = 'user_add_failed',
+    UserUpdateFailed = 'user_update_failed',
+    UserDeleteFailed = 'user_delete_failed',
+    RoleNotFound = 'role_not_found',
+}
+
 export const ResultCodes = {
     INVALID_CREDENTIALS: AuthErrorCode.InvalidCredentials,
     MISSING_USERNAME: AuthErrorCode.MissingUsername,
@@ -81,6 +93,15 @@ export const ResultCodes = {
     MULTIPLE_TEAM_RENAME_NOT_ALLOWED: TeamErrorCode.MultipleTeamRenameNotAllowed,
     QUEUED_TEAM_NOT_FOUND: TeamErrorCode.QueuedTeamNotFound,
     TEAM_NAME_TOO_LONG: TeamErrorCode.TeamNameTooLong,
+    NO_USERS_TO_UPDATE: UserErrorCode.NoUsersToUpdate,
+    NO_USERS_TO_ADD: UserErrorCode.NoUsersToAdd,
+    NO_USERS_TO_DELETE: UserErrorCode.NoUsersToDelete,
+    USER_NOT_FOUND: UserErrorCode.UserNotFound,
+    MULTIPLE_USER_MATCHES: UserErrorCode.MultipleUserMatches,
+    USER_ADD_FAILED: UserErrorCode.UserAddFailed,
+    USER_UPDATE_FAILED: UserErrorCode.UserUpdateFailed,
+    USER_DELETE_FAILED: UserErrorCode.UserDeleteFailed,
+    ROLE_NOT_FOUND: UserErrorCode.RoleNotFound,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
