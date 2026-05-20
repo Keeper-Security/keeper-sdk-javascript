@@ -11,7 +11,7 @@ import {
     normal64Bytes,
     webSafe64FromBytes,
 } from './utils'
-import { logger } from './log'
+import { logger, isLevelEnabled, formatProto } from './log'
 import {
     RestMessage,
     RestInMessage,
@@ -204,7 +204,9 @@ export class KeeperEndpoint {
             Authorization: `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`,
         }
         const url = getKeeperRouterUrl(this.options.host, message.path)
-        logger.debug(`→ ${url}`, (message as { data?: unknown }).data)
+        if (isLevelEnabled('debug')) {
+            logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
+        }
         const startTime = Date.now()
         const response = await platform.post(url, encryptedPayload, headers)
         if (!response.data || response.data.length === 0) {
@@ -231,7 +233,9 @@ export class KeeperEndpoint {
         }
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
         const result = message.fromBytes(decryptedPayload)
-        logger.debug(`← ${formatTimeDiff(new Date(Date.now() - startTime))}`, result)
+        if (isLevelEnabled('debug')) {
+            logger.debug(...formatProto(`← ${formatTimeDiff(new Date(Date.now() - startTime))}`, result))
+        }
         return result
     }
 
@@ -254,7 +258,9 @@ export class KeeperEndpoint {
                 useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
             })
             const url = this.getUrl(message.path)
-            logger.debug(`→ ${url}`, (message as { data?: unknown }).data)
+            if (isLevelEnabled('debug')) {
+                logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
+            }
             const startTime = Date.now()
             const response = await platform.post(url, request)
             if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
@@ -272,7 +278,9 @@ export class KeeperEndpoint {
                 const elapsed = formatTimeDiff(new Date(Date.now() - startTime))
                 if ('fromBytes' in message) {
                     const result = message.fromBytes(decrypted)
-                    logger.debug(`← ${elapsed}`, result)
+                    if (isLevelEnabled('debug')) {
+                        logger.debug(...formatProto(`← ${elapsed}`, result))
+                    }
                     return result
                 }
                 logger.debug(`← ${elapsed}`)

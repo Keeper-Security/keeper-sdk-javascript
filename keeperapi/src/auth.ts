@@ -43,7 +43,7 @@ import {
 import { AccountSummary, Authentication } from './proto'
 import { RestCommand } from './commands'
 import { CloseReason, createAsyncSocket, SocketListener } from './socket'
-import { logger } from './log'
+import { logger, isLevelEnabled, formatProto } from './log'
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest
 import TwoFactorExpiration = Authentication.TwoFactorExpiration
 import TwoFactorPushType = Authentication.TwoFactorPushType
@@ -477,7 +477,9 @@ export class Auth {
                     } else if (this.options.authUI3?.ssoLogin) {
                         const token = await this.options.authUI3.ssoLogin(cloudSsoLoginUrl)
                         const cloudResp = await this.endpoint.decryptCloudSsoResponse(token)
-                        logger.debug(cloudResp)
+                        if (isLevelEnabled('debug')) {
+                            logger.debug(...formatProto('', cloudResp))
+                        }
                         this._username = cloudResp.email
                         loginToken = cloudResp.encryptedLoginToken
                         loginMethod = LoginMethod.AFTER_SSO
