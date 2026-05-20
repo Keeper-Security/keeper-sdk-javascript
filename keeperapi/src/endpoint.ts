@@ -204,6 +204,7 @@ export class KeeperEndpoint {
             Authorization: `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`,
         }
         const url = getKeeperRouterUrl(this.options.host, message.path)
+        const requestId = url.substring(url.lastIndexOf('/') + 1)
         if (isLevelEnabled('debug')) {
             logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
         }
@@ -213,7 +214,7 @@ export class KeeperEndpoint {
             throw new Error(`Empty response from router for ${message.path}`)
         }
         if (response.statusCode !== 200) {
-            logger.debug('Response code:', response.statusCode)
+            logger.debug(`← ${requestId} Response code:`, response.statusCode)
             let text: string | undefined
             let json: KeeperError | undefined
             try {
@@ -234,7 +235,9 @@ export class KeeperEndpoint {
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
         const result = message.fromBytes(decryptedPayload)
         if (isLevelEnabled('debug')) {
-            logger.debug(...formatProto(`← ${formatTimeDiff(new Date(Date.now() - startTime))}`, result))
+            logger.debug(
+                ...formatProto(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`, result)
+            )
         }
         return result
     }
@@ -258,6 +261,7 @@ export class KeeperEndpoint {
                 useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
             })
             const url = this.getUrl(message.path)
+            const requestId = url.substring(url.lastIndexOf('/') + 1)
             if (isLevelEnabled('debug')) {
                 logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
             }
@@ -267,11 +271,11 @@ export class KeeperEndpoint {
                 if ('fromBytes' in message) {
                     throw Error(`Missing expected a response for ${message.path}`)
                 }
-                logger.debug(`← ${formatTimeDiff(new Date(Date.now() - startTime))}`)
+                logger.debug(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`)
                 return
             }
             if (response.statusCode != 200) {
-                logger.debug('Response code:', response.statusCode)
+                logger.debug(`← ${requestId} Response code:`, response.statusCode)
             }
             try {
                 const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
@@ -279,11 +283,11 @@ export class KeeperEndpoint {
                 if ('fromBytes' in message) {
                     const result = message.fromBytes(decrypted)
                     if (isLevelEnabled('debug')) {
-                        logger.debug(...formatProto(`← ${elapsed}`, result))
+                        logger.debug(...formatProto(`← ${requestId} ${elapsed}s`, result))
                     }
                     return result
                 }
-                logger.debug(`← ${elapsed}`)
+                logger.debug(`← ${requestId} ${elapsed}s`)
                 return
             } catch {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
