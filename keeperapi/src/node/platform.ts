@@ -5,14 +5,7 @@ import * as FormData from 'form-data'
 import NodeRSA from 'node-rsa'
 import * as WebSocket from 'faye-websocket'
 
-import {
-    EncryptionType,
-    KeyStorage,
-    KeyWrapper,
-    Platform,
-    UnwrapKeyMap,
-    UnwrappedKeyType,
-} from '../platform'
+import { EncryptionType, KeyStorage, KeyWrapper, Platform, UnwrapKeyMap, UnwrappedKeyType } from '../platform'
 import { RSA_PKCS1_PADDING } from 'constants'
 import { getKeeperKeys, getKeeperMlKemKeys } from '../transmissionKeys'
 import { SocketProxy, socketSendMessage } from '../socket'
@@ -508,7 +501,6 @@ export const nodePlatform: Platform = class {
     static async closeCryptoWorker(): Promise<void> {
         // do nothing
     }
-
 }
 
 let keyCache: Record<string, Uint8Array> = {}

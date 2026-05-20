@@ -1121,7 +1121,6 @@ export const browserPlatform: Platform = class {
             messageQueue: [],
         })
     }
-
 }
 
 function base64ToHex(data: string): string {
