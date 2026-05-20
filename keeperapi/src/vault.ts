@@ -772,7 +772,8 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
     }
 }
 
-const processNonSharedData = async (nonSharedData: INonSharedData[], storage: VaultStorage) => {
+const processNonSharedData = async (storage: VaultStorage, nonSharedData?: Vault.INonSharedData[] | null) => {
+    if (!nonSharedData) return
     for (const nsData of nonSharedData as NN<INonSharedData>[]) {
         const recUid = webSafe64FromBytes(nsData.recordUid)
         try {
@@ -1655,7 +1656,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processRecordRotations(resp.recordRotations, storage)
 
-            await processNonSharedData(resp.nonSharedData, storage)
+            await processNonSharedData(storage, resp.nonSharedData)
 
             await processSharedFolderFolders(resp.sharedFolderFolders, storage, dependencies)
 
@@ -1686,6 +1687,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processKdRecordLinks(storage, keeperDriveData.recordLinks)
 
             await processKdRecords(storage, keeperDriveData.recordData, keeperDriveData.records)
+
+            await processNonSharedData(storage, keeperDriveData.nonSharedData)
 
             await processKdRecordSharingStates(storage, keeperDriveData.recordSharingStates)
 
