@@ -9,7 +9,6 @@ import {
     EncryptionType,
     KeyStorage,
     KeyWrapper,
-    LogOptions,
     Platform,
     UnwrapKeyMap,
     UnwrappedKeyType,
@@ -510,17 +509,6 @@ export const nodePlatform: Platform = class {
         // do nothing
     }
 
-    static log(message: string, options: LogOptions): void {
-        switch (options) {
-            case 'default':
-            case 'CR':
-                console.log(message)
-                break
-            case 'noCR':
-                process.stdout.write(message)
-                break
-        }
-    }
 }
 
 let keyCache: Record<string, Uint8Array> = {}

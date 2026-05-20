@@ -24,6 +24,7 @@ export type NN<T> = Required<{ [prop in keyof T]: NonNullable<T[prop]> }>
 
 export type RestInMessage<TIn> = {
     path: string
+    data?: TIn
     toBytes(): Uint8Array
     apiVersion?: number
 }
@@ -43,6 +44,7 @@ export type RestActionMessage = {
 
 type encoderClass<T> = {
     encode: (message: T, writer?: Writer) => Writer
+    create: (properties?: T) => T
 }
 
 type decoderClass<T> = {
@@ -54,13 +56,17 @@ const createInMessage = <TIn>(
     path: string,
     encoder: encoderClass<TIn>,
     apiVersion?: number
-): RestInMessage<TIn> => ({
-    path: path,
-    toBytes(): Uint8Array {
-        return encoder.encode(data).finish()
-    },
-    apiVersion,
-})
+): RestInMessage<TIn> => {
+    const instance = encoder.create(data)
+    return {
+        path: path,
+        data: instance,
+        toBytes(): Uint8Array {
+            return encoder.encode(instance).finish()
+        },
+        apiVersion,
+    }
+}
 
 const createOutMessage = <TOut>(
     path: string,
@@ -80,16 +86,20 @@ const createMessage = <TIn, TOut>(
     encoder: encoderClass<TIn>,
     decoder: decoderClass<TOut>,
     apiVersion?: number
-): RestMessage<TIn, NN<TOut>> => ({
-    path: path,
-    toBytes(): Uint8Array {
-        return encoder.encode(data).finish()
-    },
-    fromBytes(data: Uint8Array): NN<TOut> {
-        return <NN<TOut>>decoder.decode(data)
-    },
-    apiVersion,
-})
+): RestMessage<TIn, NN<TOut>> => {
+    const instance = encoder.create(data)
+    return {
+        path: path,
+        data: instance,
+        toBytes(): Uint8Array {
+            return encoder.encode(instance).finish()
+        },
+        fromBytes(data: Uint8Array): NN<TOut> {
+            return <NN<TOut>>decoder.decode(data)
+        },
+        apiVersion,
+    }
+}
 
 const createActionMessage = (path: string, apiVersion?: number): RestActionMessage => ({
     path: path,

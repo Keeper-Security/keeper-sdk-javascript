@@ -1,4 +1,4 @@
-import { KeyWrapper, LogOptions, Platform, platform } from './platform'
+import { KeyWrapper, Platform, platform } from './platform'
 import type { KeeperHost, TransmissionKey, TransmissionKeyHpke } from './configuration'
 import {
     AllowedEcKeyIds,
@@ -9,10 +9,6 @@ import {
 } from './transmissionKeys'
 import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from './qrc'
 import { logger } from './log'
-
-export const log = (message: string, options: LogOptions = 'default') => {
-    platform.log(message, options)
-}
 
 export const formatTimeDiff = (timeDiff: Date): string => {
     const minutes = timeDiff.getMinutes()

@@ -137,8 +137,6 @@ export interface Platform {
     closeCryptoWorker(): Promise<void>
 
     createWebsocket(url: string): SocketProxy
-
-    log(message: string, options: LogOptions): void
 }
 
 export interface CryptoTask {
@@ -180,8 +178,6 @@ export type KeyStorage = {
     getObject?<T>(key: string): Promise<T | undefined>
     saveObject?<T>(key: string, value: T): Promise<void>
 }
-export type LogOptions = 'default' | 'noCR' | 'CR'
-
 export function connectPlatform(p: Platform) {
     platform = p
 }

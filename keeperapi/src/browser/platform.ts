@@ -3,7 +3,6 @@ import {
     EncryptionType,
     KeyStorage,
     KeyWrapper,
-    LogOptions,
     Platform,
     UnwrapKeyMap,
     UnwrappedKeyType,
@@ -1123,10 +1122,6 @@ export const browserPlatform: Platform = class {
         })
     }
 
-    static log(message: string, options: LogOptions): void {
-        if (options === 'CR') return
-        console.log(message)
-    }
 }
 
 function base64ToHex(data: string): string {

@@ -362,8 +362,6 @@ export class Auth {
                 needUserName = false
             }
 
-            logger.debug(startLoginRequest)
-
             var loginResponse: NN<Authentication.ILoginResponse>
             if (givenSessionToken) {
                 this._sessionToken = givenSessionToken
@@ -389,7 +387,6 @@ export class Auth {
                     result: LoginV3ResultEnum.NOT_LOGGED_IN,
                 }
             }
-            logger.debug(loginResponse)
             logger.debug('login state =', loginResponse.loginState)
 
             switch (loginResponse.loginState) {
@@ -1071,7 +1068,6 @@ export class Auth {
             encryptedLoginToken: loginResponse.encryptedLoginToken,
         })
         const loginResp = await this.executeRest(loginMsg)
-        logger.debug(loginResp)
         if (loginResp.cloneCode && loginResp.cloneCode.length > 0) {
             await this.options.sessionStorage?.saveCloneCode(
                 this.options.host as KeeperEnvironment,

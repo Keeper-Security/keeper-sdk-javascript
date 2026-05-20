@@ -8,7 +8,6 @@ import {
     getKeeperRouterUrl,
     getKeeperUrl,
     isTwoFactorResultCode,
-    log,
     normal64Bytes,
     webSafe64FromBytes,
 } from './utils'
@@ -205,7 +204,8 @@ export class KeeperEndpoint {
             Authorization: `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`,
         }
         const url = getKeeperRouterUrl(this.options.host, message.path)
-        log(`Calling KA Router URL: ${url}`, 'noCR')
+        logger.debug(`→ ${url}`, (message as { data?: unknown }).data)
+        const startTime = Date.now()
         const response = await platform.post(url, encryptedPayload, headers)
         if (!response.data || response.data.length === 0) {
             throw new Error(`Empty response from router for ${message.path}`)
@@ -230,7 +230,9 @@ export class KeeperEndpoint {
             } as KeeperError
         }
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
-        return message.fromBytes(decryptedPayload)
+        const result = message.fromBytes(decryptedPayload)
+        logger.debug(`← ${formatTimeDiff(new Date(Date.now() - startTime))}`, result)
+        return result
     }
 
     private async executeRestInternal<TIn, TOut>(
@@ -251,14 +253,15 @@ export class KeeperEndpoint {
                 apiVersion,
                 useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
             })
-            log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR')
+            const url = this.getUrl(message.path)
+            logger.debug(`→ ${url}`, (message as { data?: unknown }).data)
             const startTime = Date.now()
-            const response = await platform.post(this.getUrl(message.path), request)
-            log(` (${formatTimeDiff(new Date(Date.now() - startTime))})`, 'CR')
+            const response = await platform.post(url, request)
             if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
                 if ('fromBytes' in message) {
                     throw Error(`Missing expected a response for ${message.path}`)
                 }
+                logger.debug(`← ${formatTimeDiff(new Date(Date.now() - startTime))}`)
                 return
             }
             if (response.statusCode != 200) {
@@ -266,7 +269,13 @@ export class KeeperEndpoint {
             }
             try {
                 const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
-                if ('fromBytes' in message) return message.fromBytes(decrypted)
+                const elapsed = formatTimeDiff(new Date(Date.now() - startTime))
+                if ('fromBytes' in message) {
+                    const result = message.fromBytes(decrypted)
+                    logger.debug(`← ${elapsed}`, result)
+                    return result
+                }
+                logger.debug(`← ${elapsed}`)
                 return
             } catch {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))
