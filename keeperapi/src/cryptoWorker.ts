@@ -1,4 +1,5 @@
 import { EncryptionType, KeyStorage, platform, CryptoTask } from './platform'
+import { logger } from './log'
 
 export type CryptoWorkerKeys = Record<string, Uint8Array>
 
@@ -49,7 +50,7 @@ export class CryptoWorkerPool {
             try {
                 keys[keyId] = await this.config.getKey(keyId, encryptionType)
             } catch (e) {
-                console.error(e)
+                logger.error(e)
             }
         }
 
@@ -116,7 +117,7 @@ export async function handleCryptoWorkerMessage(message: CryptoWorkerMessage): P
                 const keyBytes = await platform.decrypt(data, keyId, encryptionType, keyStorage)
                 results[dataId] = keyBytes
             } catch (e: any) {
-                console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
+                logger.error(`The key ${dataId} cannot be decrypted (${e.message})`)
             }
         })
     )

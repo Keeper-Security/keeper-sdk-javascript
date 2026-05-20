@@ -12,6 +12,7 @@ import {
     normal64Bytes,
     webSafe64FromBytes,
 } from './utils'
+import { logger } from './log'
 import {
     RestMessage,
     RestInMessage,
@@ -94,7 +95,7 @@ export class KeeperEndpoint {
 
     async getPreLogin(username: string): Promise<IPreLoginResponse> {
         if (!this.deviceToken) {
-            console.log('Obtaining device token...')
+            logger.debug('Obtaining device token...')
             let deviceResponse = await this.getDeviceToken()
             if (!deviceResponse.encryptedDeviceToken) {
                 throw Error(`Device token was not created. Status: ${deviceResponse.status}`)
@@ -122,7 +123,7 @@ export class KeeperEndpoint {
                 let errorObj = JSON.parse(e.message)
                 if (errorObj.error === 'region_redirect') {
                     this.options.host = errorObj.region_host
-                    console.log(`Redirecting to ${this.options.host}`)
+                    logger.debug(`Redirecting to ${this.options.host}`)
                 } else {
                     throw e
                 }
@@ -210,7 +211,7 @@ export class KeeperEndpoint {
             throw new Error(`Empty response from router for ${message.path}`)
         }
         if (response.statusCode !== 200) {
-            console.log('Response code:', response.statusCode)
+            logger.debug('Response code:', response.statusCode)
             let text: string | undefined
             let json: KeeperError | undefined
             try {
@@ -261,7 +262,7 @@ export class KeeperEndpoint {
                 return
             }
             if (response.statusCode != 200) {
-                console.log('Response code:', response.statusCode)
+                logger.debug('Response code:', response.statusCode)
             }
             try {
                 const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)

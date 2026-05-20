@@ -8,6 +8,7 @@ import {
     isAllowedMlKemKeyId,
 } from './transmissionKeys'
 import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from './qrc'
+import { logger } from './log'
 
 export const log = (message: string, options: LogOptions = 'default') => {
     platform.log(message, options)
@@ -218,7 +219,7 @@ export async function decryptObjectFromStorage<T>(data: string, key: Uint8Array)
         let decrypted = await decryptFromStorage(data, key)
         return JSON.parse(platform.bytesToString(decrypted))
     } catch (e) {
-        console.log(`Unable to decrypt ${data}`)
+        logger.debug(`Unable to decrypt ${data}`)
         return {} as T
     }
 }

@@ -13,6 +13,7 @@ import { RSAKey } from './rsa'
 import { getKeeperKeys, getKeeperMlKemKeys } from '../transmissionKeys'
 import { normal64, normal64Bytes, webSafe64FromBytes } from '../utils'
 import { SocketProxy, socketSendMessage } from '../socket'
+import { logger } from '../log'
 import * as asmCrypto from 'asmcrypto.js'
 import type { KeeperHttpResponse } from '../commands'
 import {
@@ -236,21 +237,21 @@ export const browserPlatform: Platform = class {
                                         const pubKey = keyBytes.slice(0, ECC_PUB_KEY_LENGTH)
                                         await this.importKeyEC(keyId, privkey, pubKey, storage)
                                     } catch (e) {
-                                        console.error('ecc error in unwrapKeys: ', e)
+                                        logger.error('ecc error in unwrapKeys: ', e)
                                     }
                                     break
                                 default:
                                     throw new Error(`unable to import ${unwrappedType} key`)
                             }
                         } catch (e) {
-                            console.error(`Import key error: ${e}`)
+                            logger.error(`Import key error: ${e}`)
                         }
                     })
                 )
 
                 return // no error, exit
             } catch (e) {
-                console.error(`Crypto worker failed: ${e}`)
+                logger.error(`Crypto worker failed: ${e}`)
                 await workerPool?.close()
                 workerPool = null
             }
@@ -264,7 +265,7 @@ export const browserPlatform: Platform = class {
                     await this.unwrapKey(data, dataId, keyId, encryptionType, unwrappedType, storage, true)
                 } catch (e: any) {
                     if (e instanceof Error && e.message === 'sync_aborted') throw e
-                    console.error(`The key ${dataId} cannot be decrypted (${e.message})`)
+                    logger.error(`The key ${dataId} cannot be decrypted (${e.message})`)
                 }
             })
         )
@@ -309,7 +310,7 @@ export const browserPlatform: Platform = class {
 
                     await this.unwrapECCKey(privkey, pubKey, keyId, unwrappingKeyId, encryptionType, storage)
                 } catch (e) {
-                    console.error('ecc error in unwrapKey: ', e)
+                    logger.error('ecc error in unwrapKey: ', e)
                 }
                 break
             default:
@@ -1043,7 +1044,7 @@ export const browserPlatform: Platform = class {
                     })
                 })
                 .catch((error) => {
-                    console.error('Error uploading file:', error)
+                    logger.error('Error uploading file:', error)
                     reject(error)
                 })
         })
@@ -1086,7 +1087,7 @@ export const browserPlatform: Platform = class {
             await workerPool.close()
             workerPool = null
         } catch (e) {
-            console.error(e)
+            logger.error(e)
         }
     }
 

@@ -18,6 +18,7 @@ import { RSA_PKCS1_PADDING } from 'constants'
 import { getKeeperKeys, getKeeperMlKemKeys } from '../transmissionKeys'
 import { SocketProxy, socketSendMessage } from '../socket'
 import { normal64 } from '../utils'
+import { logger } from '../log'
 import type { KeeperHttpResponse } from '../commands'
 
 const base64ToBytes = (data: string): Uint8Array => {
@@ -105,7 +106,7 @@ export const nodePlatform: Platform = class {
                     storage
                 )
             } catch (e: any) {
-                console.error(`The key ${task.dataId} cannot be decrypted (${e.message})`)
+                logger.error(`The key ${task.dataId} cannot be decrypted (${e.message})`)
             }
         }
     }
