@@ -1,4 +1,4 @@
-import { KeyWrapper, LogOptions, Platform, platform } from './platform'
+import { KeyWrapper, Platform, platform } from './platform'
 import type { KeeperHost, TransmissionKey, TransmissionKeyHpke } from './configuration'
 import {
     AllowedEcKeyIds,
@@ -8,10 +8,7 @@ import {
     isAllowedMlKemKeyId,
 } from './transmissionKeys'
 import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from './qrc'
-
-export const log = (message: string, options: LogOptions = 'default') => {
-    platform.log(message, options)
-}
+import { logger } from './log'
 
 export const formatTimeDiff = (timeDiff: Date): string => {
     const minutes = timeDiff.getMinutes()
@@ -218,7 +215,7 @@ export async function decryptObjectFromStorage<T>(data: string, key: Uint8Array)
         let decrypted = await decryptFromStorage(data, key)
         return JSON.parse(platform.bytesToString(decrypted))
     } catch (e) {
-        console.log(`Unable to decrypt ${data}`)
+        logger.debug(`Unable to decrypt ${data}`)
         return {} as T
     }
 }

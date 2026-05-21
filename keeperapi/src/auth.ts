@@ -43,6 +43,7 @@ import {
 import { AccountSummary, Authentication } from './proto'
 import { RestCommand } from './commands'
 import { CloseReason, createAsyncSocket, SocketListener } from './socket'
+import { logger, isLevelEnabled, formatProto } from './log'
 import ITwoFactorSendPushRequest = Authentication.ITwoFactorSendPushRequest
 import TwoFactorExpiration = Authentication.TwoFactorExpiration
 import TwoFactorPushType = Authentication.TwoFactorPushType
@@ -222,7 +223,7 @@ export class Auth {
             try {
                 await this.options.authUI3.idpLogout(url)
             } catch (e) {
-                console.log('Logout errored out: ' + e)
+                logger.debug('Logout errored out: ' + e)
             }
         } else if (this.userType == UserType.onsiteSso) {
             const params = new URLSearchParams({
@@ -237,7 +238,7 @@ export class Auth {
             try {
                 await this.options.authUI3.idpLogout(url)
             } catch (e) {
-                console.log('Logout errored out: ' + e)
+                logger.debug('Logout errored out: ' + e)
             }
         }
     }
@@ -255,7 +256,7 @@ export class Auth {
         const getConnectionRequest = (messageSessionUid) => this.endpoint.getPushConnectionRequest(messageSessionUid)
 
         this.socket = await createAsyncSocket(url, this.messageSessionUid, getConnectionRequest)
-        console.log('Socket connected')
+        logger.debug('Socket connected')
         this.onCloseMessage((closeReason: CloseReason) => {
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
@@ -361,15 +362,13 @@ export class Auth {
                 needUserName = false
             }
 
-            console.log(startLoginRequest)
-
             var loginResponse: NN<Authentication.ILoginResponse>
             if (givenSessionToken) {
                 this._sessionToken = givenSessionToken
                 try {
                     loginResponse = await this.executeRest(startLoginMessageFromSessionToken(startLoginRequest))
                 } catch (e: any) {
-                    console.error('Fails session token login. failed_login_from_existing_session_token')
+                    logger.error('Fails session token login. failed_login_from_existing_session_token')
                     throw e
                 }
             } else {
@@ -388,8 +387,7 @@ export class Auth {
                     result: LoginV3ResultEnum.NOT_LOGGED_IN,
                 }
             }
-            console.log(loginResponse)
-            console.log('login state =', loginResponse.loginState)
+            logger.debug('login state =', loginResponse.loginState)
 
             switch (loginResponse.loginState) {
                 case Authentication.LoginState.ACCOUNT_LOCKED:
@@ -468,7 +466,7 @@ export class Auth {
                     this.disconnect()
                     break
                 case Authentication.LoginState.REDIRECT_CLOUD_SSO:
-                    console.log('Cloud SSO Connect login')
+                    logger.debug('Cloud SSO Connect login')
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.cloudSso
                     let payload = await this._endpoint.prepareSsoPayload(this.messageSessionUid)
@@ -479,14 +477,16 @@ export class Auth {
                     } else if (this.options.authUI3?.ssoLogin) {
                         const token = await this.options.authUI3.ssoLogin(cloudSsoLoginUrl)
                         const cloudResp = await this.endpoint.decryptCloudSsoResponse(token)
-                        console.log(cloudResp)
+                        if (isLevelEnabled('debug')) {
+                            logger.debug(...formatProto('', cloudResp))
+                        }
                         this._username = cloudResp.email
                         loginToken = cloudResp.encryptedLoginToken
                         loginMethod = LoginMethod.AFTER_SSO
                     }
                     break
                 case Authentication.LoginState.REDIRECT_ONSITE_SSO:
-                    console.log('SSO Connect login')
+                    logger.debug('SSO Connect login')
                     this.ssoLogoutUrl = loginResponse.url.replace('login', 'logout')
                     this.userType = UserType.onsiteSso
 
@@ -498,7 +498,7 @@ export class Auth {
                         return
                     } else if (this.options.authUI3?.ssoLogin) {
                         const onsiteResp = await this.options.authUI3.ssoLogin(onsiteSsoLoginUrl)
-                        console.log(onsiteResp)
+                        logger.debug(onsiteResp)
                         this._username = onsiteResp.email
                         wrappedPassword = wrapPassword(onsiteResp.password)
                         loginType = LoginType.SSO
@@ -558,10 +558,10 @@ export class Auth {
                 case Authentication.LoginState.LOGGED_IN:
                     try {
                         await this.loginSuccess(loginResponse, undefined)
-                        console.log('Exiting on loginState = LOGGED_IN')
+                        logger.debug('Exiting on loginState = LOGGED_IN')
                         return
                     } catch (e) {
-                        console.log('Error in Authentication.LoginState.LOGGED_IN: ', e)
+                        logger.debug('Error in Authentication.LoginState.LOGGED_IN: ', e)
                         return
                     }
                 default:
@@ -591,7 +591,7 @@ export class Auth {
             }
             return response
         } catch (err) {
-            console.error(err)
+            logger.error(err)
             return undefined
         }
     }
@@ -843,7 +843,7 @@ export class Auth {
                     const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
                     if (!done) {
                         const wssRs = JSON.parse(wssClientResponse.message)
-                        console.log(wssRs)
+                        logger.debug(wssRs)
                         processPushNotification(wssRs)
                     }
                 }
@@ -1035,7 +1035,7 @@ export class Auth {
                     const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
                     if (!done) {
                         const wssRs = JSON.parse(wssClientResponse.message)
-                        console.log(wssRs)
+                        logger.debug(wssRs)
                         processPushNotification(wssRs)
                     }
                 }
@@ -1070,7 +1070,6 @@ export class Auth {
             encryptedLoginToken: loginResponse.encryptedLoginToken,
         })
         const loginResp = await this.executeRest(loginMsg)
-        console.log(loginResp)
         if (loginResp.cloneCode && loginResp.cloneCode.length > 0) {
             await this.options.sessionStorage?.saveCloneCode(
                 this.options.host as KeeperEnvironment,
@@ -1293,7 +1292,7 @@ export class Auth {
         }
         const pushMessage = await this.socket.getPushMessage()
         const wssClientResponse = await this.endpoint.decryptPushMessage(pushMessage)
-        console.log(wssClientResponse.message)
+        logger.debug(wssClientResponse.message)
         return JSON.parse(wssClientResponse.message)
     }
 

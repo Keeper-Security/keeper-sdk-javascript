@@ -1,4 +1,5 @@
 import { platform } from './platform'
+import { logger } from './log'
 
 export type CloseReason = {
     code: number
@@ -66,7 +67,7 @@ export class SocketListener {
         messageSessionUid?: Uint8Array,
         getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>
     ) {
-        console.log('Connecting to ' + url)
+        logger.debug('Connecting to ' + url)
 
         this.url = url
         this.closeListeners = []
@@ -93,7 +94,7 @@ export class SocketListener {
         }
 
         this.socket!.onOpen(() => {
-            console.log('socket opened')
+            logger.debug('socket opened')
             if (this.reconnectTimeout) {
                 clearTimeout(this.reconnectTimeout)
             }
@@ -112,7 +113,7 @@ export class SocketListener {
             try {
                 reason = JSON.parse(event['reason'])
             } catch {
-                console.log('Connection closed - no close reason.')
+                logger.debug('Connection closed - no close reason.')
                 this.handleClose({ code: 0, reason: { close_reason: 'No close reason provided' } })
                 this.reconnect()
                 return
@@ -130,7 +131,7 @@ export class SocketListener {
                         this.handleClose({ code: event['code'], reason })
                     } else {
                         // this would be an internal error and shouldnt reach here in production
-                        console.error('Incorrect internal error: ', reason.close_reason)
+                        logger.error('Incorrect internal error: ', reason.close_reason)
                     }
                     break
                 case CloseReasonCode.NOT_CONSISTENT:
@@ -155,7 +156,7 @@ export class SocketListener {
             }
         })
         this.socket!.onError((e: Event | Error) => {
-            console.log('socket error: ' + e)
+            logger.debug('socket error: ' + e)
         })
         this.socket!.onMessage((e) => {
             this.handleMessage(e)
@@ -221,7 +222,7 @@ export class SocketListener {
     }
 
     async getPushMessage(): Promise<any> {
-        console.log('Awaiting web socket message...')
+        logger.debug('Awaiting web socket message...')
         return new Promise<any>((resolve, reject) => {
             this.singleMessageListeners.push({ resolve, reject })
         })
@@ -236,7 +237,7 @@ export class SocketListener {
     }
 
     private reconnect() {
-        console.log(`Reconnecting websocket in ${this.currentBackoffSeconds.toFixed(2)} seconds...`)
+        logger.debug(`Reconnecting websocket in ${this.currentBackoffSeconds.toFixed(2)} seconds...`)
 
         // schedule next reconnect attempt
         if (this.reconnectTimeout) {
@@ -300,7 +301,7 @@ export function socketSendMessage(message: any, socket: WebSocket, createdSocket
         case 2: // CLOSING
         case 3: // CLOSED
             createdSocket.messageQueue.length = 0
-            console.error('Trying to send a message while in the CLOSING or CLOSED state')
+            logger.error('Trying to send a message while in the CLOSING or CLOSED state')
             break
     }
 }

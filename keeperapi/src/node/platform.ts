@@ -5,19 +5,12 @@ import * as FormData from 'form-data'
 import NodeRSA from 'node-rsa'
 import * as WebSocket from 'faye-websocket'
 
-import {
-    EncryptionType,
-    KeyStorage,
-    KeyWrapper,
-    LogOptions,
-    Platform,
-    UnwrapKeyMap,
-    UnwrappedKeyType,
-} from '../platform'
+import { EncryptionType, KeyStorage, KeyWrapper, Platform, UnwrapKeyMap, UnwrappedKeyType } from '../platform'
 import { RSA_PKCS1_PADDING } from 'constants'
 import { getKeeperKeys, getKeeperMlKemKeys } from '../transmissionKeys'
 import { SocketProxy, socketSendMessage } from '../socket'
 import { normal64 } from '../utils'
+import { logger } from '../log'
 import type { KeeperHttpResponse } from '../commands'
 
 const base64ToBytes = (data: string): Uint8Array => {
@@ -105,7 +98,7 @@ export const nodePlatform: Platform = class {
                     storage
                 )
             } catch (e: any) {
-                console.error(`The key ${task.dataId} cannot be decrypted (${e.message})`)
+                logger.error(`The key ${task.dataId} cannot be decrypted (${e.message})`)
             }
         }
     }
@@ -507,18 +500,6 @@ export const nodePlatform: Platform = class {
 
     static async closeCryptoWorker(): Promise<void> {
         // do nothing
-    }
-
-    static log(message: string, options: LogOptions): void {
-        switch (options) {
-            case 'default':
-            case 'CR':
-                console.log(message)
-                break
-            case 'noCR':
-                process.stdout.write(message)
-                break
-        }
     }
 }
 

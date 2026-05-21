@@ -8,10 +8,10 @@ import {
     getKeeperRouterUrl,
     getKeeperUrl,
     isTwoFactorResultCode,
-    log,
     normal64Bytes,
     webSafe64FromBytes,
 } from './utils'
+import { logger, isLevelEnabled, formatProto } from './log'
 import {
     RestMessage,
     RestInMessage,
@@ -94,7 +94,7 @@ export class KeeperEndpoint {
 
     async getPreLogin(username: string): Promise<IPreLoginResponse> {
         if (!this.deviceToken) {
-            console.log('Obtaining device token...')
+            logger.debug('Obtaining device token...')
             let deviceResponse = await this.getDeviceToken()
             if (!deviceResponse.encryptedDeviceToken) {
                 throw Error(`Device token was not created. Status: ${deviceResponse.status}`)
@@ -122,7 +122,7 @@ export class KeeperEndpoint {
                 let errorObj = JSON.parse(e.message)
                 if (errorObj.error === 'region_redirect') {
                     this.options.host = errorObj.region_host
-                    console.log(`Redirecting to ${this.options.host}`)
+                    logger.debug(`Redirecting to ${this.options.host}`)
                 } else {
                     throw e
                 }
@@ -204,13 +204,17 @@ export class KeeperEndpoint {
             Authorization: `KeeperUser ${platform.bytesToBase64(encryptedSessionToken)}`,
         }
         const url = getKeeperRouterUrl(this.options.host, message.path)
-        log(`Calling KA Router URL: ${url}`, 'noCR')
+        const requestId = url.substring(url.lastIndexOf('/') + 1)
+        if (isLevelEnabled('debug')) {
+            logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
+        }
+        const startTime = Date.now()
         const response = await platform.post(url, encryptedPayload, headers)
         if (!response.data || response.data.length === 0) {
             throw new Error(`Empty response from router for ${message.path}`)
         }
         if (response.statusCode !== 200) {
-            console.log('Response code:', response.statusCode)
+            logger.debug(`← ${requestId} Response code:`, response.statusCode)
             let text: string | undefined
             let json: KeeperError | undefined
             try {
@@ -229,7 +233,11 @@ export class KeeperEndpoint {
             } as KeeperError
         }
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
-        return message.fromBytes(decryptedPayload)
+        const result = message.fromBytes(decryptedPayload)
+        if (isLevelEnabled('debug')) {
+            logger.debug(...formatProto(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`, result))
+        }
+        return result
     }
 
     private async executeRestInternal<TIn, TOut>(
@@ -250,22 +258,34 @@ export class KeeperEndpoint {
                 apiVersion,
                 useHpkeForTransmissionKey: this.useHpkeForTransmissionKey,
             })
-            log(`Calling REST URL: ${this.getUrl(message.path)}`, 'noCR')
+            const url = this.getUrl(message.path)
+            const requestId = url.substring(url.lastIndexOf('/') + 1)
+            if (isLevelEnabled('debug')) {
+                logger.debug(...formatProto(`→ ${url}`, (message as { data?: unknown }).data))
+            }
             const startTime = Date.now()
-            const response = await platform.post(this.getUrl(message.path), request)
-            log(` (${formatTimeDiff(new Date(Date.now() - startTime))})`, 'CR')
+            const response = await platform.post(url, request)
             if (!response.data || (response.data.length === 0 && response.statusCode === 200)) {
                 if ('fromBytes' in message) {
                     throw Error(`Missing expected a response for ${message.path}`)
                 }
+                logger.debug(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`)
                 return
             }
             if (response.statusCode != 200) {
-                console.log('Response code:', response.statusCode)
+                logger.debug(`← ${requestId} Response code:`, response.statusCode)
             }
             try {
                 const decrypted = await platform.aesGcmDecrypt(response.data, this._transmissionKey.key)
-                if ('fromBytes' in message) return message.fromBytes(decrypted)
+                const elapsed = formatTimeDiff(new Date(Date.now() - startTime))
+                if ('fromBytes' in message) {
+                    const result = message.fromBytes(decrypted)
+                    if (isLevelEnabled('debug')) {
+                        logger.debug(...formatProto(`← ${requestId} ${elapsed}s`, result))
+                    }
+                    return result
+                }
+                logger.debug(`← ${requestId} ${elapsed}s`)
                 return
             } catch {
                 const errorMessage = platform.bytesToString(response.data.slice(0, 1000))

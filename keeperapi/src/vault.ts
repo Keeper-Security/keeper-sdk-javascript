@@ -3,6 +3,7 @@ import { NN, syncDownMessage } from './restMessages'
 import { CryptoWorkerOptions, EncryptionType, KeyStorage, platform } from './platform'
 import { Records, Tokens, Vault } from './proto'
 import { formatTimeDiff, webSafe64FromBytes } from './utils'
+import { logger } from './log'
 import CacheStatus = Vault.CacheStatus
 import RecordKeyType = Records.RecordKeyType
 import IRecordMetaData = Vault.IRecordMetaData
@@ -354,7 +355,7 @@ const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string; encryption
             encryptionType = 'ecc'
             break
         default:
-            console.error('Unknown record key type: ' + keyType)
+            logger.error('Unknown record key type: ' + keyType)
             return null
     }
     return { keyId, encryptionType }
@@ -411,7 +412,7 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
         }
 
         if (!team.teamPrivateKey?.length && (!team.teamEccPublicKey?.length || !team.teamEccPrivateKey?.length)) {
-            console.error(
+            logger.error(
                 `Key ${team.teamKeyType} type for team folder private key ${teamUid} is not supported for team folder decryption`
             )
         }
@@ -453,7 +454,7 @@ export const processTeams = async (teams: NN<ITeam>[], storage: VaultStorage, de
                     }
                     break
                 default:
-                    console.error(
+                    logger.error(
                         `Key ${folderKey.keyType} type for team folder key ${teamUid}/${folderUid} is not supported for team folder decryption`
                     )
                     break
@@ -488,7 +489,7 @@ const processFolder = async (
         const decryptedData = await platform.decrypt(fData, folderUid, 'cbc', storage)
         return JSON.parse(platform.bytesToString(decryptedData))
     } catch (e: any) {
-        console.error(`The ${shared ? 'shared ' : ''}folder ${folderUid} data cannot be decrypted (${e.message})`)
+        logger.error(`The ${shared ? 'shared ' : ''}folder ${folderUid} data cannot be decrypted (${e.message})`)
     }
 }
 
@@ -576,7 +577,7 @@ const processSharedFolders = async (folders: ISharedFolder[], storage: VaultStor
                 const folderNameBytes = await platform.decrypt(folder.name, folderUid, 'cbc', storage)
                 folderName = platform.bytesToString(folderNameBytes)
             } catch (e: any) {
-                console.error(`The shared folder ${folderUid} name cannot be decrypted (${e.message})`)
+                logger.error(`The shared folder ${folderUid} name cannot be decrypted (${e.message})`)
             }
         }
 
@@ -644,7 +645,7 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 encryptionType = 'cbc'
                 break
             default:
-                console.error('Unable to detect the shared folder key encryption type')
+                logger.error('Unable to detect the shared folder key encryption type')
         }
         try {
             const sharedFolderUid = webSafe64FromBytes(rec.sharedFolderUid)
@@ -665,7 +666,7 @@ const processSharedFolderRecords = async (records: ISharedFolderRecord[], storag
                 ownerUsername: rec.ownerUsername,
             })
         } catch (e: any) {
-            console.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The shared folder record ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -703,7 +704,7 @@ const processRecordLinks = async (links: IRecordLink[], storage: VaultStorage) =
                 true
             )
         } catch (e: any) {
-            console.error(`The record link for ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The record link for ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -721,14 +722,14 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
                 extra = JSON.parse(platform.bytesToString(decryptedExtra))
             }
         } catch (e: any) {
-            console.error(`The record extra data ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The record extra data ${recUid} cannot be decrypted (${e.message})`)
         }
         try {
             if (!!rec.udata) {
                 udata = JSON.parse(rec.udata)
             }
         } catch {
-            console.error('failed to parse the udata')
+            logger.error('failed to parse the udata')
         }
         try {
             const decryptedData = await platform.decrypt(rec.data, recUid, encryptionType, storage)
@@ -745,7 +746,7 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
                 udata,
             })
         } catch (e: any) {
-            console.error(`The record ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The record ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -790,7 +791,7 @@ const processNonSharedData = async (nonSharedData: INonSharedData[], storage: Va
                 data: data,
             })
         } catch (e: any) {
-            console.error(`The non shared data ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The non shared data ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -805,7 +806,7 @@ const processReusedPasswords = async (reusedPasswords: IReusedPasswords | null |
             revision: <number>reusedPasswords.revision,
         })
     } catch (e: any) {
-        console.error(`Could not process reusedPasswords (${e.message})`)
+        logger.error(`Could not process reusedPasswords (${e.message})`)
     }
 }
 
@@ -823,7 +824,7 @@ const processProfile = async (profile: IProfile | null | undefined, storage: Vau
             revision: <number>prof.revision,
         })
     } catch (e: any) {
-        console.error(`Profile cannot be decrypted (${e.message})`)
+        logger.error(`Profile cannot be decrypted (${e.message})`)
     }
 }
 
@@ -835,7 +836,7 @@ const processProfilePic = async (profilePic, storage) => {
             data: profilePic,
         })
     } catch (e: any) {
-        console.error(`Profile picture cannot be decrypted (${e.message})`)
+        logger.error(`Profile picture cannot be decrypted (${e.message})`)
     }
 }
 
@@ -862,7 +863,7 @@ const processSharedFolderFolders = async (
                 storage
             )
         } catch (e: any) {
-            console.error(`The shared folder folder key for ${folderUid} cannot be decrypted (${e.message})`)
+            logger.error(`The shared folder folder key for ${folderUid} cannot be decrypted (${e.message})`)
         }
         try {
             const decryptedData = await platform.decrypt(folder.data, folderUid, 'cbc', storage)
@@ -878,7 +879,7 @@ const processSharedFolderFolders = async (
                 addDependencies(dependencies, webSafe64FromBytes(folder.parentUid), folderUid, 'shared_folder_folder')
             }
         } catch (e: any) {
-            console.error(`The folder folder ${folderUid} cannot be decrypted (${e.message})`)
+            logger.error(`The folder folder ${folderUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -980,7 +981,7 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
                 ownerUsername: mData.ownerUsername,
             })
         } catch (e: any) {
-            console.error(`The record metadata ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The record metadata ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 
@@ -1010,7 +1011,7 @@ const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storag
                 revision: bwRecord.revision as number,
             })
         } catch (e: any) {
-            console.error(`Breach watch record ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`Breach watch record ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -1026,7 +1027,7 @@ const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurity
                 revision: bwSecurityData.revision as number,
             })
         } catch (e: any) {
-            console.error(`Breach watch security data ${uid} cannot be processed (${e.message})`)
+            logger.error(`Breach watch security data ${uid} cannot be processed (${e.message})`)
         }
     }
 }
@@ -1052,7 +1053,7 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
                 data: securityScoreDataObj,
             })
         } catch (e: any) {
-            console.error(`The security score data ${recUid} cannot be decrypted (${e.message})`)
+            logger.error(`The security score data ${recUid} cannot be decrypted (${e.message})`)
         }
     }
 }
@@ -1064,20 +1065,20 @@ const logProtobuf = (data: any, format: SyncLogFormat, seqNo: number, counts: an
         case '!':
             return
         case 'raw':
-            console.log(data)
+            logger.debug(data)
             break
         case 'obj':
-            console.log(JSON.parse(JSON.stringify(data)))
+            logger.debug(JSON.parse(JSON.stringify(data)))
             break
         case 'str':
-            console.log(JSON.stringify(data))
+            logger.debug(JSON.stringify(data))
             break
         case 'cnt_t':
         case 'cnt':
             if (format === 'cnt_t') {
-                console.log('continuationToken: ', platform.bytesToBase64(data.continuationToken))
+                logger.debug('continuationToken: ', platform.bytesToBase64(data.continuationToken))
             }
-            console.log({
+            logger.debug({
                 seq: seqNo,
                 ...counts,
             })
@@ -1140,7 +1141,7 @@ const processRecordRotations = async (rotations: Vault.IRecordRotation[] | null 
                 disabled: r.disabled === true,
             })
         } catch {
-            console.error(`The record rotation ${uid} could not be processed`)
+            logger.error(`The record rotation ${uid} could not be processed`)
         }
     }
 }
@@ -1215,7 +1216,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                     const workerOptions = options.workerOptions || {}
                     await platform.createCryptoWorker(storage, workerOptions)
                 } catch (e) {
-                    console.error(e)
+                    logger.error(e)
                 }
             }
             result.pageCount += 1
@@ -1340,7 +1341,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             }
         }
     } catch (e: any) {
-        console.error(e)
+        logger.error(e)
         result.error = e.message
     }
     await platform.closeCryptoWorker()
