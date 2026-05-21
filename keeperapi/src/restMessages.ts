@@ -915,5 +915,15 @@ export const pamGetLeafsMessage = (
         GraphSync.GraphSyncRefsResult
     )
 
+export const pamGetRecordingsMessage = (
+    data: PAM.IPAMRecordingsRequest
+): RestMessage<PAM.IPAMRecordingsRequest, PAM.IPAMRecordingsResponse> =>
+    createMessage(
+        data,
+        'api/user/get_recordings2',
+        PAM.PAMRecordingsRequest,
+        PAM.PAMRecordingsResponse
+    )
+
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
