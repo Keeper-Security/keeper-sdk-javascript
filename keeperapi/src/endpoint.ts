@@ -235,9 +235,7 @@ export class KeeperEndpoint {
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
         const result = message.fromBytes(decryptedPayload)
         if (isLevelEnabled('debug')) {
-            logger.debug(
-                ...formatProto(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`, result)
-            )
+            logger.debug(...formatProto(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`, result))
         }
         return result
     }
