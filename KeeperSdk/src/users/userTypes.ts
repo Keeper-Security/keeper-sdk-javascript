@@ -267,8 +267,26 @@ export type AliasUserResult = {
     detail: string
 }
 
+export const MAX_FULL_NAME_LENGTH = 255
+export const MAX_JOB_TITLE_LENGTH = 255
+
 export function normalizeEmailInputs(emails: string[] | undefined): string[] {
     return (emails || []).map((e) => e.trim()).filter((e) => e.length > 0)
+}
+
+export function validateUserProfileFields(fullName: string | undefined, jobTitle: string | undefined): void {
+    if (fullName !== undefined && fullName.length > MAX_FULL_NAME_LENGTH) {
+        throw new KeeperSdkError(
+            `Full name exceeds ${MAX_FULL_NAME_LENGTH} characters.`,
+            ResultCodes.USER_UPDATE_FAILED
+        )
+    }
+    if (jobTitle !== undefined && jobTitle.length > MAX_JOB_TITLE_LENGTH) {
+        throw new KeeperSdkError(
+            `Job title exceeds ${MAX_JOB_TITLE_LENGTH} characters.`,
+            ResultCodes.USER_UPDATE_FAILED
+        )
+    }
 }
 
 export function resolveExistingUsers(users: EnterpriseUser[], identifiers: string[]): EnterpriseUser[] {

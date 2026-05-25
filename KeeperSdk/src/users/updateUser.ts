@@ -19,6 +19,7 @@ import {
 } from '../teams/teamUtils'
 import {
     normalizeEmailInputs,
+    validateUserProfileFields,
     resolveExistingUsers,
     UpdateUserStatus,
     type UpdateUserInput,
@@ -111,6 +112,7 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
 
     const fullName = (input.fullName || '').trim() || undefined
     const jobTitle = (input.jobTitle || '').trim() || undefined
+    validateUserProfileFields(fullName, jobTitle)
 
     const items: UpdateUserItemResult[] = []
 

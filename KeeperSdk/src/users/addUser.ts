@@ -18,6 +18,7 @@ import {
 } from '../teams/teamUtils'
 import {
     normalizeEmailInputs,
+    validateUserProfileFields,
     AddUserStatus,
     AddUserSkipReason,
     type AddUserInput,
@@ -108,6 +109,7 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
     const existingByEmail = buildExistingByEmail(existingUsers)
     const fullName = (input.fullName || '').trim() || undefined
     const jobTitle = (input.jobTitle || '').trim() || undefined
+    validateUserProfileFields(fullName, jobTitle)
 
     const items: AddUserItemResult[] = []
 
