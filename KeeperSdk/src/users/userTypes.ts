@@ -18,6 +18,7 @@ export enum UserColumn {
 
 export enum AddUserStatus {
     Added = 'added',
+    Reinvited = 'reinvited',
     Skipped = 'skipped',
     Failed = 'failed',
 }
@@ -35,6 +36,22 @@ export enum UpdateUserStatus {
 export enum DeleteUserStatus {
     Deleted = 'deleted',
     Failed = 'failed',
+}
+
+export enum UserAction {
+    Lock = 'lock',
+    Unlock = 'unlock',
+    ExpirePassword = 'expire_password',
+}
+
+export enum UserActionStatus {
+    Success = 'success',
+    Skipped = 'skipped',
+    Failed = 'failed',
+}
+
+export enum UserActionSkipReason {
+    Inactive = 'inactive',
 }
 
 export type UserColumnInput = UserColumn | `${UserColumn}`
@@ -133,6 +150,7 @@ export type AddUserResult = {
     parentNodeName: string
     items: AddUserItemResult[]
     added: number
+    reinvited: number
     skipped: number
     failed: number
 }
@@ -200,6 +218,53 @@ export type FormattedDeleteUserTable = {
     headers: string[]
     rows: string[][]
     summary: string
+}
+
+export type UserActionInput = {
+    emails: string[]
+    action: UserAction
+}
+
+export type UserActionItemResult = {
+    username: string
+    enterpriseUserId: number
+    status: UserActionStatus
+    skipReason?: UserActionSkipReason
+    message?: string
+}
+
+export type UserActionResult = {
+    success: boolean
+    items: UserActionItemResult[]
+    succeeded: number
+    skipped: number
+    failed: number
+}
+
+export type FormattedUserActionTable = {
+    headers: string[]
+    rows: string[][]
+    summary: string
+}
+
+export enum AliasOperation {
+    Add = 'add',
+    Remove = 'remove',
+}
+
+export type AliasUserInput = {
+    email: string
+    operation: AliasOperation
+    alias: string
+}
+
+export type AliasUserResult = {
+    success: boolean
+    username: string
+    enterpriseUserId: number
+    alias: string
+    operation: AliasOperation
+    detail: string
 }
 
 export function normalizeEmailInputs(emails: string[] | undefined): string[] {

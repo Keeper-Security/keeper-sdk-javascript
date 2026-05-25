@@ -77,6 +77,11 @@ import type {
     DeleteUserInput,
     DeleteUserResult,
     FormattedDeleteUserTable,
+    UserActionInput,
+    UserActionResult,
+    FormattedUserActionTable,
+    AliasUserInput,
+    AliasUserResult,
 } from '../users/userTypes'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
@@ -414,6 +419,18 @@ export class KeeperVault {
 
     public formatDeleteUserResult(result: DeleteUserResult): FormattedDeleteUserTable {
         return this.userManager.formatDeleteUserResult(result)
+    }
+
+    public async actionUsers(input: UserActionInput): Promise<UserActionResult> {
+        return this.userManager.actionUsers(input)
+    }
+
+    public formatUserActionResult(result: UserActionResult): FormattedUserActionTable {
+        return this.userManager.formatUserActionResult(result)
+    }
+
+    public async aliasUser(input: AliasUserInput): Promise<AliasUserResult> {
+        return this.userManager.aliasUser(input)
     }
 
     public async viewTeam(identifier: string): Promise<TeamView> {

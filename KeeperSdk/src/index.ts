@@ -311,6 +311,15 @@ export {
     DeleteUserStatus,
 } from './users/deleteUser'
 
+export {
+    actionUsers,
+    formatUserActionResult,
+    renderUserActionAsciiTable,
+    UserAction,
+    UserActionStatus,
+    UserActionSkipReason,
+} from './users/actionUser'
+
 export type {
     UserColumnInput,
     ListUsersOptions,
@@ -336,11 +345,20 @@ export type {
     DeleteUserItemResult,
     DeleteUserResult,
     FormattedDeleteUserTable,
+    UserActionInput,
+    UserActionItemResult,
+    UserActionResult,
+    FormattedUserActionTable,
+    AliasUserInput,
+    AliasUserResult,
 } from './users/userTypes'
 
-export { UserManager } from './users/UserManager'
+export {
+    aliasUser,
+    AliasOperation,
+} from './users/aliasUser'
 
-export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
+export { UserManager } from './users/UserManager'
 
 export type {
     DRecord,
