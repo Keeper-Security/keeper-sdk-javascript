@@ -62,6 +62,22 @@ import type { TeamView } from '../teams/viewTeam'
 import type { AddTeamInput, AddTeamResult } from '../teams/addTeam'
 import type { UpdateTeamInput, UpdateTeamResult } from '../teams/updateTeam'
 import type { DeleteTeamInput, DeleteTeamResult } from '../teams/deleteTeam'
+import { UserManager } from '../users/UserManager'
+import type {
+    ListUserRow,
+    ListUsersOptions,
+    UserView,
+    AddUserInput,
+    AddUserResult,
+    FormatAddUserResultOptions,
+    FormattedAddUserTable,
+    UpdateUserInput,
+    UpdateUserResult,
+    FormattedUpdateUserTable,
+    DeleteUserInput,
+    DeleteUserResult,
+    FormattedDeleteUserTable,
+} from '../users/userTypes'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
 
@@ -103,6 +119,7 @@ export class KeeperVault {
     private readonly folderManager: FolderManager
     private readonly sharedFolderManager: SharedFolderManager
     private readonly teamManager: TeamManager
+    private readonly userManager: UserManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -124,6 +141,7 @@ export class KeeperVault {
         this.folderManager = new FolderManager(this.storage, this.folderSession, authProvider)
         this.sharedFolderManager = new SharedFolderManager(this.storage, authProvider)
         this.teamManager = new TeamManager(authProvider)
+        this.userManager = new UserManager(authProvider)
     }
 
     public getFolderManager(): FolderManager {
@@ -364,6 +382,38 @@ export class KeeperVault {
 
     public async listTeams(options?: ListTeamsOptions): Promise<ListTeamRow[]> {
         return this.teamManager.listTeams(options ?? {})
+    }
+
+    public async listUsers(options?: ListUsersOptions): Promise<ListUserRow[]> {
+        return this.userManager.listUsers(options ?? {})
+    }
+
+    public async viewUser(identifier: string): Promise<UserView> {
+        return this.userManager.viewUser(identifier)
+    }
+
+    public async addUsers(input: AddUserInput): Promise<AddUserResult> {
+        return this.userManager.addUsers(input)
+    }
+
+    public formatAddUserResult(result: AddUserResult, options: FormatAddUserResultOptions = {}): FormattedAddUserTable {
+        return this.userManager.formatAddUserResult(result, options)
+    }
+
+    public async updateUsers(input: UpdateUserInput): Promise<UpdateUserResult> {
+        return this.userManager.updateUsers(input)
+    }
+
+    public formatUpdateUserResult(result: UpdateUserResult): FormattedUpdateUserTable {
+        return this.userManager.formatUpdateUserResult(result)
+    }
+
+    public async deleteUsers(input: DeleteUserInput): Promise<DeleteUserResult> {
+        return this.userManager.deleteUsers(input)
+    }
+
+    public formatDeleteUserResult(result: DeleteUserResult): FormattedDeleteUserTable {
+        return this.userManager.formatDeleteUserResult(result)
     }
 
     public async viewTeam(identifier: string): Promise<TeamView> {

@@ -13,6 +13,13 @@ export interface ILogger {
     error(...args: unknown[]): void
 }
 
+const CREDENTIAL_PATTERN = /\b(password|passwd|pwd|secret|api[_-]?key|auth[_-]?token)\s*[:=]\s*\S+/gi
+
+function sanitizeArg(arg: unknown): unknown {
+    if (typeof arg !== 'string') return arg
+    return arg.replace(CREDENTIAL_PATTERN, (_, key: string) => `${key}=[REDACTED]`)
+}
+
 export class ConsoleLogger implements ILogger {
     private level: LogLevel
 
@@ -29,19 +36,19 @@ export class ConsoleLogger implements ILogger {
     }
 
     public debug(...args: unknown[]): void {
-        if (this.level <= LogLevel.DEBUG) console.debug(...args)
+        if (this.level <= LogLevel.DEBUG) console.debug(...args.map(sanitizeArg))
     }
 
     public info(...args: unknown[]): void {
-        if (this.level <= LogLevel.INFO) console.log(...args)
+        if (this.level <= LogLevel.INFO) console.log(...args.map(sanitizeArg))
     }
 
     public warn(...args: unknown[]): void {
-        if (this.level <= LogLevel.WARN) console.warn(...args)
+        if (this.level <= LogLevel.WARN) console.warn(...args.map(sanitizeArg))
     }
 
     public error(...args: unknown[]): void {
-        if (this.level <= LogLevel.ERROR) console.error(...args)
+        if (this.level <= LogLevel.ERROR) console.error(...args.map(sanitizeArg))
     }
 }
 
