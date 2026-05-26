@@ -155,7 +155,7 @@ export function renderUsersAsciiTable(
         }
     }
 
-    const padCell = (cell: string, ci: number): string => cell + ' '.repeat(columnWidths[ci] - cell.length)
+    const padCell = (cell: string, ci: number): string => cell.padEnd(columnWidths[ci])
     const formatPhysicalRow = (cells: string[]): string =>
         cells.map((cell, ci) => padCell(cell, ci)).join('  ')
 

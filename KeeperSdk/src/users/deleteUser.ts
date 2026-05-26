@@ -44,21 +44,19 @@ export async function deleteUsers(auth: Auth, input: DeleteUserInput): Promise<D
     const items: DeleteUserItemResult[] = []
 
     for (const user of resolvedUsers) {
+        const item: DeleteUserItemResult = {
+            username: user.username,
+            enterpriseUserId: user.enterprise_user_id,
+            status: DeleteUserStatus.Failed,
+        }
+
         try {
             await sendUserDelete(auth, user.enterprise_user_id)
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                status: DeleteUserStatus.Deleted,
-            })
+            item.status = DeleteUserStatus.Deleted
         } catch (err) {
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                status: DeleteUserStatus.Failed,
-                message: extractErrorMessage(err),
-            })
+            item.message = extractErrorMessage(err)
         }
+        items.push(item)
     }
 
     return finalizeResult(items)
@@ -115,7 +113,7 @@ export function renderDeleteUserAsciiTable(table: FormattedDeleteUserTable): str
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
     const padCell = (cell: string, columnIndex: number): string =>
-        cell + ' '.repeat(Math.max(0, widths[columnIndex] - cell.length))
+        cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 

@@ -12,7 +12,7 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { isBoolean, KeeperSdkError, extractErrorMessage } from '../utils'
 import { listFolder } from './listFolder'
 import { tryResolvePath, splitPathComponents, type VaultFolderSession } from './changeDirectory'
-import { FolderKind, FolderResultStatus, ParentFolderKind } from './folderHelpers'
+import { FolderKind, FolderResultStatus, ParentFolderKind, validateFolderName } from './folderHelpers'
 
 type NewFolderKind = FolderKind
 
@@ -134,6 +134,7 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
     if (!name) {
         throw new KeeperSdkError('Folder name cannot be empty.', 'folder_name_required')
     }
+    validateFolderName(name)
 
     const parentUid = input.parentUid === undefined || input.parentUid === '' ? null : input.parentUid
     const parent = resolveParentContext(storage, parentUid)

@@ -9,7 +9,7 @@ import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-se
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { anyIsBoolean, isBoolean, isObject, KeeperSdkError, extractErrorMessage } from '../utils'
 import { resolveSingleFolder, type VaultFolderSession } from './changeDirectory'
-import { FolderKind, FolderResultStatus } from './folderHelpers'
+import { FolderKind, FolderResultStatus, validateFolderName } from './folderHelpers'
 
 export type UpdateFolderInput = {
     folderUid: string
@@ -79,6 +79,7 @@ export async function updateFolder(
     }
 
     const trimmedName = input.folderName?.trim() || ''
+    if (trimmedName) validateFolderName(trimmedName)
 
     const hasPermissionUpdate = anyIsBoolean(
         input.manageUsers,

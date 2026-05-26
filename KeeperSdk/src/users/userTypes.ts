@@ -1,6 +1,11 @@
 import { KeeperSdkError, ResultCodes } from '../utils'
 import type { EnterpriseUser } from '../teams/enterpriseData'
 
+export enum EnterpriseUserStatus {
+    Active = 'active',
+    Invited = 'invited',
+}
+
 export enum UserColumn {
     Name = 'name',
     Status = 'status',
@@ -18,6 +23,7 @@ export enum UserColumn {
 
 export enum AddUserStatus {
     Added = 'added',
+    Reinvited = 'reinvited',
     Skipped = 'skipped',
     Failed = 'failed',
 }
@@ -35,6 +41,22 @@ export enum UpdateUserStatus {
 export enum DeleteUserStatus {
     Deleted = 'deleted',
     Failed = 'failed',
+}
+
+export enum UserAction {
+    Lock = 'lock',
+    Unlock = 'unlock',
+    ExpirePassword = 'expire_password',
+}
+
+export enum UserActionStatus {
+    Success = 'success',
+    Skipped = 'skipped',
+    Failed = 'failed',
+}
+
+export enum UserActionSkipReason {
+    Inactive = 'inactive',
 }
 
 export type UserColumnInput = UserColumn | `${UserColumn}`
@@ -133,6 +155,7 @@ export type AddUserResult = {
     parentNodeName: string
     items: AddUserItemResult[]
     added: number
+    reinvited: number
     skipped: number
     failed: number
 }
@@ -202,8 +225,73 @@ export type FormattedDeleteUserTable = {
     summary: string
 }
 
+export type UserActionInput = {
+    emails: string[]
+    action: UserAction
+}
+
+export type UserActionItemResult = {
+    username: string
+    enterpriseUserId: number
+    status: UserActionStatus
+    skipReason?: UserActionSkipReason
+    message?: string
+}
+
+export type UserActionResult = {
+    success: boolean
+    items: UserActionItemResult[]
+    succeeded: number
+    skipped: number
+    failed: number
+}
+
+export type FormattedUserActionTable = {
+    headers: string[]
+    rows: string[][]
+    summary: string
+}
+
+export enum AliasOperation {
+    Add = 'add',
+    Remove = 'remove',
+}
+
+export type AliasUserInput = {
+    email: string
+    operation: AliasOperation
+    alias: string
+}
+
+export type AliasUserResult = {
+    success: boolean
+    username: string
+    enterpriseUserId: number
+    alias: string
+    operation: AliasOperation
+    detail: string
+}
+
+export const MAX_FULL_NAME_LENGTH = 255
+export const MAX_JOB_TITLE_LENGTH = 255
+
 export function normalizeEmailInputs(emails: string[] | undefined): string[] {
     return (emails || []).map((e) => e.trim()).filter((e) => e.length > 0)
+}
+
+export function validateUserProfileFields(fullName: string | undefined, jobTitle: string | undefined): void {
+    if (fullName !== undefined && fullName.length > MAX_FULL_NAME_LENGTH) {
+        throw new KeeperSdkError(
+            `Full name exceeds ${MAX_FULL_NAME_LENGTH} characters.`,
+            ResultCodes.USER_UPDATE_FAILED
+        )
+    }
+    if (jobTitle !== undefined && jobTitle.length > MAX_JOB_TITLE_LENGTH) {
+        throw new KeeperSdkError(
+            `Job title exceeds ${MAX_JOB_TITLE_LENGTH} characters.`,
+            ResultCodes.USER_UPDATE_FAILED
+        )
+    }
 }
 
 export function resolveExistingUsers(users: EnterpriseUser[], identifiers: string[]): EnterpriseUser[] {
@@ -240,8 +328,10 @@ export function resolveExistingUsers(users: EnterpriseUser[], identifiers: strin
     return result
 }
 
-export function formatUserStatus(user: EnterpriseUser): string {
-    if (user.status === 'invited') return 'Invited'
+export type FormattedUserStatus = 'Active' | 'Invited' | 'Locked' | 'Disabled'
+
+export function formatUserStatus(user: EnterpriseUser): FormattedUserStatus {
+    if (user.status === EnterpriseUserStatus.Invited) return 'Invited'
     if (user.lock === 1) return 'Locked'
     if ((user.lock ?? 0) > 1) return 'Disabled'
     return 'Active'
