@@ -93,7 +93,6 @@ async function removeAlias(
         logger.info(`Alias "${alias}" does not exist for user.`)
         return { ...base, success: false, detail: 'Alias does not exist.' }
     }
-
     try {
         await sendDeleteAlias(auth, user.enterprise_user_id, alias)
         return { ...base, success: true, detail: 'Alias removed.' }

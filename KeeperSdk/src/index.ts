@@ -351,6 +351,7 @@ export type {
     FormattedUserActionTable,
     AliasUserInput,
     AliasUserResult,
+    FormattedUserStatus,
 } from './users/userTypes'
 
 export { EnterpriseUserStatus } from './users/userTypes'

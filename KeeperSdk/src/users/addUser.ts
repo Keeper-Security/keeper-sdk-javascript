@@ -272,7 +272,7 @@ export function renderAddUserAsciiTable(table: FormattedAddUserTable): string {
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
     const padCell = (cell: string, columnIndex: number): string =>
-        cell + ' '.repeat(Math.max(0, widths[columnIndex] - cell.length))
+        cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 

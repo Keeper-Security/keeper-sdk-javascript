@@ -328,7 +328,9 @@ export function resolveExistingUsers(users: EnterpriseUser[], identifiers: strin
     return result
 }
 
-export function formatUserStatus(user: EnterpriseUser): string {
+export type FormattedUserStatus = 'Active' | 'Invited' | 'Locked' | 'Disabled'
+
+export function formatUserStatus(user: EnterpriseUser): FormattedUserStatus {
     if (user.status === EnterpriseUserStatus.Invited) return 'Invited'
     if (user.lock === 1) return 'Locked'
     if ((user.lock ?? 0) > 1) return 'Disabled'
