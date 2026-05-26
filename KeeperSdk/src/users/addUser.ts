@@ -17,6 +17,7 @@ import {
     resolveParentNode,
 } from '../teams/teamUtils'
 import {
+    EnterpriseUserStatus,
     normalizeEmailInputs,
     validateUserProfileFields,
     AddUserStatus,
@@ -115,51 +116,42 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
 
     for (const raw of rawEmails) {
         const email = raw.toLowerCase()
+        const item: AddUserItemResult = {
+            username: raw,
+            status: AddUserStatus.Failed,
+        }
 
         if (!isValidEmail(email)) {
-            items.push({
-                username: raw,
-                status: AddUserStatus.Skipped,
-                skipReason: AddUserSkipReason.InvalidEmail,
-                message: `"${raw}" is not a valid email address.`,
-            })
+            item.status = AddUserStatus.Skipped
+            item.skipReason = AddUserSkipReason.InvalidEmail
+            item.message = `"${raw}" is not a valid email address.`
+            items.push(item)
             continue
         }
 
         const existing = existingByEmail.get(email)
         if (existing) {
-            if (existing.status === 'invited') {
+            item.enterpriseUserId = existing.enterprise_user_id
+            item.nodeId = existing.node_id
+
+            if (existing.status === EnterpriseUserStatus.Invited) {
                 try {
                     await sendReinvite(auth, existing.enterprise_user_id)
-                    items.push({
-                        username: raw,
-                        enterpriseUserId: existing.enterprise_user_id,
-                        nodeId: existing.node_id,
-                        status: AddUserStatus.Reinvited,
-                        message: 'Invitation resent.',
-                    })
+                    item.status = AddUserStatus.Reinvited
+                    item.message = 'Invitation resent.'
                 } catch (err) {
-                    items.push({
-                        username: raw,
-                        enterpriseUserId: existing.enterprise_user_id,
-                        nodeId: existing.node_id,
-                        status: AddUserStatus.Failed,
-                        message: extractErrorMessage(err),
-                    })
+                    item.message = extractErrorMessage(err)
                 }
             } else {
-                items.push({
-                    username: raw,
-                    enterpriseUserId: existing.enterprise_user_id,
-                    nodeId: existing.node_id,
-                    status: AddUserStatus.Skipped,
-                    skipReason: AddUserSkipReason.AlreadyExists,
-                    message: `User "${raw}" has already accepted the invitation.`,
-                })
+                item.status = AddUserStatus.Skipped
+                item.skipReason = AddUserSkipReason.AlreadyExists
+                item.message = `User "${raw}" has already accepted the invitation.`
             }
+            items.push(item)
             continue
         }
 
+        item.username = email
         try {
             const enterpriseUserId = await allocateEnterpriseId(auth)
             const encryptedData = await encryptObjectForStorage({ displayname: fullName || '' }, treeKey)
@@ -171,19 +163,13 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
                 full_name: fullName,
                 job_title: jobTitle,
             })
-            items.push({
-                username: email,
-                enterpriseUserId,
-                nodeId: parentNodeId,
-                status: AddUserStatus.Added,
-            })
+            item.enterpriseUserId = enterpriseUserId
+            item.nodeId = parentNodeId
+            item.status = AddUserStatus.Added
         } catch (err) {
-            items.push({
-                username: raw,
-                status: AddUserStatus.Failed,
-                message: extractErrorMessage(err),
-            })
+            item.message = extractErrorMessage(err)
         }
+        items.push(item)
     }
 
     return finalizeResult(items, parentNodeId, parentNodeName)

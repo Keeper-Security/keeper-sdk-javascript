@@ -1,6 +1,11 @@
 import { KeeperSdkError, ResultCodes } from '../utils'
 import type { EnterpriseUser } from '../teams/enterpriseData'
 
+export enum EnterpriseUserStatus {
+    Active = 'active',
+    Invited = 'invited',
+}
+
 export enum UserColumn {
     Name = 'name',
     Status = 'status',
@@ -324,7 +329,7 @@ export function resolveExistingUsers(users: EnterpriseUser[], identifiers: strin
 }
 
 export function formatUserStatus(user: EnterpriseUser): string {
-    if (user.status === 'invited') return 'Invited'
+    if (user.status === EnterpriseUserStatus.Invited) return 'Invited'
     if (user.lock === 1) return 'Locked'
     if ((user.lock ?? 0) > 1) return 'Disabled'
     return 'Active'

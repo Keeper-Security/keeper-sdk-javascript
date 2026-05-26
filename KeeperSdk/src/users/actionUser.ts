@@ -10,6 +10,7 @@ import {
     type EnterpriseUser,
 } from '../teams/enterpriseData'
 import {
+    EnterpriseUserStatus,
     normalizeEmailInputs,
     resolveExistingUsers,
     UserAction,
@@ -67,33 +68,28 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
     const items: UserActionItemResult[] = []
 
     for (const user of resolvedUsers) {
-        if (user.status !== 'active') {
+        const item: UserActionItemResult = {
+            username: user.username,
+            enterpriseUserId: user.enterprise_user_id,
+            status: UserActionStatus.Failed,
+        }
+
+        if (user.status !== EnterpriseUserStatus.Active) {
             const masked = maskEmail(user.username)
             logger.warn(`User "${masked}" is not active and will be skipped.`)
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                status: UserActionStatus.Skipped,
-                skipReason: UserActionSkipReason.Inactive,
-            })
+            item.status = UserActionStatus.Skipped
+            item.skipReason = UserActionSkipReason.Inactive
+            items.push(item)
             continue
         }
 
         try {
             await sendUserAction(auth, input.action, user)
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                status: UserActionStatus.Success,
-            })
+            item.status = UserActionStatus.Success
         } catch (err) {
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                status: UserActionStatus.Failed,
-                message: extractErrorMessage(err),
-            })
+            item.message = extractErrorMessage(err)
         }
+        items.push(item)
     }
 
     return finalizeResult(items)

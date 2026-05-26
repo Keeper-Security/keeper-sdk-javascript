@@ -353,6 +353,8 @@ export type {
     AliasUserResult,
 } from './users/userTypes'
 
+export { EnterpriseUserStatus } from './users/userTypes'
+
 export {
     aliasUser,
     AliasOperation,
