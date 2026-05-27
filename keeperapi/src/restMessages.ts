@@ -567,6 +567,44 @@ export const setEnterpriseDataKeyMessage = (
 ): RestInMessage<Enterprise.IEnterpriseUserDataKey> =>
     createInMessage(data, 'enterprise/set_enterprise_user_data_key', Enterprise.EnterpriseUserDataKey)
 
+export const enterpriseUserAddAliasMessage = (
+    data: Authentication.IEnterpriseUserAddAliasRequest
+): RestMessage<Authentication.IEnterpriseUserAddAliasRequest, Authentication.IEnterpriseUserAddAliasResponse> =>
+    createMessage(
+        data,
+        'enterprise/enterprise_user_add_alias',
+        Authentication.EnterpriseUserAddAliasRequest,
+        Authentication.EnterpriseUserAddAliasResponse
+    )
+
+export const enterpriseUserSetPrimaryAliasMessage = (
+    data: Authentication.IEnterpriseUserAliasRequest
+): RestInMessage<Authentication.IEnterpriseUserAliasRequest> =>
+    createInMessage(
+        data,
+        'enterprise/enterprise_user_set_primary_alias',
+        Authentication.EnterpriseUserAliasRequest
+    )
+
+export const enterpriseUserDeleteAliasMessage = (
+    data: Authentication.IEnterpriseUserAliasRequest
+): RestInMessage<Authentication.IEnterpriseUserAliasRequest> =>
+    createInMessage(
+        data,
+        'enterprise/enterprise_user_delete_alias',
+        Authentication.EnterpriseUserAliasRequest
+    )
+
+export const enterpriseUsersLockMessage = (
+    data: Enterprise.ILockUsersRequest
+): RestMessage<Enterprise.ILockUsersRequest, Enterprise.ILockUsersResponse> =>
+    createMessage(
+        data,
+        'enterprise/enterprise_users_lock',
+        Enterprise.LockUsersRequest,
+        Enterprise.LockUsersResponse
+    )
+
 export const setV2AlternatePasswordMessage = (
     data: Authentication.IUserAuthRequest
 ): RestInMessage<Authentication.IUserAuthRequest> =>

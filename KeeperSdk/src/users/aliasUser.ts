@@ -1,4 +1,9 @@
-import { Authentication, type Auth } from '@keeper-security/keeperapi'
+import {
+    enterpriseUserAddAliasMessage,
+    enterpriseUserDeleteAliasMessage,
+    enterpriseUserSetPrimaryAliasMessage,
+    type Auth,
+} from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, logger, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
@@ -15,10 +20,6 @@ import {
 
 export { AliasOperation }
 export type { AliasUserInput, AliasUserResult }
-
-const ADD_ALIAS_PATH = 'enterprise/enterprise_user_add_alias'
-const SET_PRIMARY_ALIAS_PATH = 'enterprise/enterprise_user_set_primary_alias'
-const DELETE_ALIAS_PATH = 'enterprise/enterprise_user_delete_alias'
 
 const ALIAS_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Users,
@@ -102,21 +103,9 @@ async function removeAlias(
 }
 
 async function sendAddAlias(auth: Auth, enterpriseUserId: number, alias: string): Promise<void> {
-    const request = Authentication.EnterpriseUserAddAliasRequest.create({
-        enterpriseUserId,
-        alias,
-        primary: true,
-    })
-    const message = {
-        path: ADD_ALIAS_PATH,
-        toBytes(): Uint8Array {
-            return Authentication.EnterpriseUserAddAliasRequest.encode(request).finish()
-        },
-        fromBytes(data: Uint8Array): Authentication.IEnterpriseUserAddAliasResponse {
-            return Authentication.EnterpriseUserAddAliasResponse.decode(data)
-        },
-    }
-    const response = await auth.executeRest(message)
+    const response = await auth.executeRest(
+        enterpriseUserAddAliasMessage({ enterpriseUserId, alias, primary: true })
+    )
     for (const status of response.status || []) {
         if (status.status && status.status !== 'success') {
             throw new KeeperSdkError(`Add alias failed: ${status.status}`, ResultCodes.USER_ALIAS_FAILED)
@@ -125,29 +114,9 @@ async function sendAddAlias(auth: Auth, enterpriseUserId: number, alias: string)
 }
 
 async function sendSetPrimaryAlias(auth: Auth, enterpriseUserId: number, alias: string): Promise<void> {
-    const request = Authentication.EnterpriseUserAliasRequest.create({ enterpriseUserId, alias })
-    const message = {
-        path: SET_PRIMARY_ALIAS_PATH,
-        toBytes(): Uint8Array {
-            return Authentication.EnterpriseUserAliasRequest.encode(request).finish()
-        },
-        fromBytes(data: Uint8Array): Record<string, never> {
-            return {}
-        },
-    }
-    await auth.executeRest(message)
+    await auth.executeRestAction(enterpriseUserSetPrimaryAliasMessage({ enterpriseUserId, alias }))
 }
 
 async function sendDeleteAlias(auth: Auth, enterpriseUserId: number, alias: string): Promise<void> {
-    const request = Authentication.EnterpriseUserAliasRequest.create({ enterpriseUserId, alias })
-    const message = {
-        path: DELETE_ALIAS_PATH,
-        toBytes(): Uint8Array {
-            return Authentication.EnterpriseUserAliasRequest.encode(request).finish()
-        },
-        fromBytes(data: Uint8Array): Record<string, never> {
-            return {}
-        },
-    }
-    await auth.executeRest(message)
+    await auth.executeRestAction(enterpriseUserDeleteAliasMessage({ enterpriseUserId, alias }))
 }

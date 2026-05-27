@@ -1,9 +1,11 @@
 import {
+    Enterprise,
+    enterpriseUsersLockMessage,
     type Auth,
     type KeeperResponse,
     type RestCommand,
 } from '@keeper-security/keeperapi'
-import { extractErrorMessage, KeeperSdkError, logger, ResultCodes } from '../utils'
+import { extractErrorMessage, isNumber, KeeperSdkError, logger, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
@@ -12,7 +14,6 @@ import {
 import {
     EnterpriseUserStatus,
     normalizeEmailInputs,
-    resolveExistingUsers,
     UserAction,
     UserActionStatus,
     UserActionSkipReason,
@@ -25,23 +26,23 @@ import {
 export { UserAction, UserActionStatus, UserActionSkipReason }
 export type { UserActionInput, UserActionItemResult, UserActionResult, FormattedUserActionTable }
 
-const USER_LOCK_COMMAND = 'enterprise_user_lock'
 const EXPIRE_PASSWORD_COMMAND = 'set_master_password_expire'
 const ALL_USERS_SENTINEL = '@all'
 const ACTIONS_NOT_SUPPORTING_ALL = new Set<UserAction>([UserAction.Lock, UserAction.ExpirePassword])
+const LOCK_UNLOCK_BATCH_SIZE = 1000
+const SELF_ACTION_MESSAGE = 'This operation cannot be done on yourself.'
 
 const ACTION_USER_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Users]
 
 const USER_ACTION_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Detail']
 
-type UserLockPayload = {
-    enterprise_user_id: number
-    lock: 'locked' | 'unlocked'
-}
-
 type ExpirePasswordPayload = {
     email: string
 }
+
+type ActionUserTarget =
+    | { kind: 'user'; user: EnterpriseUser }
+    | { kind: 'not_found'; identifier: string }
 
 export async function actionUsers(auth: Auth, input: UserActionInput): Promise<UserActionResult> {
     const identifiers = normalizeEmailInputs(input.emails)
@@ -63,11 +64,25 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
     const response = await enterpriseData.getData(ACTION_USER_INCLUDES)
     const allUsers = response.users || []
 
-    const resolvedUsers = isAll ? allUsers : resolveExistingUsers(allUsers, identifiers)
+    const targets: ActionUserTarget[] = isAll
+        ? allUsers.map((user) => ({ kind: 'user' as const, user }))
+        : resolveActionUserTargets(allUsers, identifiers)
+    const callerEnterpriseUserId = resolveCallerEnterpriseUserId(auth, allUsers)
 
     const items: UserActionItemResult[] = []
+    const batchTargets = new Map<number, UserActionItemResult>()
 
-    for (const user of resolvedUsers) {
+    for (const target of targets) {
+        if (target.kind === 'not_found') {
+            items.push({
+                username: target.identifier,
+                status: UserActionStatus.Failed,
+                message: `User "${target.identifier}" does not exist.`,
+            })
+            continue
+        }
+
+        const user = target.user
         const item: UserActionItemResult = {
             username: user.username,
             enterpriseUserId: user.enterprise_user_id,
@@ -83,45 +98,126 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
             continue
         }
 
+        items.push(item)
+
+        if (input.action === UserAction.Lock || input.action === UserAction.Unlock) {
+            if (callerEnterpriseUserId !== null && user.enterprise_user_id === callerEnterpriseUserId) {
+                logger.warn(`User "${maskEmail(user.username)}" is the logged-in user and will be skipped for lock/unlock.`)
+                item.status = UserActionStatus.Failed
+                item.message = SELF_ACTION_MESSAGE
+                continue
+            }
+            batchTargets.set(user.enterprise_user_id, item)
+            continue
+        }
+
         try {
-            await sendUserAction(auth, input.action, user)
+            await sendExpirePassword(auth, user.username)
             item.status = UserActionStatus.Success
         } catch (err) {
             item.message = extractErrorMessage(err)
         }
-        items.push(item)
+    }
+
+    if (input.action === UserAction.Lock || input.action === UserAction.Unlock) {
+        await sendBatchLockUnlock(auth, input.action, batchTargets)
     }
 
     return finalizeResult(items)
 }
 
-async function sendUserAction(auth: Auth, action: UserAction, user: EnterpriseUser): Promise<void> {
-    switch (action) {
-        case UserAction.Lock:
-        case UserAction.Unlock:
-            await sendLockUnlock(auth, user.enterprise_user_id, action === UserAction.Lock ? 'locked' : 'unlocked')
-            break
-        case UserAction.ExpirePassword:
-            await sendExpirePassword(auth, user.username)
-            break
+async function sendBatchLockUnlock(
+    auth: Auth,
+    action: UserAction.Lock | UserAction.Unlock,
+    batchTargets: Map<number, UserActionItemResult>
+): Promise<void> {
+    if (batchTargets.size === 0) {
+        return
+    }
+
+    const enterpriseUserIds = [...batchTargets.keys()]
+
+    for (const chunk of chunkArray(enterpriseUserIds, LOCK_UNLOCK_BATCH_SIZE)) {
+        const response = await auth.executeRest(
+            enterpriseUsersLockMessage({
+                lockEnterpriseUserIds: action === UserAction.Lock ? chunk : [],
+                disableEnterpriseUserIds: [],
+                unlockEnterpriseUserIds: action === UserAction.Unlock ? chunk : [],
+                deleteIfPending: false,
+            })
+        )
+
+        const seen = new Set<number>()
+        for (const lockResponse of response.response || []) {
+            const enterpriseUserId = toEnterpriseUserId(lockResponse.enterpriseUserId)
+            if (enterpriseUserId === null) {
+                continue
+            }
+
+            seen.add(enterpriseUserId)
+            const item = batchTargets.get(enterpriseUserId)
+            if (!item) {
+                continue
+            }
+
+            applyLockUserResponse(item, lockResponse, action)
+        }
+
+        for (const enterpriseUserId of chunk) {
+            if (seen.has(enterpriseUserId)) {
+                continue
+            }
+            const item = batchTargets.get(enterpriseUserId)
+            if (!item) {
+                continue
+            }
+            item.status = UserActionStatus.Failed
+            item.message = 'No response received for user.'
+        }
     }
 }
 
-async function sendLockUnlock(auth: Auth, enterpriseUserId: number, lock: 'locked' | 'unlocked'): Promise<void> {
-    const command: RestCommand<UserLockPayload, KeeperResponse> = {
-        baseRequest: { command: USER_LOCK_COMMAND },
-        request: { enterprise_user_id: enterpriseUserId, lock },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
-    const result = (response.result || '').toLowerCase()
-    if (result && result !== 'success') {
-        throw new KeeperSdkError(
-            response.message ||
-                response.result_code ||
-                `${USER_LOCK_COMMAND} failed for user_id=${enterpriseUserId}`,
-            response.result_code || ResultCodes.USER_ACTION_FAILED
-        )
+function applyLockUserResponse(
+    item: UserActionItemResult,
+    lockResponse: Enterprise.ILockUserResponse,
+    action: UserAction.Lock | UserAction.Unlock
+): void {
+    const status = lockResponse.status ?? Enterprise.UserLockStatus.UNKNOWN_LOCK_STATUS
+    const errorMessage = lockResponse.errorMessage || ''
+
+    switch (status) {
+        case Enterprise.UserLockStatus.LOCKED:
+            if (action === UserAction.Lock) {
+                item.status = UserActionStatus.Success
+            } else {
+                item.status = UserActionStatus.Failed
+                item.message = errorMessage || 'User is locked.'
+            }
+            break
+        case Enterprise.UserLockStatus.UNLOCKED:
+            if (action === UserAction.Unlock) {
+                item.status = UserActionStatus.Success
+            } else {
+                item.status = UserActionStatus.Failed
+                item.message = errorMessage || 'User is unlocked.'
+            }
+            break
+        case Enterprise.UserLockStatus.CANT_BE_PENDING:
+            item.status = UserActionStatus.Skipped
+            item.skipReason = UserActionSkipReason.Pending
+            item.message = errorMessage || 'Pending user was not modified.'
+            break
+        case Enterprise.UserLockStatus.DELETED:
+            item.status = UserActionStatus.Success
+            item.message = errorMessage || 'Pending user was deleted.'
+            break
+        case Enterprise.UserLockStatus.DISABLED:
+            item.status = UserActionStatus.Failed
+            item.message = errorMessage || 'User was disabled.'
+            break
+        default:
+            item.status = UserActionStatus.Failed
+            item.message = errorMessage || 'Lock operation failed.'
     }
 }
 
@@ -143,8 +239,71 @@ async function sendExpirePassword(auth: Auth, email: string): Promise<void> {
     }
 }
 
+function chunkArray<T>(values: T[], size: number): T[][] {
+    const chunks: T[][] = []
+    for (let index = 0; index < values.length; index += size) {
+        chunks.push(values.slice(index, index + size))
+    }
+    return chunks
+}
+
+function toEnterpriseUserId(value: unknown): number | null {
+    if (value == null) {
+        return null
+    }
+    const numericId =
+        typeof value === 'object' && 'toNumber' in value
+            ? (value as { toNumber(): number }).toNumber()
+            : Number(value)
+    return isNumber(numericId) && numericId > 0 ? numericId : null
+}
+
 function maskEmail(email: string): string {
     return email.includes('@') ? `***@${email.split('@')[1]}` : '***'
+}
+
+function resolveActionUserTargets(allUsers: EnterpriseUser[], identifiers: string[]): ActionUserTarget[] {
+    const byEmail = new Map<string, EnterpriseUser>()
+    const byId = new Map<number, EnterpriseUser>()
+    for (const user of allUsers) {
+        if (user.username) byEmail.set(user.username.toLowerCase(), user)
+        byId.set(user.enterprise_user_id, user)
+    }
+
+    const result: ActionUserTarget[] = []
+    const seen = new Set<number>()
+
+    for (const identifier of identifiers) {
+        const trimmed = identifier.trim()
+        const numericId = Number(trimmed)
+        let user: EnterpriseUser | undefined
+
+        if (Number.isInteger(numericId)) {
+            user = byId.get(numericId)
+        }
+        if (!user) {
+            user = byEmail.get(trimmed.toLowerCase())
+        }
+        if (!user) {
+            result.push({ kind: 'not_found', identifier: trimmed })
+            continue
+        }
+        if (!seen.has(user.enterprise_user_id)) {
+            seen.add(user.enterprise_user_id)
+            result.push({ kind: 'user', user })
+        }
+    }
+
+    return result
+}
+
+function resolveCallerEnterpriseUserId(auth: Auth, allUsers: EnterpriseUser[]): number | null {
+    const username = auth.username.trim().toLowerCase()
+    if (!username) {
+        return null
+    }
+    const match = allUsers.find((user) => user.username?.trim().toLowerCase() === username)
+    return match?.enterprise_user_id ?? null
 }
 
 function finalizeResult(items: UserActionItemResult[]): UserActionResult {
@@ -162,7 +321,7 @@ export function formatUserActionResult(result: UserActionResult): FormattedUserA
         String(index + 1),
         item.status,
         item.username,
-        String(item.enterpriseUserId),
+        item.enterpriseUserId != null ? String(item.enterpriseUserId) : '',
         item.message || item.skipReason || '',
     ])
     return {

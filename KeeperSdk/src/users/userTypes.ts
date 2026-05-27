@@ -57,6 +57,7 @@ export enum UserActionStatus {
 
 export enum UserActionSkipReason {
     Inactive = 'inactive',
+    Pending = 'pending',
 }
 
 export type UserColumnInput = UserColumn | `${UserColumn}`
@@ -232,7 +233,7 @@ export type UserActionInput = {
 
 export type UserActionItemResult = {
     username: string
-    enterpriseUserId: number
+    enterpriseUserId?: number
     status: UserActionStatus
     skipReason?: UserActionSkipReason
     message?: string
