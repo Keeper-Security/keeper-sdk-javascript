@@ -580,30 +580,17 @@ export const enterpriseUserAddAliasMessage = (
 export const enterpriseUserSetPrimaryAliasMessage = (
     data: Authentication.IEnterpriseUserAliasRequest
 ): RestInMessage<Authentication.IEnterpriseUserAliasRequest> =>
-    createInMessage(
-        data,
-        'enterprise/enterprise_user_set_primary_alias',
-        Authentication.EnterpriseUserAliasRequest
-    )
+    createInMessage(data, 'enterprise/enterprise_user_set_primary_alias', Authentication.EnterpriseUserAliasRequest)
 
 export const enterpriseUserDeleteAliasMessage = (
     data: Authentication.IEnterpriseUserAliasRequest
 ): RestInMessage<Authentication.IEnterpriseUserAliasRequest> =>
-    createInMessage(
-        data,
-        'enterprise/enterprise_user_delete_alias',
-        Authentication.EnterpriseUserAliasRequest
-    )
+    createInMessage(data, 'enterprise/enterprise_user_delete_alias', Authentication.EnterpriseUserAliasRequest)
 
 export const enterpriseUsersLockMessage = (
     data: Enterprise.ILockUsersRequest
 ): RestMessage<Enterprise.ILockUsersRequest, Enterprise.ILockUsersResponse> =>
-    createMessage(
-        data,
-        'enterprise/enterprise_users_lock',
-        Enterprise.LockUsersRequest,
-        Enterprise.LockUsersResponse
-    )
+    createMessage(data, 'enterprise/enterprise_users_lock', Enterprise.LockUsersRequest, Enterprise.LockUsersResponse)
 
 export const setV2AlternatePasswordMessage = (
     data: Authentication.IUserAuthRequest
