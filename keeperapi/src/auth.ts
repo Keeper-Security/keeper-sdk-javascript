@@ -520,6 +520,8 @@ export class Auth {
                     } catch (e: any) {
                         if (e?.message && e.message == 'push_declined') {
                             handleError(e.message, loginResponse, e)
+                        } else if (e?.message === 'Canceled') {
+                            return { result: LoginV3ResultEnum.NOT_LOGGED_IN }
                         }
                     }
                     break

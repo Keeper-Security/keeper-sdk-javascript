@@ -51,7 +51,7 @@ type decoderClass<T> = {
     decode: (reader: Uint8Array, length?: number) => T
 }
 
-const createInMessage = <TIn>(
+export const createInMessage = <TIn>(
     data: TIn,
     path: string,
     encoder: encoderClass<TIn>,
@@ -68,7 +68,7 @@ const createInMessage = <TIn>(
     }
 }
 
-const createOutMessage = <TOut>(
+export const createOutMessage = <TOut>(
     path: string,
     decoder: decoderClass<TOut>,
     apiVersion?: number
@@ -80,7 +80,7 @@ const createOutMessage = <TOut>(
     apiVersion,
 })
 
-const createMessage = <TIn, TOut>(
+export const createMessage = <TIn, TOut>(
     data: TIn,
     path: string,
     encoder: encoderClass<TIn>,
@@ -101,7 +101,7 @@ const createMessage = <TIn, TOut>(
     }
 }
 
-const createActionMessage = (path: string, apiVersion?: number): RestActionMessage => ({
+export const createActionMessage = (path: string, apiVersion?: number): RestActionMessage => ({
     path: path,
     apiVersion,
 })
