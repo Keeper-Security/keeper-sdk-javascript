@@ -60,6 +60,10 @@ export enum UserErrorCode {
     UserUpdateFailed = 'user_update_failed',
     UserDeleteFailed = 'user_delete_failed',
     RoleNotFound = 'role_not_found',
+    NoUsersToAction = 'no_users_to_action',
+    UserActionFailed = 'user_action_failed',
+    UserActionAllNotSupported = 'user_action_all_not_supported',
+    UserAliasFailed = 'user_alias_failed',
 }
 
 export const ResultCodes = {
@@ -102,6 +106,10 @@ export const ResultCodes = {
     USER_UPDATE_FAILED: UserErrorCode.UserUpdateFailed,
     USER_DELETE_FAILED: UserErrorCode.UserDeleteFailed,
     ROLE_NOT_FOUND: UserErrorCode.RoleNotFound,
+    NO_USERS_TO_ACTION: UserErrorCode.NoUsersToAction,
+    USER_ACTION_FAILED: UserErrorCode.UserActionFailed,
+    USER_ACTION_ALL_NOT_SUPPORTED: UserErrorCode.UserActionAllNotSupported,
+    USER_ALIAS_FAILED: UserErrorCode.UserAliasFailed,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

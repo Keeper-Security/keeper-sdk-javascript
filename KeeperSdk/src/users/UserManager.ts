@@ -3,6 +3,8 @@ import { KeeperSdkError, ResultCodes } from '../utils'
 import { addUsers, formatAddUserResult, renderAddUserAsciiTable } from './addUser'
 import { updateUsers, formatUpdateUserResult, renderUpdateUserAsciiTable } from './updateUser'
 import { deleteUsers, formatDeleteUserResult, renderDeleteUserAsciiTable } from './deleteUser'
+import { actionUsers, formatUserActionResult, renderUserActionAsciiTable } from './actionUser'
+import { aliasUser } from './aliasUser'
 import { listUsers, formatUsersTable, renderUsersAsciiTable } from './listUsers'
 import { viewUser, formatUserView, userViewTable } from './viewUser'
 import type {
@@ -24,6 +26,11 @@ import type {
     DeleteUserInput,
     DeleteUserResult,
     FormattedDeleteUserTable,
+    UserActionInput,
+    UserActionResult,
+    FormattedUserActionTable,
+    AliasUserInput,
+    AliasUserResult,
 } from './userTypes'
 
 export type AuthProvider = () => Auth
@@ -93,6 +100,22 @@ export class UserManager {
 
     public renderDeleteUserAsciiTable(table: FormattedDeleteUserTable): string {
         return renderDeleteUserAsciiTable(table)
+    }
+
+    public async actionUsers(input: UserActionInput): Promise<UserActionResult> {
+        return actionUsers(this.requireAuth(), input)
+    }
+
+    public formatUserActionResult(result: UserActionResult): FormattedUserActionTable {
+        return formatUserActionResult(result)
+    }
+
+    public renderUserActionAsciiTable(table: FormattedUserActionTable): string {
+        return renderUserActionAsciiTable(table)
+    }
+
+    public async aliasUser(input: AliasUserInput): Promise<AliasUserResult> {
+        return aliasUser(this.requireAuth(), input)
     }
 
     private requireAuth(): Auth {

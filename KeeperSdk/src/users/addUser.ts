@@ -17,7 +17,9 @@ import {
     resolveParentNode,
 } from '../teams/teamUtils'
 import {
+    EnterpriseUserStatus,
     normalizeEmailInputs,
+    validateUserProfileFields,
     AddUserStatus,
     AddUserSkipReason,
     type AddUserInput,
@@ -32,6 +34,7 @@ export type { AddUserInput, AddUserItemResult, AddUserResult, FormatAddUserResul
 
 const USER_ADD_COMMAND = 'enterprise_user_add'
 const ALLOCATE_IDS_COMMAND = 'enterprise_allocate_ids'
+const REINVITE_COMMAND = 'resend_enterprise_invite'
 
 const ADD_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
@@ -53,13 +56,12 @@ type AllocateIdsPayload = {
     number_requested: number
 }
 
-type AllocateIdsResponse = KeeperResponse & {
-    base_id: number
-    number_allocated: number
+type ReinvitePayload = {
+    enterprise_user_id: number
 }
 
-type UserAddResponse = KeeperResponse & {
-    verification_code?: string
+type AllocateIdsResponse = KeeperResponse & {
+    base_id: number
 }
 
 export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUserResult> {
@@ -108,35 +110,48 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
     const existingByEmail = buildExistingByEmail(existingUsers)
     const fullName = (input.fullName || '').trim() || undefined
     const jobTitle = (input.jobTitle || '').trim() || undefined
+    validateUserProfileFields(fullName, jobTitle)
 
     const items: AddUserItemResult[] = []
 
     for (const raw of rawEmails) {
         const email = raw.toLowerCase()
+        const item: AddUserItemResult = {
+            username: raw,
+            status: AddUserStatus.Failed,
+        }
 
         if (!isValidEmail(email)) {
-            items.push({
-                username: raw,
-                status: AddUserStatus.Skipped,
-                skipReason: AddUserSkipReason.InvalidEmail,
-                message: `"${raw}" is not a valid email address.`,
-            })
+            item.status = AddUserStatus.Skipped
+            item.skipReason = AddUserSkipReason.InvalidEmail
+            item.message = `"${raw}" is not a valid email address.`
+            items.push(item)
             continue
         }
 
         const existing = existingByEmail.get(email)
         if (existing) {
-            items.push({
-                username: raw,
-                enterpriseUserId: existing.enterprise_user_id,
-                nodeId: existing.node_id,
-                status: AddUserStatus.Skipped,
-                skipReason: AddUserSkipReason.AlreadyExists,
-                message: `User "${raw}" already exists.`,
-            })
+            item.enterpriseUserId = existing.enterprise_user_id
+            item.nodeId = existing.node_id
+
+            if (existing.status === EnterpriseUserStatus.Invited) {
+                try {
+                    await sendReinvite(auth, existing.enterprise_user_id)
+                    item.status = AddUserStatus.Reinvited
+                    item.message = 'Invitation resent.'
+                } catch (err) {
+                    item.message = extractErrorMessage(err)
+                }
+            } else {
+                item.status = AddUserStatus.Skipped
+                item.skipReason = AddUserSkipReason.AlreadyExists
+                item.message = `User "${raw}" has already accepted the invitation.`
+            }
+            items.push(item)
             continue
         }
 
+        item.username = email
         try {
             const enterpriseUserId = await allocateEnterpriseId(auth)
             const encryptedData = await encryptObjectForStorage({ displayname: fullName || '' }, treeKey)
@@ -148,19 +163,13 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
                 full_name: fullName,
                 job_title: jobTitle,
             })
-            items.push({
-                username: email,
-                enterpriseUserId,
-                nodeId: parentNodeId,
-                status: AddUserStatus.Added,
-            })
+            item.enterpriseUserId = enterpriseUserId
+            item.nodeId = parentNodeId
+            item.status = AddUserStatus.Added
         } catch (err) {
-            items.push({
-                username: raw,
-                status: AddUserStatus.Failed,
-                message: extractErrorMessage(err),
-            })
+            item.message = extractErrorMessage(err)
         }
+        items.push(item)
     }
 
     return finalizeResult(items, parentNodeId, parentNodeName)
@@ -173,13 +182,7 @@ async function allocateEnterpriseId(auth: Auth): Promise<number> {
         authorization: {},
     }
     const response = await auth.executeRestCommand(command)
-    const result = (response.result || '').toLowerCase()
-    if (result && result !== 'success') {
-        throw new KeeperSdkError(
-            response.message || response.result_code || 'enterprise_allocate_ids failed',
-            response.result_code || ResultCodes.USER_ADD_FAILED
-        )
-    }
+    assertCommandSuccess(response, 'enterprise_allocate_ids failed')
     if (!isNumber(response.base_id) || response.base_id === 0) {
         throw new KeeperSdkError('Failed to allocate enterprise user ID.', ResultCodes.USER_ADD_FAILED)
     }
@@ -187,18 +190,30 @@ async function allocateEnterpriseId(auth: Auth): Promise<number> {
 }
 
 async function sendUserAdd(auth: Auth, payload: UserAddPayload): Promise<void> {
-    const command: RestCommand<UserAddPayload, UserAddResponse> = {
+    const command: RestCommand<UserAddPayload, KeeperResponse> = {
         baseRequest: { command: USER_ADD_COMMAND },
         request: payload,
         authorization: {},
     }
     const response = await auth.executeRestCommand(command)
+    assertCommandSuccess(response, `${USER_ADD_COMMAND} failed for "${payload.enterprise_user_username}"`)
+}
+
+async function sendReinvite(auth: Auth, enterpriseUserId: number): Promise<void> {
+    const command: RestCommand<ReinvitePayload, KeeperResponse> = {
+        baseRequest: { command: REINVITE_COMMAND },
+        request: { enterprise_user_id: enterpriseUserId },
+        authorization: {},
+    }
+    const response = await auth.executeRestCommand(command)
+    assertCommandSuccess(response, `${REINVITE_COMMAND} failed for user_id=${enterpriseUserId}`)
+}
+
+function assertCommandSuccess(response: KeeperResponse, fallbackMessage: string): void {
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message ||
-                response.result_code ||
-                `${USER_ADD_COMMAND} failed for "${payload.enterprise_user_username}"`,
+            response.message || response.result_code || fallbackMessage,
             response.result_code || ResultCodes.USER_ADD_FAILED
         )
     }
@@ -217,13 +232,14 @@ function finalizeResult(
     parentNodeId: number,
     parentNodeName: string
 ): AddUserResult {
-    let added = 0, skipped = 0, failed = 0
+    let added = 0, reinvited = 0, skipped = 0, failed = 0
     for (const item of items) {
         if (item.status === AddUserStatus.Added) added++
+        else if (item.status === AddUserStatus.Reinvited) reinvited++
         else if (item.status === AddUserStatus.Skipped) skipped++
         else failed++
     }
-    return { success: failed === 0 && added > 0, parentNodeId, parentNodeName, items, added, skipped, failed }
+    return { success: failed === 0 && (added > 0 || reinvited > 0), parentNodeId, parentNodeName, items, added, reinvited, skipped, failed }
 }
 
 export function formatAddUserResult(
@@ -246,7 +262,7 @@ export function formatAddUserResult(
         headers: [...USER_TABLE_HEADERS],
         rows,
         parentNodeName: result.parentNodeName,
-        summary: `Added: ${result.added}  Skipped: ${result.skipped}  Failed: ${result.failed}`,
+        summary: `Added: ${result.added}  Reinvited: ${result.reinvited}  Skipped: ${result.skipped}  Failed: ${result.failed}`,
     }
 }
 
@@ -256,15 +272,16 @@ export function renderAddUserAsciiTable(table: FormattedAddUserTable): string {
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
     const padCell = (cell: string, columnIndex: number): string =>
-        cell + ' '.repeat(Math.max(0, widths[columnIndex] - cell.length))
+        cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 
-    const lines: string[] = []
-    lines.push(`Parent: ${table.parentNodeName}`)
-    lines.push(formatRow(headers))
-    lines.push(formatRow(widths.map((width) => '-'.repeat(width))))
-    for (const row of rows) lines.push(formatRow(row))
-    lines.push(table.summary)
+    const lines: string[] = [
+        `Parent: ${table.parentNodeName}`,
+        formatRow(headers),
+        formatRow(widths.map((w) => '-'.repeat(w))),
+        ...rows.map(formatRow),
+        table.summary,
+    ]
     return lines.join('\n')
 }

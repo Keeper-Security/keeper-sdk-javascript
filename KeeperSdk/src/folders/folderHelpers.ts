@@ -1,6 +1,14 @@
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
-import { escapeRegExp } from '../utils'
+import { escapeRegExp, KeeperSdkError } from '../utils'
+
+export const MAX_FOLDER_NAME_LENGTH = 255
+
+export function validateFolderName(name: string): void {
+    if (name.length > MAX_FOLDER_NAME_LENGTH) {
+        throw new KeeperSdkError(`Folder name exceeds ${MAX_FOLDER_NAME_LENGTH} characters.`, 'folder_name_too_long')
+    }
+}
 
 export enum FolderKind {
     UserFolder = 'user_folder',

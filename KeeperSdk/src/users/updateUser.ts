@@ -19,6 +19,7 @@ import {
 } from '../teams/teamUtils'
 import {
     normalizeEmailInputs,
+    validateUserProfileFields,
     resolveExistingUsers,
     UpdateUserStatus,
     type UpdateUserInput,
@@ -111,11 +112,18 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
 
     const fullName = (input.fullName || '').trim() || undefined
     const jobTitle = (input.jobTitle || '').trim() || undefined
+    validateUserProfileFields(fullName, jobTitle)
 
     const items: UpdateUserItemResult[] = []
 
     for (const user of resolvedUsers) {
         const targetNodeId = overrideNodeId ?? (user.node_id ?? 0)
+        const item: UpdateUserItemResult = {
+            username: user.username,
+            enterpriseUserId: user.enterprise_user_id,
+            nodeId: targetNodeId,
+            status: UpdateUserStatus.Failed,
+        }
 
         try {
             if (hasProfileChange && treeKey !== null) {
@@ -140,21 +148,12 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
                 await sendRoleUserRemove(auth, roleId, user.enterprise_user_id)
             }
 
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                nodeId: targetNodeId,
-                status: UpdateUserStatus.Updated,
-            })
+            item.status = UpdateUserStatus.Updated
         } catch (err) {
-            items.push({
-                username: user.username,
-                enterpriseUserId: user.enterprise_user_id,
-                nodeId: user.node_id ?? 0,
-                status: UpdateUserStatus.Failed,
-                message: extractErrorMessage(err),
-            })
+            item.nodeId = user.node_id ?? 0
+            item.message = extractErrorMessage(err)
         }
+        items.push(item)
     }
 
     return finalizeResult(items)
@@ -323,7 +322,7 @@ export function renderUpdateUserAsciiTable(table: FormattedUpdateUserTable): str
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
     const padCell = (cell: string, columnIndex: number): string =>
-        cell + ' '.repeat(Math.max(0, widths[columnIndex] - cell.length))
+        cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 
