@@ -62,6 +62,17 @@ function convertBytesDeep(value: unknown): unknown {
     return value
 }
 
+function protoTypeName(ctor: { getTypeUrl?: (prefix?: string) => string } | undefined): string | undefined {
+    if (typeof ctor?.getTypeUrl !== 'function') return undefined
+    try {
+        const url = ctor.getTypeUrl('')
+        // `getTypeUrl('')` returns `/Fully.Qualified.Name`; strip the leading slash.
+        return url.startsWith('/') ? url.slice(1) : url
+    } catch {
+        return undefined
+    }
+}
+
 /**
  * Formats a protobufjs message for logging as `prefix TypeName:` plus its JSON body.
  * Spread into `logger.debug(...)` so the prefix stays a string and the body renders
@@ -73,18 +84,26 @@ export function formatProto(prefix: string, msg: unknown): [string, unknown] {
     if (msg == null || typeof msg !== 'object') return [prefix, msg]
     const m = msg as {
         toJSON?: () => unknown
-        constructor?: { name?: string; toObject?: (m: unknown, opts: unknown) => unknown }
+        constructor?: {
+            name?: string
+            toObject?: (m: unknown, opts: unknown) => unknown
+            getTypeUrl?: (prefix?: string) => string
+        }
     }
     const ctor = m.constructor
+    // Prefer the type name embedded in `getTypeUrl()` over `ctor.name`. Static-module
+    // protobufjs generates `getTypeUrl` with a bundled string literal like
+    // `"type.googleapis.com/Authentication.LoginResponse"`, which survives minification —
+    // whereas `ctor.name` is the JS class identifier and gets mangled in prod builds
+    // (yielding labels like `e:` instead of `LoginResponse:`).
+    const protoName = protoTypeName(ctor) ?? ctor?.name ?? 'proto'
     if (typeof ctor?.toObject !== 'function') {
         if (typeof m.toJSON !== 'function') return [prefix, msg]
-        const name = ctor?.name ?? 'proto'
-        const label = prefix ? `${prefix} ${name}:` : `${name}:`
+        const label = prefix ? `${prefix} ${protoName}:` : `${protoName}:`
         return [label, m.toJSON()]
     }
     const obj = ctor.toObject(m, { longs: String, enums: String, bytes: Uint8Array })
-    const name = ctor.name ?? 'proto'
-    const label = prefix ? `${prefix} ${name}:` : `${name}:`
+    const label = prefix ? `${prefix} ${protoName}:` : `${protoName}:`
     return [label, convertBytesDeep(obj)]
 }
 
