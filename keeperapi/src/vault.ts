@@ -91,7 +91,9 @@ type MappedCounts<Type> = {
     [Property in keyof Type]: number
 }
 
-type SyncResponseCounts = MappedCounts<Vault.ISyncDownResponse>
+type SyncResponseCounts = Partial<
+    MappedCounts<Omit<Vault.ISyncDownResponse, 'keeperDriveData'> & Vault.IKeeperDriveData>
+>
 
 export type SyncResult = {
     started: Date
@@ -1010,7 +1012,8 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
     await platform.unwrapKeys(recordKeys, storage)
 }
 
-const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storage: VaultStorage) => {
+const processBreachWatchRecords = async (storage: VaultStorage, bwRecords?: IBreachWatchRecord[] | null) => {
+    if (!bwRecords) return
     for (const bwRecord of bwRecords as NN<IBreachWatchRecord>[]) {
         if (!bwRecord.recordUid) continue
 
@@ -1038,7 +1041,11 @@ const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storag
     }
 }
 
-const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurityData[], storage: VaultStorage) => {
+const processBreachWatchSecurityData = async (
+    storage: VaultStorage,
+    securityData?: IBreachWatchSecurityData[] | null
+) => {
+    if (!securityData) return
     for (const bwSecurityData of securityData as NN<IBreachWatchSecurityData>[]) {
         const uid = webSafe64FromBytes(bwSecurityData.recordUid)
 
@@ -1054,7 +1061,11 @@ const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurity
     }
 }
 
-const processSecurityScoreData = async (securityScoreDataList: Vault.ISecurityScoreData[], storage: VaultStorage) => {
+const processSecurityScoreData = async (
+    storage: VaultStorage,
+    securityScoreDataList?: Vault.ISecurityScoreData[] | null
+) => {
+    if (!securityScoreDataList) return
     for (const securityScoreData of securityScoreDataList) {
         if (!securityScoreData.recordUid || typeof securityScoreData.revision !== 'number') continue
 
@@ -1491,15 +1502,20 @@ const logProtobuf = (data: any, format: SyncLogFormat, seqNo: number, counts: an
 }
 
 const getCounts = (obj: Vault.ISyncDownResponse): SyncResponseCounts => {
-    const results = {}
-    for (const prop in obj) {
-        if (['continuationToken', 'constructor'].includes(prop)) {
-            continue
-        }
-        if (obj[prop]?.length) {
-            results[prop] = obj[prop].length
+    const results: Record<string, number> = {}
+    const collect = (source: any) => {
+        if (!source) return
+        for (const prop in source) {
+            if (['continuationToken', 'constructor', 'keeperDriveData'].includes(prop)) {
+                continue
+            }
+            if (source[prop]?.length) {
+                results[prop] = (results[prop] || 0) + source[prop].length
+            }
         }
     }
+    collect(obj)
+    collect(obj.keeperDriveData)
     return results
 }
 
@@ -1666,11 +1682,11 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processProfilePic(resp.profilePic, storage)
 
-            await processBreachWatchRecords(resp.breachWatchRecords, storage)
+            await processBreachWatchRecords(storage, resp.breachWatchRecords)
 
-            await processBreachWatchSecurityData(resp.breachWatchSecurityData, storage)
+            await processBreachWatchSecurityData(storage, resp.breachWatchSecurityData)
 
-            await processSecurityScoreData(resp.securityScoreData, storage)
+            await processSecurityScoreData(storage, resp.securityScoreData)
 
             await processKdFolderAccesses(storage, keeperDriveData.folderAccesses)
 
@@ -1691,6 +1707,12 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             await processNonSharedData(storage, keeperDriveData.nonSharedData)
 
             await processKdRecordSharingStates(storage, keeperDriveData.recordSharingStates)
+
+            await processBreachWatchRecords(storage, keeperDriveData.breachWatchRecords)
+
+            await processBreachWatchSecurityData(storage, keeperDriveData.breachWatchSecurityData)
+
+            await processSecurityScoreData(storage, keeperDriveData.securityScoreData)
 
             await storage.addDependencies(dependencies)
 
