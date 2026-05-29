@@ -76,6 +76,7 @@ export type EnterpriseTeamRecord = {
     restrict_share?: boolean
     restrict_sharing?: boolean
     encrypted_data?: string
+    encrypted_team_key?: string
 }
 
 export type EnterpriseTeamUserLink = {
@@ -458,6 +459,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             restrict_share: message.restrictShare === true,
         }
         if (message.encryptedData) team.encrypted_data = message.encryptedData
+        if (message.encryptedTeamKey) team.encrypted_team_key = message.encryptedTeamKey
         return team
     }
 

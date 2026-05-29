@@ -524,7 +524,7 @@ export const teamsEnterpriseUsersAdd = (
 ): RestMessage<Enterprise.ITeamsEnterpriseUsersAddRequest, Enterprise.ITeamsEnterpriseUsersAddResponse> =>
     createMessage(
         data,
-        'enterprise/teams_enterprise_users_add',
+        'teams/teams_enterprise_users_add',
         Enterprise.TeamsEnterpriseUsersAddRequest,
         Enterprise.TeamsEnterpriseUsersAddResponse
     )

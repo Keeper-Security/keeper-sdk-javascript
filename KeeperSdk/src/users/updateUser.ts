@@ -3,6 +3,7 @@ import {
     type Auth,
     type KeeperResponse,
     type RestCommand,
+    teamEnterpriseUserRemoveCommand,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, KeeperSdkError, ResultCodes } from '../utils'
 import {
@@ -32,7 +33,6 @@ export { UpdateUserStatus }
 export type { UpdateUserInput, UpdateUserItemResult, UpdateUserResult, FormattedUpdateUserTable }
 
 const USER_UPDATE_COMMAND = 'enterprise_user_update'
-const TEAM_USER_REMOVE_COMMAND = 'team_enterprise_user_remove'
 const ROLE_USER_REMOVE_COMMAND = 'role_user_remove'
 
 const UPDATE_USER_INCLUDES: EnterpriseDataInclude[] = [
@@ -55,11 +55,6 @@ type UserUpdatePayload = {
     encrypted_data?: string
     full_name?: string
     job_title?: string
-}
-
-type TeamUserRemovePayload = {
-    enterprise_user_id: number
-    team_uid: string
 }
 
 type RoleUserRemovePayload = {
@@ -178,18 +173,17 @@ async function sendUserUpdate(auth: Auth, payload: UserUpdatePayload): Promise<v
 }
 
 async function sendTeamUserRemove(auth: Auth, enterpriseUserId: number, teamUid: string): Promise<void> {
-    const command: RestCommand<TeamUserRemovePayload, KeeperResponse> = {
-        baseRequest: { command: TEAM_USER_REMOVE_COMMAND },
-        request: { enterprise_user_id: enterpriseUserId, team_uid: teamUid },
-        authorization: {},
-    }
+    const command = teamEnterpriseUserRemoveCommand({
+        enterprise_user_id: enterpriseUserId,
+        team_uid: teamUid,
+    })
     const response = await auth.executeRestCommand(command)
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
             response.message ||
                 response.result_code ||
-                `${TEAM_USER_REMOVE_COMMAND} failed for user=${enterpriseUserId}, team=${teamUid}`,
+                `team_enterprise_user_remove failed for user=${enterpriseUserId}, team=${teamUid}`,
             response.result_code || ResultCodes.USER_UPDATE_FAILED
         )
     }
