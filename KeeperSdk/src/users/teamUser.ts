@@ -13,7 +13,7 @@ import {
     teamsEnterpriseUsersAdd,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
-import { extractErrorMessage, KeeperSdkError, logger, ResultCodes } from '../utils'
+import { extractErrorMessage, isNumber, KeeperSdkError, logger, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
@@ -46,6 +46,12 @@ export type {
 }
 
 const SUCCESS_RESULT = 'success'
+const MAX_TEAM_USERS_PER_REQUEST = 1000
+const MAX_USERS_PER_OPERATION = MAX_TEAM_USERS_PER_REQUEST
+const MAX_TEAMS_PER_OPERATION = 100
+const MAX_RESPONSE_MESSAGE_LENGTH = 500
+const UNEXPECTED_TEAM_RESPONSE_MESSAGE = 'Unexpected API response: no team results returned'
+const MISSING_TEAM_RESPONSE_MESSAGE = 'Team add response missing for this team'
 
 const TEAM_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Users,
@@ -213,6 +219,7 @@ async function loadTeamUserContext(
     if (teamIdentifiers.length === 0) {
         throw new KeeperSdkError('No teams provided.', ResultCodes.NO_TEAMS_FOR_USER_OP)
     }
+    validateOperationLimits(emails.length, teamIdentifiers.length)
 
     const enterpriseData = new EnterpriseDataManager(auth)
     const response = await enterpriseData.getData(TEAM_USER_INCLUDES)
@@ -240,13 +247,52 @@ function hasUsablePublicKey(publicKeys: UserPublicKeys | undefined): publicKeys 
     return !!publicKeys && !publicKeys.errorCode && !!(publicKeys.eccPublicKey || publicKeys.rsaPublicKey)
 }
 
+function sanitizeResponseMessage(value: string): string {
+    return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').slice(0, MAX_RESPONSE_MESSAGE_LENGTH)
+}
+
 function pickResponseError(
     message?: string | null,
     resultCode?: string | null,
     additionalInfo?: string | null,
     fallback?: string
 ): string | undefined {
-    return message || resultCode || additionalInfo || fallback || undefined
+    for (const candidate of [message, resultCode, additionalInfo, fallback]) {
+        if (typeof candidate === 'string' && candidate.trim().length > 0) {
+            return sanitizeResponseMessage(candidate.trim())
+        }
+    }
+    return undefined
+}
+
+function toEnterpriseUserId(value: unknown): number | null {
+    const id = typeof value === 'number' ? value : Number(value)
+    return isNumber(id) && id > 0 ? Math.trunc(id) : null
+}
+
+function validateOperationLimits(userCount: number, teamCount: number): void {
+    if (userCount > MAX_USERS_PER_OPERATION) {
+        throw new KeeperSdkError(
+            `Cannot process more than ${MAX_USERS_PER_OPERATION} users at once.`,
+            ResultCodes.NO_USERS_TO_UPDATE
+        )
+    }
+    if (teamCount > MAX_TEAMS_PER_OPERATION) {
+        throw new KeeperSdkError(
+            `Cannot process more than ${MAX_TEAMS_PER_OPERATION} teams at once.`,
+            ResultCodes.NO_TEAMS_FOR_USER_OP
+        )
+    }
+}
+
+function validateBatchUserCount(batchTeams: PreparedBatchTeam[]): void {
+    const totalUsers = batchTeams.reduce((count, batch) => count + batch.prepared.length, 0)
+    if (totalUsers > MAX_TEAM_USERS_PER_REQUEST) {
+        throw new KeeperSdkError(
+            `Cannot add more than ${MAX_TEAM_USERS_PER_REQUEST} users in one batch request.`,
+            ResultCodes.TEAM_USER_ADD_FAILED
+        )
+    }
 }
 
 async function prepareAddBatches(
@@ -345,7 +391,8 @@ function mergeTeamResponse(
 
     const items: TeamUserItemResult[] = []
     for (const userResp of teamResp.users || []) {
-        const enterpriseUserId = Number(userResp.enterpriseUserId)
+        const enterpriseUserId = toEnterpriseUserId(userResp.enterpriseUserId)
+        if (enterpriseUserId === null) continue
         const user = userMap.get(enterpriseUserId)
         if (!user) continue
         const success = userResp.success === true
@@ -379,6 +426,10 @@ async function sendTeamsEnterpriseUsersAdd(
     batchTeams: PreparedBatchTeam[],
     userType: Enterprise.TeamUserType | undefined
 ): Promise<TeamUserItemResult[]> {
+    if (batchTeams.length === 0) return []
+
+    validateBatchUserCount(batchTeams)
+
     let response: Enterprise.ITeamsEnterpriseUsersAddResponse
     try {
         response = await auth.executeRest(
@@ -388,10 +439,15 @@ async function sendTeamsEnterpriseUsersAdd(
         return markAllBatchUsersFailed(batchTeams, extractErrorMessage(err))
     }
 
+    const teamResponses = response.teams ?? []
+    if (teamResponses.length === 0) {
+        return markAllBatchUsersFailed(batchTeams, UNEXPECTED_TEAM_RESPONSE_MESSAGE)
+    }
+
     const items: TeamUserItemResult[] = []
     const teamMap = new Map(batchTeams.map((p) => [p.team.team_uid, p]))
 
-    for (const teamResp of response.teams || []) {
+    for (const teamResp of teamResponses) {
         const teamUid = teamResp.teamUid ? webSafe64FromBytes(teamResp.teamUid as Uint8Array) : ''
         const prepTeam = teamMap.get(teamUid)
         if (!prepTeam) continue
@@ -401,7 +457,11 @@ async function sendTeamsEnterpriseUsersAdd(
 
     for (const prepTeam of teamMap.values()) {
         for (const { user } of prepTeam.prepared) {
-            items.push({ ...buildItemBase(user, prepTeam.team), status: TeamUserStatus.Added })
+            items.push({
+                ...buildItemBase(user, prepTeam.team),
+                status: TeamUserStatus.Failed,
+                message: MISSING_TEAM_RESPONSE_MESSAGE,
+            })
         }
     }
     return items

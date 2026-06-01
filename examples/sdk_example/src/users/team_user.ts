@@ -31,6 +31,8 @@ type AddInput = {
 type RemoveInput = { kind: TeamUserOperation.Remove; users: string[]; teams: string[] }
 type OperationInput = AddInput | RemoveInput
 
+const MAX_LIST_ITEMS = 100
+
 function parseList(raw: string): string[] {
     const seen = new Set<string>()
     const out: string[] = []
@@ -45,11 +47,12 @@ function parseList(raw: string): string[] {
     return out
 }
 
-function parseHideSharedFolders(raw: string): boolean | undefined {
+function parseHideSharedFolders(raw: string): boolean | undefined | null {
     const value = raw.trim().toLowerCase()
+    if (value === '' || value === 'skip') return undefined
     if (value === 'on') return true
     if (value === 'off') return false
-    return undefined
+    return null
 }
 
 function formatRunStatus(result: TeamUserResult): string {
@@ -67,6 +70,9 @@ function failWith(message: string): null {
 async function promptList(label: string, message: string): Promise<string[] | null> {
     const items = parseList((await prompt(message)).trim())
     if (items.length === 0) return failWith(`At least one ${label} is required.`)
+    if (items.length > MAX_LIST_ITEMS) {
+        return failWith(`At most ${MAX_LIST_ITEMS} ${label}s are allowed per operation.`)
+    }
     return items
 }
 
@@ -92,6 +98,9 @@ async function gatherOperationInput(): Promise<OperationInput | null> {
         const hideSharedFolders = parseHideSharedFolders(
             await prompt('Hide shared folders? [on/off/skip]: ')
         )
+        if (hideSharedFolders === null) {
+            return failWith('Invalid hide shared folders value. Use on, off, or skip.')
+        }
         return { kind: TeamUserOperation.Add, users, teams, hideSharedFolders }
     }
     return { kind: TeamUserOperation.Remove, users, teams }
