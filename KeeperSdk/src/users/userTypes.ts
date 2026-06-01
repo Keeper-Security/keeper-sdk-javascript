@@ -1,6 +1,9 @@
 import { KeeperSdkError, ResultCodes } from '../utils'
 import type { EnterpriseUser } from '../teams/enterpriseData'
 
+export const MAX_FULL_NAME_LENGTH = 255
+export const MAX_JOB_TITLE_LENGTH = 255
+
 export enum EnterpriseUserStatus {
     Active = 'active',
     Invited = 'invited',
@@ -273,8 +276,53 @@ export type AliasUserResult = {
     detail: string
 }
 
-export const MAX_FULL_NAME_LENGTH = 255
-export const MAX_JOB_TITLE_LENGTH = 255
+export enum TeamUserStatus {
+    Added = 'added',
+    Removed = 'removed',
+    Skipped = 'skipped',
+    Failed = 'failed',
+    MissingPublicKey = 'missing_public_key',
+}
+
+export enum TeamUserSkipReason {
+    AlreadyMember = 'already_member',
+    NotMember = 'not_member',
+}
+
+export type AddUsersToTeamsInput = {
+    users: string[]
+    teams: string[]
+    hideSharedFolders?: boolean
+}
+
+export type RemoveUsersFromTeamsInput = {
+    users: string[]
+    teams: string[]
+}
+
+export type TeamUserItemResult = {
+    username: string
+    enterpriseUserId: number
+    teamUid: string
+    teamName: string
+    status: TeamUserStatus
+    skipReason?: TeamUserSkipReason
+    message?: string
+}
+
+export type TeamUserResult = {
+    success: boolean
+    items: TeamUserItemResult[]
+    succeeded: number
+    skipped: number
+    failed: number
+}
+
+export type FormattedTeamUserTable = {
+    headers: string[]
+    rows: string[][]
+    summary: string
+}
 
 export function normalizeEmailInputs(emails: string[] | undefined): string[] {
     return (emails || []).map((e) => e.trim()).filter((e) => e.length > 0)

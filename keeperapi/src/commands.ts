@@ -323,6 +323,19 @@ export type FolderUpdateRequest = {
 export const folderUpdateCommand = (request: FolderUpdateRequest): RestCommand<FolderUpdateRequest, KeeperResponse> =>
     createCommand(request, 'folder_update')
 
+export type TeamUserCommandRequest = {
+    enterprise_user_id: number
+    team_uid: string
+}
+
+export const teamQueueUserCommand = (
+    request: TeamUserCommandRequest
+): RestCommand<TeamUserCommandRequest, KeeperResponse> => createCommand(request, 'team_queue_user')
+
+export const teamEnterpriseUserRemoveCommand = (
+    request: TeamUserCommandRequest
+): RestCommand<TeamUserCommandRequest, KeeperResponse> => createCommand(request, 'team_enterprise_user_remove')
+
 export type GetRecordHistoryRequest = {
     record_uid: string
     client_time: number

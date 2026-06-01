@@ -82,6 +82,10 @@ import type {
     FormattedUserActionTable,
     AliasUserInput,
     AliasUserResult,
+    AddUsersToTeamsInput,
+    RemoveUsersFromTeamsInput,
+    TeamUserResult,
+    FormattedTeamUserTable,
 } from '../users/userTypes'
 import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
 import type { ILogger } from '../utils'
@@ -431,6 +435,18 @@ export class KeeperVault {
 
     public async aliasUser(input: AliasUserInput): Promise<AliasUserResult> {
         return this.userManager.aliasUser(input)
+    }
+
+    public async addUsersToTeams(input: AddUsersToTeamsInput): Promise<TeamUserResult> {
+        return this.userManager.addUsersToTeams(input)
+    }
+
+    public async removeUsersFromTeams(input: RemoveUsersFromTeamsInput): Promise<TeamUserResult> {
+        return this.userManager.removeUsersFromTeams(input)
+    }
+
+    public formatTeamUserResult(result: TeamUserResult): FormattedTeamUserTable {
+        return this.userManager.formatTeamUserResult(result)
     }
 
     public async viewTeam(identifier: string): Promise<TeamView> {
