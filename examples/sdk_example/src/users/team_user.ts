@@ -12,24 +12,23 @@ import { runExample } from '../utils/runner'
 
 type VaultHandle = Awaited<ReturnType<typeof login>>
 
-const OP_ADD = '1'
-const OP_REMOVE = '2'
+enum TeamUserMenuChoice {
+    Add = '1',
+    Remove = '2',
+}
 
-const OPERATION_PROMPT = [
-    '',
-    'Select an operation:',
-    `  ${OP_ADD}) Add users to team(s)`,
-    `  ${OP_REMOVE}) Remove users from team(s)`,
-    '',
-].join('\n')
+enum TeamUserOperation {
+    Add = 'add',
+    Remove = 'remove',
+}
 
-const USERS_PROMPT = 'User email(s) or ID(s) (comma-separated): '
-const TEAMS_PROMPT = 'Team name(s) or UID(s) (comma-separated): '
-const HIDE_SHARED_FOLDERS_PROMPT = 'Hide shared folders? [on/off/skip]: '
-const OPERATION_INPUT_PROMPT = `Operation [${OP_ADD}-${OP_REMOVE}]: `
-
-type AddInput = { kind: 'add'; users: string[]; teams: string[]; hideSharedFolders: boolean | undefined }
-type RemoveInput = { kind: 'remove'; users: string[]; teams: string[] }
+type AddInput = {
+    kind: TeamUserOperation.Add
+    users: string[]
+    teams: string[]
+    hideSharedFolders: boolean | undefined
+}
+type RemoveInput = { kind: TeamUserOperation.Remove; users: string[]; teams: string[] }
 type OperationInput = AddInput | RemoveInput
 
 function parseList(raw: string): string[] {
@@ -53,49 +52,64 @@ function parseHideSharedFolders(raw: string): boolean | undefined {
     return undefined
 }
 
+function formatRunStatus(result: TeamUserResult): string {
+    if (result.failed > 0 && result.succeeded === 0) return 'failed'
+    if (result.failed > 0) return 'partial'
+    return result.success ? 'success' : 'failed'
+}
+
 function failWith(message: string): null {
     logger.error(message)
     process.exitCode = 1
     return null
 }
 
-async function promptList(label: string, prompt_: string): Promise<string[] | null> {
-    const items = parseList((await prompt(prompt_)).trim())
+async function promptList(label: string, message: string): Promise<string[] | null> {
+    const items = parseList((await prompt(message)).trim())
     if (items.length === 0) return failWith(`At least one ${label} is required.`)
     return items
 }
 
 async function gatherOperationInput(): Promise<OperationInput | null> {
-    logger.info(OPERATION_PROMPT)
+    logger.info('')
+    logger.info('Select an operation:')
+    logger.info(`  ${TeamUserMenuChoice.Add}) Add users to team(s)`)
+    logger.info(`  ${TeamUserMenuChoice.Remove}) Remove users from team(s)`)
+    logger.info('')
 
-    const choice = (await prompt(OPERATION_INPUT_PROMPT)).trim()
-    if (choice !== OP_ADD && choice !== OP_REMOVE) {
-        return failWith(`Invalid choice. Please enter ${OP_ADD} or ${OP_REMOVE}.`)
+    const choice = (await prompt(`Operation [${TeamUserMenuChoice.Add}-${TeamUserMenuChoice.Remove}]: `)).trim()
+    if (choice !== TeamUserMenuChoice.Add && choice !== TeamUserMenuChoice.Remove) {
+        return failWith(`Invalid choice. Please enter ${TeamUserMenuChoice.Add} or ${TeamUserMenuChoice.Remove}.`)
     }
 
-    const users = await promptList('user email or ID', USERS_PROMPT)
+    const users = await promptList('user email or ID', 'User email(s) or ID(s) (comma-separated): ')
     if (!users) return null
 
-    const teams = await promptList('team name or UID', TEAMS_PROMPT)
+    const teams = await promptList('team name or UID', 'Team name(s) or UID(s) (comma-separated): ')
     if (!teams) return null
 
-    if (choice === OP_ADD) {
-        const hideSharedFolders = parseHideSharedFolders(await prompt(HIDE_SHARED_FOLDERS_PROMPT))
-        return { kind: 'add', users, teams, hideSharedFolders }
+    if (choice === TeamUserMenuChoice.Add) {
+        const hideSharedFolders = parseHideSharedFolders(
+            await prompt('Hide shared folders? [on/off/skip]: ')
+        )
+        return { kind: TeamUserOperation.Add, users, teams, hideSharedFolders }
     }
-    return { kind: 'remove', users, teams }
+    return { kind: TeamUserOperation.Remove, users, teams }
 }
 
 async function executeOperation(vault: VaultHandle, input: OperationInput): Promise<TeamUserResult> {
     const restore = suppressLogs()
     try {
-        return input.kind === 'add'
-            ? await vault.addUsersToTeams({
-                  users: input.users,
-                  teams: input.teams,
-                  hideSharedFolders: input.hideSharedFolders,
-              })
-            : await vault.removeUsersFromTeams({ users: input.users, teams: input.teams })
+        switch (input.kind) {
+            case TeamUserOperation.Add:
+                return await vault.addUsersToTeams({
+                    users: input.users,
+                    teams: input.teams,
+                    hideSharedFolders: input.hideSharedFolders,
+                })
+            case TeamUserOperation.Remove:
+                return await vault.removeUsersFromTeams({ users: input.users, teams: input.teams })
+        }
     } finally {
         restore()
     }
@@ -107,7 +121,7 @@ function reportResult(vault: VaultHandle, result: TeamUserResult): void {
     logger.info(renderTeamUserAsciiTable(table))
     logger.info('')
     logger.info(
-        `Result: ${result.success ? 'success' : 'partial/failed'} ` +
+        `Result: ${formatRunStatus(result)} ` +
             `(succeeded=${result.succeeded}, skipped=${result.skipped}, failed=${result.failed})`
     )
 
