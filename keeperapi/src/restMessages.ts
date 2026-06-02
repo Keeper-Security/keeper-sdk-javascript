@@ -218,6 +218,15 @@ export const twoFactorDuoStatus = (
 ): RestInMessage<Authentication.ITwoFactorDuoStatus> =>
     createInMessage(data, 'authentication/2fa_duo_status', Authentication.TwoFactorDuoStatus)
 
+export const twoFactorUpdateExpiration = (
+    data: Authentication.ITwoFactorUpdateExpirationRequest
+): RestInMessage<Authentication.ITwoFactorUpdateExpirationRequest> =>
+    createInMessage(
+        data,
+        'authentication/2fa_update_expiration',
+        Authentication.TwoFactorUpdateExpirationRequest
+    )
+
 export const approveDeviceMessage = (
     data: Authentication.IApproveDeviceRequest
 ): RestInMessage<Authentication.IApproveDeviceRequest> =>
