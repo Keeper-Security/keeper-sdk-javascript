@@ -4,6 +4,7 @@ export {
     ResultCodes,
     AuthErrorCode,
     SessionErrorCode,
+    RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
     KEEPER_PUBLIC_HOSTS,

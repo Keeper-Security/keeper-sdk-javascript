@@ -20,6 +20,9 @@ export enum EnterpriseDataInclude {
     Roles = 'roles',
     RoleUsers = 'role_users',
     RoleTeams = 'role_teams',
+    RolePrivileges = 'role_privileges',
+    ManagedNodes = 'managed_nodes',
+    RoleEnforcements = 'role_enforcements',
     Teams = 'teams',
     TeamUsers = 'team_users',
     QueuedTeams = 'queued_teams',
@@ -33,6 +36,9 @@ const INCLUDE_TO_ENTITY: Record<EnterpriseDataInclude, Enterprise.EnterpriseData
     [EnterpriseDataInclude.Roles]: Enterprise.EnterpriseDataEntity.ROLES,
     [EnterpriseDataInclude.RoleUsers]: Enterprise.EnterpriseDataEntity.ROLE_USERS,
     [EnterpriseDataInclude.RoleTeams]: Enterprise.EnterpriseDataEntity.ROLE_TEAMS,
+    [EnterpriseDataInclude.RolePrivileges]: Enterprise.EnterpriseDataEntity.ROLE_PRIVILEGES,
+    [EnterpriseDataInclude.ManagedNodes]: Enterprise.EnterpriseDataEntity.MANAGED_NODES,
+    [EnterpriseDataInclude.RoleEnforcements]: Enterprise.EnterpriseDataEntity.ROLE_ENFORCEMENTS,
     [EnterpriseDataInclude.Teams]: Enterprise.EnterpriseDataEntity.TEAMS,
     [EnterpriseDataInclude.TeamUsers]: Enterprise.EnterpriseDataEntity.TEAM_USERS,
     [EnterpriseDataInclude.QueuedTeams]: Enterprise.EnterpriseDataEntity.QUEUED_TEAMS,
@@ -65,6 +71,26 @@ export type EnterpriseRole = {
     node_id?: number
     encrypted_data?: string
     displayName?: string
+    visible_below?: boolean
+    new_user_inherit?: boolean
+}
+
+export type EnterpriseRolePrivilegeLink = {
+    role_id: number
+    managed_node_id: number
+    privilege_type?: string
+}
+
+export type EnterpriseRoleManagedNodeLink = {
+    role_id: number
+    managed_node_id: number
+    cascade_node_management: boolean
+}
+
+export type EnterpriseRoleEnforcementLink = {
+    role_id: number
+    enforcement_type: string
+    value?: string
 }
 
 export type EnterpriseTeamRecord = {
@@ -121,6 +147,9 @@ export type GetEnterpriseDataResponse = {
     team_users?: EnterpriseTeamUserLink[]
     role_users?: EnterpriseRoleUserLink[]
     role_teams?: EnterpriseRoleTeamLink[]
+    role_privileges?: EnterpriseRolePrivilegeLink[]
+    managed_nodes?: EnterpriseRoleManagedNodeLink[]
+    role_enforcements?: EnterpriseRoleEnforcementLink[]
     queued_teams?: EnterpriseQueuedTeamRecord[]
     queued_team_users?: EnterpriseQueuedTeamUserLink[]
     user_aliases?: EnterpriseUserAliasLink[]
@@ -442,10 +471,41 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
 
     private static decodeRoleChunk(bytes: Uint8Array): EnterpriseRole {
         const message = Enterprise.Role.decode(bytes)
-        const role: EnterpriseRole = { role_id: EnterpriseDataManager.toNumber(message.roleId) }
-        if (message.nodeId != null) role.node_id = EnterpriseDataManager.toNumber(message.nodeId)
-        if (message.encryptedData) role.encrypted_data = message.encryptedData
-        return role
+        const out: EnterpriseRole = { role_id: EnterpriseDataManager.toNumber(message.roleId) }
+        if (message.nodeId != null) out.node_id = EnterpriseDataManager.toNumber(message.nodeId)
+        if (message.encryptedData) out.encrypted_data = message.encryptedData
+        if (message.visibleBelow != null) out.visible_below = message.visibleBelow
+        if (message.newUserInherit != null) out.new_user_inherit = message.newUserInherit
+        return out
+    }
+
+    private static decodeRolePrivilegeChunk(bytes: Uint8Array): EnterpriseRolePrivilegeLink {
+        const message = Enterprise.RolePrivilege.decode(bytes)
+        const out: EnterpriseRolePrivilegeLink = {
+            role_id: EnterpriseDataManager.toNumber(message.roleId),
+            managed_node_id: EnterpriseDataManager.toNumber(message.managedNodeId),
+        }
+        if (message.privilegeType) out.privilege_type = message.privilegeType
+        return out
+    }
+
+    private static decodeManagedNodeChunk(bytes: Uint8Array): EnterpriseRoleManagedNodeLink {
+        const message = Enterprise.ManagedNode.decode(bytes)
+        return {
+            role_id: EnterpriseDataManager.toNumber(message.roleId),
+            managed_node_id: EnterpriseDataManager.toNumber(message.managedNodeId),
+            cascade_node_management: message.cascadeNodeManagement === true,
+        }
+    }
+
+    private static decodeRoleEnforcementChunk(bytes: Uint8Array): EnterpriseRoleEnforcementLink {
+        const message = Enterprise.RoleEnforcement.decode(bytes)
+        const out: EnterpriseRoleEnforcementLink = {
+            role_id: EnterpriseDataManager.toNumber(message.roleId),
+            enforcement_type: message.enforcementType || '',
+        }
+        if (message.value) out.value = message.value
+        return out
     }
 
     private static decodeTeamChunk(bytes: Uint8Array): EnterpriseTeamRecord {
@@ -577,6 +637,21 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             case Enterprise.EnterpriseDataEntity.USER_ALIASES:
                 target.user_aliases = (target.user_aliases || []).concat(
                     EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeUserAliasChunk)
+                )
+                break
+            case Enterprise.EnterpriseDataEntity.ROLE_PRIVILEGES:
+                target.role_privileges = (target.role_privileges || []).concat(
+                    EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeRolePrivilegeChunk)
+                )
+                break
+            case Enterprise.EnterpriseDataEntity.MANAGED_NODES:
+                target.managed_nodes = (target.managed_nodes || []).concat(
+                    EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeManagedNodeChunk)
+                )
+                break
+            case Enterprise.EnterpriseDataEntity.ROLE_ENFORCEMENTS:
+                target.role_enforcements = (target.role_enforcements || []).concat(
+                    EnterpriseDataManager.decodeChunk(data, EnterpriseDataManager.decodeRoleEnforcementChunk)
                 )
                 break
             default:
