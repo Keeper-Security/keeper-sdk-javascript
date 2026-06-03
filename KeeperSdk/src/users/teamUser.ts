@@ -8,9 +8,9 @@ import {
     getPublicKeysMessage,
     normal64Bytes,
     platform,
-    teamEnterpriseUserRemoveCommand,
     teamQueueUserCommand,
     teamsEnterpriseUsersAdd,
+    teamsEnterpriseUsersRemove,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, KeeperSdkError, logger, ResultCodes } from '../utils'
@@ -52,6 +52,8 @@ const MAX_TEAMS_PER_OPERATION = 100
 const MAX_RESPONSE_MESSAGE_LENGTH = 500
 const UNEXPECTED_TEAM_RESPONSE_MESSAGE = 'Unexpected API response: no team results returned'
 const MISSING_TEAM_RESPONSE_MESSAGE = 'Team add response missing for this team'
+const UNEXPECTED_REMOVE_RESPONSE_MESSAGE = 'Unexpected API response: no remove results returned'
+const MISSING_REMOVE_RESPONSE_MESSAGE = 'Team remove response missing for this user'
 
 const TEAM_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Users,
@@ -100,6 +102,13 @@ type AddBatchPreparation = {
     items: TeamUserItemResult[]
     batchTeams: PreparedBatchTeam[]
     invitedQueue: InvitedQueueEntry[]
+}
+
+type PreparedRemoveEntry = { user: EnterpriseUser; team: ResolvedTeam }
+
+type RemoveBatchPreparation = {
+    items: TeamUserItemResult[]
+    toRemove: PreparedRemoveEntry[]
 }
 
 type TeamUserItemBase = Omit<TeamUserItemResult, 'status'>
@@ -234,8 +243,8 @@ async function loadTeamUserContext(
 }
 
 function determineUserType(hideSharedFolders: boolean | undefined): Enterprise.TeamUserType | undefined {
-    if (hideSharedFolders === true) return Enterprise.TeamUserType.USER
-    if (hideSharedFolders === false) return Enterprise.TeamUserType.ADMIN_ONLY
+    if (hideSharedFolders === true) return Enterprise.TeamUserType.ADMIN_ONLY
+    if (hideSharedFolders === false) return Enterprise.TeamUserType.USER
     return undefined
 }
 
@@ -285,12 +294,12 @@ function validateOperationLimits(userCount: number, teamCount: number): void {
     }
 }
 
-function validateBatchUserCount(batchTeams: PreparedBatchTeam[]): void {
-    const totalUsers = batchTeams.reduce((count, batch) => count + batch.prepared.length, 0)
-    if (totalUsers > MAX_TEAM_USERS_PER_REQUEST) {
+function validateBatchEntryCount(count: number, operation: 'add' | 'remove'): void {
+    if (count > MAX_TEAM_USERS_PER_REQUEST) {
+        const code = operation === 'add' ? ResultCodes.TEAM_USER_ADD_FAILED : ResultCodes.TEAM_USER_REMOVE_FAILED
         throw new KeeperSdkError(
-            `Cannot add more than ${MAX_TEAM_USERS_PER_REQUEST} users in one batch request.`,
-            ResultCodes.TEAM_USER_ADD_FAILED
+            `Cannot ${operation} more than ${MAX_TEAM_USERS_PER_REQUEST} user-team pairs in one batch request.`,
+            code
         )
     }
 }
@@ -428,7 +437,10 @@ async function sendTeamsEnterpriseUsersAdd(
 ): Promise<TeamUserItemResult[]> {
     if (batchTeams.length === 0) return []
 
-    validateBatchUserCount(batchTeams)
+    validateBatchEntryCount(
+        batchTeams.reduce((count, batch) => count + batch.prepared.length, 0),
+        'add'
+    )
 
     let response: Enterprise.ITeamsEnterpriseUsersAddResponse
     try {
@@ -485,6 +497,99 @@ async function executeTeamUserCommand(
     }
 }
 
+function prepareRemoveEntries(
+    teams: ResolvedTeam[],
+    users: EnterpriseUser[],
+    membership: Set<string>
+): RemoveBatchPreparation {
+    const items: TeamUserItemResult[] = []
+    const toRemove: PreparedRemoveEntry[] = []
+
+    for (const team of teams) {
+        for (const user of users) {
+            const base = buildItemBase(user, team)
+            if (!membership.has(membershipKey(user.enterprise_user_id, team.team_uid))) {
+                items.push({ ...base, status: TeamUserStatus.Skipped, skipReason: TeamUserSkipReason.NotMember })
+                continue
+            }
+            toRemove.push({ user, team })
+        }
+    }
+
+    return { items, toRemove }
+}
+
+function markAllRemoveFailed(entries: PreparedRemoveEntry[], message: string): TeamUserItemResult[] {
+    return entries.map(({ user, team }) => ({
+        ...buildItemBase(user, team),
+        status: TeamUserStatus.Failed,
+        message,
+    }))
+}
+
+async function sendTeamsEnterpriseUsersRemove(
+    auth: Auth,
+    entries: PreparedRemoveEntry[]
+): Promise<TeamUserItemResult[]> {
+    if (entries.length === 0) return []
+
+    validateBatchEntryCount(entries.length, 'remove')
+
+    const request: Enterprise.ITeamEnterpriseUserRemovesRequest = {
+        teamEnterpriseUserRemove: entries.map(({ user, team }) => ({
+            teamUid: normal64Bytes(team.team_uid),
+            enterpriseUserId: user.enterprise_user_id,
+        })),
+    }
+
+    let response: Enterprise.ITeamEnterpriseUserRemovesResponse
+    try {
+        response = await auth.executeRest(teamsEnterpriseUsersRemove(request))
+    } catch (err) {
+        return markAllRemoveFailed(entries, extractErrorMessage(err))
+    }
+
+    const removeResponses = response.teamEnterpriseUserRemoveResponse ?? []
+    if (removeResponses.length === 0) {
+        return markAllRemoveFailed(entries, UNEXPECTED_REMOVE_RESPONSE_MESSAGE)
+    }
+
+    const entryMap = new Map(
+        entries.map((entry) => [membershipKey(entry.user.enterprise_user_id, entry.team.team_uid), entry])
+    )
+    const items: TeamUserItemResult[] = []
+
+    for (const userResp of removeResponses) {
+        const remove = userResp.teamEnterpriseUserRemove
+        const teamUid = remove?.teamUid ? webSafe64FromBytes(remove.teamUid as Uint8Array) : ''
+        const enterpriseUserId = toEnterpriseUserId(remove?.enterpriseUserId)
+        if (!teamUid || enterpriseUserId === null) continue
+
+        const entry = entryMap.get(membershipKey(enterpriseUserId, teamUid))
+        if (!entry) continue
+
+        const success = userResp.success === true
+        items.push({
+            ...buildItemBase(entry.user, entry.team),
+            status: success ? TeamUserStatus.Removed : TeamUserStatus.Failed,
+            message: success
+                ? undefined
+                : pickResponseError(userResp.message, userResp.resultCode, userResp.additionalInfo, 'Team remove failed'),
+        })
+        entryMap.delete(membershipKey(enterpriseUserId, teamUid))
+    }
+
+    for (const entry of entryMap.values()) {
+        items.push({
+            ...buildItemBase(entry.user, entry.team),
+            status: TeamUserStatus.Failed,
+            message: MISSING_REMOVE_RESPONSE_MESSAGE,
+        })
+    }
+
+    return items
+}
+
 async function processInvitedQueue(auth: Auth, invitedQueue: InvitedQueueEntry[]): Promise<TeamUserItemResult[]> {
     const items: TeamUserItemResult[] = []
     for (const { user, team } of invitedQueue) {
@@ -537,31 +642,10 @@ export async function removeUsersFromTeams(
     input: RemoveUsersFromTeamsInput
 ): Promise<TeamUserResult> {
     const ctx = await loadTeamUserContext(auth, input.users, input.teams || [])
-    const items: TeamUserItemResult[] = []
+    const { items, toRemove } = prepareRemoveEntries(ctx.teams, ctx.users, ctx.membership)
 
-    for (const team of ctx.teams) {
-        for (const user of ctx.users) {
-            const base = buildItemBase(user, team)
-
-            if (!ctx.membership.has(membershipKey(user.enterprise_user_id, team.team_uid))) {
-                items.push({ ...base, status: TeamUserStatus.Skipped, skipReason: TeamUserSkipReason.NotMember })
-                continue
-            }
-
-            try {
-                await executeTeamUserCommand(
-                    auth,
-                    teamEnterpriseUserRemoveCommand({
-                        enterprise_user_id: user.enterprise_user_id,
-                        team_uid: team.team_uid,
-                    }),
-                    ResultCodes.TEAM_USER_REMOVE_FAILED
-                )
-                items.push({ ...base, status: TeamUserStatus.Removed })
-            } catch (err) {
-                items.push({ ...base, status: TeamUserStatus.Failed, message: extractErrorMessage(err) })
-            }
-        }
+    if (toRemove.length > 0) {
+        items.push(...(await sendTeamsEnterpriseUsersRemove(auth, toRemove)))
     }
 
     return finalizeResult(items)

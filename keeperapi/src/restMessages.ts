@@ -529,6 +529,16 @@ export const teamsEnterpriseUsersAdd = (
         Enterprise.TeamsEnterpriseUsersAddResponse
     )
 
+export const teamsEnterpriseUsersRemove = (
+    data: Enterprise.ITeamEnterpriseUserRemovesRequest
+): RestMessage<Enterprise.ITeamEnterpriseUserRemovesRequest, Enterprise.ITeamEnterpriseUserRemovesResponse> =>
+    createMessage(
+        data,
+        'teams/teams_enterprise_users_remove',
+        Enterprise.TeamEnterpriseUserRemovesRequest,
+        Enterprise.TeamEnterpriseUserRemovesResponse
+    )
+
 export const setEncryptedTeamKeyMessage = (
     data: Enterprise.IEncryptedTeamKeyRequest
 ): RestInMessage<Enterprise.IEncryptedTeamKeyRequest> =>
