@@ -7,8 +7,7 @@ import { Authentication } from '../browser'
 // Behavioral guard for the protobuf Long fix. We exercise the real SDK entry
 // (../browser) — the same module a consumer / the browser extension loads — and
 // assert the observable behavior: decoded 64-bit fields (int64/uint64/...) come back
-// as JS numbers, never Long objects (which are non-serializable and break the Redux
-// store). No reaching into how the fix is wired.
+// as JS numbers, never Long objects
 describe('64-bit proto fields decode as numbers, not Long', () => {
     const PasskeyInfo = Authentication.PasskeyInfo
 

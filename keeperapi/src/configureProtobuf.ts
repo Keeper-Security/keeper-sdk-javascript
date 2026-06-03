@@ -5,8 +5,7 @@ import * as $protobuf from 'protobufjs/minimal'
  * (previously a bundler-opaque inquire("long") that webpack/rollup couldn't see,
  * so long was never bundled and 64-bit fields decoded to plain numbers). Now
  * util.Long is set, so int64/uint64/sint64/fixed64/sfixed64 fields decode to Long
- * objects. Keeper treats these as plain numbers, and Long instances are
- * non-serializable (break the Redux store).
+ * objects. We've been assuming these as plain numbers (since that was decoded).
  *
  * Disabling util.Long makes the reader bind its 64-bit read methods to
  * LongBits.toNumber(), decoding directly to numbers. configure() rebinds
@@ -22,6 +21,6 @@ import * as $protobuf from 'protobufjs/minimal'
  * to Long{0,0} even though decoded (present) values are numbers. Importing this
  * first guarantees util.Long is null before proto.js bakes those defaults.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;($protobuf.util as any).Long = null
+// @ts-expect-error
+$protobuf.util.Long = null
 $protobuf.configure()
