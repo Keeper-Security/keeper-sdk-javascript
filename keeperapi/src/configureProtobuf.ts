@@ -11,7 +11,7 @@ import * as $protobuf from 'protobufjs/minimal'
  * LongBits.toNumber(), decoding directly to numbers. configure() rebinds
  * Reader.prototype accordingly; util._configure() does not re-detect Long, so this
  * assignment sticks. This is the documented way to control Long support:
- * https://github.com/protobufjs/protobuf.js#browserify-integration
+ * https://github.com/protobufjs/protobuf.js/tree/protobufjs-v7.x#browserify-integration
  *
  * IMPORTANT: this runs as a module-load side effect (not an exported function) and
  * MUST be imported before ./proto. The generated proto.js bakes its per-field
