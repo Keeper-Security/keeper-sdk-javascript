@@ -26,7 +26,23 @@ await vault.syncDown()
 console.log(`Loaded ${vault.records.size} records`)
 ```
 
-For end-to-end runnable scripts (login, records CRUD, folder management, sharing, teams, users, user-team), see [`examples/sdk_example`](../examples/sdk_example):
+## Supported functionality
+
+`KeeperVault` exposes the operations below. Enterprise features require an enterprise administrator account.
+
+- **Authentication**: Login, session token login, resume session, sync, logout
+- **Records**: List, search, add, update, delete, move, history
+- **Folders**: List, get, create, rename, delete, change directory, folder tree
+- **Shared folders**: List shared folders, share with users, update permissions
+- **Sharing**: Share and unshare records, check share info
+- **Teams**: List, view, add, update, delete teams
+- **Users**: List, view, add, update, delete users; lock/unlock accounts; expire passwords; manage aliases and team membership
+
+Enterprise features need an enterprise administrator account.
+
+## Examples
+
+Runnable scripts for the areas above are in [`examples/sdk_example`](../examples/sdk_example):
 
 ```bash
 cd examples/sdk_example
