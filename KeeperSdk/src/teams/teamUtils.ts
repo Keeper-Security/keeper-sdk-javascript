@@ -16,17 +16,32 @@ export function validateTeamName(name: string): void {
 
 export function resolveExistingTeams(
     teams: EnterpriseTeamRecord[],
-    identifiers: string[]
+    identifiers: string[],
+    queuedTeams: EnterpriseTeamRecord[] = []
 ): EnterpriseTeamRecord[] {
     const byUid = new Map<string, EnterpriseTeamRecord>()
     const byLowerName = new Map<string, EnterpriseTeamRecord[]>()
     for (const team of teams) {
-        if (team.team_uid) byUid.set(team.team_uid, team)
+        if (!team.team_uid) continue
+        byUid.set(team.team_uid, team)
         const key = (team.name || '').trim().toLowerCase()
         if (!key) continue
         const existing = byLowerName.get(key)
         if (existing) existing.push(team)
         else byLowerName.set(key, [team])
+    }
+    for (const team of queuedTeams) {
+        if (!team.team_uid || byUid.has(team.team_uid)) continue
+        const resolved: EnterpriseTeamRecord = {
+            team_uid: team.team_uid,
+            name: team.name,
+            node_id: team.node_id ?? 0,
+            ...(team.encrypted_team_key ? { encrypted_team_key: team.encrypted_team_key } : {}),
+        }
+        byUid.set(team.team_uid, resolved)
+        const key = (team.name || '').trim().toLowerCase()
+        if (!key || byLowerName.has(key)) continue
+        byLowerName.set(key, [resolved])
     }
 
     const found = new Map<string, EnterpriseTeamRecord>()

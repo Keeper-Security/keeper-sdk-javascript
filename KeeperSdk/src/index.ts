@@ -352,6 +352,11 @@ export type {
     AliasUserInput,
     AliasUserResult,
     FormattedUserStatus,
+    AddUsersToTeamsInput,
+    RemoveUsersFromTeamsInput,
+    TeamUserItemResult,
+    TeamUserResult,
+    FormattedTeamUserTable,
 } from './users/userTypes'
 
 export { EnterpriseUserStatus } from './users/userTypes'
@@ -360,6 +365,15 @@ export {
     aliasUser,
     AliasOperation,
 } from './users/aliasUser'
+
+export {
+    addUsersToTeams,
+    removeUsersFromTeams,
+    formatTeamUserResult,
+    renderTeamUserAsciiTable,
+    TeamUserStatus,
+    TeamUserSkipReason,
+} from './users/teamUser'
 
 export { UserManager } from './users/UserManager'
 

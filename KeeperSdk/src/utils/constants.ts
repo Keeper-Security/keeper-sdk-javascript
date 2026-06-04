@@ -64,6 +64,9 @@ export enum UserErrorCode {
     UserActionFailed = 'user_action_failed',
     UserActionAllNotSupported = 'user_action_all_not_supported',
     UserAliasFailed = 'user_alias_failed',
+    NoTeamsForUserOp = 'no_teams_for_user_op',
+    TeamUserAddFailed = 'team_user_add_failed',
+    TeamUserRemoveFailed = 'team_user_remove_failed',
 }
 
 export const ResultCodes = {
@@ -110,6 +113,9 @@ export const ResultCodes = {
     USER_ACTION_FAILED: UserErrorCode.UserActionFailed,
     USER_ACTION_ALL_NOT_SUPPORTED: UserErrorCode.UserActionAllNotSupported,
     USER_ALIAS_FAILED: UserErrorCode.UserAliasFailed,
+    NO_TEAMS_FOR_USER_OP: UserErrorCode.NoTeamsForUserOp,
+    TEAM_USER_ADD_FAILED: UserErrorCode.TeamUserAddFailed,
+    TEAM_USER_REMOVE_FAILED: UserErrorCode.TeamUserRemoveFailed,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

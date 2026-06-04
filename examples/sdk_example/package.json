@@ -36,6 +36,7 @@
         "users:delete": "ts-node src/users/delete_user.ts",
         "users:action": "ts-node src/users/action_user.ts",
         "users:alias": "ts-node src/users/alias_user.ts",
+        "users:user-team": "ts-node src/users/team_user.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"
