@@ -1,5 +1,6 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
+import { EnterpriseDataManager } from '../teams/enterpriseData'
 import { formatRolesTable, listRoles, renderRolesAsciiTable } from './listRoles'
 import type {
     FormatRolesTableOptions,
@@ -44,13 +45,17 @@ export type AuthProvider = () => Auth
 
 export class RoleManager {
     private readonly authProvider: AuthProvider
+    private enterpriseData: EnterpriseDataManager | null = null
 
     constructor(authProvider: AuthProvider) {
         this.authProvider = authProvider
     }
 
     public async listRoles(options: ListRolesOptions = {}): Promise<ListRoleRow[]> {
-        return listRoles(this.requireAuth(), options)
+        return listRoles(this.requireAuth(), {
+            ...options,
+            enterpriseData: options.enterpriseData ?? this.getEnterpriseData(),
+        })
     }
 
     public formatRolesTable(rows: ListRoleRow[], options: FormatRolesTableOptions = {}): FormattedRolesTable {
@@ -77,7 +82,9 @@ export class RoleManager {
     }
 
     public async addRoles(input: AddRoleInput): Promise<AddRoleResult> {
-        return addRoles(this.requireAuth(), input)
+        const result = await addRoles(this.requireAuth(), input)
+        if (result.created > 0) this.invalidateEnterpriseData()
+        return result
     }
 
     public formatAddRoleResult(result: AddRoleResult): FormattedAddRoleTable {
@@ -89,7 +96,9 @@ export class RoleManager {
     }
 
     public async updateRoles(input: UpdateRoleInput): Promise<UpdateRoleResult> {
-        return updateRoles(this.requireAuth(), input)
+        const result = await updateRoles(this.requireAuth(), input)
+        if (result.updated > 0) this.invalidateEnterpriseData()
+        return result
     }
 
     public formatUpdateRoleResult(result: UpdateRoleResult): FormattedUpdateRoleTable {
@@ -101,7 +110,9 @@ export class RoleManager {
     }
 
     public async deleteRoles(input: DeleteRoleInput): Promise<DeleteRoleResult> {
-        return deleteRoles(this.requireAuth(), input)
+        const result = await deleteRoles(this.requireAuth(), input)
+        if (result.deleted > 0) this.invalidateEnterpriseData()
+        return result
     }
 
     public formatDeleteRoleResult(result: DeleteRoleResult): FormattedDeleteRoleTable {
@@ -110,6 +121,17 @@ export class RoleManager {
 
     public renderDeleteRoleAsciiTable(table: FormattedDeleteRoleTable): string {
         return renderDeleteRoleAsciiTable(table)
+    }
+
+    private getEnterpriseData(): EnterpriseDataManager {
+        if (!this.enterpriseData) {
+            this.enterpriseData = new EnterpriseDataManager(this.requireAuth())
+        }
+        return this.enterpriseData
+    }
+
+    private invalidateEnterpriseData(): void {
+        this.enterpriseData?.clearCache()
     }
 
     private requireAuth(): Auth {

@@ -1,8 +1,9 @@
 import type { Auth } from '@keeper-security/keeperapi'
-import { isNumber, TOKEN_SEPARATOR_PATTERN } from '../utils'
+import { isNumber, resolveSearchPattern, TOKEN_SEPARATOR_PATTERN } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
+    type EnterpriseDataManagerApi,
     type EnterpriseDisplayNames,
     type EnterpriseNode,
     type EnterpriseRole,
@@ -55,7 +56,8 @@ export async function listRoles(auth: Auth, options: ListRolesOptions = {}): Pro
         columns.includes(RoleColumn.Teams) ||
         columns.includes(RoleColumn.TeamCount)
 
-    const enterpriseData = new EnterpriseDataManager(auth)
+    const enterpriseData: EnterpriseDataManagerApi =
+        options.enterpriseData ?? new EnterpriseDataManager(auth)
     const emptyDisplayNames: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
     const [response, displayNames] = await Promise.all([
         enterpriseData.getData(includes),
@@ -80,7 +82,7 @@ export async function listRoles(auth: Auth, options: ListRolesOptions = {}): Pro
         teamNameById: buildTeamNameMap(response.teams || []),
     }
 
-    const pattern = options.pattern?.trim() || null
+    const pattern = resolveSearchPattern(options.pattern)
     const rows: ListRoleRow[] = []
     for (const role of roles) {
         const row = decorateRow(role, columns, context)

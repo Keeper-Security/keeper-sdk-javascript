@@ -28,6 +28,7 @@ export {
     ResultCodes,
     AuthErrorCode,
     SessionErrorCode,
+    ValidationErrorCode,
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
@@ -41,6 +42,7 @@ export {
     EMAIL_PATTERN,
     EMAIL_LIST_SEPARATOR_PATTERN,
     isValidEmail,
+    resolveSearchPattern,
 } from './utils'
 export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
 

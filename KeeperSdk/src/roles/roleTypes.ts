@@ -1,3 +1,5 @@
+import type { EnterpriseDataManagerApi } from '../teams/enterpriseData'
+
 export enum RoleColumn {
     VisibleBelow = 'visible_below',
     DefaultRole = 'default_role',
@@ -25,6 +27,7 @@ export const ALL_COLUMNS_WILDCARD = '*' as const
 export type ListRolesOptions = {
     pattern?: string | null
     columns?: RoleColumnInput[] | typeof ALL_COLUMNS_WILDCARD | string | null
+    enterpriseData?: EnterpriseDataManagerApi
 }
 
 export type ListRoleRow = {
