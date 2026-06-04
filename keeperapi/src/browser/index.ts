@@ -1,3 +1,4 @@
+import '../configureProtobuf'
 export * from '../endpoint'
 export * from '../auth'
 export * from '../vendorModel'

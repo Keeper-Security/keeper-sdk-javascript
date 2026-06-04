@@ -1,3 +1,7 @@
+// Must be the first import: disables protobufjs Long support before ../proto
+// (proto.js) is evaluated, so 64-bit fields decode to numbers AND proto.js does not
+// bake Long-typed prototype defaults for absent fields. See ../configureProtobuf.
+import '../configureProtobuf'
 export * from '../endpoint'
 export * from '../auth'
 export * from '../vendorModel'
