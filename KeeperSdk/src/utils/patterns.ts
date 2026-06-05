@@ -1,3 +1,6 @@
+import { KeeperSdkError } from './errors'
+import { ResultCodes } from './constants'
+
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/
 
 /** Splits user-entered email lists on whitespace, commas, and semicolons. */
@@ -17,4 +20,13 @@ export function isValidEmail(value: string): boolean {
 
 export function escapeRegExp(value: string): string {
     return value.replace(REGEX_ESCAPE_PATTERN, '\\$&')
+}
+
+export function resolveSearchPattern(pattern: unknown): string | null {
+    if (pattern == null) return null
+    if (typeof pattern !== 'string') {
+        throw new KeeperSdkError('Pattern must be a string.', ResultCodes.INVALID_PATTERN)
+    }
+    const trimmed = pattern.trim()
+    return trimmed.length > 0 ? trimmed : null
 }
