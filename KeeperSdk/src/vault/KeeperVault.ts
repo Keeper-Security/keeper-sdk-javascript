@@ -62,12 +62,18 @@ import type { TeamView } from '../teams/viewTeam'
 import type { AddTeamInput, AddTeamResult } from '../teams/addTeam'
 import type { UpdateTeamInput, UpdateTeamResult } from '../teams/updateTeam'
 import type { DeleteTeamInput, DeleteTeamResult } from '../teams/deleteTeam'
-import { RoleManager } from '../roles/RoleManager'
-import type { ListRoleRow, ListRolesOptions } from '../roles/roleTypes'
-import type { RoleView } from '../roles/viewRole'
-import type { AddRoleInput, AddRoleResult } from '../roles/addRole'
-import type { UpdateRoleInput, UpdateRoleResult } from '../roles/updateRole'
-import type { DeleteRoleInput, DeleteRoleResult } from '../roles/deleteRole'
+import {
+    RoleManager,
+    type AddRoleInput,
+    type AddRoleResult,
+    type DeleteRoleInput,
+    type DeleteRoleResult,
+    type ListRoleRow,
+    type ListRolesOptions,
+    type RoleView,
+    type UpdateRoleInput,
+    type UpdateRoleResult,
+} from '../roles'
 import { UserManager } from '../users/UserManager'
 import type {
     ListUserRow,

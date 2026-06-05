@@ -366,18 +366,17 @@ function renderMainSection(table: FormattedRoleViewTable): string {
         ? expandedRows.reduce((max, row) => Math.max(max, ...row.idLines.map((l) => l.length)), 0)
         : 0
 
-    const padRight = (text: string, width: number) => text + ' '.repeat(Math.max(0, width - text.length))
-    const padLeft = (text: string, width: number) => ' '.repeat(Math.max(0, width - text.length)) + text
-
+    const columnWidths = hasIdColumn ? [labelWidth, valueWidth, idWidth] : [labelWidth, valueWidth]
     const lines: string[] = []
     for (const row of expandedRows) {
         const lineCount = Math.max(row.valueLines.length, hasIdColumn ? row.idLines.length : 0, 1)
         for (let li = 0; li < lineCount; li++) {
-            const labelCell = padLeft(li === 0 ? row.label : '', labelWidth)
-            const valueCell = padRight(row.valueLines[li] ?? '', valueWidth)
-            const cells: string[] = [labelCell, valueCell]
-            if (hasIdColumn) cells.push(padRight(row.idLines[li] ?? '', idWidth))
-            lines.push(cells.join('  ').trimEnd())
+            const cells = [
+                li === 0 ? row.label : '',
+                row.valueLines[li] ?? '',
+                ...(hasIdColumn ? [row.idLines[li] ?? ''] : []),
+            ]
+            lines.push(formatAsciiRow(cells, columnWidths))
         }
     }
     return lines.join('\n')
@@ -389,14 +388,13 @@ function renderEnforcementsSection(rows: RoleEnforcementInfo[]): string {
 
     const nameWidth = Math.max('Name'.length, ...rows.map((r) => r.name.length))
     const valWidth = Math.max('Value'.length, ...rows.map((r) => r.value.length))
+    const columnWidths = [nameWidth, valWidth]
 
-    const pad = (text: string, width: number) => text + ' '.repeat(Math.max(0, width - text.length))
-    const rule = `${'-'.repeat(nameWidth)}  ${'-'.repeat(valWidth)}`
     const lines: string[] = [
         title,
-        `${pad('Name', nameWidth)}  ${'Value'}`,
-        rule,
-        ...rows.map((r) => `${pad(r.name, nameWidth)}  ${r.value}`),
+        formatAsciiRow(['Name', 'Value'], columnWidths),
+        formatAsciiRow(['-'.repeat(nameWidth), '-'.repeat(valWidth)], columnWidths),
+        ...rows.map((r) => formatAsciiRow([r.name, r.value], columnWidths)),
     ]
     return lines.join('\n')
 }
@@ -414,8 +412,7 @@ function renderManagedNodesSection(table: FormattedManagedNodePrivilegeTable): s
     }
     colWidths[0] = Math.max(colWidths[0], 'Cascade Node Permissions'.length)
 
-    const pad = (text: string, width: number) => text + ' '.repeat(Math.max(0, width - text.length))
-    const formatRow = (cells: string[]) => cells.map((c, i) => pad(c, colWidths[i])).join('  ').trimEnd()
+    const formatRow = (cells: string[]) => formatAsciiRow(cells, colWidths)
 
     const rule = formatRow(colWidths.map((w) => '-'.repeat(w)))
     const lines: string[] = [
@@ -444,4 +441,8 @@ function asIdLines(id: number | number[] | undefined): string[] {
     if (id == null) return []
     if (Array.isArray(id)) return id.length > 0 ? id.map(String) : ['']
     return [String(id)]
+}
+
+function formatAsciiRow(cells: string[], widths: number[]): string {
+    return cells.map((cell, index) => cell + ' '.repeat(Math.max(0, widths[index] - cell.length))).join('  ')
 }

@@ -223,22 +223,38 @@ export type {
     NodePathOptions,
 } from './teams/enterpriseData'
 
-export { listRoles, formatRolesTable, renderRolesAsciiTable } from './roles/listRoles'
 export {
+    listRoles,
+    formatRolesTable,
+    renderRolesAsciiTable,
     RoleColumn,
     SUPPORTED_ROLE_COLUMNS,
     DEFAULT_ROLE_COLUMNS,
-} from './roles/roleTypes'
+    ALL_COLUMNS_WILDCARD,
+    viewRole,
+    formatRoleView,
+    roleViewTable,
+    RoleManager,
+    addRoles,
+    formatAddRoleResult,
+    renderAddRoleAsciiTable,
+    AddRoleStatus,
+    AddRoleSkipReason,
+    updateRoles,
+    formatUpdateRoleResult,
+    renderUpdateRoleAsciiTable,
+    UpdateRoleStatus,
+    deleteRoles,
+    formatDeleteRoleResult,
+    renderDeleteRoleAsciiTable,
+    DeleteRoleStatus,
+} from './roles'
 export type {
     ListRolesOptions,
     ListRoleRow,
     RoleColumnInput,
     FormattedRolesTable,
     FormatRolesTableOptions,
-} from './roles/roleTypes'
-
-export { viewRole, formatRoleView, roleViewTable } from './roles/viewRole'
-export type {
     RoleView,
     RoleTeamInfo,
     RoleUserInfo,
@@ -248,53 +264,24 @@ export type {
     FormattedRoleViewTable,
     FormattedManagedNodePrivilegeTable,
     RoleViewTableRow,
-} from './roles/viewRole'
-
-export { RoleManager } from './roles/RoleManager'
-
-export {
-    addRoles,
-    formatAddRoleResult,
-    renderAddRoleAsciiTable,
-    AddRoleStatus,
-    AddRoleSkipReason,
-} from './roles/addRole'
-export type {
     AddRoleInput,
     AddRoleResult,
     AddRoleItemResult,
     AddRoleConfirm,
     AddRoleConflictPrompt,
     FormattedAddRoleTable,
-} from './roles/addRole'
-
-export {
-    updateRoles,
-    formatUpdateRoleResult,
-    renderUpdateRoleAsciiTable,
-    UpdateRoleStatus,
-} from './roles/updateRole'
-export type {
     UpdateRoleInput,
     UpdateRoleResult,
     UpdateRoleItemResult,
     FormattedUpdateRoleTable,
-} from './roles/updateRole'
-
-export {
-    deleteRoles,
-    formatDeleteRoleResult,
-    renderDeleteRoleAsciiTable,
-    DeleteRoleStatus,
-} from './roles/deleteRole'
-export type {
     DeleteRoleInput,
     DeleteRoleResult,
     DeleteRoleItemResult,
     FormattedDeleteRoleTable,
-} from './roles/deleteRole'
-
-export type { RoleToggleInput, RoleToggle, EnforcementPair } from './roles/roleUtils'
+    RoleToggleInput,
+    RoleToggle,
+    EnforcementPair,
+} from './roles'
 
 export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'
 export type {
