@@ -200,8 +200,7 @@ export type RoleEnforcementRemoveRequest = {
 
 export const roleEnforcementRemoveCommand = (
     request: RoleEnforcementRemoveRequest
-): RestCommand<RoleEnforcementRemoveRequest, KeeperResponse> =>
-    createCommand(request, 'role_enforcement_remove')
+): RestCommand<RoleEnforcementRemoveRequest, KeeperResponse> => createCommand(request, 'role_enforcement_remove')
 
 export type EnterpriseAllocateIdsRequest = {
     number_requested: number
