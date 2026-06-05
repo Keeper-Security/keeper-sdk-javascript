@@ -189,6 +189,20 @@ export const roleEnforcementAddCommand = (
     request: RoleEnforcementAddRequest
 ): RestCommand<RoleEnforcementAddRequest, KeeperResponse> => createCommand(request, 'role_enforcement_add')
 
+export const roleEnforcementUpdateCommand = (
+    request: RoleEnforcementAddRequest
+): RestCommand<RoleEnforcementAddRequest, KeeperResponse> => createCommand(request, 'role_enforcement_update')
+
+export type RoleEnforcementRemoveRequest = {
+    role_id: number
+    enforcement: string
+}
+
+export const roleEnforcementRemoveCommand = (
+    request: RoleEnforcementRemoveRequest
+): RestCommand<RoleEnforcementRemoveRequest, KeeperResponse> =>
+    createCommand(request, 'role_enforcement_remove')
+
 export type EnterpriseAllocateIdsRequest = {
     number_requested: number
 }

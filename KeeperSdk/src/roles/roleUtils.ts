@@ -1,6 +1,17 @@
-import { roleEnforcementAddCommand, type Auth, type KeeperResponse } from '@keeper-security/keeperapi'
+import {
+    roleEnforcementAddCommand,
+    roleEnforcementRemoveCommand,
+    roleEnforcementUpdateCommand,
+    type Auth,
+    type KeeperResponse,
+} from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
-import { EnterpriseDataManager, type EnterpriseNode, type EnterpriseRole } from '../teams/enterpriseData'
+import {
+    EnterpriseDataManager,
+    type EnterpriseNode,
+    type EnterpriseRole,
+    type EnterpriseRoleEnforcementLink,
+} from '../teams/enterpriseData'
 
 export const ROLE_TABLE_HEADERS = ['#', 'Status', 'Role Name', 'Role ID', 'Node ID', 'Detail'] as const
 export const NODE_PATH_SEPARATOR = '\\'
@@ -115,12 +126,66 @@ export function assertCommandSucceeded(response: KeeperResponse, fallbackMessage
     }
 }
 
-export async function applyRoleEnforcements(auth: Auth, roleId: number, pairs: EnforcementPair[]): Promise<void> {
+const ENFORCEMENT_FALSE = new Set(['false', 'f', '0', 'off', 'no', 'n'])
+const ENFORCEMENT_TRUE = new Set(['true', 't', '1', 'on', 'yes', 'y'])
+
+function normalizeEnforcementKey(key: string): string {
+    return key.trim().toLowerCase().replace(/-/g, '_')
+}
+
+function roleHasEnforcement(
+    roleId: number,
+    enforcement: string,
+    links: readonly EnterpriseRoleEnforcementLink[]
+): boolean {
+    return links.some(
+        (link) =>
+            link.role_id === roleId && normalizeEnforcementKey(link.enforcement_type) === enforcement
+    )
+}
+
+export async function applyRoleEnforcements(
+    auth: Auth,
+    roleId: number,
+    pairs: EnforcementPair[],
+    existingLinks: readonly EnterpriseRoleEnforcementLink[] = []
+): Promise<void> {
     for (const { key, value } of pairs) {
+        const enforcement = normalizeEnforcementKey(key)
+        const lower = value.trim().toLowerCase()
+
+        if (ENFORCEMENT_FALSE.has(lower)) {
+            if (!roleHasEnforcement(roleId, enforcement, existingLinks)) continue
+            const response = await auth.executeRestCommand(
+                roleEnforcementRemoveCommand({ role_id: roleId, enforcement })
+            )
+            assertCommandSucceeded(
+                response,
+                `role_enforcement_remove failed: ${enforcement}`,
+                ResultCodes.ROLE_ENFORCEMENT_FAILED
+            )
+            continue
+        }
+
+        if (ENFORCEMENT_TRUE.has(lower)) {
+            const exists = roleHasEnforcement(roleId, enforcement, existingLinks)
+            const response = await auth.executeRestCommand(
+                exists
+                    ? roleEnforcementUpdateCommand({ role_id: roleId, enforcement })
+                    : roleEnforcementAddCommand({ role_id: roleId, enforcement })
+            )
+            assertCommandSucceeded(
+                response,
+                `role_enforcement_${exists ? 'update' : 'add'} failed: ${enforcement}`,
+                ResultCodes.ROLE_ENFORCEMENT_FAILED
+            )
+            continue
+        }
+
         const response = await auth.executeRestCommand(
-            roleEnforcementAddCommand({ role_id: roleId, enforcement: key, value })
+            roleEnforcementAddCommand({ role_id: roleId, enforcement, value })
         )
-        assertCommandSucceeded(response, `role_enforcement_add failed: ${key}`, ResultCodes.ROLE_ENFORCEMENT_FAILED)
+        assertCommandSucceeded(response, `role_enforcement_add failed: ${enforcement}`, ResultCodes.ROLE_ENFORCEMENT_FAILED)
     }
 }
 

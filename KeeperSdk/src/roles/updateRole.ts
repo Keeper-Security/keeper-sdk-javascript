@@ -26,7 +26,10 @@ import {
     type RoleToggleInput,
 } from './roleUtils'
 
-const UPDATE_ROLE_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Roles]
+const UPDATE_ROLE_BASE_INCLUDES: EnterpriseDataInclude[] = [
+    EnterpriseDataInclude.Nodes,
+    EnterpriseDataInclude.Roles,
+]
 
 export enum UpdateRoleStatus {
     Updated = 'updated',
@@ -80,10 +83,12 @@ export async function updateRoles(auth: Auth, input: UpdateRoleInput): Promise<U
     const newUserInherit = resolveToggle(input.newUser)
     const visibleBelow = resolveToggle(input.visibleBelow)
     const enforcements = parseEnforcements(input.enforcements ?? [])
+    const includes = [...UPDATE_ROLE_BASE_INCLUDES]
+    if (enforcements.length > 0) includes.push(EnterpriseDataInclude.RoleEnforcements)
 
     const enterpriseData = new EnterpriseDataManager(auth)
     const [response, displayNames] = await Promise.all([
-        enterpriseData.getData(UPDATE_ROLE_INCLUDES),
+        enterpriseData.getData(includes),
         enterpriseData.getDisplayNames(),
     ])
 
@@ -118,7 +123,7 @@ export async function updateRoles(auth: Auth, input: UpdateRoleInput): Promise<U
                 new_user_inherit: newUserInherit ?? role.new_user_inherit ?? false,
             }
             await sendRoleUpdate(auth, payload)
-            await applyRoleEnforcements(auth, role.role_id, enforcements)
+            await applyRoleEnforcements(auth, role.role_id, enforcements, response.role_enforcements || [])
             items.push({ roleId: role.role_id, roleName: newName || currentName, nodeId: targetNodeId, status: UpdateRoleStatus.Updated })
         } catch (err) {
             items.push({ roleId: role.role_id, roleName: currentName, nodeId: role.node_id ?? 0, status: UpdateRoleStatus.Failed, message: extractErrorMessage(err) })
