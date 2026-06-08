@@ -189,6 +189,49 @@ export const roleEnforcementAddCommand = (
     request: RoleEnforcementAddRequest
 ): RestCommand<RoleEnforcementAddRequest, KeeperResponse> => createCommand(request, 'role_enforcement_add')
 
+export const roleEnforcementUpdateCommand = (
+    request: RoleEnforcementAddRequest
+): RestCommand<RoleEnforcementAddRequest, KeeperResponse> => createCommand(request, 'role_enforcement_update')
+
+export type RoleEnforcementRemoveRequest = {
+    role_id: number
+    enforcement: string
+}
+
+export const roleEnforcementRemoveCommand = (
+    request: RoleEnforcementRemoveRequest
+): RestCommand<RoleEnforcementRemoveRequest, KeeperResponse> => createCommand(request, 'role_enforcement_remove')
+
+export type EnterpriseAllocateIdsRequest = {
+    number_requested: number
+}
+
+export const enterpriseAllocateIdsCommand = (
+    request: EnterpriseAllocateIdsRequest
+): RestCommand<EnterpriseAllocateIdsRequest, KeeperResponse & { base_id: number; number_allocated: number }> =>
+    createCommand(request, 'enterprise_allocate_ids')
+
+export type RoleEditRequest = {
+    role_id: number
+    node_id: number
+    encrypted_data: string
+    visible_below: boolean
+    new_user_inherit: boolean
+}
+
+export const roleAddCommand = (request: RoleEditRequest): RestCommand<RoleEditRequest, KeeperResponse> =>
+    createCommand(request, 'role_add')
+
+export const roleUpdateCommand = (request: RoleEditRequest): RestCommand<RoleEditRequest, KeeperResponse> =>
+    createCommand(request, 'role_update')
+
+export type RoleDeleteRequest = {
+    role_id: number
+}
+
+export const roleDeleteCommand = (request: RoleDeleteRequest): RestCommand<RoleDeleteRequest, KeeperResponse> =>
+    createCommand(request, 'role_delete')
+
 export type MoveRequest = {
     to_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
     to_uid?: string
