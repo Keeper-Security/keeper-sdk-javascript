@@ -21,7 +21,7 @@
         "prepublishOnly": "npm run build"
     },
     "dependencies": {
-        "@keeper-security/keeperapi": "17.2.3",
+        "@keeper-security/keeperapi": "17.2.6",
         "ts-node": "^10.7.0",
         "typescript": "^4.6.3"
     },
