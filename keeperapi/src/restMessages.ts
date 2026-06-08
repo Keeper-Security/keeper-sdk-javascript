@@ -17,6 +17,7 @@ import {
     Vault,
     Tokens,
     NotificationCenter,
+    record,
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -957,3 +958,13 @@ export const pamGetLeafsMessage = (
 
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
+
+export const keeperDriveRecordsAdd = (
+    data: record.v3.IRecordsAddRequest
+): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, '/vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
+
+export const keeperDriveRecordsUpdate = (
+    data: Records.IRecordsUpdateRequest
+): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
+    createMessage(data, '/vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
