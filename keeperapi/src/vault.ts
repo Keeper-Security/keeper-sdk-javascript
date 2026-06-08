@@ -1,8 +1,8 @@
 import { Auth } from './auth'
 import { NN, syncDownMessage } from './restMessages'
 import { CryptoWorkerOptions, EncryptionType, KeyStorage, platform } from './platform'
-import { Records, Tokens, Vault } from './proto'
-import { formatTimeDiff, webSafe64FromBytes } from './utils'
+import { Folder, record, Records, Tokens, Vault } from './proto'
+import { formatTimeDiff, isNil, toOptional, webSafe64FromBytes } from './utils'
 import { logger } from './log'
 import CacheStatus = Vault.CacheStatus
 import RecordKeyType = Records.RecordKeyType
@@ -26,6 +26,22 @@ import IProfile = Vault.IProfile
 import IBreachWatchRecord = Vault.IBreachWatchRecord
 import IBreachWatchSecurityData = Vault.IBreachWatchSecurityData
 import type { UnwrapKeyMap } from './platform'
+import {
+    createKdRecordAccessCompositeKey,
+    DKdFolderRecord,
+    DKdRecordAccess,
+    DKdRecordSharingState,
+    DKdFolder,
+    DKdFolderAccess,
+    DKdFolderSharingState,
+    mapTeamKeyType,
+    DKdRecordLink,
+    createKdFolderAccessCompositeKey,
+} from './syncDown'
+
+export type VaultStorageDeleteOption =
+    | { kind: 'keeper_drive_record_access'; actorUid: string; recordUid: string }
+    | { kind: 'keeper_drive_folder_access'; folderUid: string; actorUid: string }
 
 export type VaultStorage = KeyStorage & {
     put(data: VaultStorageData): Promise<void>
@@ -34,7 +50,7 @@ export type VaultStorage = KeyStorage & {
     removeDependencies(dependencies: RemovedDependencies): Promise<void>
     clear(): Promise<void>
     get<T extends VaultStorageKind>(kind: T, uid?: string): Promise<VaultStorageResult<T>>
-    delete(kind: VaultStorageKind, uid: string | Uint8Array): Promise<void>
+    delete(kind: VaultStorageKind, uid: string | Uint8Array, option?: VaultStorageDeleteOption): Promise<void>
 }
 
 export type VaultStorageData =
@@ -57,27 +73,15 @@ export type VaultStorageData =
     | DSecurityScoreData
     | DUser
     | DRecordRotation
+    | DKdFolderRecord
+    | DKdRecordAccess
+    | DKdRecordSharingState
+    | DKdFolder
+    | DKdFolderSharingState
+    | DKdFolderAccess
+    | DKdRecordLink
 
-export type VaultStorageKind =
-    | 'profilePic'
-    | 'record'
-    | 'metadata'
-    | 'non_shared_data'
-    | 'team'
-    | 'shared_folder'
-    | 'shared_folder_user'
-    | 'shared_folder_team'
-    | 'shared_folder_record'
-    | 'shared_folder_folder'
-    | 'user_folder'
-    | 'profile'
-    | 'continuationToken'
-    | 'reused_passwords'
-    | 'bw_record'
-    | 'bw_security_data'
-    | 'security_score_data'
-    | 'user'
-    | 'record_rotation'
+export type VaultStorageKind = VaultStorageData['kind']
 
 export type VaultStorageResult<T extends VaultStorageKind> =
     | (T extends 'continuationToken' ? DContinuationToken : T extends 'record' ? DRecord : never)
@@ -87,7 +91,9 @@ type MappedCounts<Type> = {
     [Property in keyof Type]: number
 }
 
-type SyncResponseCounts = MappedCounts<Vault.ISyncDownResponse>
+type SyncResponseCounts = Partial<
+    MappedCounts<Omit<Vault.ISyncDownResponse, 'keeperDriveData'> & Vault.IKeeperDriveData>
+>
 
 export type SyncResult = {
     started: Date
@@ -115,6 +121,7 @@ export type DRecord = {
     clientModifiedTime: number
     extra?: any
     udata?: Udata
+    isKeeperDriveData?: boolean
 }
 
 export type DRecordMetadata = {
@@ -285,9 +292,14 @@ export type Dependency = {
     parentUid: string
     uid: string
 }
+export type RemovedDependency = {
+    parentKind: VaultStorageKind
+    childKind: VaultStorageKind
+    childUid: string
+}
 export type DependencyMap = Record<string, Dependency>
 export type Dependencies = Record<string, Set<Dependency>>
-export type RemovedDependencies = Record<string, Set<string> | '*'>
+export type RemovedDependencies = Record<string, Set<string | RemovedDependency> | '*'>
 
 const addDependencies = (dependencies: Dependencies, parentUid: string, childUid: string, kind: VaultStorageKind) => {
     let children = dependencies[parentUid]
@@ -302,13 +314,17 @@ const addDependencies = (dependencies: Dependencies, parentUid: string, childUid
     })
 }
 
-const addRemovedDependencies = (dependencies: RemovedDependencies, parentUid: string, childUid: string) => {
+const addRemovedDependencies = (
+    dependencies: RemovedDependencies,
+    parentUid: string,
+    childUid: string | RemovedDependency
+) => {
     let children = dependencies[parentUid]
     if (children === '*') {
         return
     }
     if (!children) {
-        children = new Set<string>()
+        children = new Set<string | RemovedDependency>()
         dependencies[parentUid] = children
     }
     children.add(childUid)
@@ -331,26 +347,33 @@ const getDependencies = async (folderUid: string, storage: VaultStorage, results
     }
 }
 
-const mapKeyType = (keyType: Records.RecordKeyType): { keyId: string; encryptionType: EncryptionType } | null => {
+const mapKeyType = (
+    keyType: Records.RecordKeyType | Folder.EncryptedKeyType
+): { keyId: string; encryptionType: EncryptionType } | null => {
     let keyId: string
     let encryptionType: EncryptionType
     switch (keyType) {
         case RecordKeyType.NO_KEY:
+        case Folder.EncryptedKeyType.no_key:
             return null
         case RecordKeyType.ENCRYPTED_BY_DATA_KEY:
+        case Folder.EncryptedKeyType.encrypted_by_data_key:
             keyId = 'data'
             encryptionType = 'cbc'
             break
         case RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM:
+        case Folder.EncryptedKeyType.encrypted_by_data_key_gcm:
             keyId = 'data'
             encryptionType = 'gcm'
             break
         // RSA TAGGED - might have to fallback to ecc or force ecc - dont make a change here, rely on keeperapp to provide the correct keyType
         case RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY:
+        case Folder.EncryptedKeyType.encrypted_by_public_key:
             keyId = 'pk_rsa'
             encryptionType = 'rsa'
             break
         case RecordKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC:
+        case Folder.EncryptedKeyType.encrypted_by_public_key_ecc:
             keyId = 'pk_ecc'
             encryptionType = 'ecc'
             break
@@ -751,7 +774,8 @@ const processRecords = async (records: IRecord[], storage: VaultStorage) => {
     }
 }
 
-const processNonSharedData = async (nonSharedData: INonSharedData[], storage: VaultStorage) => {
+const processNonSharedData = async (storage: VaultStorage, nonSharedData?: Vault.INonSharedData[] | null) => {
+    if (!nonSharedData) return
     for (const nsData of nonSharedData as NN<INonSharedData>[]) {
         const recUid = webSafe64FromBytes(nsData.recordUid)
         try {
@@ -988,7 +1012,8 @@ const processMetadata = async (recordMetaData: IRecordMetaData[], storage: Vault
     await platform.unwrapKeys(recordKeys, storage)
 }
 
-const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storage: VaultStorage) => {
+const processBreachWatchRecords = async (storage: VaultStorage, bwRecords?: IBreachWatchRecord[] | null) => {
+    if (!bwRecords) return
     for (const bwRecord of bwRecords as NN<IBreachWatchRecord>[]) {
         if (!bwRecord.recordUid) continue
 
@@ -1016,7 +1041,11 @@ const processBreachWatchRecords = async (bwRecords: IBreachWatchRecord[], storag
     }
 }
 
-const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurityData[], storage: VaultStorage) => {
+const processBreachWatchSecurityData = async (
+    storage: VaultStorage,
+    securityData?: IBreachWatchSecurityData[] | null
+) => {
+    if (!securityData) return
     for (const bwSecurityData of securityData as NN<IBreachWatchSecurityData>[]) {
         const uid = webSafe64FromBytes(bwSecurityData.recordUid)
 
@@ -1032,7 +1061,11 @@ const processBreachWatchSecurityData = async (securityData: IBreachWatchSecurity
     }
 }
 
-const processSecurityScoreData = async (securityScoreDataList: Vault.ISecurityScoreData[], storage: VaultStorage) => {
+const processSecurityScoreData = async (
+    storage: VaultStorage,
+    securityScoreDataList?: Vault.ISecurityScoreData[] | null
+) => {
+    if (!securityScoreDataList) return
     for (const securityScoreData of securityScoreDataList) {
         if (!securityScoreData.recordUid || typeof securityScoreData.revision !== 'number') continue
 
@@ -1057,6 +1090,388 @@ const processSecurityScoreData = async (securityScoreDataList: Vault.ISecuritySc
         }
     }
 }
+
+// Keeper Drive Processors Start
+
+const processKdRemovedRecordLinks = async (
+    removedDependencies: RemovedDependencies,
+    keeperDriveRemovedRecordLinks?: Vault.IRecordLink[] | null
+) => {
+    if (!keeperDriveRemovedRecordLinks) return
+    for (const link of keeperDriveRemovedRecordLinks) {
+        if (!link.childRecordUid || !link.parentRecordUid) continue
+        const childRecordUid = webSafe64FromBytes(link.childRecordUid)
+        const parentRecordUid = webSafe64FromBytes(link.parentRecordUid)
+        addRemovedDependencies(removedDependencies, parentRecordUid, childRecordUid)
+    }
+}
+
+const processKdRecordLinks = async (storage: VaultStorage, keeperDriveRecordLinks?: Vault.IRecordLink[] | null) => {
+    if (!keeperDriveRecordLinks) return
+    for (const link of keeperDriveRecordLinks) {
+        if (!link.childRecordUid || !link.parentRecordUid || !link.recordKey) continue
+        const childRecordUid = webSafe64FromBytes(link.childRecordUid)
+        const parentRecordUid = webSafe64FromBytes(link.parentRecordUid)
+
+        try {
+            await platform.unwrapKey(link.recordKey, childRecordUid, parentRecordUid, 'gcm', 'aes', storage, true)
+            await storage.put({
+                kind: 'keeper_drive_record_link',
+                childRecordUid,
+                parentRecordUid,
+            })
+        } catch (e: any) {
+            console.error(
+                `[ks] The record link for ${childRecordUid} cannot be decrypted by ${parentRecordUid} (${e.message})`
+            )
+        }
+    }
+}
+
+const processKdRevokedFolderAccesses = async (
+    storage: VaultStorage,
+    keeperDriveRevokedFolderAccesses?: Folder.IRevokedAccess[] | null
+) => {
+    if (!keeperDriveRevokedFolderAccesses) return
+    for (const revokedAccess of keeperDriveRevokedFolderAccesses) {
+        if (!revokedAccess.actorUid || !revokedAccess.folderUid) continue
+        const actorUid = webSafe64FromBytes(revokedAccess.actorUid)
+        const folderUid = webSafe64FromBytes(revokedAccess.folderUid)
+        await storage.delete('keeper_drive_folder_access', createKdFolderAccessCompositeKey(actorUid, folderUid), {
+            kind: 'keeper_drive_folder_access',
+            actorUid,
+            folderUid,
+        })
+    }
+}
+
+const processKdRemovedFolders = async (
+    storage: VaultStorage,
+    keeperDriveRemovedFolders?: Folder.IFolderRemoved[] | null
+) => {
+    if (!keeperDriveRemovedFolders) return
+    for (const removedFolder of keeperDriveRemovedFolders) {
+        if (!removedFolder.folderUid) continue
+        const folderUid = webSafe64FromBytes(removedFolder.folderUid)
+        await storage.delete('keeper_drive_folder', folderUid)
+    }
+}
+
+const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IFolderKey[] | null) => {
+    if (!folderKeys) return
+    const encryptedByDataKeyMap: UnwrapKeyMap = {}
+    const encryptedByParentKeyMap: UnwrapKeyMap = {}
+    const encryptedByDataKey = folderKeys.filter(
+        (key) => key.encryptedBy === Folder.FolderKeyEncryptionType.ENCRYPTED_BY_USER_KEY
+    )
+    const encryptedByParentKey = folderKeys.filter(
+        (key) => key.encryptedBy === Folder.FolderKeyEncryptionType.ENCRYPTED_BY_PARENT_KEY
+    )
+    for (const key of encryptedByDataKey) {
+        if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
+        const folderUid = webSafe64FromBytes(key.folderUid)
+        const parentUid = webSafe64FromBytes(key.parentUid)
+        encryptedByDataKeyMap[folderUid] = {
+            data: key.folderKey,
+            dataId: folderUid,
+            keyId: 'data',
+            encryptionType: 'gcm',
+            unwrappedType: 'aes',
+        }
+    }
+    await platform.unwrapKeys(encryptedByDataKeyMap, storage)
+    for (const key of encryptedByParentKey) {
+        if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
+        const folderUid = webSafe64FromBytes(key.folderUid)
+        const parentUid = webSafe64FromBytes(key.parentUid)
+        encryptedByParentKeyMap[folderUid] = {
+            data: key.folderKey,
+            dataId: folderUid,
+            keyId: parentUid,
+            encryptionType: 'gcm',
+            unwrappedType: 'aes',
+        }
+    }
+    await platform.unwrapKeys(encryptedByParentKeyMap, storage)
+}
+
+const processKdFolderAccesses = async (
+    storage: VaultStorage,
+    keeperDriveFolderAccesses?: Folder.IFolderAccessData[] | null
+) => {
+    if (!keeperDriveFolderAccesses) return
+    const folderKeyMap: UnwrapKeyMap = {}
+    for (const folderAccess of keeperDriveFolderAccesses) {
+        const folderUid = webSafe64FromBytes(folderAccess.folderUid!)
+        if (
+            !folderAccess.folderUid ||
+            !folderAccess.accessTypeUid ||
+            !folderAccess.accessRoleType ||
+            !folderAccess.accessType ||
+            !folderAccess.permissions
+        )
+            continue
+        const accessTypeUid = webSafe64FromBytes(folderAccess.accessTypeUid)
+        const permission = folderAccess.permissions
+        // for child folders, they're only encrypted by their parent folder key
+        if (
+            folderAccess.folderKey &&
+            folderAccess.folderKey.encryptedKey &&
+            !isNil(folderAccess.folderKey.encryptedKeyType)
+        ) {
+            const keyInfo =
+                folderAccess.accessType === Folder.AccessType.AT_USER
+                    ? mapKeyType(folderAccess.folderKey.encryptedKeyType)
+                    : folderAccess.accessType === Folder.AccessType.AT_TEAM
+                      ? mapTeamKeyType(folderAccess.folderKey.encryptedKeyType, accessTypeUid)
+                      : null
+            if (!keyInfo) continue
+            folderKeyMap[folderUid] = {
+                data: folderAccess.folderKey.encryptedKey,
+                dataId: folderUid,
+                keyId: keyInfo.keyId,
+                encryptionType: keyInfo.encryptionType,
+                unwrappedType: 'aes',
+            }
+        }
+        await storage.put({
+            kind: 'keeper_drive_folder_access',
+            accessUid: createKdFolderAccessCompositeKey(accessTypeUid, folderUid),
+            folderUid,
+            accessTypeUid,
+            accessType: folderAccess.accessType,
+            accessRoleType: folderAccess.accessRoleType,
+            permission,
+        })
+    }
+    await platform.unwrapKeys(folderKeyMap, storage)
+}
+
+const processKdFolderSharingState = async (
+    storage: VaultStorage,
+    keeperDriveFolderSharingStates?: Vault.IFolderSharingState[] | null
+) => {
+    if (!keeperDriveFolderSharingStates) return
+    for (const folderSharingState of keeperDriveFolderSharingStates) {
+        if (!folderSharingState.folderUid) continue
+        await storage.put({
+            kind: 'keeper_drive_folder_sharing_state',
+            folderUid: webSafe64FromBytes(folderSharingState.folderUid),
+            shared: toOptional(folderSharingState.shared),
+            count: toOptional(folderSharingState.count),
+        })
+    }
+}
+
+const processKdFolders = async (storage: VaultStorage, keeperDriveFolders?: Folder.IFolderData[] | null) => {
+    if (!keeperDriveFolders) return
+    for (const folder of keeperDriveFolders || []) {
+        if (
+            !folder.folderUid ||
+            !folder.folderKey ||
+            !folder.data ||
+            !folder.ownerInfo ||
+            folder.type !== Folder.FolderUsageType.UT_NORMAL
+        )
+            continue
+        const folderUid = webSafe64FromBytes(folder.folderUid)
+        const parentUid =
+            folder.parentUid && folder.parentUid.length > 0 ? webSafe64FromBytes(folder.parentUid) : undefined
+        try {
+            const folderData = JSON.parse(
+                platform.bytesToString(await platform.decrypt(folder.data, folderUid, 'gcm', storage))
+            )
+            await storage.put({
+                kind: 'keeper_drive_folder',
+                uid: folderUid,
+                data: folderData,
+                parentUid,
+                ownerInfo: {
+                    accountUid: folder.ownerInfo.accountUid
+                        ? webSafe64FromBytes(folder.ownerInfo.accountUid)
+                        : undefined,
+                    username: toOptional(folder.ownerInfo.username),
+                },
+                lastModified: <number>toOptional(folder.lastModified),
+                type: toOptional(folder.type),
+                inheritUserPermissions: toOptional(folder.inheritUserPermissions),
+            })
+        } catch (err: any) {
+            console.error(`[ks] folder ${folderUid} cannot be decrypted (${err.message})`)
+        }
+    }
+}
+
+const processKdRecordAccess = async (storage: VaultStorage, kdRecordAccesses?: Folder.IRecordAccessData[] | null) => {
+    if (!kdRecordAccesses) return
+    for (const recordAccess of kdRecordAccesses) {
+        if (
+            !recordAccess.recordUid ||
+            !recordAccess.accessTypeUid ||
+            isNil(recordAccess.accessType) ||
+            isNil(recordAccess.accessRoleType)
+        )
+            continue
+        const recordUid = webSafe64FromBytes(recordAccess.recordUid)
+        const accessTypeUid = webSafe64FromBytes(recordAccess.accessTypeUid)
+        await storage.put({
+            kind: 'keeper_drive_record_access',
+            accessUid: createKdRecordAccessCompositeKey(accessTypeUid, recordUid),
+            accessTypeUid,
+            accessType: recordAccess.accessType,
+            recordUid,
+            accessRoleType: recordAccess.accessRoleType,
+            owner: toOptional(recordAccess.owner),
+            inherited: toOptional(recordAccess.inherited),
+            hidden: toOptional(recordAccess.hidden),
+            deniedAccess: toOptional(recordAccess.deniedAccess),
+            canEdit: toOptional(recordAccess.canEdit),
+            canView: toOptional(recordAccess.canView),
+            canListAccess: toOptional(recordAccess.canListAccess),
+            canUpdateAccess: toOptional(recordAccess.canUpdateAccess),
+            canDelete: toOptional(recordAccess.canDelete),
+            canChangeOwnership: toOptional(recordAccess.canChangeOwnership),
+            canRequestAccess: toOptional(recordAccess.canRequestAccess),
+            canApproveAccess: toOptional(recordAccess.canApproveAccess),
+            dateCreated: <number | undefined>toOptional(recordAccess.dateCreated),
+            lastModified: <number | undefined>toOptional(recordAccess.lastModified),
+            tlaProperties: toOptional(recordAccess.tlaProperties),
+        })
+    }
+}
+
+const processKdFolderRecords = async (
+    storage: VaultStorage,
+    dependencies: Dependencies,
+    kdFolderRecords?: Folder.IFolderRecord[] | null
+) => {
+    if (!kdFolderRecords) return
+    const recordKeyMap: UnwrapKeyMap = {}
+    for (const folderRecord of kdFolderRecords) {
+        if (
+            !folderRecord.folderUid ||
+            !folderRecord.recordMetadata ||
+            !folderRecord.recordMetadata.recordUid ||
+            !folderRecord.recordMetadata.encryptedRecordKey ||
+            isNil(folderRecord.recordMetadata.encryptedRecordKeyType) ||
+            isNil(folderRecord.folderKeyEncryptionType)
+        )
+            continue
+        const folderUid = webSafe64FromBytes(folderRecord.folderUid)
+        const recordUid = webSafe64FromBytes(folderRecord.recordMetadata.recordUid)
+        const keyInfo = mapKeyType(folderRecord.recordMetadata.encryptedRecordKeyType)
+        if (!keyInfo) continue
+        recordKeyMap[recordUid] = {
+            data: folderRecord.recordMetadata.encryptedRecordKey,
+            dataId: recordUid,
+            keyId:
+                folderRecord.folderKeyEncryptionType === Folder.FolderKeyEncryptionType.ENCRYPTED_BY_PARENT_KEY
+                    ? folderUid
+                    : keyInfo.keyId,
+            encryptionType: keyInfo?.encryptionType,
+            unwrappedType: 'aes',
+        }
+        if (folderUid) {
+            addDependencies(dependencies, folderUid, recordUid, 'record')
+            await storage.put({
+                kind: 'keeper_drive_folder_record',
+                folderUid,
+                recordUid,
+            })
+        }
+    }
+    await platform.unwrapKeys(recordKeyMap, storage)
+}
+
+const processKdRecordSharingStates = async (
+    storage: VaultStorage,
+    kdRecordSharingStates?: record.v3.sharing.IRecordSharingState[] | null
+) => {
+    if (!kdRecordSharingStates) return
+    for (const sharingState of kdRecordSharingStates) {
+        if (!sharingState.recordUid) continue
+        await storage.put({
+            kind: 'keeper_drive_record_sharing_state',
+            recordUid: webSafe64FromBytes(sharingState.recordUid),
+            isDirectlyShared: toOptional(sharingState.isDirectlyShared),
+            isIndirectlyShared: toOptional(sharingState.isIndirectlyShared),
+            isShared: toOptional(sharingState.isShared),
+        })
+    }
+}
+
+const processKdRecords = async (
+    storage: VaultStorage,
+    kdRecordData?: Folder.IRecordData[] | null,
+    kdRecords?: Vault.IDriveRecord[] | null
+) => {
+    if (!kdRecordData || !kdRecords) return
+    const kdRecordMap: {
+        [key in string]: Vault.IDriveRecord
+    } = {}
+    for (const record of kdRecords) {
+        if (!record.recordUid || !record.revision) continue
+        kdRecordMap[webSafe64FromBytes(record.recordUid)] = record
+    }
+    for (const record of kdRecordData) {
+        if (!record.recordUid || !record.data) continue
+        const recordUid = webSafe64FromBytes(record.recordUid)
+        const metadata = kdRecordMap[recordUid] || {}
+        if (!metadata.version) continue
+        try {
+            const decryptedData = await platform.decrypt(record.data, recordUid, 'gcm', storage)
+            const recordData = JSON.parse(platform.bytesToString(decryptedData))
+            await storage.put({
+                kind: 'record',
+                uid: recordUid,
+                data: recordData,
+                version: metadata.version,
+                revision: metadata.revision as number,
+                shared: !!metadata.shared,
+                clientModifiedTime: metadata.clientModifiedTime as number,
+                isKeeperDriveData: true,
+            })
+        } catch (err: any) {
+            console.error(`[kd] record ${recordUid} cannot be decrypted: ${err.message}`)
+        }
+    }
+}
+
+const processKdRemovedFolderRecords = (
+    removedDependencies: RemovedDependencies,
+    keeperDriveRemovedFolderRecords?: Records.IFolderRecordKey[] | null
+) => {
+    if (!keeperDriveRemovedFolderRecords) return
+    for (const folderRecord of keeperDriveRemovedFolderRecords) {
+        if (!folderRecord.recordUid || !folderRecord.folderUid) continue
+        const recordUid = webSafe64FromBytes(folderRecord.recordUid)
+        const folderUid = webSafe64FromBytes(folderRecord.folderUid)
+        addRemovedDependencies(removedDependencies, folderUid, {
+            parentKind: 'keeper_drive_folder',
+            childKind: 'record',
+            childUid: recordUid,
+        })
+    }
+}
+
+const processKdRevokedRecordAccesses = async (
+    storage: VaultStorage,
+    kdRevokedAccesses?: record.v3.sharing.IRevokedAccess[] | null
+) => {
+    if (!kdRevokedAccesses) return
+    for (const revokedAccess of kdRevokedAccesses) {
+        if (!revokedAccess.actorUid || !revokedAccess.recordUid) continue
+        const actorUid = webSafe64FromBytes(revokedAccess.actorUid)
+        const recordUid = webSafe64FromBytes(revokedAccess.recordUid)
+        await storage.delete('keeper_drive_record_access', createKdRecordAccessCompositeKey(actorUid, recordUid), {
+            kind: 'keeper_drive_record_access',
+            actorUid,
+            recordUid,
+        })
+    }
+}
+
+// Keeper Drive Processors End
 
 export type SyncLogFormat = '!' | 'raw' | 'obj' | 'str' | 'cnt' | 'cnt_t'
 
@@ -1087,15 +1502,20 @@ const logProtobuf = (data: any, format: SyncLogFormat, seqNo: number, counts: an
 }
 
 const getCounts = (obj: Vault.ISyncDownResponse): SyncResponseCounts => {
-    const results = {}
-    for (const prop in obj) {
-        if (['continuationToken', 'constructor'].includes(prop)) {
-            continue
-        }
-        if (obj[prop]?.length) {
-            results[prop] = obj[prop].length
+    const results: Record<string, number> = {}
+    const collect = (source: any) => {
+        if (!source) return
+        for (const prop in source) {
+            if (['continuationToken', 'constructor', 'keeperDriveData'].includes(prop)) {
+                continue
+            }
+            if (source[prop]?.length) {
+                results[prop] = (results[prop] || 0) + source[prop].length
+            }
         }
     }
+    collect(obj)
+    collect(obj.keeperDriveData)
     return results
 }
 
@@ -1221,6 +1641,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             }
             result.pageCount += 1
             networkTime += requestTime
+            const keeperDriveData = resp.keeperDriveData ?? {}
             const dependencies = {}
 
             await processUsers(resp.users, storage)
@@ -1251,7 +1672,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processRecordRotations(resp.recordRotations, storage)
 
-            await processNonSharedData(resp.nonSharedData, storage)
+            await processNonSharedData(storage, resp.nonSharedData)
 
             await processSharedFolderFolders(resp.sharedFolderFolders, storage, dependencies)
 
@@ -1261,11 +1682,37 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processProfilePic(resp.profilePic, storage)
 
-            await processBreachWatchRecords(resp.breachWatchRecords, storage)
+            await processBreachWatchRecords(storage, resp.breachWatchRecords)
 
-            await processBreachWatchSecurityData(resp.breachWatchSecurityData, storage)
+            await processBreachWatchSecurityData(storage, resp.breachWatchSecurityData)
 
-            await processSecurityScoreData(resp.securityScoreData, storage)
+            await processSecurityScoreData(storage, resp.securityScoreData)
+
+            await processKdFolderAccesses(storage, keeperDriveData.folderAccesses)
+
+            await processKdFolderKeys(storage, keeperDriveData.folderKeys)
+
+            await processKdFolders(storage, keeperDriveData.folders)
+
+            await processKdFolderSharingState(storage, keeperDriveData.folderSharingState)
+
+            await processKdRecordAccess(storage, keeperDriveData.recordAccesses)
+
+            await processKdFolderRecords(storage, dependencies, keeperDriveData.folderRecords)
+
+            await processKdRecordLinks(storage, keeperDriveData.recordLinks)
+
+            await processKdRecords(storage, keeperDriveData.recordData, keeperDriveData.records)
+
+            await processNonSharedData(storage, keeperDriveData.nonSharedData)
+
+            await processKdRecordSharingStates(storage, keeperDriveData.recordSharingStates)
+
+            await processBreachWatchRecords(storage, keeperDriveData.breachWatchRecords)
+
+            await processBreachWatchSecurityData(storage, keeperDriveData.breachWatchSecurityData)
+
+            await processSecurityScoreData(storage, keeperDriveData.securityScoreData)
 
             await storage.addDependencies(dependencies)
 
@@ -1324,6 +1771,16 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
             for await (const user of resp.removedUsers) {
                 await storage.delete('user', user)
             }
+
+            await processKdRemovedFolders(storage, keeperDriveData.removedFolders)
+
+            await processKdRevokedFolderAccesses(storage, keeperDriveData.revokedFolderAccesses)
+
+            processKdRemovedFolderRecords(removedDependencies, keeperDriveData.removedFolderRecords)
+
+            await processKdRevokedRecordAccesses(storage, keeperDriveData.revokedRecordAccesses)
+
+            await processKdRemovedRecordLinks(removedDependencies, keeperDriveData.removedRecordLinks)
 
             await storage.removeDependencies(removedDependencies)
 
