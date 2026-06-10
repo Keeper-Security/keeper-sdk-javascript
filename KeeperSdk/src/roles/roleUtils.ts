@@ -182,10 +182,17 @@ export async function applyRoleEnforcements(
             continue
         }
 
+        const exists = roleHasEnforcement(roleId, enforcement, existingLinks)
         const response = await auth.executeRestCommand(
-            roleEnforcementAddCommand({ role_id: roleId, enforcement, value })
+            exists
+                ? roleEnforcementUpdateCommand({ role_id: roleId, enforcement, value })
+                : roleEnforcementAddCommand({ role_id: roleId, enforcement, value })
         )
-        assertCommandSucceeded(response, `role_enforcement_add failed: ${enforcement}`, ResultCodes.ROLE_ENFORCEMENT_FAILED)
+        assertCommandSucceeded(
+            response,
+            `role_enforcement_${exists ? 'update' : 'add'} failed: ${enforcement}`,
+            ResultCodes.ROLE_ENFORCEMENT_FAILED
+        )
     }
 }
 
