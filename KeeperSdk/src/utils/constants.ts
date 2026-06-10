@@ -54,6 +54,11 @@ export enum RoleErrorCode {
     RoleEnforcementFailed = 'role_enforcement_failed',
 }
 
+export enum NsfErrorCode {
+    NotFound = 'nsf_not_found',
+    MultipleMatches = 'nsf_multiple_matches',
+}
+
 export enum TeamErrorCode {
     TeamRequired = 'team_required',
     TeamNotFound = 'team_not_found',
@@ -121,6 +126,8 @@ export const ResultCodes = {
     ROLE_RENAME_MULTI_NOT_ALLOWED: RoleErrorCode.RoleRenameMultiNotAllowed,
     ROLE_NAME_EMPTY: RoleErrorCode.RoleNameEmpty,
     ROLE_ENFORCEMENT_FAILED: RoleErrorCode.RoleEnforcementFailed,
+    NSF_NOT_FOUND: NsfErrorCode.NotFound,
+    MULTIPLE_NSF_MATCHES: NsfErrorCode.MultipleMatches,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,

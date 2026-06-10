@@ -25,6 +25,7 @@ export {
     extractResultCode,
     SdkDefaults,
     AuthDefaults,
+    NsfErrorCode,
     ResultCodes,
     AuthErrorCode,
     SessionErrorCode,
@@ -442,6 +443,50 @@ export {
 } from './users/teamUser'
 
 export { UserManager } from './users/UserManager'
+
+export {
+    ROOT_FOLDER_UID,
+    KeeperDriveKind,
+    NsfItemType,
+    formatAccessRoleType,
+    formatAccessType,
+    normalizeParentUid,
+    isRootFolderUid,
+    getKeeperDriveFolders,
+    getKeeperDriveRecords,
+    findRecordFolderLocation,
+    buildFolderPath,
+    isSensitiveFieldType,
+    ListNsfFormat,
+    listNestedShareFolders,
+    formatListNsfTable,
+    renderListNsfAsciiTable,
+    formatListNsfCsv,
+    formatListNsfJson,
+    formatListNsfOutput,
+    GetNsfFormat,
+    resolveNsfFolder,
+    resolveNsfRecord,
+    getNestedShareFolder,
+    formatNsfFolderDetail,
+    formatNsfRecordDetail,
+    formatNsfDetail,
+    NestedShareFolderManager,
+} from './nestedShareFolders'
+export type {
+    ListNsfFormatInput,
+    ListNsfOptions,
+    ListNsfRow,
+    FormattedListNsfTable,
+    GetNsfFormatInput,
+    GetNsfOptions,
+    GetNsfResult,
+    NsfFolderView,
+    NsfRecordView,
+    NsfFolderPermission,
+    NsfFolderAccessRow,
+    NsfRecordPermission,
+} from './nestedShareFolders'
 
 export type {
     DRecord,
