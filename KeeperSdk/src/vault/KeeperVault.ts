@@ -62,6 +62,18 @@ import type { TeamView } from '../teams/viewTeam'
 import type { AddTeamInput, AddTeamResult } from '../teams/addTeam'
 import type { UpdateTeamInput, UpdateTeamResult } from '../teams/updateTeam'
 import type { DeleteTeamInput, DeleteTeamResult } from '../teams/deleteTeam'
+import {
+    RoleManager,
+    type AddRoleInput,
+    type AddRoleResult,
+    type DeleteRoleInput,
+    type DeleteRoleResult,
+    type ListRoleRow,
+    type ListRolesOptions,
+    type RoleView,
+    type UpdateRoleInput,
+    type UpdateRoleResult,
+} from '../roles'
 import { UserManager } from '../users/UserManager'
 import type {
     ListUserRow,
@@ -128,6 +140,7 @@ export class KeeperVault {
     private readonly folderManager: FolderManager
     private readonly sharedFolderManager: SharedFolderManager
     private readonly teamManager: TeamManager
+    private readonly roleManager: RoleManager
     private readonly userManager: UserManager
 
     constructor(config?: KeeperVaultConfig) {
@@ -150,6 +163,7 @@ export class KeeperVault {
         this.folderManager = new FolderManager(this.storage, this.folderSession, authProvider)
         this.sharedFolderManager = new SharedFolderManager(this.storage, authProvider)
         this.teamManager = new TeamManager(authProvider)
+        this.roleManager = new RoleManager(authProvider)
         this.userManager = new UserManager(authProvider)
     }
 
@@ -163,6 +177,10 @@ export class KeeperVault {
 
     public getTeamManager(): TeamManager {
         return this.teamManager
+    }
+
+    public getRoleManager(): RoleManager {
+        return this.roleManager
     }
 
     private async createAuth(options?: { useSessionResumption?: boolean }): Promise<Auth> {
@@ -467,6 +485,32 @@ export class KeeperVault {
 
     public async deleteTeams(input: DeleteTeamInput): Promise<DeleteTeamResult> {
         const result = await this.teamManager.deleteTeams(input)
+        if (result.deleted > 0) await this.syncIfNeeded()
+        return result
+    }
+
+    public async listRoles(options?: ListRolesOptions): Promise<ListRoleRow[]> {
+        return this.roleManager.listRoles(options ?? {})
+    }
+
+    public async viewRole(identifier: string): Promise<RoleView> {
+        return this.roleManager.viewRole(identifier)
+    }
+
+    public async addRoles(input: AddRoleInput): Promise<AddRoleResult> {
+        const result = await this.roleManager.addRoles(input)
+        if (result.created > 0) await this.syncIfNeeded()
+        return result
+    }
+
+    public async updateRoles(input: UpdateRoleInput): Promise<UpdateRoleResult> {
+        const result = await this.roleManager.updateRoles(input)
+        if (result.updated > 0) await this.syncIfNeeded()
+        return result
+    }
+
+    public async deleteRoles(input: DeleteRoleInput): Promise<DeleteRoleResult> {
+        const result = await this.roleManager.deleteRoles(input)
         if (result.deleted > 0) await this.syncIfNeeded()
         return result
     }

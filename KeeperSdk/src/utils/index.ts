@@ -4,6 +4,8 @@ export {
     ResultCodes,
     AuthErrorCode,
     SessionErrorCode,
+    ValidationErrorCode,
+    RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
     KEEPER_PUBLIC_HOSTS,
@@ -20,4 +22,5 @@ export {
     REGEX_ESCAPE_PATTERN,
     isValidEmail,
     escapeRegExp,
+    resolveSearchPattern,
 } from './patterns'
