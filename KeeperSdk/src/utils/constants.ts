@@ -1,13 +1,8 @@
-const DEFAULT_CLIENT_VERSION = 'c18.0.0'
-const DEFAULT_DEVICE_NAME = 'JavaScript Keeper SDK'
-const DEFAULT_CONFIG_DIR = '.keeper'
-const DEFAULT_LOG_FORMAT = '!'
-
 export const SdkDefaults = {
-    CLIENT_VERSION: DEFAULT_CLIENT_VERSION,
-    DEVICE_NAME: DEFAULT_DEVICE_NAME,
-    CONFIG_DIR: DEFAULT_CONFIG_DIR,
-    LOG_FORMAT: DEFAULT_LOG_FORMAT,
+    CLIENT_VERSION: 'c17.0.0',
+    DEVICE_NAME: 'JavaScript Keeper SDK',
+    CONFIG_DIR: '.keeper',
+    LOG_FORMAT: '!',
 } as const
 
 export const AuthDefaults = {
