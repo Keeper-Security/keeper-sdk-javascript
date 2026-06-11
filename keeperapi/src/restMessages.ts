@@ -969,26 +969,6 @@ export const keeperDriveRecordsUpdate = (
 ): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, '/vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
-export const keeperDriveRecordAccessMessage = (
-    recordUids: Uint8Array[],
-    clientTime: number = Date.now()
-): RestMessage<Records.IGetRecordDataWithAccessInfoRequest, Records.IGetRecordDataWithAccessInfoResponse> =>
-    getRecordsDetailsMessage({
-        clientTime,
-        recordUid: recordUids,
-        recordDetailsInclude: Records.RecordDetailsInclude.SHARE_ONLY,
-    })
-
-export const keeperDriveRecordDataMessage = (
-    recordUids: Uint8Array[],
-    clientTime: number = Date.now()
-): RestMessage<Records.IGetRecordDataWithAccessInfoRequest, Records.IGetRecordDataWithAccessInfoResponse> =>
-    getRecordsDetailsMessage({
-        clientTime,
-        recordUid: recordUids,
-        recordDetailsInclude: Records.RecordDetailsInclude.DATA_ONLY,
-    })
-
 export const getSharingAdminsMessage = (
     data: Enterprise.IGetSharingAdminsRequest
 ): RestMessage<Enterprise.IGetSharingAdminsRequest, Enterprise.IGetSharingAdminsResponse> =>
