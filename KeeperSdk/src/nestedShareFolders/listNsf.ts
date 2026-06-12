@@ -8,6 +8,12 @@ import {
     normalizeParentUid,
 } from './nsfHelpers'
 import { getRecordTitle, getRecordType } from '../records/RecordUtils'
+import {
+    NSF_LIST_DEFAULT_COLUMN_WIDTH,
+    NSF_LIST_FULL_HEADERS,
+    NSF_LIST_MIN_TRUNCATE_PREFIX,
+    NSF_LIST_TABLE_HEADERS,
+} from './nsfConstants'
 
 export enum ListNsfFormat {
     Table = 'table',
@@ -36,11 +42,6 @@ export type FormattedListNsfTable = {
     headers: string[]
     rows: string[][]
 }
-
-const TABLE_HEADERS = ['#', 'Item Type', 'UID', 'Title', 'Type', 'Description'] as const
-const FULL_HEADERS = ['Item Type', 'UID', 'Title', 'Type', 'Description', 'Parent/Folder'] as const
-const DEFAULT_COLUMN_WIDTH = 40
-const MIN_TRUNCATE_PREFIX = 3
 
 function compareRows(a: ListNsfRow, b: ListNsfRow): number {
     const typeCompare = a.itemType.localeCompare(b.itemType)
@@ -80,15 +81,15 @@ export function listNestedShareFolders(storage: InMemoryStorage, options: ListNs
 
 function truncateText(text: string, maxLength: number): string {
     if (!text || text.length <= maxLength) return text
-    if (maxLength <= MIN_TRUNCATE_PREFIX) return text.slice(0, maxLength)
-    return `${text.slice(0, maxLength - MIN_TRUNCATE_PREFIX)}...`
+    if (maxLength <= NSF_LIST_MIN_TRUNCATE_PREFIX) return text.slice(0, maxLength)
+    return `${text.slice(0, maxLength - NSF_LIST_MIN_TRUNCATE_PREFIX)}...`
 }
 
 export function formatListNsfTable(
     rows: ListNsfRow[],
     options: { columnWidth?: number } = {}
 ): FormattedListNsfTable {
-    const columnWidth = options.columnWidth ?? DEFAULT_COLUMN_WIDTH
+    const columnWidth = options.columnWidth ?? NSF_LIST_DEFAULT_COLUMN_WIDTH
     const outRows = rows.map((row, index) => [
         String(index + 1),
         row.itemType,
@@ -97,7 +98,7 @@ export function formatListNsfTable(
         truncateText(row.type, columnWidth),
         truncateText(row.description, columnWidth),
     ])
-    return { headers: [...TABLE_HEADERS], rows: outRows }
+    return { headers: [...NSF_LIST_TABLE_HEADERS], rows: outRows }
 }
 
 export function renderListNsfAsciiTable(
@@ -127,7 +128,7 @@ function escapeCsvCell(value: string): string {
 }
 
 export function formatListNsfCsv(rows: ListNsfRow[]): string {
-    const lines = [FULL_HEADERS.join(',')]
+    const lines = [NSF_LIST_FULL_HEADERS.join(',')]
     for (const row of rows) {
         lines.push(
             [

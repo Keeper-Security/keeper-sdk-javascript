@@ -12,37 +12,18 @@ import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import { getRecordTitle } from '../records/RecordUtils'
+import {
+    NSF_ACCESS_ROLE_LABELS,
+    NSF_ACCESS_TYPE_LABELS,
+    NSF_LEGACY_FOLDER_MSG,
+    NSF_LEGACY_RECORD_MSG,
+    NSF_NOTE_FIELD_TYPES,
+    NSF_RECORD_DESCRIPTION_MAX_LENGTH,
+    NSF_SENSITIVE_FIELD_TYPES,
+    ROOT_FOLDER_UID,
+} from './nsfConstants'
 
-const LEGACY_RECORD_MSG =
-    "Record '{0}' is a legacy vault record. Nested Share Folder commands operate only on Nested Share Records."
-const LEGACY_FOLDER_MSG =
-    "Folder '{0}' is a legacy folder. Nested Share Folder commands operate only on Nested Share Folders."
-
-const ACCESS_ROLE_LABELS: Record<number, string> = {
-    [Folder.AccessRoleType.NAVIGATOR]: 'navigator',
-    [Folder.AccessRoleType.REQUESTOR]: 'requestor',
-    [Folder.AccessRoleType.VIEWER]: 'viewer',
-    [Folder.AccessRoleType.SHARED_MANAGER]: 'shared-manager',
-    [Folder.AccessRoleType.CONTENT_MANAGER]: 'content-manager',
-    [Folder.AccessRoleType.CONTENT_SHARE_MANAGER]: 'content-share-manager',
-    [Folder.AccessRoleType.MANAGER]: 'manager',
-    [Folder.AccessRoleType.UNRESOLVED]: 'unresolved',
-}
-
-const ACCESS_TYPE_LABELS: Record<number, string> = {
-    [Folder.AccessType.AT_USER]: 'user',
-    [Folder.AccessType.AT_TEAM]: 'team',
-    [Folder.AccessType.AT_OWNER]: 'owner',
-    [Folder.AccessType.AT_ENTERPRISE]: 'enterprise',
-    [Folder.AccessType.AT_FOLDER]: 'folder',
-    [Folder.AccessType.AT_APPLICATION]: 'application',
-}
-
-const SENSITIVE_FIELD_TYPES = new Set(['password', 'secret', 'pinCode'])
-const NOTE_FIELD_TYPES = new Set(['note', 'multiline'])
-const RECORD_DESCRIPTION_MAX_LENGTH = 120
-
-export const ROOT_FOLDER_UID = 'AAAAAAAAAAAAAAAAAPmtNA'
+export { ROOT_FOLDER_UID } from './nsfConstants'
 
 export enum KeeperDriveKind {
     Folder = 'keeper_drive_folder',
@@ -69,13 +50,13 @@ export function isNestedShareFolder(storage: InMemoryStorage, folderUid: string)
 export function ensureNestedShareRecord(storage: InMemoryStorage, recordUid: string, identifier?: string): void {
     if (isNestedShareRecord(storage, recordUid)) return
     const ident = identifier ?? recordUid
-    throw new KeeperSdkError(LEGACY_RECORD_MSG.replace('{0}', ident), ResultCodes.NSF_LEGACY_RECORD)
+    throw new KeeperSdkError(NSF_LEGACY_RECORD_MSG.replace('{0}', ident), ResultCodes.NSF_LEGACY_RECORD)
 }
 
 export function ensureNestedShareFolder(storage: InMemoryStorage, folderUid: string, identifier?: string): void {
     if (isNestedShareFolder(storage, folderUid)) return
     const ident = identifier ?? folderUid
-    throw new KeeperSdkError(LEGACY_FOLDER_MSG.replace('{0}', ident), ResultCodes.NSF_LEGACY_FOLDER)
+    throw new KeeperSdkError(NSF_LEGACY_FOLDER_MSG.replace('{0}', ident), ResultCodes.NSF_LEGACY_FOLDER)
 }
 
 function resolveByUidOrName<T>(
@@ -205,12 +186,12 @@ export function checkRecordDeletePermission(
 
 export function formatAccessRoleType(role: Folder.AccessRoleType | null | undefined): string {
     if (role == null) return 'unknown'
-    return ACCESS_ROLE_LABELS[role] ?? `role-${role}`
+    return NSF_ACCESS_ROLE_LABELS[role] ?? `role-${role}`
 }
 
 export function formatAccessType(type: Folder.AccessType | null | undefined): string {
     if (type == null) return 'unknown'
-    return ACCESS_TYPE_LABELS[type] ?? `type-${type}`
+    return NSF_ACCESS_TYPE_LABELS[type] ?? `type-${type}`
 }
 
 export function normalizeParentUid(parentUid: string | undefined | null): string {
@@ -297,21 +278,21 @@ export function getRecordDescription(record: DRecord): string {
 
     const fields = Array.isArray(data.fields) ? data.fields : []
     for (const field of fields) {
-        if (!NOTE_FIELD_TYPES.has(field?.type)) continue
+        if (!NSF_NOTE_FIELD_TYPES.has(field?.type)) continue
         const value = Array.isArray(field.value) ? field.value[0] : field.value
         if (typeof value === 'string' && value.trim()) {
-            return value.trim().slice(0, RECORD_DESCRIPTION_MAX_LENGTH)
+            return value.trim().slice(0, NSF_RECORD_DESCRIPTION_MAX_LENGTH)
         }
     }
 
     if (typeof data.notes === 'string' && data.notes.trim()) {
-        return data.notes.trim().slice(0, RECORD_DESCRIPTION_MAX_LENGTH)
+        return data.notes.trim().slice(0, NSF_RECORD_DESCRIPTION_MAX_LENGTH)
     }
     return ''
 }
 
 export function isSensitiveFieldType(fieldType: string): boolean {
-    return SENSITIVE_FIELD_TYPES.has(fieldType)
+    return NSF_SENSITIVE_FIELD_TYPES.has(fieldType)
 }
 
 export function resolveAccessUsername(

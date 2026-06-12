@@ -1,9 +1,9 @@
 import type { Auth, DRecord, DKdFolder, DKdFolderAccess } from '@keeper-security/keeperapi'
 import {
-    Enterprise,
     Folder,
     Records,
     getRecordsDetailsMessage,
+    getSharingAdminsMessage,
     normal64Bytes,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
@@ -25,9 +25,7 @@ import {
     formatAccessType,
     getFolderAccessEntries,
     getKeeperDriveFolder,
-    getKeeperDriveFolders,
     getKeeperDriveRecord,
-    getKeeperDriveRecords,
     isFolderShareAdministrator,
     isFolderUserPermission,
     isSensitiveFieldType,
@@ -36,16 +34,16 @@ import {
     resolveNsfFolderIdentifier,
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
-
-const MASKED_VALUE = '********'
-const FOLDER_LABEL_WIDTH = 22
-const RECORD_LABEL_WIDTH = 17
-const TOP_LEVEL_FIELD_TYPES = new Set(['login', 'password', 'url', 'note', 'multiline', 'text'])
-const UNKNOWN_RECORD_TITLES = new Set(['(no data)', '(untitled)', 'Unknown'])
-const FOLDER_USER_PERMISSIONS_HEADING = '         User Permissions:'
-const FOLDER_SHARE_ADMINS_HEADING = '     Share Administrators:'
-const RECORD_USER_PERMISSIONS_HEADING = 'User Permissions:'
-const SHARING_ADMINS_API_PATH = 'enterprise/get_sharing_admins'
+import {
+    NSF_FOLDER_LABEL_WIDTH,
+    NSF_FOLDER_SHARE_ADMINS_HEADING,
+    NSF_FOLDER_USER_PERMISSIONS_HEADING,
+    NSF_MASKED_VALUE,
+    NSF_RECORD_LABEL_WIDTH,
+    NSF_RECORD_USER_PERMISSIONS_HEADING,
+    NSF_TOP_LEVEL_FIELD_TYPES,
+    NSF_UNKNOWN_RECORD_TITLES,
+} from './nsfConstants'
 
 export enum GetNsfFormat {
     Detail = 'detail',
@@ -124,11 +122,11 @@ export type NsfRecordView = {
 export type GetNsfResult = { kind: 'folder'; view: NsfFolderView } | { kind: 'record'; view: NsfRecordView }
 
 function folderDetailRow(label: string, value: string): string {
-    return `${label.padStart(FOLDER_LABEL_WIDTH)}: ${value}`
+    return `${label.padStart(NSF_FOLDER_LABEL_WIDTH)}: ${value}`
 }
 
 function recordDetailRow(label: string, value: string): string {
-    return `${label.padStart(RECORD_LABEL_WIDTH)}: ${value}`
+    return `${label.padStart(NSF_RECORD_LABEL_WIDTH)}: ${value}`
 }
 
 function recordDetailsMessage(recordUid: string, include: Records.RecordDetailsInclude) {
@@ -137,19 +135,6 @@ function recordDetailsMessage(recordUid: string, include: Records.RecordDetailsI
         recordUid: [normal64Bytes(recordUid)],
         recordDetailsInclude: include,
     })
-}
-
-function recordSharingAdminsMessage(recordUid: string) {
-    const uid = normal64Bytes(recordUid)
-    return {
-        path: SHARING_ADMINS_API_PATH,
-        toBytes(): Uint8Array {
-            return Enterprise.GetSharingAdminsRequest.encode({ recordUid: uid }).finish()
-        },
-        fromBytes(data: Uint8Array): Enterprise.IGetSharingAdminsResponse {
-            return Enterprise.GetSharingAdminsResponse.decode(data)
-        },
-    }
 }
 
 function bytesToUid(bytes: Uint8Array | null | undefined): string | undefined {
@@ -226,10 +211,10 @@ function ensureFolderOwnerListed(
 
 function buildRecordFields(record: DRecord, unmask: boolean): NsfRecordView['fields'] {
     return getRecordFields(record).flatMap((field) => {
-        if (TOP_LEVEL_FIELD_TYPES.has(field.type)) return []
+        if (NSF_TOP_LEVEL_FIELD_TYPES.has(field.type)) return []
         const rawValue = Array.isArray(field.value) ? field.value[0] : field.value
         if (rawValue == null || rawValue === '') return []
-        const value = !unmask && isSensitiveFieldType(field.type) ? MASKED_VALUE : String(rawValue)
+        const value = !unmask && isSensitiveFieldType(field.type) ? NSF_MASKED_VALUE : String(rawValue)
         return [{ type: field.type, label: field.label, value }]
     })
 }
@@ -269,7 +254,9 @@ async function fetchRecordPermissions(auth: Auth, recordUid: string): Promise<Ns
 
 async function fetchRecordShareAdmins(auth: Auth, recordUid: string): Promise<string[]> {
     try {
-        const response = await auth.executeRest(recordSharingAdminsMessage(recordUid))
+        const response = await auth.executeRest(
+            getSharingAdminsMessage({ recordUid: normal64Bytes(recordUid) })
+        )
         return (response.userProfileExts ?? [])
             .map((ext) => ext.email || '')
             .filter((email) => email.length > 0)
@@ -332,7 +319,7 @@ async function buildRecordView(
     }
 
     let title = getRecordTitle(record)
-    if (UNKNOWN_RECORD_TITLES.has(title)) {
+    if (NSF_UNKNOWN_RECORD_TITLES.has(title)) {
         const fallbackData = await fetchRecordDataFallback(auth, recordUid)
         if (fallbackData) {
             record = { ...record, data: fallbackData }
@@ -357,7 +344,7 @@ async function buildRecordView(
         version: record.version,
         folderLocation: findRecordFolderLocation(storage, recordUid) || 'root',
         login: getRecordLogin(record) || undefined,
-        password: password ? (unmask ? password : MASKED_VALUE) : undefined,
+        password: password ? (unmask ? password : NSF_MASKED_VALUE) : undefined,
         url: getRecordUrl(record) || undefined,
         notes,
         fields: buildRecordFields(record, unmask),
@@ -409,10 +396,10 @@ export function formatNsfFolderDetail(view: NsfFolderView, verbose = false): str
         folderDetailRow('Nested Share Folder UID', view.folderUid),
         folderDetailRow('Name', view.name),
         '',
-        FOLDER_USER_PERMISSIONS_HEADING,
+        NSF_FOLDER_USER_PERMISSIONS_HEADING,
         ...view.userPermissions.map((entry) => `${entry.username}: ${entry.role}`),
         '',
-        FOLDER_SHARE_ADMINS_HEADING,
+        NSF_FOLDER_SHARE_ADMINS_HEADING,
         ...view.shareAdmins.map((entry) => `${entry.username}: ${entry.role}`),
     ]
 
@@ -452,7 +439,7 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
     }
 
     if (view.userPermissions.length > 0) {
-        lines.push('', RECORD_USER_PERMISSIONS_HEADING)
+        lines.push('', NSF_RECORD_USER_PERMISSIONS_HEADING)
         for (const entry of view.userPermissions) {
             lines.push('', ...formatRecordUserPermissionBlock(entry))
         }
