@@ -1,7 +1,6 @@
 import type { RestMessage } from '@keeper-security/keeperapi'
 import { Reader, Writer } from 'protobufjs'
-
-const REMOVE_RECORD_PATH = 'vault/folders/v3/remove_record'
+import { NSF_REMOVE_RECORD_PATH } from './nsfConstants'
 
 function readBytes(reader: Reader): Uint8Array {
     return reader.bytes() as Uint8Array
@@ -245,7 +244,7 @@ export function removeRecordMessage(
     request: RemoveRecordRequest
 ): RestMessage<RemoveRecordRequest, RemoveRecordResponse> {
     return {
-        path: REMOVE_RECORD_PATH,
+        path: NSF_REMOVE_RECORD_PATH,
         data: request,
         toBytes(): Uint8Array {
             return encodeRemoveRecordRequest(request)

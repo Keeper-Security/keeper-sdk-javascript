@@ -776,16 +776,6 @@ export class KeeperVault {
         return this.getAuthOrThrow()
     }
 
-    /** Closes the push websocket while keeping the REST session active. */
-    public releasePushConnection(): void {
-        if (!this.auth) return
-        try {
-            this.auth.disconnect()
-        } catch (err) {
-            this.log.debug('releasePushConnection error:', extractErrorMessage(err))
-        }
-    }
-
     public disconnect(): void {
         if (this.auth) {
             try {

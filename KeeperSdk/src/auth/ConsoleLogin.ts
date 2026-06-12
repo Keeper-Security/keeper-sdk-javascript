@@ -342,8 +342,6 @@ async function syncVault(vault: KeeperVault): Promise<KeeperVault> {
     logger.info('Syncing vault...')
     await withSuppressedOutput(() => vault.sync())
     logger.info(`Vault synced. ${vault.getSummary().recordCount} records loaded.\n`)
-    // CLI examples use REST only; close push websocket to avoid async key errors during prompts.
-    vault.releasePushConnection()
     return vault
 }
 

@@ -18,8 +18,7 @@ import {
     type RemoveRecordResponse,
     type RemoveRecordResultItem,
 } from './nsfRemoveMessages'
-
-const MAX_REMOVALS = 500
+import { NSF_MAX_REMOVALS } from './nsfConstants'
 
 export enum NsfRemoveOperation {
     OwnerTrash = 'owner-trash',
@@ -115,8 +114,8 @@ function buildRemovals(
     if (recordIdentifiers.length === 0) {
         throw new KeeperSdkError('At least one record UID or title is required.', ResultCodes.NSF_NOT_FOUND)
     }
-    if (recordIdentifiers.length > MAX_REMOVALS) {
-        throw new KeeperSdkError(`Maximum ${MAX_REMOVALS} records per request.`, ResultCodes.NSF_TOO_MANY_RECORDS)
+    if (recordIdentifiers.length > NSF_MAX_REMOVALS) {
+        throw new KeeperSdkError(`Maximum ${NSF_MAX_REMOVALS} records per request.`, ResultCodes.NSF_TOO_MANY_RECORDS)
     }
     if (operation === NsfRemoveOperation.Unlink && !folderIdentifier?.trim()) {
         throw new KeeperSdkError(

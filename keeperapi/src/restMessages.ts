@@ -451,36 +451,6 @@ export const getRecordsDetailsMessage = (
         Records.GetRecordDataWithAccessInfoResponse
     )
 
-export const keeperDriveRecordAccessMessage = (
-    recordUids: Uint8Array[],
-    clientTime: number = Date.now()
-): RestMessage<Records.IGetRecordDataWithAccessInfoRequest, Records.IGetRecordDataWithAccessInfoResponse> =>
-    getRecordsDetailsMessage({
-        clientTime,
-        recordUid: recordUids,
-        recordDetailsInclude: Records.RecordDetailsInclude.SHARE_ONLY,
-    })
-
-export const keeperDriveRecordDataMessage = (
-    recordUids: Uint8Array[],
-    clientTime: number = Date.now()
-): RestMessage<Records.IGetRecordDataWithAccessInfoRequest, Records.IGetRecordDataWithAccessInfoResponse> =>
-    getRecordsDetailsMessage({
-        clientTime,
-        recordUid: recordUids,
-        recordDetailsInclude: Records.RecordDetailsInclude.DATA_ONLY,
-    })
-
-export const getSharingAdminsMessage = (
-    data: Enterprise.IGetSharingAdminsRequest
-): RestMessage<Enterprise.IGetSharingAdminsRequest, Enterprise.IGetSharingAdminsResponse> =>
-    createMessage(
-        data,
-        'enterprise/get_sharing_admins',
-        Enterprise.GetSharingAdminsRequest,
-        Enterprise.GetSharingAdminsResponse
-    )
-
 export const folderRecordUpdateMessage = (
     data: Folder.IFolderRecordUpdateRequest
 ): RestMessage<Folder.IFolderRecordUpdateRequest, Folder.IFolderRecordUpdateResponse> =>
