@@ -31,6 +31,8 @@
         "roles:delete": "ts-node src/roles/deleteRole.ts",
         "nsf:list": "ts-node src/nestedShareFolders/list_nsf.ts",
         "nsf:get": "ts-node src/nestedShareFolders/get_nsf.ts",
+        "nsf:ln": "ts-node src/nestedShareFolders/link_nsf.ts",
+        "nsf:rm": "ts-node src/nestedShareFolders/remove_nsf.ts",
         "teams:list": "ts-node src/teams/list_teams.ts",
         "teams:view": "ts-node src/teams/view_team.ts",
         "teams:add": "ts-node src/teams/add_team.ts",

@@ -481,6 +481,16 @@ export const getSharingAdminsMessage = (
         Enterprise.GetSharingAdminsResponse
     )
 
+export const folderRecordUpdateMessage = (
+    data: Folder.IFolderRecordUpdateRequest
+): RestMessage<Folder.IFolderRecordUpdateRequest, Folder.IFolderRecordUpdateResponse> =>
+    createMessage(
+        data,
+        'vault/folders/v3/record_update',
+        Folder.FolderRecordUpdateRequest,
+        Folder.FolderRecordUpdateResponse
+    )
+
 export const recordsAddMessage = (
     data: Records.IRecordsAddRequest
 ): RestMessage<Records.IRecordsAddRequest, Records.IRecordsModifyResponse> =>

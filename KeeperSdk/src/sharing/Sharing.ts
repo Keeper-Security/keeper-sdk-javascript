@@ -4,7 +4,7 @@ import {
     Authentication,
     platform,
     getPublicKeysMessage,
-    keeperDriveRecordAccessByUid,
+    keeperDriveRecordAccessMessage,
     webSafe64FromBytes,
     recordsShareUpdateMessage,
     normal64Bytes,
@@ -243,7 +243,7 @@ function longToNumber(value: number | { toNumber: () => number } | null | undefi
 export async function getRecordShareInfo(auth: Auth, recordUid: string): Promise<RecordShareInfo | null> {
     let response
     try {
-        response = await auth.executeRest(keeperDriveRecordAccessByUid(recordUid))
+        response = await auth.executeRest(keeperDriveRecordAccessMessage([normal64Bytes(recordUid)]))
     } catch (err) {
         throw new KeeperSdkError(
             `Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`

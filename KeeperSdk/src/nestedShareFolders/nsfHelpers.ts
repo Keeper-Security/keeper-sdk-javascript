@@ -3,10 +3,20 @@ import type {
     DUser,
     DKdFolder,
     DKdFolderAccess,
+    DKdFolderRecord,
+    DKdRecordAccess,
     Dependency,
 } from '@keeper-security/keeperapi'
 import { Folder, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
+import { VaultObjectKind } from '../folders/folderHelpers'
+import { KeeperSdkError, ResultCodes } from '../utils'
+import { getRecordTitle } from '../records/RecordUtils'
+
+const LEGACY_RECORD_MSG =
+    "Record '{0}' is a legacy vault record. Nested Share Folder commands operate only on Nested Share Records."
+const LEGACY_FOLDER_MSG =
+    "Folder '{0}' is a legacy folder. Nested Share Folder commands operate only on Nested Share Folders."
 
 const ACCESS_ROLE_LABELS: Record<number, string> = {
     [Folder.AccessRoleType.NAVIGATOR]: 'navigator',
@@ -44,6 +54,153 @@ export enum KeeperDriveKind {
 export enum NsfItemType {
     Folder = 'Folder',
     Record = 'Record',
+}
+
+export function isNestedShareRecord(storage: InMemoryStorage, recordUid: string): boolean {
+    return !!getKeeperDriveRecord(storage, recordUid)
+}
+
+export function isNestedShareFolder(storage: InMemoryStorage, folderUid: string): boolean {
+    if (!folderUid) return false
+    if (isRootFolderUid(folderUid)) return true
+    return !!getKeeperDriveFolder(storage, folderUid)
+}
+
+export function ensureNestedShareRecord(storage: InMemoryStorage, recordUid: string, identifier?: string): void {
+    if (isNestedShareRecord(storage, recordUid)) return
+    const ident = identifier ?? recordUid
+    throw new KeeperSdkError(LEGACY_RECORD_MSG.replace('{0}', ident), ResultCodes.NSF_LEGACY_RECORD)
+}
+
+export function ensureNestedShareFolder(storage: InMemoryStorage, folderUid: string, identifier?: string): void {
+    if (isNestedShareFolder(storage, folderUid)) return
+    const ident = identifier ?? folderUid
+    throw new KeeperSdkError(LEGACY_FOLDER_MSG.replace('{0}', ident), ResultCodes.NSF_LEGACY_FOLDER)
+}
+
+function resolveByUidOrName<T>(
+    items: T[],
+    identifier: string,
+    getUid: (item: T) => string,
+    getName: (item: T) => string
+): T | undefined {
+    const trimmed = identifier.trim()
+    if (!trimmed) return undefined
+
+    const byUid = items.find((item) => getUid(item) === trimmed)
+    if (byUid) return byUid
+
+    const lower = trimmed.toLowerCase()
+    const nameMatches = items.filter((item) => getName(item).toLowerCase() === lower)
+    if (nameMatches.length === 1) return nameMatches[0]
+    if (nameMatches.length > 1) {
+        throw new KeeperSdkError(
+            `Multiple matches found for "${identifier}". Use a UID instead.`,
+            ResultCodes.MULTIPLE_NSF_MATCHES
+        )
+    }
+    return undefined
+}
+
+function resolveRecordByTitleSearch(storage: InMemoryStorage, identifier: string): DRecord | undefined {
+    const lower = identifier.toLowerCase()
+    const matches = getKeeperDriveRecords(storage).filter((record) => {
+        const title = getRecordTitle(record)
+        return title && lower.length > 0 && title.toLowerCase().includes(lower)
+    })
+    if (matches.length === 1) return matches[0]
+    if (matches.length > 1) {
+        throw new KeeperSdkError(
+            `Multiple records matched "${identifier}". Use a UID instead.`,
+            ResultCodes.MULTIPLE_NSF_MATCHES
+        )
+    }
+    return undefined
+}
+
+function resolveFolderByPath(storage: InMemoryStorage, identifier: string): string | undefined {
+    const trimmed = identifier.trim().replace(/^\/+/, '')
+    if (!trimmed) return ROOT_FOLDER_UID
+
+    const targetPath = `/${trimmed.toLowerCase()}`
+    for (const folder of getKeeperDriveFolders(storage)) {
+        if (buildFolderPath(storage, folder.uid).toLowerCase() === targetPath) {
+            return folder.uid
+        }
+    }
+    return undefined
+}
+
+export function resolveNsfRecordIdentifier(storage: InMemoryStorage, identifier: string): string | undefined {
+    const trimmed = identifier.trim()
+    if (!trimmed) return undefined
+
+    const kdRecord = getKeeperDriveRecord(storage, trimmed)
+    if (kdRecord) return kdRecord.uid
+
+    const anyRecord = storage.getByUid<DRecord>(VaultObjectKind.Record, trimmed)
+    if (anyRecord) return anyRecord.uid
+
+    return resolveRecordByTitleSearch(storage, trimmed)?.uid
+}
+
+export function resolveNsfFolderIdentifier(storage: InMemoryStorage, identifier: string): string | undefined {
+    const trimmed = identifier.trim()
+    if (!trimmed) return undefined
+
+    if (isRootFolderUid(trimmed) || trimmed.toLowerCase() === 'root') return ROOT_FOLDER_UID
+
+    const byUidOrName = resolveByUidOrName(
+        getKeeperDriveFolders(storage),
+        trimmed,
+        (folder) => folder.uid,
+        (folder) => folder.data.name || ''
+    )
+    if (byUidOrName) return byUidOrName.uid
+
+    return resolveFolderByPath(storage, trimmed)
+}
+
+export function findNestedShareFoldersForRecord(storage: InMemoryStorage, recordUid: string): string[] {
+    return storage
+        .getAll<DKdFolderRecord>(KeeperDriveKind.FolderRecord)
+        .filter((entry) => entry.recordUid === recordUid)
+        .map((entry) => entry.folderUid)
+}
+
+export function checkRecordDeletePermission(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid?: Uint8Array
+): void {
+    const entries = storage
+        .getAll<DKdRecordAccess>(KeeperDriveKind.RecordAccess)
+        .filter((entry) => entry.recordUid === recordUid)
+    if (entries.length === 0) return
+
+    const accountUidStr = accountUid?.length ? webSafe64FromBytes(accountUid) : ''
+    for (const entry of entries) {
+        const isCurrentUser =
+            (entry.accessType === Folder.AccessType.AT_USER &&
+                entry.accessTypeUid === accountUidStr) ||
+            (username &&
+                storage.getAll<DUser>('user').some(
+                    (user) =>
+                        user.username === username &&
+                        webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
+                ))
+        if (!isCurrentUser) continue
+        if (entry.owner || entry.canDelete) return
+        throw new KeeperSdkError(
+            'You do not have permission to delete this record.',
+            ResultCodes.NSF_PERMISSION_DENIED
+        )
+    }
+    throw new KeeperSdkError(
+        'You do not have permission to delete this record.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
 }
 
 export function formatAccessRoleType(role: Folder.AccessRoleType | null | undefined): string {

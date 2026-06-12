@@ -33,6 +33,8 @@ import {
     isSensitiveFieldType,
     normalizeParentUid,
     resolveAccessUsername,
+    resolveNsfFolderIdentifier,
+    resolveNsfRecordIdentifier,
 } from './nsfHelpers'
 
 const MASKED_VALUE = '********'
@@ -157,46 +159,6 @@ function bytesToUid(bytes: Uint8Array | null | undefined): string | undefined {
 function longToNumber(value: number | { toNumber: () => number } | null | undefined): number | undefined {
     if (value == null) return undefined
     return typeof value === 'number' ? value : value.toNumber()
-}
-
-function resolveByUidOrName<T>(
-    items: T[],
-    identifier: string,
-    getUid: (item: T) => string,
-    getName: (item: T) => string
-): T | undefined {
-    const trimmed = identifier.trim()
-    if (!trimmed) return undefined
-
-    const byUid = items.find((item) => getUid(item) === trimmed)
-    if (byUid) return byUid
-
-    const lower = trimmed.toLowerCase()
-    const nameMatches = items.filter((item) => getName(item).toLowerCase() === lower)
-    if (nameMatches.length === 1) return nameMatches[0]
-    if (nameMatches.length > 1) {
-        throw new KeeperSdkError(
-            `Multiple matches found for "${identifier}". Use a UID instead.`,
-            ResultCodes.MULTIPLE_NSF_MATCHES
-        )
-    }
-    return undefined
-}
-
-function resolveRecordByTitleSearch(storage: InMemoryStorage, identifier: string): DRecord | undefined {
-    const lower = identifier.toLowerCase()
-    const matches = getKeeperDriveRecords(storage).filter((record) => {
-        const title = getRecordTitle(record)
-        return title && lower.length > 0 && title.toLowerCase().includes(lower)
-    })
-    if (matches.length === 1) return matches[0]
-    if (matches.length > 1) {
-        throw new KeeperSdkError(
-            `Multiple records matched "${identifier}". Use a UID instead.`,
-            ResultCodes.MULTIPLE_NSF_MATCHES
-        )
-    }
-    return undefined
 }
 
 function mapFolderPermission(entry: DKdFolderAccess): NsfFolderPermission {
@@ -405,18 +367,13 @@ async function buildRecordView(
 }
 
 export function resolveNsfFolder(storage: InMemoryStorage, identifier: string): string | undefined {
-    return resolveByUidOrName(
-        getKeeperDriveFolders(storage),
-        identifier,
-        (folder) => folder.uid,
-        (folder) => folder.data.name || ''
-    )?.uid
+    return resolveNsfFolderIdentifier(storage, identifier)
 }
 
 export function resolveNsfRecord(storage: InMemoryStorage, identifier: string): string | undefined {
-    const trimmed = identifier.trim()
-    if (!trimmed) return undefined
-    return getKeeperDriveRecord(storage, trimmed)?.uid ?? resolveRecordByTitleSearch(storage, trimmed)?.uid
+    const uid = resolveNsfRecordIdentifier(storage, identifier)
+    if (!uid) return undefined
+    return getKeeperDriveRecord(storage, uid)?.uid
 }
 
 export async function getNestedShareFolder(

@@ -471,6 +471,10 @@ export {
     formatNsfFolderDetail,
     formatNsfRecordDetail,
     formatNsfDetail,
+    linkNestedShareRecord,
+    NsfRemoveOperation,
+    removeNestedShareRecords,
+    formatRemoveNsfPreview,
     NestedShareFolderManager,
 } from './nestedShareFolders'
 export type {
@@ -486,6 +490,11 @@ export type {
     NsfFolderPermission,
     NsfFolderAccessRow,
     NsfRecordPermission,
+    LinkNsfRecordResult,
+    NsfRemoveOperationInput,
+    RemoveNsfRecordInput,
+    NsfRemovePreviewItem,
+    RemoveNsfRecordResult,
 } from './nestedShareFolders'
 
 export type {

@@ -57,6 +57,14 @@ export enum RoleErrorCode {
 export enum NsfErrorCode {
     NotFound = 'nsf_not_found',
     MultipleMatches = 'nsf_multiple_matches',
+    LegacyRecord = 'nsf_legacy_record',
+    LegacyFolder = 'nsf_legacy_folder',
+    PermissionDenied = 'nsf_permission_denied',
+    LinkFailed = 'nsf_link_failed',
+    RemoveFailed = 'nsf_remove_failed',
+    FolderRequired = 'nsf_folder_required',
+    TooManyRecords = 'nsf_too_many_records',
+    MissingKey = 'nsf_missing_key',
 }
 
 export enum TeamErrorCode {
@@ -128,6 +136,14 @@ export const ResultCodes = {
     ROLE_ENFORCEMENT_FAILED: RoleErrorCode.RoleEnforcementFailed,
     NSF_NOT_FOUND: NsfErrorCode.NotFound,
     MULTIPLE_NSF_MATCHES: NsfErrorCode.MultipleMatches,
+    NSF_LEGACY_RECORD: NsfErrorCode.LegacyRecord,
+    NSF_LEGACY_FOLDER: NsfErrorCode.LegacyFolder,
+    NSF_PERMISSION_DENIED: NsfErrorCode.PermissionDenied,
+    NSF_LINK_FAILED: NsfErrorCode.LinkFailed,
+    NSF_REMOVE_FAILED: NsfErrorCode.RemoveFailed,
+    NSF_FOLDER_REQUIRED: NsfErrorCode.FolderRequired,
+    NSF_TOO_MANY_RECORDS: NsfErrorCode.TooManyRecords,
+    NSF_MISSING_KEY: NsfErrorCode.MissingKey,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,

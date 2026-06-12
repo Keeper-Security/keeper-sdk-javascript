@@ -21,6 +21,13 @@ import {
     type NsfFolderView,
     type NsfRecordView,
 } from './getNsf'
+import { linkNestedShareRecord, type LinkNsfRecordResult } from './linkNsfRecord'
+import {
+    formatRemoveNsfPreview,
+    removeNestedShareRecords,
+    type RemoveNsfRecordInput,
+    type RemoveNsfRecordResult,
+} from './removeNsfRecord'
 
 export type AuthProvider = () => Auth
 
@@ -71,5 +78,20 @@ export class NestedShareFolderManager {
 
     public formatNsfRecordDetail(view: NsfRecordView, verbose = false): string {
         return renderNsfRecordDetail(view, verbose)
+    }
+
+    public async linkNestedShareRecord(
+        recordIdentifier: string,
+        folderIdentifier: string
+    ): Promise<LinkNsfRecordResult> {
+        return linkNestedShareRecord(this.storage, this.requireAuth(), recordIdentifier, folderIdentifier)
+    }
+
+    public async removeNestedShareRecords(input: RemoveNsfRecordInput): Promise<RemoveNsfRecordResult> {
+        return removeNestedShareRecords(this.storage, this.requireAuth(), input)
+    }
+
+    public formatRemoveNsfPreview(preview: RemoveNsfRecordResult['preview']): string {
+        return formatRemoveNsfPreview(preview)
     }
 }

@@ -13,6 +13,14 @@ export {
     isSensitiveFieldType,
     resolveAccessUsername,
     folderAccessDisplayRole,
+    isNestedShareRecord,
+    isNestedShareFolder,
+    ensureNestedShareRecord,
+    ensureNestedShareFolder,
+    resolveNsfRecordIdentifier,
+    resolveNsfFolderIdentifier,
+    findNestedShareFoldersForRecord,
+    checkRecordDeletePermission,
 } from './nsfHelpers'
 
 export {
@@ -50,5 +58,20 @@ export type {
     NsfFolderAccessRow,
     NsfRecordPermission,
 } from './getNsf'
+
+export { linkNestedShareRecord } from './linkNsfRecord'
+export type { LinkNsfRecordResult } from './linkNsfRecord'
+
+export {
+    NsfRemoveOperation,
+    removeNestedShareRecords,
+    formatRemoveNsfPreview,
+} from './removeNsfRecord'
+export type {
+    NsfRemoveOperationInput,
+    RemoveNsfRecordInput,
+    NsfRemovePreviewItem,
+    RemoveNsfRecordResult,
+} from './removeNsfRecord'
 
 export { NestedShareFolderManager } from './NestedShareFolderManager'
