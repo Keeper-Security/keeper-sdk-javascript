@@ -1160,7 +1160,6 @@ const processKdRemovedFolders = async (
 const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IFolderKey[] | null) => {
     if (!folderKeys) return
     const encryptedByDataKeyMap: UnwrapKeyMap = {}
-    const encryptedByParentKeyMap: UnwrapKeyMap = {}
     const encryptedByDataKey = folderKeys.filter(
         (key) => key.encryptedBy === Folder.FolderKeyEncryptionType.ENCRYPTED_BY_USER_KEY
     )
@@ -1170,7 +1169,6 @@ const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IF
     for (const key of encryptedByDataKey) {
         if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
         const folderUid = webSafe64FromBytes(key.folderUid)
-        const parentUid = webSafe64FromBytes(key.parentUid)
         encryptedByDataKeyMap[folderUid] = {
             data: key.folderKey,
             dataId: folderUid,
@@ -1184,15 +1182,8 @@ const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IF
         if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
         const folderUid = webSafe64FromBytes(key.folderUid)
         const parentUid = webSafe64FromBytes(key.parentUid)
-        encryptedByParentKeyMap[folderUid] = {
-            data: key.folderKey,
-            dataId: folderUid,
-            keyId: parentUid,
-            encryptionType: 'gcm',
-            unwrappedType: 'aes',
-        }
+        await platform.unwrapKey(key.folderKey, folderUid, parentUid, 'gcm', 'aes', storage)
     }
-    await platform.unwrapKeys(encryptedByParentKeyMap, storage)
 }
 
 const processKdFolderAccesses = async (
