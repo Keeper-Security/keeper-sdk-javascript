@@ -74,6 +74,10 @@ export class InMemoryStorage implements VaultStorage {
         return this.dependenciesByParent.get(uid)
     }
 
+    public getDependenciesSync(uid: string): Dependency[] | undefined {
+        return this.dependenciesByParent.get(uid)
+    }
+
     public async addDependencies(dependencies: Dependencies): Promise<void> {
         for (const [parentUid, children] of Object.entries(dependencies)) {
             if (!this.dependenciesByParent.has(parentUid)) {
@@ -137,6 +141,7 @@ export class InMemoryStorage implements VaultStorage {
             token?: string
             sharedFolderUid?: string
             recordUid?: string
+            folderUid?: string
             accountUid?: string | Uint8Array
             teamUid?: string
         }
@@ -156,6 +161,9 @@ export class InMemoryStorage implements VaultStorage {
         }
         if (record.sharedFolderUid && record.teamUid) {
             return `${record.sharedFolderUid}:${record.teamUid}`
+        }
+        if (record.folderUid && record.recordUid) {
+            return `${record.folderUid}:${record.recordUid}`
         }
         if (item.kind === VaultObjectKind.User && accountUidStr) return accountUidStr
         return '_singleton_'
