@@ -141,6 +141,8 @@ export class Auth {
     private messageSessionUid: Uint8Array
     options: ClientConfigurationInternal
     private socket?: SocketListener
+    // Optional second socket to the KRouter user endpoint (see connectToRouter).
+    private routerSocket?: SocketListener
     public clientKey?: Uint8Array
     private _accountSummary?: IAccountSummaryElements
     private _accountSummaryVersion: number = 1
@@ -283,6 +285,64 @@ export class Auth {
             this.socket.disconnect()
             delete this.socket
         }
+    }
+
+    /**
+     * Opens a WebSocket to the KRouter user endpoint
+     * (`wss://connect.<host>/api/user/client`). This is separate from the
+     * KeeperApp push socket opened by `connect()`. Requires a session token, so
+     * call it after login. When `ClientConfiguration.connectToRouter` is set this
+     * runs automatically once the session token is available.
+     *
+     * Inbound frames are JSON text (`gw_response`, `client_error`, notifications).
+     * Subscribe with `onRouterMessage`; incoming events are also debug-logged.
+     */
+    async connectToRouter() {
+        if (!this._sessionToken) {
+            throw new Error('Cannot connect to router socket without a session token')
+        }
+        if (this.routerSocket?.getIsConnected()) {
+            return
+        }
+        const url = await this.endpoint.getRouterConnectionUrl(this._sessionToken)
+        // No app-level heartbeat: the router treats every binary frame as a
+        // RouterControllerMessage and relies on protocol-level ping/pong instead.
+        const routerSocket = await createAsyncSocket(url, undefined, undefined, false)
+        if (!routerSocket) {
+            throw new Error('Failed to open router socket')
+        }
+        this.routerSocket = routerSocket
+        logger.debug('Router socket connected')
+        routerSocket.onPushMessage((data: Uint8Array) => {
+            if (!isLevelEnabled('debug')) return
+            const text = platform.bytesToString(data)
+            try {
+                logger.debug('Router message received', JSON.parse(text))
+            } catch {
+                logger.debug('Router message received', text)
+            }
+        })
+    }
+
+    disconnectRouter() {
+        if (this.routerSocket) {
+            this.routerSocket.disconnect()
+            delete this.routerSocket
+        }
+    }
+
+    onRouterMessage(callback: (data: Uint8Array) => void): void {
+        if (!this.routerSocket) {
+            throw new Error('No router socket available')
+        }
+        this.routerSocket.onPushMessage(callback)
+    }
+
+    onRouterCloseMessage(callback: (data: any) => void): void {
+        if (!this.routerSocket) {
+            throw new Error('No router socket available')
+        }
+        this.routerSocket.onCloseMessage(callback)
     }
 
     /**
@@ -1265,6 +1325,9 @@ export class Auth {
         this.socket.onOpen(() => {
             this.socket?.registerLogin(this._sessionToken)
         })
+        if (this.options.connectToRouter) {
+            this.connectToRouter().catch((e) => logger.debug('Router socket connect failed', e))
+        }
     }
 
     async registerDevice() {
