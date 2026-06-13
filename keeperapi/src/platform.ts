@@ -136,7 +136,7 @@ export interface Platform {
 
     closeCryptoWorker(): Promise<void>
 
-    createWebsocket(url: string): SocketProxy
+    createWebsocket(url: string, sendHeartbeat?: boolean): SocketProxy
 }
 
 export interface CryptoTask {
