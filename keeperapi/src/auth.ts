@@ -257,6 +257,17 @@ export class Auth {
 
         this.socket = await createAsyncSocket(url, this.messageSessionUid, getConnectionRequest)
         logger.debug('Socket connected')
+        // Log every incoming push event with the same logger/format as REST calls.
+        // Decryption only runs when debug logging is enabled.
+        this.onPushMessage(async (data: Uint8Array) => {
+            if (!isLevelEnabled('debug')) return
+            try {
+                const wssClientResponse = await this.endpoint.decryptPushMessage(data)
+                logger.debug(...formatProto('Push message received', wssClientResponse))
+            } catch (e) {
+                logger.debug('Push message received (undecryptable)', e)
+            }
+        })
         this.onCloseMessage((closeReason: CloseReason) => {
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
