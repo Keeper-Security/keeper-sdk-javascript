@@ -143,6 +143,11 @@ export class Auth {
     private socket?: SocketListener
     // Optional second socket to the KRouter user endpoint (see connectToRouter).
     private routerSocket?: SocketListener
+    // Listener registered via onRouterMessage, retained so it can be (re)attached
+    // each time the router socket (re)connects. Lets a caller subscribe before the
+    // socket finishes its async connect (it is opened fire-and-forget after login)
+    // without racing it. Only one consumer is ever needed.
+    private routerMessageListener?: (data: Uint8Array) => void
     public clientKey?: Uint8Array
     private _accountSummary?: IAccountSummaryElements
     private _accountSummaryVersion: number = 1
@@ -322,6 +327,11 @@ export class Auth {
                 logger.debug('Router message received', text)
             }
         })
+        // (Re)attach the subscriber registered before this socket existed (or before
+        // a reconnect created a fresh one).
+        if (this.routerMessageListener) {
+            routerSocket.onPushMessage(this.routerMessageListener)
+        }
     }
 
     disconnectRouter() {
@@ -332,10 +342,11 @@ export class Auth {
     }
 
     onRouterMessage(callback: (data: Uint8Array) => void): void {
-        if (!this.routerSocket) {
-            throw new Error('No router socket available')
-        }
-        this.routerSocket.onPushMessage(callback)
+        // Retain the listener so it survives (re)connects, then attach it to the
+        // current socket if one is already open. Safe to call before connectToRouter
+        // has finished — it does not throw when the socket is not yet available.
+        this.routerMessageListener = callback
+        this.routerSocket?.onPushMessage(callback)
     }
 
     onRouterCloseMessage(callback: (data: any) => void): void {
