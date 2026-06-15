@@ -330,3 +330,4 @@ export function isFolderUserPermission(entry: DKdFolderAccess): boolean {
         entry.accessType === Folder.AccessType.AT_OWNER
     )
 }
+

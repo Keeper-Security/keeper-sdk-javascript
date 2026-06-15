@@ -37,11 +37,8 @@ async function getNsf() {
         }
 
         logger.info('')
-        if (asJson) {
-            logger.info(JSON.stringify(result.view, null, 2))
-        } else {
-            logger.info(vault.formatNsfDetail(result, verbose))
-        }
+        const output = asJson ? JSON.stringify(result.view, null, 2) : vault.formatNsfDetail(result, verbose)
+        process.stdout.write(`${output}\n`)
         logger.info('')
     } catch (err) {
         logger.error(`Lookup failed: ${extractErrorMessage(err)}`)

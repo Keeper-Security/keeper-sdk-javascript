@@ -1,4 +1,4 @@
-import type { Auth, DRecord, DRecordMetadata } from '@keeper-security/keeperapi'
+import type { Auth, DRecordMetadata, EncryptionType } from '@keeper-security/keeperapi'
 import {
     Folder,
     Records,
@@ -6,7 +6,6 @@ import {
     normal64Bytes,
     platform,
     webSafe64FromBytes,
-    type EncryptionType,
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
@@ -18,30 +17,15 @@ import {
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
 
-export type LinkNsfRecordResult = {
-    success: boolean
-    recordUid: string
-    folderUid: string
-    status: string
-    message: string
-}
-
-async function resolveRecordKeyType(
+function resolveRecordKeyType(
     storage: InMemoryStorage,
-    recordUid: string,
-    recordVersion: number
-): Promise<{ encryptionType: EncryptionType; keyType: Folder.EncryptedKeyType }> {
+    recordUid: string
+): { encryptionType: EncryptionType; keyType: Folder.EncryptedKeyType } {
     const metadata = storage.getByUid<DRecordMetadata>(VaultObjectKind.Metadata, recordUid)
     if (metadata?.recordKeyType === Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY) {
         return {
             encryptionType: 'cbc',
             keyType: Folder.EncryptedKeyType.encrypted_by_data_key,
-        }
-    }
-    if (metadata?.recordKeyType === Records.RecordKeyType.ENCRYPTED_BY_DATA_KEY_GCM || recordVersion >= 3) {
-        return {
-            encryptionType: 'gcm',
-            keyType: Folder.EncryptedKeyType.encrypted_by_data_key_gcm,
         }
     }
     return {
@@ -50,12 +34,19 @@ async function resolveRecordKeyType(
     }
 }
 
+export type LinkNsfRecordResult = {
+    success: boolean
+    recordUid: string
+    folderUid: string
+    status: string
+    message: string
+}
+
 async function buildRecordMetadata(
     storage: InMemoryStorage,
     folderUid: string,
     recordUid: string
 ): Promise<Folder.IRecordMetadata> {
-    const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid)
     const recordKey = await storage.getKeyBytes(recordUid)
     const folderKey = await storage.getKeyBytes(folderUid)
     if (!recordKey) {
@@ -71,7 +62,7 @@ async function buildRecordMetadata(
         )
     }
 
-    const { encryptionType, keyType } = await resolveRecordKeyType(storage, recordUid, record?.version ?? 3)
+    const { encryptionType, keyType } = resolveRecordKeyType(storage, recordUid)
     const encryptedRecordKey = await platform.wrapKey(recordUid, folderUid, encryptionType, storage)
     return {
         recordUid: normal64Bytes(recordUid),

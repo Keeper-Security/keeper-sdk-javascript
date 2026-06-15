@@ -54,4 +54,3 @@ export const NSF_LIST_DEFAULT_COLUMN_WIDTH = 40
 export const NSF_LIST_MIN_TRUNCATE_PREFIX = 3
 
 export const NSF_MAX_REMOVALS = 500
-export const NSF_REMOVE_RECORD_PATH = 'vault/folders/v3/remove_record'

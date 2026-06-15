@@ -45,6 +45,27 @@ import {
     NSF_UNKNOWN_RECORD_TITLES,
 } from './nsfConstants'
 
+function longToNumber(value: number | { toNumber: () => number } | null | undefined): number | undefined {
+    if (value == null) return undefined
+    return typeof value === 'number' ? value : value.toNumber()
+}
+
+function formatNsfFieldValue(value: unknown): string {
+    if (value == null || value === '') return ''
+    if (typeof value === 'string') return value
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+    if (Array.isArray(value)) {
+        return value.map(formatNsfFieldValue).filter((part) => part.length > 0).join(', ')
+    }
+    if (typeof value === 'object') {
+        const parts = Object.values(value as Record<string, unknown>)
+            .map(formatNsfFieldValue)
+            .filter((part) => part.length > 0)
+        return parts.join(', ')
+    }
+    return String(value)
+}
+
 export enum GetNsfFormat {
     Detail = 'detail',
     JSON = 'json',
@@ -141,11 +162,6 @@ function bytesToUid(bytes: Uint8Array | null | undefined): string | undefined {
     return bytes?.length ? webSafe64FromBytes(bytes) : undefined
 }
 
-function longToNumber(value: number | { toNumber: () => number } | null | undefined): number | undefined {
-    if (value == null) return undefined
-    return typeof value === 'number' ? value : value.toNumber()
-}
-
 function mapFolderPermission(entry: DKdFolderAccess): NsfFolderPermission {
     const permission = entry.permission
     return {
@@ -178,17 +194,21 @@ function buildFolderAccessRow(
 
 function splitFolderPermissions(storage: InMemoryStorage, folder: DKdFolder) {
     const entries = getFolderAccessEntries(storage, folder.uid)
-    return {
-        userPermissions: entries
-            .filter(isFolderUserPermission)
-            .map((entry) => buildFolderAccessRow(storage, folder, entry)),
-        shareAdmins: entries
-            .filter(isFolderShareAdministrator)
-            .map((entry) => buildFolderAccessRow(storage, folder, entry)),
-        teamPermissions: entries
-            .filter((entry) => entry.accessType === Folder.AccessType.AT_TEAM)
-            .map(mapFolderPermission),
+    const userPermissions: NsfFolderAccessRow[] = []
+    const shareAdmins: NsfFolderAccessRow[] = []
+    const teamPermissions: NsfFolderPermission[] = []
+    for (const entry of entries) {
+        if (isFolderUserPermission(entry)) {
+            userPermissions.push(buildFolderAccessRow(storage, folder, entry))
+        }
+        if (isFolderShareAdministrator(entry)) {
+            shareAdmins.push(buildFolderAccessRow(storage, folder, entry))
+        }
+        if (entry.accessType === Folder.AccessType.AT_TEAM) {
+            teamPermissions.push(mapFolderPermission(entry))
+        }
     }
+    return { userPermissions, shareAdmins, teamPermissions }
 }
 
 function prependOwnerRow(rows: NsfFolderAccessRow[], ownerUsername: string): NsfFolderAccessRow[] {
@@ -210,13 +230,22 @@ function ensureFolderOwnerListed(
 }
 
 function buildRecordFields(record: DRecord, unmask: boolean): NsfRecordView['fields'] {
-    return getRecordFields(record).flatMap((field) => {
-        if (NSF_TOP_LEVEL_FIELD_TYPES.has(field.type)) return []
-        const rawValue = Array.isArray(field.value) ? field.value[0] : field.value
-        if (rawValue == null || rawValue === '') return []
-        const value = !unmask && isSensitiveFieldType(field.type) ? NSF_MASKED_VALUE : String(rawValue)
-        return [{ type: field.type, label: field.label, value }]
-    })
+    return getRecordFields(record)
+        .filter((field) => !NSF_TOP_LEVEL_FIELD_TYPES.has(field.type))
+        .map((field) => {
+            const rawValues = Array.isArray(field.value) ? field.value : [field.value]
+            const displayValue = rawValues
+                .map((value) => formatNsfFieldValue(value))
+                .filter((value) => value.length > 0)
+                .join(', ')
+            return { field, displayValue }
+        })
+        .filter(({ displayValue }) => displayValue.length > 0)
+        .map(({ field, displayValue }) => ({
+            type: field.type,
+            label: field.label,
+            value: !unmask && isSensitiveFieldType(field.type) ? NSF_MASKED_VALUE : displayValue,
+        }))
 }
 
 function formatRecordUserPermissionBlock(entry: NsfRecordPermission): string[] {
@@ -258,8 +287,7 @@ async function fetchRecordShareAdmins(auth: Auth, recordUid: string): Promise<st
             getSharingAdminsMessage({ recordUid: normal64Bytes(recordUid) })
         )
         return (response.userProfileExts ?? [])
-            .map((ext) => ext.email || '')
-            .filter((email) => email.length > 0)
+            .flatMap((ext) => (ext?.email ? [ext.email] : []))
             .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
     } catch {
         return []

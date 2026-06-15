@@ -1,5 +1,5 @@
-import type { Auth } from '@keeper-security/keeperapi'
-import { normal64Bytes, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import type { Auth, folder as FolderProto } from '@keeper-security/keeperapi'
+import { folder, normal64Bytes, removeRecordMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import {
@@ -9,16 +9,10 @@ import {
     resolveNsfFolderIdentifier,
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
-import {
-    RemoveRecordAction,
-    RemoveRecordOperation,
-    RemoveRecordStatus,
-    removeRecordMessage,
-    type RemoveRecordRemovalInput,
-    type RemoveRecordResponse,
-    type RemoveRecordResultItem,
-} from './nsfRemoveMessages'
 import { NSF_MAX_REMOVALS } from './nsfConstants'
+
+const { RemoveAction, RecordOperationType, RemoveStatus } = folder.v3.remove
+const REMOVE_SUCCESS_STATUS = RemoveStatus[RemoveStatus.REMOVE_STATUS_SUCCESS]
 
 export enum NsfRemoveOperation {
     OwnerTrash = 'owner-trash',
@@ -57,10 +51,10 @@ export type RemoveNsfRecordResult = {
     message?: string
 }
 
-const OPERATION_MAP: Record<NsfRemoveOperation, RemoveRecordOperation> = {
-    [NsfRemoveOperation.Unlink]: RemoveRecordOperation.Unlink,
-    [NsfRemoveOperation.FolderTrash]: RemoveRecordOperation.FolderTrash,
-    [NsfRemoveOperation.OwnerTrash]: RemoveRecordOperation.OwnerTrash,
+const OPERATION_MAP: Record<NsfRemoveOperation, FolderProto.v3.remove.RecordOperationType> = {
+    [NsfRemoveOperation.Unlink]: RecordOperationType.UNLINK_FROM_FOLDER,
+    [NsfRemoveOperation.FolderTrash]: RecordOperationType.MOVE_TO_FOLDER_TRASH,
+    [NsfRemoveOperation.OwnerTrash]: RecordOperationType.MOVE_TO_OWNER_TRASH,
 }
 
 function normalizeOperation(operation: NsfRemoveOperationInput = NsfRemoveOperation.OwnerTrash): NsfRemoveOperation {
@@ -72,36 +66,37 @@ function normalizeOperation(operation: NsfRemoveOperationInput = NsfRemoveOperat
     )
 }
 
-function mapPreviewItem(item: RemoveRecordResultItem): NsfRemovePreviewItem {
+function mapPreviewItem(item: FolderProto.v3.remove.IRemoveResult): NsfRemovePreviewItem {
     return {
-        recordUid: item.recordUid.length ? webSafe64FromBytes(item.recordUid) : '',
-        folderUid: item.folderUid.length ? webSafe64FromBytes(item.folderUid) : '',
-        status: RemoveRecordStatus[item.status] ?? String(item.status),
+        recordUid: item.itemUid?.length ? webSafe64FromBytes(item.itemUid) : '',
+        folderUid: item.folderUid?.length ? webSafe64FromBytes(item.folderUid) : '',
+        status: item.status == null ? 'REMOVE_STATUS_UNKNOWN' : (RemoveStatus[item.status] ?? String(item.status)),
         impact: item.impact
             ? {
-                  foldersCount: item.impact.foldersCount,
-                  recordsCount: item.impact.recordsCount,
-                  affectedUsersCount: item.impact.affectedUsersCount,
-                  affectedTeamsCount: item.impact.affectedTeamsCount,
-                  warnings: [...item.impact.warnings],
+                  foldersCount: item.impact.foldersCount ?? 0,
+                  recordsCount: item.impact.recordsCount ?? 0,
+                  affectedUsersCount: item.impact.affectedUsersCount ?? 0,
+                  affectedTeamsCount: item.impact.affectedTeamsCount ?? 0,
+                  warnings: [...(item.impact.warnings ?? [])],
               }
             : undefined,
-        error: item.error,
+        error: item.error
+            ? {
+                  code: item.error.code ?? 0,
+                  message: item.error.message ?? '',
+              }
+            : undefined,
     }
 }
 
-function mapPreview(response: RemoveRecordResponse): NsfRemovePreviewItem[] {
-    return response.results.map(mapPreviewItem)
-}
-
 function hasPreviewErrors(preview: NsfRemovePreviewItem[]): boolean {
-    return preview.some((item) => item.error != null || item.status !== 'Success')
+    return preview.some((item) => item.error != null || item.status !== REMOVE_SUCCESS_STATUS)
 }
 
 type RemovalSpec = {
     recordUid: string
     folderUid?: string
-    operation: RemoveRecordOperation
+    operation: FolderProto.v3.remove.RecordOperationType
 }
 
 function buildRemovals(
@@ -159,24 +154,20 @@ function buildRemovals(
     return removals
 }
 
-function toRemovalInput(spec: RemovalSpec): RemoveRecordRemovalInput {
-    return {
-        recordUid: normal64Bytes(spec.recordUid),
-        folderUid: spec.folderUid ? normal64Bytes(spec.folderUid) : undefined,
-        operation: spec.operation,
-    }
-}
-
 async function executeRemove(
     auth: Auth,
     removals: RemovalSpec[],
-    action: RemoveRecordAction,
+    action: FolderProto.v3.remove.RemoveAction,
     confirmationToken?: Uint8Array
-): Promise<RemoveRecordResponse> {
+): Promise<FolderProto.v3.remove.IRemoveResponse> {
     return auth.executeRest(
         removeRecordMessage({
             action,
-            records: removals.map(toRemovalInput),
+            records: removals.map((spec) => ({
+                recordUid: normal64Bytes(spec.recordUid),
+                folderUid: spec.folderUid ? normal64Bytes(spec.folderUid) : new Uint8Array(0),
+                operationType: spec.operation,
+            })),
             confirmationToken,
         })
     )
@@ -214,8 +205,8 @@ export async function removeNestedShareRecords(
     const removals = buildRemovals(storage, auth, input.records, input.folder, operation)
 
     try {
-        const previewResponse = await executeRemove(auth, removals, RemoveRecordAction.Preview)
-        const preview = mapPreview(previewResponse)
+        const previewResponse = await executeRemove(auth, removals, RemoveAction.REMOVE_ACTION_PREVIEW)
+        const preview = (previewResponse.results ?? []).map(mapPreviewItem)
 
         if (hasPreviewErrors(preview)) {
             throw new KeeperSdkError(formatRemoveNsfPreview(preview) || 'Removal preview failed.', ResultCodes.NSF_REMOVE_FAILED)
@@ -229,7 +220,7 @@ export async function removeNestedShareRecords(
             return { confirmed: false, dryRun: false, preview, message: 'Confirmation required. Set force=true to proceed.' }
         }
 
-        await executeRemove(auth, removals, RemoveRecordAction.Confirm, previewResponse.confirmationToken)
+        await executeRemove(auth, removals, RemoveAction.REMOVE_ACTION_CONFIRM, previewResponse.confirmationToken)
         return {
             confirmed: true,
             dryRun: false,
