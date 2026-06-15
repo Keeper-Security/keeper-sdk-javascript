@@ -18,6 +18,7 @@ import {
     Tokens,
     NotificationCenter,
     record,
+    folder,
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -449,6 +450,26 @@ export const getRecordsDetailsMessage = (
         'vault/get_records_details',
         Records.GetRecordDataWithAccessInfoRequest,
         Records.GetRecordDataWithAccessInfoResponse
+    )
+
+export const folderRecordUpdateMessage = (
+    data: Folder.IFolderRecordUpdateRequest
+): RestMessage<Folder.IFolderRecordUpdateRequest, Folder.IFolderRecordUpdateResponse> =>
+    createMessage(
+        data,
+        'vault/folders/v3/record_update',
+        Folder.FolderRecordUpdateRequest,
+        Folder.FolderRecordUpdateResponse
+    )
+
+export const removeRecordMessage = (
+    data: folder.v3.remove.IRemoveRecordRequest
+): RestMessage<folder.v3.remove.IRemoveRecordRequest, folder.v3.remove.IRemoveResponse> =>
+    createMessage(
+        data,
+        'vault/folders/v3/remove_record',
+        folder.v3.remove.RemoveRecordRequest,
+        folder.v3.remove.RemoveResponse
     )
 
 export const recordsAddMessage = (
