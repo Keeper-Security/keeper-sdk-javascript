@@ -89,6 +89,10 @@ export enum UserErrorCode {
     TeamUserRemoveFailed = 'team_user_remove_failed',
 }
 
+export enum SyncErrorCode {
+    SyncFailed = 'sync_failed',
+}
+
 export const ResultCodes = {
     INVALID_CREDENTIALS: AuthErrorCode.InvalidCredentials,
     MISSING_USERNAME: AuthErrorCode.MissingUsername,
@@ -149,6 +153,7 @@ export const ResultCodes = {
     NO_TEAMS_FOR_USER_OP: UserErrorCode.NoTeamsForUserOp,
     TEAM_USER_ADD_FAILED: UserErrorCode.TeamUserAddFailed,
     TEAM_USER_REMOVE_FAILED: UserErrorCode.TeamUserRemoveFailed,
+    SYNC_FAILED: SyncErrorCode.SyncFailed,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

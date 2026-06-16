@@ -1,7 +1,6 @@
-import readline from 'readline/promises'
-import { setTimeout as delay } from 'timers/promises'
 import type { AuthUI3, DeviceApprovalChannel, TwoFactorChannelData } from '@keeper-security/keeperapi'
 import { Authentication } from '@keeper-security/keeperapi'
+import { getSdkPlatform } from '../platform'
 import { logger, extractErrorMessage, KeeperSdkError, AuthDefaults, ResultCodes } from '../utils'
 
 export class ConsoleAuthUI implements AuthUI3 {
@@ -54,18 +53,19 @@ export class ConsoleAuthUI implements AuthUI3 {
     }
 
     private static async waitWithCancel(timeoutMs: number, cancel?: Promise<void>): Promise<void> {
+        const platform = getSdkPlatform()
         if (!cancel) {
-            await delay(timeoutMs)
+            await platform.delay(timeoutMs)
             return
         }
-        await Promise.race([delay(timeoutMs), cancel])
+        await Promise.race([platform.delay(timeoutMs), cancel])
     }
 
-    public async waitForDeviceApproval(channels: DeviceApprovalChannel[], isCloud: boolean): Promise<boolean> {
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        })
+    public async waitForDeviceApproval(channels: DeviceApprovalChannel[], _isCloud: boolean): Promise<boolean> {
+        const rl = getSdkPlatform().createReadline(
+            typeof process !== 'undefined' ? process.stdin : undefined,
+            typeof process !== 'undefined' ? process.stdout : undefined
+        )
 
         try {
             logger.info('\n--- Device Approval Required ---')
@@ -106,10 +106,10 @@ export class ConsoleAuthUI implements AuthUI3 {
     }
 
     public async waitForTwoFactorCode(channels: TwoFactorChannelData[], cancel: Promise<void>): Promise<boolean> {
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        })
+        const rl = getSdkPlatform().createReadline(
+            typeof process !== 'undefined' ? process.stdin : undefined,
+            typeof process !== 'undefined' ? process.stdout : undefined
+        )
 
         try {
             logger.info('\n--- Two-Factor Authentication Required ---')
@@ -155,10 +155,10 @@ export class ConsoleAuthUI implements AuthUI3 {
     }
 
     public async getPassword(isAlternate: boolean): Promise<string> {
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        })
+        const rl = getSdkPlatform().createReadline(
+            typeof process !== 'undefined' ? process.stdin : undefined,
+            typeof process !== 'undefined' ? process.stdout : undefined
+        )
         try {
             const label = isAlternate ? 'alternate master password' : 'master password'
             return (await rl.question(`Enter your ${label}: `)).trim()

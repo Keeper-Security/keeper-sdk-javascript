@@ -8,10 +8,13 @@
         "directory": "KeeperSdk"
     },
     "license": "ISC",
-    "main": "src/index.ts",
+    "main": "dist/index.js",
+    "browser": "dist/browser.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist node_modules",
+        "rebuild": "npm run clean && npm install && npm run build",
         "link-local": "npm link ../keeperapi",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
@@ -23,6 +26,7 @@
     "dependencies": {
         "@keeper-security/keeperapi": "17.2.6",
         "ts-node": "^10.7.0",
+        "asmcrypto.js": "^2.3.2",
         "typescript": "^4.6.3"
     },
     "devDependencies": {

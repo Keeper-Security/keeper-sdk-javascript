@@ -1,6 +1,3 @@
-import fs from 'fs/promises'
-import path from 'path'
-import os from 'os'
 import {
     normal64Bytes,
     type DeviceConfig,
@@ -8,37 +5,24 @@ import {
     type KeeperHost,
     type SessionParams,
 } from '@keeper-security/keeperapi'
-import { logger, extractErrorMessage, SdkDefaults } from '../utils'
+import { getSdkPlatform } from '../platform'
+import { logger, extractErrorMessage } from '../utils'
 import type { Nullable } from '../utils'
+import type {
+    ConfigLoader,
+    KeeperJsonConfig,
+    ConfigurationServerConfig,
+    ConfigurationUser,
+} from './config'
+import { isValidKeeperConfig } from './config'
 
-export type ConfigurationUser = {
-    user?: string
-    server?: string
-    last_device?: { device_token?: string }
-}
-
-export type ConfigurationServerConfig = {
-    server?: string
-    clone_code?: string
-}
-
-export type ConfigurationDeviceConfig = {
-    device_token?: string
-    private_key?: string
-    server_info?: Array<ConfigurationServerConfig>
-}
-
-export type KeeperJsonConfig = {
-    last_login?: string
-    last_server?: string
-    user?: string
-    server?: string
-    device_token?: string
-    private_key?: string
-    clone_code?: string
-    users?: Array<ConfigurationUser>
-    devices?: Array<ConfigurationDeviceConfig>
-}
+export type {
+    KeeperJsonConfig,
+    ConfigLoader,
+    ConfigurationUser,
+    ConfigurationServerConfig,
+    ConfigurationDeviceConfig,
+} from './config'
 
 type ResolvedDevice = {
     deviceToken: Uint8Array
@@ -49,41 +33,6 @@ type ResolvedDevice = {
 type DeviceCacheEntry = {
     username: string
     device: Nullable<ResolvedDevice>
-}
-
-export interface ConfigLoader {
-    load(): Promise<KeeperJsonConfig>
-    save(config: KeeperJsonConfig): Promise<void>
-    readonly configDir: string
-}
-
-export class FileConfigLoader implements ConfigLoader {
-    public readonly configDir: string
-
-    constructor(configDir?: string) {
-        this.configDir = configDir || path.join(os.homedir(), SdkDefaults.CONFIG_DIR)
-    }
-
-    async load(): Promise<KeeperJsonConfig> {
-        const configPath = path.join(this.configDir, 'config.json')
-        try {
-            const content = await fs.readFile(configPath, 'utf-8')
-            const parsed: unknown = JSON.parse(content)
-            if (SessionManager.isValidKeeperConfig(parsed)) {
-                return parsed
-            }
-        } catch (err) {
-            logger.debug('Failed to load keeper config:', extractErrorMessage(err))
-        }
-        return {}
-    }
-
-    async save(config: KeeperJsonConfig): Promise<void> {
-        const configPath = path.join(this.configDir, 'config.json')
-        await fs.writeFile(configPath, JSON.stringify(config, null, 2), {
-            mode: 0o600,
-        })
-    }
 }
 
 export class SessionManager implements SessionStorage {
@@ -98,8 +47,10 @@ export class SessionManager implements SessionStorage {
     constructor(configDir?: string)
     constructor(loader: ConfigLoader)
     constructor(configDirOrLoader?: string | ConfigLoader) {
-        if (typeof configDirOrLoader === 'string' || configDirOrLoader === undefined) {
-            this.configLoader = new FileConfigLoader(configDirOrLoader as string | undefined)
+        if (typeof configDirOrLoader === 'string') {
+            this.configLoader = getSdkPlatform().createFileConfigLoader(configDirOrLoader)
+        } else if (configDirOrLoader === undefined) {
+            this.configLoader = getSdkPlatform().createFileConfigLoader()
         } else {
             this.configLoader = configDirOrLoader
         }
@@ -187,7 +138,7 @@ export class SessionManager implements SessionStorage {
             )
             if (user?.last_device?.device_token) {
                 const device = (parsed.devices || []).find(
-                    (configDevice) => configDevice.device_token === user.last_device.device_token
+                    (configDevice) => configDevice.device_token === user.last_device!.device_token
                 )
                 if (device?.server_info) {
                     const serverInfo = device.server_info.find((entry) => entry.server === host)
@@ -284,10 +235,6 @@ export class SessionManager implements SessionStorage {
     }
 
     public static isValidKeeperConfig(value: unknown): value is KeeperJsonConfig {
-        if (typeof value !== 'object' || value === null) return false
-        const obj = value as Record<string, unknown>
-        if (obj.users !== undefined && !Array.isArray(obj.users)) return false
-        if (obj.devices !== undefined && !Array.isArray(obj.devices)) return false
-        return true
+        return isValidKeeperConfig(value)
     }
 }

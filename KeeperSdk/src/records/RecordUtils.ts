@@ -209,14 +209,37 @@ export function getRecordUrl(record: DRecord): string | undefined {
     return getRecordSummary(record).url
 }
 
+export function getRecordDescription(record: DRecord): string {
+    if (record.version === 6) return 'PAM Configuration'
+
+    const summary = getRecordSummary(record)
+    const parts: string[] = []
+    if (summary.login) parts.push(summary.login)
+    if (summary.url) parts.push(summary.url)
+    return parts.length > 0 ? parts.join(' @ ') : ''
+}
+
+export function getRecordCategory(record: DRecord): 'Classic' | 'Nested' {
+    return record.isKeeperDriveData ? 'Nested' : 'Classic'
+}
+
 const wordCache = new WeakMap<DRecord, string[]>()
 
 export function searchRecords(records: DRecord[], criteria: string): DRecord[] {
-    if (!criteria.trim()) return records
+    const trimmed = criteria.trim()
+    if (!trimmed) return records
 
-    const searchWords = criteria.toLowerCase().split(/\s+/)
+    const searchWords = trimmed
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length > 0)
 
     return records.filter((record) => {
+        const uidLower = record.uid?.toLowerCase() ?? ''
+        if (uidLower && searchWords.every((sw) => uidLower.includes(sw))) {
+            return true
+        }
+
         let words = wordCache.get(record)
         if (!words) {
             words = collectRecordWords(record)
@@ -246,11 +269,67 @@ function collectRecordWords(record: DRecord): string[] {
         }
     }
 
-    words.push(record.uid)
+    words.push(record.uid.toLowerCase())
     return words
 }
 
-export function formatRecord(record: DRecord, showDetails = false): string {
+export type FormatRecordOptions = {
+    showDetails?: boolean
+    unmask?: boolean
+}
+
+function resolveFormatRecordOptions(showDetailsOrOptions?: boolean | FormatRecordOptions): {
+    showDetails: boolean
+    unmask: boolean
+} {
+    if (typeof showDetailsOrOptions === 'boolean') {
+        return { showDetails: showDetailsOrOptions, unmask: false }
+    }
+    return {
+        showDetails: showDetailsOrOptions?.showDetails ?? false,
+        unmask: showDetailsOrOptions?.unmask ?? false,
+    }
+}
+
+function formatFieldValue(field: RecordField, unmask: boolean): string {
+    const isTotp = TOTP_FIELD_TYPES.has(field.type)
+    const isSensitive = field.type === FieldType.Password || isTotp || field.privacyScreen === true
+    if (!isSensitive || unmask) {
+        return field.value.map((v) => (typeof v === 'string' ? v : JSON.stringify(v))).join(', ')
+    }
+    return MASKED_VALUE
+}
+
+export function formatRecordFields(record: DRecord, unmask: boolean): { name: string; value: unknown }[] {
+    const summary = getRecordSummary(record)
+    const fields: { name: string; value: unknown }[] = [
+        { name: 'title', value: getRecordTitle(record) },
+        { name: 'record_uid', value: record.uid },
+        { name: 'version', value: record.version },
+        { name: 'record_type', value: getRecordType(record) },
+    ]
+    if (summary.login) fields.push({ name: 'login', value: summary.login })
+    if (summary.password) {
+        fields.push({
+            name: 'password',
+            value: unmask ? summary.password : MASKED_VALUE,
+        })
+    }
+    if (summary.url) fields.push({ name: 'login_url', value: summary.url })
+    for (const field of summary.fields) {
+        if (field.type === FieldType.Login || field.type === FieldType.Url) continue
+        const label = TOTP_FIELD_TYPES.has(field.type)
+            ? 'TOTP URL'
+            : (field.label || field.type).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        fields.push({ name: label, value: formatFieldValue(field, unmask) })
+    }
+    const notes = record.version <= RecordVersion.Legacy ? record.data?.notes : undefined
+    if (notes) fields.push({ name: 'Notes', value: notes })
+    return fields
+}
+
+export function formatRecord(record: DRecord, showDetailsOrOptions?: boolean | FormatRecordOptions): string {
+    const { showDetails, unmask } = resolveFormatRecordOptions(showDetailsOrOptions)
     const summary = getRecordSummary(record)
     const lines: string[] = [
         RECORD_SEPARATOR,
@@ -261,17 +340,23 @@ export function formatRecord(record: DRecord, showDetails = false): string {
 
     if (summary.login) lines.push(`Username: ${summary.login}`)
     if (summary.url) lines.push(`URL: ${summary.url}`)
+    if (summary.password) {
+        lines.push(`Password: ${unmask ? summary.password : MASKED_VALUE}`)
+    }
 
     if (showDetails) {
         for (const field of summary.fields) {
             if (field.type === FieldType.Login || field.type === FieldType.Url) continue
+            if (field.type === FieldType.Password) continue
             const isTotp = TOTP_FIELD_TYPES.has(field.type)
-            const isSensitive = field.type === FieldType.Password || isTotp
             const label = isTotp ? 'TOTP URL' : field.label || field.type
-            lines.push(`${label}: ${isSensitive ? MASKED_VALUE : field.value.join(', ')}`)
+            lines.push(`${label}: ${formatFieldValue(field, unmask)}`)
         }
 
         const totpUrl = getRecordTotpUrl(record)
+        if (unmask && totpUrl) {
+            lines.push(`TOTP URL: ${totpUrl}`)
+        }
         const code = totpUrl ? getTotpCode(totpUrl) : null
         if (code) {
             lines.push(`Two Factor Code: ${code.code}    valid for ${code.secondsRemaining} sec`)

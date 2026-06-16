@@ -12,10 +12,14 @@ export const TOKEN_SEPARATOR_PATTERN = /[\s\-_.,;:!?@#$%^&*()[\]{}|\\/<>]+/
 /** Characters that must be escaped when embedding user input into a RegExp. */
 export const REGEX_ESCAPE_PATTERN = /[.+^${}()|[\]\\]/g
 
-const MAX_EMAIL_LENGTH = 254
+/** Sequence of one or more `=` characters at end of string (Base32 padding). */
+export const TRAILING_EQUALS_PATTERN = /=+$/g
+
+/** Any whitespace run. */
+export const WHITESPACE_PATTERN = /\s+/g
 
 export function isValidEmail(value: string): boolean {
-    return value.length <= MAX_EMAIL_LENGTH && EMAIL_PATTERN.test(value)
+    return EMAIL_PATTERN.test(value)
 }
 
 export function escapeRegExp(value: string): string {

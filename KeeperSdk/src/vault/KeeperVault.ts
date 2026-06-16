@@ -8,11 +8,16 @@ import {
     DTeam,
     DUserFolder,
     Authentication,
+    normal64Bytes,
 } from '@keeper-security/keeperapi'
 import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { SessionManager } from '../auth/SessionManager'
-import { ConsoleAuthUI } from '../auth/ConsoleAuthUI'
+import { getSdkPlatform } from '../platform'
+import {
+    toSessionParams,
+    type SessionRestoreInput,
+} from '../auth/sessionRestore'
 import { searchRecords, formatRecord, getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
     addRecord as addRecordOp,
@@ -99,7 +104,15 @@ import type {
     TeamUserResult,
     FormattedTeamUserTable,
 } from '../users/userTypes'
-import { ConsoleLogger, LogLevel, KeeperSdkError, extractErrorMessage, SdkDefaults, ResultCodes } from '../utils'
+import {
+    ConsoleLogger,
+    LogLevel,
+    KeeperSdkError,
+    extractErrorMessage,
+    extractResultCode,
+    SdkDefaults,
+    ResultCodes,
+} from '../utils'
 import type { ILogger } from '../utils'
 
 enum VaultStatus {
@@ -157,7 +170,7 @@ export class KeeperVault {
         this.log = new ConsoleLogger(this.config.logLevel)
         this.storage = config?.storage || new InMemoryStorage()
         this.sessionManager = config?.sessionStorage || new SessionManager(this.config.configDir || undefined)
-        this.authUI = config?.authUI || new ConsoleAuthUI()
+        this.authUI = config?.authUI ?? getSdkPlatform().createAuthUI(this.config.useConsoleAuth)
 
         const authProvider = () => this.getAuthOrThrow()
         this.folderManager = new FolderManager(this.storage, this.folderSession, authProvider)
@@ -265,8 +278,73 @@ export class KeeperVault {
         this.log.info(`Logged in as ${username} (via session token)`)
     }
 
+    /**
+     * Persist device token and private key for this vault host in session storage so
+     * {@link loginWithSessionToken} and {@link resumeSession} work without a prior password login on this machine.
+     * Values use the same base64 / base64url decoding as {@link SessionManager} (`normal64Bytes`).
+     */
+    public async registerDevice(
+        deviceToken: string,
+        privateKey: string,
+        options?: { username?: string }
+    ): Promise<void> {
+        const host = this.config.host
+        const save = this.sessionManager.createOnDeviceConfig(host)
+        await save({
+            deviceToken: normal64Bytes(deviceToken),
+            privateKey: normal64Bytes(privateKey),
+        })
+        if (options?.username) {
+            this.sessionManager.setLastUsername(options.username)
+        }
+        this.log.info(`Device credentials stored for host ${host}`)
+    }
+
     public getSessionToken(): string | undefined {
         return this.auth?.sessionToken || undefined
+    }
+
+    /**
+     * Resume a session from extension-exported {@link SessionRestoreInput}.
+     * Verifies the token with a lightweight server call so an expired session
+     * fails here, not later from `sync()`.
+     */
+    public async restoreSession(input: SessionRestoreInput): Promise<void> {
+        const params = toSessionParams(input)
+        await this.sessionManager.saveSessionParameters(params)
+        this.sessionManager.setLastUsername(params.username)
+
+        this.auth = await this.createAuth()
+        await this.auth.continueSession()
+
+        if (!this.auth.sessionToken) {
+            throw new KeeperSdkError(
+                'Session restore failed — session token may be expired or invalid.',
+                ResultCodes.SESSION_TOKEN_EXPIRED
+            )
+        }
+
+        try {
+            await this.auth.loadAccountSummary()
+        } catch (err) {
+            const code = extractResultCode(err)
+            const msg = extractErrorMessage(err)
+            this.disconnect()
+            const isExpired = code === ResultCodes.SESSION_TOKEN_EXPIRED
+            throw new KeeperSdkError(
+                isExpired
+                    ? `Session token rejected by server (${code}): ${msg}. Re-export session JSON and try again.`
+                    : `Session restore failed: ${msg}`,
+                code ?? ResultCodes.SESSION_TOKEN_EXPIRED
+            )
+        }
+
+        this.synced = false
+        this.log.info(`Session restored for ${params.username}`)
+    }
+
+    public async getAccountUsername(): Promise<string | undefined> {
+        return this.sessionManager.getLastUsername()
     }
 
     public async resumeSession(): Promise<void> {
@@ -317,14 +395,22 @@ export class KeeperVault {
     public async sync(): Promise<SyncResult> {
         const auth = this.getAuthOrThrow()
 
-        const result = await syncDown({
-            auth,
-            storage: this.storage,
-            logFormat: this.config.logFormat,
-        })
-
-        this.synced = true
-        return result
+        try{
+            const result = await syncDown({
+                auth,
+                storage: this.storage,
+                logFormat: this.config.logFormat,
+            })
+            if (result.error) {
+                this.log.error('Sync error:', result.error)
+                throw new KeeperSdkError(`Sync failed: ${result.error}`, ResultCodes.SYNC_FAILED)
+            }
+            this.synced = true
+            return result
+        }catch(e) {
+            this.log.error('Sync failed:', extractErrorMessage(e))
+            throw e
+        }
     }
 
     public async batch(fn: () => Promise<void>): Promise<void> {
@@ -356,7 +442,10 @@ export class KeeperVault {
     }
 
     public getRecordByUid(uid: string): DRecord | undefined {
-        return this.storage.getByUid<DRecord>(VaultObjectKind.Record, uid)
+        const direct = this.storage.getByUid<DRecord>(VaultObjectKind.Record, uid)
+        if (direct) return direct
+        const lower = uid.toLowerCase()
+        return this.getRecords().find((record) => record.uid?.toLowerCase() === lower)
     }
 
     public findRecord(uidOrTitle: string): DRecord | undefined {

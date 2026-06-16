@@ -1,12 +1,13 @@
+import { connectSdkPlatform } from './platform'
+import { nodeSdkPlatform } from './platform/node/platform'
+
+connectSdkPlatform(nodeSdkPlatform)
+
+export * from './api'
+
+/** Node.js Commander / CLI helpers (readline, ~/.keeper config). */
 export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
-export { SessionManager, FileConfigLoader } from './auth/SessionManager'
-export type {
-    KeeperJsonConfig,
-    ConfigLoader,
-    ConfigurationUser,
-    ConfigurationServerConfig,
-    ConfigurationDeviceConfig,
-} from './auth/SessionManager'
+export { FileConfigLoader } from './auth/node/FileConfigLoader'
 export { login, cleanup, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
