@@ -50,18 +50,22 @@ function longToNumber(value: number | { toNumber: () => number } | null | undefi
     return typeof value === 'number' ? value : value.toNumber()
 }
 
+function formatNsfFieldParts(values: unknown[]): string[] {
+    return values
+        .filter((value) => value != null && value !== '')
+        .map(formatNsfFieldValue)
+        .filter((part) => part.length > 0)
+}
+
 function formatNsfFieldValue(value: unknown): string {
     if (value == null || value === '') return ''
     if (typeof value === 'string') return value
     if (typeof value === 'number' || typeof value === 'boolean') return String(value)
     if (Array.isArray(value)) {
-        return value.map(formatNsfFieldValue).filter((part) => part.length > 0).join(', ')
+        return formatNsfFieldParts(value).join(', ')
     }
     if (typeof value === 'object') {
-        const parts = Object.values(value as Record<string, unknown>)
-            .map(formatNsfFieldValue)
-            .filter((part) => part.length > 0)
-        return parts.join(', ')
+        return formatNsfFieldParts(Object.values(value as Record<string, unknown>)).join(', ')
     }
     return String(value)
 }
@@ -234,10 +238,7 @@ function buildRecordFields(record: DRecord, unmask: boolean): NsfRecordView['fie
         .filter((field) => !NSF_TOP_LEVEL_FIELD_TYPES.has(field.type))
         .map((field) => {
             const rawValues = Array.isArray(field.value) ? field.value : [field.value]
-            const displayValue = rawValues
-                .map((value) => formatNsfFieldValue(value))
-                .filter((value) => value.length > 0)
-                .join(', ')
+            const displayValue = formatNsfFieldParts(rawValues).join(', ')
             return { field, displayValue }
         })
         .filter(({ displayValue }) => displayValue.length > 0)
