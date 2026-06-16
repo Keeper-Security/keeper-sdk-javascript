@@ -27,7 +27,6 @@ const rsaAlgorithmName: string = 'RSASSA-PKCS1-v1_5'
 const CBC_IV_LENGTH = 16
 const GCM_IV_LENGTH = 12
 const ECC_PUB_KEY_LENGTH = 65
-let socket: WebSocket | null = null
 let workerPool: CryptoWorkerPool | null = null
 
 const base64ToBytes = (data: string): Uint8Array => {
@@ -1090,33 +1089,51 @@ export const browserPlatform: Platform = class {
         }
     }
 
-    static createWebsocket(url: string): SocketProxy {
-        socket = new WebSocket(url)
+    static createWebsocket(url: string, sendHeartbeat: boolean = true): SocketProxy {
+        // Use a per-socket local reference. A module-level variable would be
+        // overwritten when a second socket is opened (e.g. push + router),
+        // routing the first socket's send/close to the wrong connection.
+        const ws = new WebSocket(url)
         let createdSocket
+        // App-level keepalive for the push socket. The router socket relies on the
+        // protocol-level ping/pong handled by the server/browser and treats every
+        // binary frame as a RouterControllerMessage, so it must NOT receive this.
+        if (sendHeartbeat) {
+            const heartbeat = setInterval(() => {
+                if (ws.readyState !== WebSocket.OPEN) return
+                ws.send(OPCODE_PING)
+            }, 10000)
+            ws.addEventListener('close', () => clearInterval(heartbeat))
+        }
         return (createdSocket = {
             onOpen: (callback: () => void) => {
-                socket!.onopen = (e: Event) => {
+                ws.onopen = (e: Event) => {
                     callback()
                 }
             },
             close: () => {
-                socket!.close()
+                ws.close()
             },
             onClose: (callback: (e: Event) => void) => {
-                socket!.addEventListener('close', callback)
+                ws.addEventListener('close', callback)
             },
             onError: (callback: (e: Event) => void) => {
-                socket!.addEventListener('error', callback)
+                ws.addEventListener('error', callback)
             },
             onMessage: (callback: (e: Uint8Array) => void) => {
-                socket!.onmessage = async (e: MessageEvent) => {
-                    const pmArrBuff = await e.data.arrayBuffer()
-                    const pmUint8Buff = new Uint8Array(pmArrBuff)
+                ws.onmessage = async (e: MessageEvent) => {
+                    // The push socket delivers binary (Blob/ArrayBuffer) frames; the
+                    // router socket delivers JSON text frames. Text frames arrive as a
+                    // string with no `arrayBuffer()`, so encode them to bytes here.
+                    const pmUint8Buff =
+                        typeof e.data === 'string'
+                            ? new TextEncoder().encode(e.data)
+                            : new Uint8Array(await e.data.arrayBuffer())
                     callback(pmUint8Buff)
                 }
             },
             send: (message: any) => {
-                socketSendMessage(message, socket!, createdSocket)
+                socketSendMessage(message, ws, createdSocket)
             },
             messageQueue: [],
         })
@@ -1150,12 +1167,6 @@ function bytesToHex(data: Uint8Array): string {
 }
 
 const OPCODE_PING = new Uint8Array([0x9])
-
-const heartbeat = setInterval(() => {
-    if (!socket) return
-    if (socket.readyState !== WebSocket.OPEN) return
-    socket.send(OPCODE_PING)
-}, 10000)
 
 let keyBytesCache: Record<string, Uint8Array> = {}
 
