@@ -21,7 +21,8 @@ enum TreeItemKind {
 }
 
 const TREE_TAG = {
-    sharedFolder: '[SHARED]',
+    folder: '[folder]',
+    sharedFolder: '[shared folder]',
     record: '[record]',
 } as const
 
@@ -136,16 +137,18 @@ async function collectSharedFolderPermissions(
 }
 
 function folderTreeTag(
-    _userFolder: DUserFolder | undefined,
+    userFolder: DUserFolder | undefined,
     sharedFolder: DSharedFolder | undefined,
     _sharedFolderFolder: DSharedFolderFolder | undefined
 ): string {
-    return sharedFolder ? TREE_TAG.sharedFolder : ''
+    if (sharedFolder) return TREE_TAG.sharedFolder
+    if (userFolder) return TREE_TAG.folder
+    return TREE_TAG.folder
 }
 
 function formatTreeNodeName(baseName: string, tag: string, verbose: boolean, uid?: string): string {
     const name = verbose && uid ? `${baseName} (${uid})` : baseName
-    return tag ? `${name} ${tag}` : name
+    return `${name} ${tag}`
 }
 
 function formatTreeRecordName(title: string, verbose: boolean, recordUid?: string): string {

@@ -9,6 +9,7 @@ const UserTypeValues = {
     onsiteSso: 'onsite_sso' as UserType,
 }
 
+/** String form of {@link SessionParams} as exported from extension / vault storage. */
 export type SessionRestoreInput = {
     accountUid: string
     clientKey: string
@@ -99,6 +100,7 @@ export function validateSessionRestoreInput(input: Partial<SessionRestoreInput>)
     return input as SessionRestoreInput
 }
 
+/** Build keeperapi {@link SessionParams} from extension-style strings. */
 export function toSessionParams(input: SessionRestoreInput): SessionParams {
     const enterprisePublicKey = decodeBytes('enterprisePublicKey', input.enterprisePublicKey, false)
     const enterpriseEccPublicKey = decodeBytes('enterpriseEccPublicKey', input.enterpriseEccPublicKey, false)
@@ -138,6 +140,7 @@ function looksLikeInlineJson(text: string): boolean {
     return t.startsWith('{') || t.startsWith('[') || t.startsWith('"')
 }
 
+/** File path / URL — not inline JSON (avoid JSON.parse on `/path/to/conf.json`). */
 function looksLikeFilePath(text: string): boolean {
     const t = text.trim()
     if (/^https?:\/\//i.test(t)) return true
@@ -147,6 +150,10 @@ function looksLikeFilePath(text: string): boolean {
     return false
 }
 
+/**
+ * Parse session JSON. One JSON.parse when the payload is an object; two when the CLI
+ * value is a JSON-encoded string (e.g. JSON.stringify(conf) wrapped in quotes).
+ */
 export function sessionRestoreFromJson(json: string): SessionRestoreInput {
     const text = json.trim().replace(/^\uFEFF/, '')
     let parsed: unknown
@@ -170,6 +177,7 @@ export function sessionRestoreFromJson(json: string): SessionRestoreInput {
     return validateSessionRestoreInput(parsed as Partial<SessionRestoreInput>)
 }
 
+/** Parse `--from-json` payload, or read a file when the value is not JSON. */
 export async function resolveSessionRestorePayload(
     raw: string,
     readFile?: (path: string) => Promise<string>
