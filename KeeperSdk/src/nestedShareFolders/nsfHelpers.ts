@@ -5,7 +5,6 @@ import type {
     DKdFolderAccess,
     DKdFolderRecord,
     DKdRecordAccess,
-    Dependency,
 } from '@keeper-security/keeperapi'
 import { Folder, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
@@ -232,13 +231,9 @@ export function getFolderDisplayName(storage: InMemoryStorage, folderUid: string
 }
 
 export function findRecordFolderLocation(storage: InMemoryStorage, recordUid: string): string {
-    for (const folder of getKeeperDriveFolders(storage)) {
-        const children = storage.getDependenciesSync(folder.uid)
-        if (children?.some((child: Dependency) => child.uid === recordUid && child.kind === 'record')) {
-            return isRootFolderUid(folder.uid) ? 'root' : folder.data.name || folder.uid
-        }
-    }
-    return 'root'
+    const folderUids = findNestedShareFoldersForRecord(storage, recordUid)
+    if (folderUids.length === 0) return 'root'
+    return getFolderDisplayName(storage, folderUids[0])
 }
 
 export function buildFolderPath(storage: InMemoryStorage, folderUid: string): string {
@@ -260,13 +255,11 @@ export function buildFolderPath(storage: InMemoryStorage, folderUid: string): st
 }
 
 export function collectRecordsInFolder(storage: InMemoryStorage, folderUid: string): DRecord[] {
-    const children = storage.getDependenciesSync(folderUid)
-    if (!children?.length) return []
-
+    const normalizedFolderUid = normalizeParentUid(folderUid)
     const records: DRecord[] = []
-    for (const child of children) {
-        if (child.kind !== 'record') continue
-        const record = getKeeperDriveRecord(storage, child.uid)
+    for (const entry of storage.getAll<DKdFolderRecord>(KeeperDriveKind.FolderRecord)) {
+        if (normalizeParentUid(entry.folderUid) !== normalizedFolderUid) continue
+        const record = getKeeperDriveRecord(storage, entry.recordUid)
         if (record) records.push(record)
     }
     return records

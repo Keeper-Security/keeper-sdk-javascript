@@ -74,10 +74,6 @@ export class InMemoryStorage implements VaultStorage {
         return this.dependenciesByParent.get(uid)
     }
 
-    public getDependenciesSync(uid: string): Dependency[] | undefined {
-        return this.dependenciesByParent.get(uid)
-    }
-
     public async addDependencies(dependencies: Dependencies): Promise<void> {
         for (const [parentUid, children] of Object.entries(dependencies)) {
             if (!this.dependenciesByParent.has(parentUid)) {
