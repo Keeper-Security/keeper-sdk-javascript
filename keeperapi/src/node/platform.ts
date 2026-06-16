@@ -466,7 +466,8 @@ export const nodePlatform: Platform = class {
         })
     }
 
-    static createWebsocket(url: string): SocketProxy {
+    static createWebsocket(url: string, _sendHeartbeat: boolean = true): SocketProxy {
+        // The node client has no app-level heartbeat, so `sendHeartbeat` is unused here.
         const socket = new WebSocket.Client(url)
         let createdSocket
         return (createdSocket = {
