@@ -37,8 +37,8 @@ export const NSF_RECORD_DESCRIPTION_MAX_LENGTH = 120
 export const NSF_MASKED_VALUE = '********'
 export const NSF_FOLDER_LABEL_WIDTH = 22
 export const NSF_RECORD_LABEL_WIDTH = 17
-export const NSF_FOLDER_USER_PERMISSIONS_HEADING = '         User Permissions:'
-export const NSF_FOLDER_SHARE_ADMINS_HEADING = '     Share Administrators:'
+export const NSF_FOLDER_USER_PERMISSIONS_HEADING = 'User Permissions:'
+export const NSF_FOLDER_SHARE_ADMINS_HEADING = 'Share Administrators:'
 export const NSF_RECORD_USER_PERMISSIONS_HEADING = 'User Permissions:'
 
 export const NSF_LIST_TABLE_HEADERS = ['#', 'Item Type', 'UID', 'Title', 'Type', 'Description'] as const
