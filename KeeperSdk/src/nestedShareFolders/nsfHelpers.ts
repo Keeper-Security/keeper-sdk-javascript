@@ -148,35 +148,141 @@ export function findNestedShareFoldersForRecord(storage: InMemoryStorage, record
         .map((entry) => entry.folderUid)
 }
 
+function toRequiredAccountUidStr(accountUid: Uint8Array): string {
+    if (!accountUid.length) {
+        throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
+    }
+    return webSafe64FromBytes(accountUid)
+}
+
+function isCurrentUserRecordAccess(
+    storage: InMemoryStorage,
+    entry: DKdRecordAccess,
+    username: string,
+    accountUidStr: string
+): boolean {
+    return (
+        (entry.accessType === Folder.AccessType.AT_USER && entry.accessTypeUid === accountUidStr) ||
+        (username.length > 0 &&
+            storage.getAll<DUser>('user').some(
+                (user) =>
+                    user.username === username &&
+                    webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
+            ))
+    )
+}
+
+function isCurrentUserFolderAccess(
+    storage: InMemoryStorage,
+    entry: DKdFolderAccess,
+    username: string,
+    accountUidStr: string
+): boolean {
+    if (
+        entry.accessType !== Folder.AccessType.AT_USER &&
+        entry.accessType !== Folder.AccessType.AT_OWNER
+    ) {
+        return false
+    }
+    return (
+        entry.accessTypeUid === accountUidStr ||
+        (username.length > 0 &&
+            storage.getAll<DUser>('user').some(
+                (user) =>
+                    user.username === username &&
+                    webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
+            ))
+    )
+}
+
+function isFolderOwnerAccount(storage: InMemoryStorage, folderUid: string, accountUidStr: string): boolean {
+    if (isRootFolderUid(folderUid)) return true
+    const folder = getKeeperDriveFolder(storage, folderUid)
+    return folder?.ownerInfo?.accountUid === accountUidStr
+}
+
+type FolderPermissionFlag = 'canRemove' | 'canDelete'
+
+function hasFolderPermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    username: string,
+    accountUid: Uint8Array,
+    permission: FolderPermissionFlag
+): boolean {
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    if (isFolderOwnerAccount(storage, folderUid, accountUidStr)) return true
+
+    for (const entry of getFolderAccessEntries(storage, folderUid)) {
+        if (!isCurrentUserFolderAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.permission?.[permission]) return true
+    }
+    return false
+}
+
+function getRecordAccessEntries(storage: InMemoryStorage, recordUid: string): DKdRecordAccess[] {
+    return storage
+        .getAll<DKdRecordAccess>(KeeperDriveKind.RecordAccess)
+        .filter((entry) => entry.recordUid === recordUid)
+}
+
+function canRecordBeDeleted(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array,
+    folderUid?: string
+): boolean {
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getRecordAccessEntries(storage, recordUid)
+    if (entries.length === 0) return true
+
+    for (const entry of entries) {
+        if (!isCurrentUserRecordAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.owner || entry.canDelete) return true
+        if (
+            folderUid &&
+            !isRootFolderUid(folderUid) &&
+            hasFolderPermission(storage, folderUid, username, accountUid, 'canDelete')
+        ) {
+            return true
+        }
+        return false
+    }
+
+    return (
+        !!folderUid &&
+        !isRootFolderUid(folderUid) &&
+        hasFolderPermission(storage, folderUid, username, accountUid, 'canDelete')
+    )
+}
+
+export function checkFolderRemovePermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (hasFolderPermission(storage, folderUid, username, accountUid, 'canRemove')) return
+    // Folder-trash and unlink are less destructive than owner-trash. Allow when the user
+    // can permanently delete the record, or owns it without explicit record-access entries
+    // (common for records in a personal drive root with no folder-access sync data).
+    if (canRecordBeDeleted(storage, recordUid, username, accountUid, folderUid)) return
+    throw new KeeperSdkError(
+        'You do not have permission to remove records from this folder.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
 export function checkRecordDeletePermission(
     storage: InMemoryStorage,
     recordUid: string,
     username: string,
-    accountUid?: Uint8Array
+    accountUid: Uint8Array,
+    folderUid?: string
 ): void {
-    const entries = storage
-        .getAll<DKdRecordAccess>(KeeperDriveKind.RecordAccess)
-        .filter((entry) => entry.recordUid === recordUid)
-    if (entries.length === 0) return
-
-    const accountUidStr = accountUid?.length ? webSafe64FromBytes(accountUid) : ''
-    for (const entry of entries) {
-        const isCurrentUser =
-            (entry.accessType === Folder.AccessType.AT_USER &&
-                entry.accessTypeUid === accountUidStr) ||
-            (username &&
-                storage.getAll<DUser>('user').some(
-                    (user) =>
-                        user.username === username &&
-                        webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
-                ))
-        if (!isCurrentUser) continue
-        if (entry.owner || entry.canDelete) return
-        throw new KeeperSdkError(
-            'You do not have permission to delete this record.',
-            ResultCodes.NSF_PERMISSION_DENIED
-        )
-    }
+    if (canRecordBeDeleted(storage, recordUid, username, accountUid, folderUid)) return
     throw new KeeperSdkError(
         'You do not have permission to delete this record.',
         ResultCodes.NSF_PERMISSION_DENIED
@@ -313,7 +419,8 @@ export function isFolderShareAdministrator(entry: DKdFolderAccess): boolean {
     return (
         entry.accessType === Folder.AccessType.AT_OWNER ||
         entry.accessRoleType === Folder.AccessRoleType.MANAGER ||
-        entry.accessRoleType === Folder.AccessRoleType.CONTENT_SHARE_MANAGER
+        entry.accessRoleType === Folder.AccessRoleType.CONTENT_SHARE_MANAGER ||
+        entry.accessRoleType === Folder.AccessRoleType.SHARED_MANAGER
     )
 }
 

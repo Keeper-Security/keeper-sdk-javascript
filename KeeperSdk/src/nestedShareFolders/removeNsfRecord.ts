@@ -3,9 +3,11 @@ import { folder, normal64Bytes, removeRecordMessage, webSafe64FromBytes } from '
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import {
+    checkFolderRemovePermission,
     checkRecordDeletePermission,
     ensureNestedShareRecord,
     findNestedShareFoldersForRecord,
+    isRootFolderUid,
     resolveNsfFolderIdentifier,
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
@@ -124,6 +126,11 @@ function buildRemovals(
         throw new KeeperSdkError(`Folder '${folderIdentifier}' not found`, ResultCodes.NSF_NOT_FOUND)
     }
 
+    const accountUid = auth.accountUid
+    if (!accountUid?.length) {
+        throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
+    }
+
     const removals: RemovalSpec[] = []
     for (const identifier of recordIdentifiers) {
         const recordUid = resolveNsfRecordIdentifier(storage, identifier)
@@ -131,7 +138,6 @@ function buildRemovals(
             throw new KeeperSdkError(`Record '${identifier}' not found`, ResultCodes.NSF_NOT_FOUND)
         }
         ensureNestedShareRecord(storage, recordUid, identifier)
-        checkRecordDeletePermission(storage, recordUid, auth.username, auth.accountUid)
 
         let ctxFolder = folderUid
         if (!ctxFolder) {
@@ -143,6 +149,18 @@ function buildRemovals(
                 )
             }
             ctxFolder = folders[0]
+        }
+
+        if (operation === NsfRemoveOperation.OwnerTrash) {
+            checkRecordDeletePermission(storage, recordUid, auth.username, accountUid, ctxFolder)
+        } else {
+            if (!ctxFolder || isRootFolderUid(ctxFolder)) {
+                throw new KeeperSdkError(
+                    `Folder context is required for '${operation}' operation.`,
+                    ResultCodes.NSF_FOLDER_REQUIRED
+                )
+            }
+            checkFolderRemovePermission(storage, ctxFolder, recordUid, auth.username, accountUid)
         }
 
         removals.push({

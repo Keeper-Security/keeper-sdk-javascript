@@ -20,6 +20,7 @@ export {
     resolveNsfRecordIdentifier,
     resolveNsfFolderIdentifier,
     findNestedShareFoldersForRecord,
+    checkFolderRemovePermission,
     checkRecordDeletePermission,
 } from './nsfHelpers'
 
