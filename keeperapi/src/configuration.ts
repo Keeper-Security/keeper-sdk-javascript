@@ -27,6 +27,10 @@ export interface ClientConfiguration {
     iterations?: number
     salt?: Uint8Array
     useHpkeForTransmissionKey?: boolean
+    // When true, the SDK also opens a WebSocket to the KRouter user socket
+    // (`wss://connect.<host>/api/user/client`) once a session token is available,
+    // in addition to the KeeperApp push socket. See `Auth.connectToRouter`.
+    connectToRouter?: boolean
 }
 export interface ClientConfigurationInternal extends ClientConfiguration {
     deviceConfig: DeviceConfig // v15+ device config

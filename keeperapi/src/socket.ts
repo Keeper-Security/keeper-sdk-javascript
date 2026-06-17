@@ -56,6 +56,9 @@ export class SocketListener {
     private onOpenListeners: Array<() => void>
     // The messageSessionUid
     private messageSessionUid?: Uint8Array
+    // Whether to send the app-level keepalive ping (push socket only; the router
+    // socket rejects arbitrary binary frames — see browser platform createWebsocket).
+    private sendHeartbeat: boolean
 
     private isConnected: boolean
     private reconnectTimeout?: ReturnType<typeof setTimeout>
@@ -65,11 +68,13 @@ export class SocketListener {
     constructor(
         url: string,
         messageSessionUid?: Uint8Array,
-        getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>
+        getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>,
+        sendHeartbeat: boolean = true
     ) {
         logger.debug('Connecting to ' + url)
 
         this.url = url
+        this.sendHeartbeat = sendHeartbeat
         this.closeListeners = []
         this.singleCloseListeners = []
         this.messageListeners = []
@@ -88,9 +93,9 @@ export class SocketListener {
     async createWebsocket(messageSessionUid?: Uint8Array) {
         if (this.getConnectionRequest && messageSessionUid) {
             const connectionRequest = await this.getConnectionRequest(messageSessionUid)
-            this.socket = platform.createWebsocket(`${this.url}/${connectionRequest}`)
+            this.socket = platform.createWebsocket(`${this.url}/${connectionRequest}`, this.sendHeartbeat)
         } else {
-            this.socket = platform.createWebsocket(this.url)
+            this.socket = platform.createWebsocket(this.url, this.sendHeartbeat)
         }
 
         this.socket!.onOpen(() => {
@@ -275,9 +280,10 @@ export class SocketListener {
 export async function createAsyncSocket(
     url: string,
     messageSessionUid?: Uint8Array,
-    getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>
+    getConnectionRequest?: (messageSessionUid: Uint8Array) => Promise<string>,
+    sendHeartbeat: boolean = true
 ): Promise<SocketListener | undefined> {
-    const socket = new SocketListener(url, messageSessionUid, getConnectionRequest)
+    const socket = new SocketListener(url, messageSessionUid, getConnectionRequest, sendHeartbeat)
     await socket.createWebsocket(messageSessionUid)
     return socket
 }
