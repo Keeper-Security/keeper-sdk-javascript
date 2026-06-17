@@ -54,3 +54,9 @@ export const NSF_LIST_DEFAULT_COLUMN_WIDTH = 40
 export const NSF_LIST_MIN_TRUNCATE_PREFIX = 3
 
 export const NSF_MAX_REMOVALS = 500
+export const NSF_MAX_FOLDER_REMOVALS = 100
+
+export const NSF_PATH_SENTINEL = '\x00'
+
+export const NSF_FOLDER_COLORS = ['none', 'red', 'orange', 'yellow', 'green', 'blue', 'gray'] as const
+export type NsfFolderColor = (typeof NSF_FOLDER_COLORS)[number]

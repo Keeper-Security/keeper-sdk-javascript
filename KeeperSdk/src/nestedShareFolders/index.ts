@@ -19,8 +19,13 @@ export {
     ensureNestedShareFolder,
     resolveNsfRecordIdentifier,
     resolveNsfFolderIdentifier,
+    resolveNsfFolderUidOrName,
     findNestedShareFoldersForRecord,
     checkRecordDeletePermission,
+    checkRecordEditPermission,
+    checkFolderDeletePermission,
+    parseNsfPath,
+    findExistingChildFolder,
 } from './nsfHelpers'
 
 export {
@@ -73,5 +78,43 @@ export type {
     NsfRemovePreviewItem,
     RemoveNsfRecordResult,
 } from './removeNsfRecord'
+
+export { mkdirNestedShareFolder } from './mkdirNsf'
+export type { MkdirNsfInput, MkdirNsfResult, NsfFolderColorInput } from './mkdirNsf'
+export { NSF_FOLDER_COLORS } from './nsfConstants'
+export type { NsfFolderColor } from './nsfConstants'
+
+export {
+    NsfRemoveFolderOperation,
+    removeNestedShareFolders,
+    formatRemoveNsfFolderPreview,
+} from './removeNsfFolder'
+export type {
+    NsfRemoveFolderOperationInput,
+    RemoveNsfFolderInput,
+    NsfRemoveFolderPreviewItem,
+    RemoveNsfFolderResult,
+} from './removeNsfFolder'
+
+export {
+    GetNsfRecordDetailsFormat,
+    getNestedShareRecordDetails,
+    formatNsfRecordDetailsTable,
+    formatNsfRecordDetailsOutput,
+} from './getNsfRecordDetails'
+export type {
+    GetNsfRecordDetailsFormatInput,
+    GetNsfRecordDetailsInput,
+    GetNsfRecordDetailsResult,
+    NsfRecordDetailsItem,
+} from './getNsfRecordDetails'
+
+export { updateNestedShareRecords } from './updateNsfRecord'
+export type {
+    UpdateNsfRecordInput,
+    UpdateNsfRecordResult,
+    UpdateNsfRecordResultItem,
+    UpdateNsfRecordFieldMap,
+} from './updateNsfRecord'
 
 export { NestedShareFolderManager } from './NestedShareFolderManager'

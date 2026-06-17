@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { Writer } from 'protobufjs'
+import { Reader, Writer } from 'protobufjs'
 import {
     AccountSummary,
     Authentication,
@@ -471,6 +471,85 @@ export const removeRecordMessage = (
         folder.v3.remove.RemoveRecordRequest,
         folder.v3.remove.RemoveResponse
     )
+
+export const removeFolderMessage = (
+    data: folder.v3.remove.IRemoveFolderRequest
+): RestMessage<folder.v3.remove.IRemoveFolderRequest, folder.v3.remove.IRemoveResponse> =>
+    createMessage(
+        data,
+        'vault/folders/v3/remove_folder',
+        folder.v3.remove.RemoveFolderRequest,
+        folder.v3.remove.RemoveResponse
+    )
+
+export interface IRecordDetailsDataRequest {
+    recordUids: Uint8Array[]
+    clientTime?: number
+}
+
+export interface IRecordDetailsDataResponse {
+    data: Records.IRecordData[]
+    forbiddenRecords: Uint8Array[]
+}
+
+const RecordDetailsDataRequest = {
+    create(properties?: IRecordDetailsDataRequest): IRecordDetailsDataRequest {
+        return {
+            recordUids: properties?.recordUids ?? [],
+            clientTime: properties?.clientTime,
+        }
+    },
+    encode(message: IRecordDetailsDataRequest, writer?: Writer): Writer {
+        if (!writer) writer = Writer.create()
+        if (message.clientTime != null) {
+            writer.uint32(8).int64(message.clientTime)
+        }
+        for (const uid of message.recordUids) {
+            writer.uint32(26).bytes(uid)
+        }
+        return writer
+    },
+}
+
+const RecordDetailsDataResponse = {
+    decode(data: Uint8Array): IRecordDetailsDataResponse {
+        const reader = Reader.create(data)
+        const response: IRecordDetailsDataResponse = {
+            data: [],
+            forbiddenRecords: [],
+        }
+        while (reader.pos < reader.len) {
+            const tag = reader.uint32()
+            switch (tag >>> 3) {
+                case 1:
+                    response.data.push(Records.RecordData.decode(reader, reader.uint32()))
+                    break
+                case 2:
+                    response.forbiddenRecords.push(reader.bytes() as Uint8Array)
+                    break
+                default:
+                    reader.skipType(tag & 7)
+                    break
+            }
+        }
+        return response
+    },
+}
+
+export const recordDetailsDataMessage = (
+    data: IRecordDetailsDataRequest
+): RestMessage<IRecordDetailsDataRequest, IRecordDetailsDataResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/details/data',
+        RecordDetailsDataRequest,
+        RecordDetailsDataResponse
+    )
+
+export const folderAddMessage = (
+    data: Folder.IFolderAddRequest
+): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
+    createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
 
 export const recordsAddMessage = (
     data: Records.IRecordsAddRequest
@@ -998,7 +1077,7 @@ export const keeperDriveRecordsAdd = (
 export const keeperDriveRecordsUpdate = (
     data: Records.IRecordsUpdateRequest
 ): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
-    createMessage(data, '/vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
+    createMessage(data, 'vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
 
 export const getSharingAdminsMessage = (
     data: Enterprise.IGetSharingAdminsRequest
