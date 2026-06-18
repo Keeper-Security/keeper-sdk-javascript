@@ -8,7 +8,6 @@ import { getOpt, hasOpt, rejectUnknownOptions, wantsCliHelp } from '../parse'
 import { formatDetailedHelpForCommand } from '../help'
 import { runVaultSync } from './sync'
 
-/** Flags allowed to follow `--from-json <value>` on the same line. */
 export const RESTORE_SESSION_TRAILING_OPTS = [
     'sync',
     'account-uid',
@@ -143,32 +142,42 @@ export const restoreSessionCommand: CliCommandDefinition = {
     ],
     allowedOptions: RESTORE_ALLOWED,
     help: {
-        title: 'restore-session — restore SessionParams from extension / vault export',
-        synopsis: `  restore-session --from-json session.json
-  restore-session --session-token TOKEN --username U --account-uid B64 …`,
-        description: `  Loads a full SessionParams snapshot and resumes the session (same path as
-  the browser extension after login). Use this when you have accountUid,
-  clientKey, dataKey, keys, sessionToken, username, etc. from extension storage
-  — deviceToken/device private key are not part of this payload.
+        description:
+            'Restore a logged-in session from extension SessionParams (continueSession; no device keys required).',
+        usage: '[-h] [--from-json JSON] [--sync] [session fields as flags]',
+        options: [
+            {
+                flags: '--from-json',
+                metavar: 'JSON',
+                help: 'inline JSON object/string or path to a session JSON file',
+            },
+            { flags: '--account-uid', metavar: 'B64', help: 'account UID (base64)' },
+            { flags: '--client-key', metavar: 'B64', help: 'client key (base64)' },
+            { flags: '--data-key', metavar: 'B64', help: 'data key (base64)' },
+            { flags: '--ecc-private-key', metavar: 'B64', help: 'ECC private key (base64)' },
+            { flags: '--ecc-public-key', metavar: 'B64', help: 'ECC public key (base64)' },
+            { flags: '--message-session-uid', metavar: 'B64', help: 'message session UID (base64)' },
+            { flags: '--private-key', metavar: 'B64', help: 'RSA private key (base64)' },
+            {
+                flags: '--session-token, --st',
+                metavar: 'TOKEN',
+                help: 'session token string (as stored; often base64url)',
+            },
+            { flags: '--session-token-type', metavar: 'N', help: 'numeric SessionTokenType enum' },
+            { flags: '--username, --user', metavar: 'USER', help: 'account username' },
+            { flags: '--user-type', metavar: 'TYPE', help: '0=normal, 1=cloud_sso, 2=onsite_sso' },
+            { flags: '--sso-logout-url', metavar: 'URL', help: 'SSO logout URL' },
+            { flags: '--sso-session-id', metavar: 'ID', help: 'SSO session ID' },
+            { flags: '--enterprise-public-key', metavar: 'B64', help: 'enterprise public key (optional)' },
+            { flags: '--enterprise-ecc-public-key', metavar: 'B64', help: 'enterprise ECC public key (optional)' },
+            { flags: '--sync', help: 'run syncDown after restoring the session' },
+        ],
+        epilog: `Provide parameters either as one JSON object (--from-json) or as flags / env.
+Binary fields are base64 or base64url. sessionToken expires; region must match keeper-host / KEEPER_HOST.
 
-  Provide parameters either as one JSON object (--from-json) or as flags / env.
-  Binary fields are base64 or base64url.`,
-        options: `  --from-json           Inline JSON (object or JSON-stringified object), or a file path
-  The entire remainder of the command line is passed to JSON.parse (then file read if needed).
-  --account-uid, --client-key, --data-key, --ecc-private-key, --ecc-public-key
-  --message-session-uid, --private-key
-  --session-token, --st   Session token string (as stored; often base64url)
-  --session-token-type  Numeric SessionTokenType enum
-  --username, --user
-  --user-type           0=normal, 1=cloud_sso, 2=onsite_sso (or string names)
-  --sso-logout-url, --sso-session-id
-  --enterprise-public-key, --enterprise-ecc-public-key  (optional)
-  --sync            Run syncDown after restoring the session`,
-        environment: `  RESTORE_SESSION_JSON              Same as --from-json
-  RESTORE_SESSION_ACCOUNT_UID       Per-field overrides (see --help flags)
-  RESTORE_SESSION_SESSION_TOKEN
-  … (RESTORE_SESSION_<FIELD> for each field above)`,
-        note: '  sessionToken expires; region must match keeper-host / KEEPER_HOST.',
+environment variables:
+  RESTORE_SESSION_JSON              same as --from-json
+  RESTORE_SESSION_<FIELD>           per-field overrides (see flags above)`,
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) {

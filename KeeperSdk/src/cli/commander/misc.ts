@@ -4,26 +4,10 @@ import { formatDetailedHelpForCommand } from '../help'
 import { ensureCapability, ensureSession } from '../commandHelpers'
 import { formatTable } from '../table'
 import { getRecordTitle } from '../../records/RecordUtils'
-import { renderRecordsListTable } from '../../records/listRecordsTable'
 import { recordUid } from '../utils'
-import { formatSharedFoldersTable, renderSharedFoldersAsciiTable } from '../../sharedFolders/listSharedFolders'
-
-async function runList(host: KeeperCliHost, parsed: ParsedCli): Promise<CliResult> {
-    const r = await ensureSession(host)
-    if (r) return r
-    const v = host.getVault()
-    await v.sync()
-    const records = v.getRecords()
-    if (hasOpt(parsed.opts, 'json')) {
-        return { code: 0, out: JSON.stringify(records, null, 2) + '\n', err: '' }
-    }
-    if (records.length === 0) {
-        return { code: 0, out: '(no records)\n', err: '' }
-    }
-    const verbose = hasOpt(parsed.opts, 'verbose') || hasOpt(parsed.opts, 'v')
-    const out = renderRecordsListTable(records, { verbose }) + '\n'
-    return { code: 0, out, err: '' }
-}
+import { formatWhoamiJson, formatWhoamiOutput } from '../account/whoamiFormat'
+import { executeList } from './listCore'
+import { executeListSf } from './listSfCore'
 
 async function runSearch(host: KeeperCliHost, parsed: ParsedCli): Promise<CliResult> {
     const pattern = parsed.positional.join(' ') || getOpt(parsed.opts, 'pattern')
@@ -47,68 +31,71 @@ async function runSearch(host: KeeperCliHost, parsed: ParsedCli): Promise<CliRes
     return { code: 0, out: formatTable(['record_uid', 'title'], rows), err: '' }
 }
 
-async function runListSf(host: KeeperCliHost, parsed: ParsedCli): Promise<CliResult> {
-    const r = await ensureSession(host)
-    if (r) return r
-    const v = host.getVault()
-    const cap = ensureCapability(v, 'listSharedFolders', 'list-sf')
-    if (cap) return cap
-    await v.sync()
-    const pattern = parsed.positional[0] ?? getOpt(parsed.opts, 'pattern') ?? null
-    const verbose = hasOpt(parsed.opts, 'verbose') || hasOpt(parsed.opts, 'v')
-    const rows = v.listSharedFolders!({ pattern, verbose, includeDetails: verbose })
-    if (hasOpt(parsed.opts, 'json')) {
-        return { code: 0, out: JSON.stringify(rows, null, 2) + '\n', err: '' }
-    }
-    if (rows.length === 0) {
-        return {
-            code: 0,
-            out: pattern ? `(no shared folders matched "${pattern}")\n` : '(no shared folders)\n',
-            err: '',
-        }
-    }
-    const table = formatSharedFoldersTable(rows, { verbose })
-    return { code: 0, out: renderSharedFoldersAsciiTable(table) + '\n', err: '' }
-}
-
-async function runWhoami(host: KeeperCliHost): Promise<CliResult> {
+async function runWhoami(host: KeeperCliHost, parsed: ParsedCli): Promise<CliResult> {
     const v = host.getVault()
     if (!v.isLoggedIn) {
         return { code: 1, out: '', err: 'whoami: not logged in\n' }
     }
-    const username =
-        (await host.getAccountUsername?.()) ?? host.envString('KEEPER_USER') ?? host.envString('KEEPER_USERNAME')
-    const summary = v.getSummary?.()
-    const lines = [`username: ${username ?? '(unknown)'}`]
-    if (summary) {
-        lines.push(
-            `records: ${summary.recordCount}`,
-            `folders: ${summary.folderCount}`,
-            `shared_folders: ${summary.sharedFolderCount}`
-        )
+
+    const cap = ensureCapability(v, 'getWhoamiInfo', 'whoami')
+    if (cap) return cap
+
+    const verbose = hasOpt(parsed.opts, 'verbose') || hasOpt(parsed.opts, 'v')
+    if (verbose) {
+        const syncCap = ensureCapability(v, 'sync', 'whoami')
+        if (syncCap) return syncCap
+        await v.sync!()
     }
-    return { code: 0, out: lines.join('\n') + '\n', err: '' }
+
+    const info = await v.getWhoamiInfo!({ includeVaultCounts: verbose })
+
+    if (hasOpt(parsed.opts, 'json')) {
+        return { code: 0, out: formatWhoamiJson(info, { verbose }), err: '' }
+    }
+
+    return { code: 0, out: formatWhoamiOutput(info, { verbose }), err: '' }
 }
 
 export const listCommand: CliCommandDefinition = {
     name: 'list',
     order: 14,
     aliases: ['l'],
-    description: 'List all vault records (Commander table).',
-    usage: 'list [--verbose|-v] [--json]',
-    flagOptions: ['--json', '--verbose', '-v'],
+    description: 'List all records',
+    usage: 'list [--format {table,csv,json,pdf}] [--output OUTPUT] [-v] [-t RECORD_TYPE] [--field FIELD] [pattern]',
+    flagOptions: ['--format', '--output', '-v', '--verbose', '-t', '--type', '--field', '--json'],
+    valueShortFlags: ['t'],
     help: {
-        title: 'list — all records (Keeper Commander)',
-        synopsis: 'usage: list [--verbose]',
-        description:
-            '  Syncs and prints every record in a Commander-style table: uid, type, title, description, shared, and record category.',
-        options: '  --verbose, -v   Do not truncate long columns (default max width 40).',
-        seeAlso: '  get, search, ls',
+        description: 'List all records',
+        usage: '[-h] [--format {table,csv,json,pdf}] [--output OUTPUT] [-v] [-t RECORD_TYPE] [--field FIELD] [pattern]',
+        positionals: [{ name: 'pattern', nargs: '?', help: 'search pattern' }],
+        options: [
+            {
+                flags: '--format',
+                choices: 'table,csv,json,pdf',
+                help: 'format of output',
+            },
+            {
+                flags: '--output',
+                metavar: 'OUTPUT',
+                help: 'path to resulting output file (ignored for "table" format)',
+            },
+            { flags: '-v, --verbose', help: 'verbose output' },
+            {
+                flags: '-t, --type',
+                metavar: 'RECORD_TYPE',
+                help: 'List records of certain types. Can be repeated',
+            },
+            {
+                flags: '--field',
+                metavar: 'FIELD',
+                help: 'Filter records by specific field(s). Can be specified multiple times.',
+            },
+        ],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(listCommand), err: '' }
         try {
-            return await runList(host, parsed)
+            return await executeList(host, parsed)
         } catch (e) {
             return { code: 1, out: '', err: host.formatError('list', e) }
         }
@@ -123,13 +110,17 @@ export const searchCommand: CliCommandDefinition = {
     usage: 'search <terms...> [--json]',
     flagOptions: ['--json', '--pattern'],
     help: {
-        title: 'search — find records (Keeper Commander)',
-        synopsis: 'usage: search <terms...>',
-        description:
-            '  Space-separated terms; all terms must match somewhere in the record (title, fields, or UID).\n' +
-            '  For exact lookup by UID, use get <uid> instead.',
-        examples: '  search amazon\n  search bank account\n  get zhJdqy7lb_zIEeCJT7GLlQ',
-        seeAlso: '  get, ls',
+        description: 'Search the vault. Words can be in any order.',
+        usage: '[-h] [--json] [pattern ...]',
+        positionals: [
+            {
+                name: 'pattern',
+                nargs: '*',
+                help: 'search terms (space-separated, order independent)',
+            },
+        ],
+        options: [{ flags: '--json', help: 'emit JSON' }],
+        epilog: 'For exact lookup by UID, use get <uid> instead of search.',
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(searchCommand), err: '' }
@@ -145,18 +136,35 @@ export const listSfCommand: CliCommandDefinition = {
     name: 'list-sf',
     order: 16,
     aliases: ['lsf'],
-    description: 'List shared folders.',
-    usage: 'list-sf [pattern] [--verbose] [--json]',
-    flagOptions: ['--verbose', '-v', '--json', '--pattern'],
+    description: 'List all shared folders',
+    usage: 'list-sf [--format {table,csv,json,pdf}] [--output OUTPUT] [--roe-eligible] [pattern]',
+    flagOptions: ['--format', '--output', '--roe-eligible', '--roe', '--json', '--pattern'],
     help: {
-        title: 'list-sf — shared folders (Keeper Commander)',
-        synopsis: 'usage: list-sf [pattern]',
-        seeAlso: '  ls, get',
+        description: 'List all shared folders',
+        usage: '[-h] [--format {table,csv,json,pdf}] [--output OUTPUT] [--roe-eligible] [pattern]',
+        positionals: [{ name: 'pattern', nargs: '?', help: 'search pattern' }],
+        options: [
+            {
+                flags: '--format',
+                choices: 'table,csv,json,pdf',
+                help: 'format of output',
+            },
+            {
+                flags: '--output',
+                metavar: 'OUTPUT',
+                help: 'path to resulting output file (ignored for "table" format)',
+            },
+            {
+                flags: '--roe-eligible',
+                help:
+                    'only list shared folders eligible for --rotate-on-expiration (contain at least one pamUser record with rotation configured)',
+            },
+        ],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(listSfCommand), err: '' }
         try {
-            return await runListSf(host, parsed)
+            return await executeListSf(host, parsed)
         } catch (e) {
             return { code: 1, out: '', err: host.formatError('list-sf', e) }
         }
@@ -166,20 +174,21 @@ export const listSfCommand: CliCommandDefinition = {
 export const whoamiCommand: CliCommandDefinition = {
     name: 'whoami',
     order: 18,
-    description: 'Display current user and vault counts.',
-    usage: 'whoami',
+    description: 'Display current user and account information.',
+    usage: 'whoami [--verbose|-v] [--json]',
+    flagOptions: ['--verbose', '-v', '--json'],
     help: {
-        title: 'whoami — current user (Keeper Commander)',
-        synopsis: 'usage: whoami',
-        seeAlso: '  login, sync-down',
+        description: 'Display current user and account information.',
+        usage: '[-h] [-v] [--json]',
+        options: [
+            { flags: '-v, --verbose', help: 'include vault counts and reporting status' },
+            { flags: '--json', help: 'emit JSON' },
+        ],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(whoamiCommand), err: '' }
-        if (parsed.opts.size > 0 || parsed.positional.length > 0) {
-            return { code: 1, out: '', err: 'whoami: unexpected arguments\n' }
-        }
         try {
-            return await runWhoami(host)
+            return await runWhoami(host, parsed)
         } catch (e) {
             return { code: 1, out: '', err: host.formatError('whoami', e) }
         }

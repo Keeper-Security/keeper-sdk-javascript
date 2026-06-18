@@ -10,7 +10,6 @@ import { getCommand } from './commander/get'
 import { cdCommand, lsCommand, mkdirCommand, treeCommand } from './commander/nav'
 import { listCommand, listSfCommand, searchCommand, whoamiCommand } from './commander/misc'
 
-/** Built-in CLI commands (Keeper Commander-style vault shell). */
 export const BUILTIN_CLI_COMMANDS: readonly CliCommandDefinition[] = [
     helpCommand,
     loginCommand,

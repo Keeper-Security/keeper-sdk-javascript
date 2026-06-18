@@ -1,86 +1,8 @@
 import type { CliCommandDefinition, CliResult, KeeperCliHost, ParsedCli } from '../types'
-import { getOpt, hasOpt, wantsCliHelp } from '../parse'
+import { hasOpt, wantsCliHelp } from '../parse'
 import { formatDetailedHelpForCommand } from '../help'
 import { ensureCapability, ensureSession } from '../commandHelpers'
-import { formatTable } from '../table'
-
-function lsPath(parsed: ParsedCli): string | undefined {
-    return parsed.positional[0]
-}
-
-function formatLs(
-    result: {
-        detail: boolean
-        folders: Array<{ uid: string; name: string }>
-        records: Array<{ uid: string; name: string; type?: string }>
-    },
-    detail: boolean
-): string {
-    if (result.folders.length + result.records.length === 0) return '(empty)\n'
-
-    const headers = detail ? ['flags', 'uid', 'name', 'type'] : ['kind', 'uid', 'name']
-    const rows: string[][] = []
-    for (const f of result.folders) {
-        const flags = ((f as { flags?: string }).flags ?? '').trim()
-        rows.push(detail ? [flags || 'f---', f.uid, f.name, ''] : ['dir', f.uid, f.name])
-    }
-    for (const r of result.records) {
-        const flags = ((r as { flags?: string }).flags ?? '').trim()
-        const type = r.type ?? ''
-        rows.push(detail ? [flags || 'r---', r.uid, r.name, type] : ['rec', r.uid, r.name])
-    }
-    return formatTable(headers, rows)
-}
-
-async function runLs(host: KeeperCliHost, parsed: ParsedCli, cmd: string): Promise<CliResult> {
-    const r = await ensureSession(host)
-    if (r) return r
-    const v = host.getVault()
-    const cap = ensureCapability(v, 'listFolder', cmd)
-    if (cap) return cap
-    await v.sync()
-
-    const detail = hasOpt(parsed.opts, 'detail') || hasOpt(parsed.opts, 'list') || hasOpt(parsed.opts, 'l')
-    const foldersOnly = hasOpt(parsed.opts, 'folders') || hasOpt(parsed.opts, 'f')
-    const recordsOnly = hasOpt(parsed.opts, 'records') || hasOpt(parsed.opts, 'r')
-    const target = lsPath(parsed)
-
-    const listOpts = {
-        detail,
-        showFolders: recordsOnly ? false : true,
-        showRecords: foldersOnly ? false : true,
-    }
-
-    if (!target) {
-        const result = await v.listFolder!({ ...listOpts })
-        return { code: 0, out: formatLs(result, detail), err: '' }
-    }
-
-    if (!v.changeDirectory || !v.getCurrentFolderUid) {
-        return { code: 1, out: '', err: `${cmd}: host lacks navigation capabilities.\n` }
-    }
-
-    const originalUid = v.getCurrentFolderUid()
-    let resolvedUid: string | null
-    try {
-        const cd = await v.changeDirectory(target)
-        resolvedUid = cd.folderUid
-    } catch (e) {
-        return { code: 1, out: '', err: host.formatError(`${cmd} ${target}`, e) }
-    }
-    try {
-        const result = await v.listFolder!({ folderUid: resolvedUid ?? null, ...listOpts })
-        return { code: 0, out: formatLs(result, detail), err: '' }
-    } finally {
-        if (resolvedUid !== originalUid) {
-            try {
-                await v.changeDirectory(originalUid ?? '/')
-            } catch {
-                /* best-effort */
-            }
-        }
-    }
-}
+import { executeLs } from './lsCore'
 
 async function runCd(host: KeeperCliHost, parsed: ParsedCli, cmd: string): Promise<CliResult> {
     const target = parsed.positional[0]
@@ -106,7 +28,8 @@ async function runTree(host: KeeperCliHost, parsed: ParsedCli, cmd: string): Pro
     if (cap) return cap
     await v.sync()
     const folderPath = parsed.positional[0]
-    const out = await v.tree!(folderPath ? { folderPath, showRecords: true } : { showRecords: true })
+    const showRecords = hasOpt(parsed.opts, 'records') || hasOpt(parsed.opts, 'r')
+    const out = await v.tree!(folderPath ? { folderPath, showRecords } : { showRecords })
     return { code: 0, out: out.endsWith('\n') ? out : out + '\n', err: '' }
 }
 
@@ -137,28 +60,58 @@ async function runMkdir(host: KeeperCliHost, parsed: ParsedCli, cmd: string): Pr
 }
 
 const lsHelp: CliCommandDefinition['help'] = {
-    title: 'ls — list folder contents (Keeper Commander)',
-    synopsis: 'usage: ls [-l] [-f] [-r] [pattern]',
-    description: '  Lists records and subfolders in the current folder, or in PATH if given.',
-    options: `  -l, --list       Detailed list (flags, types).
-  -f, --folders    Folders only.
-  -r, --records    Records only.
-  --help, -h       Show this help.`,
-    examples: '  ls\n  ls "Marketing"\n  ls -l',
-    seeAlso: '  cd, tree, get',
+    description: 'List folder contents.',
+    usage: '[-h] [--format {table,csv,json,pdf}] [--output OUTPUT] [-l] [-f] [-r] [-s] [-v] [-R] [pattern]',
+    positionals: [{ name: 'pattern', nargs: '?', help: 'search pattern' }],
+    options: [
+        {
+            flags: '--format',
+            choices: 'table,csv,json,pdf',
+            help: 'format of output',
+        },
+        {
+            flags: '--output',
+            metavar: 'OUTPUT',
+            help: 'path to resulting output file (ignored for "table" format)',
+        },
+        { flags: '-l, --list', help: 'show detailed list' },
+        { flags: '-f, --folders', help: 'display folders only' },
+        { flags: '-r, --records', help: 'display records only' },
+        { flags: '-s, --short', help: 'Do not display record details. (Not used)' },
+        { flags: '-v, --verbose', help: 'verbose output' },
+        { flags: '-R, --recursive', help: 'list all folders/records in subfolders' },
+    ],
 }
 
 export const lsCommand: CliCommandDefinition = {
     name: 'ls',
     order: 11,
-    description: 'List folder contents (current folder or PATH).',
-    usage: 'ls [PATH] [-l|--list] [-f|--folders] [-r|--records]',
-    flagOptions: ['-l', '--list', '-f', '--folders', '-r', '--records', '--detail'],
+    description: 'List folder contents.',
+    usage: 'ls [--format {table,csv,json,pdf}] [--output OUTPUT] [-l] [-f] [-r] [-s] [-v] [-R] [pattern]',
+    flagOptions: [
+        '--format',
+        '--output',
+        '-l',
+        '--list',
+        '-f',
+        '--folders',
+        '-r',
+        '--records',
+        '-s',
+        '--short',
+        '-v',
+        '--verbose',
+        '-R',
+        '--recursive',
+        '--detail',
+        '--json',
+        '--pattern',
+    ],
     help: lsHelp,
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(lsCommand), err: '' }
         try {
-            return await runLs(host, parsed, 'ls')
+            return await executeLs(host, parsed, 'ls')
         } catch (e) {
             return { code: 1, out: '', err: host.formatError('ls', e) }
         }
@@ -171,11 +124,9 @@ export const cdCommand: CliCommandDefinition = {
     description: 'Change current folder.',
     usage: 'cd <path>',
     help: {
-        title: 'cd — change current folder (Keeper Commander)',
-        synopsis: 'usage: cd <folder>',
-        description: '  PATH is a slash-separated folder name/UID sequence, or `/` for vault root.',
-        examples: '  cd Marketing\n  cd ..\n  cd /',
-        seeAlso: '  ls, tree',
+        description: 'Change current folder',
+        usage: '[-h] folder',
+        positionals: [{ name: 'folder', help: 'folder path or UID' }],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(cdCommand), err: '' }
@@ -191,13 +142,13 @@ export const treeCommand: CliCommandDefinition = {
     name: 'tree',
     order: 13,
     description: 'Display the folder structure.',
-    usage: 'tree [PATH]',
+    usage: 'tree [PATH] [-r|--records]',
+    flagOptions: ['-r', '--records'],
     help: {
-        title: 'tree — folder structure (Keeper Commander)',
-        synopsis: 'usage: tree [folder]',
-        description:
-            '  Renders an ASCII tree from PATH or the vault root. Each node is tagged [folder], [shared folder], or [record].',
-        seeAlso: '  ls, cd',
+        description: 'Display the folder structure.',
+        usage: '[-h] [-r] [folder]',
+        positionals: [{ name: 'folder', nargs: '?', help: 'folder path or UID' }],
+        options: [{ flags: '-r, --records', help: 'show records within each folder' }],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(treeCommand), err: '' }
@@ -216,12 +167,10 @@ export const mkdirCommand: CliCommandDefinition = {
     usage: 'mkdir <path> [-sf|--shared-folder]',
     flagOptions: ['-sf', '--shared-folder', '--shared'],
     help: {
-        title: 'mkdir — create folder (Keeper Commander)',
-        synopsis: 'usage: mkdir <path> [-sf]',
-        description: '  Creates a user folder under the current folder. -sf creates a shared folder.',
-        options: '  -sf, --shared-folder    Create a shared folder.',
-        examples: '  mkdir Drafts\n  mkdir TeamShare -sf',
-        seeAlso: '  cd, ls',
+        description: 'Create a folder',
+        usage: '[-h] [-sf] path',
+        positionals: [{ name: 'path', help: 'folder path' }],
+        options: [{ flags: '-sf, --shared-folder', help: 'create a shared folder' }],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) return { code: 0, out: formatDetailedHelpForCommand(mkdirCommand), err: '' }

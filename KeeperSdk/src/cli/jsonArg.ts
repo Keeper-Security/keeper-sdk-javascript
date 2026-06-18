@@ -1,7 +1,3 @@
-/**
- * Everything after `--from-json` on the command line (trimmed). No tokenization — callers use JSON.parse.
- * Trailing flags such as `--sync` are stripped via {@link stripTrailingCliFlags}.
- */
 export function extractFromJsonFlagValue(
     line: string,
     flag = 'from-json',
@@ -16,7 +12,6 @@ export function extractFromJsonFlagValue(
     return stripTrailingCliFlags(rest, trailingFlags)
 }
 
-/** Remove trailing ` --flag` tokens (e.g. `--sync` after a file path or JSON blob). */
 export function stripTrailingCliFlags(value: string, flagNames: readonly string[]): string {
     if (flagNames.length === 0) return value.trim()
     let s = value.trim()

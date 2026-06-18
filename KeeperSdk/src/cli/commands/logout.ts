@@ -30,10 +30,7 @@ export const logoutCommand: CliCommandDefinition = {
     description: 'Log out of the current Keeper session.',
     usage: 'logout [--help|-h]',
     help: {
-        title: 'logout — end the current Keeper session',
-        synopsis: '  logout',
-        description: '  Ends the current session if one exists.',
-        options: '  None.',
+        description: 'Log out of the current Keeper session.',
     },
     run: (host, parsed) => runLogoutCommand(host, parsed),
 }

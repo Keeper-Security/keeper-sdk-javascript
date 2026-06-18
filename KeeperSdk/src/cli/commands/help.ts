@@ -15,15 +15,9 @@ export const helpCommand: CliCommandDefinition = {
     description: 'Show all commands, or full docs for one command (same as COMMAND --help).',
     usage: 'help [command]  (see also: help --help)',
     help: {
-        title: 'help — show commands or short syntax for one command',
-        synopsis: '  help [COMMAND]',
-        description: `  Without arguments, lists commands for the current session.
-  When not logged in, only sign-in commands are listed (login, restore-session, …).
-  After login, lists vault commands as well.
-
-  With COMMAND, prints usage for that command (sign-in commands only when logged out).`,
-        options: '  None. This command does not take GNU-style flags.',
-        seeAlso: '  Each command’s --help output.',
+        description: 'Show all commands, or full docs for one command (same as COMMAND --help).',
+        usage: '[-h] [command]',
+        positionals: [{ name: 'command', nargs: '?', help: 'command name' }],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) {

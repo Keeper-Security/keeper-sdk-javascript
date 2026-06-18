@@ -11,23 +11,17 @@ export const getCommand: CliCommandDefinition = {
     usage: 'get <uid|title> [--format {detail,json,password,fields}] [--unmask]',
     flagOptions: ['--format', '--unmask', '--detail', '--json'],
     help: {
-        title: 'get — record/folder details (Keeper Commander)',
-        synopsis: 'usage: get [--unmask] [--format {detail,json,password,fields}] uid',
-        description:
-            '  Resolves a vault object by UID or title. Records support all output formats; folders and shared folders support detail/json.\n' +
-            '  Prefer get for exact UID lookup; search is for text in titles and fields.',
-        arguments: '  uid    Record, folder, or shared-folder UID or title.',
-        options: `  --format {detail,json,password,fields}
-                 detail (default): human-readable output.
-                 json: JSON object.
-                 password: password field only (records).
-                 fields: JSON array of {name, value} (records).
-  --unmask         Show sensitive field values (records).
-  --help, -h       Show this help.`,
-        examples: `  get "Amazon"
-  get AbCdEf123456 --format json --unmask
-  get MyFolderUid --format json`,
-        seeAlso: '  ls, search, list',
+        description: 'Get the details of a record/folder/team by UID or title',
+        usage: '[-h] [--unmask] [--format {detail,json,password,fields}] uid',
+        positionals: [{ name: 'uid', help: 'UID or title to search for' }],
+        options: [
+            { flags: '--unmask', help: 'display hidden field values (records)' },
+            {
+                flags: '--format',
+                choices: 'detail,json,password,fields',
+                help: 'output format (default: detail)',
+            },
+        ],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) {

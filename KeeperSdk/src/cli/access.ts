@@ -1,7 +1,6 @@
 import type { CliCommandDefinition } from './types'
 import { listCliCommands, resolveCliCommandName } from './registry'
 
-/** Commands available before a vault session exists. */
 export const AUTH_CLI_COMMAND_NAMES = new Set<string>([
     'help',
     'login',

@@ -2,7 +2,6 @@ import type { CliResult, ParsedCli } from './types'
 
 const isWhitespace = (ch: string) => /\s/.test(ch)
 
-/** Split a command line into tokens; respects double quotes and `\\` escapes. */
 export function tokenizeArguments(args: string): string[] {
     const out: string[] = []
     const sb: string[] = []
@@ -67,14 +66,32 @@ function setBool(opts: Map<string, string | true>, k: string): void {
     opts.set(k.toLowerCase(), true)
 }
 
-function setStr(opts: Map<string, string | true>, k: string, v: string): void {
-    opts.set(k.toLowerCase(), v)
+function setStr(
+    opts: Map<string, string | true>,
+    repeated: Map<string, string[]>,
+    k: string,
+    v: string
+): void {
+    const key = k.toLowerCase()
+    const prev = opts.get(key)
+    if (prev !== undefined && prev !== true) {
+        const list = repeated.get(key) ?? [prev]
+        list.push(v)
+        repeated.set(key, list)
+    } else {
+        repeated.set(key, [v])
+    }
+    opts.set(key, v)
 }
 
-/** Parse argv-style tokens after the command name. */
-export function parseCliArgs(tokens: string[]): ParsedCli {
+export function parseCliArgs(
+    tokens: string[],
+    options: { valueShortFlags?: ReadonlySet<string> } = {}
+): ParsedCli {
+    const valueShortFlags = options.valueShortFlags ?? new Set<string>()
     const positional: string[] = []
     const opts = new Map<string, string | true>()
+    const repeatedOpts = new Map<string, string[]>()
 
     let i = 0
     while (i < tokens.length) {
@@ -98,14 +115,14 @@ export function parseCliArgs(tokens: string[]): ParsedCli {
             }
             const eq = body.indexOf('=')
             if (eq >= 0) {
-                setStr(opts, body.slice(0, eq), body.slice(eq + 1))
+                setStr(opts, repeatedOpts, body.slice(0, eq), body.slice(eq + 1))
                 i++
                 continue
             }
             const name = body
             const next = tokens[i + 1]
             if (next && next !== '--' && !next.startsWith('-')) {
-                setStr(opts, name, next)
+                setStr(opts, repeatedOpts, name, next)
                 i += 2
                 continue
             }
@@ -121,7 +138,19 @@ export function parseCliArgs(tokens: string[]): ParsedCli {
             continue
         }
         if (/^[A-Za-z]$/.test(rest)) {
-            setBool(opts, rest)
+            const name = rest
+            const next = tokens[i + 1]
+            if (
+                valueShortFlags.has(name.toLowerCase()) &&
+                next &&
+                next !== '--' &&
+                !next.startsWith('-')
+            ) {
+                setStr(opts, repeatedOpts, name, next)
+                i += 2
+                continue
+            }
+            setBool(opts, name)
             i++
             continue
         }
@@ -135,7 +164,22 @@ export function parseCliArgs(tokens: string[]): ParsedCli {
         i++
     }
 
-    return { positional, opts }
+    return { positional, opts, repeatedOpts }
+}
+
+export function getAllOpt(parsed: ParsedCli, ...names: string[]): string[] {
+    const out: string[] = []
+    for (const n of names) {
+        const key = n.toLowerCase()
+        const repeated = parsed.repeatedOpts.get(key)
+        if (repeated) {
+            out.push(...repeated)
+            continue
+        }
+        const v = parsed.opts.get(key)
+        if (v !== undefined && v !== true) out.push(v)
+    }
+    return out
 }
 
 export function hasOpt(opts: Map<string, string | true>, ...names: string[]): boolean {

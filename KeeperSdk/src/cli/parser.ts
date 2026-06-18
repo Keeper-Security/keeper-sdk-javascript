@@ -9,13 +9,20 @@ import { formatAllCommandsSummary, formatDetailedHelpForCommand, formatShortComm
 const NOT_LOGGED_IN_ERR =
     'Not logged in. Run `login` or `restore-session` (see `help`).\n'
 
+function valueShortFlagsForCommand(def: CliCommandDefinition): ReadonlySet<string> {
+    const out = new Set<string>()
+    for (const flag of def.valueShortFlags ?? []) {
+        out.add(flag.replace(/^-+/, '').toLowerCase())
+    }
+    return out
+}
+
 export type KeeperCliParserOptions = {
     prog?: string
     description?: string
     epilog?: string
 }
 
-/** Self-contained CLI parser. Register commands, then `parse()` dispatches a line. */
 export class KeeperCliParser {
     private readonly prog: string
     private readonly description: string
@@ -123,12 +130,13 @@ export class KeeperCliParser {
         }
 
         let parsed: ParsedCli
+        const parseOpts = { valueShortFlags: valueShortFlagsForCommand(def) }
         if (def.name === 'restore-session') {
             const json = extractFromJsonFlagValue(raw, 'from-json', RESTORE_SESSION_TRAILING_OPTS)
-            parsed = parseCliArgs(rest)
+            parsed = parseCliArgs(rest, parseOpts)
             if (json) parsed.opts.set('from-json', json)
         } else {
-            parsed = parseCliArgs(rest)
+            parsed = parseCliArgs(rest, parseOpts)
         }
 
         if (wantsCliHelp(parsed)) {
@@ -138,7 +146,6 @@ export class KeeperCliParser {
     }
 }
 
-/** Parser pre-loaded with the SDK's built-in commands. */
 export function createKeeperCliParser(options: KeeperCliParserOptions = {}): KeeperCliParser {
     const parser = new KeeperCliParser(options)
     void loadBuiltinsInto(parser)

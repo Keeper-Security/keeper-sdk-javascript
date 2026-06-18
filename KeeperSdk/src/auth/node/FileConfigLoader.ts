@@ -5,7 +5,7 @@ import type { ConfigLoader, KeeperJsonConfig } from '../config'
 import { isValidKeeperConfig } from '../config'
 import { logger, extractErrorMessage, SdkDefaults } from '../../utils'
 
-/** Node-only: read/write `~/.keeper/config.json`. */
+/** CAUTION: This is a Node-only class. */
 export class FileConfigLoader implements ConfigLoader {
     public readonly configDir: string
 

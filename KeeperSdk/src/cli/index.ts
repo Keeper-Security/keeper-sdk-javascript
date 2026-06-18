@@ -3,7 +3,6 @@ import { registerCliAlias } from './registry'
 
 let registryInitialized = false
 
-/** Register built-in Keeper CLI commands (idempotent). */
 export function ensureKeeperCliRegistry(): void {
     if (registryInitialized) return
     registryInitialized = true
@@ -27,23 +26,18 @@ export {
     parseCliArgs,
     hasOpt,
     getOpt,
+    getAllOpt,
     wantsCliHelp,
     rejectUnknownOptions,
 } from './parse'
 
 export {
-    formatDetailedHelp,
     formatDetailedHelpForCommand,
     formatAllCommandsSummary,
     formatShortCommandSummary,
+    getDetailedHelpPageForRegistry,
+    getDetailedHelpPage,
 } from './help'
-import { getDetailedHelpPageForRegistry } from './help'
-import { listCliCommands } from './registry'
-
-export function getDetailedHelpPage(name: string): string | null {
-    ensureKeeperCliRegistry()
-    return getDetailedHelpPageForRegistry(listCliCommands(), name)
-}
 
 export {
     registerCliCommand,

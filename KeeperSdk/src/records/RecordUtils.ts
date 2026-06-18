@@ -44,8 +44,53 @@ type LegacyExtraField = {
 }
 
 function toFieldValueArray(v: unknown): any[] {
-    if (v == null) return []
+    if (v == null || v === '') return []
     return Array.isArray(v) ? v : [v]
+}
+
+function normalizeTypedFieldValue(value: unknown): any[] {
+    if (value == null || value === '') return []
+    if (Array.isArray(value)) return value
+    return [value]
+}
+
+function fieldHasValue(field: RecordField): boolean {
+    return field.value.some((v) => extractTotpUrlFromValue(v) != null || formatRawFieldValue(v).length > 0)
+}
+
+function formatRawFieldValue(v: unknown): string {
+    if (v == null) return ''
+    if (typeof v === 'string') return v.trim()
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v)
+    return JSON.stringify(v)
+}
+
+/** Extract otpauth URL or raw TOTP secret from a field value. */
+function extractTotpUrlFromValue(v: unknown): string | undefined {
+    if (v == null) return undefined
+    if (typeof v === 'string') {
+        const trimmed = v.trim()
+        return trimmed || undefined
+    }
+    if (typeof v === 'object' && !Array.isArray(v)) {
+        const obj = v as Record<string, unknown>
+        for (const key of ['url', 'otpauth', 'otpAuth', 'totp', 'value', 'data', 'secret']) {
+            const val = obj[key]
+            if (typeof val === 'string' && val.trim()) return val.trim()
+        }
+    }
+    return undefined
+}
+
+function getExtraTotpUrl(record: DRecord): string | undefined {
+    for (const field of getLegacyExtraFields(record)) {
+        if (field.type !== 'totp') continue
+        for (const v of field.value) {
+            const url = extractTotpUrlFromValue(v)
+            if (url) return url
+        }
+    }
+    return undefined
 }
 
 function getLegacyExtraFields(record: DRecord): RecordField[] {
@@ -126,7 +171,7 @@ export function getRecordFields(record: DRecord): RecordField[] {
         for (const f of record.data.fields) {
             fields.push({
                 type: f.type || FieldType.Text,
-                value: Array.isArray(f.value) ? f.value : [f.value],
+                value: normalizeTypedFieldValue(f.value),
                 label: f.label,
                 required: f.required,
                 privacyScreen: f.privacyScreen,
@@ -139,7 +184,7 @@ export function getRecordFields(record: DRecord): RecordField[] {
         for (const f of record.data.custom) {
             fields.push({
                 type: f.type || FieldType.Text,
-                value: Array.isArray(f.value) ? f.value : [f.value],
+                value: normalizeTypedFieldValue(f.value),
                 label: f.label,
                 required: f.required,
                 privacyScreen: f.privacyScreen,
@@ -191,10 +236,11 @@ export function getRecordTotpUrl(record: DRecord): string | undefined {
     for (const field of getRecordFields(record)) {
         if (!TOTP_FIELD_TYPES.has(field.type)) continue
         for (const v of field.value) {
-            if (typeof v === 'string' && v.trim()) return v.trim()
+            const url = extractTotpUrlFromValue(v)
+            if (url) return url
         }
     }
-    return undefined
+    return getExtraTotpUrl(record)
 }
 
 export function getRecordPassword(record: DRecord): string | undefined {
@@ -292,12 +338,30 @@ function resolveFormatRecordOptions(showDetailsOrOptions?: boolean | FormatRecor
 }
 
 function formatFieldValue(field: RecordField, unmask: boolean): string {
+    if (!fieldHasValue(field)) return ''
     const isTotp = TOTP_FIELD_TYPES.has(field.type)
     const isSensitive = field.type === FieldType.Password || isTotp || field.privacyScreen === true
     if (!isSensitive || unmask) {
-        return field.value.map((v) => (typeof v === 'string' ? v : JSON.stringify(v))).join(', ')
+        return field.value.map((v) => formatRawFieldValue(v)).filter(Boolean).join(', ')
     }
     return MASKED_VALUE
+}
+
+function appendTotpFields(
+    fields: { name: string; value: unknown }[],
+    record: DRecord,
+    unmask: boolean
+): void {
+    const totpUrl = getRecordTotpUrl(record)
+    if (!totpUrl) return
+    fields.push({ name: 'TOTP URL', value: unmask ? totpUrl : MASKED_VALUE })
+    const code = getTotpCode(totpUrl)
+    if (code) {
+        fields.push({
+            name: 'Two Factor Code',
+            value: `${code.code} (valid for ${code.secondsRemaining} sec)`,
+        })
+    }
 }
 
 export function formatRecordFields(record: DRecord, unmask: boolean): { name: string; value: unknown }[] {
@@ -318,11 +382,13 @@ export function formatRecordFields(record: DRecord, unmask: boolean): { name: st
     if (summary.url) fields.push({ name: 'login_url', value: summary.url })
     for (const field of summary.fields) {
         if (field.type === FieldType.Login || field.type === FieldType.Url) continue
-        const label = TOTP_FIELD_TYPES.has(field.type)
-            ? 'TOTP URL'
-            : (field.label || field.type).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        if (field.type === FieldType.Password) continue
+        if (TOTP_FIELD_TYPES.has(field.type)) continue
+        if (!fieldHasValue(field)) continue
+        const label = (field.label || field.type).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
         fields.push({ name: label, value: formatFieldValue(field, unmask) })
     }
+    appendTotpFields(fields, record, unmask)
     const notes = record.version <= RecordVersion.Legacy ? record.data?.notes : undefined
     if (notes) fields.push({ name: 'Notes', value: notes })
     return fields
@@ -348,18 +414,20 @@ export function formatRecord(record: DRecord, showDetailsOrOptions?: boolean | F
         for (const field of summary.fields) {
             if (field.type === FieldType.Login || field.type === FieldType.Url) continue
             if (field.type === FieldType.Password) continue
-            const isTotp = TOTP_FIELD_TYPES.has(field.type)
-            const label = isTotp ? 'TOTP URL' : field.label || field.type
-            lines.push(`${label}: ${formatFieldValue(field, unmask)}`)
+            if (TOTP_FIELD_TYPES.has(field.type)) continue
+            if (!fieldHasValue(field)) continue
+            const label = field.label || field.type
+            const value = formatFieldValue(field, unmask)
+            if (value) lines.push(`${label}: ${value}`)
         }
 
         const totpUrl = getRecordTotpUrl(record)
-        if (unmask && totpUrl) {
-            lines.push(`TOTP URL: ${totpUrl}`)
-        }
-        const code = totpUrl ? getTotpCode(totpUrl) : null
-        if (code) {
-            lines.push(`Two Factor Code: ${code.code}    valid for ${code.secondsRemaining} sec`)
+        if (totpUrl) {
+            lines.push(`TOTP URL: ${unmask ? totpUrl : MASKED_VALUE}`)
+            const code = getTotpCode(totpUrl)
+            if (code) {
+                lines.push(`Two Factor Code: ${code.code}    valid for ${code.secondsRemaining} sec`)
+            }
         }
     }
 

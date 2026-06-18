@@ -122,7 +122,7 @@ export async function ensureLoggedIn(host: KeeperCliHost): Promise<CliResult> {
         return { code: 0, out: '', err: '' }
     }
     if (host.envString('KEEPER_USERNAME')) {
-        return runLoginCommand(host, { positional: [], opts: new Map() })
+        return runLoginCommand(host, { positional: [], opts: new Map(), repeatedOpts: new Map() })
     }
     return { code: 1, out: '', err: 'not logged in\n' }
 }
@@ -144,35 +144,30 @@ export const loginCommand: CliCommandDefinition = {
     ],
     allowedOptions: LOGIN_ALLOWED,
     help: {
-        title: 'login — authenticate to Keeper (vault session)',
-        synopsis: `  login [--username|--user EMAIL_OR_NAME]
-  login [--username|--user U] [--session-token|--token|--st TOKEN]
-  login [--username|--user U] [--session-token TOKEN] [--session-token-plain]`,
-        description: `  Establishes a Keeper session.
+        description:
+            'Log in with password (env / masked prompt) or session token (flag or KEEPER_SESSION_TOKEN).',
+        usage:
+            '[-h] [--username USER] [--session-token TOKEN] [--session-token-plain]',
+        options: [
+            { flags: '--username, --user', metavar: 'USER', help: 'account identifier (often email)' },
+            {
+                flags: '--session-token, --token, --st',
+                metavar: 'TOKEN',
+                help: 'session token string (or use KEEPER_SESSION_TOKEN)',
+            },
+            {
+                flags: '--session-token-plain',
+                help: 'treat --session-token value as plain UTF-8 and encode base64url',
+            },
+        ],
+        epilog: `Password MUST NOT appear on the CLI line. Use KEEPER_PASSWORD for automation, or run
+login with only a username and enter the password when prompted (masked).
 
-  Username comes from --username / --user or KEEPER_USERNAME.
-
-  Password MUST NOT appear on the CLI line (logging, proxies, browser history).
-  Automation: set KEEPER_PASSWORD in the environment when embedding in Node.
-  Web shell: run login with only a username; the UI prompts for a masked password
-  and sends it through the login transport, not in "line".
-
-  Session token login: pass the token on the command line or via
-  KEEPER_SESSION_TOKEN (sensitive — same caveats as any secret on argv).
-
-  --session-token-plain treats the value as plain UTF-8 and encodes base64url
-  before login (same idea as the session_token_login example).
-
-  Device registration: session token login requires deviceToken + privateKey for
-  this host in session storage (e.g. ~/.keeper/config.json) or a prior password
-  login in this shell.`,
-        options: `  --username, --user           Account identifier (often email).
-  --session-token, --token, --st   Session token string (or use KEEPER_SESSION_TOKEN).
-  --session-token-plain        Treat --session-token value as plain UTF-8 and encode base64url.`,
-        environment: `  KEEPER_USERNAME          Default username if not passed on the command line.
-  KEEPER_PASSWORD          Password for non-interactive login (no session token).
-  KEEPER_SESSION_TOKEN     Session token when not passed as a flag.
-  KEEPER_HOST              Optional vault host / region (also: keeper-host attribute).`,
+environment variables:
+  KEEPER_USERNAME          default username if not passed on the command line
+  KEEPER_PASSWORD          password for non-interactive login (no session token)
+  KEEPER_SESSION_TOKEN     session token when not passed as a flag
+  KEEPER_HOST              optional vault host / region`,
     },
     run: (host, parsed) => runLoginCommand(host, parsed),
 }

@@ -17,7 +17,6 @@ function formatSyncSummary(result: SyncResult): string {
     return lines.join('\n') + '\n'
 }
 
-/** Download vault data via keeperapi syncDown (KeeperVault.sync). */
 export async function runVaultSync(host: KeeperCliHost): Promise<CliResult> {
     const v = host.getVault()
     if (!v.isLoggedIn) {
@@ -35,12 +34,7 @@ export const syncCommand: CliCommandDefinition = {
     description: 'Download / refresh vault data from Keeper (syncDown).',
     usage: 'sync [--help|-h]',
     help: {
-        title: 'sync — download vault data (syncDown)',
-        synopsis: '  sync',
-        description: `  Pulls records, folders, and related vault data into local storage.
-  Requires an active session (login or restore-session).`,
-        options: '  --help, -h    Show this help.',
-        seeAlso: '  restore-session --sync, list, ls',
+        description: 'Download / refresh vault data from Keeper (syncDown).',
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) {

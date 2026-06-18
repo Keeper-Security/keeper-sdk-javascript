@@ -5,6 +5,15 @@ import { RESTORE_SESSION_TRAILING_OPTS } from './commands/restoreSession'
 import { formatDetailedHelpForCommand } from './help'
 import { isAuthCliCommand } from './access'
 import { getCliCommand } from './registry'
+import type { CliCommandDefinition } from './types'
+
+function valueShortFlagsForCommand(def: CliCommandDefinition): ReadonlySet<string> {
+    const out = new Set<string>()
+    for (const flag of def.valueShortFlags ?? []) {
+        out.add(flag.replace(/^-+/, '').toLowerCase())
+    }
+    return out
+}
 
 const NOT_LOGGED_IN_ERR =
     'Not logged in. Run `login` or `restore-session` (see `help`).\n'
@@ -22,7 +31,7 @@ export async function dispatchKeeperCli(
     if (!host.getVault().isLoggedIn && !isAuthCliCommand(def.name)) {
         return { code: 1, out: '', err: NOT_LOGGED_IN_ERR }
     }
-    const parsed = preParsed ?? parseCliArgs(args)
+    const parsed = preParsed ?? parseCliArgs(args, { valueShortFlags: valueShortFlagsForCommand(def) })
     if (wantsCliHelp(parsed)) {
         return { code: 0, out: formatDetailedHelpForCommand(def), err: '' }
     }
@@ -40,11 +49,12 @@ export async function dispatchCliLine(line: string, host: KeeperCliHost): Promis
         return { code: 0, out: '', err: '' }
     }
     const args = tokens.slice(1)
+    const def = getCliCommand(name)
     let preParsed: ParsedCli | undefined
-    if (name === 'restore-session') {
+    if (name === 'restore-session' && def) {
         const json = extractFromJsonFlagValue(trimmed, 'from-json', RESTORE_SESSION_TRAILING_OPTS)
         if (json) {
-            preParsed = parseCliArgs(args)
+            preParsed = parseCliArgs(args, { valueShortFlags: valueShortFlagsForCommand(def) })
             preParsed.opts.set('from-json', json)
         }
     }

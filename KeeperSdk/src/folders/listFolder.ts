@@ -26,6 +26,7 @@ export type ListFolderOptions = {
     showFolders?: boolean
     showRecords?: boolean
     detail?: boolean
+    recursive?: boolean
 }
 
 export type ListFolderFolderSimple = {
@@ -319,6 +320,32 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
                 name: title,
                 type: getRecordType(record),
             })
+        }
+    }
+
+    if (options.recursive === true && folderRows.length > 0) {
+        const seenFolderUids = new Set(folderRows.map((row) => row.uid))
+        const seenRecordUids = new Set(recordRows.map((row) => row.uid))
+        for (const childUid of folderRows.map((row) => row.uid)) {
+            const sub = await listFolder(storage, {
+                folderUid: childUid,
+                showFolders,
+                showRecords,
+                detail: false,
+                pattern: null,
+                recursive: true,
+            })
+            if (sub.detail) continue
+            for (const folder of sub.folders) {
+                if (seenFolderUids.has(folder.uid)) continue
+                seenFolderUids.add(folder.uid)
+                folderRows.push(folder)
+            }
+            for (const record of sub.records) {
+                if (seenRecordUids.has(record.uid)) continue
+                seenRecordUids.add(record.uid)
+                recordRows.push(record)
+            }
         }
     }
 

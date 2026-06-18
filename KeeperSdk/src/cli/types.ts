@@ -1,6 +1,6 @@
 import type { DRecord, DSharedFolder, SyncResult } from '@keeper-security/keeperapi'
 import type { SessionRestoreInput } from '../auth/sessionRestore'
-import type { ChangeDirectoryResult } from '../folders/changeDirectory'
+import type { ChangeDirectoryResult, TryResolvePathResult } from '../folders/changeDirectory'
 import type { FolderTreeBuildOptions } from '../folders/folderTree'
 import type { GetFolderOptions, GetFolderResult } from '../folders/getFolder'
 import type { ListFolderOptions, ListFolderResult } from '../folders/listFolder'
@@ -10,12 +10,12 @@ import type { DeleteFolderResult } from '../folders/deleteFolder'
 import type { ListSharedFolderRow, ListSharedFoldersOptions } from '../sharedFolders/listSharedFolders'
 import type { RecordShareInfo } from '../sharing/Sharing'
 import type { VaultSummary } from '../vault/KeeperVault'
+import type { WhoamiInfo } from '../account/whoamiInfo'
 
 export type CliResult = {
     code: number
     out: string
     err: string
-    /** Set when the host UI must prompt for a masked password (never on the CLI line). */
     needPassword?: boolean
     loginUsername?: string
 }
@@ -23,6 +23,7 @@ export type CliResult = {
 export type ParsedCli = {
     positional: string[]
     opts: Map<string, string | true>
+    repeatedOpts: Map<string, string[]>
 }
 
 /**
@@ -39,6 +40,7 @@ export type KeeperCliVault = {
     getSharedFolders(): DSharedFolder[]
     restoreSession(input: SessionRestoreInput): Promise<void>
     getSummary?: () => VaultSummary
+    getWhoamiInfo?: (options?: { includeVaultCounts?: boolean }) => Promise<WhoamiInfo>
     findRecord?: (uidOrTitle: string) => DRecord | undefined
     findRecords?: (criteria: string) => DRecord[]
     getRecordShareInfo?: (recordUid: string) => Promise<RecordShareInfo | null>
@@ -46,6 +48,7 @@ export type KeeperCliVault = {
     listFolder?: (options?: ListFolderOptions) => Promise<ListFolderResult>
     tree?: (options?: FolderTreeBuildOptions) => Promise<string>
     changeDirectory?: (path: string) => Promise<ChangeDirectoryResult>
+    tryResolvePath?: (path: string) => Promise<TryResolvePathResult>
     getCurrentFolderUid?: () => string | null
     getWorkingFolderDisplayName?: () => string
     getFolder?: (uidOrName: string, options?: GetFolderOptions) => Promise<GetFolderResult>
@@ -63,16 +66,25 @@ export type KeeperCliHost = {
     getAccountUsername?: () => Promise<string | undefined>
 }
 
+export type CliHelpPositional = {
+    name: string
+    help: string
+    nargs?: '?' | '*' | '+'
+}
+
+export type CliHelpOption = {
+    flags: string
+    help: string
+    metavar?: string
+    choices?: string
+}
+
 export type CliHelpDoc = {
-    title: string
-    synopsis?: string
-    description?: string
-    arguments?: string
-    options?: string
-    environment?: string
-    examples?: string
-    seeAlso?: string
-    note?: string
+    description: string
+    usage?: string
+    positionals?: CliHelpPositional[]
+    options?: CliHelpOption[]
+    epilog?: string
 }
 
 export type CliCommandDefinition = {
@@ -83,7 +95,7 @@ export type CliCommandDefinition = {
     aliases?: readonly string[]
     subcommands?: readonly string[]
     flagOptions?: readonly string[]
-    /** When set, options outside this set are rejected (`--help` / `-h` always allowed). */
+    valueShortFlags?: readonly string[]
     allowedOptions?: ReadonlySet<string>
     help: CliHelpDoc
     run: (host: KeeperCliHost, parsed: ParsedCli) => Promise<CliResult>

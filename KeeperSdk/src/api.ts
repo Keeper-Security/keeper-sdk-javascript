@@ -84,6 +84,10 @@ export type {
 export { KeeperVault } from './vault/KeeperVault'
 export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
 
+export { buildWhoamiInfo, normalizeServerHost, resolveDataCenter } from './account/whoamiInfo'
+export type { WhoamiInfo, BuildWhoamiInfoInput } from './account/whoamiInfo'
+export { formatWhoamiJson, formatWhoamiOutput } from './cli/account/whoamiFormat'
+
 export type { SessionRestoreInput } from './auth/sessionRestore'
 export {
     toSessionParams,

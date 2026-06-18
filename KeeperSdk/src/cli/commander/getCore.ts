@@ -95,7 +95,6 @@ async function tryGetSharedFolderByUid(
     return { code: 0, out: `${hit.name ?? '(unnamed)'}\t${hit.uid}\n`, err: '' }
 }
 
-/** Commander-style `get` (record, folder, or shared folder by UID/title). */
 export async function executeGet(host: KeeperCliHost, parsed: ParsedCli, cmd = 'get'): Promise<CliResult> {
     const target = getGetTarget(parsed)
     if (!target) {

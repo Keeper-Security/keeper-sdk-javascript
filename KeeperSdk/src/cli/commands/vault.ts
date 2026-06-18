@@ -31,13 +31,10 @@ export const vaultCommand: CliCommandDefinition = {
     subcommands: ['summary'],
     flagOptions: ['--json'],
     help: {
-        title: 'vault — vault-wide statistics',
-        synopsis: '  vault summary [--json]',
-        description: '  Runs sync, then prints counts from the local vault cache.',
-        arguments: '  summary   Print record, shared folder, and user-folder counts.',
-        options: '  --json      Emit JSON.\n  --help, -h  Show this help.',
-        examples: '  vault summary\n  vault summary --json',
-        seeAlso: '  sync, list, tree, whoami',
+        description: 'Vault summary counts (records, folders, shared folders).',
+        usage: '[-h] [--json] summary',
+        positionals: [{ name: 'summary', help: 'print record, shared folder, and user-folder counts' }],
+        options: [{ flags: '--json', help: 'emit JSON' }],
     },
     async run(host, parsed) {
         if (wantsCliHelp(parsed)) {
