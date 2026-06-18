@@ -17,7 +17,7 @@ jobs:
           node-version: '24'
 
       - name: Lib - Install
-        run: npm i
+        run: npm ci
         working-directory: ./keeperapi
         env:
           NPM_TOKEN: ""

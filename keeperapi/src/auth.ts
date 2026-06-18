@@ -141,6 +141,13 @@ export class Auth {
     private messageSessionUid: Uint8Array
     options: ClientConfigurationInternal
     private socket?: SocketListener
+    // Optional second socket to the KRouter user endpoint (see connectToRouter).
+    private routerSocket?: SocketListener
+    // Listener registered via onRouterMessage, retained so it can be (re)attached
+    // each time the router socket (re)connects. Lets a caller subscribe before the
+    // socket finishes its async connect (it is opened fire-and-forget after login)
+    // without racing it. Only one consumer is ever needed.
+    private routerMessageListener?: (data: Uint8Array) => void
     public clientKey?: Uint8Array
     private _accountSummary?: IAccountSummaryElements
     private _accountSummaryVersion: number = 1
@@ -257,6 +264,17 @@ export class Auth {
 
         this.socket = await createAsyncSocket(url, this.messageSessionUid, getConnectionRequest)
         logger.debug('Socket connected')
+        // Log every incoming push event with the same logger/format as REST calls.
+        // Decryption only runs when debug logging is enabled.
+        this.onPushMessage(async (data: Uint8Array) => {
+            if (!isLevelEnabled('debug')) return
+            try {
+                const wssClientResponse = await this.endpoint.decryptPushMessage(data)
+                logger.debug(...formatProto('Push message received', wssClientResponse))
+            } catch (e) {
+                logger.debug('Push message received (undecryptable)', e)
+            }
+        })
         this.onCloseMessage((closeReason: CloseReason) => {
             if (this.options.onCommandFailure) {
                 this.options.onCommandFailure({
@@ -272,6 +290,70 @@ export class Auth {
             this.socket.disconnect()
             delete this.socket
         }
+    }
+
+    /**
+     * Opens a WebSocket to the KRouter user endpoint
+     * (`wss://connect.<host>/api/user/client`). This is separate from the
+     * KeeperApp push socket opened by `connect()`. Requires a session token, so
+     * call it after login. When `ClientConfiguration.connectToRouter` is set this
+     * runs automatically once the session token is available.
+     *
+     * Inbound frames are JSON text (`gw_response`, `client_error`, notifications).
+     * Subscribe with `onRouterMessage`; incoming events are also debug-logged.
+     */
+    async connectToRouter() {
+        if (!this._sessionToken) {
+            throw new Error('Cannot connect to router socket without a session token')
+        }
+        if (this.routerSocket?.getIsConnected()) {
+            return
+        }
+        const url = await this.endpoint.getRouterConnectionUrl(this._sessionToken)
+        // No app-level heartbeat: the router treats every binary frame as a
+        // RouterControllerMessage and relies on protocol-level ping/pong instead.
+        const routerSocket = await createAsyncSocket(url, undefined, undefined, false)
+        if (!routerSocket) {
+            throw new Error('Failed to open router socket')
+        }
+        this.routerSocket = routerSocket
+        logger.debug('Router socket connected')
+        routerSocket.onPushMessage((data: Uint8Array) => {
+            if (!isLevelEnabled('debug')) return
+            const text = platform.bytesToString(data)
+            try {
+                logger.debug('Router message received', JSON.parse(text))
+            } catch {
+                logger.debug('Router message received', text)
+            }
+        })
+        // (Re)attach the subscriber registered before this socket existed (or before
+        // a reconnect created a fresh one).
+        if (this.routerMessageListener) {
+            routerSocket.onPushMessage(this.routerMessageListener)
+        }
+    }
+
+    disconnectRouter() {
+        if (this.routerSocket) {
+            this.routerSocket.disconnect()
+            delete this.routerSocket
+        }
+    }
+
+    onRouterMessage(callback: (data: Uint8Array) => void): void {
+        // Retain the listener so it survives (re)connects, then attach it to the
+        // current socket if one is already open. Safe to call before connectToRouter
+        // has finished — it does not throw when the socket is not yet available.
+        this.routerMessageListener = callback
+        this.routerSocket?.onPushMessage(callback)
+    }
+
+    onRouterCloseMessage(callback: (data: any) => void): void {
+        if (!this.routerSocket) {
+            throw new Error('No router socket available')
+        }
+        this.routerSocket.onCloseMessage(callback)
     }
 
     /**
@@ -1254,6 +1336,9 @@ export class Auth {
         this.socket.onOpen(() => {
             this.socket?.registerLogin(this._sessionToken)
         })
+        if (this.options.connectToRouter) {
+            this.connectToRouter().catch((e) => logger.debug('Router socket connect failed', e))
+        }
     }
 
     async registerDevice() {

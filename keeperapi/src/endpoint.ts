@@ -417,6 +417,25 @@ export class KeeperEndpoint {
         return WssClientResponse.decode(decryptedPushMessage)
     }
 
+    // Builds the KRouter user-socket URL. Browsers can't set custom WebSocket
+    // headers, so the same `keeper-user` credentials that `executeRouterRest`
+    // sends as `Authorization` / `TransmissionKey` headers are passed as URL-safe
+    // query parameters instead — KRouter's auth provider falls back to query
+    // parameters and un-url-safes them (see KeeperAuthenticationProvider.kt).
+    async getRouterConnectionUrl(sessionToken: string): Promise<string> {
+        const transmissionKey = await this.getTransmissionKey()
+        const sessionTokenBytes = normal64Bytes(sessionToken)
+        const encryptedSessionToken = await platform.aesGcmEncrypt(sessionTokenBytes, transmissionKey.key)
+        const authorization = `KeeperUser ${webSafe64FromBytes(encryptedSessionToken)}`
+        const transmissionKeyParam = webSafe64FromBytes(transmissionKey.ecEncryptedKey)
+        const httpUrl = getKeeperRouterUrl(this.options.host, 'api/user/client')
+        const wssUrl = httpUrl.replace(/^http/, 'ws')
+        return (
+            `${wssUrl}?Authorization=${encodeURIComponent(authorization)}` +
+            `&TransmissionKey=${encodeURIComponent(transmissionKeyParam)}`
+        )
+    }
+
     async getPushConnectionRequest(messageSessionUid: Uint8Array) {
         this._transmissionKey = await this.getTransmissionKey()
         return getPushConnectionRequest(
