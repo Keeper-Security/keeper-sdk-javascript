@@ -539,12 +539,7 @@ const RecordDetailsDataResponse = {
 export const recordDetailsDataMessage = (
     data: IRecordDetailsDataRequest
 ): RestMessage<IRecordDetailsDataRequest, IRecordDetailsDataResponse> =>
-    createMessage(
-        data,
-        'vault/records/v3/details/data',
-        RecordDetailsDataRequest,
-        RecordDetailsDataResponse
-    )
+    createMessage(data, 'vault/records/v3/details/data', RecordDetailsDataRequest, RecordDetailsDataResponse)
 
 export const folderAddMessage = (
     data: Folder.IFolderAddRequest

@@ -7,6 +7,7 @@ import {
     checkFolderDeletePermission,
     ensureNestedShareFolder,
     getFolderDisplayName,
+    requireAuthAccountUid,
     resolveNsfFolderUidOrName,
 } from './nsfHelpers'
 
@@ -90,10 +91,7 @@ function buildRemovals(
         )
     }
 
-    const accountUid = auth.accountUid
-    if (!accountUid?.length) {
-        throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
-    }
+    const accountUid = requireAuthAccountUid(auth)
 
     const removals: RemovalSpec[] = []
     for (const identifier of folderIdentifiers) {

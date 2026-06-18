@@ -1,4 +1,5 @@
 import type {
+    Auth,
     DRecord,
     DUser,
     DKdFolder,
@@ -6,7 +7,7 @@ import type {
     DKdFolderRecord,
     DKdRecordAccess,
 } from '@keeper-security/keeperapi'
-import { Folder, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import { Folder, Records, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes } from '../utils'
@@ -43,6 +44,68 @@ export function nsfToNumber(
 ): number | undefined {
     if (value == null) return fallback
     return typeof value === 'number' ? value : value.toNumber()
+}
+
+export function requireAuthAccountUid(auth: Auth): Uint8Array {
+    const accountUid = auth.accountUid
+    if (!accountUid?.length) {
+        throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
+    }
+    return accountUid
+}
+
+export function requireAuthDataKey(auth: Auth): Uint8Array {
+    if (!auth.dataKey?.length) {
+        throw new KeeperSdkError('Data key not available. Ensure you are logged in.', ResultCodes.NSF_MISSING_KEY)
+    }
+    return auth.dataKey
+}
+
+export function buildFolderOwnerInfo(auth: Auth): Folder.IUserInfo | undefined {
+    if (!auth.accountUid?.length) return undefined
+    return {
+        accountUid: auth.accountUid,
+        username: auth.username,
+    }
+}
+
+export function parseFolderModifyStatus(
+    result: Folder.IFolderModifyResult | null | undefined,
+    failureCode: string
+): string {
+    if (!result) {
+        throw new KeeperSdkError('No results from folder operation.', failureCode)
+    }
+    const status = result.status ?? Folder.FolderModifyStatus.SUCCESS
+    const statusName = Folder.FolderModifyStatus[status] ?? String(status)
+    if (status !== Folder.FolderModifyStatus.SUCCESS) {
+        throw new KeeperSdkError(
+            result.message || `Folder operation failed (${statusName}).`,
+            failureCode
+        )
+    }
+    return result.message || 'Folder operation succeeded'
+}
+
+export function parseRecordModifyStatus(
+    result: Records.IRecordModifyStatus | null | undefined,
+    failureCode: string
+): { statusName: string; message: string } {
+    if (!result) {
+        throw new KeeperSdkError('No results from record operation.', failureCode)
+    }
+    const status = result.status ?? Records.RecordModifyResult.RS_SUCCESS
+    const statusName = Records.RecordModifyResult[status] ?? String(status)
+    if (status !== Records.RecordModifyResult.RS_SUCCESS) {
+        throw new KeeperSdkError(
+            result.message || `Record operation failed (${statusName}).`,
+            failureCode
+        )
+    }
+    return {
+        statusName,
+        message: result.message || 'Record operation succeeded',
+    }
 }
 
 export function isNestedShareRecord(storage: InMemoryStorage, recordUid: string): boolean {
@@ -238,6 +301,14 @@ function resolveKeeperDriveRootParentUid(storage: InMemoryStorage): string | und
     return undefined
 }
 
+export function resolveKeeperDriveParentUid(
+    storage: InMemoryStorage,
+    parentUid: string | null | undefined
+): string | null {
+    if (parentUid && !isRootFolderUid(parentUid)) return parentUid
+    return resolveKeeperDriveRootParentUid(storage) ?? null
+}
+
 export async function cacheNewNsfFolder(
     storage: InMemoryStorage,
     auth: { username?: string; accountUid?: Uint8Array },
@@ -270,27 +341,18 @@ export function checkFolderDeletePermission(
     storage: InMemoryStorage,
     folderUid: string,
     username: string,
-    accountUid?: Uint8Array
+    accountUid: Uint8Array
 ): void {
     if (isRootFolderUid(folderUid)) {
         throw new KeeperSdkError('The root folder cannot be removed.', ResultCodes.NSF_PERMISSION_DENIED)
     }
 
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
     const entries = getFolderAccessEntries(storage, folderUid)
     if (entries.length === 0) return
 
-    const accountUidStr = accountUid?.length ? webSafe64FromBytes(accountUid) : ''
     for (const entry of entries) {
-        const isCurrentUser =
-            (entry.accessType === Folder.AccessType.AT_USER && entry.accessTypeUid === accountUidStr) ||
-            (entry.accessType === Folder.AccessType.AT_OWNER && entry.accessTypeUid === accountUidStr) ||
-            (username &&
-                storage.getAll<DUser>('user').some(
-                    (user) =>
-                        user.username === username &&
-                        webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
-                ))
-        if (!isCurrentUser) continue
+        if (!isCurrentUserFolderAccess(storage, entry, username, accountUidStr)) continue
         if (entry.accessType === Folder.AccessType.AT_OWNER || entry.permission?.canDelete) return
         throw new KeeperSdkError(
             'You do not have permission to delete this folder.',

@@ -1,4 +1,4 @@
-import type { Auth } from '@keeper-security/keeperapi'
+import type { Auth, Records } from '@keeper-security/keeperapi'
 import { normal64Bytes, recordDetailsDataMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
@@ -35,16 +35,32 @@ function resolveRecordUids(storage: InMemoryStorage, identifiers: string[]): str
         throw new KeeperSdkError('At least one record UID or title is required.', ResultCodes.NSF_DETAILS_FAILED)
     }
 
-    const recordUids: string[] = []
-    for (const identifier of identifiers) {
+    return identifiers.map((identifier) => {
         const recordUid = resolveNsfRecordIdentifier(storage, identifier)
         if (!recordUid) {
             throw new KeeperSdkError(`Record '${identifier}' not found`, ResultCodes.NSF_NOT_FOUND)
         }
         ensureNestedShareRecord(storage, recordUid, identifier)
-        recordUids.push(recordUid)
+        return recordUid
+    })
+}
+
+async function mapRecordDetailsItem(
+    storage: InMemoryStorage,
+    auth: Auth,
+    item: Records.IRecordData
+): Promise<NsfRecordDetailsItem | undefined> {
+    const recordUid = item.recordUid?.length ? webSafe64FromBytes(item.recordUid) : ''
+    if (!recordUid) return undefined
+
+    const { title, type } = await decryptRecordTitleAndType(storage, auth, recordUid, item)
+    return {
+        recordUid,
+        title,
+        type,
+        revision: nsfToNumber(item.revision, 0) ?? 0,
+        version: item.version ?? 0,
     }
-    return recordUids
 }
 
 export function formatNsfRecordDetailsTable(result: GetNsfRecordDetailsResult): string {
@@ -95,16 +111,8 @@ export async function getNestedShareRecordDetails(
 
         const data: NsfRecordDetailsItem[] = []
         for (const item of response.data ?? []) {
-            const recordUid = item.recordUid?.length ? webSafe64FromBytes(item.recordUid) : ''
-            if (!recordUid) continue
-            const { title, type } = await decryptRecordTitleAndType(storage, auth, recordUid, item)
-            data.push({
-                recordUid,
-                title,
-                type,
-                revision: nsfToNumber(item.revision, 0) ?? 0,
-                version: item.version ?? 0,
-            })
+            const mapped = await mapRecordDetailsItem(storage, auth, item)
+            if (mapped) data.push(mapped)
         }
 
         return {
