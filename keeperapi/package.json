@@ -7,6 +7,9 @@
     "types": "dist/node/index.d.ts",
     "repository": "https://github.com/Keeper-Security/keeper-sdk-javascript",
     "license": "ISC",
+    "engines": {
+        "node": ">=24.13.1"
+    },
     "scripts": {
         "start": "rollup -cw",
         "build": "node ./scripts/cleanDistFolder.js && rollup -c && cp src/proto.d.ts dist",
