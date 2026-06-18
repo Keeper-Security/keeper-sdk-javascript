@@ -118,4 +118,15 @@ export type {
     UpdateNsfRecordFieldMap,
 } from './updateNsfRecord'
 
+export { addNestedShareRecord } from './addNsfRecord'
+export type { AddNsfRecordInput, AddNsfRecordResult } from './addNsfRecord'
+
+export {
+    buildNsfRecordData,
+    parseNsfFieldStrings,
+    type NsfRecordFieldMap,
+    type NsfRecordCustomField,
+    type ParsedNsfFieldStrings,
+} from './nsfRecordData'
+
 export { NestedShareFolderManager } from './NestedShareFolderManager'

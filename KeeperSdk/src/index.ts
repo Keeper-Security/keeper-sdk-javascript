@@ -485,6 +485,9 @@ export {
     formatNsfRecordDetailsTable,
     formatNsfRecordDetailsOutput,
     updateNestedShareRecords,
+    addNestedShareRecord,
+    buildNsfRecordData,
+    parseNsfFieldStrings,
     checkRecordEditPermission,
     NestedShareFolderManager,
 } from './nestedShareFolders'
@@ -522,6 +525,11 @@ export type {
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
     UpdateNsfRecordFieldMap,
+    AddNsfRecordInput,
+    AddNsfRecordResult,
+    NsfRecordFieldMap,
+    NsfRecordCustomField,
+    ParsedNsfFieldStrings,
 } from './nestedShareFolders'
 
 export type {

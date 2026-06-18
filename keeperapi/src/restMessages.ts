@@ -1072,7 +1072,7 @@ export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineC
 export const keeperDriveRecordsAdd = (
     data: record.v3.IRecordsAddRequest
 ): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
-    createMessage(data, '/vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
+    createMessage(data, 'vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
 
 export const keeperDriveRecordsUpdate = (
     data: Records.IRecordsUpdateRequest

@@ -3,30 +3,17 @@ import {
     extractErrorMessage,
     login,
     logger,
+    parseNsfFieldStrings,
     prompt,
-    suppressLogs,
-    type UpdateNsfRecordFieldMap,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-
-function parseFieldSpecs(input: string): UpdateNsfRecordFieldMap {
-    const fields: UpdateNsfRecordFieldMap = {}
-    for (const spec of input.split(',').map((value) => value.trim()).filter(Boolean)) {
-        const separator = spec.indexOf('=')
-        if (separator <= 0) continue
-        const type = spec.slice(0, separator).trim()
-        const value = spec.slice(separator + 1).trim()
-        if (type) fields[type] = value
-    }
-    return fields
-}
+import { splitCommaSeparated, withSuppressedLogs } from '../utils/format'
 
 async function updateNsfRecord() {
     const vault = await login()
 
     try {
-        const recordsInput = (await prompt('Record UID(s) or title(s), comma-separated: ')).trim()
-        const records = recordsInput.split(',').map((value) => value.trim()).filter(Boolean)
+        const records = splitCommaSeparated(await prompt('Record UID(s) or title(s), comma-separated: '))
         if (records.length === 0) {
             logger.info('At least one record is required.')
             return
@@ -36,21 +23,19 @@ async function updateNsfRecord() {
         const recordType = (await prompt('Record type (optional): ')).trim()
         const notes = (await prompt('Notes (optional): ')).trim()
         const fieldsInput = (await prompt('Fields (type=value, comma-separated, optional): ')).trim()
-        const fields = fieldsInput ? parseFieldSpecs(fieldsInput) : undefined
+        const fields = fieldsInput
+            ? parseNsfFieldStrings(splitCommaSeparated(fieldsInput)).fields
+            : undefined
 
-        const restore = suppressLogs()
-        let result
-        try {
-            result = await vault.updateNestedShareRecords({
+        const result = await withSuppressedLogs(() =>
+            vault.updateNestedShareRecords({
                 records,
                 title: title || undefined,
                 recordType: recordType || undefined,
                 notes: notes || undefined,
                 fields,
             })
-        } finally {
-            restore()
-        }
+        )
 
         logger.info('')
         for (const item of result.updated) {

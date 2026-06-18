@@ -2,16 +2,8 @@ import type { Auth } from '@keeper-security/keeperapi'
 import { normal64Bytes, recordDetailsDataMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
-import {
-    ensureNestedShareRecord,
-    resolveNsfRecordIdentifier,
-} from './nsfHelpers'
 import { decryptRecordTitleAndType } from './nsfRecordCrypto'
-
-function longToNumber(value: number | { toNumber: () => number } | null | undefined): number {
-    if (value == null) return 0
-    return typeof value === 'number' ? value : value.toNumber()
-}
+import { ensureNestedShareRecord, nsfToNumber, resolveNsfRecordIdentifier } from './nsfHelpers'
 
 export enum GetNsfRecordDetailsFormat {
     Table = 'table',
@@ -80,8 +72,7 @@ export function formatNsfRecordDetailsOutput(
     result: GetNsfRecordDetailsResult,
     format: GetNsfRecordDetailsFormatInput = GetNsfRecordDetailsFormat.Table
 ): string {
-    const value = String(format).toLowerCase()
-    if (value === GetNsfRecordDetailsFormat.JSON || value === 'json') {
+    if (String(format).toLowerCase() === GetNsfRecordDetailsFormat.JSON) {
         return JSON.stringify(result, null, 2)
     }
     return formatNsfRecordDetailsTable(result)
@@ -103,7 +94,7 @@ export async function getNestedShareRecordDetails(
         )
 
         const data: NsfRecordDetailsItem[] = []
-        for (const item of response.data) {
+        for (const item of response.data ?? []) {
             const recordUid = item.recordUid?.length ? webSafe64FromBytes(item.recordUid) : ''
             if (!recordUid) continue
             const { title, type } = await decryptRecordTitleAndType(storage, auth, recordUid, item)
@@ -111,14 +102,14 @@ export async function getNestedShareRecordDetails(
                 recordUid,
                 title,
                 type,
-                revision: longToNumber(item.revision),
+                revision: nsfToNumber(item.revision, 0) ?? 0,
                 version: item.version ?? 0,
             })
         }
 
         return {
             data,
-            forbiddenRecords: response.forbiddenRecords.map((uid) => webSafe64FromBytes(uid)),
+            forbiddenRecords: (response.forbiddenRecords ?? []).map((uid) => webSafe64FromBytes(uid)),
         }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err

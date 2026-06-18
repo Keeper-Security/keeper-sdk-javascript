@@ -5,16 +5,15 @@ import {
     login,
     logger,
     prompt,
-    suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
+import { splitCommaSeparated, withSuppressedLogs } from '../utils/format'
 
 async function getNsfRecordDetails() {
     const vault = await login()
 
     try {
-        const recordsInput = (await prompt('Record UID(s) or title(s), comma-separated: ')).trim()
-        const records = recordsInput.split(',').map((value) => value.trim()).filter(Boolean)
+        const records = splitCommaSeparated(await prompt('Record UID(s) or title(s), comma-separated: '))
         if (records.length === 0) {
             logger.info('At least one record is required.')
             return
@@ -24,13 +23,7 @@ async function getNsfRecordDetails() {
         const format =
             formatInput === 'json' ? GetNsfRecordDetailsFormat.JSON : GetNsfRecordDetailsFormat.Table
 
-        const restore = suppressLogs()
-        let result
-        try {
-            result = await vault.getNestedShareRecordDetails({ records, format })
-        } finally {
-            restore()
-        }
+        const result = await withSuppressedLogs(() => vault.getNestedShareRecordDetails({ records, format }))
 
         logger.info('')
         logger.info(vault.formatNsfRecordDetailsOutput(result, format))

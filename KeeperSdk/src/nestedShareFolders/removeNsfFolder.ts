@@ -12,6 +12,8 @@ import {
 
 const { RemoveAction, FolderOperationType, RemoveStatus } = folder.v3.remove
 const REMOVE_SUCCESS_STATUS = RemoveStatus[RemoveStatus.REMOVE_STATUS_SUCCESS]
+const TRASH_ACTION_LABEL = 'moved to trash'
+const PERMANENT_DELETE_ACTION_LABEL = 'permanently deleted'
 
 export enum NsfRemoveFolderOperation {
     FolderTrash = 'folder-trash',
@@ -88,6 +90,11 @@ function buildRemovals(
         )
     }
 
+    const accountUid = auth.accountUid
+    if (!accountUid?.length) {
+        throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
+    }
+
     const removals: RemovalSpec[] = []
     for (const identifier of folderIdentifiers) {
         const folderUid = resolveNsfFolderUidOrName(storage, identifier)
@@ -95,7 +102,7 @@ function buildRemovals(
             throw new KeeperSdkError(`Folder '${identifier}' not found`, ResultCodes.NSF_NOT_FOUND)
         }
         ensureNestedShareFolder(storage, folderUid, identifier)
-        checkFolderDeletePermission(storage, folderUid, auth.username, auth.accountUid)
+        checkFolderDeletePermission(storage, folderUid, auth.username, accountUid)
         removals.push({
             folderUid,
             name: getFolderDisplayName(storage, folderUid),
@@ -154,7 +161,13 @@ function mapPreview(
     removals: RemovalSpec[],
     response: FolderProto.v3.remove.IRemoveResponse
 ): NsfRemoveFolderPreviewItem[] {
-    return response.results.map((item, index) => mapPreviewItem(removals[index] ?? removals[0], item))
+    return (response.results ?? []).map((item, index) => {
+        const spec = removals[index]
+        if (!spec) {
+            throw new KeeperSdkError('Folder removal preview mismatch.', ResultCodes.NSF_REMOVE_FAILED)
+        }
+        return mapPreviewItem(spec, item)
+    })
 }
 
 function hasPreviewErrors(preview: NsfRemoveFolderPreviewItem[]): boolean {
@@ -167,7 +180,9 @@ export function formatRemoveNsfFolderPreview(
     quiet = false
 ): string {
     const action =
-        operation === NsfRemoveFolderOperation.DeletePermanent ? 'permanently deleted' : 'moved to trash'
+        operation === NsfRemoveFolderOperation.DeletePermanent
+            ? PERMANENT_DELETE_ACTION_LABEL
+            : TRASH_ACTION_LABEL
     const lines: string[] = []
 
     for (const item of preview) {

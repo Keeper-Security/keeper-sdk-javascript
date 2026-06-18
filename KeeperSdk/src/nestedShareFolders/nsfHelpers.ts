@@ -37,6 +37,14 @@ export enum NsfItemType {
     Record = 'Record',
 }
 
+export function nsfToNumber(
+    value: number | { toNumber: () => number } | null | undefined,
+    fallback?: number
+): number | undefined {
+    if (value == null) return fallback
+    return typeof value === 'number' ? value : value.toNumber()
+}
+
 export function isNestedShareRecord(storage: InMemoryStorage, recordUid: string): boolean {
     return !!getKeeperDriveRecord(storage, recordUid)
 }
@@ -169,18 +177,62 @@ export function parseNsfPath(folderPath: string): string[] {
     return segments
 }
 
+function getKnownKeeperDriveFolderUids(storage: InMemoryStorage): Set<string> {
+    return new Set(getKeeperDriveFolders(storage).map((folder) => folder.uid))
+}
+
+function isVirtualDriveRootParent(storage: InMemoryStorage, parentUid: string | undefined | null): boolean {
+    const trimmed = parentUid?.trim()
+    if (!trimmed || isRootFolderUid(trimmed)) return true
+    return !getKnownKeeperDriveFolderUids(storage).has(trimmed)
+}
+
+function isRootLevelParent(storage: InMemoryStorage, parentUid: string | undefined | null): boolean {
+    return isVirtualDriveRootParent(storage, parentUid)
+}
+
+function folderParentsMatch(
+    storage: InMemoryStorage,
+    folderParentUid: string | undefined,
+    searchParentUid: string | null | undefined
+): boolean {
+    if (normalizeParentUid(folderParentUid) === normalizeParentUid(searchParentUid)) return true
+    return isRootLevelParent(storage, searchParentUid) && isRootLevelParent(storage, folderParentUid)
+}
+
 export function findExistingChildFolder(
     storage: InMemoryStorage,
     segment: string,
     parentUid: string | null | undefined
 ): string | undefined {
-    const normalizedParent = normalizeParentUid(parentUid)
     const lower = segment.toLowerCase()
+    const exactMatches: string[] = []
+    const rootMatches: string[] = []
+
     for (const folder of getKeeperDriveFolders(storage)) {
-        const folderParent = normalizeParentUid(folder.parentUid)
         const name = folder.data.name || ''
-        if (folderParent === normalizedParent && name.toLowerCase() === lower) {
-            return folder.uid
+        if (name.toLowerCase() !== lower) continue
+
+        if (normalizeParentUid(folder.parentUid) === normalizeParentUid(parentUid)) {
+            exactMatches.push(folder.uid)
+            continue
+        }
+        if (folderParentsMatch(storage, folder.parentUid, parentUid)) {
+            rootMatches.push(folder.uid)
+        }
+    }
+
+    if (exactMatches.length > 0) return exactMatches[0]
+    if (rootMatches.length > 0) return rootMatches[0]
+    return undefined
+}
+
+function resolveKeeperDriveRootParentUid(storage: InMemoryStorage): string | undefined {
+    const knownFolderUids = getKnownKeeperDriveFolderUids(storage)
+    for (const folder of getKeeperDriveFolders(storage)) {
+        const parentUid = folder.parentUid?.trim()
+        if (parentUid && !knownFolderUids.has(parentUid) && !isRootFolderUid(parentUid)) {
+            return parentUid
         }
     }
     return undefined
@@ -194,7 +246,10 @@ export async function cacheNewNsfFolder(
     parentUid: string | null | undefined,
     inheritPermissions: boolean
 ): Promise<void> {
-    const normalizedParent = isRootFolderUid(parentUid) ? undefined : parentUid?.trim() || undefined
+    const normalizedParent =
+        parentUid && !isRootFolderUid(parentUid)
+            ? parentUid.trim()
+            : resolveKeeperDriveRootParentUid(storage)
     await storage.put({
         kind: 'keeper_drive_folder',
         uid: folderUid,
@@ -372,9 +427,6 @@ export function checkFolderRemovePermission(
     accountUid: Uint8Array
 ): void {
     if (hasFolderPermission(storage, folderUid, username, accountUid, 'canRemove')) return
-    // Folder-trash and unlink are less destructive than owner-trash. Allow when the user
-    // can permanently delete the record, or owns it without explicit record-access entries
-    // (common for records in a personal drive root with no folder-access sync data).
     if (canRecordBeDeleted(storage, recordUid, username, accountUid, folderUid)) return
     throw new KeeperSdkError(
         'You do not have permission to remove records from this folder.',
@@ -400,25 +452,14 @@ export function checkRecordEditPermission(
     storage: InMemoryStorage,
     recordUid: string,
     username: string,
-    accountUid?: Uint8Array
+    accountUid: Uint8Array
 ): void {
-    const entries = storage
-        .getAll<DKdRecordAccess>(KeeperDriveKind.RecordAccess)
-        .filter((entry) => entry.recordUid === recordUid)
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getRecordAccessEntries(storage, recordUid)
     if (entries.length === 0) return
 
-    const accountUidStr = accountUid?.length ? webSafe64FromBytes(accountUid) : ''
     for (const entry of entries) {
-        const isCurrentUser =
-            (entry.accessType === Folder.AccessType.AT_USER &&
-                entry.accessTypeUid === accountUidStr) ||
-            (username &&
-                storage.getAll<DUser>('user').some(
-                    (user) =>
-                        user.username === username &&
-                        webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
-                ))
-        if (!isCurrentUser) continue
+        if (!isCurrentUserRecordAccess(storage, entry, username, accountUidStr)) continue
         if (entry.owner || entry.canEdit) return
         throw new KeeperSdkError(
             'You do not have permission to edit this record.',

@@ -69,6 +69,7 @@ export enum NsfErrorCode {
     MkdirFailed = 'nsf_mkdir_failed',
     UpdateFailed = 'nsf_update_failed',
     DetailsFailed = 'nsf_details_failed',
+    AddFailed = 'nsf_add_failed',
 }
 
 export enum TeamErrorCode {
@@ -152,6 +153,7 @@ export const ResultCodes = {
     NSF_MKDIR_FAILED: NsfErrorCode.MkdirFailed,
     NSF_UPDATE_FAILED: NsfErrorCode.UpdateFailed,
     NSF_DETAILS_FAILED: NsfErrorCode.DetailsFailed,
+    NSF_ADD_FAILED: NsfErrorCode.AddFailed,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,

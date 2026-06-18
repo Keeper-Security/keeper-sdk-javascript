@@ -20,6 +20,8 @@ import {
     parseNsfPath,
 } from './nsfHelpers'
 
+const FOLDER_KEY_BYTE_LENGTH = 32
+
 export type NsfFolderColorInput = NsfFolderColor | `${NsfFolderColor}`
 
 export type MkdirNsfInput = {
@@ -81,7 +83,7 @@ async function prepareFolderData(
     inheritPermissions: boolean
 ): Promise<{ folderUid: string; folderData: Folder.IFolderData }> {
     const folderUid = generateUid()
-    const folderKey = platform.getRandomBytes(32)
+    const folderKey = platform.getRandomBytes(FOLDER_KEY_BYTE_LENGTH)
     await storage.saveKeyBytes(folderUid, folderKey)
 
     const metadata: { name: string; color?: string } = { name: folderName }
@@ -118,7 +120,7 @@ async function createFolderV3(
     parentUid: string | null,
     color: NsfFolderColor | undefined,
     inheritPermissions: boolean
-): Promise<{ folderUid: string; success: boolean; message: string }> {
+): Promise<{ folderUid: string; message: string }> {
     const { folderUid, folderData } = await prepareFolderData(
         storage,
         auth,
@@ -135,15 +137,13 @@ async function createFolderV3(
     }
 
     const statusName = Folder.FolderModifyStatus[result.status ?? Folder.FolderModifyStatus.SUCCESS] ?? 'UNKNOWN'
-    const success = result.status === Folder.FolderModifyStatus.SUCCESS
-    if (!success) {
+    if (result.status !== Folder.FolderModifyStatus.SUCCESS) {
         throw new KeeperSdkError(result.message || `Folder creation failed (${statusName}).`, ResultCodes.NSF_MKDIR_FAILED)
     }
 
     await cacheNewNsfFolder(storage, auth, folderUid, folderName, parentUid, inheritPermissions)
     return {
         folderUid,
-        success,
         message: result.message || 'Folder created successfully',
     }
 }

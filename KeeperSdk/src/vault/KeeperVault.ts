@@ -84,6 +84,7 @@ import type { MkdirNsfInput, MkdirNsfResult } from '../nestedShareFolders/mkdirN
 import type { RemoveNsfFolderInput, RemoveNsfFolderResult } from '../nestedShareFolders/removeNsfFolder'
 import type { GetNsfRecordDetailsInput, GetNsfRecordDetailsResult } from '../nestedShareFolders/getNsfRecordDetails'
 import type { UpdateNsfRecordInput, UpdateNsfRecordResult } from '../nestedShareFolders/updateNsfRecord'
+import type { AddNsfRecordInput, AddNsfRecordResult } from '../nestedShareFolders/addNsfRecord'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
 import type {
     ListUserRow,
@@ -798,6 +799,12 @@ export class KeeperVault {
     public async updateNestedShareRecords(input: UpdateNsfRecordInput): Promise<UpdateNsfRecordResult> {
         const result = await this.nestedShareFolderManager.updateNestedShareRecords(input)
         if (result.updated.some((item) => item.success)) await this.syncIfNeeded()
+        return result
+    }
+
+    public async addNestedShareRecord(input: AddNsfRecordInput): Promise<AddNsfRecordResult> {
+        const result = await this.nestedShareFolderManager.addNestedShareRecord(input)
+        if (result.success) await this.syncIfNeeded()
         return result
     }
 

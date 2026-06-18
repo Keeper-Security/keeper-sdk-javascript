@@ -3,6 +3,8 @@ import { Records, normal64Bytes, platform, webSafe64FromBytes } from '@keeper-se
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { findNestedShareFoldersForRecord } from './nsfHelpers'
 
+const UNKNOWN_RECORD_LABEL = 'Unknown'
+
 function decodePayload(value: string | Uint8Array | null | undefined): Uint8Array {
     if (!value) return new Uint8Array(0)
     if (value instanceof Uint8Array) return value
@@ -23,7 +25,7 @@ async function decryptWithFolderKeys(
             try {
                 return await platform.aesCbcDecrypt(encryptedKey, folderKey, true)
             } catch {
-                // try next folder key
+                continue
             }
         }
     }
@@ -50,10 +52,8 @@ export async function resolveRecordKeyBytes(
         }
         return await platform.aesGcmDecrypt(encryptedKey, auth.dataKey)
     } catch {
-        // fall through to folder keys
+        return decryptWithFolderKeys(storage, recordUid, encryptedKey)
     }
-
-    return decryptWithFolderKeys(storage, recordUid, encryptedKey)
 }
 
 export async function decryptRecordTitleAndType(
@@ -71,12 +71,12 @@ export async function decryptRecordTitleAndType(
         recordData.recordKeyType
     )
     if (!recordKey) {
-        return { title: 'Unknown', type: 'Unknown' }
+        return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }
     }
 
     const encryptedData = decodePayload(recordData.encryptedRecordData)
     if (!encryptedData.length) {
-        return { title: 'Unknown', type: 'Unknown' }
+        return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }
     }
 
     try {
@@ -86,10 +86,10 @@ export async function decryptRecordTitleAndType(
             type?: string
         }
         return {
-            title: parsed.title?.trim() || 'Unknown',
-            type: parsed.type?.trim() || 'Unknown',
+            title: parsed.title?.trim() || UNKNOWN_RECORD_LABEL,
+            type: parsed.type?.trim() || UNKNOWN_RECORD_LABEL,
         }
     } catch {
-        return { title: 'Unknown', type: 'Unknown' }
+        return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }
     }
 }
