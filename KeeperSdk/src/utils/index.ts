@@ -8,6 +8,9 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    AuditReportErrorCode,
+    ActionReportErrorCode,
+    PasswordReportErrorCode,
     KEEPER_PUBLIC_HOSTS,
 } from './constants'
 export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger } from './Logger'

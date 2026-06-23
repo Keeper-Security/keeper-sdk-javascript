@@ -419,6 +419,84 @@ export const putEnterpriseSettingCommand = (
     request: PutEnterpriseSettingRequest
 ): RestCommand<PutEnterpriseSettingRequest, KeeperResponse> => createCommand(request, 'put_enterprise_setting')
 
+export type AuditReportFilterPayload = {
+    created?:
+        | 'today'
+        | 'yesterday'
+        | 'last_7_days'
+        | 'last_30_days'
+        | 'month_to_date'
+        | 'last_month'
+        | 'year_to_date'
+        | 'last_year'
+        | {
+              min?: number | string
+              max?: number | string
+              exclude_min?: boolean
+              exclude_max?: boolean
+          }
+    event_type?: string | number | Array<string | number>
+    audit_event_type?: string | number | Array<string | number>
+    keeper_version?: number | number[]
+    username?: string | string[]
+    to_username?: string | string[]
+    ip_address?: string[]
+    record_uid?: string | string[]
+    shared_folder_uid?: string | string[]
+    parent_id?: number | number[]
+}
+
+export type GetAuditEventReportsRequest = {
+    report_type: string
+    scope: 'enterprise' | 'user'
+    timezone: string
+    limit: number
+    order?: 'ascending' | 'descending'
+    filter?: AuditReportFilterPayload
+    aggregate?: string[]
+    columns?: string[]
+    report_format?: 'message' | 'fields'
+}
+
+export type GetAuditEventReportsResponse = KeeperResponse & {
+    timezone?: string
+    audit_event_overview_report_rows?: Array<Record<string, string | number | boolean | undefined>>
+}
+
+export const getAuditEventReportsCommand = (
+    request: GetAuditEventReportsRequest
+): RestCommand<GetAuditEventReportsRequest, GetAuditEventReportsResponse> =>
+    createCommand(request, 'get_audit_event_reports')
+
+export type GetAuditEventDimensionsRequest = {
+    report_type: 'dim'
+    columns: string[]
+    limit: number
+    scope: 'enterprise' | 'user'
+}
+
+export type GetAuditEventDimensionsResponse = KeeperResponse & {
+    dimensions?: Record<string, unknown[]>
+}
+
+export const getAuditEventDimensionsCommand = (
+    request: GetAuditEventDimensionsRequest
+): RestCommand<GetAuditEventDimensionsRequest, GetAuditEventDimensionsResponse> =>
+    createCommand(request, 'get_audit_event_dimensions')
+
+export type GetEnterpriseDataRequest = {
+    include: string[]
+}
+
+export type GetEnterpriseDataCommandResponse = KeeperResponse & {
+    licenses?: Record<string, unknown>[]
+}
+
+export const getEnterpriseDataCommand = (
+    request: GetEnterpriseDataRequest
+): RestCommand<GetEnterpriseDataRequest, GetEnterpriseDataCommandResponse> =>
+    createCommand(request, 'get_enterprise_data')
+
 /**
 export class KeeperCommand<Response extends KeeperResponse = KeeperResponse> {
     command?: string;

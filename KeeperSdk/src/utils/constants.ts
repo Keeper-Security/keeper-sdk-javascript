@@ -70,6 +70,32 @@ export enum TeamErrorCode {
     TeamNameTooLong = 'team_name_too_long',
 }
 
+export enum AuditReportErrorCode {
+    InvalidReportType = 'audit_invalid_report_type',
+    InvalidCreatedFilter = 'audit_invalid_created_filter',
+    InvalidFilter = 'audit_invalid_filter',
+    InvalidLimit = 'audit_invalid_limit',
+    ColumnsRequired = 'audit_columns_required',
+    DimensionColumnRequired = 'audit_dimension_column_required',
+    DimensionFailed = 'audit_dimension_failed',
+    ReportFailed = 'audit_report_failed',
+    ReportingNotEnabled = 'audit_reporting_not_enabled',
+    LicenseCheckFailed = 'audit_license_check_failed',
+}
+
+export enum ActionReportErrorCode {
+    ReportFailed = 'action_report_failed',
+    InvalidAction = 'action_report_invalid_action',
+    TargetUserRequired = 'action_report_target_user_required',
+    TransferNotSupported = 'action_report_transfer_not_supported',
+    NodeNotFound = 'action_report_node_not_found',
+    NodeNotUnique = 'action_report_node_not_unique',
+}
+
+export enum PasswordReportErrorCode {
+    PolicyRequired = 'password_report_policy_required',
+}
+
 export enum UserErrorCode {
     NoUsersToUpdate = 'no_users_to_update',
     NoUsersToAdd = 'no_users_to_add',
@@ -149,6 +175,23 @@ export const ResultCodes = {
     NO_TEAMS_FOR_USER_OP: UserErrorCode.NoTeamsForUserOp,
     TEAM_USER_ADD_FAILED: UserErrorCode.TeamUserAddFailed,
     TEAM_USER_REMOVE_FAILED: UserErrorCode.TeamUserRemoveFailed,
+    AUDIT_INVALID_REPORT_TYPE: AuditReportErrorCode.InvalidReportType,
+    AUDIT_INVALID_CREATED_FILTER: AuditReportErrorCode.InvalidCreatedFilter,
+    AUDIT_INVALID_FILTER: AuditReportErrorCode.InvalidFilter,
+    AUDIT_INVALID_LIMIT: AuditReportErrorCode.InvalidLimit,
+    AUDIT_COLUMNS_REQUIRED: AuditReportErrorCode.ColumnsRequired,
+    AUDIT_DIMENSION_COLUMN_REQUIRED: AuditReportErrorCode.DimensionColumnRequired,
+    AUDIT_DIMENSION_FAILED: AuditReportErrorCode.DimensionFailed,
+    AUDIT_REPORT_FAILED: AuditReportErrorCode.ReportFailed,
+    AUDIT_REPORTING_NOT_ENABLED: AuditReportErrorCode.ReportingNotEnabled,
+    AUDIT_LICENSE_CHECK_FAILED: AuditReportErrorCode.LicenseCheckFailed,
+    ACTION_REPORT_FAILED: ActionReportErrorCode.ReportFailed,
+    ACTION_REPORT_INVALID_ACTION: ActionReportErrorCode.InvalidAction,
+    ACTION_REPORT_TARGET_USER_REQUIRED: ActionReportErrorCode.TargetUserRequired,
+    ACTION_REPORT_TRANSFER_NOT_SUPPORTED: ActionReportErrorCode.TransferNotSupported,
+    ACTION_REPORT_NODE_NOT_FOUND: ActionReportErrorCode.NodeNotFound,
+    ACTION_REPORT_NODE_NOT_UNIQUE: ActionReportErrorCode.NodeNotUnique,
+    PASSWORD_REPORT_POLICY_REQUIRED: PasswordReportErrorCode.PolicyRequired,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
