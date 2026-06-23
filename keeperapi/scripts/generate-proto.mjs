@@ -35,9 +35,7 @@ const FILENAME_OVERRIDES = {
 }
 
 const run = (tool, args) =>
-    new Promise((resolve, reject) =>
-        tool.main(args, (err, output) => (err ? reject(err) : resolve(output)))
-    )
+    new Promise((resolve, reject) => tool.main(args, (err, output) => (err ? reject(err) : resolve(output))))
 
 async function main() {
     if (!existsSync(PROTO_DIR)) {
@@ -50,10 +48,13 @@ async function main() {
 
     console.log('Running pbjs...')
     const combined = await run(pbjs, [
-        '--target', 'static-module',
+        '--target',
+        'static-module',
         '--force-number',
-        '--wrap', 'es6',
-        '--path', PROTO_DIR,
+        '--wrap',
+        'es6',
+        '--path',
+        PROTO_DIR,
         ...PROTO_FILES,
     ])
 
@@ -96,25 +97,23 @@ async function main() {
 
         writeFileSync(
             join(protoDir, `${filename}.js`),
-            [
-                ESLINT_HEADER,
-                `import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';`,
-                '',
-                body,
-            ].join('\n')
+            [ESLINT_HEADER, `import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';`, '', body].join(
+                '\n'
+            )
         )
     }
 
     // index.js — re-exports all namespaces in pbjs output order (= dependency order)
     writeFileSync(
         join(protoDir, 'index.js'),
-        splits.map(({ name }) => `export { ${name} } from './${FILENAME_OVERRIDES[name] ?? name}.js';`).join('\n') + '\n'
+        splits.map(({ name }) => `export { ${name} } from './${FILENAME_OVERRIDES[name] ?? name}.js';`).join('\n') +
+            '\n'
     )
 
-    console.log(`Split into ${splits.length} namespace files: ${splits.map(s => s.name).join(', ')}`)
+    console.log(`Split into ${splits.length} namespace files: ${splits.map((s) => s.name).join(', ')}`)
 }
 
-main().catch(err => {
+main().catch((err) => {
     console.error(err)
     process.exit(1)
 })
