@@ -323,7 +323,7 @@ function buildFolderView(storage: InMemoryStorage, folderUid: string): NsfFolder
         objectType: 'folder',
         folderUid,
         name: folder.data.name || 'Unnamed',
-        parentUid: normalizeParentUid(folder.parentUid),
+        parentUid: normalizeParentUid(storage, folder.parentUid),
         path: buildFolderPath(storage, folderUid),
         userPermissions,
         shareAdmins,

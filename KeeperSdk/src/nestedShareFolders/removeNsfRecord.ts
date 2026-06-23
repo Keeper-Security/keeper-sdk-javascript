@@ -154,7 +154,7 @@ function buildRemovals(
         if (operation === NsfRemoveOperation.OwnerTrash) {
             checkRecordDeletePermission(storage, recordUid, auth.username, accountUid, ctxFolder)
         } else {
-            if (!ctxFolder || isRootFolderUid(ctxFolder)) {
+            if (!ctxFolder || isRootFolderUid(storage, ctxFolder)) {
                 throw new KeeperSdkError(
                     `Folder context is required for '${operation}' operation.`,
                     ResultCodes.NSF_FOLDER_REQUIRED

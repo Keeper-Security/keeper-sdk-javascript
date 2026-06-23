@@ -55,7 +55,7 @@ function collectFolderRows(storage: InMemoryStorage): ListNsfRow[] {
         title: folder.data.name || 'Unnamed',
         type: '',
         description: '',
-        parentOrFolder: normalizeParentUid(folder.parentUid),
+        parentOrFolder: normalizeParentUid(storage, folder.parentUid),
     }))
 }
 
