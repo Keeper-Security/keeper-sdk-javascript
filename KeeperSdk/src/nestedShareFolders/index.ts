@@ -25,8 +25,14 @@ export {
     checkRecordDeletePermission,
     checkRecordEditPermission,
     checkFolderDeletePermission,
+    checkFolderEditPermission,
+    checkFolderSharePermission,
+    checkRecordSharePermission,
     parseNsfPath,
     findExistingChildFolder,
+    resolveNsfRoleName,
+    getNsfAccessRoleLabel,
+    normalizeNsfRecordPermissionRole,
 } from './nsfHelpers'
 
 export {
@@ -82,8 +88,58 @@ export type {
 
 export { mkdirNestedShareFolder } from './mkdirNsf'
 export type { MkdirNsfInput, MkdirNsfResult, NsfFolderColorInput } from './mkdirNsf'
-export { NSF_FOLDER_COLORS } from './nsfConstants'
-export type { NsfFolderColor } from './nsfConstants'
+
+export { updateNestedShareFolder } from './updateNsfFolder'
+export type { UpdateNsfFolderInput, UpdateNsfFolderResult } from './updateNsfFolder'
+
+export {
+    NsfFolderShareAction,
+    NsfRecordShareAction,
+    shareNestedShareFolder,
+    shareNestedShareRecord,
+    formatNsfRecordSharePlan,
+    formatNsfRecordShareResults,
+} from './nsfShare'
+export type {
+    NsfFolderShareActionInput,
+    ShareNestedShareFolderInput,
+    ShareNestedShareFolderResult,
+    NsfFolderShareResultItem,
+    NsfRecordShareActionInput,
+    ShareNestedShareRecordInput,
+    ShareNestedShareRecordResult,
+    NsfRecordSharePlanItem,
+    NsfRecordShareResultItem,
+} from './nsfShare'
+
+export {
+    getNsfRecordShortcuts,
+    listNsfShortcuts,
+    keepNsfShortcut,
+    formatNsfShortcutOutput,
+    formatKeepNsfShortcutPlan,
+} from './nsfShortcut'
+export type {
+    NsfShortcutRow,
+    ListNsfShortcutsOptions,
+    KeepNsfShortcutInput,
+    KeepNsfShortcutPlanItem,
+    KeepNsfShortcutResult,
+    KeepNsfShortcutResultItem,
+} from './nsfShortcut'
+
+export {
+    transferNestedShareRecords,
+    formatTransferNestedShareRecordResults,
+} from './nsfTransferRecord'
+export type {
+    TransferNestedShareRecordInput,
+    TransferNestedShareRecordResult,
+    TransferNestedShareRecordResultItem,
+} from './nsfTransferRecord'
+
+export { NSF_FOLDER_COLORS, NSF_RECORD_PERMISSION_ROLES } from './nsfConstants'
+export type { NsfFolderColor, NsfRecordPermissionRole, NsfRecordPermissionRoleInput } from './nsfConstants'
 
 export {
     NsfRemoveFolderOperation,
@@ -120,6 +176,23 @@ export type {
 
 export { addNestedShareRecord } from './addNsfRecord'
 export type { AddNsfRecordInput, AddNsfRecordResult } from './addNsfRecord'
+
+export {
+    NsfRecordPermissionAction,
+    collectNsfRecordUidsInFolder,
+    updateNestedShareRecordPermissions,
+    buildNsfRecordPermissionPlan,
+    formatNsfRecordPermissionPlan,
+    formatNsfRecordPermissionFailures,
+} from './nsfRecordPermission'
+export type {
+    NsfRecordPermissionActionInput,
+    UpdateNsfRecordPermissionInput,
+    UpdateNsfRecordPermissionResult,
+    NsfRecordPermissionPlan,
+    NsfRecordPermissionPlanItem,
+    NsfRecordPermissionFailure,
+} from './nsfRecordPermission'
 
 export {
     buildNsfRecordData,

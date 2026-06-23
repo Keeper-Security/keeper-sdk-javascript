@@ -70,6 +70,10 @@ export enum NsfErrorCode {
     UpdateFailed = 'nsf_update_failed',
     DetailsFailed = 'nsf_details_failed',
     AddFailed = 'nsf_add_failed',
+    RecordPermissionFailed = 'nsf_record_permission_failed',
+    ShareFailed = 'nsf_share_failed',
+    ShortcutFailed = 'nsf_shortcut_failed',
+    TransferFailed = 'nsf_transfer_failed',
 }
 
 export enum TeamErrorCode {
@@ -154,6 +158,10 @@ export const ResultCodes = {
     NSF_UPDATE_FAILED: NsfErrorCode.UpdateFailed,
     NSF_DETAILS_FAILED: NsfErrorCode.DetailsFailed,
     NSF_ADD_FAILED: NsfErrorCode.AddFailed,
+    NSF_RECORD_PERMISSION_FAILED: NsfErrorCode.RecordPermissionFailed,
+    NSF_SHARE_FAILED: NsfErrorCode.ShareFailed,
+    NSF_SHORTCUT_FAILED: NsfErrorCode.ShortcutFailed,
+    NSF_TRANSFER_FAILED: NsfErrorCode.TransferFailed,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,

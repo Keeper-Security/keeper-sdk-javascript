@@ -8,6 +8,9 @@ import {
     webSafe64FromBytes,
     recordsShareUpdateMessage,
     normal64Bytes,
+    sendShareInviteMessage,
+    record,
+    Folder,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError } from '../utils/errors'
 
@@ -47,14 +50,15 @@ export type RemoveShareResult = {
     message: string
 }
 
-type UserKeys = {
+export type UserShareKeys = {
     username: string
+    accountUid?: Uint8Array
     rsaPublicKey: Uint8Array | null
     eccPublicKey: Uint8Array | null
     errorCode: string | null
 }
 
-async function loadUserPublicKey(auth: Auth, email: string): Promise<UserKeys> {
+export async function loadUserShareKeys(auth: Auth, email: string): Promise<UserShareKeys> {
     const msg = getPublicKeysMessage({ usernames: [email] })
     let response: Authentication.IGetPublicKeysResponse
 
@@ -79,9 +83,125 @@ async function loadUserPublicKey(auth: Auth, email: string): Promise<UserKeys> {
 
     return {
         username: entry.username || email,
+        accountUid: entry.accountUid?.length ? (entry.accountUid as Uint8Array) : undefined,
         rsaPublicKey: entry.publicKey && entry.publicKey.length > 0 ? (entry.publicKey as Uint8Array) : null,
         eccPublicKey: entry.publicEccKey && entry.publicEccKey.length > 0 ? (entry.publicEccKey as Uint8Array) : null,
         errorCode: entry.errorCode || null,
+    }
+}
+
+export async function encryptKeyForRecipient(
+    key: Uint8Array,
+    userKeys: UserShareKeys
+): Promise<{ encryptedKey: Uint8Array; useEccKey: boolean }> {
+    if (userKeys.eccPublicKey) {
+        return {
+            encryptedKey: await platform.publicEncryptEC(key, userKeys.eccPublicKey),
+            useEccKey: true,
+        }
+    }
+    if (userKeys.rsaPublicKey) {
+        return {
+            encryptedKey: platform.publicEncrypt(key, platform.bytesToBase64(userKeys.rsaPublicKey)),
+            useEccKey: false,
+        }
+    }
+    throw new KeeperSdkError(
+        `No usable public key available for ${userKeys.username}`,
+        ShareStatus.MissingPublicKey
+    )
+}
+
+export async function sendShareInviteIfNeeded(auth: Auth, email: string): Promise<void> {
+    await auth.executeRestAction(
+        sendShareInviteMessage(Authentication.SendShareInviteRequest.create({ email }))
+    )
+}
+
+export async function loadUserShareKeysOrInvite(
+    auth: Auth,
+    email: string,
+    errorCode: string = ShareStatus.MissingPublicKey
+): Promise<UserShareKeys & { accountUid: Uint8Array }> {
+    const userKeys = await loadUserShareKeys(auth, email)
+    if (!userKeys.rsaPublicKey && !userKeys.eccPublicKey) {
+        await sendShareInviteIfNeeded(auth, email)
+        throw new KeeperSdkError(
+            `User '${email}' has no public key. Share invitation sent.`,
+            errorCode
+        )
+    }
+    if (!userKeys.accountUid?.length) {
+        throw new KeeperSdkError(`User ${email} not found`, errorCode)
+    }
+    return { ...userKeys, accountUid: userKeys.accountUid }
+}
+
+export function parseRecordSharingStatus(
+    status: record.v3.sharing.IStatus | null | undefined
+): { recordUid: string; success: boolean; message: string } {
+    if (!status?.recordUid?.length) {
+        return { recordUid: '', success: false, message: 'No status returned' }
+    }
+    const recordUid = webSafe64FromBytes(status.recordUid)
+    const sharingStatus = status.status ?? record.v3.sharing.SharingStatus.SUCCESS
+    const statusName = record.v3.sharing.SharingStatus[sharingStatus] ?? String(sharingStatus)
+    const success =
+        sharingStatus === record.v3.sharing.SharingStatus.SUCCESS ||
+        sharingStatus === record.v3.sharing.SharingStatus.PENDING_ACCEPT
+    return { recordUid, success, message: status.message || statusName }
+}
+
+export async function buildNsfRecordSharePermission(
+    auth: Auth,
+    recordUid: string,
+    recordKey: Uint8Array,
+    email: string,
+    accessRoleType: Folder.AccessRoleType,
+    expirationTimestamp?: number,
+    errorCode: string = ShareStatus.MissingPublicKey
+): Promise<record.v3.sharing.IPermissions> {
+    const userKeys = await loadUserShareKeysOrInvite(auth, email, errorCode)
+    const { encryptedKey, useEccKey } = await encryptKeyForRecipient(recordKey, userKeys)
+    const recordUidBytes = normal64Bytes(recordUid)
+    const rules: Folder.IRecordAccessData = {
+        accessTypeUid: userKeys.accountUid,
+        accessType: Folder.AccessType.AT_USER,
+        recordUid: recordUidBytes,
+        owner: false,
+        accessRoleType,
+    }
+    if (expirationTimestamp != null) {
+        rules.tlaProperties = { expiration: expirationTimestamp }
+    }
+    return {
+        recipientUid: userKeys.accountUid,
+        recordUid: recordUidBytes,
+        recordKey: encryptedKey,
+        useEccKey,
+        rules,
+    }
+}
+
+export async function buildNsfRecordRevokePermission(
+    auth: Auth,
+    recordUid: string,
+    email: string,
+    errorCode: string = ShareStatus.MissingPublicKey
+): Promise<record.v3.sharing.IPermissions> {
+    const userKeys = await loadUserShareKeys(auth, email)
+    if (!userKeys.accountUid?.length) {
+        throw new KeeperSdkError(`User ${email} not found`, errorCode)
+    }
+    const recordUidBytes = normal64Bytes(recordUid)
+    return {
+        recipientUid: userKeys.accountUid,
+        recordUid: recordUidBytes,
+        rules: {
+            accessTypeUid: userKeys.accountUid,
+            accessType: Folder.AccessType.AT_USER,
+            recordUid: recordUidBytes,
+        },
     }
 }
 
@@ -92,7 +212,7 @@ export async function shareRecord(
 ): Promise<ShareRecordResult> {
     const { recordUid, email, canEdit = false, canShare = false } = input
 
-    const userKeys = await loadUserPublicKey(auth, email)
+    const userKeys = await loadUserShareKeys(auth, email)
 
     let encryptedRecordKey: Uint8Array
     let useEccKey = false

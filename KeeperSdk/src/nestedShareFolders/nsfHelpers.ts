@@ -20,6 +20,9 @@ import {
     NSF_NOTE_FIELD_TYPES,
     NSF_PATH_SENTINEL,
     NSF_RECORD_DESCRIPTION_MAX_LENGTH,
+    NSF_RECORD_PERMISSION_ROLE_LABELS,
+    NSF_RECORD_PERMISSION_ROLE_MAP,
+    NSF_RECORD_PERMISSION_ROLES,
     NSF_SENSITIVE_FIELD_TYPES,
     ROOT_FOLDER_UID,
 } from './nsfConstants'
@@ -337,6 +340,154 @@ export async function cacheNewNsfFolder(
     })
 }
 
+export function checkFolderEditPermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (isRootFolderUid(folderUid)) {
+        throw new KeeperSdkError('The root folder cannot be edited.', ResultCodes.NSF_PERMISSION_DENIED)
+    }
+
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getFolderAccessEntries(storage, folderUid)
+    if (entries.length === 0) return
+
+    for (const entry of entries) {
+        if (!isCurrentUserFolderAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.accessType === Folder.AccessType.AT_OWNER || entry.permission?.canUpdateSetting) return
+        throw new KeeperSdkError(
+            'You do not have permission to edit this folder.',
+            ResultCodes.NSF_PERMISSION_DENIED
+        )
+    }
+    throw new KeeperSdkError(
+        'You do not have permission to edit this folder.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export async function patchNsfFolderMetadata(
+    storage: InMemoryStorage,
+    folderUid: string,
+    metadata: { name: string; color?: string }
+): Promise<void> {
+    const folder = getKeeperDriveFolder(storage, folderUid)
+    if (!folder) return
+
+    const data: { name: string; color?: string } = { name: metadata.name }
+    if (metadata.color) data.color = metadata.color
+
+    await storage.put({
+        ...folder,
+        data,
+    })
+}
+
+export function checkFolderSharePermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (isRootFolderUid(folderUid)) {
+        throw new KeeperSdkError('The root folder cannot be shared.', ResultCodes.NSF_PERMISSION_DENIED)
+    }
+
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getFolderAccessEntries(storage, folderUid)
+    if (entries.length === 0) return
+
+    for (const entry of entries) {
+        if (!isCurrentUserFolderAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.accessType === Folder.AccessType.AT_OWNER || entry.permission?.canUpdateAccess) return
+        throw new KeeperSdkError(
+            'You do not have permission to share this folder.',
+            ResultCodes.NSF_PERMISSION_DENIED
+        )
+    }
+    throw new KeeperSdkError(
+        'You do not have permission to share this folder.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export function checkRecordSharePermission(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getRecordAccessEntries(storage, recordUid)
+    if (entries.length === 0) return
+
+    for (const entry of entries) {
+        if (!isCurrentUserRecordAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.owner || entry.canUpdateAccess) return
+        throw new KeeperSdkError(
+            'You do not have permission to share this record.',
+            ResultCodes.NSF_PERMISSION_DENIED
+        )
+    }
+    throw new KeeperSdkError(
+        'You do not have permission to share this record.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export function findFolderAccessEntry(
+    storage: InMemoryStorage,
+    folderUid: string,
+    accessTypeUid: string,
+    accessType: Folder.AccessType
+): DKdFolderAccess | undefined {
+    return getFolderAccessEntries(storage, folderUid).find(
+        (entry) => entry.accessTypeUid === accessTypeUid && entry.accessType === accessType
+    )
+}
+
+export function collectExistingFolderShareTargets(
+    storage: InMemoryStorage,
+    folderUid: string,
+    currentUsername: string
+): Array<{ recipient: string; isTeam: boolean; accountUid?: string }> {
+    const targets: Array<{ recipient: string; isTeam: boolean; accountUid?: string }> = []
+    const seen = new Set<string>()
+
+    for (const entry of getFolderAccessEntries(storage, folderUid)) {
+        if (entry.accessType === Folder.AccessType.AT_OWNER) continue
+
+        if (entry.accessType === Folder.AccessType.AT_USER) {
+            const username = resolveAccessUsername(storage, entry.accessTypeUid)
+            if (!username || username === currentUsername) continue
+            const key = `user:${username.toLowerCase()}`
+            if (seen.has(key)) continue
+            seen.add(key)
+            targets.push({
+                recipient: username,
+                isTeam: false,
+                accountUid: entry.accessTypeUid,
+            })
+            continue
+        }
+
+        if (entry.accessType === Folder.AccessType.AT_TEAM) {
+            const key = `team:${entry.accessTypeUid}`
+            if (seen.has(key)) continue
+            seen.add(key)
+            targets.push({
+                recipient: entry.accessTypeUid,
+                isTeam: true,
+                accountUid: entry.accessTypeUid,
+            })
+        }
+    }
+
+    return targets
+}
+
 export function checkFolderDeletePermission(
     storage: InMemoryStorage,
     folderUid: string,
@@ -425,7 +576,7 @@ function isFolderOwnerAccount(storage: InMemoryStorage, folderUid: string, accou
     return folder?.ownerInfo?.accountUid === accountUidStr
 }
 
-type FolderPermissionFlag = 'canRemove' | 'canDelete'
+type FolderPermissionFlag = 'canRemove' | 'canDelete' | 'canUpdateSetting'
 
 function hasFolderPermission(
     storage: InMemoryStorage,
@@ -674,5 +825,61 @@ export function isFolderUserPermission(entry: DKdFolderAccess): boolean {
         entry.accessType === Folder.AccessType.AT_USER ||
         entry.accessType === Folder.AccessType.AT_OWNER
     )
+}
+
+export type NsfRecordAccessFlags = {
+    canViewTitle?: boolean
+    canEdit?: boolean
+    canView?: boolean
+    canListAccess?: boolean
+    canUpdateAccess?: boolean
+    canDelete?: boolean
+    canChangeOwnership?: boolean
+    canRequestAccess?: boolean
+    canApproveAccess?: boolean
+    accessRoleType?: number | null
+}
+
+function inferRecordPermissionRole(access: NsfRecordAccessFlags): string {
+    if (access.canChangeOwnership) return 'full-manager'
+    if (access.canDelete && access.canUpdateAccess) return 'content-share-manager'
+    if (access.canEdit && !access.canUpdateAccess) return 'content-manager'
+    if (access.canUpdateAccess) return 'share-manager'
+    if (access.canView && access.canListAccess) return 'viewer'
+    if (access.canView || access.canViewTitle || access.canRequestAccess) return 'contributor'
+    return 'contributor'
+}
+
+export function resolveNsfRoleName(role: string): Folder.AccessRoleType {
+    const value = NSF_RECORD_PERMISSION_ROLE_MAP[role.trim().toLowerCase()]
+    if (value == null) {
+        throw new KeeperSdkError(
+            `Invalid role '${role}'. Accepted values: ${NSF_RECORD_PERMISSION_ROLES.join(', ')}.`,
+            ResultCodes.NSF_RECORD_PERMISSION_FAILED
+        )
+    }
+    return value
+}
+
+export function getNsfRecordPermissionRoleLabel(
+    role: Folder.AccessRoleType | number | null | undefined
+): string {
+    if (role == null) return ''
+    return NSF_RECORD_PERMISSION_ROLE_LABELS[role] ?? String(role)
+}
+
+export function getNsfAccessRoleLabel(access: NsfRecordAccessFlags): string {
+    const roleInt = access.accessRoleType
+    if (roleInt != null && roleInt !== Folder.AccessRoleType.UNRESOLVED) {
+        return getNsfRecordPermissionRoleLabel(roleInt)
+    }
+    return inferRecordPermissionRole(access)
+}
+
+export function normalizeNsfRecordPermissionRole(role?: string): string | undefined {
+    const trimmed = role?.trim()
+    if (!trimmed) return undefined
+    resolveNsfRoleName(trimmed)
+    return trimmed.toLowerCase()
 }
 

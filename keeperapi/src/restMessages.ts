@@ -20,6 +20,7 @@ import {
     record,
     folder,
 } from './proto'
+import { decodeRepeatedWithForbidden, recordUidsRequestCodec, type RecordUidsRequest } from './restMessageCodecs'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
 export type NN<T> = Required<{ [prop in keyof T]: NonNullable<T[prop]> }>
@@ -482,8 +483,7 @@ export const removeFolderMessage = (
         folder.v3.remove.RemoveResponse
     )
 
-export interface IRecordDetailsDataRequest {
-    recordUids: Uint8Array[]
+export interface IRecordDetailsDataRequest extends RecordUidsRequest {
     clientTime?: number
 }
 
@@ -504,35 +504,16 @@ const RecordDetailsDataRequest = {
         if (message.clientTime != null) {
             writer.uint32(8).int64(message.clientTime)
         }
-        for (const uid of message.recordUids) {
-            writer.uint32(26).bytes(uid)
-        }
-        return writer
+        return recordUidsRequestCodec.encode(message, writer)
     },
 }
 
 const RecordDetailsDataResponse = {
     decode(data: Uint8Array): IRecordDetailsDataResponse {
-        const reader = Reader.create(data)
-        const response: IRecordDetailsDataResponse = {
-            data: [],
-            forbiddenRecords: [],
-        }
-        while (reader.pos < reader.len) {
-            const tag = reader.uint32()
-            switch (tag >>> 3) {
-                case 1:
-                    response.data.push(Records.RecordData.decode(reader, reader.uint32()))
-                    break
-                case 2:
-                    response.forbiddenRecords.push(reader.bytes() as Uint8Array)
-                    break
-                default:
-                    reader.skipType(tag & 7)
-                    break
-            }
-        }
-        return response
+        const { items, forbiddenRecords } = decodeRepeatedWithForbidden(data, (reader, length) =>
+            Records.RecordData.decode(reader, length)
+        )
+        return { data: items, forbiddenRecords }
     },
 }
 
@@ -545,6 +526,11 @@ export const folderAddMessage = (
     data: Folder.IFolderAddRequest
 ): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
     createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
+
+export const folderUpdateMessage = (
+    data: Folder.IFolderUpdateRequest
+): RestMessage<Folder.IFolderUpdateRequest, Folder.IFolderUpdateResponse> =>
+    createMessage(data, 'vault/folders/v3/update', Folder.FolderUpdateRequest, Folder.FolderUpdateResponse)
 
 export const recordsAddMessage = (
     data: Records.IRecordsAddRequest
@@ -1073,6 +1059,87 @@ export const keeperDriveRecordsUpdate = (
     data: Records.IRecordsUpdateRequest
 ): RestMessage<Records.IRecordsUpdateRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records/v3/update', Records.RecordsUpdateRequest, Records.RecordsModifyResponse)
+
+export type IRecordAccessDetailsRequest = RecordUidsRequest
+
+export type IRecordAccessEntry = {
+    data?: Folder.IRecordAccessData
+    accessorInfo?: { name?: string }
+}
+
+export type IRecordAccessDetailsResponse = {
+    recordAccesses: IRecordAccessEntry[]
+    forbiddenRecords: Uint8Array[]
+}
+
+function decodeRecordAccessEntry(reader: Reader, length: number): IRecordAccessEntry {
+    const end = reader.pos + length
+    const entry: IRecordAccessEntry = {}
+    while (reader.pos < end) {
+        const tag = reader.uint32()
+        switch (tag >>> 3) {
+            case 1:
+                entry.data = Folder.RecordAccessData.decode(reader, reader.uint32())
+                break
+            case 2: {
+                const infoEnd = reader.pos + reader.uint32()
+                const accessorInfo: { name?: string } = {}
+                while (reader.pos < infoEnd) {
+                    const infoTag = reader.uint32()
+                    if ((infoTag >>> 3) === 1) accessorInfo.name = reader.string()
+                    else reader.skipType(infoTag & 7)
+                }
+                entry.accessorInfo = accessorInfo
+                break
+            }
+            default:
+                reader.skipType(tag & 7)
+        }
+    }
+    return entry
+}
+
+const RecordAccessDetailsResponse = {
+    decode(data: Uint8Array): IRecordAccessDetailsResponse {
+        const { items, forbiddenRecords } = decodeRepeatedWithForbidden(data, decodeRecordAccessEntry)
+        return { recordAccesses: items, forbiddenRecords }
+    },
+}
+
+export const recordAccessDetailsMessage = (
+    data: IRecordAccessDetailsRequest
+): RestMessage<IRecordAccessDetailsRequest, IRecordAccessDetailsResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/details/access',
+        recordUidsRequestCodec,
+        RecordAccessDetailsResponse
+    )
+
+export const recordsShareV3Message = (
+    data: record.v3.sharing.IRequest
+): RestMessage<record.v3.sharing.IRequest, record.v3.sharing.IResponse> =>
+    createMessage(data, 'vault/records/v3/share', record.v3.sharing.Request, record.v3.sharing.Response)
+
+export const folderAccessUpdateMessage = (
+    data: Folder.IFolderAccessRequest
+): RestMessage<Folder.IFolderAccessRequest, Folder.IFolderAccessResponse> =>
+    createMessage(
+        data,
+        'vault/folders/v3/access_update',
+        Folder.FolderAccessRequest,
+        Folder.FolderAccessResponse
+    )
+
+export const recordsTransferV3Message = (
+    data: Records.IRecordsOnwershipTransferRequest
+): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/transfer',
+        Records.RecordsOnwershipTransferRequest,
+        Records.RecordsOnwershipTransferResponse
+    )
 
 export const getSharingAdminsMessage = (
     data: Enterprise.IGetSharingAdminsRequest
