@@ -42,10 +42,13 @@ export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './util
 export {
     searchRecords,
     formatRecord,
+    formatRecordFields,
     getRecordTitle,
     getRecordType,
     getRecordFields,
     getRecordSummary,
+    getRecordDescription,
+    getRecordCategory,
     getRecordPassword,
     getRecordLogin,
     getRecordUrl,
@@ -86,7 +89,6 @@ export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
 
 export { buildWhoamiInfo, normalizeServerHost, resolveDataCenter } from './account/whoamiInfo'
 export type { WhoamiInfo, BuildWhoamiInfoInput } from './account/whoamiInfo'
-export { formatWhoamiJson, formatWhoamiOutput } from './cli/account/whoamiFormat'
 
 export type { SessionRestoreInput } from './auth/sessionRestore'
 export {
@@ -184,46 +186,6 @@ export { FolderManager } from './folders/FolderManager'
 export type { AuthProvider, SharedFolderPermissionsInput } from './folders/FolderManager'
 
 export { SharedFolderManager } from './sharedFolders/SharedFolderManager'
-
-export {
-    dispatchCliLine,
-    dispatchKeeperCli,
-    ensureKeeperCliRegistry,
-    registerCliCommand,
-    registerCliAlias,
-    getCliCommand,
-    listCliCommands,
-    listCliCommandNames,
-    listCliCommandNamesForLoginState,
-    listCliCommandsForLoginState,
-    isAuthCliCommand,
-    listDocumentedCommands,
-    getDetailedHelpPage,
-    formatDetailedHelpForCommand,
-    tokenizeArguments,
-    parseCliArgs,
-    wantsCliHelp,
-    rejectUnknownOptions,
-    loginWithCredentials,
-    loginWithSessionToken,
-    runLoginCommand,
-    runLogoutCommand,
-    KeeperCliParser,
-    createKeeperCliParser,
-    getKeeperCliPromptPrefix,
-    BUILTIN_CLI_COMMANDS,
-    registerBuiltinCliCommands,
-    listCommand,
-} from './cli'
-export type { KeeperCliParserOptions } from './cli'
-export type {
-    CliResult,
-    ParsedCli,
-    CliCommandDefinition,
-    CliHelpDoc,
-    KeeperCliHost,
-    KeeperCliVault,
-} from './cli'
 
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 
