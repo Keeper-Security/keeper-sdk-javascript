@@ -2,6 +2,9 @@ name: Update Protobuf
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - be-6375
 
 permissions:
   contents: write
