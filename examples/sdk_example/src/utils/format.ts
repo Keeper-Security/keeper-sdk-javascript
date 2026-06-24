@@ -2,7 +2,6 @@ import {
     EMAIL_LIST_SEPARATOR_PATTERN,
     EMAIL_PATTERN,
     isValidEmail,
-    suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 
 export { EMAIL_PATTERN }
@@ -39,19 +38,6 @@ export const LEGACY_RECORD_MAX_VERSION = 2
 export function isYes(answer: string): boolean {
     const normalized = answer.trim().toLowerCase()
     return normalized === 'y' || normalized === 'yes'
-}
-
-export function splitCommaSeparated(input: string): string[] {
-    return input.split(',').map((value) => value.trim()).filter(Boolean)
-}
-
-export async function withSuppressedLogs<T>(fn: () => Promise<T>): Promise<T> {
-    const restore = suppressLogs()
-    try {
-        return await fn()
-    } finally {
-        restore()
-    }
 }
 
 export function parseEmails(raw: string): { emails: string[]; invalid: string[] } {
