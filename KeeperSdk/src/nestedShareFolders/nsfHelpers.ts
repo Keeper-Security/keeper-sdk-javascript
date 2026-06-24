@@ -1,4 +1,5 @@
 import type {
+    Auth,
     DRecord,
     DUser,
     DKdFolder,
@@ -6,7 +7,7 @@ import type {
     DKdFolderRecord,
     DKdRecordAccess,
 } from '@keeper-security/keeperapi'
-import { Folder, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import { Folder, Records, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes } from '../utils'
@@ -17,6 +18,7 @@ import {
     NSF_LEGACY_FOLDER_MSG,
     NSF_LEGACY_RECORD_MSG,
     NSF_NOTE_FIELD_TYPES,
+    NSF_PATH_SENTINEL,
     NSF_RECORD_DESCRIPTION_MAX_LENGTH,
     NSF_SENSITIVE_FIELD_TYPES,
 } from './nsfConstants'
@@ -31,6 +33,76 @@ export enum KeeperDriveKind {
 export enum NsfItemType {
     Folder = 'Folder',
     Record = 'Record',
+}
+
+export function nsfToNumber(
+    value: number | { toNumber: () => number } | null | undefined,
+    fallback?: number
+): number | undefined {
+    if (value == null) return fallback
+    return typeof value === 'number' ? value : value.toNumber()
+}
+
+export function requireAuthAccountUid(auth: Auth): Uint8Array {
+    const accountUid = auth.accountUid
+    if (!accountUid?.length) {
+        throw new KeeperSdkError('Not logged in. Call login() first.', ResultCodes.NOT_LOGGED_IN)
+    }
+    return accountUid
+}
+
+export function requireAuthDataKey(auth: Auth): Uint8Array {
+    if (!auth.dataKey?.length) {
+        throw new KeeperSdkError('Data key not available. Ensure you are logged in.', ResultCodes.NSF_MISSING_KEY)
+    }
+    return auth.dataKey
+}
+
+export function buildFolderOwnerInfo(auth: Auth): Folder.IUserInfo | undefined {
+    if (!auth.accountUid?.length) return undefined
+    return {
+        accountUid: auth.accountUid,
+        username: auth.username,
+    }
+}
+
+export function parseFolderModifyStatus(
+    result: Folder.IFolderModifyResult | null | undefined,
+    failureCode: string
+): string {
+    if (!result) {
+        throw new KeeperSdkError('No results from folder operation.', failureCode)
+    }
+    const status = result.status ?? Folder.FolderModifyStatus.SUCCESS
+    const statusName = Folder.FolderModifyStatus[status] ?? String(status)
+    if (status !== Folder.FolderModifyStatus.SUCCESS) {
+        throw new KeeperSdkError(
+            result.message || `Folder operation failed (${statusName}).`,
+            failureCode
+        )
+    }
+    return result.message || 'Folder operation succeeded'
+}
+
+export function parseRecordModifyStatus(
+    result: Records.IRecordModifyStatus | null | undefined,
+    failureCode: string
+): { statusName: string; message: string } {
+    if (!result) {
+        throw new KeeperSdkError('No results from record operation.', failureCode)
+    }
+    const status = result.status ?? Records.RecordModifyResult.RS_SUCCESS
+    const statusName = Records.RecordModifyResult[status] ?? String(status)
+    if (status !== Records.RecordModifyResult.RS_SUCCESS) {
+        throw new KeeperSdkError(
+            result.message || `Record operation failed (${statusName}).`,
+            failureCode
+        )
+    }
+    return {
+        statusName,
+        message: result.message || 'Record operation succeeded',
+    }
 }
 
 export function isNestedShareRecord(storage: InMemoryStorage, recordUid: string): boolean {
@@ -172,6 +244,145 @@ export function resolveNsfFolderIdentifier(storage: InMemoryStorage, identifier:
     if (byUidOrName) return byUidOrName.uid
 
     return resolveFolderByPath(storage, trimmed)
+}
+
+export function resolveNsfFolderUidOrName(storage: InMemoryStorage, identifier: string): string | undefined {
+    const trimmed = identifier.trim()
+    if (!trimmed) return undefined
+
+    if (getKeeperDriveFolder(storage, trimmed)) return trimmed
+
+    return resolveByUidOrName(
+        getKeeperDriveFolders(storage),
+        trimmed,
+        (folder) => folder.uid,
+        (folder) => folder.data.name || ''
+    )?.uid
+}
+
+export function parseNsfPath(folderPath: string): string[] {
+    const collapsed = folderPath.replace(/\/\//g, NSF_PATH_SENTINEL)
+    const segments: string[] = []
+    for (const raw of collapsed.split('/')) {
+        const name = raw.replace(new RegExp(NSF_PATH_SENTINEL, 'g'), '/').trim()
+        if (name) segments.push(name)
+    }
+    if (segments.length === 0) {
+        throw new KeeperSdkError('Invalid folder name.', ResultCodes.NSF_MKDIR_FAILED)
+    }
+    return segments
+}
+
+function isVirtualDriveRootParent(storage: InMemoryStorage, parentUid: string | undefined | null): boolean {
+    const trimmed = parentUid?.trim()
+    if (!trimmed || isRootFolderUid(storage, trimmed)) return true
+    return !getKnownKeeperDriveFolderUids(storage).has(trimmed)
+}
+
+function isRootLevelParent(storage: InMemoryStorage, parentUid: string | undefined | null): boolean {
+    return isVirtualDriveRootParent(storage, parentUid)
+}
+
+function folderParentsMatch(
+    storage: InMemoryStorage,
+    folderParentUid: string | undefined,
+    searchParentUid: string | null | undefined
+): boolean {
+    if (normalizeParentUid(storage, folderParentUid) === normalizeParentUid(storage, searchParentUid)) {
+        return true
+    }
+    return isRootLevelParent(storage, searchParentUid) && isRootLevelParent(storage, folderParentUid)
+}
+
+export function findExistingChildFolder(
+    storage: InMemoryStorage,
+    segment: string,
+    parentUid: string | null | undefined
+): string | undefined {
+    const lower = segment.toLowerCase()
+    const exactMatches: string[] = []
+    const rootMatches: string[] = []
+
+    for (const folder of getKeeperDriveFolders(storage)) {
+        const name = folder.data.name || ''
+        if (name.toLowerCase() !== lower) continue
+
+        if (normalizeParentUid(storage, folder.parentUid) === normalizeParentUid(storage, parentUid)) {
+            exactMatches.push(folder.uid)
+            continue
+        }
+        if (folderParentsMatch(storage, folder.parentUid, parentUid)) {
+            rootMatches.push(folder.uid)
+        }
+    }
+
+    if (exactMatches.length > 0) return exactMatches[0]
+    if (rootMatches.length > 0) return rootMatches[0]
+    return undefined
+}
+
+export function resolveKeeperDriveParentUid(
+    storage: InMemoryStorage,
+    parentUid: string | null | undefined
+): string | null {
+    if (parentUid && !isRootFolderUid(storage, parentUid)) return parentUid
+    return resolveKeeperDriveRootParentUid(storage) ?? null
+}
+
+export async function cacheNewNsfFolder(
+    storage: InMemoryStorage,
+    auth: { username?: string; accountUid?: Uint8Array },
+    folderUid: string,
+    name: string,
+    parentUid: string | null | undefined,
+    inheritPermissions: boolean
+): Promise<void> {
+    const normalizedParent =
+        parentUid && !isRootFolderUid(storage, parentUid)
+            ? parentUid.trim()
+            : resolveKeeperDriveRootParentUid(storage)
+    await storage.put({
+        kind: 'keeper_drive_folder',
+        uid: folderUid,
+        data: { name },
+        parentUid: normalizedParent,
+        ownerInfo: {
+            accountUid: auth.accountUid?.length ? webSafe64FromBytes(auth.accountUid) : undefined,
+            username: auth.username,
+        },
+        type: Folder.FolderUsageType.UT_NORMAL,
+        inheritUserPermissions: inheritPermissions
+            ? Folder.SetBooleanValue.BOOLEAN_TRUE
+            : Folder.SetBooleanValue.BOOLEAN_FALSE,
+    })
+}
+
+export function checkFolderDeletePermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (isRootFolderUid(storage, folderUid)) {
+        throw new KeeperSdkError('The root folder cannot be removed.', ResultCodes.NSF_PERMISSION_DENIED)
+    }
+
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getFolderAccessEntries(storage, folderUid)
+    if (entries.length === 0) return
+
+    for (const entry of entries) {
+        if (!isCurrentUserFolderAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.accessType === Folder.AccessType.AT_OWNER || entry.permission?.canDelete) return
+        throw new KeeperSdkError(
+            'You do not have permission to delete this folder.',
+            ResultCodes.NSF_PERMISSION_DENIED
+        )
+    }
+    throw new KeeperSdkError(
+        'You do not have permission to delete this folder.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
 }
 
 export function findNestedShareFoldersForRecord(storage: InMemoryStorage, recordUid: string): string[] {
@@ -322,6 +533,30 @@ export function checkRecordDeletePermission(
     )
 }
 
+export function checkRecordEditPermission(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getRecordAccessEntries(storage, recordUid)
+    if (entries.length === 0) return
+
+    for (const entry of entries) {
+        if (!isCurrentUserRecordAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.owner || entry.canEdit) return
+        throw new KeeperSdkError(
+            'You do not have permission to edit this record.',
+            ResultCodes.NSF_PERMISSION_DENIED
+        )
+    }
+    throw new KeeperSdkError(
+        'You do not have permission to edit this record.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
 export function formatAccessRoleType(role: Folder.AccessRoleType | null | undefined): string {
     if (role == null) return 'unknown'
     return NSF_ACCESS_ROLE_LABELS[role] ?? `role-${role}`
@@ -455,4 +690,3 @@ export function isFolderUserPermission(entry: DKdFolderAccess): boolean {
         entry.accessType === Folder.AccessType.AT_OWNER
     )
 }
-
