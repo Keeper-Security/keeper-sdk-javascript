@@ -1,8 +1,13 @@
+const DEFAULT_CLIENT_VERSION = 'c18.0.0'
+const DEFAULT_DEVICE_NAME = 'JavaScript Keeper SDK'
+const DEFAULT_CONFIG_DIR = '.keeper'
+const DEFAULT_LOG_FORMAT = '!'
+
 export const SdkDefaults = {
-    CLIENT_VERSION: 'c17.0.0',
-    DEVICE_NAME: 'JavaScript Keeper SDK',
-    CONFIG_DIR: '.keeper',
-    LOG_FORMAT: '!',
+    CLIENT_VERSION: DEFAULT_CLIENT_VERSION,
+    DEVICE_NAME: DEFAULT_DEVICE_NAME,
+    CONFIG_DIR: DEFAULT_CONFIG_DIR,
+    LOG_FORMAT: DEFAULT_LOG_FORMAT,
 } as const
 
 export const AuthDefaults = {
@@ -47,6 +52,19 @@ export enum RoleErrorCode {
     RoleRenameMultiNotAllowed = 'role_rename_multi_not_allowed',
     RoleNameEmpty = 'role_name_empty',
     RoleEnforcementFailed = 'role_enforcement_failed',
+}
+
+export enum NsfErrorCode {
+    NotFound = 'nsf_not_found',
+    MultipleMatches = 'nsf_multiple_matches',
+    LegacyRecord = 'nsf_legacy_record',
+    LegacyFolder = 'nsf_legacy_folder',
+    PermissionDenied = 'nsf_permission_denied',
+    LinkFailed = 'nsf_link_failed',
+    RemoveFailed = 'nsf_remove_failed',
+    FolderRequired = 'nsf_folder_required',
+    TooManyRecords = 'nsf_too_many_records',
+    MissingKey = 'nsf_missing_key',
 }
 
 export enum TeamErrorCode {
@@ -116,6 +134,16 @@ export const ResultCodes = {
     ROLE_RENAME_MULTI_NOT_ALLOWED: RoleErrorCode.RoleRenameMultiNotAllowed,
     ROLE_NAME_EMPTY: RoleErrorCode.RoleNameEmpty,
     ROLE_ENFORCEMENT_FAILED: RoleErrorCode.RoleEnforcementFailed,
+    NSF_NOT_FOUND: NsfErrorCode.NotFound,
+    MULTIPLE_NSF_MATCHES: NsfErrorCode.MultipleMatches,
+    NSF_LEGACY_RECORD: NsfErrorCode.LegacyRecord,
+    NSF_LEGACY_FOLDER: NsfErrorCode.LegacyFolder,
+    NSF_PERMISSION_DENIED: NsfErrorCode.PermissionDenied,
+    NSF_LINK_FAILED: NsfErrorCode.LinkFailed,
+    NSF_REMOVE_FAILED: NsfErrorCode.RemoveFailed,
+    NSF_FOLDER_REQUIRED: NsfErrorCode.FolderRequired,
+    NSF_TOO_MANY_RECORDS: NsfErrorCode.TooManyRecords,
+    NSF_MISSING_KEY: NsfErrorCode.MissingKey,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,
