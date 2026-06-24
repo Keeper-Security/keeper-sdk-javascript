@@ -8,7 +8,7 @@ import {
     ensureNestedShareFolder,
     getFolderDisplayName,
     requireAuthAccountUid,
-    resolveNsfFolderUidOrName,
+    resolveNsfFolderIdentifier,
 } from './nsfHelpers'
 
 const { RemoveAction, FolderOperationType, RemoveStatus } = folder.v3.remove
@@ -95,7 +95,7 @@ function buildRemovals(
 
     const removals: RemovalSpec[] = []
     for (const identifier of folderIdentifiers) {
-        const folderUid = resolveNsfFolderUidOrName(storage, identifier)
+        const folderUid = resolveNsfFolderIdentifier(storage, identifier)
         if (!folderUid) {
             throw new KeeperSdkError(`Folder '${identifier}' not found`, ResultCodes.NSF_NOT_FOUND)
         }

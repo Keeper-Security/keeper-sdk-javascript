@@ -1,12 +1,18 @@
 {
     "name": "@keeper-security/keeperapi",
     "description": "Keeper API Javascript SDK",
-    "version": "17.3.0",
-    "browser": "dist/index.es.js",
+    "version": "18.0.1",
+    "browser": "dist/browser/index.js",
     "main": "dist/index.cjs.js",
     "types": "dist/node/index.d.ts",
+    "sideEffects": [
+        "**/configureProtobuf*"
+    ],
     "repository": "https://github.com/Keeper-Security/keeper-sdk-javascript",
     "license": "ISC",
+    "engines": {
+        "node": ">=24.13.1"
+    },
     "scripts": {
         "start": "rollup -cw",
         "build": "node ./scripts/cleanDistFolder.js && rollup -c && cp src/proto.d.ts dist",

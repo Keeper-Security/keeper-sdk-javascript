@@ -952,17 +952,17 @@ export const ssoCloudValidationRequestMessage = (
     )
 
 export const switchAccountListAuthenticated = () =>
-    createOutMessage('/authentication/switch_account_list_authenticated', Authentication.SwitchListResponse)
+    createOutMessage('authentication/switch_account_list_authenticated', Authentication.SwitchListResponse)
 
 export const switchAccountListRemoved = (
     data: Authentication.LoginAsUserRequest
 ): RestInMessage<Authentication.ILoginAsUserRequest> =>
-    createInMessage(data, '/authentication/switch_account_list_remove', Authentication.LoginAsUserRequest)
+    createInMessage(data, 'authentication/switch_account_list_remove', Authentication.LoginAsUserRequest)
 
 export const switchAccountFromAuthenticated = (data: Authentication.LoginAsUserRequest) =>
     createMessage(
         data,
-        '/authentication/switch_account_from_authenticated',
+        'authentication/switch_account_from_authenticated',
         Authentication.LoginAsUserRequest,
         Authentication.LoginResponse
     )

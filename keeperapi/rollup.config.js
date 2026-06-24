@@ -8,14 +8,12 @@ export default [
         input: 'src/browser/index.ts',
         output: [
             {
-                file: pkg.browser,
+                dir: 'dist',
                 format: 'es',
+                preserveModules: true,
+                preserveModulesRoot: 'src',
                 sourcemap: true,
             },
-            // {
-            //     file: pkg.browsertest,
-            //     format: 'cjs',
-            // },
         ],
         external: [...Object.keys(pkg.dependencies || {}), 'protobufjs/minimal', '@noble/post-quantum/ml-kem.js'],
         plugins: [

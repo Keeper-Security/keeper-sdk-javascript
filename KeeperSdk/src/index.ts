@@ -445,13 +445,13 @@ export {
 export { UserManager } from './users/UserManager'
 
 export {
-    ROOT_FOLDER_UID,
     KeeperDriveKind,
     NsfItemType,
     formatAccessRoleType,
     formatAccessType,
     normalizeParentUid,
     isRootFolderUid,
+    resolveKeeperDriveRootParentUid,
     getKeeperDriveFolders,
     getKeeperDriveRecords,
     findRecordFolderLocation,
