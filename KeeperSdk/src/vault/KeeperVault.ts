@@ -81,6 +81,11 @@ import {
     type UpdateRoleResult,
 } from '../roles'
 import { UserManager } from '../users/UserManager'
+import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
+import type { ListNsfOptions, ListNsfRow, ListNsfFormatInput, FormattedListNsfTable } from '../nestedShareFolders/listNsf'
+import type { GetNsfOptions, GetNsfResult } from '../nestedShareFolders/getNsf'
+import type { LinkNsfRecordResult } from '../nestedShareFolders/linkNsfRecord'
+import type { RemoveNsfRecordInput, RemoveNsfRecordResult } from '../nestedShareFolders/removeNsfRecord'
 import type {
     ListUserRow,
     ListUsersOptions,
@@ -158,6 +163,7 @@ export class KeeperVault {
     private readonly teamManager: TeamManager
     private readonly roleManager: RoleManager
     private readonly userManager: UserManager
+    private readonly nestedShareFolderManager: NestedShareFolderManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -181,6 +187,11 @@ export class KeeperVault {
         this.teamManager = new TeamManager(authProvider)
         this.roleManager = new RoleManager(authProvider)
         this.userManager = new UserManager(authProvider)
+        this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
+    }
+
+    public getNestedShareFolderManager(): NestedShareFolderManager {
+        return this.nestedShareFolderManager
     }
 
     public getFolderManager(): FolderManager {
@@ -846,6 +857,50 @@ export class KeeperVault {
     public async getRecordShareInfo(recordUid: string): Promise<RecordShareInfo | null> {
         const auth = this.getAuthOrThrow()
         return getRecordShareInfoOp(auth, recordUid)
+    }
+
+    public listNestedShareFolders(options?: ListNsfOptions): ListNsfRow[] {
+        this.getAuthOrThrow()
+        return this.nestedShareFolderManager.listNestedShareFolders(options ?? {})
+    }
+
+    public formatListNsfTable(rows: ListNsfRow[], options?: { columnWidth?: number }): FormattedListNsfTable {
+        return this.nestedShareFolderManager.formatListNsfTable(rows, options ?? {})
+    }
+
+    public renderListNsfAsciiTable(table: FormattedListNsfTable, options?: { minColWidth?: number }): string {
+        return this.nestedShareFolderManager.renderListNsfAsciiTable(table, options ?? {})
+    }
+
+    public formatListNsfOutput(rows: ListNsfRow[], format?: ListNsfFormatInput): string {
+        return this.nestedShareFolderManager.formatListNsfOutput(rows, format)
+    }
+
+    public async getNestedShareFolder(identifier: string, options?: GetNsfOptions): Promise<GetNsfResult> {
+        return this.nestedShareFolderManager.getNestedShareFolder(identifier, options ?? {})
+    }
+
+    public formatNsfDetail(result: GetNsfResult, verbose?: boolean): string {
+        return this.nestedShareFolderManager.formatNsfDetail(result, verbose ?? false)
+    }
+
+    public async linkNestedShareRecord(
+        recordIdentifier: string,
+        folderIdentifier: string
+    ): Promise<LinkNsfRecordResult> {
+        const result = await this.nestedShareFolderManager.linkNestedShareRecord(recordIdentifier, folderIdentifier)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async removeNestedShareRecords(input: RemoveNsfRecordInput): Promise<RemoveNsfRecordResult> {
+        const result = await this.nestedShareFolderManager.removeNestedShareRecords(input)
+        if (result.confirmed) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatRemoveNsfPreview(preview: RemoveNsfRecordResult['preview']): string {
+        return this.nestedShareFolderManager.formatRemoveNsfPreview(preview)
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
