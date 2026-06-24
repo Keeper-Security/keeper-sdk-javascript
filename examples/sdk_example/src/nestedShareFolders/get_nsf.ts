@@ -1,25 +1,28 @@
 import {
     cleanup,
     extractErrorMessage,
-    formatNsfDetail,
-    formatNsfJson,
     GetNsfFormat,
     login,
     logger,
+    prompt,
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-import { promptRequired, promptYesNo, yesNoPrompt } from '../utils/promptCommands'
+import { isYes } from '../utils/format'
 
 async function getNsf() {
     const vault = await login()
 
     try {
-        const identifier = await promptRequired('Record UID, folder UID, or title: ', 'No UID or title given.')
+        const identifier = (await prompt('Record UID, folder UID, or title: ')).trim()
+        if (!identifier) {
+            logger.info('No UID or title given.')
+            return
+        }
 
-        const asJson = await promptYesNo(yesNoPrompt('Output as JSON?'))
-        const verbose = await promptYesNo(yesNoPrompt('Verbose permissions?'))
-        const unmask = await promptYesNo(yesNoPrompt('Unmask secrets?'))
+        const asJson = isYes(await prompt('Output as JSON? [y/N]: '))
+        const verbose = isYes(await prompt('Verbose permissions? [y/N]: '))
+        const unmask = isYes(await prompt('Unmask secrets? [y/N]: '))
 
         const restore = suppressLogs()
         let result
@@ -34,7 +37,7 @@ async function getNsf() {
         }
 
         logger.info('')
-        const output = asJson ? formatNsfJson(result) : formatNsfDetail(result, verbose)
+        const output = asJson ? JSON.stringify(result.view, null, 2) : vault.formatNsfDetail(result, verbose)
         process.stdout.write(`${output}\n`)
         logger.info('')
     } catch (err) {
