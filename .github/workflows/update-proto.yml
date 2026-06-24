@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - be-6375
+      - main
 
 permissions:
   contents: write
