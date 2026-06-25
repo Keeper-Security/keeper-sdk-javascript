@@ -175,6 +175,17 @@ export class SocketListener {
         this.socket.send(sessionToken)
     }
 
+    // Send an outbound frame over the socket. Strings are sent as text frames,
+    // Uint8Array as binary. The underlying SocketProxy queues the message if the
+    // socket is still connecting and flushes once it opens.
+    send(message: string | Uint8Array) {
+        if (!this.socket) {
+            logger.warn('Cannot send: socket not available')
+            return
+        }
+        this.socket.send(message)
+    }
+
     onOpen(callback: () => void): void {
         this.onOpenListeners.push(callback)
     }
