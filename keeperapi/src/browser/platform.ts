@@ -96,11 +96,9 @@ export const browserPlatform: Platform = class {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'cbc'), cbcKey)
                 await storage.saveObject(this.getStorageKeyId(keyId, 'gcm'), gcmKey)
-            } else if (storage.saveKeyBytes) {
-                await storage.saveKeyBytes(keyId, key)
-            } else {
-                await storage.saveKeyBytes(keyId, key)
-            }
+                return
+            } 
+            await storage.saveKeyBytes(keyId, key)
         }
     }
 
@@ -116,15 +114,11 @@ export const browserPlatform: Platform = class {
         if (storage) {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'ecc'), key)
-            } else if (storage.saveKeyBytes) {
-                const jwk = await crypto.subtle.exportKey('jwk', key)
-                const keyBytes = this.stringToBytes(JSON.stringify(jwk))
-                await storage.saveKeyBytes(keyId, keyBytes)
-            } else {
-                const jwk = await crypto.subtle.exportKey('jwk', key)
-                const keyBytes = this.stringToBytes(JSON.stringify(jwk))
-                await storage.saveKeyBytes(keyId, keyBytes)
-            }
+                return
+            } 
+            const jwk = await crypto.subtle.exportKey('jwk', key)
+            const keyBytes = this.stringToBytes(JSON.stringify(jwk))
+            await storage.saveKeyBytes(keyId, keyBytes)
         }
     }
 
