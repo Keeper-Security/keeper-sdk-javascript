@@ -13,6 +13,7 @@ import {
 } from './listNsf'
 import {
     formatNsfDetail as renderNsfDetail,
+    formatNsfJson as renderNsfJson,
     formatNsfFolderDetail as renderNsfFolderDetail,
     formatNsfRecordDetail as renderNsfRecordDetail,
     getNestedShareFolder,
@@ -89,6 +90,10 @@ export class NestedShareFolderManager {
 
     public formatNsfDetail(result: GetNsfResult, verbose = false): string {
         return renderNsfDetail(result, verbose)
+    }
+
+    public formatNsfJson(result: GetNsfResult): string {
+        return renderNsfJson(result)
     }
 
     public formatNsfFolderDetail(view: NsfFolderView, verbose = false): string {

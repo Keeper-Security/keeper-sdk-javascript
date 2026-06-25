@@ -37,7 +37,7 @@ async function getNsf() {
         }
 
         logger.info('')
-        const output = asJson ? JSON.stringify(result.view, null, 2) : vault.formatNsfDetail(result, verbose)
+        const output = asJson ? vault.formatNsfJson(result) : vault.formatNsfDetail(result, verbose)
         process.stdout.write(`${output}\n`)
         logger.info('')
     } catch (err) {

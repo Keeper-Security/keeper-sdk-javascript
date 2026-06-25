@@ -20,6 +20,7 @@ import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import {
     buildFolderPath,
     collectRecordsInFolder,
+    findNestedShareFoldersForRecord,
     findRecordFolderLocation,
     folderAccessDisplayRole,
     formatAccessType,
@@ -127,6 +128,38 @@ export type NsfFolderView = {
     records: { uid: string; title: string; type: string }[]
 }
 
+export type NsfRecordFieldView = {
+    type: string
+    label?: string
+    value: string[]
+}
+
+export type NsfRecordFolderView = {
+    uid: string
+    path: string
+}
+
+export type NsfRecordJsonUserPermission = {
+    username: string
+    owner: boolean
+    shareable: boolean
+    editable: boolean
+    role: string
+}
+
+export type NsfRecordJsonView = {
+    record_uid: string
+    title: string
+    type: string
+    version: number
+    revision: number
+    folder?: NsfRecordFolderView
+    fields: { type: string; value: string[] }[]
+    notes?: string
+    user_permissions: NsfRecordJsonUserPermission[]
+    share_admins: string[]
+}
+
 export type NsfRecordView = {
     objectType: 'record'
     recordUid: string
@@ -134,12 +167,13 @@ export type NsfRecordView = {
     type: string
     revision: number
     version: number
+    folder?: NsfRecordFolderView
     folderLocation: string
     login?: string
     password?: string
     url?: string
     notes?: string
-    fields: { type: string; label?: string; value: string }[]
+    fields: NsfRecordFieldView[]
     userPermissions: NsfRecordPermission[]
     shareAdmins: string[]
 }
@@ -233,20 +267,80 @@ function ensureFolderOwnerListed(
     }
 }
 
-function buildRecordFields(record: DRecord, unmask: boolean): NsfRecordView['fields'] {
-    return getRecordFields(record)
-        .filter((field) => !NSF_TOP_LEVEL_FIELD_TYPES.has(field.type))
-        .map((field) => {
-            const rawValues = Array.isArray(field.value) ? field.value : [field.value]
-            const displayValue = formatNsfFieldParts(rawValues).join(', ')
-            return { field, displayValue }
-        })
-        .filter(({ displayValue }) => displayValue.length > 0)
-        .map(({ field, displayValue }) => ({
+function fieldValueToStrings(values: unknown[]): string[] {
+    return values.map((value) => {
+        if (value == null || value === '') return ''
+        if (typeof value === 'string') return value
+        if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+        if (typeof value === 'object') {
+            const obj = value as Record<string, unknown>
+            if (typeof obj.url === 'string') return obj.url
+            if (typeof obj.value === 'string') return obj.value
+            return JSON.stringify(value)
+        }
+        return String(value)
+    })
+}
+
+function resolveRecordFolder(
+    storage: InMemoryStorage,
+    recordUid: string
+): NsfRecordFolderView | undefined {
+    const folderUids = findNestedShareFoldersForRecord(storage, recordUid)
+    if (folderUids.length === 0) return undefined
+
+    const uid = folderUids[0]
+    return {
+        uid,
+        path: buildFolderPath(storage, uid).replace(/^\//, ''),
+    }
+}
+
+function buildRecordFields(record: DRecord, unmask: boolean): NsfRecordFieldView[] {
+    return getRecordFields(record).map((field) => {
+        const rawValues = Array.isArray(field.value) ? field.value : [field.value]
+        const stringValues = fieldValueToStrings(rawValues)
+        const masked = !unmask && isSensitiveFieldType(field.type)
+        return {
             type: field.type,
             label: field.label,
-            value: !unmask && isSensitiveFieldType(field.type) ? NSF_MASKED_VALUE : displayValue,
-        }))
+            value:
+                masked && stringValues.some((value) => value.length > 0)
+                    ? stringValues.map((value) => (value.length > 0 ? NSF_MASKED_VALUE : value))
+                    : stringValues,
+        }
+    })
+}
+
+function recordPermissionRole(entry: NsfRecordPermission): string {
+    if (entry.owner) return 'full-manager'
+    if (entry.shareAdmin) return 'shared-manager'
+    return 'content-manager'
+}
+
+export function toNsfRecordJsonView(view: NsfRecordView): NsfRecordJsonView {
+    return {
+        record_uid: view.recordUid,
+        title: view.title,
+        type: view.type,
+        version: view.version,
+        revision: view.revision,
+        ...(view.folder ? { folder: view.folder } : {}),
+        fields: view.fields.map(({ type, value }) => ({ type, value })),
+        ...(view.notes ? { notes: view.notes } : {}),
+        user_permissions: view.userPermissions.map((entry) => ({
+            username: entry.username,
+            owner: entry.owner,
+            shareable: entry.shareable,
+            editable: entry.editable,
+            role: recordPermissionRole(entry),
+        })),
+        share_admins: view.shareAdmins,
+    }
+}
+
+export function formatNsfRecordJson(view: NsfRecordView): string {
+    return JSON.stringify(toNsfRecordJsonView(view), null, 2)
 }
 
 function formatRecordUserPermissionBlock(entry: NsfRecordPermission): string[] {
@@ -371,6 +465,7 @@ async function buildRecordView(
         type: getRecordType(record),
         revision: record.revision,
         version: record.version,
+        folder: resolveRecordFolder(storage, recordUid),
         folderLocation: findRecordFolderLocation(storage, recordUid) || 'root',
         login: getRecordLogin(record) || undefined,
         password: password ? (unmask ? password : NSF_MASKED_VALUE) : undefined,
@@ -463,8 +558,11 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
     if (view.notes) lines.push(recordDetailRow('Notes', view.notes))
 
     for (const field of view.fields) {
+        if (NSF_TOP_LEVEL_FIELD_TYPES.has(field.type)) continue
+        const displayValue = field.value.filter(Boolean).join(', ')
+        if (!displayValue) continue
         const label = field.label || field.type
-        lines.push(recordDetailRow(label.charAt(0).toUpperCase() + label.slice(1), field.value))
+        lines.push(recordDetailRow(label.charAt(0).toUpperCase() + label.slice(1), displayValue))
     }
 
     if (view.userPermissions.length > 0) {
@@ -484,10 +582,13 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
     if (verbose) {
         lines.push(
             '',
-            recordDetailRow('Folder', view.folderLocation),
+            recordDetailRow('Folder', view.folder?.path ?? view.folderLocation),
             recordDetailRow('Revision', String(view.revision)),
             recordDetailRow('Version', String(view.version))
         )
+        if (view.folder?.uid) {
+            lines.push(recordDetailRow('Folder UID', view.folder.uid))
+        }
     }
 
     return lines.join('\n')
@@ -497,4 +598,11 @@ export function formatNsfDetail(result: GetNsfResult, verbose = false): string {
     return result.kind === 'folder'
         ? formatNsfFolderDetail(result.view, verbose)
         : formatNsfRecordDetail(result.view, verbose)
+}
+
+export function formatNsfJson(result: GetNsfResult): string {
+    if (result.kind === 'record') {
+        return formatNsfRecordJson(result.view)
+    }
+    return JSON.stringify(result.view, null, 2)
 }

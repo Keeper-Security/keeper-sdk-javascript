@@ -738,6 +738,10 @@ export class KeeperVault {
         return this.nestedShareFolderManager.formatNsfDetail(result, verbose ?? false)
     }
 
+    public formatNsfJson(result: GetNsfResult): string {
+        return this.nestedShareFolderManager.formatNsfJson(result)
+    }
+
     public async linkNestedShareRecord(
         recordIdentifier: string,
         folderIdentifier: string

@@ -53,6 +53,9 @@ export {
     formatNsfFolderDetail,
     formatNsfRecordDetail,
     formatNsfDetail,
+    formatNsfRecordJson,
+    formatNsfJson,
+    toNsfRecordJsonView,
 } from './getNsf'
 export type {
     GetNsfFormatInput,
@@ -60,6 +63,10 @@ export type {
     GetNsfResult,
     NsfFolderView,
     NsfRecordView,
+    NsfRecordFieldView,
+    NsfRecordFolderView,
+    NsfRecordJsonView,
+    NsfRecordJsonUserPermission,
     NsfFolderPermission,
     NsfFolderAccessRow,
     NsfRecordPermission,
