@@ -297,6 +297,7 @@ export {
     runPasswordReport,
     formatPasswordReportResult,
     getPasswordStrength,
+    calculatePasswordScore,
     parsePasswordPolicy,
     isPasswordCompliant,
     buildPasswordPolicySummary,

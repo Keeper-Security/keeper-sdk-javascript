@@ -424,10 +424,11 @@ export const PASSWORD_REPORT_BASE_HEADERS = [
 export const PASSWORD_REPORT_VERBOSE_HEADERS = ['score', 'status', 'reused']
 
 export const PASSWORD_BREACHWATCH_STATUS_NAMES: Readonly<Record<number, string>> = {
-    0: 'Good',
-    1: 'Weak',
-    2: 'Breached',
-    3: 'Ignored',
+    0: 'GOOD',
+    1: 'CHANGED',
+    2: 'WEAK',
+    3: 'BREACHED',
+    4: 'IGNORE',
 }
 
 export type EnterpriseAuditLicense = {

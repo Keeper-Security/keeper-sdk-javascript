@@ -1,12 +1,11 @@
-import type { DBWRecord, DRecord, DSecurityScoreData } from '@keeper-security/keeperapi'
+import type { DBWRecord, DRecord } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { resolveSingleFolder, type VaultFolderSession } from '../folders/changeDirectory'
 import { listFolder } from '../folders/listFolder'
 import {
-    getRecordFields,
     getRecordPassword,
+    getRecordSummary,
     getRecordTitle,
-    RecordVersion,
 } from '../records/RecordUtils'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import {
@@ -101,15 +100,246 @@ function truncateText(value: string, maxLength = DEFAULT_TRUNCATION_LENGTH): str
 }
 
 function getRecordDescription(record: DRecord): string {
-    if (record.version <= RecordVersion.Legacy) {
-        return record.data?.notes ? String(record.data.notes) : ''
-    }
-    for (const field of getRecordFields(record)) {
-        if (field.type === 'note' && field.value.length > 0) {
-            return String(field.value[0])
+    const summary = getRecordSummary(record)
+    const parts: string[] = []
+    if (summary.login) parts.push(summary.login)
+    if (summary.url) parts.push(String(summary.url))
+    return parts.join(' @ ')
+}
+
+type BWPasswordEntry = {
+    value?: string
+    status?: number | string
+}
+
+type BreachWatchRecordData = {
+    passwords?: BWPasswordEntry[]
+    status?: number | string
+    breachWatchStatus?: number | string
+}
+
+function chunkText(text: string, predicate: (char: string) => boolean): string[] {
+    const chunks: string[] = []
+    let acc = ''
+    for (const char of text) {
+        if (predicate(char)) {
+            acc += char
+        } else if (acc) {
+            chunks.push(acc)
+            acc = ''
         }
     }
+    if (acc) chunks.push(acc)
+    return chunks
+}
+
+function offsetChar(text: string, compare: (prev: string, current: string) => number): number[] {
+    if (!text) return []
+    const offsets: number[] = []
+    let prev = text[0]
+    for (const char of text.slice(1)) {
+        offsets.push(compare(prev, char))
+        prev = char
+    }
+    return offsets
+}
+
+/** Keeper Commander-compatible password strength score (0–100). */
+export function calculatePasswordScore(password: string): number {
+    if (!password) return 0
+
+    let normalized = password
+    let total = password.length
+    if (total > 50) {
+        normalized = password.slice(0, 50)
+        total = 50
+    }
+
+    let uppers = 0
+    let lowers = 0
+    let digits = 0
+    let symbols = 0
+    for (const char of normalized) {
+        if (char >= 'A' && char <= 'Z') uppers++
+        else if (char >= 'a' && char <= 'z') lowers++
+        else if (char >= '0' && char <= '9') digits++
+        else symbols++
+    }
+
+    let ds = digits + symbols
+    if (!/^[A-Za-z]/.test(normalized)) ds--
+    if (!/[A-Za-z]$/.test(normalized)) ds--
+    if (ds < 0) ds = 0
+
+    let score = total * 4
+    if (uppers > 0) score += (total - uppers) * 2
+    if (lowers > 0) score += (total - lowers) * 2
+    if (digits > 0) score += digits * 4
+    score += symbols * 6
+    score += ds * 2
+
+    let variance = 0
+    if (uppers > 0) variance++
+    if (lowers > 0) variance++
+    if (digits > 0) variance++
+    if (symbols > 0) variance++
+    if (total >= 8 && variance >= 3) score += (variance + 1) * 2
+
+    if (digits + symbols === 0) score -= total
+    if (uppers + lowers + symbols === 0) score -= total
+
+    const pwdLen = normalized.length
+    let repInc = 0
+    let repCount = 0
+    for (let i = 0; i < pwdLen; i++) {
+        let charExists = false
+        for (let j = 0; j < pwdLen; j++) {
+            if (i !== j && normalized[i] === normalized[j]) {
+                charExists = true
+                repInc += pwdLen / Math.abs(i - j)
+            }
+        }
+        if (charExists) repCount++
+    }
+    const unqCount = pwdLen - repCount
+    repInc = Math.ceil(unqCount === 0 ? repInc : repInc / unqCount)
+    if (repCount > 0) score -= repInc
+
+    let consecCount = 0
+    const consecPredicates = [
+        (char: string) => char >= 'A' && char <= 'Z',
+        (char: string) => char >= 'a' && char <= 'z',
+        (char: string) => char >= '0' && char <= '9',
+    ]
+    for (const predicate of consecPredicates) {
+        for (const chunk of chunkText(normalized, predicate)) {
+            if (chunk.length >= 2) consecCount += chunk.length - 1
+        }
+    }
+    if (consecCount > 0) score -= 2 * consecCount
+
+    let sequenceCount = 0
+    for (const [modulus, predicate] of [
+        [26, (char: string) => /[a-z]/i.test(char)] as const,
+        [10, (char: string) => char >= '0' && char <= '9'] as const,
+    ]) {
+        for (const chunk of chunkText(normalized.toLowerCase(), predicate)) {
+            if (chunk.length < 3) continue
+            const offsets = offsetChar(chunk, (prev, current) => {
+                const delta = prev.charCodeAt(0) - current.charCodeAt(0)
+                return delta >= 0 ? delta : delta + modulus
+            })
+            let op = offsets[0]
+            for (const oc of offsets.slice(1)) {
+                if (oc === op) {
+                    if (op !== 0) sequenceCount++
+                } else {
+                    op = oc
+                }
+            }
+        }
+    }
+
+    const symbolMap: Record<string, number> = {}
+    '!@#$%^&*()_+[]\\{}\'|;:",./<>?'.split('').forEach((symbol, index) => {
+        symbolMap[symbol] = index
+    })
+    for (const chunk of chunkText(normalized, (char) => char in symbolMap)) {
+        if (chunk.length < 3) continue
+        const offsets = offsetChar(chunk, (prev, current) => {
+            const delta = symbolMap[prev] - symbolMap[current]
+            const modulus = Object.keys(symbolMap).length
+            return delta >= 0 ? delta : delta + modulus
+        })
+        let op = offsets[0]
+        for (const oc of offsets.slice(1)) {
+            if (oc === op) {
+                if (op !== 0) sequenceCount++
+            } else {
+                op = oc
+            }
+        }
+    }
+    if (sequenceCount > 0) score -= 3 * sequenceCount
+
+    if (score < 0) return 0
+    if (score > 100) return 100
+    return score
+}
+
+function formatBreachWatchStatus(rawStatus: number | string): string {
+    if (typeof rawStatus === 'string') {
+        return rawStatus.toUpperCase()
+    }
+    return PASSWORD_BREACHWATCH_STATUS_NAMES[rawStatus] || String(rawStatus)
+}
+
+function getWorstBreachWatchStatus(statuses: Array<number | string>): number | string | undefined {
+    const rank = (status: number | string): number => {
+        if (typeof status === 'string') {
+            const upper = status.toUpperCase()
+            if (upper === 'BREACHED') return 4
+            if (upper === 'WEAK') return 3
+            if (upper === 'CHANGED') return 2
+            if (upper === 'IGNORE') return 1
+            return 0
+        }
+        return { 3: 4, 2: 3, 1: 2, 4: 1, 0: 0 }[status] ?? 0
+    }
+
+    let worst: number | string | undefined
+    let worstRank = -1
+    for (const status of statuses) {
+        const statusRank = rank(status)
+        if (statusRank > worstRank) {
+            worstRank = statusRank
+            worst = status
+        }
+    }
+    return worst
+}
+
+function getBreachWatchPasswordStatus(storage: InMemoryStorage, recordUid: string, password: string): string {
+    const bwRecord = storage.getByUid<DBWRecord>('bw_record', recordUid)
+    if (!bwRecord?.data) return ''
+
+    const data = bwRecord.data as BreachWatchRecordData
+    const passwords = data.passwords
+    if (Array.isArray(passwords) && passwords.length > 0) {
+        const match = passwords.find((entry) => entry.value === password)
+        if (match?.status != null && match.status !== '') {
+            return formatBreachWatchStatus(match.status)
+        }
+
+        const statuses = passwords
+            .map((entry) => entry.status)
+            .filter((status): status is number | string => status != null && status !== '')
+        const worstStatus = getWorstBreachWatchStatus(statuses)
+        if (worstStatus != null) {
+            return formatBreachWatchStatus(worstStatus)
+        }
+    }
+
+    const legacyStatus = data.status ?? data.breachWatchStatus
+    if (legacyStatus != null && legacyStatus !== '') {
+        return formatBreachWatchStatus(legacyStatus)
+    }
+
     return ''
+}
+
+function buildBreachWatchPasswordCountMap(storage: InMemoryStorage): Map<string, number> {
+    const counts = new Map<string, number>()
+    for (const bwRecord of storage.getAll<DBWRecord>('bw_record')) {
+        const passwords = (bwRecord.data as BreachWatchRecordData | undefined)?.passwords
+        if (!Array.isArray(passwords)) continue
+        for (const entry of passwords) {
+            const value = entry.value
+            if (!value) continue
+            counts.set(value, (counts.get(value) || 0) + 1)
+        }
+    }
+    return counts
 }
 
 async function collectRecordUidsInFolderTree(storage: InMemoryStorage, folderUid: string | null): Promise<string[]> {
@@ -148,37 +378,6 @@ function buildPasswordCountMap(records: DRecord[]): Map<string, number> {
         counts.set(password, (counts.get(password) || 0) + 1)
     }
     return counts
-}
-
-function estimatePasswordScore(password: string): number {
-    const strength = getPasswordStrength(password)
-    let score = Math.min(strength.length * 4, 40)
-    if (strength.caps > 0) score += 10
-    if (strength.lower > 0) score += 10
-    if (strength.digits > 0) score += 15
-    if (strength.symbols > 0) score += 15
-    if (strength.length >= 12) score += 10
-    return Math.min(score, 100)
-}
-
-function getPasswordScore(storage: InMemoryStorage, recordUid: string, password: string): string {
-    const scoreData = storage.getByUid<DSecurityScoreData>('security_score_data', recordUid)
-    if (scoreData?.data?.password === password && typeof scoreData.data.score === 'number') {
-        return String(scoreData.data.score)
-    }
-    return String(estimatePasswordScore(password))
-}
-
-function getBreachWatchStatus(storage: InMemoryStorage, recordUid: string): string {
-    const bwRecord = storage.getByUid<DBWRecord>('bw_record', recordUid)
-    if (!bwRecord?.data) return ''
-
-    const rawStatus = bwRecord.data.status ?? bwRecord.data.breachWatchStatus
-    if (rawStatus == null || rawStatus === '') return ''
-    if (typeof rawStatus === 'number') {
-        return PASSWORD_BREACHWATCH_STATUS_NAMES[rawStatus] || String(rawStatus)
-    }
-    return String(rawStatus)
 }
 
 function buildTableHeaders(verbose: boolean, rowNumbers: boolean): string[] {
@@ -242,6 +441,7 @@ export async function runPasswordReport(
     const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
     const targetUids = new Set(await resolveTargetRecordUids(storage, session, options.folder))
     const passwordCounts = buildPasswordCountMap(storage.getRecords())
+    const breachWatchPasswordCounts = buildBreachWatchPasswordCountMap(storage)
 
     const rows: PasswordReportRow[] = []
     for (const record of storage.getRecords()) {
@@ -266,9 +466,9 @@ export async function runPasswordReport(
         }
 
         if (verbose) {
-            entry.score = getPasswordScore(storage, record.uid, password)
-            entry.status = getBreachWatchStatus(storage, record.uid)
-            const reuseCount = passwordCounts.get(password) || 0
+            entry.score = String(calculatePasswordScore(password))
+            entry.status = getBreachWatchPasswordStatus(storage, record.uid, password)
+            const reuseCount = breachWatchPasswordCounts.get(password) ?? passwordCounts.get(password) ?? 0
             if (reuseCount > 1) entry.reused = String(reuseCount)
         }
 
