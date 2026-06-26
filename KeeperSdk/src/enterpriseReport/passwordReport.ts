@@ -25,7 +25,40 @@ import {
 } from './reportTypes'
 import { formatReportOutput } from './reportUtils'
 
+const POLICY_FIELD_COUNT = 5
+const SPECIAL_CHAR_SET = new Set(PW_SPECIAL_CHARACTERS.split(''))
+
+const POLICY_SUMMARY_LABELS: ReadonlyArray<{ key: keyof PasswordPolicy; label: string }> = [
+    { key: 'length', label: 'length' },
+    { key: 'lower', label: 'lowercase' },
+    { key: 'upper', label: 'uppercase' },
+    { key: 'digits', label: 'digits' },
+    { key: 'special', label: 'special' },
+]
+
 type SupportedRecordVersion = (typeof SUPPORTED_RECORD_VERSIONS)[number]
+
+type PasswordReportTable = {
+    headers: string[]
+    rows: string[][]
+}
+
+type VerboseRowContext = {
+    storage: InMemoryStorage
+    passwordCounts: ReadonlyMap<string, number>
+    breachWatchPasswordCounts: ReadonlyMap<string, number>
+}
+
+type BWPasswordEntry = {
+    value?: string
+    status?: number | string
+}
+
+type BreachWatchRecordData = {
+    passwords?: BWPasswordEntry[]
+    status?: number | string
+    breachWatchStatus?: number | string
+}
 
 export function getPasswordStrength(password: string): PasswordStrength {
     let caps = 0
@@ -37,7 +70,7 @@ export function getPasswordStrength(password: string): PasswordStrength {
         if (char >= 'A' && char <= 'Z') caps++
         else if (char >= 'a' && char <= 'z') lower++
         else if (char >= '0' && char <= '9') digits++
-        else if (PW_SPECIAL_CHARACTERS.includes(char)) symbols++
+        else if (SPECIAL_CHAR_SET.has(char)) symbols++
     }
 
     return { length: password.length, caps, lower, digits, symbols }
@@ -45,16 +78,18 @@ export function getPasswordStrength(password: string): PasswordStrength {
 
 export function parsePasswordPolicy(options: PasswordReportOptions): PasswordPolicy {
     if (options.policy?.trim()) {
-        const components = options.policy.split(',').map((part) => part.trim())
-        const values = components.slice(0, 5).map((part) => (part ? Number.parseInt(part, 10) : 0))
-        while (values.length < 5) values.push(0)
-        return {
-            length: values[0] || 0,
-            lower: values[1] || 0,
-            upper: values[2] || 0,
-            digits: values[3] || 0,
-            special: values[4] || 0,
+        const values = options.policy
+            .split(',')
+            .map((part) => part.trim())
+            .slice(0, POLICY_FIELD_COUNT)
+            .map(parsePolicyNumber)
+
+        while (values.length < POLICY_FIELD_COUNT) {
+            values.push(0)
         }
+
+        const [length, lower, upper, digits, special] = values
+        return { length, lower, upper, digits, special }
     }
 
     return {
@@ -77,71 +112,9 @@ export function isPasswordCompliant(strength: PasswordStrength, policy: Password
 }
 
 export function buildPasswordPolicySummary(policy: PasswordPolicy): string {
-    const parts: string[] = []
-    if (policy.length > 0) parts.push(`length >= ${policy.length}`)
-    if (policy.lower > 0) parts.push(`lowercase >= ${policy.lower}`)
-    if (policy.upper > 0) parts.push(`uppercase >= ${policy.upper}`)
-    if (policy.digits > 0) parts.push(`digits >= ${policy.digits}`)
-    if (policy.special > 0) parts.push(`special >= ${policy.special}`)
-    return parts.join(', ')
-}
-
-function validatePasswordPolicy(policy: PasswordPolicy): void {
-    if (policy.length + policy.lower + policy.upper + policy.digits + policy.special === 0) {
-        throw new KeeperSdkError(
-            'At least one password policy constraint must be set.',
-            ResultCodes.PASSWORD_REPORT_POLICY_REQUIRED
-        )
-    }
-}
-
-function truncateText(value: string, maxLength = DEFAULT_TRUNCATION_LENGTH): string {
-    return value.length <= maxLength ? value : `${value.slice(0, maxLength)}...`
-}
-
-function getRecordDescription(record: DRecord): string {
-    const summary = getRecordSummary(record)
-    const parts: string[] = []
-    if (summary.login) parts.push(summary.login)
-    if (summary.url) parts.push(String(summary.url))
-    return parts.join(' @ ')
-}
-
-type BWPasswordEntry = {
-    value?: string
-    status?: number | string
-}
-
-type BreachWatchRecordData = {
-    passwords?: BWPasswordEntry[]
-    status?: number | string
-    breachWatchStatus?: number | string
-}
-
-function chunkText(text: string, predicate: (char: string) => boolean): string[] {
-    const chunks: string[] = []
-    let acc = ''
-    for (const char of text) {
-        if (predicate(char)) {
-            acc += char
-        } else if (acc) {
-            chunks.push(acc)
-            acc = ''
-        }
-    }
-    if (acc) chunks.push(acc)
-    return chunks
-}
-
-function offsetChar(text: string, compare: (prev: string, current: string) => number): number[] {
-    if (!text) return []
-    const offsets: number[] = []
-    let prev = text[0]
-    for (const char of text.slice(1)) {
-        offsets.push(compare(prev, char))
-        prev = char
-    }
-    return offsets
+    return POLICY_SUMMARY_LABELS.filter(({ key }) => policy[key] > 0)
+        .map(({ key, label }) => `${label} >= ${policy[key]}`)
+        .join(', ')
 }
 
 /** Keeper Commander-compatible password strength score (0–100). */
@@ -267,6 +240,112 @@ export function calculatePasswordScore(password: string): number {
     return score
 }
 
+export function formatPasswordReportResult(
+    result: PasswordReportResult,
+    options: FormatPasswordReportOptions = {}
+): string {
+    const outputFormat = options.outputFormat ?? result.outputFormat
+    const table = toPasswordReportTable(result, options)
+    return formatReportOutput(table.headers, table.rows, outputFormat)
+}
+
+export async function runPasswordReport(
+    storage: InMemoryStorage,
+    session: VaultFolderSession,
+    options: PasswordReportOptions = {}
+): Promise<PasswordReportResult> {
+    const policy = parsePasswordPolicy(options)
+    validatePasswordPolicy(policy)
+
+    const verbose = options.verbose === true
+    const rowNumbers = options.rowNumbers !== false
+    const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
+
+    const targetRecords = await resolveTargetRecords(storage, session, options.folder)
+    const passwordCounts = buildPasswordCountMap(storage.getRecords())
+    const breachWatchPasswordCounts = buildBreachWatchPasswordCountMap(storage)
+    const verboseContext: VerboseRowContext = {
+        storage,
+        passwordCounts,
+        breachWatchPasswordCounts,
+    }
+
+    const rows = targetRecords.flatMap((record) =>
+        buildNonCompliantRow(record, policy, verbose, verboseContext)
+    )
+
+    const table = buildPasswordReportTable(rows, verbose, rowNumbers)
+
+    return {
+        policy,
+        policySummary: buildPasswordPolicySummary(policy),
+        headers: table.headers,
+        rows,
+        formatted: formatReportOutput(table.headers, table.rows, outputFormat),
+        verbose,
+        rowNumbers,
+        outputFormat,
+    }
+}
+
+function parsePolicyNumber(part: string): number {
+    if (!part) return 0
+    const parsed = Number.parseInt(part, 10)
+    return Number.isFinite(parsed) ? parsed : 0
+}
+
+function isSupportedRecordVersion(version: number): version is SupportedRecordVersion {
+    return (SUPPORTED_RECORD_VERSIONS as readonly number[]).includes(version)
+}
+
+function validatePasswordPolicy(policy: PasswordPolicy): void {
+    const hasConstraint = POLICY_SUMMARY_LABELS.some(({ key }) => policy[key] > 0)
+    if (!hasConstraint) {
+        throw new KeeperSdkError(
+            'At least one password policy constraint must be set.',
+            ResultCodes.PASSWORD_REPORT_POLICY_REQUIRED
+        )
+    }
+}
+
+function truncateText(value: string, maxLength = DEFAULT_TRUNCATION_LENGTH): string {
+    return value.length <= maxLength ? value : `${value.slice(0, maxLength)}...`
+}
+
+function getRecordDescription(record: DRecord): string {
+    const summary = getRecordSummary(record)
+    const parts: string[] = []
+    if (summary.login) parts.push(summary.login)
+    if (summary.url) parts.push(String(summary.url))
+    return parts.join(' @ ')
+}
+
+function chunkText(text: string, predicate: (char: string) => boolean): string[] {
+    const chunks: string[] = []
+    let acc = ''
+    for (const char of text) {
+        if (predicate(char)) {
+            acc += char
+        } else if (acc) {
+            chunks.push(acc)
+            acc = ''
+        }
+    }
+    if (acc) chunks.push(acc)
+    return chunks
+}
+
+function offsetChar(text: string, compare: (prev: string, current: string) => number): number[] {
+    if (!text) return []
+    const offsets: number[] = []
+    let prev = text[0]
+    for (const char of text.slice(1)) {
+        offsets.push(compare(prev, char))
+        prev = char
+    }
+    return offsets
+}
+
 function formatBreachWatchStatus(rawStatus: number | string): string {
     if (typeof rawStatus === 'string') {
         return rawStatus.toUpperCase()
@@ -336,7 +415,7 @@ function buildBreachWatchPasswordCountMap(storage: InMemoryStorage): Map<string,
         for (const entry of passwords) {
             const value = entry.value
             if (!value) continue
-            counts.set(value, (counts.get(value) || 0) + 1)
+            counts.set(value, (counts.get(value) ?? 0) + 1)
         }
     }
     return counts
@@ -344,40 +423,115 @@ function buildBreachWatchPasswordCountMap(storage: InMemoryStorage): Map<string,
 
 async function collectRecordUidsInFolderTree(storage: InMemoryStorage, folderUid: string | null): Promise<string[]> {
     const uids: string[] = []
-    const listed = await listFolder(storage, {
-        folderUid: folderUid ?? undefined,
-        showFolders: true,
-        showRecords: true,
-    })
+    const folderQueue = [folderUid]
 
-    for (const record of listed.records ?? []) {
-        uids.push(record.uid)
+    while (folderQueue.length > 0) {
+        const currentFolderUid = folderQueue.shift()
+        const listed = await listFolder(storage, {
+            folderUid: currentFolderUid ?? undefined,
+            showFolders: true,
+            showRecords: true,
+        })
+
+        for (const record of listed.records ?? []) {
+            uids.push(record.uid)
+        }
+        for (const folder of listed.folders) {
+            folderQueue.push(folder.uid)
+        }
     }
-    for (const folder of listed.folders) {
-        uids.push(...(await collectRecordUidsInFolderTree(storage, folder.uid)))
-    }
+
     return uids
 }
 
-async function resolveTargetRecordUids(
+async function resolveTargetRecords(
     storage: InMemoryStorage,
     session: VaultFolderSession,
     folder?: string | null
-): Promise<string[]> {
+): Promise<DRecord[]> {
+    const records = storage.getRecords()
     const folderPath = folder?.trim()
-    if (!folderPath) return storage.getRecords().map((record) => record.uid)
+    if (!folderPath) return records
+
     const resolved = await resolveSingleFolder(storage, session, folderPath)
-    return collectRecordUidsInFolderTree(storage, resolved.folderUid)
+    const targetUids = new Set(await collectRecordUidsInFolderTree(storage, resolved.folderUid))
+    return records.filter((record) => targetUids.has(record.uid))
 }
 
-function buildPasswordCountMap(records: DRecord[]): Map<string, number> {
+function buildPasswordCountMap(records: readonly DRecord[]): Map<string, number> {
     const counts = new Map<string, number>()
     for (const record of records) {
         const password = getRecordPassword(record)
         if (!password) continue
-        counts.set(password, (counts.get(password) || 0) + 1)
+        counts.set(password, (counts.get(password) ?? 0) + 1)
     }
     return counts
+}
+
+function buildNonCompliantRow(
+    record: DRecord,
+    policy: PasswordPolicy,
+    verbose: boolean,
+    context: VerboseRowContext
+): PasswordReportRow[] {
+    if (!isSupportedRecordVersion(record.version)) return []
+
+    const password = getRecordPassword(record)
+    if (!password) return []
+
+    const strength = getPasswordStrength(password)
+    if (isPasswordCompliant(strength, policy)) return []
+
+    const row: PasswordReportRow = {
+        recordUid: record.uid,
+        title: truncateText(getRecordTitle(record)),
+        description: truncateText(getRecordDescription(record)),
+        length: strength.length,
+        lower: strength.lower,
+        upper: strength.caps,
+        digits: strength.digits,
+        special: strength.symbols,
+    }
+
+    if (verbose) {
+        applyVerboseFields(row, record.uid, password, context)
+    }
+
+    return [row]
+}
+
+function applyVerboseFields(
+    row: PasswordReportRow,
+    recordUid: string,
+    password: string,
+    context: VerboseRowContext
+): void {
+    const { storage, passwordCounts, breachWatchPasswordCounts } = context
+    row.score = String(calculatePasswordScore(password))
+    row.status = getBreachWatchPasswordStatus(storage, recordUid, password)
+
+    const reuseCount = breachWatchPasswordCounts.get(password) ?? passwordCounts.get(password) ?? 0
+    if (reuseCount > 1) {
+        row.reused = String(reuseCount)
+    }
+}
+
+function toPasswordReportTable(
+    result: PasswordReportResult,
+    options: FormatPasswordReportOptions = {}
+): PasswordReportTable {
+    const rowNumbers = options.rowNumbers ?? result.rowNumbers
+    return buildPasswordReportTable(result.rows, result.verbose, rowNumbers)
+}
+
+function buildPasswordReportTable(
+    rows: readonly PasswordReportRow[],
+    verbose: boolean,
+    rowNumbers: boolean
+): PasswordReportTable {
+    const headers = buildTableHeaders(verbose, rowNumbers)
+    const tableRows = rows.map((row, index) => toTableCells(row, verbose, rowNumbers, index + 1))
+    return { headers, rows: tableRows }
 }
 
 function buildTableHeaders(verbose: boolean, rowNumbers: boolean): string[] {
@@ -387,104 +541,29 @@ function buildTableHeaders(verbose: boolean, rowNumbers: boolean): string[] {
     return headers
 }
 
-function buildTableRow(
-    entry: PasswordReportRow,
+function toTableCells(
+    row: PasswordReportRow,
     verbose: boolean,
     rowNumbers: boolean,
     rowNumber: number
 ): string[] {
     const cells = [
-        entry.recordUid,
-        entry.title,
-        entry.description,
-        String(entry.length),
-        String(entry.lower),
-        String(entry.upper),
-        String(entry.digits),
-        String(entry.special),
+        row.recordUid,
+        row.title,
+        row.description,
+        String(row.length),
+        String(row.lower),
+        String(row.upper),
+        String(row.digits),
+        String(row.special),
     ]
-    if (verbose) cells.push(entry.score || '', entry.status || '', entry.reused || '')
-    if (rowNumbers) cells.unshift(String(rowNumber))
+
+    if (verbose) {
+        cells.push(row.score ?? '', row.status ?? '', row.reused ?? '')
+    }
+    if (rowNumbers) {
+        cells.unshift(String(rowNumber))
+    }
+
     return cells
-}
-
-function buildPasswordReportTable(
-    rows: PasswordReportRow[],
-    verbose: boolean,
-    rowNumbers: boolean
-): { headers: string[]; rows: string[][] } {
-    const headers = buildTableHeaders(verbose, rowNumbers)
-    const tableRows = rows.map((row, index) => buildTableRow(row, verbose, rowNumbers, index + 1))
-    return { headers, rows: tableRows }
-}
-
-export function formatPasswordReportResult(
-    result: PasswordReportResult,
-    options: FormatPasswordReportOptions = {}
-): string {
-    const rowNumbers = options.rowNumbers ?? result.rowNumbers
-    const outputFormat = options.outputFormat ?? result.outputFormat
-    const { headers, rows } = buildPasswordReportTable(result.rows, result.verbose, rowNumbers)
-    return formatReportOutput(headers, rows, outputFormat)
-}
-
-export async function runPasswordReport(
-    storage: InMemoryStorage,
-    session: VaultFolderSession,
-    options: PasswordReportOptions = {}
-): Promise<PasswordReportResult> {
-    const policy = parsePasswordPolicy(options)
-    validatePasswordPolicy(policy)
-
-    const verbose = options.verbose === true
-    const rowNumbers = options.rowNumbers !== false
-    const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
-    const targetUids = new Set(await resolveTargetRecordUids(storage, session, options.folder))
-    const passwordCounts = buildPasswordCountMap(storage.getRecords())
-    const breachWatchPasswordCounts = buildBreachWatchPasswordCountMap(storage)
-
-    const rows: PasswordReportRow[] = []
-    for (const record of storage.getRecords()) {
-        if (!targetUids.has(record.uid)) continue
-        if (!SUPPORTED_RECORD_VERSIONS.includes(record.version as SupportedRecordVersion)) continue
-
-        const password = getRecordPassword(record)
-        if (!password) continue
-
-        const strength = getPasswordStrength(password)
-        if (isPasswordCompliant(strength, policy)) continue
-
-        const entry: PasswordReportRow = {
-            recordUid: record.uid,
-            title: truncateText(getRecordTitle(record)),
-            description: truncateText(getRecordDescription(record)),
-            length: strength.length,
-            lower: strength.lower,
-            upper: strength.caps,
-            digits: strength.digits,
-            special: strength.symbols,
-        }
-
-        if (verbose) {
-            entry.score = String(calculatePasswordScore(password))
-            entry.status = getBreachWatchPasswordStatus(storage, record.uid, password)
-            const reuseCount = breachWatchPasswordCounts.get(password) ?? passwordCounts.get(password) ?? 0
-            if (reuseCount > 1) entry.reused = String(reuseCount)
-        }
-
-        rows.push(entry)
-    }
-
-    const { headers, rows: formattedRows } = buildPasswordReportTable(rows, verbose, rowNumbers)
-
-    return {
-        policy,
-        policySummary: buildPasswordPolicySummary(policy),
-        headers,
-        rows,
-        formatted: formatReportOutput(headers, formattedRows, outputFormat),
-        verbose,
-        rowNumbers,
-        outputFormat,
-    }
 }
