@@ -23,21 +23,23 @@ import {
     AUDIT_VIRTUAL_DIMENSIONS,
     CREATED_PRESETS,
     SUMMARY_REPORT_TYPES,
-    type AuditDimensionEventType,
-    type AuditDimensionIpAddress,
-    type AuditDimensionKeeperVersion,
-    type AuditDimensionRow,
-    type AuditEventOverviewReportRow,
-    type AuditReportFilter,
-    type AuditReportFilterPayload,
-    type AuditReportOptions,
-    type AuditReportResult,
-    type AuditSummaryReportType,
-    type CreatedFilterCriteria,
-    type CreatedPreset,
-    type EnterpriseAuditLicense,
-    type FormatAuditReportOptions,
-    type FormattedAuditReportTable,
+} from './reportTypes'
+import type {
+    AuditDimensionEventType,
+    AuditDimensionIpAddress,
+    AuditDimensionKeeperVersion,
+    AuditDimensionRow,
+    AuditEventOverviewReportRow,
+    AuditReportFilter,
+    AuditReportFilterPayload,
+    AuditReportOptions,
+    AuditReportResult,
+    AuditSummaryReportType,
+    CreatedFilterCriteria,
+    CreatedPreset,
+    EnterpriseAuditLicense,
+    FormatAuditReportOptions,
+    FormattedAuditReportTable,
 } from './reportTypes'
 import {
     assertSucceeded,
@@ -179,7 +181,7 @@ async function runRawReport(
         }
         rows.push(
             fields.map((field) =>
-                field === 'message' ? eventMessage(event, templates) : formatFieldValue(field, event[field], 'raw')
+                field === 'message' ? eventMessage(event, templates) : formatFieldValue(field, getAuditEventField(event, field), 'raw')
             )
         )
     }
@@ -226,7 +228,9 @@ async function runSummaryReport(
     })
 
     const fields = [...aggregates, ...(reportType !== 'span' ? ['created'] : []), ...options.columns]
-    const rows = events.map((event) => fields.map((field) => formatFieldValue(field, event[field], reportType)))
+    const rows = events.map((event) =>
+        fields.map((field) => formatFieldValue(field, getAuditEventField(event, field), reportType))
+    )
     const headers = outputFormat === AuditOutputFormat.Json ? fields : fields.map(fieldToTitle)
 
     return {
@@ -418,10 +422,7 @@ async function resolveFilter(auth: Auth, filter: AuditReportFilter = {}): Promis
 }
 
 async function loadDimension(auth: Auth, dimension: string): Promise<AuditDimensionRow[]> {
-    if (auth.username !== cachedUsername) {
-        dimensionCache = new Map()
-        cachedUsername = auth.username || ''
-    }
+    invalidateAuditCachesIfUserChanged(auth)
     const cached = dimensionCache.get(dimension)
     if (cached) return cached
 
@@ -502,6 +503,7 @@ function buildVirtualDimension(dimension: string, sourceRows: AuditDimensionRow[
 }
 
 async function loadSyslogTemplates(auth: Auth): Promise<Map<string, string>> {
+    invalidateAuditCachesIfUserChanged(auth)
     if (syslogTemplates) return syslogTemplates
     const templates = new Map<string, string>()
     for (const row of await loadDimension(auth, 'audit_event_type')) {
@@ -513,6 +515,18 @@ async function loadSyslogTemplates(auth: Auth): Promise<Map<string, string>> {
     return templates
 }
 
+function invalidateAuditCachesIfUserChanged(auth: Auth): void {
+    if (auth.username !== cachedUsername) {
+        dimensionCache = new Map()
+        syslogTemplates = null
+        cachedUsername = auth.username || ''
+    }
+}
+
+function getAuditEventField(event: AuditEventOverviewReportRow, field: string): unknown {
+    return (event as Record<string, unknown>)[field]
+}
+
 function eventMessage(event: AuditEventOverviewReportRow, templates: Map<string, string>): string {
     const template = templates.get(event.audit_event_type || '')
     if (!template) return ''
@@ -520,7 +534,8 @@ function eventMessage(event: AuditEventOverviewReportRow, templates: Map<string,
     while (true) {
         const match = /\$\{(\w+)\}/.exec(info)
         if (!match) break
-        const value = event[match[1]] == null ? ' ' : String(event[match[1]])
+        const fieldValue = getAuditEventField(event, match[1])
+        const value = fieldValue == null ? ' ' : String(fieldValue)
         info = info.slice(0, match.index) + value + info.slice(match.index + match[0].length)
     }
     return info

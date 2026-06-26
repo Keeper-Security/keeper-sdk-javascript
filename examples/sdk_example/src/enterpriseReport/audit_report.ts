@@ -11,7 +11,6 @@ import {
 } from '@keeper-security/keeper-sdk-javascript'
 import type { AuditReportFilter, AuditReportOptions } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-import { isYes } from '../utils/format'
 
 async function promptAuditFilters(): Promise<AuditReportFilter | undefined> {
     const filter: AuditReportFilter = {}
@@ -70,17 +69,6 @@ async function auditReportExample() {
     const vault = await login()
 
     try {
-        if (isYes(await prompt('Show syntax help and event types? [y/N]: '))) {
-            const restore = suppressLogs()
-            try {
-                const result = await vault.runAuditReport({ syntaxHelp: true })
-                logger.info(result.formatted)
-            } finally {
-                restore()
-            }
-            return
-        }
-
         const reportType = (await prompt('Report type [raw/dim/hour/day/week/month/span]: ')).trim().toLowerCase()
         if (!reportType) {
             logger.error('Report type is required.')

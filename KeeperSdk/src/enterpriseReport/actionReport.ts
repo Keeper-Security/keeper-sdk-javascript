@@ -39,7 +39,6 @@ import {
     type ActionReportOptions,
     type ActionReportResult,
     type ActionResult,
-    type AuditEventOverviewReportRow,
     type AuditReportFilterPayload,
     type FormatActionReportOptions,
     type FormattedActionReportTable,
@@ -241,7 +240,7 @@ async function queryUsersWithRecentEvents(
         assertSucceeded(response, 'get_audit_event_reports failed', ResultCodes.ACTION_REPORT_FAILED)
 
         for (const row of response.audit_event_overview_report_rows ?? []) {
-            const value = (row as AuditEventOverviewReportRow)[config.auditColumn]
+            const value = (row as Record<string, unknown>)[config.auditColumn]
             if (value == null || value === '') continue
             active.add(String(value).trim().toLowerCase())
         }

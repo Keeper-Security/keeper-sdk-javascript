@@ -82,7 +82,6 @@ async function actionReportExample() {
             daysSince,
             applyAction,
             dryRun,
-            force,
             ...(node ? { node } : {}),
             ...(targetUser ? { targetUser } : {}),
             ...(columnsRaw ? { columns: columnsRaw } : {}),

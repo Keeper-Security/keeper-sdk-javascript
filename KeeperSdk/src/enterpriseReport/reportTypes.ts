@@ -27,7 +27,6 @@ export type AuditEventOverviewReportRow = {
     occurrences?: number
     first_created?: number | string
     last_created?: number | string
-    [key: string]: string | number | boolean | undefined
 }
 
 export type AuditDimensionIpAddress = {
@@ -244,7 +243,6 @@ export type ActionReportOptions = {
     applyAction?: AdminAction
     targetUser?: string
     dryRun?: boolean
-    force?: boolean
     node?: string
     outputFormat?: AuditOutputFormat
     timezone?: string
