@@ -122,7 +122,7 @@ export type {
     UpdateNsfRecordInput,
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
-    UpdateNsfRecordFieldMap,
+    UpdateNsfRecordFieldEntry,
 } from './updateNsfRecord'
 
 export { addNestedShareRecord } from './addNsfRecord'
@@ -130,10 +130,12 @@ export type { AddNsfRecordInput, AddNsfRecordResult } from './addNsfRecord'
 
 export {
     buildNsfRecordData,
-    parseNsfFieldStrings,
-    type NsfRecordFieldMap,
-    type NsfRecordCustomField,
+    parseNsfFieldInput,
+    parseNsfFieldSpaceInput,
+    resolveNsfFieldValue,
+    type ParsedNsfFields,
     type ParsedNsfFieldStrings,
+    type RecordFieldEntry,
 } from './nsfRecordData'
 
 export { NestedShareFolderManager } from './NestedShareFolderManager'

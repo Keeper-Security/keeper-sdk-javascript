@@ -4,7 +4,7 @@ import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { resolveRecordKeyBytes } from './nsfRecordCrypto'
-import { getPaddedJsonBytes, mergeNsfRecordData, type NsfRecordFieldMap } from './nsfRecordData'
+import { getPaddedJsonBytes, mergeNsfRecordData, type RecordFieldEntry } from './nsfRecordData'
 import {
     checkRecordEditPermission,
     ensureNestedShareRecord,
@@ -14,14 +14,15 @@ import {
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
 
-export type { NsfRecordFieldMap as UpdateNsfRecordFieldMap } from './nsfRecordData'
+export type { RecordFieldEntry as UpdateNsfRecordFieldEntry } from './nsfRecordData'
 
 export type UpdateNsfRecordInput = {
     records: string[]
     title?: string
     recordType?: string
     notes?: string
-    fields?: NsfRecordFieldMap
+    fieldEntries?: RecordFieldEntry[]
+    customEntries?: RecordFieldEntry[]
 }
 
 export type UpdateNsfRecordResultItem = {

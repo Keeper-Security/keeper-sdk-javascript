@@ -58,3 +58,39 @@ export const NSF_PATH_SENTINEL = '\x00'
 
 export const NSF_FOLDER_COLORS = ['none', 'red', 'orange', 'yellow', 'green', 'blue', 'gray'] as const
 export type NsfFolderColor = (typeof NSF_FOLDER_COLORS)[number]
+
+
+export const NSF_KNOWN_FIELD_TYPES = new Set([
+    'login',
+    'password',
+    'url',
+    'email',
+    'text',
+    'multiline',
+    'secret',
+    'note',
+    'onetimecode',
+    'date',
+    'phone',
+    'name',
+    'address',
+    'paymentcard',
+    'bankaccount',
+    'securityquestion',
+    'host',
+    'keypair',
+    'fileref',
+    'passkey',
+    'pincode',
+])
+
+
+export const NSF_STRUCTURED_SUBKEYS: Record<string, ReadonlySet<string>> = {
+    name: new Set(['first', 'middle', 'last']),
+    host: new Set(['hostName', 'port', 'host']),
+    address: new Set(['street1', 'street2', 'city', 'state', 'zip', 'country', 'address']),
+    paymentcard: new Set(['cardNumber', 'cardExpirationDate', 'cardSecurityCode', 'cardPin']),
+    bankaccount: new Set(['accountNumber', 'routingNumber', 'accountType']),
+    securityquestion: new Set(['question', 'answer']),
+    phone: new Set(['number', 'region', 'type', 'ext']),
+}

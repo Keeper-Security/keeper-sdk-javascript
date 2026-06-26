@@ -1,7 +1,6 @@
 import type { Auth, record as RecordProto } from '@keeper-security/keeperapi'
 import {
     Folder,
-    Records,
     generateEncryptionKey,
     generateUid,
     keeperDriveRecordsAdd,
@@ -13,8 +12,7 @@ import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import {
     buildNsfRecordData,
     getPaddedJsonBytes,
-    type NsfRecordCustomField,
-    type NsfRecordFieldMap,
+    type RecordFieldEntry,
 } from './nsfRecordData'
 import {
     ensureNestedShareFolder,
@@ -24,15 +22,15 @@ import {
     resolveNsfFolderIdentifier,
 } from './nsfHelpers'
 
-export type { NsfRecordFieldMap, NsfRecordCustomField } from './nsfRecordData'
+export type { RecordFieldEntry } from './nsfRecordData'
 
 export type AddNsfRecordInput = {
     title: string
     recordType: string
     folder?: string
     notes?: string
-    fields?: NsfRecordFieldMap
-    custom?: NsfRecordCustomField[]
+    fieldEntries?: RecordFieldEntry[]
+    customEntries?: RecordFieldEntry[]
     recordData?: Record<string, unknown>
     force?: boolean
     hasFileFields?: boolean
@@ -121,8 +119,8 @@ export async function addNestedShareRecord(
             title: input.title,
             recordType: input.recordType,
             notes: input.notes,
-            fields: input.fields,
-            custom: input.custom,
+            fieldEntries: input.fieldEntries,
+            customEntries: input.customEntries,
         })
 
     try {
