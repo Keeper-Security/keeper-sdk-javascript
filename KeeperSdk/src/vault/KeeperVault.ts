@@ -9,6 +9,7 @@ import {
     DUserFolder,
     Authentication,
     normal64Bytes,
+    platform,
 } from '@keeper-security/keeperapi'
 import type { SyncResult, SyncLogFormat, VaultStorage, SessionStorage, AuthUI3 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
@@ -150,6 +151,7 @@ export class KeeperVault {
     private readonly log: ILogger
     private synced = false
     private batchDepth = 0
+    private restoredAccountUid: string | null = null
     private readonly folderSession: VaultFolderSession = FolderManager.createSession()
     private readonly folderManager: FolderManager
     private readonly sharedFolderManager: SharedFolderManager
@@ -340,6 +342,17 @@ export class KeeperVault {
             )
         }
 
+        const accountUid = input.accountUid.trim()
+        if (this.restoredAccountUid && accountUid && this.restoredAccountUid !== accountUid) {
+            await this.storage.clear()
+            platform.unloadKeys()
+        } else {
+            // Preserve vault data and continuation token for incremental sync on the same account.
+            platform.unloadNonUserKeys()
+        }
+        if (accountUid) {
+            this.restoredAccountUid = accountUid
+        }
         this.synced = false
         this.log.info(`Session restored for ${params.username}`)
     }
@@ -417,7 +430,7 @@ export class KeeperVault {
     public async sync(): Promise<SyncResult> {
         const auth = this.getAuthOrThrow()
 
-        try{
+        try {
             const result = await syncDown({
                 auth,
                 storage: this.storage,
@@ -429,10 +442,20 @@ export class KeeperVault {
             }
             this.synced = true
             return result
-        }catch(e) {
+        } catch (e) {
             this.log.error('Sync failed:', extractErrorMessage(e))
             throw e
         }
+    }
+
+    /** Drop incremental sync cursor and crypto caches so the next sync can restart cleanly. */
+    public async clearSyncCheckpoint(): Promise<void> {
+        const checkpoint = await this.storage.get('continuationToken')
+        if (checkpoint?.token) {
+            await this.storage.delete('continuationToken', checkpoint.token)
+        }
+        platform.unloadNonUserKeys()
+        this.synced = false
     }
 
     public async batch(fn: () => Promise<void>): Promise<void> {
@@ -687,13 +710,19 @@ export class KeeperVault {
         confirm?: (summary: string) => boolean | Promise<boolean>
     ): Promise<DeleteFolderResult> {
         const result = await this.folderManager.deleteFolder(folderRefs, confirm)
-        if (result.success) await this.syncIfNeeded()
+        if (result.success) {
+            await this.clearSyncCheckpoint()
+            await this.syncIfNeeded()
+        }
         return result
     }
 
     public async rmdir(patterns: string[], options?: RmdirOptions): Promise<DeleteFolderResult> {
         const result = await this.folderManager.rmdir(patterns, options ?? {})
-        if (result.success) await this.syncIfNeeded()
+        if (result.success) {
+            await this.clearSyncCheckpoint()
+            await this.syncIfNeeded()
+        }
         return result
     }
 

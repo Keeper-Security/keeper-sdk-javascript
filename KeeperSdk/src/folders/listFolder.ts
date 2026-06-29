@@ -17,6 +17,7 @@ import {
     globToRegex,
     sharedFolderFolderName,
     sharedFolderName,
+    userFolderColor,
     userFolderName,
 } from './folderHelpers'
 
@@ -33,6 +34,8 @@ export type ListFolderFolderSimple = {
     uid: string
     name: string
     folderKind: FolderKind
+    /** User-folder vault color when set (Commander `ls` colorization). */
+    color?: string
 }
 
 export type ListFolderRecordSimple = {
@@ -133,10 +136,12 @@ export async function listVaultRootFolders(storage: InMemoryStorage): Promise<{
     for (const userFolder of await listRootUserFolders(storage)) {
         if (seen.has(userFolder.uid)) continue
         seen.add(userFolder.uid)
+        const color = userFolderColor(userFolder)
         rows.push({
             uid: userFolder.uid,
             name: userFolderName(userFolder),
             folderKind: FolderKind.UserFolder,
+            ...(color ? { color } : {}),
         })
     }
 
@@ -290,7 +295,13 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
             if (!userFolder) continue
             const name = userFolderName(userFolder)
             if (!matches(name, userFolder.uid)) continue
-            folderRows.push({ uid: userFolder.uid, name, folderKind: FolderKind.UserFolder })
+            const color = userFolderColor(userFolder)
+            folderRows.push({
+                uid: userFolder.uid,
+                name,
+                folderKind: FolderKind.UserFolder,
+                ...(color ? { color } : {}),
+            })
         } else if (dependency.kind === FolderKind.SharedFolder && showFolders && parentKey !== null) {
             const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, dependency.uid)
             if (!sharedFolder) continue

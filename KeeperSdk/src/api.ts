@@ -187,6 +187,57 @@ export type { AuthProvider, SharedFolderPermissionsInput } from './folders/Folde
 
 export { SharedFolderManager } from './sharedFolders/SharedFolderManager'
 
+export {
+    listTeams,
+    formatTeamsTable,
+    renderTeamsAsciiTable,
+    formatTeamRestricts,
+    TeamColumn,
+    SUPPORTED_TEAM_COLUMNS,
+    DEFAULT_TEAM_COLUMNS,
+} from './teams/listTeams'
+export type {
+    ListTeamsOptions,
+    ListTeamRow,
+    TeamColumnInput,
+    FormattedTeamsTable,
+    FormatTeamsTableOptions,
+} from './teams/listTeams'
+
+export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'
+export type {
+    TeamView,
+    TeamRoleInfo,
+    TeamUserInfo,
+    FormatTeamViewOptions,
+    FormattedTeamViewTable,
+    TeamViewTableRow,
+} from './teams/viewTeam'
+
+export {
+    listUsers,
+    formatUsersTable,
+    renderUsersAsciiTable,
+    UserColumn,
+    SUPPORTED_USER_COLUMNS,
+    DEFAULT_USER_COLUMNS,
+} from './users/listUsers'
+export type {
+    UserColumnInput,
+    ListUsersOptions,
+    ListUserRow,
+    FormattedUsersTable,
+    FormatUsersTableOptions,
+} from './users/listUsers'
+
+export { viewUser, formatUserView, userViewTable } from './users/viewUser'
+export type {
+    UserView,
+    FormatUserViewOptions,
+    FormattedUserViewTable,
+    UserViewTableRow,
+} from './users/userTypes'
+
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 
 export type {
