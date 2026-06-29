@@ -1,0 +1,16925 @@
+/*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
+import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+
+export const Folder = $root.Folder = (() => {
+
+    /**
+     * Namespace Folder.
+     * @exports Folder
+     * @namespace
+     */
+    const Folder = {};
+
+    /**
+     * RecordType enum.
+     * @name Folder.RecordType
+     * @enum {number}
+     * @property {number} password=0 password value
+     */
+    Folder.RecordType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "password"] = 0;
+        return values;
+    })();
+
+    /**
+     * FolderType enum.
+     * @name Folder.FolderType
+     * @enum {number}
+     * @property {number} default_folder=0 default_folder value
+     * @property {number} user_folder=1 user_folder value
+     * @property {number} shared_folder=2 shared_folder value
+     * @property {number} shared_folder_folder=3 shared_folder_folder value
+     */
+    Folder.FolderType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "default_folder"] = 0;
+        values[valuesById[1] = "user_folder"] = 1;
+        values[valuesById[2] = "shared_folder"] = 2;
+        values[valuesById[3] = "shared_folder_folder"] = 3;
+        return values;
+    })();
+
+    /**
+     * EncryptedKeyType enum.
+     * @name Folder.EncryptedKeyType
+     * @enum {number}
+     * @property {number} no_key=0 no_key value
+     * @property {number} encrypted_by_data_key=1 encrypted_by_data_key value
+     * @property {number} encrypted_by_public_key=2 encrypted_by_public_key value
+     * @property {number} encrypted_by_data_key_gcm=3 encrypted_by_data_key_gcm value
+     * @property {number} encrypted_by_public_key_ecc=4 encrypted_by_public_key_ecc value
+     */
+    Folder.EncryptedKeyType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "no_key"] = 0;
+        values[valuesById[1] = "encrypted_by_data_key"] = 1;
+        values[valuesById[2] = "encrypted_by_public_key"] = 2;
+        values[valuesById[3] = "encrypted_by_data_key_gcm"] = 3;
+        values[valuesById[4] = "encrypted_by_public_key_ecc"] = 4;
+        return values;
+    })();
+
+    Folder.EncryptedDataKey = (function() {
+
+        /**
+         * Properties of an EncryptedDataKey.
+         * @memberof Folder
+         * @interface IEncryptedDataKey
+         * @property {Uint8Array|null} [encryptedKey] EncryptedDataKey encryptedKey
+         * @property {Folder.EncryptedKeyType|null} [encryptedKeyType] EncryptedDataKey encryptedKeyType
+         */
+
+        /**
+         * Constructs a new EncryptedDataKey.
+         * @memberof Folder
+         * @classdesc Represents an EncryptedDataKey.
+         * @implements IEncryptedDataKey
+         * @constructor
+         * @param {Folder.IEncryptedDataKey=} [properties] Properties to set
+         */
+        function EncryptedDataKey(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * EncryptedDataKey encryptedKey.
+         * @member {Uint8Array} encryptedKey
+         * @memberof Folder.EncryptedDataKey
+         * @instance
+         */
+        EncryptedDataKey.prototype.encryptedKey = $util.newBuffer([]);
+
+        /**
+         * EncryptedDataKey encryptedKeyType.
+         * @member {Folder.EncryptedKeyType} encryptedKeyType
+         * @memberof Folder.EncryptedDataKey
+         * @instance
+         */
+        EncryptedDataKey.prototype.encryptedKeyType = 0;
+
+        /**
+         * Creates a new EncryptedDataKey instance using the specified properties.
+         * @function create
+         * @memberof Folder.EncryptedDataKey
+         * @static
+         * @param {Folder.IEncryptedDataKey=} [properties] Properties to set
+         * @returns {Folder.EncryptedDataKey} EncryptedDataKey instance
+         */
+        EncryptedDataKey.create = function create(properties) {
+            return new EncryptedDataKey(properties);
+        };
+
+        /**
+         * Encodes the specified EncryptedDataKey message. Does not implicitly {@link Folder.EncryptedDataKey.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.EncryptedDataKey
+         * @static
+         * @param {Folder.IEncryptedDataKey} message EncryptedDataKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        EncryptedDataKey.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.encryptedKey != null && Object.hasOwnProperty.call(message, "encryptedKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.encryptedKey);
+            if (message.encryptedKeyType != null && Object.hasOwnProperty.call(message, "encryptedKeyType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.encryptedKeyType);
+            return writer;
+        };
+
+        /**
+         * Decodes an EncryptedDataKey message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.EncryptedDataKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.EncryptedDataKey} EncryptedDataKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        EncryptedDataKey.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.EncryptedDataKey();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.encryptedKey = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.encryptedKeyType = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an EncryptedDataKey message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.EncryptedDataKey
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.EncryptedDataKey} EncryptedDataKey
+         */
+        EncryptedDataKey.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.EncryptedDataKey)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.EncryptedDataKey: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.EncryptedDataKey();
+            if (object.encryptedKey != null)
+                if (typeof object.encryptedKey === "string")
+                    $util.base64.decode(object.encryptedKey, message.encryptedKey = $util.newBuffer($util.base64.length(object.encryptedKey)), 0);
+                else if (object.encryptedKey.length >= 0)
+                    message.encryptedKey = object.encryptedKey;
+            switch (object.encryptedKeyType) {
+            default:
+                if (typeof object.encryptedKeyType === "number") {
+                    message.encryptedKeyType = object.encryptedKeyType;
+                    break;
+                }
+                break;
+            case "no_key":
+            case 0:
+                message.encryptedKeyType = 0;
+                break;
+            case "encrypted_by_data_key":
+            case 1:
+                message.encryptedKeyType = 1;
+                break;
+            case "encrypted_by_public_key":
+            case 2:
+                message.encryptedKeyType = 2;
+                break;
+            case "encrypted_by_data_key_gcm":
+            case 3:
+                message.encryptedKeyType = 3;
+                break;
+            case "encrypted_by_public_key_ecc":
+            case 4:
+                message.encryptedKeyType = 4;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an EncryptedDataKey message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.EncryptedDataKey
+         * @static
+         * @param {Folder.EncryptedDataKey} message EncryptedDataKey
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        EncryptedDataKey.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.encryptedKey = "";
+                else {
+                    object.encryptedKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedKey = $util.newBuffer(object.encryptedKey);
+                }
+                object.encryptedKeyType = options.enums === String ? "no_key" : 0;
+            }
+            if (message.encryptedKey != null && Object.hasOwnProperty.call(message, "encryptedKey"))
+                object.encryptedKey = options.bytes === String ? $util.base64.encode(message.encryptedKey, 0, message.encryptedKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedKey) : message.encryptedKey;
+            if (message.encryptedKeyType != null && Object.hasOwnProperty.call(message, "encryptedKeyType"))
+                object.encryptedKeyType = options.enums === String ? $root.Folder.EncryptedKeyType[message.encryptedKeyType] === undefined ? message.encryptedKeyType : $root.Folder.EncryptedKeyType[message.encryptedKeyType] : message.encryptedKeyType;
+            return object;
+        };
+
+        /**
+         * Converts this EncryptedDataKey to JSON.
+         * @function toJSON
+         * @memberof Folder.EncryptedDataKey
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        EncryptedDataKey.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for EncryptedDataKey
+         * @function getTypeUrl
+         * @memberof Folder.EncryptedDataKey
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        EncryptedDataKey.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.EncryptedDataKey";
+        };
+
+        return EncryptedDataKey;
+    })();
+
+    Folder.SharedFolderRecordData = (function() {
+
+        /**
+         * Properties of a SharedFolderRecordData.
+         * @memberof Folder
+         * @interface ISharedFolderRecordData
+         * @property {Uint8Array|null} [folderUid] SharedFolderRecordData folderUid
+         * @property {Uint8Array|null} [recordUid] SharedFolderRecordData recordUid
+         * @property {number|null} [userId] SharedFolderRecordData userId
+         * @property {Array.<Folder.IEncryptedDataKey>|null} [encryptedDataKey] SharedFolderRecordData encryptedDataKey
+         */
+
+        /**
+         * Constructs a new SharedFolderRecordData.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderRecordData.
+         * @implements ISharedFolderRecordData
+         * @constructor
+         * @param {Folder.ISharedFolderRecordData=} [properties] Properties to set
+         */
+        function SharedFolderRecordData(properties) {
+            this.encryptedDataKey = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderRecordData folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.SharedFolderRecordData
+         * @instance
+         */
+        SharedFolderRecordData.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderRecordData recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.SharedFolderRecordData
+         * @instance
+         */
+        SharedFolderRecordData.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderRecordData userId.
+         * @member {number} userId
+         * @memberof Folder.SharedFolderRecordData
+         * @instance
+         */
+        SharedFolderRecordData.prototype.userId = 0;
+
+        /**
+         * SharedFolderRecordData encryptedDataKey.
+         * @member {Array.<Folder.IEncryptedDataKey>} encryptedDataKey
+         * @memberof Folder.SharedFolderRecordData
+         * @instance
+         */
+        SharedFolderRecordData.prototype.encryptedDataKey = $util.emptyArray;
+
+        /**
+         * Creates a new SharedFolderRecordData instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderRecordData
+         * @static
+         * @param {Folder.ISharedFolderRecordData=} [properties] Properties to set
+         * @returns {Folder.SharedFolderRecordData} SharedFolderRecordData instance
+         */
+        SharedFolderRecordData.create = function create(properties) {
+            return new SharedFolderRecordData(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderRecordData message. Does not implicitly {@link Folder.SharedFolderRecordData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderRecordData
+         * @static
+         * @param {Folder.ISharedFolderRecordData} message SharedFolderRecordData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderRecordData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.recordUid);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.userId);
+            if (message.encryptedDataKey != null && message.encryptedDataKey.length)
+                for (let i = 0; i < message.encryptedDataKey.length; ++i)
+                    $root.Folder.EncryptedDataKey.encode(message.encryptedDataKey[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderRecordData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderRecordData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderRecordData} SharedFolderRecordData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderRecordData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderRecordData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.userId = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        if (!(message.encryptedDataKey && message.encryptedDataKey.length))
+                            message.encryptedDataKey = [];
+                        message.encryptedDataKey.push($root.Folder.EncryptedDataKey.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderRecordData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderRecordData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderRecordData} SharedFolderRecordData
+         */
+        SharedFolderRecordData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderRecordData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderRecordData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderRecordData();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            if (object.encryptedDataKey) {
+                if (!Array.isArray(object.encryptedDataKey))
+                    throw TypeError(".Folder.SharedFolderRecordData.encryptedDataKey: array expected");
+                message.encryptedDataKey = [];
+                for (let i = 0; i < object.encryptedDataKey.length; ++i) {
+                    if (!$util.isObject(object.encryptedDataKey[i]))
+                        throw TypeError(".Folder.SharedFolderRecordData.encryptedDataKey: object expected");
+                    message.encryptedDataKey[i] = $root.Folder.EncryptedDataKey.fromObject(object.encryptedDataKey[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderRecordData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderRecordData
+         * @static
+         * @param {Folder.SharedFolderRecordData} message SharedFolderRecordData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderRecordData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.encryptedDataKey = [];
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                object.userId = 0;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                object.userId = message.userId;
+            if (message.encryptedDataKey && message.encryptedDataKey.length) {
+                object.encryptedDataKey = [];
+                for (let j = 0; j < message.encryptedDataKey.length; ++j)
+                    object.encryptedDataKey[j] = $root.Folder.EncryptedDataKey.toObject(message.encryptedDataKey[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderRecordData to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderRecordData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderRecordData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderRecordData
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderRecordData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderRecordData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderRecordData";
+        };
+
+        return SharedFolderRecordData;
+    })();
+
+    Folder.SharedFolderRecordDataList = (function() {
+
+        /**
+         * Properties of a SharedFolderRecordDataList.
+         * @memberof Folder
+         * @interface ISharedFolderRecordDataList
+         * @property {Array.<Folder.ISharedFolderRecordData>|null} [sharedFolderRecordData] SharedFolderRecordDataList sharedFolderRecordData
+         */
+
+        /**
+         * Constructs a new SharedFolderRecordDataList.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderRecordDataList.
+         * @implements ISharedFolderRecordDataList
+         * @constructor
+         * @param {Folder.ISharedFolderRecordDataList=} [properties] Properties to set
+         */
+        function SharedFolderRecordDataList(properties) {
+            this.sharedFolderRecordData = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderRecordDataList sharedFolderRecordData.
+         * @member {Array.<Folder.ISharedFolderRecordData>} sharedFolderRecordData
+         * @memberof Folder.SharedFolderRecordDataList
+         * @instance
+         */
+        SharedFolderRecordDataList.prototype.sharedFolderRecordData = $util.emptyArray;
+
+        /**
+         * Creates a new SharedFolderRecordDataList instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderRecordDataList
+         * @static
+         * @param {Folder.ISharedFolderRecordDataList=} [properties] Properties to set
+         * @returns {Folder.SharedFolderRecordDataList} SharedFolderRecordDataList instance
+         */
+        SharedFolderRecordDataList.create = function create(properties) {
+            return new SharedFolderRecordDataList(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderRecordDataList message. Does not implicitly {@link Folder.SharedFolderRecordDataList.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderRecordDataList
+         * @static
+         * @param {Folder.ISharedFolderRecordDataList} message SharedFolderRecordDataList message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderRecordDataList.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolderRecordData != null && message.sharedFolderRecordData.length)
+                for (let i = 0; i < message.sharedFolderRecordData.length; ++i)
+                    $root.Folder.SharedFolderRecordData.encode(message.sharedFolderRecordData[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderRecordDataList message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderRecordDataList
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderRecordDataList} SharedFolderRecordDataList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderRecordDataList.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderRecordDataList();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.sharedFolderRecordData && message.sharedFolderRecordData.length))
+                            message.sharedFolderRecordData = [];
+                        message.sharedFolderRecordData.push($root.Folder.SharedFolderRecordData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderRecordDataList message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderRecordDataList
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderRecordDataList} SharedFolderRecordDataList
+         */
+        SharedFolderRecordDataList.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderRecordDataList)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderRecordDataList: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderRecordDataList();
+            if (object.sharedFolderRecordData) {
+                if (!Array.isArray(object.sharedFolderRecordData))
+                    throw TypeError(".Folder.SharedFolderRecordDataList.sharedFolderRecordData: array expected");
+                message.sharedFolderRecordData = [];
+                for (let i = 0; i < object.sharedFolderRecordData.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderRecordData[i]))
+                        throw TypeError(".Folder.SharedFolderRecordDataList.sharedFolderRecordData: object expected");
+                    message.sharedFolderRecordData[i] = $root.Folder.SharedFolderRecordData.fromObject(object.sharedFolderRecordData[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderRecordDataList message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderRecordDataList
+         * @static
+         * @param {Folder.SharedFolderRecordDataList} message SharedFolderRecordDataList
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderRecordDataList.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.sharedFolderRecordData = [];
+            if (message.sharedFolderRecordData && message.sharedFolderRecordData.length) {
+                object.sharedFolderRecordData = [];
+                for (let j = 0; j < message.sharedFolderRecordData.length; ++j)
+                    object.sharedFolderRecordData[j] = $root.Folder.SharedFolderRecordData.toObject(message.sharedFolderRecordData[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderRecordDataList to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderRecordDataList
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderRecordDataList.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderRecordDataList
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderRecordDataList
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderRecordDataList.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderRecordDataList";
+        };
+
+        return SharedFolderRecordDataList;
+    })();
+
+    Folder.SharedFolderRecordFix = (function() {
+
+        /**
+         * Properties of a SharedFolderRecordFix.
+         * @memberof Folder
+         * @interface ISharedFolderRecordFix
+         * @property {Uint8Array|null} [folderUid] SharedFolderRecordFix folderUid
+         * @property {Uint8Array|null} [recordUid] SharedFolderRecordFix recordUid
+         * @property {Uint8Array|null} [encryptedRecordFolderKey] SharedFolderRecordFix encryptedRecordFolderKey
+         */
+
+        /**
+         * Constructs a new SharedFolderRecordFix.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderRecordFix.
+         * @implements ISharedFolderRecordFix
+         * @constructor
+         * @param {Folder.ISharedFolderRecordFix=} [properties] Properties to set
+         */
+        function SharedFolderRecordFix(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderRecordFix folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.SharedFolderRecordFix
+         * @instance
+         */
+        SharedFolderRecordFix.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderRecordFix recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.SharedFolderRecordFix
+         * @instance
+         */
+        SharedFolderRecordFix.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderRecordFix encryptedRecordFolderKey.
+         * @member {Uint8Array} encryptedRecordFolderKey
+         * @memberof Folder.SharedFolderRecordFix
+         * @instance
+         */
+        SharedFolderRecordFix.prototype.encryptedRecordFolderKey = $util.newBuffer([]);
+
+        /**
+         * Creates a new SharedFolderRecordFix instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderRecordFix
+         * @static
+         * @param {Folder.ISharedFolderRecordFix=} [properties] Properties to set
+         * @returns {Folder.SharedFolderRecordFix} SharedFolderRecordFix instance
+         */
+        SharedFolderRecordFix.create = function create(properties) {
+            return new SharedFolderRecordFix(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderRecordFix message. Does not implicitly {@link Folder.SharedFolderRecordFix.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderRecordFix
+         * @static
+         * @param {Folder.ISharedFolderRecordFix} message SharedFolderRecordFix message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderRecordFix.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.recordUid);
+            if (message.encryptedRecordFolderKey != null && Object.hasOwnProperty.call(message, "encryptedRecordFolderKey"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.encryptedRecordFolderKey);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderRecordFix message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderRecordFix
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderRecordFix} SharedFolderRecordFix
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderRecordFix.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderRecordFix();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.encryptedRecordFolderKey = reader.bytes();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderRecordFix message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderRecordFix
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderRecordFix} SharedFolderRecordFix
+         */
+        SharedFolderRecordFix.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderRecordFix)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderRecordFix: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderRecordFix();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.encryptedRecordFolderKey != null)
+                if (typeof object.encryptedRecordFolderKey === "string")
+                    $util.base64.decode(object.encryptedRecordFolderKey, message.encryptedRecordFolderKey = $util.newBuffer($util.base64.length(object.encryptedRecordFolderKey)), 0);
+                else if (object.encryptedRecordFolderKey.length >= 0)
+                    message.encryptedRecordFolderKey = object.encryptedRecordFolderKey;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderRecordFix message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderRecordFix
+         * @static
+         * @param {Folder.SharedFolderRecordFix} message SharedFolderRecordFix
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderRecordFix.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if (options.bytes === String)
+                    object.encryptedRecordFolderKey = "";
+                else {
+                    object.encryptedRecordFolderKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedRecordFolderKey = $util.newBuffer(object.encryptedRecordFolderKey);
+                }
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.encryptedRecordFolderKey != null && Object.hasOwnProperty.call(message, "encryptedRecordFolderKey"))
+                object.encryptedRecordFolderKey = options.bytes === String ? $util.base64.encode(message.encryptedRecordFolderKey, 0, message.encryptedRecordFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedRecordFolderKey) : message.encryptedRecordFolderKey;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderRecordFix to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderRecordFix
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderRecordFix.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderRecordFix
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderRecordFix
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderRecordFix.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderRecordFix";
+        };
+
+        return SharedFolderRecordFix;
+    })();
+
+    Folder.SharedFolderRecordFixList = (function() {
+
+        /**
+         * Properties of a SharedFolderRecordFixList.
+         * @memberof Folder
+         * @interface ISharedFolderRecordFixList
+         * @property {Array.<Folder.ISharedFolderRecordFix>|null} [sharedFolderRecordFix] SharedFolderRecordFixList sharedFolderRecordFix
+         */
+
+        /**
+         * Constructs a new SharedFolderRecordFixList.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderRecordFixList.
+         * @implements ISharedFolderRecordFixList
+         * @constructor
+         * @param {Folder.ISharedFolderRecordFixList=} [properties] Properties to set
+         */
+        function SharedFolderRecordFixList(properties) {
+            this.sharedFolderRecordFix = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderRecordFixList sharedFolderRecordFix.
+         * @member {Array.<Folder.ISharedFolderRecordFix>} sharedFolderRecordFix
+         * @memberof Folder.SharedFolderRecordFixList
+         * @instance
+         */
+        SharedFolderRecordFixList.prototype.sharedFolderRecordFix = $util.emptyArray;
+
+        /**
+         * Creates a new SharedFolderRecordFixList instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderRecordFixList
+         * @static
+         * @param {Folder.ISharedFolderRecordFixList=} [properties] Properties to set
+         * @returns {Folder.SharedFolderRecordFixList} SharedFolderRecordFixList instance
+         */
+        SharedFolderRecordFixList.create = function create(properties) {
+            return new SharedFolderRecordFixList(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderRecordFixList message. Does not implicitly {@link Folder.SharedFolderRecordFixList.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderRecordFixList
+         * @static
+         * @param {Folder.ISharedFolderRecordFixList} message SharedFolderRecordFixList message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderRecordFixList.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolderRecordFix != null && message.sharedFolderRecordFix.length)
+                for (let i = 0; i < message.sharedFolderRecordFix.length; ++i)
+                    $root.Folder.SharedFolderRecordFix.encode(message.sharedFolderRecordFix[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderRecordFixList message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderRecordFixList
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderRecordFixList} SharedFolderRecordFixList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderRecordFixList.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderRecordFixList();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.sharedFolderRecordFix && message.sharedFolderRecordFix.length))
+                            message.sharedFolderRecordFix = [];
+                        message.sharedFolderRecordFix.push($root.Folder.SharedFolderRecordFix.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderRecordFixList message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderRecordFixList
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderRecordFixList} SharedFolderRecordFixList
+         */
+        SharedFolderRecordFixList.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderRecordFixList)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderRecordFixList: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderRecordFixList();
+            if (object.sharedFolderRecordFix) {
+                if (!Array.isArray(object.sharedFolderRecordFix))
+                    throw TypeError(".Folder.SharedFolderRecordFixList.sharedFolderRecordFix: array expected");
+                message.sharedFolderRecordFix = [];
+                for (let i = 0; i < object.sharedFolderRecordFix.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderRecordFix[i]))
+                        throw TypeError(".Folder.SharedFolderRecordFixList.sharedFolderRecordFix: object expected");
+                    message.sharedFolderRecordFix[i] = $root.Folder.SharedFolderRecordFix.fromObject(object.sharedFolderRecordFix[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderRecordFixList message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderRecordFixList
+         * @static
+         * @param {Folder.SharedFolderRecordFixList} message SharedFolderRecordFixList
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderRecordFixList.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.sharedFolderRecordFix = [];
+            if (message.sharedFolderRecordFix && message.sharedFolderRecordFix.length) {
+                object.sharedFolderRecordFix = [];
+                for (let j = 0; j < message.sharedFolderRecordFix.length; ++j)
+                    object.sharedFolderRecordFix[j] = $root.Folder.SharedFolderRecordFix.toObject(message.sharedFolderRecordFix[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderRecordFixList to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderRecordFixList
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderRecordFixList.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderRecordFixList
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderRecordFixList
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderRecordFixList.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderRecordFixList";
+        };
+
+        return SharedFolderRecordFixList;
+    })();
+
+    Folder.RecordRequest = (function() {
+
+        /**
+         * Properties of a RecordRequest.
+         * @memberof Folder
+         * @interface IRecordRequest
+         * @property {Uint8Array|null} [recordUid] RecordRequest recordUid
+         * @property {Folder.RecordType|null} [recordType] RecordRequest recordType
+         * @property {Uint8Array|null} [recordData] RecordRequest recordData
+         * @property {Uint8Array|null} [encryptedRecordKey] RecordRequest encryptedRecordKey
+         * @property {Folder.FolderType|null} [folderType] RecordRequest folderType
+         * @property {number|null} [howLongAgo] RecordRequest howLongAgo
+         * @property {Uint8Array|null} [folderUid] RecordRequest folderUid
+         * @property {Uint8Array|null} [encryptedRecordFolderKey] RecordRequest encryptedRecordFolderKey
+         * @property {Uint8Array|null} [extra] RecordRequest extra
+         * @property {Uint8Array|null} [nonSharedData] RecordRequest nonSharedData
+         * @property {Array.<number>|null} [fileIds] RecordRequest fileIds
+         */
+
+        /**
+         * Constructs a new RecordRequest.
+         * @memberof Folder
+         * @classdesc Represents a RecordRequest.
+         * @implements IRecordRequest
+         * @constructor
+         * @param {Folder.IRecordRequest=} [properties] Properties to set
+         */
+        function RecordRequest(properties) {
+            this.fileIds = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RecordRequest recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * RecordRequest recordType.
+         * @member {Folder.RecordType} recordType
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.recordType = 0;
+
+        /**
+         * RecordRequest recordData.
+         * @member {Uint8Array} recordData
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.recordData = $util.newBuffer([]);
+
+        /**
+         * RecordRequest encryptedRecordKey.
+         * @member {Uint8Array} encryptedRecordKey
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.encryptedRecordKey = $util.newBuffer([]);
+
+        /**
+         * RecordRequest folderType.
+         * @member {Folder.FolderType} folderType
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.folderType = 0;
+
+        /**
+         * RecordRequest howLongAgo.
+         * @member {number} howLongAgo
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.howLongAgo = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * RecordRequest folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * RecordRequest encryptedRecordFolderKey.
+         * @member {Uint8Array} encryptedRecordFolderKey
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.encryptedRecordFolderKey = $util.newBuffer([]);
+
+        /**
+         * RecordRequest extra.
+         * @member {Uint8Array} extra
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.extra = $util.newBuffer([]);
+
+        /**
+         * RecordRequest nonSharedData.
+         * @member {Uint8Array} nonSharedData
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.nonSharedData = $util.newBuffer([]);
+
+        /**
+         * RecordRequest fileIds.
+         * @member {Array.<number>} fileIds
+         * @memberof Folder.RecordRequest
+         * @instance
+         */
+        RecordRequest.prototype.fileIds = $util.emptyArray;
+
+        /**
+         * Creates a new RecordRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.RecordRequest
+         * @static
+         * @param {Folder.IRecordRequest=} [properties] Properties to set
+         * @returns {Folder.RecordRequest} RecordRequest instance
+         */
+        RecordRequest.create = function create(properties) {
+            return new RecordRequest(properties);
+        };
+
+        /**
+         * Encodes the specified RecordRequest message. Does not implicitly {@link Folder.RecordRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RecordRequest
+         * @static
+         * @param {Folder.IRecordRequest} message RecordRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.recordType != null && Object.hasOwnProperty.call(message, "recordType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.recordType);
+            if (message.recordData != null && Object.hasOwnProperty.call(message, "recordData"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordData);
+            if (message.encryptedRecordKey != null && Object.hasOwnProperty.call(message, "encryptedRecordKey"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.encryptedRecordKey);
+            if (message.folderType != null && Object.hasOwnProperty.call(message, "folderType"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.folderType);
+            if (message.howLongAgo != null && Object.hasOwnProperty.call(message, "howLongAgo"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int64(message.howLongAgo);
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.folderUid);
+            if (message.encryptedRecordFolderKey != null && Object.hasOwnProperty.call(message, "encryptedRecordFolderKey"))
+                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encryptedRecordFolderKey);
+            if (message.extra != null && Object.hasOwnProperty.call(message, "extra"))
+                writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.extra);
+            if (message.nonSharedData != null && Object.hasOwnProperty.call(message, "nonSharedData"))
+                writer.uint32(/* id 10, wireType 2 =*/82).bytes(message.nonSharedData);
+            if (message.fileIds != null && message.fileIds.length) {
+                writer.uint32(/* id 11, wireType 2 =*/90).fork();
+                for (let i = 0; i < message.fileIds.length; ++i)
+                    writer.int64(message.fileIds[i]);
+                writer.ldelim();
+            }
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RecordRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RecordRequest} RecordRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RecordRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.recordType = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.recordData = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.encryptedRecordKey = reader.bytes();
+                        break;
+                    }
+                case 5: {
+                        message.folderType = reader.int32();
+                        break;
+                    }
+                case 6: {
+                        message.howLongAgo = reader.int64();
+                        break;
+                    }
+                case 7: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 8: {
+                        message.encryptedRecordFolderKey = reader.bytes();
+                        break;
+                    }
+                case 9: {
+                        message.extra = reader.bytes();
+                        break;
+                    }
+                case 10: {
+                        message.nonSharedData = reader.bytes();
+                        break;
+                    }
+                case 11: {
+                        if (!(message.fileIds && message.fileIds.length))
+                            message.fileIds = [];
+                        if ((tag & 7) === 2) {
+                            let end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2)
+                                message.fileIds.push(reader.int64());
+                        } else
+                            message.fileIds.push(reader.int64());
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RecordRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RecordRequest} RecordRequest
+         */
+        RecordRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RecordRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RecordRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RecordRequest();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            switch (object.recordType) {
+            default:
+                if (typeof object.recordType === "number") {
+                    message.recordType = object.recordType;
+                    break;
+                }
+                break;
+            case "password":
+            case 0:
+                message.recordType = 0;
+                break;
+            }
+            if (object.recordData != null)
+                if (typeof object.recordData === "string")
+                    $util.base64.decode(object.recordData, message.recordData = $util.newBuffer($util.base64.length(object.recordData)), 0);
+                else if (object.recordData.length >= 0)
+                    message.recordData = object.recordData;
+            if (object.encryptedRecordKey != null)
+                if (typeof object.encryptedRecordKey === "string")
+                    $util.base64.decode(object.encryptedRecordKey, message.encryptedRecordKey = $util.newBuffer($util.base64.length(object.encryptedRecordKey)), 0);
+                else if (object.encryptedRecordKey.length >= 0)
+                    message.encryptedRecordKey = object.encryptedRecordKey;
+            switch (object.folderType) {
+            default:
+                if (typeof object.folderType === "number") {
+                    message.folderType = object.folderType;
+                    break;
+                }
+                break;
+            case "default_folder":
+            case 0:
+                message.folderType = 0;
+                break;
+            case "user_folder":
+            case 1:
+                message.folderType = 1;
+                break;
+            case "shared_folder":
+            case 2:
+                message.folderType = 2;
+                break;
+            case "shared_folder_folder":
+            case 3:
+                message.folderType = 3;
+                break;
+            }
+            if (object.howLongAgo != null)
+                if ($util.Long)
+                    message.howLongAgo = $util.Long.fromValue(object.howLongAgo, false);
+                else if (typeof object.howLongAgo === "string")
+                    message.howLongAgo = parseInt(object.howLongAgo, 10);
+                else if (typeof object.howLongAgo === "number")
+                    message.howLongAgo = object.howLongAgo;
+                else if (typeof object.howLongAgo === "object")
+                    message.howLongAgo = new $util.LongBits(object.howLongAgo.low >>> 0, object.howLongAgo.high >>> 0).toNumber();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.encryptedRecordFolderKey != null)
+                if (typeof object.encryptedRecordFolderKey === "string")
+                    $util.base64.decode(object.encryptedRecordFolderKey, message.encryptedRecordFolderKey = $util.newBuffer($util.base64.length(object.encryptedRecordFolderKey)), 0);
+                else if (object.encryptedRecordFolderKey.length >= 0)
+                    message.encryptedRecordFolderKey = object.encryptedRecordFolderKey;
+            if (object.extra != null)
+                if (typeof object.extra === "string")
+                    $util.base64.decode(object.extra, message.extra = $util.newBuffer($util.base64.length(object.extra)), 0);
+                else if (object.extra.length >= 0)
+                    message.extra = object.extra;
+            if (object.nonSharedData != null)
+                if (typeof object.nonSharedData === "string")
+                    $util.base64.decode(object.nonSharedData, message.nonSharedData = $util.newBuffer($util.base64.length(object.nonSharedData)), 0);
+                else if (object.nonSharedData.length >= 0)
+                    message.nonSharedData = object.nonSharedData;
+            if (object.fileIds) {
+                if (!Array.isArray(object.fileIds))
+                    throw TypeError(".Folder.RecordRequest.fileIds: array expected");
+                message.fileIds = [];
+                for (let i = 0; i < object.fileIds.length; ++i)
+                    if ($util.Long)
+                        message.fileIds[i] = $util.Long.fromValue(object.fileIds[i], false);
+                    else if (typeof object.fileIds[i] === "string")
+                        message.fileIds[i] = parseInt(object.fileIds[i], 10);
+                    else if (typeof object.fileIds[i] === "number")
+                        message.fileIds[i] = object.fileIds[i];
+                    else if (typeof object.fileIds[i] === "object")
+                        message.fileIds[i] = new $util.LongBits(object.fileIds[i].low >>> 0, object.fileIds[i].high >>> 0).toNumber();
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RecordRequest
+         * @static
+         * @param {Folder.RecordRequest} message RecordRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.fileIds = [];
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                object.recordType = options.enums === String ? "password" : 0;
+                if (options.bytes === String)
+                    object.recordData = "";
+                else {
+                    object.recordData = [];
+                    if (options.bytes !== Array)
+                        object.recordData = $util.newBuffer(object.recordData);
+                }
+                if (options.bytes === String)
+                    object.encryptedRecordKey = "";
+                else {
+                    object.encryptedRecordKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedRecordKey = $util.newBuffer(object.encryptedRecordKey);
+                }
+                object.folderType = options.enums === String ? "default_folder" : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.howLongAgo = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.howLongAgo = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.encryptedRecordFolderKey = "";
+                else {
+                    object.encryptedRecordFolderKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedRecordFolderKey = $util.newBuffer(object.encryptedRecordFolderKey);
+                }
+                if (options.bytes === String)
+                    object.extra = "";
+                else {
+                    object.extra = [];
+                    if (options.bytes !== Array)
+                        object.extra = $util.newBuffer(object.extra);
+                }
+                if (options.bytes === String)
+                    object.nonSharedData = "";
+                else {
+                    object.nonSharedData = [];
+                    if (options.bytes !== Array)
+                        object.nonSharedData = $util.newBuffer(object.nonSharedData);
+                }
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.recordType != null && Object.hasOwnProperty.call(message, "recordType"))
+                object.recordType = options.enums === String ? $root.Folder.RecordType[message.recordType] === undefined ? message.recordType : $root.Folder.RecordType[message.recordType] : message.recordType;
+            if (message.recordData != null && Object.hasOwnProperty.call(message, "recordData"))
+                object.recordData = options.bytes === String ? $util.base64.encode(message.recordData, 0, message.recordData.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordData) : message.recordData;
+            if (message.encryptedRecordKey != null && Object.hasOwnProperty.call(message, "encryptedRecordKey"))
+                object.encryptedRecordKey = options.bytes === String ? $util.base64.encode(message.encryptedRecordKey, 0, message.encryptedRecordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedRecordKey) : message.encryptedRecordKey;
+            if (message.folderType != null && Object.hasOwnProperty.call(message, "folderType"))
+                object.folderType = options.enums === String ? $root.Folder.FolderType[message.folderType] === undefined ? message.folderType : $root.Folder.FolderType[message.folderType] : message.folderType;
+            if (message.howLongAgo != null && Object.hasOwnProperty.call(message, "howLongAgo"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.howLongAgo = typeof message.howLongAgo === "number" ? BigInt(message.howLongAgo) : $util.Long.fromBits(message.howLongAgo.low >>> 0, message.howLongAgo.high >>> 0, false).toBigInt();
+                else if (typeof message.howLongAgo === "number")
+                    object.howLongAgo = options.longs === String ? String(message.howLongAgo) : message.howLongAgo;
+                else
+                    object.howLongAgo = options.longs === String ? $util.Long.prototype.toString.call(message.howLongAgo) : options.longs === Number ? new $util.LongBits(message.howLongAgo.low >>> 0, message.howLongAgo.high >>> 0).toNumber() : message.howLongAgo;
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.encryptedRecordFolderKey != null && Object.hasOwnProperty.call(message, "encryptedRecordFolderKey"))
+                object.encryptedRecordFolderKey = options.bytes === String ? $util.base64.encode(message.encryptedRecordFolderKey, 0, message.encryptedRecordFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedRecordFolderKey) : message.encryptedRecordFolderKey;
+            if (message.extra != null && Object.hasOwnProperty.call(message, "extra"))
+                object.extra = options.bytes === String ? $util.base64.encode(message.extra, 0, message.extra.length) : options.bytes === Array ? Array.prototype.slice.call(message.extra) : message.extra;
+            if (message.nonSharedData != null && Object.hasOwnProperty.call(message, "nonSharedData"))
+                object.nonSharedData = options.bytes === String ? $util.base64.encode(message.nonSharedData, 0, message.nonSharedData.length) : options.bytes === Array ? Array.prototype.slice.call(message.nonSharedData) : message.nonSharedData;
+            if (message.fileIds && message.fileIds.length) {
+                object.fileIds = [];
+                for (let j = 0; j < message.fileIds.length; ++j)
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.fileIds[j] = typeof message.fileIds[j] === "number" ? BigInt(message.fileIds[j]) : $util.Long.fromBits(message.fileIds[j].low >>> 0, message.fileIds[j].high >>> 0, false).toBigInt();
+                    else if (typeof message.fileIds[j] === "number")
+                        object.fileIds[j] = options.longs === String ? String(message.fileIds[j]) : message.fileIds[j];
+                    else
+                        object.fileIds[j] = options.longs === String ? $util.Long.prototype.toString.call(message.fileIds[j]) : options.longs === Number ? new $util.LongBits(message.fileIds[j].low >>> 0, message.fileIds[j].high >>> 0).toNumber() : message.fileIds[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this RecordRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.RecordRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordRequest
+         * @function getTypeUrl
+         * @memberof Folder.RecordRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RecordRequest";
+        };
+
+        return RecordRequest;
+    })();
+
+    Folder.RecordResponse = (function() {
+
+        /**
+         * Properties of a RecordResponse.
+         * @memberof Folder
+         * @interface IRecordResponse
+         * @property {Uint8Array|null} [recordUid] RecordResponse recordUid
+         * @property {number|null} [revision] RecordResponse revision
+         * @property {string|null} [status] RecordResponse status
+         */
+
+        /**
+         * Constructs a new RecordResponse.
+         * @memberof Folder
+         * @classdesc Represents a RecordResponse.
+         * @implements IRecordResponse
+         * @constructor
+         * @param {Folder.IRecordResponse=} [properties] Properties to set
+         */
+        function RecordResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RecordResponse recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.RecordResponse
+         * @instance
+         */
+        RecordResponse.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * RecordResponse revision.
+         * @member {number} revision
+         * @memberof Folder.RecordResponse
+         * @instance
+         */
+        RecordResponse.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * RecordResponse status.
+         * @member {string} status
+         * @memberof Folder.RecordResponse
+         * @instance
+         */
+        RecordResponse.prototype.status = "";
+
+        /**
+         * Creates a new RecordResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.RecordResponse
+         * @static
+         * @param {Folder.IRecordResponse=} [properties] Properties to set
+         * @returns {Folder.RecordResponse} RecordResponse instance
+         */
+        RecordResponse.create = function create(properties) {
+            return new RecordResponse(properties);
+        };
+
+        /**
+         * Encodes the specified RecordResponse message. Does not implicitly {@link Folder.RecordResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RecordResponse
+         * @static
+         * @param {Folder.IRecordResponse} message RecordResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.revision);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.status);
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RecordResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RecordResponse} RecordResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RecordResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                case 3: {
+                        message.status = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RecordResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RecordResponse} RecordResponse
+         */
+        RecordResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RecordResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RecordResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RecordResponse();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            if (object.status != null)
+                message.status = String(object.status);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RecordResponse
+         * @static
+         * @param {Folder.RecordResponse} message RecordResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.status = "";
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this RecordResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.RecordResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordResponse
+         * @function getTypeUrl
+         * @memberof Folder.RecordResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RecordResponse";
+        };
+
+        return RecordResponse;
+    })();
+
+    Folder.SharedFolderFields = (function() {
+
+        /**
+         * Properties of a SharedFolderFields.
+         * @memberof Folder
+         * @interface ISharedFolderFields
+         * @property {Uint8Array|null} [encryptedFolderName] SharedFolderFields encryptedFolderName
+         * @property {boolean|null} [manageUsers] SharedFolderFields manageUsers
+         * @property {boolean|null} [manageRecords] SharedFolderFields manageRecords
+         * @property {boolean|null} [canEdit] SharedFolderFields canEdit
+         * @property {boolean|null} [canShare] SharedFolderFields canShare
+         */
+
+        /**
+         * Constructs a new SharedFolderFields.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderFields.
+         * @implements ISharedFolderFields
+         * @constructor
+         * @param {Folder.ISharedFolderFields=} [properties] Properties to set
+         */
+        function SharedFolderFields(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderFields encryptedFolderName.
+         * @member {Uint8Array} encryptedFolderName
+         * @memberof Folder.SharedFolderFields
+         * @instance
+         */
+        SharedFolderFields.prototype.encryptedFolderName = $util.newBuffer([]);
+
+        /**
+         * SharedFolderFields manageUsers.
+         * @member {boolean} manageUsers
+         * @memberof Folder.SharedFolderFields
+         * @instance
+         */
+        SharedFolderFields.prototype.manageUsers = false;
+
+        /**
+         * SharedFolderFields manageRecords.
+         * @member {boolean} manageRecords
+         * @memberof Folder.SharedFolderFields
+         * @instance
+         */
+        SharedFolderFields.prototype.manageRecords = false;
+
+        /**
+         * SharedFolderFields canEdit.
+         * @member {boolean} canEdit
+         * @memberof Folder.SharedFolderFields
+         * @instance
+         */
+        SharedFolderFields.prototype.canEdit = false;
+
+        /**
+         * SharedFolderFields canShare.
+         * @member {boolean} canShare
+         * @memberof Folder.SharedFolderFields
+         * @instance
+         */
+        SharedFolderFields.prototype.canShare = false;
+
+        /**
+         * Creates a new SharedFolderFields instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderFields
+         * @static
+         * @param {Folder.ISharedFolderFields=} [properties] Properties to set
+         * @returns {Folder.SharedFolderFields} SharedFolderFields instance
+         */
+        SharedFolderFields.create = function create(properties) {
+            return new SharedFolderFields(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderFields message. Does not implicitly {@link Folder.SharedFolderFields.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderFields
+         * @static
+         * @param {Folder.ISharedFolderFields} message SharedFolderFields message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderFields.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.encryptedFolderName != null && Object.hasOwnProperty.call(message, "encryptedFolderName"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.encryptedFolderName);
+            if (message.manageUsers != null && Object.hasOwnProperty.call(message, "manageUsers"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.manageUsers);
+            if (message.manageRecords != null && Object.hasOwnProperty.call(message, "manageRecords"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.manageRecords);
+            if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
+                writer.uint32(/* id 4, wireType 0 =*/32).bool(message.canEdit);
+            if (message.canShare != null && Object.hasOwnProperty.call(message, "canShare"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.canShare);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderFields message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderFields
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderFields} SharedFolderFields
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderFields.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderFields();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.encryptedFolderName = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.manageUsers = reader.bool();
+                        break;
+                    }
+                case 3: {
+                        message.manageRecords = reader.bool();
+                        break;
+                    }
+                case 4: {
+                        message.canEdit = reader.bool();
+                        break;
+                    }
+                case 5: {
+                        message.canShare = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderFields message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderFields
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderFields} SharedFolderFields
+         */
+        SharedFolderFields.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderFields)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderFields: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderFields();
+            if (object.encryptedFolderName != null)
+                if (typeof object.encryptedFolderName === "string")
+                    $util.base64.decode(object.encryptedFolderName, message.encryptedFolderName = $util.newBuffer($util.base64.length(object.encryptedFolderName)), 0);
+                else if (object.encryptedFolderName.length >= 0)
+                    message.encryptedFolderName = object.encryptedFolderName;
+            if (object.manageUsers != null)
+                message.manageUsers = Boolean(object.manageUsers);
+            if (object.manageRecords != null)
+                message.manageRecords = Boolean(object.manageRecords);
+            if (object.canEdit != null)
+                message.canEdit = Boolean(object.canEdit);
+            if (object.canShare != null)
+                message.canShare = Boolean(object.canShare);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderFields message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderFields
+         * @static
+         * @param {Folder.SharedFolderFields} message SharedFolderFields
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderFields.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.encryptedFolderName = "";
+                else {
+                    object.encryptedFolderName = [];
+                    if (options.bytes !== Array)
+                        object.encryptedFolderName = $util.newBuffer(object.encryptedFolderName);
+                }
+                object.manageUsers = false;
+                object.manageRecords = false;
+                object.canEdit = false;
+                object.canShare = false;
+            }
+            if (message.encryptedFolderName != null && Object.hasOwnProperty.call(message, "encryptedFolderName"))
+                object.encryptedFolderName = options.bytes === String ? $util.base64.encode(message.encryptedFolderName, 0, message.encryptedFolderName.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedFolderName) : message.encryptedFolderName;
+            if (message.manageUsers != null && Object.hasOwnProperty.call(message, "manageUsers"))
+                object.manageUsers = message.manageUsers;
+            if (message.manageRecords != null && Object.hasOwnProperty.call(message, "manageRecords"))
+                object.manageRecords = message.manageRecords;
+            if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
+                object.canEdit = message.canEdit;
+            if (message.canShare != null && Object.hasOwnProperty.call(message, "canShare"))
+                object.canShare = message.canShare;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderFields to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderFields
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderFields.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderFields
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderFields
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderFields.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderFields";
+        };
+
+        return SharedFolderFields;
+    })();
+
+    Folder.SharedFolderFolderFields = (function() {
+
+        /**
+         * Properties of a SharedFolderFolderFields.
+         * @memberof Folder
+         * @interface ISharedFolderFolderFields
+         * @property {Uint8Array|null} [sharedFolderUid] SharedFolderFolderFields sharedFolderUid
+         */
+
+        /**
+         * Constructs a new SharedFolderFolderFields.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderFolderFields.
+         * @implements ISharedFolderFolderFields
+         * @constructor
+         * @param {Folder.ISharedFolderFolderFields=} [properties] Properties to set
+         */
+        function SharedFolderFolderFields(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderFolderFields sharedFolderUid.
+         * @member {Uint8Array} sharedFolderUid
+         * @memberof Folder.SharedFolderFolderFields
+         * @instance
+         */
+        SharedFolderFolderFields.prototype.sharedFolderUid = $util.newBuffer([]);
+
+        /**
+         * Creates a new SharedFolderFolderFields instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderFolderFields
+         * @static
+         * @param {Folder.ISharedFolderFolderFields=} [properties] Properties to set
+         * @returns {Folder.SharedFolderFolderFields} SharedFolderFolderFields instance
+         */
+        SharedFolderFolderFields.create = function create(properties) {
+            return new SharedFolderFolderFields(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderFolderFields message. Does not implicitly {@link Folder.SharedFolderFolderFields.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderFolderFields
+         * @static
+         * @param {Folder.ISharedFolderFolderFields} message SharedFolderFolderFields message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderFolderFields.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.sharedFolderUid);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderFolderFields message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderFolderFields
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderFolderFields} SharedFolderFolderFields
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderFolderFields.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderFolderFields();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.sharedFolderUid = reader.bytes();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderFolderFields message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderFolderFields
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderFolderFields} SharedFolderFolderFields
+         */
+        SharedFolderFolderFields.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderFolderFields)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderFolderFields: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderFolderFields();
+            if (object.sharedFolderUid != null)
+                if (typeof object.sharedFolderUid === "string")
+                    $util.base64.decode(object.sharedFolderUid, message.sharedFolderUid = $util.newBuffer($util.base64.length(object.sharedFolderUid)), 0);
+                else if (object.sharedFolderUid.length >= 0)
+                    message.sharedFolderUid = object.sharedFolderUid;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderFolderFields message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderFolderFields
+         * @static
+         * @param {Folder.SharedFolderFolderFields} message SharedFolderFolderFields
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderFolderFields.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.sharedFolderUid = "";
+                else {
+                    object.sharedFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderUid = $util.newBuffer(object.sharedFolderUid);
+                }
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                object.sharedFolderUid = options.bytes === String ? $util.base64.encode(message.sharedFolderUid, 0, message.sharedFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUid) : message.sharedFolderUid;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderFolderFields to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderFolderFields
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderFolderFields.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderFolderFields
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderFolderFields
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderFolderFields.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderFolderFields";
+        };
+
+        return SharedFolderFolderFields;
+    })();
+
+    Folder.FolderRequest = (function() {
+
+        /**
+         * Properties of a FolderRequest.
+         * @memberof Folder
+         * @interface IFolderRequest
+         * @property {Uint8Array|null} [folderUid] FolderRequest folderUid
+         * @property {Folder.FolderType|null} [folderType] FolderRequest folderType
+         * @property {Uint8Array|null} [parentFolderUid] FolderRequest parentFolderUid
+         * @property {Uint8Array|null} [folderData] FolderRequest folderData
+         * @property {Uint8Array|null} [encryptedFolderKey] FolderRequest encryptedFolderKey
+         * @property {Folder.ISharedFolderFields|null} [sharedFolderFields] FolderRequest sharedFolderFields
+         * @property {Folder.ISharedFolderFolderFields|null} [sharedFolderFolderFields] FolderRequest sharedFolderFolderFields
+         */
+
+        /**
+         * Constructs a new FolderRequest.
+         * @memberof Folder
+         * @classdesc Represents a FolderRequest.
+         * @implements IFolderRequest
+         * @constructor
+         * @param {Folder.IFolderRequest=} [properties] Properties to set
+         */
+        function FolderRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderRequest folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderRequest folderType.
+         * @member {Folder.FolderType} folderType
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.folderType = 0;
+
+        /**
+         * FolderRequest parentFolderUid.
+         * @member {Uint8Array} parentFolderUid
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.parentFolderUid = $util.newBuffer([]);
+
+        /**
+         * FolderRequest folderData.
+         * @member {Uint8Array} folderData
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.folderData = $util.newBuffer([]);
+
+        /**
+         * FolderRequest encryptedFolderKey.
+         * @member {Uint8Array} encryptedFolderKey
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.encryptedFolderKey = $util.newBuffer([]);
+
+        /**
+         * FolderRequest sharedFolderFields.
+         * @member {Folder.ISharedFolderFields|null|undefined} sharedFolderFields
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.sharedFolderFields = null;
+
+        /**
+         * FolderRequest sharedFolderFolderFields.
+         * @member {Folder.ISharedFolderFolderFields|null|undefined} sharedFolderFolderFields
+         * @memberof Folder.FolderRequest
+         * @instance
+         */
+        FolderRequest.prototype.sharedFolderFolderFields = null;
+
+        /**
+         * Creates a new FolderRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderRequest
+         * @static
+         * @param {Folder.IFolderRequest=} [properties] Properties to set
+         * @returns {Folder.FolderRequest} FolderRequest instance
+         */
+        FolderRequest.create = function create(properties) {
+            return new FolderRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FolderRequest message. Does not implicitly {@link Folder.FolderRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderRequest
+         * @static
+         * @param {Folder.IFolderRequest} message FolderRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.folderType != null && Object.hasOwnProperty.call(message, "folderType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.folderType);
+            if (message.parentFolderUid != null && Object.hasOwnProperty.call(message, "parentFolderUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.parentFolderUid);
+            if (message.folderData != null && Object.hasOwnProperty.call(message, "folderData"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.folderData);
+            if (message.encryptedFolderKey != null && Object.hasOwnProperty.call(message, "encryptedFolderKey"))
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.encryptedFolderKey);
+            if (message.sharedFolderFields != null && Object.hasOwnProperty.call(message, "sharedFolderFields"))
+                $root.Folder.SharedFolderFields.encode(message.sharedFolderFields, writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+            if (message.sharedFolderFolderFields != null && Object.hasOwnProperty.call(message, "sharedFolderFolderFields"))
+                $root.Folder.SharedFolderFolderFields.encode(message.sharedFolderFolderFields, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderRequest} FolderRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.folderType = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.parentFolderUid = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.folderData = reader.bytes();
+                        break;
+                    }
+                case 5: {
+                        message.encryptedFolderKey = reader.bytes();
+                        break;
+                    }
+                case 6: {
+                        message.sharedFolderFields = $root.Folder.SharedFolderFields.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 7: {
+                        message.sharedFolderFolderFields = $root.Folder.SharedFolderFolderFields.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderRequest} FolderRequest
+         */
+        FolderRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderRequest();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            switch (object.folderType) {
+            default:
+                if (typeof object.folderType === "number") {
+                    message.folderType = object.folderType;
+                    break;
+                }
+                break;
+            case "default_folder":
+            case 0:
+                message.folderType = 0;
+                break;
+            case "user_folder":
+            case 1:
+                message.folderType = 1;
+                break;
+            case "shared_folder":
+            case 2:
+                message.folderType = 2;
+                break;
+            case "shared_folder_folder":
+            case 3:
+                message.folderType = 3;
+                break;
+            }
+            if (object.parentFolderUid != null)
+                if (typeof object.parentFolderUid === "string")
+                    $util.base64.decode(object.parentFolderUid, message.parentFolderUid = $util.newBuffer($util.base64.length(object.parentFolderUid)), 0);
+                else if (object.parentFolderUid.length >= 0)
+                    message.parentFolderUid = object.parentFolderUid;
+            if (object.folderData != null)
+                if (typeof object.folderData === "string")
+                    $util.base64.decode(object.folderData, message.folderData = $util.newBuffer($util.base64.length(object.folderData)), 0);
+                else if (object.folderData.length >= 0)
+                    message.folderData = object.folderData;
+            if (object.encryptedFolderKey != null)
+                if (typeof object.encryptedFolderKey === "string")
+                    $util.base64.decode(object.encryptedFolderKey, message.encryptedFolderKey = $util.newBuffer($util.base64.length(object.encryptedFolderKey)), 0);
+                else if (object.encryptedFolderKey.length >= 0)
+                    message.encryptedFolderKey = object.encryptedFolderKey;
+            if (object.sharedFolderFields != null) {
+                if (!$util.isObject(object.sharedFolderFields))
+                    throw TypeError(".Folder.FolderRequest.sharedFolderFields: object expected");
+                message.sharedFolderFields = $root.Folder.SharedFolderFields.fromObject(object.sharedFolderFields, long + 1);
+            }
+            if (object.sharedFolderFolderFields != null) {
+                if (!$util.isObject(object.sharedFolderFolderFields))
+                    throw TypeError(".Folder.FolderRequest.sharedFolderFolderFields: object expected");
+                message.sharedFolderFolderFields = $root.Folder.SharedFolderFolderFields.fromObject(object.sharedFolderFolderFields, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderRequest
+         * @static
+         * @param {Folder.FolderRequest} message FolderRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                object.folderType = options.enums === String ? "default_folder" : 0;
+                if (options.bytes === String)
+                    object.parentFolderUid = "";
+                else {
+                    object.parentFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.parentFolderUid = $util.newBuffer(object.parentFolderUid);
+                }
+                if (options.bytes === String)
+                    object.folderData = "";
+                else {
+                    object.folderData = [];
+                    if (options.bytes !== Array)
+                        object.folderData = $util.newBuffer(object.folderData);
+                }
+                if (options.bytes === String)
+                    object.encryptedFolderKey = "";
+                else {
+                    object.encryptedFolderKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedFolderKey = $util.newBuffer(object.encryptedFolderKey);
+                }
+                object.sharedFolderFields = null;
+                object.sharedFolderFolderFields = null;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.folderType != null && Object.hasOwnProperty.call(message, "folderType"))
+                object.folderType = options.enums === String ? $root.Folder.FolderType[message.folderType] === undefined ? message.folderType : $root.Folder.FolderType[message.folderType] : message.folderType;
+            if (message.parentFolderUid != null && Object.hasOwnProperty.call(message, "parentFolderUid"))
+                object.parentFolderUid = options.bytes === String ? $util.base64.encode(message.parentFolderUid, 0, message.parentFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.parentFolderUid) : message.parentFolderUid;
+            if (message.folderData != null && Object.hasOwnProperty.call(message, "folderData"))
+                object.folderData = options.bytes === String ? $util.base64.encode(message.folderData, 0, message.folderData.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderData) : message.folderData;
+            if (message.encryptedFolderKey != null && Object.hasOwnProperty.call(message, "encryptedFolderKey"))
+                object.encryptedFolderKey = options.bytes === String ? $util.base64.encode(message.encryptedFolderKey, 0, message.encryptedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedFolderKey) : message.encryptedFolderKey;
+            if (message.sharedFolderFields != null && Object.hasOwnProperty.call(message, "sharedFolderFields"))
+                object.sharedFolderFields = $root.Folder.SharedFolderFields.toObject(message.sharedFolderFields, options, q + 1);
+            if (message.sharedFolderFolderFields != null && Object.hasOwnProperty.call(message, "sharedFolderFolderFields"))
+                object.sharedFolderFolderFields = $root.Folder.SharedFolderFolderFields.toObject(message.sharedFolderFolderFields, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this FolderRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderRequest
+         * @function getTypeUrl
+         * @memberof Folder.FolderRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderRequest";
+        };
+
+        return FolderRequest;
+    })();
+
+    Folder.FolderResponse = (function() {
+
+        /**
+         * Properties of a FolderResponse.
+         * @memberof Folder
+         * @interface IFolderResponse
+         * @property {Uint8Array|null} [folderUid] FolderResponse folderUid
+         * @property {number|null} [revision] FolderResponse revision
+         * @property {string|null} [status] FolderResponse status
+         */
+
+        /**
+         * Constructs a new FolderResponse.
+         * @memberof Folder
+         * @classdesc Represents a FolderResponse.
+         * @implements IFolderResponse
+         * @constructor
+         * @param {Folder.IFolderResponse=} [properties] Properties to set
+         */
+        function FolderResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderResponse folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderResponse
+         * @instance
+         */
+        FolderResponse.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderResponse revision.
+         * @member {number} revision
+         * @memberof Folder.FolderResponse
+         * @instance
+         */
+        FolderResponse.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * FolderResponse status.
+         * @member {string} status
+         * @memberof Folder.FolderResponse
+         * @instance
+         */
+        FolderResponse.prototype.status = "";
+
+        /**
+         * Creates a new FolderResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderResponse
+         * @static
+         * @param {Folder.IFolderResponse=} [properties] Properties to set
+         * @returns {Folder.FolderResponse} FolderResponse instance
+         */
+        FolderResponse.create = function create(properties) {
+            return new FolderResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FolderResponse message. Does not implicitly {@link Folder.FolderResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderResponse
+         * @static
+         * @param {Folder.IFolderResponse} message FolderResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.revision);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.status);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderResponse} FolderResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                case 3: {
+                        message.status = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderResponse} FolderResponse
+         */
+        FolderResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderResponse();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            if (object.status != null)
+                message.status = String(object.status);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderResponse
+         * @static
+         * @param {Folder.FolderResponse} message FolderResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.status = "";
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this FolderResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderResponse
+         * @function getTypeUrl
+         * @memberof Folder.FolderResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderResponse";
+        };
+
+        return FolderResponse;
+    })();
+
+    Folder.ImportFolderRecordRequest = (function() {
+
+        /**
+         * Properties of an ImportFolderRecordRequest.
+         * @memberof Folder
+         * @interface IImportFolderRecordRequest
+         * @property {Array.<Folder.IFolderRequest>|null} [folderRequest] ImportFolderRecordRequest folderRequest
+         * @property {Array.<Folder.IRecordRequest>|null} [recordRequest] ImportFolderRecordRequest recordRequest
+         */
+
+        /**
+         * Constructs a new ImportFolderRecordRequest.
+         * @memberof Folder
+         * @classdesc Represents an ImportFolderRecordRequest.
+         * @implements IImportFolderRecordRequest
+         * @constructor
+         * @param {Folder.IImportFolderRecordRequest=} [properties] Properties to set
+         */
+        function ImportFolderRecordRequest(properties) {
+            this.folderRequest = [];
+            this.recordRequest = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ImportFolderRecordRequest folderRequest.
+         * @member {Array.<Folder.IFolderRequest>} folderRequest
+         * @memberof Folder.ImportFolderRecordRequest
+         * @instance
+         */
+        ImportFolderRecordRequest.prototype.folderRequest = $util.emptyArray;
+
+        /**
+         * ImportFolderRecordRequest recordRequest.
+         * @member {Array.<Folder.IRecordRequest>} recordRequest
+         * @memberof Folder.ImportFolderRecordRequest
+         * @instance
+         */
+        ImportFolderRecordRequest.prototype.recordRequest = $util.emptyArray;
+
+        /**
+         * Creates a new ImportFolderRecordRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.ImportFolderRecordRequest
+         * @static
+         * @param {Folder.IImportFolderRecordRequest=} [properties] Properties to set
+         * @returns {Folder.ImportFolderRecordRequest} ImportFolderRecordRequest instance
+         */
+        ImportFolderRecordRequest.create = function create(properties) {
+            return new ImportFolderRecordRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ImportFolderRecordRequest message. Does not implicitly {@link Folder.ImportFolderRecordRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.ImportFolderRecordRequest
+         * @static
+         * @param {Folder.IImportFolderRecordRequest} message ImportFolderRecordRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ImportFolderRecordRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderRequest != null && message.folderRequest.length)
+                for (let i = 0; i < message.folderRequest.length; ++i)
+                    $root.Folder.FolderRequest.encode(message.folderRequest[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            if (message.recordRequest != null && message.recordRequest.length)
+                for (let i = 0; i < message.recordRequest.length; ++i)
+                    $root.Folder.RecordRequest.encode(message.recordRequest[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes an ImportFolderRecordRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.ImportFolderRecordRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.ImportFolderRecordRequest} ImportFolderRecordRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ImportFolderRecordRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.ImportFolderRecordRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderRequest && message.folderRequest.length))
+                            message.folderRequest = [];
+                        message.folderRequest.push($root.Folder.FolderRequest.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 2: {
+                        if (!(message.recordRequest && message.recordRequest.length))
+                            message.recordRequest = [];
+                        message.recordRequest.push($root.Folder.RecordRequest.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an ImportFolderRecordRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.ImportFolderRecordRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.ImportFolderRecordRequest} ImportFolderRecordRequest
+         */
+        ImportFolderRecordRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.ImportFolderRecordRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.ImportFolderRecordRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.ImportFolderRecordRequest();
+            if (object.folderRequest) {
+                if (!Array.isArray(object.folderRequest))
+                    throw TypeError(".Folder.ImportFolderRecordRequest.folderRequest: array expected");
+                message.folderRequest = [];
+                for (let i = 0; i < object.folderRequest.length; ++i) {
+                    if (!$util.isObject(object.folderRequest[i]))
+                        throw TypeError(".Folder.ImportFolderRecordRequest.folderRequest: object expected");
+                    message.folderRequest[i] = $root.Folder.FolderRequest.fromObject(object.folderRequest[i], long + 1);
+                }
+            }
+            if (object.recordRequest) {
+                if (!Array.isArray(object.recordRequest))
+                    throw TypeError(".Folder.ImportFolderRecordRequest.recordRequest: array expected");
+                message.recordRequest = [];
+                for (let i = 0; i < object.recordRequest.length; ++i) {
+                    if (!$util.isObject(object.recordRequest[i]))
+                        throw TypeError(".Folder.ImportFolderRecordRequest.recordRequest: object expected");
+                    message.recordRequest[i] = $root.Folder.RecordRequest.fromObject(object.recordRequest[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ImportFolderRecordRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.ImportFolderRecordRequest
+         * @static
+         * @param {Folder.ImportFolderRecordRequest} message ImportFolderRecordRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ImportFolderRecordRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.folderRequest = [];
+                object.recordRequest = [];
+            }
+            if (message.folderRequest && message.folderRequest.length) {
+                object.folderRequest = [];
+                for (let j = 0; j < message.folderRequest.length; ++j)
+                    object.folderRequest[j] = $root.Folder.FolderRequest.toObject(message.folderRequest[j], options, q + 1);
+            }
+            if (message.recordRequest && message.recordRequest.length) {
+                object.recordRequest = [];
+                for (let j = 0; j < message.recordRequest.length; ++j)
+                    object.recordRequest[j] = $root.Folder.RecordRequest.toObject(message.recordRequest[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ImportFolderRecordRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.ImportFolderRecordRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ImportFolderRecordRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for ImportFolderRecordRequest
+         * @function getTypeUrl
+         * @memberof Folder.ImportFolderRecordRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        ImportFolderRecordRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.ImportFolderRecordRequest";
+        };
+
+        return ImportFolderRecordRequest;
+    })();
+
+    Folder.ImportFolderRecordResponse = (function() {
+
+        /**
+         * Properties of an ImportFolderRecordResponse.
+         * @memberof Folder
+         * @interface IImportFolderRecordResponse
+         * @property {Array.<Folder.IFolderResponse>|null} [folderResponse] ImportFolderRecordResponse folderResponse
+         * @property {Array.<Folder.IRecordResponse>|null} [recordResponse] ImportFolderRecordResponse recordResponse
+         */
+
+        /**
+         * Constructs a new ImportFolderRecordResponse.
+         * @memberof Folder
+         * @classdesc Represents an ImportFolderRecordResponse.
+         * @implements IImportFolderRecordResponse
+         * @constructor
+         * @param {Folder.IImportFolderRecordResponse=} [properties] Properties to set
+         */
+        function ImportFolderRecordResponse(properties) {
+            this.folderResponse = [];
+            this.recordResponse = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ImportFolderRecordResponse folderResponse.
+         * @member {Array.<Folder.IFolderResponse>} folderResponse
+         * @memberof Folder.ImportFolderRecordResponse
+         * @instance
+         */
+        ImportFolderRecordResponse.prototype.folderResponse = $util.emptyArray;
+
+        /**
+         * ImportFolderRecordResponse recordResponse.
+         * @member {Array.<Folder.IRecordResponse>} recordResponse
+         * @memberof Folder.ImportFolderRecordResponse
+         * @instance
+         */
+        ImportFolderRecordResponse.prototype.recordResponse = $util.emptyArray;
+
+        /**
+         * Creates a new ImportFolderRecordResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.ImportFolderRecordResponse
+         * @static
+         * @param {Folder.IImportFolderRecordResponse=} [properties] Properties to set
+         * @returns {Folder.ImportFolderRecordResponse} ImportFolderRecordResponse instance
+         */
+        ImportFolderRecordResponse.create = function create(properties) {
+            return new ImportFolderRecordResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ImportFolderRecordResponse message. Does not implicitly {@link Folder.ImportFolderRecordResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.ImportFolderRecordResponse
+         * @static
+         * @param {Folder.IImportFolderRecordResponse} message ImportFolderRecordResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ImportFolderRecordResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderResponse != null && message.folderResponse.length)
+                for (let i = 0; i < message.folderResponse.length; ++i)
+                    $root.Folder.FolderResponse.encode(message.folderResponse[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            if (message.recordResponse != null && message.recordResponse.length)
+                for (let i = 0; i < message.recordResponse.length; ++i)
+                    $root.Folder.RecordResponse.encode(message.recordResponse[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes an ImportFolderRecordResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.ImportFolderRecordResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.ImportFolderRecordResponse} ImportFolderRecordResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ImportFolderRecordResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.ImportFolderRecordResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderResponse && message.folderResponse.length))
+                            message.folderResponse = [];
+                        message.folderResponse.push($root.Folder.FolderResponse.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 2: {
+                        if (!(message.recordResponse && message.recordResponse.length))
+                            message.recordResponse = [];
+                        message.recordResponse.push($root.Folder.RecordResponse.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an ImportFolderRecordResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.ImportFolderRecordResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.ImportFolderRecordResponse} ImportFolderRecordResponse
+         */
+        ImportFolderRecordResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.ImportFolderRecordResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.ImportFolderRecordResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.ImportFolderRecordResponse();
+            if (object.folderResponse) {
+                if (!Array.isArray(object.folderResponse))
+                    throw TypeError(".Folder.ImportFolderRecordResponse.folderResponse: array expected");
+                message.folderResponse = [];
+                for (let i = 0; i < object.folderResponse.length; ++i) {
+                    if (!$util.isObject(object.folderResponse[i]))
+                        throw TypeError(".Folder.ImportFolderRecordResponse.folderResponse: object expected");
+                    message.folderResponse[i] = $root.Folder.FolderResponse.fromObject(object.folderResponse[i], long + 1);
+                }
+            }
+            if (object.recordResponse) {
+                if (!Array.isArray(object.recordResponse))
+                    throw TypeError(".Folder.ImportFolderRecordResponse.recordResponse: array expected");
+                message.recordResponse = [];
+                for (let i = 0; i < object.recordResponse.length; ++i) {
+                    if (!$util.isObject(object.recordResponse[i]))
+                        throw TypeError(".Folder.ImportFolderRecordResponse.recordResponse: object expected");
+                    message.recordResponse[i] = $root.Folder.RecordResponse.fromObject(object.recordResponse[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ImportFolderRecordResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.ImportFolderRecordResponse
+         * @static
+         * @param {Folder.ImportFolderRecordResponse} message ImportFolderRecordResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ImportFolderRecordResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.folderResponse = [];
+                object.recordResponse = [];
+            }
+            if (message.folderResponse && message.folderResponse.length) {
+                object.folderResponse = [];
+                for (let j = 0; j < message.folderResponse.length; ++j)
+                    object.folderResponse[j] = $root.Folder.FolderResponse.toObject(message.folderResponse[j], options, q + 1);
+            }
+            if (message.recordResponse && message.recordResponse.length) {
+                object.recordResponse = [];
+                for (let j = 0; j < message.recordResponse.length; ++j)
+                    object.recordResponse[j] = $root.Folder.RecordResponse.toObject(message.recordResponse[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ImportFolderRecordResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.ImportFolderRecordResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ImportFolderRecordResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for ImportFolderRecordResponse
+         * @function getTypeUrl
+         * @memberof Folder.ImportFolderRecordResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        ImportFolderRecordResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.ImportFolderRecordResponse";
+        };
+
+        return ImportFolderRecordResponse;
+    })();
+
+    /**
+     * SetBooleanValue enum.
+     * @name Folder.SetBooleanValue
+     * @enum {number}
+     * @property {number} BOOLEAN_NO_CHANGE=0 BOOLEAN_NO_CHANGE value
+     * @property {number} BOOLEAN_TRUE=1 BOOLEAN_TRUE value
+     * @property {number} BOOLEAN_FALSE=2 BOOLEAN_FALSE value
+     */
+    Folder.SetBooleanValue = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "BOOLEAN_NO_CHANGE"] = 0;
+        values[valuesById[1] = "BOOLEAN_TRUE"] = 1;
+        values[valuesById[2] = "BOOLEAN_FALSE"] = 2;
+        return values;
+    })();
+
+    Folder.SharedFolderUpdateRecord = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateRecord.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateRecord
+         * @property {Uint8Array|null} [recordUid] SharedFolderUpdateRecord recordUid
+         * @property {Uint8Array|null} [sharedFolderUid] SharedFolderUpdateRecord sharedFolderUid
+         * @property {Uint8Array|null} [teamUid] SharedFolderUpdateRecord teamUid
+         * @property {Folder.SetBooleanValue|null} [canEdit] SharedFolderUpdateRecord canEdit
+         * @property {Folder.SetBooleanValue|null} [canShare] SharedFolderUpdateRecord canShare
+         * @property {Uint8Array|null} [encryptedRecordKey] SharedFolderUpdateRecord encryptedRecordKey
+         * @property {number|null} [revision] SharedFolderUpdateRecord revision
+         * @property {number|null} [expiration] SharedFolderUpdateRecord expiration
+         * @property {Records.TimerNotificationType|null} [timerNotificationType] SharedFolderUpdateRecord timerNotificationType
+         * @property {boolean|null} [rotateOnExpiration] SharedFolderUpdateRecord rotateOnExpiration
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateRecord.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateRecord.
+         * @implements ISharedFolderUpdateRecord
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateRecord=} [properties] Properties to set
+         */
+        function SharedFolderUpdateRecord(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateRecord recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateRecord sharedFolderUid.
+         * @member {Uint8Array} sharedFolderUid
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.sharedFolderUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateRecord teamUid.
+         * @member {Uint8Array} teamUid
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.teamUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateRecord canEdit.
+         * @member {Folder.SetBooleanValue} canEdit
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.canEdit = 0;
+
+        /**
+         * SharedFolderUpdateRecord canShare.
+         * @member {Folder.SetBooleanValue} canShare
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.canShare = 0;
+
+        /**
+         * SharedFolderUpdateRecord encryptedRecordKey.
+         * @member {Uint8Array} encryptedRecordKey
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.encryptedRecordKey = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateRecord revision.
+         * @member {number} revision
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.revision = 0;
+
+        /**
+         * SharedFolderUpdateRecord expiration.
+         * @member {number} expiration
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.expiration = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * SharedFolderUpdateRecord timerNotificationType.
+         * @member {Records.TimerNotificationType} timerNotificationType
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.timerNotificationType = 0;
+
+        /**
+         * SharedFolderUpdateRecord rotateOnExpiration.
+         * @member {boolean} rotateOnExpiration
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         */
+        SharedFolderUpdateRecord.prototype.rotateOnExpiration = false;
+
+        /**
+         * Creates a new SharedFolderUpdateRecord instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @static
+         * @param {Folder.ISharedFolderUpdateRecord=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateRecord} SharedFolderUpdateRecord instance
+         */
+        SharedFolderUpdateRecord.create = function create(properties) {
+            return new SharedFolderUpdateRecord(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateRecord message. Does not implicitly {@link Folder.SharedFolderUpdateRecord.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @static
+         * @param {Folder.ISharedFolderUpdateRecord} message SharedFolderUpdateRecord message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateRecord.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.sharedFolderUid);
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.teamUid);
+            if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.canEdit);
+            if (message.canShare != null && Object.hasOwnProperty.call(message, "canShare"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.canShare);
+            if (message.encryptedRecordKey != null && Object.hasOwnProperty.call(message, "encryptedRecordKey"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.encryptedRecordKey);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.revision);
+            if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
+                writer.uint32(/* id 8, wireType 0 =*/64).sint64(message.expiration);
+            if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.timerNotificationType);
+            if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
+                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.rotateOnExpiration);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateRecord message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateRecord} SharedFolderUpdateRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateRecord.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateRecord();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.sharedFolderUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.teamUid = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.canEdit = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.canShare = reader.int32();
+                        break;
+                    }
+                case 6: {
+                        message.encryptedRecordKey = reader.bytes();
+                        break;
+                    }
+                case 7: {
+                        message.revision = reader.int32();
+                        break;
+                    }
+                case 8: {
+                        message.expiration = reader.sint64();
+                        break;
+                    }
+                case 9: {
+                        message.timerNotificationType = reader.int32();
+                        break;
+                    }
+                case 10: {
+                        message.rotateOnExpiration = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateRecord message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateRecord} SharedFolderUpdateRecord
+         */
+        SharedFolderUpdateRecord.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateRecord)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateRecord: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateRecord();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.sharedFolderUid != null)
+                if (typeof object.sharedFolderUid === "string")
+                    $util.base64.decode(object.sharedFolderUid, message.sharedFolderUid = $util.newBuffer($util.base64.length(object.sharedFolderUid)), 0);
+                else if (object.sharedFolderUid.length >= 0)
+                    message.sharedFolderUid = object.sharedFolderUid;
+            if (object.teamUid != null)
+                if (typeof object.teamUid === "string")
+                    $util.base64.decode(object.teamUid, message.teamUid = $util.newBuffer($util.base64.length(object.teamUid)), 0);
+                else if (object.teamUid.length >= 0)
+                    message.teamUid = object.teamUid;
+            switch (object.canEdit) {
+            default:
+                if (typeof object.canEdit === "number") {
+                    message.canEdit = object.canEdit;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canEdit = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canEdit = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canEdit = 2;
+                break;
+            }
+            switch (object.canShare) {
+            default:
+                if (typeof object.canShare === "number") {
+                    message.canShare = object.canShare;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canShare = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canShare = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canShare = 2;
+                break;
+            }
+            if (object.encryptedRecordKey != null)
+                if (typeof object.encryptedRecordKey === "string")
+                    $util.base64.decode(object.encryptedRecordKey, message.encryptedRecordKey = $util.newBuffer($util.base64.length(object.encryptedRecordKey)), 0);
+                else if (object.encryptedRecordKey.length >= 0)
+                    message.encryptedRecordKey = object.encryptedRecordKey;
+            if (object.revision != null)
+                message.revision = object.revision | 0;
+            if (object.expiration != null)
+                if ($util.Long)
+                    message.expiration = $util.Long.fromValue(object.expiration, false);
+                else if (typeof object.expiration === "string")
+                    message.expiration = parseInt(object.expiration, 10);
+                else if (typeof object.expiration === "number")
+                    message.expiration = object.expiration;
+                else if (typeof object.expiration === "object")
+                    message.expiration = new $util.LongBits(object.expiration.low >>> 0, object.expiration.high >>> 0).toNumber();
+            switch (object.timerNotificationType) {
+            default:
+                if (typeof object.timerNotificationType === "number") {
+                    message.timerNotificationType = object.timerNotificationType;
+                    break;
+                }
+                break;
+            case "NOTIFICATION_OFF":
+            case 0:
+                message.timerNotificationType = 0;
+                break;
+            case "NOTIFY_OWNER":
+            case 1:
+                message.timerNotificationType = 1;
+                break;
+            case "NOTIFY_PRIVILEGED_USERS":
+            case 2:
+                message.timerNotificationType = 2;
+                break;
+            }
+            if (object.rotateOnExpiration != null)
+                message.rotateOnExpiration = Boolean(object.rotateOnExpiration);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateRecord message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @static
+         * @param {Folder.SharedFolderUpdateRecord} message SharedFolderUpdateRecord
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateRecord.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if (options.bytes === String)
+                    object.sharedFolderUid = "";
+                else {
+                    object.sharedFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderUid = $util.newBuffer(object.sharedFolderUid);
+                }
+                if (options.bytes === String)
+                    object.teamUid = "";
+                else {
+                    object.teamUid = [];
+                    if (options.bytes !== Array)
+                        object.teamUid = $util.newBuffer(object.teamUid);
+                }
+                object.canEdit = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canShare = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                if (options.bytes === String)
+                    object.encryptedRecordKey = "";
+                else {
+                    object.encryptedRecordKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedRecordKey = $util.newBuffer(object.encryptedRecordKey);
+                }
+                object.revision = 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.expiration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.expiration = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.timerNotificationType = options.enums === String ? "NOTIFICATION_OFF" : 0;
+                object.rotateOnExpiration = false;
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                object.sharedFolderUid = options.bytes === String ? $util.base64.encode(message.sharedFolderUid, 0, message.sharedFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUid) : message.sharedFolderUid;
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                object.teamUid = options.bytes === String ? $util.base64.encode(message.teamUid, 0, message.teamUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamUid) : message.teamUid;
+            if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
+                object.canEdit = options.enums === String ? $root.Folder.SetBooleanValue[message.canEdit] === undefined ? message.canEdit : $root.Folder.SetBooleanValue[message.canEdit] : message.canEdit;
+            if (message.canShare != null && Object.hasOwnProperty.call(message, "canShare"))
+                object.canShare = options.enums === String ? $root.Folder.SetBooleanValue[message.canShare] === undefined ? message.canShare : $root.Folder.SetBooleanValue[message.canShare] : message.canShare;
+            if (message.encryptedRecordKey != null && Object.hasOwnProperty.call(message, "encryptedRecordKey"))
+                object.encryptedRecordKey = options.bytes === String ? $util.base64.encode(message.encryptedRecordKey, 0, message.encryptedRecordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedRecordKey) : message.encryptedRecordKey;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                object.revision = message.revision;
+            if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.expiration = typeof message.expiration === "number" ? BigInt(message.expiration) : $util.Long.fromBits(message.expiration.low >>> 0, message.expiration.high >>> 0, false).toBigInt();
+                else if (typeof message.expiration === "number")
+                    object.expiration = options.longs === String ? String(message.expiration) : message.expiration;
+                else
+                    object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
+            if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
+                object.timerNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : $root.Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
+            if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
+                object.rotateOnExpiration = message.rotateOnExpiration;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateRecord to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateRecord.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateRecord
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateRecord
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateRecord.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateRecord";
+        };
+
+        return SharedFolderUpdateRecord;
+    })();
+
+    Folder.SharedFolderUpdateUser = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateUser.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateUser
+         * @property {string|null} [username] SharedFolderUpdateUser username
+         * @property {Folder.SetBooleanValue|null} [manageUsers] SharedFolderUpdateUser manageUsers
+         * @property {Folder.SetBooleanValue|null} [manageRecords] SharedFolderUpdateUser manageRecords
+         * @property {Uint8Array|null} [sharedFolderKey] SharedFolderUpdateUser sharedFolderKey
+         * @property {number|null} [expiration] SharedFolderUpdateUser expiration
+         * @property {Records.TimerNotificationType|null} [timerNotificationType] SharedFolderUpdateUser timerNotificationType
+         * @property {Folder.IEncryptedDataKey|null} [typedSharedFolderKey] SharedFolderUpdateUser typedSharedFolderKey
+         * @property {boolean|null} [rotateOnExpiration] SharedFolderUpdateUser rotateOnExpiration
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateUser.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateUser.
+         * @implements ISharedFolderUpdateUser
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateUser=} [properties] Properties to set
+         */
+        function SharedFolderUpdateUser(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateUser username.
+         * @member {string} username
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.username = "";
+
+        /**
+         * SharedFolderUpdateUser manageUsers.
+         * @member {Folder.SetBooleanValue} manageUsers
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.manageUsers = 0;
+
+        /**
+         * SharedFolderUpdateUser manageRecords.
+         * @member {Folder.SetBooleanValue} manageRecords
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.manageRecords = 0;
+
+        /**
+         * SharedFolderUpdateUser sharedFolderKey.
+         * @member {Uint8Array} sharedFolderKey
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.sharedFolderKey = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateUser expiration.
+         * @member {number} expiration
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.expiration = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * SharedFolderUpdateUser timerNotificationType.
+         * @member {Records.TimerNotificationType} timerNotificationType
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.timerNotificationType = 0;
+
+        /**
+         * SharedFolderUpdateUser typedSharedFolderKey.
+         * @member {Folder.IEncryptedDataKey|null|undefined} typedSharedFolderKey
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.typedSharedFolderKey = null;
+
+        /**
+         * SharedFolderUpdateUser rotateOnExpiration.
+         * @member {boolean} rotateOnExpiration
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         */
+        SharedFolderUpdateUser.prototype.rotateOnExpiration = false;
+
+        /**
+         * Creates a new SharedFolderUpdateUser instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateUser
+         * @static
+         * @param {Folder.ISharedFolderUpdateUser=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateUser} SharedFolderUpdateUser instance
+         */
+        SharedFolderUpdateUser.create = function create(properties) {
+            return new SharedFolderUpdateUser(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateUser message. Does not implicitly {@link Folder.SharedFolderUpdateUser.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateUser
+         * @static
+         * @param {Folder.ISharedFolderUpdateUser} message SharedFolderUpdateUser message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateUser.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.username);
+            if (message.manageUsers != null && Object.hasOwnProperty.call(message, "manageUsers"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.manageUsers);
+            if (message.manageRecords != null && Object.hasOwnProperty.call(message, "manageRecords"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.manageRecords);
+            if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.sharedFolderKey);
+            if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
+                writer.uint32(/* id 5, wireType 0 =*/40).sint64(message.expiration);
+            if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.timerNotificationType);
+            if (message.typedSharedFolderKey != null && Object.hasOwnProperty.call(message, "typedSharedFolderKey"))
+                $root.Folder.EncryptedDataKey.encode(message.typedSharedFolderKey, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+            if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.rotateOnExpiration);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateUser message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateUser
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateUser} SharedFolderUpdateUser
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateUser.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateUser();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.username = reader.string();
+                        break;
+                    }
+                case 2: {
+                        message.manageUsers = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.manageRecords = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        message.sharedFolderKey = reader.bytes();
+                        break;
+                    }
+                case 5: {
+                        message.expiration = reader.sint64();
+                        break;
+                    }
+                case 6: {
+                        message.timerNotificationType = reader.int32();
+                        break;
+                    }
+                case 7: {
+                        message.typedSharedFolderKey = $root.Folder.EncryptedDataKey.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 8: {
+                        message.rotateOnExpiration = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateUser message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateUser
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateUser} SharedFolderUpdateUser
+         */
+        SharedFolderUpdateUser.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateUser)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateUser: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateUser();
+            if (object.username != null)
+                message.username = String(object.username);
+            switch (object.manageUsers) {
+            default:
+                if (typeof object.manageUsers === "number") {
+                    message.manageUsers = object.manageUsers;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.manageUsers = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.manageUsers = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.manageUsers = 2;
+                break;
+            }
+            switch (object.manageRecords) {
+            default:
+                if (typeof object.manageRecords === "number") {
+                    message.manageRecords = object.manageRecords;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.manageRecords = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.manageRecords = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.manageRecords = 2;
+                break;
+            }
+            if (object.sharedFolderKey != null)
+                if (typeof object.sharedFolderKey === "string")
+                    $util.base64.decode(object.sharedFolderKey, message.sharedFolderKey = $util.newBuffer($util.base64.length(object.sharedFolderKey)), 0);
+                else if (object.sharedFolderKey.length >= 0)
+                    message.sharedFolderKey = object.sharedFolderKey;
+            if (object.expiration != null)
+                if ($util.Long)
+                    message.expiration = $util.Long.fromValue(object.expiration, false);
+                else if (typeof object.expiration === "string")
+                    message.expiration = parseInt(object.expiration, 10);
+                else if (typeof object.expiration === "number")
+                    message.expiration = object.expiration;
+                else if (typeof object.expiration === "object")
+                    message.expiration = new $util.LongBits(object.expiration.low >>> 0, object.expiration.high >>> 0).toNumber();
+            switch (object.timerNotificationType) {
+            default:
+                if (typeof object.timerNotificationType === "number") {
+                    message.timerNotificationType = object.timerNotificationType;
+                    break;
+                }
+                break;
+            case "NOTIFICATION_OFF":
+            case 0:
+                message.timerNotificationType = 0;
+                break;
+            case "NOTIFY_OWNER":
+            case 1:
+                message.timerNotificationType = 1;
+                break;
+            case "NOTIFY_PRIVILEGED_USERS":
+            case 2:
+                message.timerNotificationType = 2;
+                break;
+            }
+            if (object.typedSharedFolderKey != null) {
+                if (!$util.isObject(object.typedSharedFolderKey))
+                    throw TypeError(".Folder.SharedFolderUpdateUser.typedSharedFolderKey: object expected");
+                message.typedSharedFolderKey = $root.Folder.EncryptedDataKey.fromObject(object.typedSharedFolderKey, long + 1);
+            }
+            if (object.rotateOnExpiration != null)
+                message.rotateOnExpiration = Boolean(object.rotateOnExpiration);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateUser message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateUser
+         * @static
+         * @param {Folder.SharedFolderUpdateUser} message SharedFolderUpdateUser
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateUser.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                object.username = "";
+                object.manageUsers = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.manageRecords = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                if (options.bytes === String)
+                    object.sharedFolderKey = "";
+                else {
+                    object.sharedFolderKey = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderKey = $util.newBuffer(object.sharedFolderKey);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.expiration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.expiration = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.timerNotificationType = options.enums === String ? "NOTIFICATION_OFF" : 0;
+                object.typedSharedFolderKey = null;
+                object.rotateOnExpiration = false;
+            }
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                object.username = message.username;
+            if (message.manageUsers != null && Object.hasOwnProperty.call(message, "manageUsers"))
+                object.manageUsers = options.enums === String ? $root.Folder.SetBooleanValue[message.manageUsers] === undefined ? message.manageUsers : $root.Folder.SetBooleanValue[message.manageUsers] : message.manageUsers;
+            if (message.manageRecords != null && Object.hasOwnProperty.call(message, "manageRecords"))
+                object.manageRecords = options.enums === String ? $root.Folder.SetBooleanValue[message.manageRecords] === undefined ? message.manageRecords : $root.Folder.SetBooleanValue[message.manageRecords] : message.manageRecords;
+            if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
+                object.sharedFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderKey, 0, message.sharedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderKey) : message.sharedFolderKey;
+            if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.expiration = typeof message.expiration === "number" ? BigInt(message.expiration) : $util.Long.fromBits(message.expiration.low >>> 0, message.expiration.high >>> 0, false).toBigInt();
+                else if (typeof message.expiration === "number")
+                    object.expiration = options.longs === String ? String(message.expiration) : message.expiration;
+                else
+                    object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
+            if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
+                object.timerNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : $root.Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
+            if (message.typedSharedFolderKey != null && Object.hasOwnProperty.call(message, "typedSharedFolderKey"))
+                object.typedSharedFolderKey = $root.Folder.EncryptedDataKey.toObject(message.typedSharedFolderKey, options, q + 1);
+            if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
+                object.rotateOnExpiration = message.rotateOnExpiration;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateUser to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateUser
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateUser.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateUser
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateUser
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateUser.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateUser";
+        };
+
+        return SharedFolderUpdateUser;
+    })();
+
+    Folder.SharedFolderUpdateTeam = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateTeam.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateTeam
+         * @property {Uint8Array|null} [teamUid] SharedFolderUpdateTeam teamUid
+         * @property {boolean|null} [manageUsers] SharedFolderUpdateTeam manageUsers
+         * @property {boolean|null} [manageRecords] SharedFolderUpdateTeam manageRecords
+         * @property {Uint8Array|null} [sharedFolderKey] SharedFolderUpdateTeam sharedFolderKey
+         * @property {number|null} [expiration] SharedFolderUpdateTeam expiration
+         * @property {Records.TimerNotificationType|null} [timerNotificationType] SharedFolderUpdateTeam timerNotificationType
+         * @property {Folder.IEncryptedDataKey|null} [typedSharedFolderKey] SharedFolderUpdateTeam typedSharedFolderKey
+         * @property {boolean|null} [rotateOnExpiration] SharedFolderUpdateTeam rotateOnExpiration
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateTeam.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateTeam.
+         * @implements ISharedFolderUpdateTeam
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateTeam=} [properties] Properties to set
+         */
+        function SharedFolderUpdateTeam(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateTeam teamUid.
+         * @member {Uint8Array} teamUid
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.teamUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateTeam manageUsers.
+         * @member {boolean} manageUsers
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.manageUsers = false;
+
+        /**
+         * SharedFolderUpdateTeam manageRecords.
+         * @member {boolean} manageRecords
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.manageRecords = false;
+
+        /**
+         * SharedFolderUpdateTeam sharedFolderKey.
+         * @member {Uint8Array} sharedFolderKey
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.sharedFolderKey = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateTeam expiration.
+         * @member {number} expiration
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.expiration = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * SharedFolderUpdateTeam timerNotificationType.
+         * @member {Records.TimerNotificationType} timerNotificationType
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.timerNotificationType = 0;
+
+        /**
+         * SharedFolderUpdateTeam typedSharedFolderKey.
+         * @member {Folder.IEncryptedDataKey|null|undefined} typedSharedFolderKey
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.typedSharedFolderKey = null;
+
+        /**
+         * SharedFolderUpdateTeam rotateOnExpiration.
+         * @member {boolean} rotateOnExpiration
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         */
+        SharedFolderUpdateTeam.prototype.rotateOnExpiration = false;
+
+        /**
+         * Creates a new SharedFolderUpdateTeam instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @static
+         * @param {Folder.ISharedFolderUpdateTeam=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateTeam} SharedFolderUpdateTeam instance
+         */
+        SharedFolderUpdateTeam.create = function create(properties) {
+            return new SharedFolderUpdateTeam(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateTeam message. Does not implicitly {@link Folder.SharedFolderUpdateTeam.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @static
+         * @param {Folder.ISharedFolderUpdateTeam} message SharedFolderUpdateTeam message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateTeam.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.teamUid);
+            if (message.manageUsers != null && Object.hasOwnProperty.call(message, "manageUsers"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.manageUsers);
+            if (message.manageRecords != null && Object.hasOwnProperty.call(message, "manageRecords"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.manageRecords);
+            if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.sharedFolderKey);
+            if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
+                writer.uint32(/* id 5, wireType 0 =*/40).sint64(message.expiration);
+            if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.timerNotificationType);
+            if (message.typedSharedFolderKey != null && Object.hasOwnProperty.call(message, "typedSharedFolderKey"))
+                $root.Folder.EncryptedDataKey.encode(message.typedSharedFolderKey, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+            if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.rotateOnExpiration);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateTeam message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateTeam} SharedFolderUpdateTeam
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateTeam.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateTeam();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.teamUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.manageUsers = reader.bool();
+                        break;
+                    }
+                case 3: {
+                        message.manageRecords = reader.bool();
+                        break;
+                    }
+                case 4: {
+                        message.sharedFolderKey = reader.bytes();
+                        break;
+                    }
+                case 5: {
+                        message.expiration = reader.sint64();
+                        break;
+                    }
+                case 6: {
+                        message.timerNotificationType = reader.int32();
+                        break;
+                    }
+                case 7: {
+                        message.typedSharedFolderKey = $root.Folder.EncryptedDataKey.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 8: {
+                        message.rotateOnExpiration = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateTeam message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateTeam} SharedFolderUpdateTeam
+         */
+        SharedFolderUpdateTeam.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateTeam)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateTeam: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateTeam();
+            if (object.teamUid != null)
+                if (typeof object.teamUid === "string")
+                    $util.base64.decode(object.teamUid, message.teamUid = $util.newBuffer($util.base64.length(object.teamUid)), 0);
+                else if (object.teamUid.length >= 0)
+                    message.teamUid = object.teamUid;
+            if (object.manageUsers != null)
+                message.manageUsers = Boolean(object.manageUsers);
+            if (object.manageRecords != null)
+                message.manageRecords = Boolean(object.manageRecords);
+            if (object.sharedFolderKey != null)
+                if (typeof object.sharedFolderKey === "string")
+                    $util.base64.decode(object.sharedFolderKey, message.sharedFolderKey = $util.newBuffer($util.base64.length(object.sharedFolderKey)), 0);
+                else if (object.sharedFolderKey.length >= 0)
+                    message.sharedFolderKey = object.sharedFolderKey;
+            if (object.expiration != null)
+                if ($util.Long)
+                    message.expiration = $util.Long.fromValue(object.expiration, false);
+                else if (typeof object.expiration === "string")
+                    message.expiration = parseInt(object.expiration, 10);
+                else if (typeof object.expiration === "number")
+                    message.expiration = object.expiration;
+                else if (typeof object.expiration === "object")
+                    message.expiration = new $util.LongBits(object.expiration.low >>> 0, object.expiration.high >>> 0).toNumber();
+            switch (object.timerNotificationType) {
+            default:
+                if (typeof object.timerNotificationType === "number") {
+                    message.timerNotificationType = object.timerNotificationType;
+                    break;
+                }
+                break;
+            case "NOTIFICATION_OFF":
+            case 0:
+                message.timerNotificationType = 0;
+                break;
+            case "NOTIFY_OWNER":
+            case 1:
+                message.timerNotificationType = 1;
+                break;
+            case "NOTIFY_PRIVILEGED_USERS":
+            case 2:
+                message.timerNotificationType = 2;
+                break;
+            }
+            if (object.typedSharedFolderKey != null) {
+                if (!$util.isObject(object.typedSharedFolderKey))
+                    throw TypeError(".Folder.SharedFolderUpdateTeam.typedSharedFolderKey: object expected");
+                message.typedSharedFolderKey = $root.Folder.EncryptedDataKey.fromObject(object.typedSharedFolderKey, long + 1);
+            }
+            if (object.rotateOnExpiration != null)
+                message.rotateOnExpiration = Boolean(object.rotateOnExpiration);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateTeam message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @static
+         * @param {Folder.SharedFolderUpdateTeam} message SharedFolderUpdateTeam
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateTeam.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.teamUid = "";
+                else {
+                    object.teamUid = [];
+                    if (options.bytes !== Array)
+                        object.teamUid = $util.newBuffer(object.teamUid);
+                }
+                object.manageUsers = false;
+                object.manageRecords = false;
+                if (options.bytes === String)
+                    object.sharedFolderKey = "";
+                else {
+                    object.sharedFolderKey = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderKey = $util.newBuffer(object.sharedFolderKey);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.expiration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.expiration = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.timerNotificationType = options.enums === String ? "NOTIFICATION_OFF" : 0;
+                object.typedSharedFolderKey = null;
+                object.rotateOnExpiration = false;
+            }
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                object.teamUid = options.bytes === String ? $util.base64.encode(message.teamUid, 0, message.teamUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamUid) : message.teamUid;
+            if (message.manageUsers != null && Object.hasOwnProperty.call(message, "manageUsers"))
+                object.manageUsers = message.manageUsers;
+            if (message.manageRecords != null && Object.hasOwnProperty.call(message, "manageRecords"))
+                object.manageRecords = message.manageRecords;
+            if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
+                object.sharedFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderKey, 0, message.sharedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderKey) : message.sharedFolderKey;
+            if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.expiration = typeof message.expiration === "number" ? BigInt(message.expiration) : $util.Long.fromBits(message.expiration.low >>> 0, message.expiration.high >>> 0, false).toBigInt();
+                else if (typeof message.expiration === "number")
+                    object.expiration = options.longs === String ? String(message.expiration) : message.expiration;
+                else
+                    object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
+            if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
+                object.timerNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : $root.Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
+            if (message.typedSharedFolderKey != null && Object.hasOwnProperty.call(message, "typedSharedFolderKey"))
+                object.typedSharedFolderKey = $root.Folder.EncryptedDataKey.toObject(message.typedSharedFolderKey, options, q + 1);
+            if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
+                object.rotateOnExpiration = message.rotateOnExpiration;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateTeam to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateTeam.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateTeam
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateTeam
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateTeam.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateTeam";
+        };
+
+        return SharedFolderUpdateTeam;
+    })();
+
+    Folder.SharedFolderUpdateV3Request = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateV3Request.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateV3Request
+         * @property {number|null} [sharedFolderUpdateOperationDontUse] SharedFolderUpdateV3Request sharedFolderUpdateOperationDontUse
+         * @property {Uint8Array|null} [sharedFolderUid] SharedFolderUpdateV3Request sharedFolderUid
+         * @property {Uint8Array|null} [encryptedSharedFolderName] SharedFolderUpdateV3Request encryptedSharedFolderName
+         * @property {number|null} [revision] SharedFolderUpdateV3Request revision
+         * @property {boolean|null} [forceUpdate] SharedFolderUpdateV3Request forceUpdate
+         * @property {Uint8Array|null} [fromTeamUid] SharedFolderUpdateV3Request fromTeamUid
+         * @property {Folder.SetBooleanValue|null} [defaultManageUsers] SharedFolderUpdateV3Request defaultManageUsers
+         * @property {Folder.SetBooleanValue|null} [defaultManageRecords] SharedFolderUpdateV3Request defaultManageRecords
+         * @property {Folder.SetBooleanValue|null} [defaultCanEdit] SharedFolderUpdateV3Request defaultCanEdit
+         * @property {Folder.SetBooleanValue|null} [defaultCanShare] SharedFolderUpdateV3Request defaultCanShare
+         * @property {Array.<Folder.ISharedFolderUpdateRecord>|null} [sharedFolderAddRecord] SharedFolderUpdateV3Request sharedFolderAddRecord
+         * @property {Array.<Folder.ISharedFolderUpdateUser>|null} [sharedFolderAddUser] SharedFolderUpdateV3Request sharedFolderAddUser
+         * @property {Array.<Folder.ISharedFolderUpdateTeam>|null} [sharedFolderAddTeam] SharedFolderUpdateV3Request sharedFolderAddTeam
+         * @property {Array.<Folder.ISharedFolderUpdateRecord>|null} [sharedFolderUpdateRecord] SharedFolderUpdateV3Request sharedFolderUpdateRecord
+         * @property {Array.<Folder.ISharedFolderUpdateUser>|null} [sharedFolderUpdateUser] SharedFolderUpdateV3Request sharedFolderUpdateUser
+         * @property {Array.<Folder.ISharedFolderUpdateTeam>|null} [sharedFolderUpdateTeam] SharedFolderUpdateV3Request sharedFolderUpdateTeam
+         * @property {Array.<Uint8Array>|null} [sharedFolderRemoveRecord] SharedFolderUpdateV3Request sharedFolderRemoveRecord
+         * @property {Array.<string>|null} [sharedFolderRemoveUser] SharedFolderUpdateV3Request sharedFolderRemoveUser
+         * @property {Array.<Uint8Array>|null} [sharedFolderRemoveTeam] SharedFolderUpdateV3Request sharedFolderRemoveTeam
+         * @property {string|null} [sharedFolderOwner] SharedFolderUpdateV3Request sharedFolderOwner
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateV3Request.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateV3Request.
+         * @implements ISharedFolderUpdateV3Request
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateV3Request=} [properties] Properties to set
+         */
+        function SharedFolderUpdateV3Request(properties) {
+            this.sharedFolderAddRecord = [];
+            this.sharedFolderAddUser = [];
+            this.sharedFolderAddTeam = [];
+            this.sharedFolderUpdateRecord = [];
+            this.sharedFolderUpdateUser = [];
+            this.sharedFolderUpdateTeam = [];
+            this.sharedFolderRemoveRecord = [];
+            this.sharedFolderRemoveUser = [];
+            this.sharedFolderRemoveTeam = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderUpdateOperationDontUse.
+         * @member {number} sharedFolderUpdateOperationDontUse
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderUpdateOperationDontUse = 0;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderUid.
+         * @member {Uint8Array} sharedFolderUid
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateV3Request encryptedSharedFolderName.
+         * @member {Uint8Array} encryptedSharedFolderName
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.encryptedSharedFolderName = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateV3Request revision.
+         * @member {number} revision
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * SharedFolderUpdateV3Request forceUpdate.
+         * @member {boolean} forceUpdate
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.forceUpdate = false;
+
+        /**
+         * SharedFolderUpdateV3Request fromTeamUid.
+         * @member {Uint8Array} fromTeamUid
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.fromTeamUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateV3Request defaultManageUsers.
+         * @member {Folder.SetBooleanValue} defaultManageUsers
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.defaultManageUsers = 0;
+
+        /**
+         * SharedFolderUpdateV3Request defaultManageRecords.
+         * @member {Folder.SetBooleanValue} defaultManageRecords
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.defaultManageRecords = 0;
+
+        /**
+         * SharedFolderUpdateV3Request defaultCanEdit.
+         * @member {Folder.SetBooleanValue} defaultCanEdit
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.defaultCanEdit = 0;
+
+        /**
+         * SharedFolderUpdateV3Request defaultCanShare.
+         * @member {Folder.SetBooleanValue} defaultCanShare
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.defaultCanShare = 0;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderAddRecord.
+         * @member {Array.<Folder.ISharedFolderUpdateRecord>} sharedFolderAddRecord
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderAddRecord = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderAddUser.
+         * @member {Array.<Folder.ISharedFolderUpdateUser>} sharedFolderAddUser
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderAddUser = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderAddTeam.
+         * @member {Array.<Folder.ISharedFolderUpdateTeam>} sharedFolderAddTeam
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderAddTeam = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderUpdateRecord.
+         * @member {Array.<Folder.ISharedFolderUpdateRecord>} sharedFolderUpdateRecord
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderUpdateRecord = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderUpdateUser.
+         * @member {Array.<Folder.ISharedFolderUpdateUser>} sharedFolderUpdateUser
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderUpdateUser = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderUpdateTeam.
+         * @member {Array.<Folder.ISharedFolderUpdateTeam>} sharedFolderUpdateTeam
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderUpdateTeam = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderRemoveRecord.
+         * @member {Array.<Uint8Array>} sharedFolderRemoveRecord
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderRemoveRecord = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderRemoveUser.
+         * @member {Array.<string>} sharedFolderRemoveUser
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderRemoveUser = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderRemoveTeam.
+         * @member {Array.<Uint8Array>} sharedFolderRemoveTeam
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderRemoveTeam = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Request sharedFolderOwner.
+         * @member {string} sharedFolderOwner
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         */
+        SharedFolderUpdateV3Request.prototype.sharedFolderOwner = "";
+
+        /**
+         * Creates a new SharedFolderUpdateV3Request instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3Request=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateV3Request} SharedFolderUpdateV3Request instance
+         */
+        SharedFolderUpdateV3Request.create = function create(properties) {
+            return new SharedFolderUpdateV3Request(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3Request message. Does not implicitly {@link Folder.SharedFolderUpdateV3Request.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3Request} message SharedFolderUpdateV3Request message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateV3Request.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolderUpdateOperationDontUse != null && Object.hasOwnProperty.call(message, "sharedFolderUpdateOperationDontUse"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.sharedFolderUpdateOperationDontUse);
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.sharedFolderUid);
+            if (message.encryptedSharedFolderName != null && Object.hasOwnProperty.call(message, "encryptedSharedFolderName"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.encryptedSharedFolderName);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.revision);
+            if (message.forceUpdate != null && Object.hasOwnProperty.call(message, "forceUpdate"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.forceUpdate);
+            if (message.fromTeamUid != null && Object.hasOwnProperty.call(message, "fromTeamUid"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.fromTeamUid);
+            if (message.defaultManageUsers != null && Object.hasOwnProperty.call(message, "defaultManageUsers"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.defaultManageUsers);
+            if (message.defaultManageRecords != null && Object.hasOwnProperty.call(message, "defaultManageRecords"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int32(message.defaultManageRecords);
+            if (message.defaultCanEdit != null && Object.hasOwnProperty.call(message, "defaultCanEdit"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.defaultCanEdit);
+            if (message.defaultCanShare != null && Object.hasOwnProperty.call(message, "defaultCanShare"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int32(message.defaultCanShare);
+            if (message.sharedFolderAddRecord != null && message.sharedFolderAddRecord.length)
+                for (let i = 0; i < message.sharedFolderAddRecord.length; ++i)
+                    $root.Folder.SharedFolderUpdateRecord.encode(message.sharedFolderAddRecord[i], writer.uint32(/* id 11, wireType 2 =*/90).fork(), q + 1).ldelim();
+            if (message.sharedFolderAddUser != null && message.sharedFolderAddUser.length)
+                for (let i = 0; i < message.sharedFolderAddUser.length; ++i)
+                    $root.Folder.SharedFolderUpdateUser.encode(message.sharedFolderAddUser[i], writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
+            if (message.sharedFolderAddTeam != null && message.sharedFolderAddTeam.length)
+                for (let i = 0; i < message.sharedFolderAddTeam.length; ++i)
+                    $root.Folder.SharedFolderUpdateTeam.encode(message.sharedFolderAddTeam[i], writer.uint32(/* id 13, wireType 2 =*/106).fork(), q + 1).ldelim();
+            if (message.sharedFolderUpdateRecord != null && message.sharedFolderUpdateRecord.length)
+                for (let i = 0; i < message.sharedFolderUpdateRecord.length; ++i)
+                    $root.Folder.SharedFolderUpdateRecord.encode(message.sharedFolderUpdateRecord[i], writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
+            if (message.sharedFolderUpdateUser != null && message.sharedFolderUpdateUser.length)
+                for (let i = 0; i < message.sharedFolderUpdateUser.length; ++i)
+                    $root.Folder.SharedFolderUpdateUser.encode(message.sharedFolderUpdateUser[i], writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
+            if (message.sharedFolderUpdateTeam != null && message.sharedFolderUpdateTeam.length)
+                for (let i = 0; i < message.sharedFolderUpdateTeam.length; ++i)
+                    $root.Folder.SharedFolderUpdateTeam.encode(message.sharedFolderUpdateTeam[i], writer.uint32(/* id 16, wireType 2 =*/130).fork(), q + 1).ldelim();
+            if (message.sharedFolderRemoveRecord != null && message.sharedFolderRemoveRecord.length)
+                for (let i = 0; i < message.sharedFolderRemoveRecord.length; ++i)
+                    writer.uint32(/* id 17, wireType 2 =*/138).bytes(message.sharedFolderRemoveRecord[i]);
+            if (message.sharedFolderRemoveUser != null && message.sharedFolderRemoveUser.length)
+                for (let i = 0; i < message.sharedFolderRemoveUser.length; ++i)
+                    writer.uint32(/* id 18, wireType 2 =*/146).string(message.sharedFolderRemoveUser[i]);
+            if (message.sharedFolderRemoveTeam != null && message.sharedFolderRemoveTeam.length)
+                for (let i = 0; i < message.sharedFolderRemoveTeam.length; ++i)
+                    writer.uint32(/* id 19, wireType 2 =*/154).bytes(message.sharedFolderRemoveTeam[i]);
+            if (message.sharedFolderOwner != null && Object.hasOwnProperty.call(message, "sharedFolderOwner"))
+                writer.uint32(/* id 20, wireType 2 =*/162).string(message.sharedFolderOwner);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateV3Request message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateV3Request} SharedFolderUpdateV3Request
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateV3Request.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateV3Request();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.sharedFolderUpdateOperationDontUse = reader.int32();
+                        break;
+                    }
+                case 2: {
+                        message.sharedFolderUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.encryptedSharedFolderName = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                case 5: {
+                        message.forceUpdate = reader.bool();
+                        break;
+                    }
+                case 6: {
+                        message.fromTeamUid = reader.bytes();
+                        break;
+                    }
+                case 7: {
+                        message.defaultManageUsers = reader.int32();
+                        break;
+                    }
+                case 8: {
+                        message.defaultManageRecords = reader.int32();
+                        break;
+                    }
+                case 9: {
+                        message.defaultCanEdit = reader.int32();
+                        break;
+                    }
+                case 10: {
+                        message.defaultCanShare = reader.int32();
+                        break;
+                    }
+                case 11: {
+                        if (!(message.sharedFolderAddRecord && message.sharedFolderAddRecord.length))
+                            message.sharedFolderAddRecord = [];
+                        message.sharedFolderAddRecord.push($root.Folder.SharedFolderUpdateRecord.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 12: {
+                        if (!(message.sharedFolderAddUser && message.sharedFolderAddUser.length))
+                            message.sharedFolderAddUser = [];
+                        message.sharedFolderAddUser.push($root.Folder.SharedFolderUpdateUser.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 13: {
+                        if (!(message.sharedFolderAddTeam && message.sharedFolderAddTeam.length))
+                            message.sharedFolderAddTeam = [];
+                        message.sharedFolderAddTeam.push($root.Folder.SharedFolderUpdateTeam.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 14: {
+                        if (!(message.sharedFolderUpdateRecord && message.sharedFolderUpdateRecord.length))
+                            message.sharedFolderUpdateRecord = [];
+                        message.sharedFolderUpdateRecord.push($root.Folder.SharedFolderUpdateRecord.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 15: {
+                        if (!(message.sharedFolderUpdateUser && message.sharedFolderUpdateUser.length))
+                            message.sharedFolderUpdateUser = [];
+                        message.sharedFolderUpdateUser.push($root.Folder.SharedFolderUpdateUser.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 16: {
+                        if (!(message.sharedFolderUpdateTeam && message.sharedFolderUpdateTeam.length))
+                            message.sharedFolderUpdateTeam = [];
+                        message.sharedFolderUpdateTeam.push($root.Folder.SharedFolderUpdateTeam.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 17: {
+                        if (!(message.sharedFolderRemoveRecord && message.sharedFolderRemoveRecord.length))
+                            message.sharedFolderRemoveRecord = [];
+                        message.sharedFolderRemoveRecord.push(reader.bytes());
+                        break;
+                    }
+                case 18: {
+                        if (!(message.sharedFolderRemoveUser && message.sharedFolderRemoveUser.length))
+                            message.sharedFolderRemoveUser = [];
+                        message.sharedFolderRemoveUser.push(reader.string());
+                        break;
+                    }
+                case 19: {
+                        if (!(message.sharedFolderRemoveTeam && message.sharedFolderRemoveTeam.length))
+                            message.sharedFolderRemoveTeam = [];
+                        message.sharedFolderRemoveTeam.push(reader.bytes());
+                        break;
+                    }
+                case 20: {
+                        message.sharedFolderOwner = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateV3Request message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateV3Request} SharedFolderUpdateV3Request
+         */
+        SharedFolderUpdateV3Request.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateV3Request)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateV3Request: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateV3Request();
+            if (object.sharedFolderUpdateOperationDontUse != null)
+                message.sharedFolderUpdateOperationDontUse = object.sharedFolderUpdateOperationDontUse | 0;
+            if (object.sharedFolderUid != null)
+                if (typeof object.sharedFolderUid === "string")
+                    $util.base64.decode(object.sharedFolderUid, message.sharedFolderUid = $util.newBuffer($util.base64.length(object.sharedFolderUid)), 0);
+                else if (object.sharedFolderUid.length >= 0)
+                    message.sharedFolderUid = object.sharedFolderUid;
+            if (object.encryptedSharedFolderName != null)
+                if (typeof object.encryptedSharedFolderName === "string")
+                    $util.base64.decode(object.encryptedSharedFolderName, message.encryptedSharedFolderName = $util.newBuffer($util.base64.length(object.encryptedSharedFolderName)), 0);
+                else if (object.encryptedSharedFolderName.length >= 0)
+                    message.encryptedSharedFolderName = object.encryptedSharedFolderName;
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            if (object.forceUpdate != null)
+                message.forceUpdate = Boolean(object.forceUpdate);
+            if (object.fromTeamUid != null)
+                if (typeof object.fromTeamUid === "string")
+                    $util.base64.decode(object.fromTeamUid, message.fromTeamUid = $util.newBuffer($util.base64.length(object.fromTeamUid)), 0);
+                else if (object.fromTeamUid.length >= 0)
+                    message.fromTeamUid = object.fromTeamUid;
+            switch (object.defaultManageUsers) {
+            default:
+                if (typeof object.defaultManageUsers === "number") {
+                    message.defaultManageUsers = object.defaultManageUsers;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.defaultManageUsers = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.defaultManageUsers = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.defaultManageUsers = 2;
+                break;
+            }
+            switch (object.defaultManageRecords) {
+            default:
+                if (typeof object.defaultManageRecords === "number") {
+                    message.defaultManageRecords = object.defaultManageRecords;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.defaultManageRecords = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.defaultManageRecords = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.defaultManageRecords = 2;
+                break;
+            }
+            switch (object.defaultCanEdit) {
+            default:
+                if (typeof object.defaultCanEdit === "number") {
+                    message.defaultCanEdit = object.defaultCanEdit;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.defaultCanEdit = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.defaultCanEdit = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.defaultCanEdit = 2;
+                break;
+            }
+            switch (object.defaultCanShare) {
+            default:
+                if (typeof object.defaultCanShare === "number") {
+                    message.defaultCanShare = object.defaultCanShare;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.defaultCanShare = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.defaultCanShare = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.defaultCanShare = 2;
+                break;
+            }
+            if (object.sharedFolderAddRecord) {
+                if (!Array.isArray(object.sharedFolderAddRecord))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderAddRecord: array expected");
+                message.sharedFolderAddRecord = [];
+                for (let i = 0; i < object.sharedFolderAddRecord.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderAddRecord[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderAddRecord: object expected");
+                    message.sharedFolderAddRecord[i] = $root.Folder.SharedFolderUpdateRecord.fromObject(object.sharedFolderAddRecord[i], long + 1);
+                }
+            }
+            if (object.sharedFolderAddUser) {
+                if (!Array.isArray(object.sharedFolderAddUser))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderAddUser: array expected");
+                message.sharedFolderAddUser = [];
+                for (let i = 0; i < object.sharedFolderAddUser.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderAddUser[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderAddUser: object expected");
+                    message.sharedFolderAddUser[i] = $root.Folder.SharedFolderUpdateUser.fromObject(object.sharedFolderAddUser[i], long + 1);
+                }
+            }
+            if (object.sharedFolderAddTeam) {
+                if (!Array.isArray(object.sharedFolderAddTeam))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderAddTeam: array expected");
+                message.sharedFolderAddTeam = [];
+                for (let i = 0; i < object.sharedFolderAddTeam.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderAddTeam[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderAddTeam: object expected");
+                    message.sharedFolderAddTeam[i] = $root.Folder.SharedFolderUpdateTeam.fromObject(object.sharedFolderAddTeam[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUpdateRecord) {
+                if (!Array.isArray(object.sharedFolderUpdateRecord))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderUpdateRecord: array expected");
+                message.sharedFolderUpdateRecord = [];
+                for (let i = 0; i < object.sharedFolderUpdateRecord.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderUpdateRecord[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderUpdateRecord: object expected");
+                    message.sharedFolderUpdateRecord[i] = $root.Folder.SharedFolderUpdateRecord.fromObject(object.sharedFolderUpdateRecord[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUpdateUser) {
+                if (!Array.isArray(object.sharedFolderUpdateUser))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderUpdateUser: array expected");
+                message.sharedFolderUpdateUser = [];
+                for (let i = 0; i < object.sharedFolderUpdateUser.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderUpdateUser[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderUpdateUser: object expected");
+                    message.sharedFolderUpdateUser[i] = $root.Folder.SharedFolderUpdateUser.fromObject(object.sharedFolderUpdateUser[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUpdateTeam) {
+                if (!Array.isArray(object.sharedFolderUpdateTeam))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderUpdateTeam: array expected");
+                message.sharedFolderUpdateTeam = [];
+                for (let i = 0; i < object.sharedFolderUpdateTeam.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderUpdateTeam[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderUpdateTeam: object expected");
+                    message.sharedFolderUpdateTeam[i] = $root.Folder.SharedFolderUpdateTeam.fromObject(object.sharedFolderUpdateTeam[i], long + 1);
+                }
+            }
+            if (object.sharedFolderRemoveRecord) {
+                if (!Array.isArray(object.sharedFolderRemoveRecord))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderRemoveRecord: array expected");
+                message.sharedFolderRemoveRecord = [];
+                for (let i = 0; i < object.sharedFolderRemoveRecord.length; ++i)
+                    if (typeof object.sharedFolderRemoveRecord[i] === "string")
+                        $util.base64.decode(object.sharedFolderRemoveRecord[i], message.sharedFolderRemoveRecord[i] = $util.newBuffer($util.base64.length(object.sharedFolderRemoveRecord[i])), 0);
+                    else if (object.sharedFolderRemoveRecord[i].length >= 0)
+                        message.sharedFolderRemoveRecord[i] = object.sharedFolderRemoveRecord[i];
+            }
+            if (object.sharedFolderRemoveUser) {
+                if (!Array.isArray(object.sharedFolderRemoveUser))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderRemoveUser: array expected");
+                message.sharedFolderRemoveUser = [];
+                for (let i = 0; i < object.sharedFolderRemoveUser.length; ++i)
+                    message.sharedFolderRemoveUser[i] = String(object.sharedFolderRemoveUser[i]);
+            }
+            if (object.sharedFolderRemoveTeam) {
+                if (!Array.isArray(object.sharedFolderRemoveTeam))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Request.sharedFolderRemoveTeam: array expected");
+                message.sharedFolderRemoveTeam = [];
+                for (let i = 0; i < object.sharedFolderRemoveTeam.length; ++i)
+                    if (typeof object.sharedFolderRemoveTeam[i] === "string")
+                        $util.base64.decode(object.sharedFolderRemoveTeam[i], message.sharedFolderRemoveTeam[i] = $util.newBuffer($util.base64.length(object.sharedFolderRemoveTeam[i])), 0);
+                    else if (object.sharedFolderRemoveTeam[i].length >= 0)
+                        message.sharedFolderRemoveTeam[i] = object.sharedFolderRemoveTeam[i];
+            }
+            if (object.sharedFolderOwner != null)
+                message.sharedFolderOwner = String(object.sharedFolderOwner);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateV3Request message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @static
+         * @param {Folder.SharedFolderUpdateV3Request} message SharedFolderUpdateV3Request
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateV3Request.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.sharedFolderAddRecord = [];
+                object.sharedFolderAddUser = [];
+                object.sharedFolderAddTeam = [];
+                object.sharedFolderUpdateRecord = [];
+                object.sharedFolderUpdateUser = [];
+                object.sharedFolderUpdateTeam = [];
+                object.sharedFolderRemoveRecord = [];
+                object.sharedFolderRemoveUser = [];
+                object.sharedFolderRemoveTeam = [];
+            }
+            if (options.defaults) {
+                object.sharedFolderUpdateOperationDontUse = 0;
+                if (options.bytes === String)
+                    object.sharedFolderUid = "";
+                else {
+                    object.sharedFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderUid = $util.newBuffer(object.sharedFolderUid);
+                }
+                if (options.bytes === String)
+                    object.encryptedSharedFolderName = "";
+                else {
+                    object.encryptedSharedFolderName = [];
+                    if (options.bytes !== Array)
+                        object.encryptedSharedFolderName = $util.newBuffer(object.encryptedSharedFolderName);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.forceUpdate = false;
+                if (options.bytes === String)
+                    object.fromTeamUid = "";
+                else {
+                    object.fromTeamUid = [];
+                    if (options.bytes !== Array)
+                        object.fromTeamUid = $util.newBuffer(object.fromTeamUid);
+                }
+                object.defaultManageUsers = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.defaultManageRecords = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.defaultCanEdit = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.defaultCanShare = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.sharedFolderOwner = "";
+            }
+            if (message.sharedFolderUpdateOperationDontUse != null && Object.hasOwnProperty.call(message, "sharedFolderUpdateOperationDontUse"))
+                object.sharedFolderUpdateOperationDontUse = message.sharedFolderUpdateOperationDontUse;
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                object.sharedFolderUid = options.bytes === String ? $util.base64.encode(message.sharedFolderUid, 0, message.sharedFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUid) : message.sharedFolderUid;
+            if (message.encryptedSharedFolderName != null && Object.hasOwnProperty.call(message, "encryptedSharedFolderName"))
+                object.encryptedSharedFolderName = options.bytes === String ? $util.base64.encode(message.encryptedSharedFolderName, 0, message.encryptedSharedFolderName.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedSharedFolderName) : message.encryptedSharedFolderName;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            if (message.forceUpdate != null && Object.hasOwnProperty.call(message, "forceUpdate"))
+                object.forceUpdate = message.forceUpdate;
+            if (message.fromTeamUid != null && Object.hasOwnProperty.call(message, "fromTeamUid"))
+                object.fromTeamUid = options.bytes === String ? $util.base64.encode(message.fromTeamUid, 0, message.fromTeamUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.fromTeamUid) : message.fromTeamUid;
+            if (message.defaultManageUsers != null && Object.hasOwnProperty.call(message, "defaultManageUsers"))
+                object.defaultManageUsers = options.enums === String ? $root.Folder.SetBooleanValue[message.defaultManageUsers] === undefined ? message.defaultManageUsers : $root.Folder.SetBooleanValue[message.defaultManageUsers] : message.defaultManageUsers;
+            if (message.defaultManageRecords != null && Object.hasOwnProperty.call(message, "defaultManageRecords"))
+                object.defaultManageRecords = options.enums === String ? $root.Folder.SetBooleanValue[message.defaultManageRecords] === undefined ? message.defaultManageRecords : $root.Folder.SetBooleanValue[message.defaultManageRecords] : message.defaultManageRecords;
+            if (message.defaultCanEdit != null && Object.hasOwnProperty.call(message, "defaultCanEdit"))
+                object.defaultCanEdit = options.enums === String ? $root.Folder.SetBooleanValue[message.defaultCanEdit] === undefined ? message.defaultCanEdit : $root.Folder.SetBooleanValue[message.defaultCanEdit] : message.defaultCanEdit;
+            if (message.defaultCanShare != null && Object.hasOwnProperty.call(message, "defaultCanShare"))
+                object.defaultCanShare = options.enums === String ? $root.Folder.SetBooleanValue[message.defaultCanShare] === undefined ? message.defaultCanShare : $root.Folder.SetBooleanValue[message.defaultCanShare] : message.defaultCanShare;
+            if (message.sharedFolderAddRecord && message.sharedFolderAddRecord.length) {
+                object.sharedFolderAddRecord = [];
+                for (let j = 0; j < message.sharedFolderAddRecord.length; ++j)
+                    object.sharedFolderAddRecord[j] = $root.Folder.SharedFolderUpdateRecord.toObject(message.sharedFolderAddRecord[j], options, q + 1);
+            }
+            if (message.sharedFolderAddUser && message.sharedFolderAddUser.length) {
+                object.sharedFolderAddUser = [];
+                for (let j = 0; j < message.sharedFolderAddUser.length; ++j)
+                    object.sharedFolderAddUser[j] = $root.Folder.SharedFolderUpdateUser.toObject(message.sharedFolderAddUser[j], options, q + 1);
+            }
+            if (message.sharedFolderAddTeam && message.sharedFolderAddTeam.length) {
+                object.sharedFolderAddTeam = [];
+                for (let j = 0; j < message.sharedFolderAddTeam.length; ++j)
+                    object.sharedFolderAddTeam[j] = $root.Folder.SharedFolderUpdateTeam.toObject(message.sharedFolderAddTeam[j], options, q + 1);
+            }
+            if (message.sharedFolderUpdateRecord && message.sharedFolderUpdateRecord.length) {
+                object.sharedFolderUpdateRecord = [];
+                for (let j = 0; j < message.sharedFolderUpdateRecord.length; ++j)
+                    object.sharedFolderUpdateRecord[j] = $root.Folder.SharedFolderUpdateRecord.toObject(message.sharedFolderUpdateRecord[j], options, q + 1);
+            }
+            if (message.sharedFolderUpdateUser && message.sharedFolderUpdateUser.length) {
+                object.sharedFolderUpdateUser = [];
+                for (let j = 0; j < message.sharedFolderUpdateUser.length; ++j)
+                    object.sharedFolderUpdateUser[j] = $root.Folder.SharedFolderUpdateUser.toObject(message.sharedFolderUpdateUser[j], options, q + 1);
+            }
+            if (message.sharedFolderUpdateTeam && message.sharedFolderUpdateTeam.length) {
+                object.sharedFolderUpdateTeam = [];
+                for (let j = 0; j < message.sharedFolderUpdateTeam.length; ++j)
+                    object.sharedFolderUpdateTeam[j] = $root.Folder.SharedFolderUpdateTeam.toObject(message.sharedFolderUpdateTeam[j], options, q + 1);
+            }
+            if (message.sharedFolderRemoveRecord && message.sharedFolderRemoveRecord.length) {
+                object.sharedFolderRemoveRecord = [];
+                for (let j = 0; j < message.sharedFolderRemoveRecord.length; ++j)
+                    object.sharedFolderRemoveRecord[j] = options.bytes === String ? $util.base64.encode(message.sharedFolderRemoveRecord[j], 0, message.sharedFolderRemoveRecord[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderRemoveRecord[j]) : message.sharedFolderRemoveRecord[j];
+            }
+            if (message.sharedFolderRemoveUser && message.sharedFolderRemoveUser.length) {
+                object.sharedFolderRemoveUser = [];
+                for (let j = 0; j < message.sharedFolderRemoveUser.length; ++j)
+                    object.sharedFolderRemoveUser[j] = message.sharedFolderRemoveUser[j];
+            }
+            if (message.sharedFolderRemoveTeam && message.sharedFolderRemoveTeam.length) {
+                object.sharedFolderRemoveTeam = [];
+                for (let j = 0; j < message.sharedFolderRemoveTeam.length; ++j)
+                    object.sharedFolderRemoveTeam[j] = options.bytes === String ? $util.base64.encode(message.sharedFolderRemoveTeam[j], 0, message.sharedFolderRemoveTeam[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderRemoveTeam[j]) : message.sharedFolderRemoveTeam[j];
+            }
+            if (message.sharedFolderOwner != null && Object.hasOwnProperty.call(message, "sharedFolderOwner"))
+                object.sharedFolderOwner = message.sharedFolderOwner;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateV3Request to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateV3Request.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3Request
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateV3Request
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateV3Request.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateV3Request";
+        };
+
+        return SharedFolderUpdateV3Request;
+    })();
+
+    Folder.SharedFolderUpdateV3RequestV2 = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateV3RequestV2.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateV3RequestV2
+         * @property {Array.<Folder.ISharedFolderUpdateV3Request>|null} [sharedFoldersUpdateV3] SharedFolderUpdateV3RequestV2 sharedFoldersUpdateV3
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateV3RequestV2.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateV3RequestV2.
+         * @implements ISharedFolderUpdateV3RequestV2
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateV3RequestV2=} [properties] Properties to set
+         */
+        function SharedFolderUpdateV3RequestV2(properties) {
+            this.sharedFoldersUpdateV3 = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateV3RequestV2 sharedFoldersUpdateV3.
+         * @member {Array.<Folder.ISharedFolderUpdateV3Request>} sharedFoldersUpdateV3
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @instance
+         */
+        SharedFolderUpdateV3RequestV2.prototype.sharedFoldersUpdateV3 = $util.emptyArray;
+
+        /**
+         * Creates a new SharedFolderUpdateV3RequestV2 instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3RequestV2=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateV3RequestV2} SharedFolderUpdateV3RequestV2 instance
+         */
+        SharedFolderUpdateV3RequestV2.create = function create(properties) {
+            return new SharedFolderUpdateV3RequestV2(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3RequestV2 message. Does not implicitly {@link Folder.SharedFolderUpdateV3RequestV2.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3RequestV2} message SharedFolderUpdateV3RequestV2 message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateV3RequestV2.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFoldersUpdateV3 != null && message.sharedFoldersUpdateV3.length)
+                for (let i = 0; i < message.sharedFoldersUpdateV3.length; ++i)
+                    $root.Folder.SharedFolderUpdateV3Request.encode(message.sharedFoldersUpdateV3[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateV3RequestV2 message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateV3RequestV2} SharedFolderUpdateV3RequestV2
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateV3RequestV2.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateV3RequestV2();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.sharedFoldersUpdateV3 && message.sharedFoldersUpdateV3.length))
+                            message.sharedFoldersUpdateV3 = [];
+                        message.sharedFoldersUpdateV3.push($root.Folder.SharedFolderUpdateV3Request.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateV3RequestV2 message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateV3RequestV2} SharedFolderUpdateV3RequestV2
+         */
+        SharedFolderUpdateV3RequestV2.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateV3RequestV2)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateV3RequestV2: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateV3RequestV2();
+            if (object.sharedFoldersUpdateV3) {
+                if (!Array.isArray(object.sharedFoldersUpdateV3))
+                    throw TypeError(".Folder.SharedFolderUpdateV3RequestV2.sharedFoldersUpdateV3: array expected");
+                message.sharedFoldersUpdateV3 = [];
+                for (let i = 0; i < object.sharedFoldersUpdateV3.length; ++i) {
+                    if (!$util.isObject(object.sharedFoldersUpdateV3[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3RequestV2.sharedFoldersUpdateV3: object expected");
+                    message.sharedFoldersUpdateV3[i] = $root.Folder.SharedFolderUpdateV3Request.fromObject(object.sharedFoldersUpdateV3[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateV3RequestV2 message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @static
+         * @param {Folder.SharedFolderUpdateV3RequestV2} message SharedFolderUpdateV3RequestV2
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateV3RequestV2.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.sharedFoldersUpdateV3 = [];
+            if (message.sharedFoldersUpdateV3 && message.sharedFoldersUpdateV3.length) {
+                object.sharedFoldersUpdateV3 = [];
+                for (let j = 0; j < message.sharedFoldersUpdateV3.length; ++j)
+                    object.sharedFoldersUpdateV3[j] = $root.Folder.SharedFolderUpdateV3Request.toObject(message.sharedFoldersUpdateV3[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateV3RequestV2 to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateV3RequestV2.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3RequestV2
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateV3RequestV2
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateV3RequestV2.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateV3RequestV2";
+        };
+
+        return SharedFolderUpdateV3RequestV2;
+    })();
+
+    Folder.SharedFolderUpdateRecordStatus = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateRecordStatus.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateRecordStatus
+         * @property {Uint8Array|null} [recordUid] SharedFolderUpdateRecordStatus recordUid
+         * @property {string|null} [status] SharedFolderUpdateRecordStatus status
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateRecordStatus.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateRecordStatus.
+         * @implements ISharedFolderUpdateRecordStatus
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateRecordStatus=} [properties] Properties to set
+         */
+        function SharedFolderUpdateRecordStatus(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateRecordStatus recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @instance
+         */
+        SharedFolderUpdateRecordStatus.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateRecordStatus status.
+         * @member {string} status
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @instance
+         */
+        SharedFolderUpdateRecordStatus.prototype.status = "";
+
+        /**
+         * Creates a new SharedFolderUpdateRecordStatus instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @static
+         * @param {Folder.ISharedFolderUpdateRecordStatus=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateRecordStatus} SharedFolderUpdateRecordStatus instance
+         */
+        SharedFolderUpdateRecordStatus.create = function create(properties) {
+            return new SharedFolderUpdateRecordStatus(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateRecordStatus message. Does not implicitly {@link Folder.SharedFolderUpdateRecordStatus.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @static
+         * @param {Folder.ISharedFolderUpdateRecordStatus} message SharedFolderUpdateRecordStatus message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateRecordStatus.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.status);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateRecordStatus message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateRecordStatus} SharedFolderUpdateRecordStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateRecordStatus.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateRecordStatus();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.status = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateRecordStatus message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateRecordStatus} SharedFolderUpdateRecordStatus
+         */
+        SharedFolderUpdateRecordStatus.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateRecordStatus)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateRecordStatus: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateRecordStatus();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.status != null)
+                message.status = String(object.status);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateRecordStatus message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @static
+         * @param {Folder.SharedFolderUpdateRecordStatus} message SharedFolderUpdateRecordStatus
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateRecordStatus.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                object.status = "";
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateRecordStatus to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateRecordStatus.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateRecordStatus
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateRecordStatus
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateRecordStatus.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateRecordStatus";
+        };
+
+        return SharedFolderUpdateRecordStatus;
+    })();
+
+    Folder.SharedFolderUpdateUserStatus = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateUserStatus.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateUserStatus
+         * @property {string|null} [username] SharedFolderUpdateUserStatus username
+         * @property {string|null} [status] SharedFolderUpdateUserStatus status
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateUserStatus.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateUserStatus.
+         * @implements ISharedFolderUpdateUserStatus
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateUserStatus=} [properties] Properties to set
+         */
+        function SharedFolderUpdateUserStatus(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateUserStatus username.
+         * @member {string} username
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @instance
+         */
+        SharedFolderUpdateUserStatus.prototype.username = "";
+
+        /**
+         * SharedFolderUpdateUserStatus status.
+         * @member {string} status
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @instance
+         */
+        SharedFolderUpdateUserStatus.prototype.status = "";
+
+        /**
+         * Creates a new SharedFolderUpdateUserStatus instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @static
+         * @param {Folder.ISharedFolderUpdateUserStatus=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateUserStatus} SharedFolderUpdateUserStatus instance
+         */
+        SharedFolderUpdateUserStatus.create = function create(properties) {
+            return new SharedFolderUpdateUserStatus(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateUserStatus message. Does not implicitly {@link Folder.SharedFolderUpdateUserStatus.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @static
+         * @param {Folder.ISharedFolderUpdateUserStatus} message SharedFolderUpdateUserStatus message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateUserStatus.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.username);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.status);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateUserStatus message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateUserStatus} SharedFolderUpdateUserStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateUserStatus.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateUserStatus();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.username = reader.string();
+                        break;
+                    }
+                case 2: {
+                        message.status = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateUserStatus message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateUserStatus} SharedFolderUpdateUserStatus
+         */
+        SharedFolderUpdateUserStatus.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateUserStatus)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateUserStatus: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateUserStatus();
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.status != null)
+                message.status = String(object.status);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateUserStatus message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @static
+         * @param {Folder.SharedFolderUpdateUserStatus} message SharedFolderUpdateUserStatus
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateUserStatus.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                object.username = "";
+                object.status = "";
+            }
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                object.username = message.username;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateUserStatus to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateUserStatus.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateUserStatus
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateUserStatus
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateUserStatus.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateUserStatus";
+        };
+
+        return SharedFolderUpdateUserStatus;
+    })();
+
+    Folder.SharedFolderUpdateTeamStatus = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateTeamStatus.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateTeamStatus
+         * @property {Uint8Array|null} [teamUid] SharedFolderUpdateTeamStatus teamUid
+         * @property {string|null} [status] SharedFolderUpdateTeamStatus status
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateTeamStatus.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateTeamStatus.
+         * @implements ISharedFolderUpdateTeamStatus
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateTeamStatus=} [properties] Properties to set
+         */
+        function SharedFolderUpdateTeamStatus(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateTeamStatus teamUid.
+         * @member {Uint8Array} teamUid
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @instance
+         */
+        SharedFolderUpdateTeamStatus.prototype.teamUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateTeamStatus status.
+         * @member {string} status
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @instance
+         */
+        SharedFolderUpdateTeamStatus.prototype.status = "";
+
+        /**
+         * Creates a new SharedFolderUpdateTeamStatus instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @static
+         * @param {Folder.ISharedFolderUpdateTeamStatus=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateTeamStatus} SharedFolderUpdateTeamStatus instance
+         */
+        SharedFolderUpdateTeamStatus.create = function create(properties) {
+            return new SharedFolderUpdateTeamStatus(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateTeamStatus message. Does not implicitly {@link Folder.SharedFolderUpdateTeamStatus.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @static
+         * @param {Folder.ISharedFolderUpdateTeamStatus} message SharedFolderUpdateTeamStatus message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateTeamStatus.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.teamUid);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.status);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateTeamStatus message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateTeamStatus} SharedFolderUpdateTeamStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateTeamStatus.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateTeamStatus();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.teamUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.status = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateTeamStatus message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateTeamStatus} SharedFolderUpdateTeamStatus
+         */
+        SharedFolderUpdateTeamStatus.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateTeamStatus)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateTeamStatus: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateTeamStatus();
+            if (object.teamUid != null)
+                if (typeof object.teamUid === "string")
+                    $util.base64.decode(object.teamUid, message.teamUid = $util.newBuffer($util.base64.length(object.teamUid)), 0);
+                else if (object.teamUid.length >= 0)
+                    message.teamUid = object.teamUid;
+            if (object.status != null)
+                message.status = String(object.status);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateTeamStatus message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @static
+         * @param {Folder.SharedFolderUpdateTeamStatus} message SharedFolderUpdateTeamStatus
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateTeamStatus.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.teamUid = "";
+                else {
+                    object.teamUid = [];
+                    if (options.bytes !== Array)
+                        object.teamUid = $util.newBuffer(object.teamUid);
+                }
+                object.status = "";
+            }
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                object.teamUid = options.bytes === String ? $util.base64.encode(message.teamUid, 0, message.teamUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamUid) : message.teamUid;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateTeamStatus to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateTeamStatus.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateTeamStatus
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateTeamStatus
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateTeamStatus.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateTeamStatus";
+        };
+
+        return SharedFolderUpdateTeamStatus;
+    })();
+
+    Folder.SharedFolderUpdateV3Response = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateV3Response.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateV3Response
+         * @property {number|null} [revision] SharedFolderUpdateV3Response revision
+         * @property {Array.<Folder.ISharedFolderUpdateRecordStatus>|null} [sharedFolderAddRecordStatus] SharedFolderUpdateV3Response sharedFolderAddRecordStatus
+         * @property {Array.<Folder.ISharedFolderUpdateUserStatus>|null} [sharedFolderAddUserStatus] SharedFolderUpdateV3Response sharedFolderAddUserStatus
+         * @property {Array.<Folder.ISharedFolderUpdateTeamStatus>|null} [sharedFolderAddTeamStatus] SharedFolderUpdateV3Response sharedFolderAddTeamStatus
+         * @property {Array.<Folder.ISharedFolderUpdateRecordStatus>|null} [sharedFolderUpdateRecordStatus] SharedFolderUpdateV3Response sharedFolderUpdateRecordStatus
+         * @property {Array.<Folder.ISharedFolderUpdateUserStatus>|null} [sharedFolderUpdateUserStatus] SharedFolderUpdateV3Response sharedFolderUpdateUserStatus
+         * @property {Array.<Folder.ISharedFolderUpdateTeamStatus>|null} [sharedFolderUpdateTeamStatus] SharedFolderUpdateV3Response sharedFolderUpdateTeamStatus
+         * @property {Array.<Folder.ISharedFolderUpdateRecordStatus>|null} [sharedFolderRemoveRecordStatus] SharedFolderUpdateV3Response sharedFolderRemoveRecordStatus
+         * @property {Array.<Folder.ISharedFolderUpdateUserStatus>|null} [sharedFolderRemoveUserStatus] SharedFolderUpdateV3Response sharedFolderRemoveUserStatus
+         * @property {Array.<Folder.ISharedFolderUpdateTeamStatus>|null} [sharedFolderRemoveTeamStatus] SharedFolderUpdateV3Response sharedFolderRemoveTeamStatus
+         * @property {Uint8Array|null} [sharedFolderUid] SharedFolderUpdateV3Response sharedFolderUid
+         * @property {string|null} [status] SharedFolderUpdateV3Response status
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateV3Response.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateV3Response.
+         * @implements ISharedFolderUpdateV3Response
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateV3Response=} [properties] Properties to set
+         */
+        function SharedFolderUpdateV3Response(properties) {
+            this.sharedFolderAddRecordStatus = [];
+            this.sharedFolderAddUserStatus = [];
+            this.sharedFolderAddTeamStatus = [];
+            this.sharedFolderUpdateRecordStatus = [];
+            this.sharedFolderUpdateUserStatus = [];
+            this.sharedFolderUpdateTeamStatus = [];
+            this.sharedFolderRemoveRecordStatus = [];
+            this.sharedFolderRemoveUserStatus = [];
+            this.sharedFolderRemoveTeamStatus = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateV3Response revision.
+         * @member {number} revision
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderAddRecordStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateRecordStatus>} sharedFolderAddRecordStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderAddRecordStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderAddUserStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateUserStatus>} sharedFolderAddUserStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderAddUserStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderAddTeamStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateTeamStatus>} sharedFolderAddTeamStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderAddTeamStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderUpdateRecordStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateRecordStatus>} sharedFolderUpdateRecordStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderUpdateRecordStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderUpdateUserStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateUserStatus>} sharedFolderUpdateUserStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderUpdateUserStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderUpdateTeamStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateTeamStatus>} sharedFolderUpdateTeamStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderUpdateTeamStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderRemoveRecordStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateRecordStatus>} sharedFolderRemoveRecordStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderRemoveRecordStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderRemoveUserStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateUserStatus>} sharedFolderRemoveUserStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderRemoveUserStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderRemoveTeamStatus.
+         * @member {Array.<Folder.ISharedFolderUpdateTeamStatus>} sharedFolderRemoveTeamStatus
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderRemoveTeamStatus = $util.emptyArray;
+
+        /**
+         * SharedFolderUpdateV3Response sharedFolderUid.
+         * @member {Uint8Array} sharedFolderUid
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.sharedFolderUid = $util.newBuffer([]);
+
+        /**
+         * SharedFolderUpdateV3Response status.
+         * @member {string} status
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         */
+        SharedFolderUpdateV3Response.prototype.status = "";
+
+        /**
+         * Creates a new SharedFolderUpdateV3Response instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3Response=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateV3Response} SharedFolderUpdateV3Response instance
+         */
+        SharedFolderUpdateV3Response.create = function create(properties) {
+            return new SharedFolderUpdateV3Response(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3Response message. Does not implicitly {@link Folder.SharedFolderUpdateV3Response.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3Response} message SharedFolderUpdateV3Response message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateV3Response.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.revision);
+            if (message.sharedFolderAddRecordStatus != null && message.sharedFolderAddRecordStatus.length)
+                for (let i = 0; i < message.sharedFolderAddRecordStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateRecordStatus.encode(message.sharedFolderAddRecordStatus[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            if (message.sharedFolderAddUserStatus != null && message.sharedFolderAddUserStatus.length)
+                for (let i = 0; i < message.sharedFolderAddUserStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateUserStatus.encode(message.sharedFolderAddUserStatus[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+            if (message.sharedFolderAddTeamStatus != null && message.sharedFolderAddTeamStatus.length)
+                for (let i = 0; i < message.sharedFolderAddTeamStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateTeamStatus.encode(message.sharedFolderAddTeamStatus[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+            if (message.sharedFolderUpdateRecordStatus != null && message.sharedFolderUpdateRecordStatus.length)
+                for (let i = 0; i < message.sharedFolderUpdateRecordStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateRecordStatus.encode(message.sharedFolderUpdateRecordStatus[i], writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+            if (message.sharedFolderUpdateUserStatus != null && message.sharedFolderUpdateUserStatus.length)
+                for (let i = 0; i < message.sharedFolderUpdateUserStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateUserStatus.encode(message.sharedFolderUpdateUserStatus[i], writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+            if (message.sharedFolderUpdateTeamStatus != null && message.sharedFolderUpdateTeamStatus.length)
+                for (let i = 0; i < message.sharedFolderUpdateTeamStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateTeamStatus.encode(message.sharedFolderUpdateTeamStatus[i], writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+            if (message.sharedFolderRemoveRecordStatus != null && message.sharedFolderRemoveRecordStatus.length)
+                for (let i = 0; i < message.sharedFolderRemoveRecordStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateRecordStatus.encode(message.sharedFolderRemoveRecordStatus[i], writer.uint32(/* id 8, wireType 2 =*/66).fork(), q + 1).ldelim();
+            if (message.sharedFolderRemoveUserStatus != null && message.sharedFolderRemoveUserStatus.length)
+                for (let i = 0; i < message.sharedFolderRemoveUserStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateUserStatus.encode(message.sharedFolderRemoveUserStatus[i], writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
+            if (message.sharedFolderRemoveTeamStatus != null && message.sharedFolderRemoveTeamStatus.length)
+                for (let i = 0; i < message.sharedFolderRemoveTeamStatus.length; ++i)
+                    $root.Folder.SharedFolderUpdateTeamStatus.encode(message.sharedFolderRemoveTeamStatus[i], writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                writer.uint32(/* id 12, wireType 2 =*/98).bytes(message.sharedFolderUid);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 13, wireType 2 =*/106).string(message.status);
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateV3Response message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateV3Response} SharedFolderUpdateV3Response
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateV3Response.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateV3Response();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                case 2: {
+                        if (!(message.sharedFolderAddRecordStatus && message.sharedFolderAddRecordStatus.length))
+                            message.sharedFolderAddRecordStatus = [];
+                        message.sharedFolderAddRecordStatus.push($root.Folder.SharedFolderUpdateRecordStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 3: {
+                        if (!(message.sharedFolderAddUserStatus && message.sharedFolderAddUserStatus.length))
+                            message.sharedFolderAddUserStatus = [];
+                        message.sharedFolderAddUserStatus.push($root.Folder.SharedFolderUpdateUserStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 4: {
+                        if (!(message.sharedFolderAddTeamStatus && message.sharedFolderAddTeamStatus.length))
+                            message.sharedFolderAddTeamStatus = [];
+                        message.sharedFolderAddTeamStatus.push($root.Folder.SharedFolderUpdateTeamStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 5: {
+                        if (!(message.sharedFolderUpdateRecordStatus && message.sharedFolderUpdateRecordStatus.length))
+                            message.sharedFolderUpdateRecordStatus = [];
+                        message.sharedFolderUpdateRecordStatus.push($root.Folder.SharedFolderUpdateRecordStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 6: {
+                        if (!(message.sharedFolderUpdateUserStatus && message.sharedFolderUpdateUserStatus.length))
+                            message.sharedFolderUpdateUserStatus = [];
+                        message.sharedFolderUpdateUserStatus.push($root.Folder.SharedFolderUpdateUserStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 7: {
+                        if (!(message.sharedFolderUpdateTeamStatus && message.sharedFolderUpdateTeamStatus.length))
+                            message.sharedFolderUpdateTeamStatus = [];
+                        message.sharedFolderUpdateTeamStatus.push($root.Folder.SharedFolderUpdateTeamStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 8: {
+                        if (!(message.sharedFolderRemoveRecordStatus && message.sharedFolderRemoveRecordStatus.length))
+                            message.sharedFolderRemoveRecordStatus = [];
+                        message.sharedFolderRemoveRecordStatus.push($root.Folder.SharedFolderUpdateRecordStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 9: {
+                        if (!(message.sharedFolderRemoveUserStatus && message.sharedFolderRemoveUserStatus.length))
+                            message.sharedFolderRemoveUserStatus = [];
+                        message.sharedFolderRemoveUserStatus.push($root.Folder.SharedFolderUpdateUserStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 10: {
+                        if (!(message.sharedFolderRemoveTeamStatus && message.sharedFolderRemoveTeamStatus.length))
+                            message.sharedFolderRemoveTeamStatus = [];
+                        message.sharedFolderRemoveTeamStatus.push($root.Folder.SharedFolderUpdateTeamStatus.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 12: {
+                        message.sharedFolderUid = reader.bytes();
+                        break;
+                    }
+                case 13: {
+                        message.status = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateV3Response message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateV3Response} SharedFolderUpdateV3Response
+         */
+        SharedFolderUpdateV3Response.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateV3Response)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateV3Response: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateV3Response();
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            if (object.sharedFolderAddRecordStatus) {
+                if (!Array.isArray(object.sharedFolderAddRecordStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderAddRecordStatus: array expected");
+                message.sharedFolderAddRecordStatus = [];
+                for (let i = 0; i < object.sharedFolderAddRecordStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderAddRecordStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderAddRecordStatus: object expected");
+                    message.sharedFolderAddRecordStatus[i] = $root.Folder.SharedFolderUpdateRecordStatus.fromObject(object.sharedFolderAddRecordStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderAddUserStatus) {
+                if (!Array.isArray(object.sharedFolderAddUserStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderAddUserStatus: array expected");
+                message.sharedFolderAddUserStatus = [];
+                for (let i = 0; i < object.sharedFolderAddUserStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderAddUserStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderAddUserStatus: object expected");
+                    message.sharedFolderAddUserStatus[i] = $root.Folder.SharedFolderUpdateUserStatus.fromObject(object.sharedFolderAddUserStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderAddTeamStatus) {
+                if (!Array.isArray(object.sharedFolderAddTeamStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderAddTeamStatus: array expected");
+                message.sharedFolderAddTeamStatus = [];
+                for (let i = 0; i < object.sharedFolderAddTeamStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderAddTeamStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderAddTeamStatus: object expected");
+                    message.sharedFolderAddTeamStatus[i] = $root.Folder.SharedFolderUpdateTeamStatus.fromObject(object.sharedFolderAddTeamStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUpdateRecordStatus) {
+                if (!Array.isArray(object.sharedFolderUpdateRecordStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderUpdateRecordStatus: array expected");
+                message.sharedFolderUpdateRecordStatus = [];
+                for (let i = 0; i < object.sharedFolderUpdateRecordStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderUpdateRecordStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderUpdateRecordStatus: object expected");
+                    message.sharedFolderUpdateRecordStatus[i] = $root.Folder.SharedFolderUpdateRecordStatus.fromObject(object.sharedFolderUpdateRecordStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUpdateUserStatus) {
+                if (!Array.isArray(object.sharedFolderUpdateUserStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderUpdateUserStatus: array expected");
+                message.sharedFolderUpdateUserStatus = [];
+                for (let i = 0; i < object.sharedFolderUpdateUserStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderUpdateUserStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderUpdateUserStatus: object expected");
+                    message.sharedFolderUpdateUserStatus[i] = $root.Folder.SharedFolderUpdateUserStatus.fromObject(object.sharedFolderUpdateUserStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUpdateTeamStatus) {
+                if (!Array.isArray(object.sharedFolderUpdateTeamStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderUpdateTeamStatus: array expected");
+                message.sharedFolderUpdateTeamStatus = [];
+                for (let i = 0; i < object.sharedFolderUpdateTeamStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderUpdateTeamStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderUpdateTeamStatus: object expected");
+                    message.sharedFolderUpdateTeamStatus[i] = $root.Folder.SharedFolderUpdateTeamStatus.fromObject(object.sharedFolderUpdateTeamStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderRemoveRecordStatus) {
+                if (!Array.isArray(object.sharedFolderRemoveRecordStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderRemoveRecordStatus: array expected");
+                message.sharedFolderRemoveRecordStatus = [];
+                for (let i = 0; i < object.sharedFolderRemoveRecordStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderRemoveRecordStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderRemoveRecordStatus: object expected");
+                    message.sharedFolderRemoveRecordStatus[i] = $root.Folder.SharedFolderUpdateRecordStatus.fromObject(object.sharedFolderRemoveRecordStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderRemoveUserStatus) {
+                if (!Array.isArray(object.sharedFolderRemoveUserStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderRemoveUserStatus: array expected");
+                message.sharedFolderRemoveUserStatus = [];
+                for (let i = 0; i < object.sharedFolderRemoveUserStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderRemoveUserStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderRemoveUserStatus: object expected");
+                    message.sharedFolderRemoveUserStatus[i] = $root.Folder.SharedFolderUpdateUserStatus.fromObject(object.sharedFolderRemoveUserStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderRemoveTeamStatus) {
+                if (!Array.isArray(object.sharedFolderRemoveTeamStatus))
+                    throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderRemoveTeamStatus: array expected");
+                message.sharedFolderRemoveTeamStatus = [];
+                for (let i = 0; i < object.sharedFolderRemoveTeamStatus.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderRemoveTeamStatus[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3Response.sharedFolderRemoveTeamStatus: object expected");
+                    message.sharedFolderRemoveTeamStatus[i] = $root.Folder.SharedFolderUpdateTeamStatus.fromObject(object.sharedFolderRemoveTeamStatus[i], long + 1);
+                }
+            }
+            if (object.sharedFolderUid != null)
+                if (typeof object.sharedFolderUid === "string")
+                    $util.base64.decode(object.sharedFolderUid, message.sharedFolderUid = $util.newBuffer($util.base64.length(object.sharedFolderUid)), 0);
+                else if (object.sharedFolderUid.length >= 0)
+                    message.sharedFolderUid = object.sharedFolderUid;
+            if (object.status != null)
+                message.status = String(object.status);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateV3Response message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @static
+         * @param {Folder.SharedFolderUpdateV3Response} message SharedFolderUpdateV3Response
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateV3Response.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.sharedFolderAddRecordStatus = [];
+                object.sharedFolderAddUserStatus = [];
+                object.sharedFolderAddTeamStatus = [];
+                object.sharedFolderUpdateRecordStatus = [];
+                object.sharedFolderUpdateUserStatus = [];
+                object.sharedFolderUpdateTeamStatus = [];
+                object.sharedFolderRemoveRecordStatus = [];
+                object.sharedFolderRemoveUserStatus = [];
+                object.sharedFolderRemoveTeamStatus = [];
+            }
+            if (options.defaults) {
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if (options.bytes === String)
+                    object.sharedFolderUid = "";
+                else {
+                    object.sharedFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderUid = $util.newBuffer(object.sharedFolderUid);
+                }
+                object.status = "";
+            }
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            if (message.sharedFolderAddRecordStatus && message.sharedFolderAddRecordStatus.length) {
+                object.sharedFolderAddRecordStatus = [];
+                for (let j = 0; j < message.sharedFolderAddRecordStatus.length; ++j)
+                    object.sharedFolderAddRecordStatus[j] = $root.Folder.SharedFolderUpdateRecordStatus.toObject(message.sharedFolderAddRecordStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderAddUserStatus && message.sharedFolderAddUserStatus.length) {
+                object.sharedFolderAddUserStatus = [];
+                for (let j = 0; j < message.sharedFolderAddUserStatus.length; ++j)
+                    object.sharedFolderAddUserStatus[j] = $root.Folder.SharedFolderUpdateUserStatus.toObject(message.sharedFolderAddUserStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderAddTeamStatus && message.sharedFolderAddTeamStatus.length) {
+                object.sharedFolderAddTeamStatus = [];
+                for (let j = 0; j < message.sharedFolderAddTeamStatus.length; ++j)
+                    object.sharedFolderAddTeamStatus[j] = $root.Folder.SharedFolderUpdateTeamStatus.toObject(message.sharedFolderAddTeamStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderUpdateRecordStatus && message.sharedFolderUpdateRecordStatus.length) {
+                object.sharedFolderUpdateRecordStatus = [];
+                for (let j = 0; j < message.sharedFolderUpdateRecordStatus.length; ++j)
+                    object.sharedFolderUpdateRecordStatus[j] = $root.Folder.SharedFolderUpdateRecordStatus.toObject(message.sharedFolderUpdateRecordStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderUpdateUserStatus && message.sharedFolderUpdateUserStatus.length) {
+                object.sharedFolderUpdateUserStatus = [];
+                for (let j = 0; j < message.sharedFolderUpdateUserStatus.length; ++j)
+                    object.sharedFolderUpdateUserStatus[j] = $root.Folder.SharedFolderUpdateUserStatus.toObject(message.sharedFolderUpdateUserStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderUpdateTeamStatus && message.sharedFolderUpdateTeamStatus.length) {
+                object.sharedFolderUpdateTeamStatus = [];
+                for (let j = 0; j < message.sharedFolderUpdateTeamStatus.length; ++j)
+                    object.sharedFolderUpdateTeamStatus[j] = $root.Folder.SharedFolderUpdateTeamStatus.toObject(message.sharedFolderUpdateTeamStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderRemoveRecordStatus && message.sharedFolderRemoveRecordStatus.length) {
+                object.sharedFolderRemoveRecordStatus = [];
+                for (let j = 0; j < message.sharedFolderRemoveRecordStatus.length; ++j)
+                    object.sharedFolderRemoveRecordStatus[j] = $root.Folder.SharedFolderUpdateRecordStatus.toObject(message.sharedFolderRemoveRecordStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderRemoveUserStatus && message.sharedFolderRemoveUserStatus.length) {
+                object.sharedFolderRemoveUserStatus = [];
+                for (let j = 0; j < message.sharedFolderRemoveUserStatus.length; ++j)
+                    object.sharedFolderRemoveUserStatus[j] = $root.Folder.SharedFolderUpdateUserStatus.toObject(message.sharedFolderRemoveUserStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderRemoveTeamStatus && message.sharedFolderRemoveTeamStatus.length) {
+                object.sharedFolderRemoveTeamStatus = [];
+                for (let j = 0; j < message.sharedFolderRemoveTeamStatus.length; ++j)
+                    object.sharedFolderRemoveTeamStatus[j] = $root.Folder.SharedFolderUpdateTeamStatus.toObject(message.sharedFolderRemoveTeamStatus[j], options, q + 1);
+            }
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                object.sharedFolderUid = options.bytes === String ? $util.base64.encode(message.sharedFolderUid, 0, message.sharedFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUid) : message.sharedFolderUid;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateV3Response to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateV3Response.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3Response
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateV3Response
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateV3Response.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateV3Response";
+        };
+
+        return SharedFolderUpdateV3Response;
+    })();
+
+    Folder.SharedFolderUpdateV3ResponseV2 = (function() {
+
+        /**
+         * Properties of a SharedFolderUpdateV3ResponseV2.
+         * @memberof Folder
+         * @interface ISharedFolderUpdateV3ResponseV2
+         * @property {Array.<Folder.ISharedFolderUpdateV3Response>|null} [sharedFoldersUpdateV3Response] SharedFolderUpdateV3ResponseV2 sharedFoldersUpdateV3Response
+         */
+
+        /**
+         * Constructs a new SharedFolderUpdateV3ResponseV2.
+         * @memberof Folder
+         * @classdesc Represents a SharedFolderUpdateV3ResponseV2.
+         * @implements ISharedFolderUpdateV3ResponseV2
+         * @constructor
+         * @param {Folder.ISharedFolderUpdateV3ResponseV2=} [properties] Properties to set
+         */
+        function SharedFolderUpdateV3ResponseV2(properties) {
+            this.sharedFoldersUpdateV3Response = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SharedFolderUpdateV3ResponseV2 sharedFoldersUpdateV3Response.
+         * @member {Array.<Folder.ISharedFolderUpdateV3Response>} sharedFoldersUpdateV3Response
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @instance
+         */
+        SharedFolderUpdateV3ResponseV2.prototype.sharedFoldersUpdateV3Response = $util.emptyArray;
+
+        /**
+         * Creates a new SharedFolderUpdateV3ResponseV2 instance using the specified properties.
+         * @function create
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3ResponseV2=} [properties] Properties to set
+         * @returns {Folder.SharedFolderUpdateV3ResponseV2} SharedFolderUpdateV3ResponseV2 instance
+         */
+        SharedFolderUpdateV3ResponseV2.create = function create(properties) {
+            return new SharedFolderUpdateV3ResponseV2(properties);
+        };
+
+        /**
+         * Encodes the specified SharedFolderUpdateV3ResponseV2 message. Does not implicitly {@link Folder.SharedFolderUpdateV3ResponseV2.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @static
+         * @param {Folder.ISharedFolderUpdateV3ResponseV2} message SharedFolderUpdateV3ResponseV2 message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SharedFolderUpdateV3ResponseV2.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFoldersUpdateV3Response != null && message.sharedFoldersUpdateV3Response.length)
+                for (let i = 0; i < message.sharedFoldersUpdateV3Response.length; ++i)
+                    $root.Folder.SharedFolderUpdateV3Response.encode(message.sharedFoldersUpdateV3Response[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a SharedFolderUpdateV3ResponseV2 message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.SharedFolderUpdateV3ResponseV2} SharedFolderUpdateV3ResponseV2
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SharedFolderUpdateV3ResponseV2.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.SharedFolderUpdateV3ResponseV2();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.sharedFoldersUpdateV3Response && message.sharedFoldersUpdateV3Response.length))
+                            message.sharedFoldersUpdateV3Response = [];
+                        message.sharedFoldersUpdateV3Response.push($root.Folder.SharedFolderUpdateV3Response.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SharedFolderUpdateV3ResponseV2 message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.SharedFolderUpdateV3ResponseV2} SharedFolderUpdateV3ResponseV2
+         */
+        SharedFolderUpdateV3ResponseV2.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.SharedFolderUpdateV3ResponseV2)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.SharedFolderUpdateV3ResponseV2: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.SharedFolderUpdateV3ResponseV2();
+            if (object.sharedFoldersUpdateV3Response) {
+                if (!Array.isArray(object.sharedFoldersUpdateV3Response))
+                    throw TypeError(".Folder.SharedFolderUpdateV3ResponseV2.sharedFoldersUpdateV3Response: array expected");
+                message.sharedFoldersUpdateV3Response = [];
+                for (let i = 0; i < object.sharedFoldersUpdateV3Response.length; ++i) {
+                    if (!$util.isObject(object.sharedFoldersUpdateV3Response[i]))
+                        throw TypeError(".Folder.SharedFolderUpdateV3ResponseV2.sharedFoldersUpdateV3Response: object expected");
+                    message.sharedFoldersUpdateV3Response[i] = $root.Folder.SharedFolderUpdateV3Response.fromObject(object.sharedFoldersUpdateV3Response[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SharedFolderUpdateV3ResponseV2 message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @static
+         * @param {Folder.SharedFolderUpdateV3ResponseV2} message SharedFolderUpdateV3ResponseV2
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SharedFolderUpdateV3ResponseV2.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.sharedFoldersUpdateV3Response = [];
+            if (message.sharedFoldersUpdateV3Response && message.sharedFoldersUpdateV3Response.length) {
+                object.sharedFoldersUpdateV3Response = [];
+                for (let j = 0; j < message.sharedFoldersUpdateV3Response.length; ++j)
+                    object.sharedFoldersUpdateV3Response[j] = $root.Folder.SharedFolderUpdateV3Response.toObject(message.sharedFoldersUpdateV3Response[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SharedFolderUpdateV3ResponseV2 to JSON.
+         * @function toJSON
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SharedFolderUpdateV3ResponseV2.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SharedFolderUpdateV3ResponseV2
+         * @function getTypeUrl
+         * @memberof Folder.SharedFolderUpdateV3ResponseV2
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SharedFolderUpdateV3ResponseV2.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.SharedFolderUpdateV3ResponseV2";
+        };
+
+        return SharedFolderUpdateV3ResponseV2;
+    })();
+
+    Folder.GetDeletedSharedFoldersAndRecordsResponse = (function() {
+
+        /**
+         * Properties of a GetDeletedSharedFoldersAndRecordsResponse.
+         * @memberof Folder
+         * @interface IGetDeletedSharedFoldersAndRecordsResponse
+         * @property {Array.<Folder.IDeletedSharedFolder>|null} [sharedFolders] GetDeletedSharedFoldersAndRecordsResponse sharedFolders
+         * @property {Array.<Folder.IDeletedSharedFolderRecord>|null} [sharedFolderRecords] GetDeletedSharedFoldersAndRecordsResponse sharedFolderRecords
+         * @property {Array.<Folder.IDeletedRecordData>|null} [deletedRecordData] GetDeletedSharedFoldersAndRecordsResponse deletedRecordData
+         * @property {Array.<Folder.IUsername>|null} [usernames] GetDeletedSharedFoldersAndRecordsResponse usernames
+         */
+
+        /**
+         * Constructs a new GetDeletedSharedFoldersAndRecordsResponse.
+         * @memberof Folder
+         * @classdesc Represents a GetDeletedSharedFoldersAndRecordsResponse.
+         * @implements IGetDeletedSharedFoldersAndRecordsResponse
+         * @constructor
+         * @param {Folder.IGetDeletedSharedFoldersAndRecordsResponse=} [properties] Properties to set
+         */
+        function GetDeletedSharedFoldersAndRecordsResponse(properties) {
+            this.sharedFolders = [];
+            this.sharedFolderRecords = [];
+            this.deletedRecordData = [];
+            this.usernames = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetDeletedSharedFoldersAndRecordsResponse sharedFolders.
+         * @member {Array.<Folder.IDeletedSharedFolder>} sharedFolders
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @instance
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.prototype.sharedFolders = $util.emptyArray;
+
+        /**
+         * GetDeletedSharedFoldersAndRecordsResponse sharedFolderRecords.
+         * @member {Array.<Folder.IDeletedSharedFolderRecord>} sharedFolderRecords
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @instance
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.prototype.sharedFolderRecords = $util.emptyArray;
+
+        /**
+         * GetDeletedSharedFoldersAndRecordsResponse deletedRecordData.
+         * @member {Array.<Folder.IDeletedRecordData>} deletedRecordData
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @instance
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.prototype.deletedRecordData = $util.emptyArray;
+
+        /**
+         * GetDeletedSharedFoldersAndRecordsResponse usernames.
+         * @member {Array.<Folder.IUsername>} usernames
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @instance
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.prototype.usernames = $util.emptyArray;
+
+        /**
+         * Creates a new GetDeletedSharedFoldersAndRecordsResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @static
+         * @param {Folder.IGetDeletedSharedFoldersAndRecordsResponse=} [properties] Properties to set
+         * @returns {Folder.GetDeletedSharedFoldersAndRecordsResponse} GetDeletedSharedFoldersAndRecordsResponse instance
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.create = function create(properties) {
+            return new GetDeletedSharedFoldersAndRecordsResponse(properties);
+        };
+
+        /**
+         * Encodes the specified GetDeletedSharedFoldersAndRecordsResponse message. Does not implicitly {@link Folder.GetDeletedSharedFoldersAndRecordsResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @static
+         * @param {Folder.IGetDeletedSharedFoldersAndRecordsResponse} message GetDeletedSharedFoldersAndRecordsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolders != null && message.sharedFolders.length)
+                for (let i = 0; i < message.sharedFolders.length; ++i)
+                    $root.Folder.DeletedSharedFolder.encode(message.sharedFolders[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            if (message.sharedFolderRecords != null && message.sharedFolderRecords.length)
+                for (let i = 0; i < message.sharedFolderRecords.length; ++i)
+                    $root.Folder.DeletedSharedFolderRecord.encode(message.sharedFolderRecords[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            if (message.deletedRecordData != null && message.deletedRecordData.length)
+                for (let i = 0; i < message.deletedRecordData.length; ++i)
+                    $root.Folder.DeletedRecordData.encode(message.deletedRecordData[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+            if (message.usernames != null && message.usernames.length)
+                for (let i = 0; i < message.usernames.length; ++i)
+                    $root.Folder.Username.encode(message.usernames[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a GetDeletedSharedFoldersAndRecordsResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.GetDeletedSharedFoldersAndRecordsResponse} GetDeletedSharedFoldersAndRecordsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.GetDeletedSharedFoldersAndRecordsResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.sharedFolders && message.sharedFolders.length))
+                            message.sharedFolders = [];
+                        message.sharedFolders.push($root.Folder.DeletedSharedFolder.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 2: {
+                        if (!(message.sharedFolderRecords && message.sharedFolderRecords.length))
+                            message.sharedFolderRecords = [];
+                        message.sharedFolderRecords.push($root.Folder.DeletedSharedFolderRecord.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 3: {
+                        if (!(message.deletedRecordData && message.deletedRecordData.length))
+                            message.deletedRecordData = [];
+                        message.deletedRecordData.push($root.Folder.DeletedRecordData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 4: {
+                        if (!(message.usernames && message.usernames.length))
+                            message.usernames = [];
+                        message.usernames.push($root.Folder.Username.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a GetDeletedSharedFoldersAndRecordsResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.GetDeletedSharedFoldersAndRecordsResponse} GetDeletedSharedFoldersAndRecordsResponse
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.GetDeletedSharedFoldersAndRecordsResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.GetDeletedSharedFoldersAndRecordsResponse();
+            if (object.sharedFolders) {
+                if (!Array.isArray(object.sharedFolders))
+                    throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.sharedFolders: array expected");
+                message.sharedFolders = [];
+                for (let i = 0; i < object.sharedFolders.length; ++i) {
+                    if (!$util.isObject(object.sharedFolders[i]))
+                        throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.sharedFolders: object expected");
+                    message.sharedFolders[i] = $root.Folder.DeletedSharedFolder.fromObject(object.sharedFolders[i], long + 1);
+                }
+            }
+            if (object.sharedFolderRecords) {
+                if (!Array.isArray(object.sharedFolderRecords))
+                    throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.sharedFolderRecords: array expected");
+                message.sharedFolderRecords = [];
+                for (let i = 0; i < object.sharedFolderRecords.length; ++i) {
+                    if (!$util.isObject(object.sharedFolderRecords[i]))
+                        throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.sharedFolderRecords: object expected");
+                    message.sharedFolderRecords[i] = $root.Folder.DeletedSharedFolderRecord.fromObject(object.sharedFolderRecords[i], long + 1);
+                }
+            }
+            if (object.deletedRecordData) {
+                if (!Array.isArray(object.deletedRecordData))
+                    throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.deletedRecordData: array expected");
+                message.deletedRecordData = [];
+                for (let i = 0; i < object.deletedRecordData.length; ++i) {
+                    if (!$util.isObject(object.deletedRecordData[i]))
+                        throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.deletedRecordData: object expected");
+                    message.deletedRecordData[i] = $root.Folder.DeletedRecordData.fromObject(object.deletedRecordData[i], long + 1);
+                }
+            }
+            if (object.usernames) {
+                if (!Array.isArray(object.usernames))
+                    throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.usernames: array expected");
+                message.usernames = [];
+                for (let i = 0; i < object.usernames.length; ++i) {
+                    if (!$util.isObject(object.usernames[i]))
+                        throw TypeError(".Folder.GetDeletedSharedFoldersAndRecordsResponse.usernames: object expected");
+                    message.usernames[i] = $root.Folder.Username.fromObject(object.usernames[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetDeletedSharedFoldersAndRecordsResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @static
+         * @param {Folder.GetDeletedSharedFoldersAndRecordsResponse} message GetDeletedSharedFoldersAndRecordsResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.sharedFolders = [];
+                object.sharedFolderRecords = [];
+                object.deletedRecordData = [];
+                object.usernames = [];
+            }
+            if (message.sharedFolders && message.sharedFolders.length) {
+                object.sharedFolders = [];
+                for (let j = 0; j < message.sharedFolders.length; ++j)
+                    object.sharedFolders[j] = $root.Folder.DeletedSharedFolder.toObject(message.sharedFolders[j], options, q + 1);
+            }
+            if (message.sharedFolderRecords && message.sharedFolderRecords.length) {
+                object.sharedFolderRecords = [];
+                for (let j = 0; j < message.sharedFolderRecords.length; ++j)
+                    object.sharedFolderRecords[j] = $root.Folder.DeletedSharedFolderRecord.toObject(message.sharedFolderRecords[j], options, q + 1);
+            }
+            if (message.deletedRecordData && message.deletedRecordData.length) {
+                object.deletedRecordData = [];
+                for (let j = 0; j < message.deletedRecordData.length; ++j)
+                    object.deletedRecordData[j] = $root.Folder.DeletedRecordData.toObject(message.deletedRecordData[j], options, q + 1);
+            }
+            if (message.usernames && message.usernames.length) {
+                object.usernames = [];
+                for (let j = 0; j < message.usernames.length; ++j)
+                    object.usernames[j] = $root.Folder.Username.toObject(message.usernames[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this GetDeletedSharedFoldersAndRecordsResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GetDeletedSharedFoldersAndRecordsResponse
+         * @function getTypeUrl
+         * @memberof Folder.GetDeletedSharedFoldersAndRecordsResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GetDeletedSharedFoldersAndRecordsResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.GetDeletedSharedFoldersAndRecordsResponse";
+        };
+
+        return GetDeletedSharedFoldersAndRecordsResponse;
+    })();
+
+    Folder.DeletedSharedFolder = (function() {
+
+        /**
+         * Properties of a DeletedSharedFolder.
+         * @memberof Folder
+         * @interface IDeletedSharedFolder
+         * @property {Uint8Array|null} [sharedFolderUid] DeletedSharedFolder sharedFolderUid
+         * @property {Uint8Array|null} [folderUid] DeletedSharedFolder folderUid
+         * @property {Uint8Array|null} [parentUid] DeletedSharedFolder parentUid
+         * @property {Uint8Array|null} [sharedFolderKey] DeletedSharedFolder sharedFolderKey
+         * @property {Records.RecordKeyType|null} [folderKeyType] DeletedSharedFolder folderKeyType
+         * @property {Uint8Array|null} [data] DeletedSharedFolder data
+         * @property {number|null} [dateDeleted] DeletedSharedFolder dateDeleted
+         * @property {number|null} [revision] DeletedSharedFolder revision
+         */
+
+        /**
+         * Constructs a new DeletedSharedFolder.
+         * @memberof Folder
+         * @classdesc Represents a DeletedSharedFolder.
+         * @implements IDeletedSharedFolder
+         * @constructor
+         * @param {Folder.IDeletedSharedFolder=} [properties] Properties to set
+         */
+        function DeletedSharedFolder(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DeletedSharedFolder sharedFolderUid.
+         * @member {Uint8Array} sharedFolderUid
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.sharedFolderUid = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolder folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolder parentUid.
+         * @member {Uint8Array} parentUid
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.parentUid = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolder sharedFolderKey.
+         * @member {Uint8Array} sharedFolderKey
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.sharedFolderKey = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolder folderKeyType.
+         * @member {Records.RecordKeyType} folderKeyType
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.folderKeyType = 0;
+
+        /**
+         * DeletedSharedFolder data.
+         * @member {Uint8Array} data
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.data = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolder dateDeleted.
+         * @member {number} dateDeleted
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.dateDeleted = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * DeletedSharedFolder revision.
+         * @member {number} revision
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         */
+        DeletedSharedFolder.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new DeletedSharedFolder instance using the specified properties.
+         * @function create
+         * @memberof Folder.DeletedSharedFolder
+         * @static
+         * @param {Folder.IDeletedSharedFolder=} [properties] Properties to set
+         * @returns {Folder.DeletedSharedFolder} DeletedSharedFolder instance
+         */
+        DeletedSharedFolder.create = function create(properties) {
+            return new DeletedSharedFolder(properties);
+        };
+
+        /**
+         * Encodes the specified DeletedSharedFolder message. Does not implicitly {@link Folder.DeletedSharedFolder.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.DeletedSharedFolder
+         * @static
+         * @param {Folder.IDeletedSharedFolder} message DeletedSharedFolder message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeletedSharedFolder.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.sharedFolderUid);
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.folderUid);
+            if (message.parentUid != null && Object.hasOwnProperty.call(message, "parentUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.parentUid);
+            if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.sharedFolderKey);
+            if (message.folderKeyType != null && Object.hasOwnProperty.call(message, "folderKeyType"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.folderKeyType);
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.data);
+            if (message.dateDeleted != null && Object.hasOwnProperty.call(message, "dateDeleted"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int64(message.dateDeleted);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int64(message.revision);
+            return writer;
+        };
+
+        /**
+         * Decodes a DeletedSharedFolder message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.DeletedSharedFolder
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.DeletedSharedFolder} DeletedSharedFolder
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeletedSharedFolder.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.DeletedSharedFolder();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.sharedFolderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.parentUid = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.sharedFolderKey = reader.bytes();
+                        break;
+                    }
+                case 5: {
+                        message.folderKeyType = reader.int32();
+                        break;
+                    }
+                case 6: {
+                        message.data = reader.bytes();
+                        break;
+                    }
+                case 7: {
+                        message.dateDeleted = reader.int64();
+                        break;
+                    }
+                case 8: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a DeletedSharedFolder message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.DeletedSharedFolder
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.DeletedSharedFolder} DeletedSharedFolder
+         */
+        DeletedSharedFolder.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.DeletedSharedFolder)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.DeletedSharedFolder: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.DeletedSharedFolder();
+            if (object.sharedFolderUid != null)
+                if (typeof object.sharedFolderUid === "string")
+                    $util.base64.decode(object.sharedFolderUid, message.sharedFolderUid = $util.newBuffer($util.base64.length(object.sharedFolderUid)), 0);
+                else if (object.sharedFolderUid.length >= 0)
+                    message.sharedFolderUid = object.sharedFolderUid;
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.parentUid != null)
+                if (typeof object.parentUid === "string")
+                    $util.base64.decode(object.parentUid, message.parentUid = $util.newBuffer($util.base64.length(object.parentUid)), 0);
+                else if (object.parentUid.length >= 0)
+                    message.parentUid = object.parentUid;
+            if (object.sharedFolderKey != null)
+                if (typeof object.sharedFolderKey === "string")
+                    $util.base64.decode(object.sharedFolderKey, message.sharedFolderKey = $util.newBuffer($util.base64.length(object.sharedFolderKey)), 0);
+                else if (object.sharedFolderKey.length >= 0)
+                    message.sharedFolderKey = object.sharedFolderKey;
+            switch (object.folderKeyType) {
+            default:
+                if (typeof object.folderKeyType === "number") {
+                    message.folderKeyType = object.folderKeyType;
+                    break;
+                }
+                break;
+            case "NO_KEY":
+            case 0:
+                message.folderKeyType = 0;
+                break;
+            case "ENCRYPTED_BY_DATA_KEY":
+            case 1:
+                message.folderKeyType = 1;
+                break;
+            case "ENCRYPTED_BY_PUBLIC_KEY":
+            case 2:
+                message.folderKeyType = 2;
+                break;
+            case "ENCRYPTED_BY_DATA_KEY_GCM":
+            case 3:
+                message.folderKeyType = 3;
+                break;
+            case "ENCRYPTED_BY_PUBLIC_KEY_ECC":
+            case 4:
+                message.folderKeyType = 4;
+                break;
+            case "ENCRYPTED_BY_ROOT_KEY_CBC":
+            case 5:
+                message.folderKeyType = 5;
+                break;
+            case "ENCRYPTED_BY_ROOT_KEY_GCM":
+            case 6:
+                message.folderKeyType = 6;
+                break;
+            }
+            if (object.data != null)
+                if (typeof object.data === "string")
+                    $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+                else if (object.data.length >= 0)
+                    message.data = object.data;
+            if (object.dateDeleted != null)
+                if ($util.Long)
+                    message.dateDeleted = $util.Long.fromValue(object.dateDeleted, false);
+                else if (typeof object.dateDeleted === "string")
+                    message.dateDeleted = parseInt(object.dateDeleted, 10);
+                else if (typeof object.dateDeleted === "number")
+                    message.dateDeleted = object.dateDeleted;
+                else if (typeof object.dateDeleted === "object")
+                    message.dateDeleted = new $util.LongBits(object.dateDeleted.low >>> 0, object.dateDeleted.high >>> 0).toNumber();
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DeletedSharedFolder message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.DeletedSharedFolder
+         * @static
+         * @param {Folder.DeletedSharedFolder} message DeletedSharedFolder
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DeletedSharedFolder.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.sharedFolderUid = "";
+                else {
+                    object.sharedFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderUid = $util.newBuffer(object.sharedFolderUid);
+                }
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.parentUid = "";
+                else {
+                    object.parentUid = [];
+                    if (options.bytes !== Array)
+                        object.parentUid = $util.newBuffer(object.parentUid);
+                }
+                if (options.bytes === String)
+                    object.sharedFolderKey = "";
+                else {
+                    object.sharedFolderKey = [];
+                    if (options.bytes !== Array)
+                        object.sharedFolderKey = $util.newBuffer(object.sharedFolderKey);
+                }
+                object.folderKeyType = options.enums === String ? "NO_KEY" : 0;
+                if (options.bytes === String)
+                    object.data = "";
+                else {
+                    object.data = [];
+                    if (options.bytes !== Array)
+                        object.data = $util.newBuffer(object.data);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.dateDeleted = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.dateDeleted = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            }
+            if (message.sharedFolderUid != null && Object.hasOwnProperty.call(message, "sharedFolderUid"))
+                object.sharedFolderUid = options.bytes === String ? $util.base64.encode(message.sharedFolderUid, 0, message.sharedFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUid) : message.sharedFolderUid;
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.parentUid != null && Object.hasOwnProperty.call(message, "parentUid"))
+                object.parentUid = options.bytes === String ? $util.base64.encode(message.parentUid, 0, message.parentUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.parentUid) : message.parentUid;
+            if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
+                object.sharedFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderKey, 0, message.sharedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderKey) : message.sharedFolderKey;
+            if (message.folderKeyType != null && Object.hasOwnProperty.call(message, "folderKeyType"))
+                object.folderKeyType = options.enums === String ? $root.Records.RecordKeyType[message.folderKeyType] === undefined ? message.folderKeyType : $root.Records.RecordKeyType[message.folderKeyType] : message.folderKeyType;
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+            if (message.dateDeleted != null && Object.hasOwnProperty.call(message, "dateDeleted"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.dateDeleted = typeof message.dateDeleted === "number" ? BigInt(message.dateDeleted) : $util.Long.fromBits(message.dateDeleted.low >>> 0, message.dateDeleted.high >>> 0, false).toBigInt();
+                else if (typeof message.dateDeleted === "number")
+                    object.dateDeleted = options.longs === String ? String(message.dateDeleted) : message.dateDeleted;
+                else
+                    object.dateDeleted = options.longs === String ? $util.Long.prototype.toString.call(message.dateDeleted) : options.longs === Number ? new $util.LongBits(message.dateDeleted.low >>> 0, message.dateDeleted.high >>> 0).toNumber() : message.dateDeleted;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            return object;
+        };
+
+        /**
+         * Converts this DeletedSharedFolder to JSON.
+         * @function toJSON
+         * @memberof Folder.DeletedSharedFolder
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DeletedSharedFolder.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for DeletedSharedFolder
+         * @function getTypeUrl
+         * @memberof Folder.DeletedSharedFolder
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        DeletedSharedFolder.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.DeletedSharedFolder";
+        };
+
+        return DeletedSharedFolder;
+    })();
+
+    Folder.DeletedSharedFolderRecord = (function() {
+
+        /**
+         * Properties of a DeletedSharedFolderRecord.
+         * @memberof Folder
+         * @interface IDeletedSharedFolderRecord
+         * @property {Uint8Array|null} [folderUid] DeletedSharedFolderRecord folderUid
+         * @property {Uint8Array|null} [recordUid] DeletedSharedFolderRecord recordUid
+         * @property {Uint8Array|null} [sharedRecordKey] DeletedSharedFolderRecord sharedRecordKey
+         * @property {number|null} [dateDeleted] DeletedSharedFolderRecord dateDeleted
+         * @property {number|null} [revision] DeletedSharedFolderRecord revision
+         */
+
+        /**
+         * Constructs a new DeletedSharedFolderRecord.
+         * @memberof Folder
+         * @classdesc Represents a DeletedSharedFolderRecord.
+         * @implements IDeletedSharedFolderRecord
+         * @constructor
+         * @param {Folder.IDeletedSharedFolderRecord=} [properties] Properties to set
+         */
+        function DeletedSharedFolderRecord(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DeletedSharedFolderRecord folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @instance
+         */
+        DeletedSharedFolderRecord.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolderRecord recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @instance
+         */
+        DeletedSharedFolderRecord.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolderRecord sharedRecordKey.
+         * @member {Uint8Array} sharedRecordKey
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @instance
+         */
+        DeletedSharedFolderRecord.prototype.sharedRecordKey = $util.newBuffer([]);
+
+        /**
+         * DeletedSharedFolderRecord dateDeleted.
+         * @member {number} dateDeleted
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @instance
+         */
+        DeletedSharedFolderRecord.prototype.dateDeleted = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * DeletedSharedFolderRecord revision.
+         * @member {number} revision
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @instance
+         */
+        DeletedSharedFolderRecord.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new DeletedSharedFolderRecord instance using the specified properties.
+         * @function create
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @static
+         * @param {Folder.IDeletedSharedFolderRecord=} [properties] Properties to set
+         * @returns {Folder.DeletedSharedFolderRecord} DeletedSharedFolderRecord instance
+         */
+        DeletedSharedFolderRecord.create = function create(properties) {
+            return new DeletedSharedFolderRecord(properties);
+        };
+
+        /**
+         * Encodes the specified DeletedSharedFolderRecord message. Does not implicitly {@link Folder.DeletedSharedFolderRecord.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @static
+         * @param {Folder.IDeletedSharedFolderRecord} message DeletedSharedFolderRecord message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeletedSharedFolderRecord.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.recordUid);
+            if (message.sharedRecordKey != null && Object.hasOwnProperty.call(message, "sharedRecordKey"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.sharedRecordKey);
+            if (message.dateDeleted != null && Object.hasOwnProperty.call(message, "dateDeleted"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.dateDeleted);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.revision);
+            return writer;
+        };
+
+        /**
+         * Decodes a DeletedSharedFolderRecord message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.DeletedSharedFolderRecord} DeletedSharedFolderRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeletedSharedFolderRecord.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.DeletedSharedFolderRecord();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.sharedRecordKey = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.dateDeleted = reader.int64();
+                        break;
+                    }
+                case 5: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a DeletedSharedFolderRecord message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.DeletedSharedFolderRecord} DeletedSharedFolderRecord
+         */
+        DeletedSharedFolderRecord.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.DeletedSharedFolderRecord)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.DeletedSharedFolderRecord: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.DeletedSharedFolderRecord();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.sharedRecordKey != null)
+                if (typeof object.sharedRecordKey === "string")
+                    $util.base64.decode(object.sharedRecordKey, message.sharedRecordKey = $util.newBuffer($util.base64.length(object.sharedRecordKey)), 0);
+                else if (object.sharedRecordKey.length >= 0)
+                    message.sharedRecordKey = object.sharedRecordKey;
+            if (object.dateDeleted != null)
+                if ($util.Long)
+                    message.dateDeleted = $util.Long.fromValue(object.dateDeleted, false);
+                else if (typeof object.dateDeleted === "string")
+                    message.dateDeleted = parseInt(object.dateDeleted, 10);
+                else if (typeof object.dateDeleted === "number")
+                    message.dateDeleted = object.dateDeleted;
+                else if (typeof object.dateDeleted === "object")
+                    message.dateDeleted = new $util.LongBits(object.dateDeleted.low >>> 0, object.dateDeleted.high >>> 0).toNumber();
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DeletedSharedFolderRecord message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @static
+         * @param {Folder.DeletedSharedFolderRecord} message DeletedSharedFolderRecord
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DeletedSharedFolderRecord.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if (options.bytes === String)
+                    object.sharedRecordKey = "";
+                else {
+                    object.sharedRecordKey = [];
+                    if (options.bytes !== Array)
+                        object.sharedRecordKey = $util.newBuffer(object.sharedRecordKey);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.dateDeleted = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.dateDeleted = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.sharedRecordKey != null && Object.hasOwnProperty.call(message, "sharedRecordKey"))
+                object.sharedRecordKey = options.bytes === String ? $util.base64.encode(message.sharedRecordKey, 0, message.sharedRecordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedRecordKey) : message.sharedRecordKey;
+            if (message.dateDeleted != null && Object.hasOwnProperty.call(message, "dateDeleted"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.dateDeleted = typeof message.dateDeleted === "number" ? BigInt(message.dateDeleted) : $util.Long.fromBits(message.dateDeleted.low >>> 0, message.dateDeleted.high >>> 0, false).toBigInt();
+                else if (typeof message.dateDeleted === "number")
+                    object.dateDeleted = options.longs === String ? String(message.dateDeleted) : message.dateDeleted;
+                else
+                    object.dateDeleted = options.longs === String ? $util.Long.prototype.toString.call(message.dateDeleted) : options.longs === Number ? new $util.LongBits(message.dateDeleted.low >>> 0, message.dateDeleted.high >>> 0).toNumber() : message.dateDeleted;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            return object;
+        };
+
+        /**
+         * Converts this DeletedSharedFolderRecord to JSON.
+         * @function toJSON
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DeletedSharedFolderRecord.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for DeletedSharedFolderRecord
+         * @function getTypeUrl
+         * @memberof Folder.DeletedSharedFolderRecord
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        DeletedSharedFolderRecord.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.DeletedSharedFolderRecord";
+        };
+
+        return DeletedSharedFolderRecord;
+    })();
+
+    Folder.DeletedRecordData = (function() {
+
+        /**
+         * Properties of a DeletedRecordData.
+         * @memberof Folder
+         * @interface IDeletedRecordData
+         * @property {Uint8Array|null} [recordUid] DeletedRecordData recordUid
+         * @property {Uint8Array|null} [ownerUid] DeletedRecordData ownerUid
+         * @property {number|null} [revision] DeletedRecordData revision
+         * @property {number|null} [clientModifiedTime] DeletedRecordData clientModifiedTime
+         * @property {Uint8Array|null} [data] DeletedRecordData data
+         * @property {number|null} [version] DeletedRecordData version
+         */
+
+        /**
+         * Constructs a new DeletedRecordData.
+         * @memberof Folder
+         * @classdesc Represents a DeletedRecordData.
+         * @implements IDeletedRecordData
+         * @constructor
+         * @param {Folder.IDeletedRecordData=} [properties] Properties to set
+         */
+        function DeletedRecordData(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DeletedRecordData recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         */
+        DeletedRecordData.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * DeletedRecordData ownerUid.
+         * @member {Uint8Array} ownerUid
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         */
+        DeletedRecordData.prototype.ownerUid = $util.newBuffer([]);
+
+        /**
+         * DeletedRecordData revision.
+         * @member {number} revision
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         */
+        DeletedRecordData.prototype.revision = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * DeletedRecordData clientModifiedTime.
+         * @member {number} clientModifiedTime
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         */
+        DeletedRecordData.prototype.clientModifiedTime = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * DeletedRecordData data.
+         * @member {Uint8Array} data
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         */
+        DeletedRecordData.prototype.data = $util.newBuffer([]);
+
+        /**
+         * DeletedRecordData version.
+         * @member {number} version
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         */
+        DeletedRecordData.prototype.version = 0;
+
+        /**
+         * Creates a new DeletedRecordData instance using the specified properties.
+         * @function create
+         * @memberof Folder.DeletedRecordData
+         * @static
+         * @param {Folder.IDeletedRecordData=} [properties] Properties to set
+         * @returns {Folder.DeletedRecordData} DeletedRecordData instance
+         */
+        DeletedRecordData.create = function create(properties) {
+            return new DeletedRecordData(properties);
+        };
+
+        /**
+         * Encodes the specified DeletedRecordData message. Does not implicitly {@link Folder.DeletedRecordData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.DeletedRecordData
+         * @static
+         * @param {Folder.IDeletedRecordData} message DeletedRecordData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeletedRecordData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.ownerUid != null && Object.hasOwnProperty.call(message, "ownerUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.ownerUid);
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.revision);
+            if (message.clientModifiedTime != null && Object.hasOwnProperty.call(message, "clientModifiedTime"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.clientModifiedTime);
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.data);
+            if (message.version != null && Object.hasOwnProperty.call(message, "version"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.version);
+            return writer;
+        };
+
+        /**
+         * Decodes a DeletedRecordData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.DeletedRecordData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.DeletedRecordData} DeletedRecordData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeletedRecordData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.DeletedRecordData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.ownerUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.revision = reader.int64();
+                        break;
+                    }
+                case 4: {
+                        message.clientModifiedTime = reader.int64();
+                        break;
+                    }
+                case 5: {
+                        message.data = reader.bytes();
+                        break;
+                    }
+                case 6: {
+                        message.version = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a DeletedRecordData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.DeletedRecordData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.DeletedRecordData} DeletedRecordData
+         */
+        DeletedRecordData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.DeletedRecordData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.DeletedRecordData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.DeletedRecordData();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.ownerUid != null)
+                if (typeof object.ownerUid === "string")
+                    $util.base64.decode(object.ownerUid, message.ownerUid = $util.newBuffer($util.base64.length(object.ownerUid)), 0);
+                else if (object.ownerUid.length >= 0)
+                    message.ownerUid = object.ownerUid;
+            if (object.revision != null)
+                if ($util.Long)
+                    message.revision = $util.Long.fromValue(object.revision, false);
+                else if (typeof object.revision === "string")
+                    message.revision = parseInt(object.revision, 10);
+                else if (typeof object.revision === "number")
+                    message.revision = object.revision;
+                else if (typeof object.revision === "object")
+                    message.revision = new $util.LongBits(object.revision.low >>> 0, object.revision.high >>> 0).toNumber();
+            if (object.clientModifiedTime != null)
+                if ($util.Long)
+                    message.clientModifiedTime = $util.Long.fromValue(object.clientModifiedTime, false);
+                else if (typeof object.clientModifiedTime === "string")
+                    message.clientModifiedTime = parseInt(object.clientModifiedTime, 10);
+                else if (typeof object.clientModifiedTime === "number")
+                    message.clientModifiedTime = object.clientModifiedTime;
+                else if (typeof object.clientModifiedTime === "object")
+                    message.clientModifiedTime = new $util.LongBits(object.clientModifiedTime.low >>> 0, object.clientModifiedTime.high >>> 0).toNumber();
+            if (object.data != null)
+                if (typeof object.data === "string")
+                    $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+                else if (object.data.length >= 0)
+                    message.data = object.data;
+            if (object.version != null)
+                message.version = object.version | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DeletedRecordData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.DeletedRecordData
+         * @static
+         * @param {Folder.DeletedRecordData} message DeletedRecordData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DeletedRecordData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if (options.bytes === String)
+                    object.ownerUid = "";
+                else {
+                    object.ownerUid = [];
+                    if (options.bytes !== Array)
+                        object.ownerUid = $util.newBuffer(object.ownerUid);
+                }
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.revision = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.revision = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.clientModifiedTime = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.clientModifiedTime = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if (options.bytes === String)
+                    object.data = "";
+                else {
+                    object.data = [];
+                    if (options.bytes !== Array)
+                        object.data = $util.newBuffer(object.data);
+                }
+                object.version = 0;
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.ownerUid != null && Object.hasOwnProperty.call(message, "ownerUid"))
+                object.ownerUid = options.bytes === String ? $util.base64.encode(message.ownerUid, 0, message.ownerUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.ownerUid) : message.ownerUid;
+            if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
+                else if (typeof message.revision === "number")
+                    object.revision = options.longs === String ? String(message.revision) : message.revision;
+                else
+                    object.revision = options.longs === String ? $util.Long.prototype.toString.call(message.revision) : options.longs === Number ? new $util.LongBits(message.revision.low >>> 0, message.revision.high >>> 0).toNumber() : message.revision;
+            if (message.clientModifiedTime != null && Object.hasOwnProperty.call(message, "clientModifiedTime"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.clientModifiedTime = typeof message.clientModifiedTime === "number" ? BigInt(message.clientModifiedTime) : $util.Long.fromBits(message.clientModifiedTime.low >>> 0, message.clientModifiedTime.high >>> 0, false).toBigInt();
+                else if (typeof message.clientModifiedTime === "number")
+                    object.clientModifiedTime = options.longs === String ? String(message.clientModifiedTime) : message.clientModifiedTime;
+                else
+                    object.clientModifiedTime = options.longs === String ? $util.Long.prototype.toString.call(message.clientModifiedTime) : options.longs === Number ? new $util.LongBits(message.clientModifiedTime.low >>> 0, message.clientModifiedTime.high >>> 0).toNumber() : message.clientModifiedTime;
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+            if (message.version != null && Object.hasOwnProperty.call(message, "version"))
+                object.version = message.version;
+            return object;
+        };
+
+        /**
+         * Converts this DeletedRecordData to JSON.
+         * @function toJSON
+         * @memberof Folder.DeletedRecordData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DeletedRecordData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for DeletedRecordData
+         * @function getTypeUrl
+         * @memberof Folder.DeletedRecordData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        DeletedRecordData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.DeletedRecordData";
+        };
+
+        return DeletedRecordData;
+    })();
+
+    Folder.Username = (function() {
+
+        /**
+         * Properties of a Username.
+         * @memberof Folder
+         * @interface IUsername
+         * @property {Uint8Array|null} [accountUid] Username accountUid
+         * @property {string|null} [username] Username username
+         */
+
+        /**
+         * Constructs a new Username.
+         * @memberof Folder
+         * @classdesc Represents a Username.
+         * @implements IUsername
+         * @constructor
+         * @param {Folder.IUsername=} [properties] Properties to set
+         */
+        function Username(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Username accountUid.
+         * @member {Uint8Array} accountUid
+         * @memberof Folder.Username
+         * @instance
+         */
+        Username.prototype.accountUid = $util.newBuffer([]);
+
+        /**
+         * Username username.
+         * @member {string} username
+         * @memberof Folder.Username
+         * @instance
+         */
+        Username.prototype.username = "";
+
+        /**
+         * Creates a new Username instance using the specified properties.
+         * @function create
+         * @memberof Folder.Username
+         * @static
+         * @param {Folder.IUsername=} [properties] Properties to set
+         * @returns {Folder.Username} Username instance
+         */
+        Username.create = function create(properties) {
+            return new Username(properties);
+        };
+
+        /**
+         * Encodes the specified Username message. Does not implicitly {@link Folder.Username.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.Username
+         * @static
+         * @param {Folder.IUsername} message Username message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Username.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.accountUid != null && Object.hasOwnProperty.call(message, "accountUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.accountUid);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            return writer;
+        };
+
+        /**
+         * Decodes a Username message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.Username
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.Username} Username
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Username.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.Username();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.accountUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.username = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a Username message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.Username
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.Username} Username
+         */
+        Username.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.Username)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.Username: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.Username();
+            if (object.accountUid != null)
+                if (typeof object.accountUid === "string")
+                    $util.base64.decode(object.accountUid, message.accountUid = $util.newBuffer($util.base64.length(object.accountUid)), 0);
+                else if (object.accountUid.length >= 0)
+                    message.accountUid = object.accountUid;
+            if (object.username != null)
+                message.username = String(object.username);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Username message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.Username
+         * @static
+         * @param {Folder.Username} message Username
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Username.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.accountUid = "";
+                else {
+                    object.accountUid = [];
+                    if (options.bytes !== Array)
+                        object.accountUid = $util.newBuffer(object.accountUid);
+                }
+                object.username = "";
+            }
+            if (message.accountUid != null && Object.hasOwnProperty.call(message, "accountUid"))
+                object.accountUid = options.bytes === String ? $util.base64.encode(message.accountUid, 0, message.accountUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accountUid) : message.accountUid;
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                object.username = message.username;
+            return object;
+        };
+
+        /**
+         * Converts this Username to JSON.
+         * @function toJSON
+         * @memberof Folder.Username
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Username.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for Username
+         * @function getTypeUrl
+         * @memberof Folder.Username
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        Username.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.Username";
+        };
+
+        return Username;
+    })();
+
+    Folder.RestoreDeletedSharedFoldersAndRecordsRequest = (function() {
+
+        /**
+         * Properties of a RestoreDeletedSharedFoldersAndRecordsRequest.
+         * @memberof Folder
+         * @interface IRestoreDeletedSharedFoldersAndRecordsRequest
+         * @property {Array.<Folder.IRestoreSharedObject>|null} [folders] RestoreDeletedSharedFoldersAndRecordsRequest folders
+         * @property {Array.<Folder.IRestoreSharedObject>|null} [records] RestoreDeletedSharedFoldersAndRecordsRequest records
+         */
+
+        /**
+         * Constructs a new RestoreDeletedSharedFoldersAndRecordsRequest.
+         * @memberof Folder
+         * @classdesc Represents a RestoreDeletedSharedFoldersAndRecordsRequest.
+         * @implements IRestoreDeletedSharedFoldersAndRecordsRequest
+         * @constructor
+         * @param {Folder.IRestoreDeletedSharedFoldersAndRecordsRequest=} [properties] Properties to set
+         */
+        function RestoreDeletedSharedFoldersAndRecordsRequest(properties) {
+            this.folders = [];
+            this.records = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RestoreDeletedSharedFoldersAndRecordsRequest folders.
+         * @member {Array.<Folder.IRestoreSharedObject>} folders
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @instance
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.prototype.folders = $util.emptyArray;
+
+        /**
+         * RestoreDeletedSharedFoldersAndRecordsRequest records.
+         * @member {Array.<Folder.IRestoreSharedObject>} records
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @instance
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.prototype.records = $util.emptyArray;
+
+        /**
+         * Creates a new RestoreDeletedSharedFoldersAndRecordsRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @static
+         * @param {Folder.IRestoreDeletedSharedFoldersAndRecordsRequest=} [properties] Properties to set
+         * @returns {Folder.RestoreDeletedSharedFoldersAndRecordsRequest} RestoreDeletedSharedFoldersAndRecordsRequest instance
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.create = function create(properties) {
+            return new RestoreDeletedSharedFoldersAndRecordsRequest(properties);
+        };
+
+        /**
+         * Encodes the specified RestoreDeletedSharedFoldersAndRecordsRequest message. Does not implicitly {@link Folder.RestoreDeletedSharedFoldersAndRecordsRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @static
+         * @param {Folder.IRestoreDeletedSharedFoldersAndRecordsRequest} message RestoreDeletedSharedFoldersAndRecordsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folders != null && message.folders.length)
+                for (let i = 0; i < message.folders.length; ++i)
+                    $root.Folder.RestoreSharedObject.encode(message.folders[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            if (message.records != null && message.records.length)
+                for (let i = 0; i < message.records.length; ++i)
+                    $root.Folder.RestoreSharedObject.encode(message.records[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a RestoreDeletedSharedFoldersAndRecordsRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RestoreDeletedSharedFoldersAndRecordsRequest} RestoreDeletedSharedFoldersAndRecordsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RestoreDeletedSharedFoldersAndRecordsRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folders && message.folders.length))
+                            message.folders = [];
+                        message.folders.push($root.Folder.RestoreSharedObject.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 2: {
+                        if (!(message.records && message.records.length))
+                            message.records = [];
+                        message.records.push($root.Folder.RestoreSharedObject.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RestoreDeletedSharedFoldersAndRecordsRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RestoreDeletedSharedFoldersAndRecordsRequest} RestoreDeletedSharedFoldersAndRecordsRequest
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RestoreDeletedSharedFoldersAndRecordsRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RestoreDeletedSharedFoldersAndRecordsRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RestoreDeletedSharedFoldersAndRecordsRequest();
+            if (object.folders) {
+                if (!Array.isArray(object.folders))
+                    throw TypeError(".Folder.RestoreDeletedSharedFoldersAndRecordsRequest.folders: array expected");
+                message.folders = [];
+                for (let i = 0; i < object.folders.length; ++i) {
+                    if (!$util.isObject(object.folders[i]))
+                        throw TypeError(".Folder.RestoreDeletedSharedFoldersAndRecordsRequest.folders: object expected");
+                    message.folders[i] = $root.Folder.RestoreSharedObject.fromObject(object.folders[i], long + 1);
+                }
+            }
+            if (object.records) {
+                if (!Array.isArray(object.records))
+                    throw TypeError(".Folder.RestoreDeletedSharedFoldersAndRecordsRequest.records: array expected");
+                message.records = [];
+                for (let i = 0; i < object.records.length; ++i) {
+                    if (!$util.isObject(object.records[i]))
+                        throw TypeError(".Folder.RestoreDeletedSharedFoldersAndRecordsRequest.records: object expected");
+                    message.records[i] = $root.Folder.RestoreSharedObject.fromObject(object.records[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RestoreDeletedSharedFoldersAndRecordsRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @static
+         * @param {Folder.RestoreDeletedSharedFoldersAndRecordsRequest} message RestoreDeletedSharedFoldersAndRecordsRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.folders = [];
+                object.records = [];
+            }
+            if (message.folders && message.folders.length) {
+                object.folders = [];
+                for (let j = 0; j < message.folders.length; ++j)
+                    object.folders[j] = $root.Folder.RestoreSharedObject.toObject(message.folders[j], options, q + 1);
+            }
+            if (message.records && message.records.length) {
+                object.records = [];
+                for (let j = 0; j < message.records.length; ++j)
+                    object.records[j] = $root.Folder.RestoreSharedObject.toObject(message.records[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this RestoreDeletedSharedFoldersAndRecordsRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RestoreDeletedSharedFoldersAndRecordsRequest
+         * @function getTypeUrl
+         * @memberof Folder.RestoreDeletedSharedFoldersAndRecordsRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RestoreDeletedSharedFoldersAndRecordsRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RestoreDeletedSharedFoldersAndRecordsRequest";
+        };
+
+        return RestoreDeletedSharedFoldersAndRecordsRequest;
+    })();
+
+    Folder.RestoreSharedObject = (function() {
+
+        /**
+         * Properties of a RestoreSharedObject.
+         * @memberof Folder
+         * @interface IRestoreSharedObject
+         * @property {Uint8Array|null} [folderUid] RestoreSharedObject folderUid
+         * @property {Array.<Uint8Array>|null} [recordUids] RestoreSharedObject recordUids
+         */
+
+        /**
+         * Constructs a new RestoreSharedObject.
+         * @memberof Folder
+         * @classdesc Represents a RestoreSharedObject.
+         * @implements IRestoreSharedObject
+         * @constructor
+         * @param {Folder.IRestoreSharedObject=} [properties] Properties to set
+         */
+        function RestoreSharedObject(properties) {
+            this.recordUids = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RestoreSharedObject folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.RestoreSharedObject
+         * @instance
+         */
+        RestoreSharedObject.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * RestoreSharedObject recordUids.
+         * @member {Array.<Uint8Array>} recordUids
+         * @memberof Folder.RestoreSharedObject
+         * @instance
+         */
+        RestoreSharedObject.prototype.recordUids = $util.emptyArray;
+
+        /**
+         * Creates a new RestoreSharedObject instance using the specified properties.
+         * @function create
+         * @memberof Folder.RestoreSharedObject
+         * @static
+         * @param {Folder.IRestoreSharedObject=} [properties] Properties to set
+         * @returns {Folder.RestoreSharedObject} RestoreSharedObject instance
+         */
+        RestoreSharedObject.create = function create(properties) {
+            return new RestoreSharedObject(properties);
+        };
+
+        /**
+         * Encodes the specified RestoreSharedObject message. Does not implicitly {@link Folder.RestoreSharedObject.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RestoreSharedObject
+         * @static
+         * @param {Folder.IRestoreSharedObject} message RestoreSharedObject message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RestoreSharedObject.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.recordUids != null && message.recordUids.length)
+                for (let i = 0; i < message.recordUids.length; ++i)
+                    writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.recordUids[i]);
+            return writer;
+        };
+
+        /**
+         * Decodes a RestoreSharedObject message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RestoreSharedObject
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RestoreSharedObject} RestoreSharedObject
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RestoreSharedObject.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RestoreSharedObject();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        if (!(message.recordUids && message.recordUids.length))
+                            message.recordUids = [];
+                        message.recordUids.push(reader.bytes());
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RestoreSharedObject message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RestoreSharedObject
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RestoreSharedObject} RestoreSharedObject
+         */
+        RestoreSharedObject.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RestoreSharedObject)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RestoreSharedObject: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RestoreSharedObject();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.recordUids) {
+                if (!Array.isArray(object.recordUids))
+                    throw TypeError(".Folder.RestoreSharedObject.recordUids: array expected");
+                message.recordUids = [];
+                for (let i = 0; i < object.recordUids.length; ++i)
+                    if (typeof object.recordUids[i] === "string")
+                        $util.base64.decode(object.recordUids[i], message.recordUids[i] = $util.newBuffer($util.base64.length(object.recordUids[i])), 0);
+                    else if (object.recordUids[i].length >= 0)
+                        message.recordUids[i] = object.recordUids[i];
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RestoreSharedObject message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RestoreSharedObject
+         * @static
+         * @param {Folder.RestoreSharedObject} message RestoreSharedObject
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RestoreSharedObject.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.recordUids = [];
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.recordUids && message.recordUids.length) {
+                object.recordUids = [];
+                for (let j = 0; j < message.recordUids.length; ++j)
+                    object.recordUids[j] = options.bytes === String ? $util.base64.encode(message.recordUids[j], 0, message.recordUids[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUids[j]) : message.recordUids[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this RestoreSharedObject to JSON.
+         * @function toJSON
+         * @memberof Folder.RestoreSharedObject
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RestoreSharedObject.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RestoreSharedObject
+         * @function getTypeUrl
+         * @memberof Folder.RestoreSharedObject
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RestoreSharedObject.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RestoreSharedObject";
+        };
+
+        return RestoreSharedObject;
+    })();
+
+    /**
+     * FolderUsageType enum.
+     * @name Folder.FolderUsageType
+     * @enum {number}
+     * @property {number} UT_UNKNOWN=0 UT_UNKNOWN value
+     * @property {number} UT_NORMAL=1 UT_NORMAL value
+     * @property {number} UT_WORKFLOW=2 UT_WORKFLOW value
+     * @property {number} UT_TRASHCAN=3 UT_TRASHCAN value
+     */
+    Folder.FolderUsageType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "UT_UNKNOWN"] = 0;
+        values[valuesById[1] = "UT_NORMAL"] = 1;
+        values[valuesById[2] = "UT_WORKFLOW"] = 2;
+        values[valuesById[3] = "UT_TRASHCAN"] = 3;
+        return values;
+    })();
+
+    Folder.FolderData = (function() {
+
+        /**
+         * Properties of a FolderData.
+         * @memberof Folder
+         * @interface IFolderData
+         * @property {Uint8Array|null} [folderUid] FolderData folderUid
+         * @property {Uint8Array|null} [parentUid] FolderData parentUid
+         * @property {Uint8Array|null} [data] FolderData data
+         * @property {Folder.FolderUsageType|null} [type] FolderData type
+         * @property {Folder.SetBooleanValue|null} [inheritUserPermissions] FolderData inheritUserPermissions
+         * @property {Uint8Array|null} [folderKey] FolderData folderKey
+         * @property {Folder.IUserInfo|null} [ownerInfo] FolderData ownerInfo
+         * @property {number|null} [dateCreated] FolderData dateCreated
+         * @property {number|null} [lastModified] FolderData lastModified
+         */
+
+        /**
+         * Constructs a new FolderData.
+         * @memberof Folder
+         * @classdesc FolderData is used in the folder add and update requests and it is stored in the DAG.
+         * It is also used to store folders' data in the sync down response.
+         * @implements IFolderData
+         * @constructor
+         * @param {Folder.IFolderData=} [properties] Properties to set
+         */
+        function FolderData(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderData folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderData parentUid.
+         * @member {Uint8Array} parentUid
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.parentUid = $util.newBuffer([]);
+
+        /**
+         * FolderData data.
+         * @member {Uint8Array} data
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.data = $util.newBuffer([]);
+
+        /**
+         * FolderData type.
+         * @member {Folder.FolderUsageType} type
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.type = 0;
+
+        /**
+         * FolderData inheritUserPermissions.
+         * @member {Folder.SetBooleanValue} inheritUserPermissions
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.inheritUserPermissions = 0;
+
+        /**
+         * FolderData folderKey.
+         * @member {Uint8Array} folderKey
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.folderKey = $util.newBuffer([]);
+
+        /**
+         * FolderData ownerInfo.
+         * @member {Folder.IUserInfo|null|undefined} ownerInfo
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.ownerInfo = null;
+
+        /**
+         * FolderData dateCreated.
+         * @member {number} dateCreated
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.dateCreated = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * FolderData lastModified.
+         * @member {number} lastModified
+         * @memberof Folder.FolderData
+         * @instance
+         */
+        FolderData.prototype.lastModified = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new FolderData instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderData
+         * @static
+         * @param {Folder.IFolderData=} [properties] Properties to set
+         * @returns {Folder.FolderData} FolderData instance
+         */
+        FolderData.create = function create(properties) {
+            return new FolderData(properties);
+        };
+
+        /**
+         * Encodes the specified FolderData message. Does not implicitly {@link Folder.FolderData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderData
+         * @static
+         * @param {Folder.IFolderData} message FolderData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.parentUid != null && Object.hasOwnProperty.call(message, "parentUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.parentUid);
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.data);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.type);
+            if (message.inheritUserPermissions != null && Object.hasOwnProperty.call(message, "inheritUserPermissions"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.inheritUserPermissions);
+            if (message.folderKey != null && Object.hasOwnProperty.call(message, "folderKey"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.folderKey);
+            if (message.ownerInfo != null && Object.hasOwnProperty.call(message, "ownerInfo"))
+                $root.Folder.UserInfo.encode(message.ownerInfo, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+            if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int64(message.dateCreated);
+            if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int64(message.lastModified);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderData} FolderData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.parentUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.data = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.type = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.inheritUserPermissions = reader.int32();
+                        break;
+                    }
+                case 6: {
+                        message.folderKey = reader.bytes();
+                        break;
+                    }
+                case 7: {
+                        message.ownerInfo = $root.Folder.UserInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 8: {
+                        message.dateCreated = reader.int64();
+                        break;
+                    }
+                case 9: {
+                        message.lastModified = reader.int64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderData} FolderData
+         */
+        FolderData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderData();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.parentUid != null)
+                if (typeof object.parentUid === "string")
+                    $util.base64.decode(object.parentUid, message.parentUid = $util.newBuffer($util.base64.length(object.parentUid)), 0);
+                else if (object.parentUid.length >= 0)
+                    message.parentUid = object.parentUid;
+            if (object.data != null)
+                if (typeof object.data === "string")
+                    $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+                else if (object.data.length >= 0)
+                    message.data = object.data;
+            switch (object.type) {
+            default:
+                if (typeof object.type === "number") {
+                    message.type = object.type;
+                    break;
+                }
+                break;
+            case "UT_UNKNOWN":
+            case 0:
+                message.type = 0;
+                break;
+            case "UT_NORMAL":
+            case 1:
+                message.type = 1;
+                break;
+            case "UT_WORKFLOW":
+            case 2:
+                message.type = 2;
+                break;
+            case "UT_TRASHCAN":
+            case 3:
+                message.type = 3;
+                break;
+            }
+            switch (object.inheritUserPermissions) {
+            default:
+                if (typeof object.inheritUserPermissions === "number") {
+                    message.inheritUserPermissions = object.inheritUserPermissions;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.inheritUserPermissions = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.inheritUserPermissions = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.inheritUserPermissions = 2;
+                break;
+            }
+            if (object.folderKey != null)
+                if (typeof object.folderKey === "string")
+                    $util.base64.decode(object.folderKey, message.folderKey = $util.newBuffer($util.base64.length(object.folderKey)), 0);
+                else if (object.folderKey.length >= 0)
+                    message.folderKey = object.folderKey;
+            if (object.ownerInfo != null) {
+                if (!$util.isObject(object.ownerInfo))
+                    throw TypeError(".Folder.FolderData.ownerInfo: object expected");
+                message.ownerInfo = $root.Folder.UserInfo.fromObject(object.ownerInfo, long + 1);
+            }
+            if (object.dateCreated != null)
+                if ($util.Long)
+                    message.dateCreated = $util.Long.fromValue(object.dateCreated, false);
+                else if (typeof object.dateCreated === "string")
+                    message.dateCreated = parseInt(object.dateCreated, 10);
+                else if (typeof object.dateCreated === "number")
+                    message.dateCreated = object.dateCreated;
+                else if (typeof object.dateCreated === "object")
+                    message.dateCreated = new $util.LongBits(object.dateCreated.low >>> 0, object.dateCreated.high >>> 0).toNumber();
+            if (object.lastModified != null)
+                if ($util.Long)
+                    message.lastModified = $util.Long.fromValue(object.lastModified, false);
+                else if (typeof object.lastModified === "string")
+                    message.lastModified = parseInt(object.lastModified, 10);
+                else if (typeof object.lastModified === "number")
+                    message.lastModified = object.lastModified;
+                else if (typeof object.lastModified === "object")
+                    message.lastModified = new $util.LongBits(object.lastModified.low >>> 0, object.lastModified.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderData
+         * @static
+         * @param {Folder.FolderData} message FolderData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.parentUid = "";
+                else {
+                    object.parentUid = [];
+                    if (options.bytes !== Array)
+                        object.parentUid = $util.newBuffer(object.parentUid);
+                }
+                if (options.bytes === String)
+                    object.data = "";
+                else {
+                    object.data = [];
+                    if (options.bytes !== Array)
+                        object.data = $util.newBuffer(object.data);
+                }
+                object.type = options.enums === String ? "UT_UNKNOWN" : 0;
+                object.inheritUserPermissions = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                if (options.bytes === String)
+                    object.folderKey = "";
+                else {
+                    object.folderKey = [];
+                    if (options.bytes !== Array)
+                        object.folderKey = $util.newBuffer(object.folderKey);
+                }
+                object.ownerInfo = null;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.dateCreated = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.dateCreated = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.lastModified = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.lastModified = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.parentUid != null && Object.hasOwnProperty.call(message, "parentUid"))
+                object.parentUid = options.bytes === String ? $util.base64.encode(message.parentUid, 0, message.parentUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.parentUid) : message.parentUid;
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                object.type = options.enums === String ? $root.Folder.FolderUsageType[message.type] === undefined ? message.type : $root.Folder.FolderUsageType[message.type] : message.type;
+            if (message.inheritUserPermissions != null && Object.hasOwnProperty.call(message, "inheritUserPermissions"))
+                object.inheritUserPermissions = options.enums === String ? $root.Folder.SetBooleanValue[message.inheritUserPermissions] === undefined ? message.inheritUserPermissions : $root.Folder.SetBooleanValue[message.inheritUserPermissions] : message.inheritUserPermissions;
+            if (message.folderKey != null && Object.hasOwnProperty.call(message, "folderKey"))
+                object.folderKey = options.bytes === String ? $util.base64.encode(message.folderKey, 0, message.folderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderKey) : message.folderKey;
+            if (message.ownerInfo != null && Object.hasOwnProperty.call(message, "ownerInfo"))
+                object.ownerInfo = $root.Folder.UserInfo.toObject(message.ownerInfo, options, q + 1);
+            if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.dateCreated = typeof message.dateCreated === "number" ? BigInt(message.dateCreated) : $util.Long.fromBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0, false).toBigInt();
+                else if (typeof message.dateCreated === "number")
+                    object.dateCreated = options.longs === String ? String(message.dateCreated) : message.dateCreated;
+                else
+                    object.dateCreated = options.longs === String ? $util.Long.prototype.toString.call(message.dateCreated) : options.longs === Number ? new $util.LongBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0).toNumber() : message.dateCreated;
+            if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.lastModified = typeof message.lastModified === "number" ? BigInt(message.lastModified) : $util.Long.fromBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0, false).toBigInt();
+                else if (typeof message.lastModified === "number")
+                    object.lastModified = options.longs === String ? String(message.lastModified) : message.lastModified;
+                else
+                    object.lastModified = options.longs === String ? $util.Long.prototype.toString.call(message.lastModified) : options.longs === Number ? new $util.LongBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0).toNumber() : message.lastModified;
+            return object;
+        };
+
+        /**
+         * Converts this FolderData to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderData
+         * @function getTypeUrl
+         * @memberof Folder.FolderData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderData";
+        };
+
+        return FolderData;
+    })();
+
+    Folder.FolderKey = (function() {
+
+        /**
+         * Properties of a FolderKey.
+         * @memberof Folder
+         * @interface IFolderKey
+         * @property {Uint8Array|null} [folderUid] FolderKey folderUid
+         * @property {Uint8Array|null} [parentUid] FolderKey parentUid
+         * @property {Uint8Array|null} [folderKey] FolderKey folderKey
+         * @property {Folder.FolderKeyEncryptionType|null} [encryptedBy] FolderKey encryptedBy
+         */
+
+        /**
+         * Constructs a new FolderKey.
+         * @memberof Folder
+         * @classdesc Represents a FolderKey.
+         * @implements IFolderKey
+         * @constructor
+         * @param {Folder.IFolderKey=} [properties] Properties to set
+         */
+        function FolderKey(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderKey folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderKey
+         * @instance
+         */
+        FolderKey.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderKey parentUid.
+         * @member {Uint8Array} parentUid
+         * @memberof Folder.FolderKey
+         * @instance
+         */
+        FolderKey.prototype.parentUid = $util.newBuffer([]);
+
+        /**
+         * FolderKey folderKey.
+         * @member {Uint8Array} folderKey
+         * @memberof Folder.FolderKey
+         * @instance
+         */
+        FolderKey.prototype.folderKey = $util.newBuffer([]);
+
+        /**
+         * FolderKey encryptedBy.
+         * @member {Folder.FolderKeyEncryptionType} encryptedBy
+         * @memberof Folder.FolderKey
+         * @instance
+         */
+        FolderKey.prototype.encryptedBy = 0;
+
+        /**
+         * Creates a new FolderKey instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderKey
+         * @static
+         * @param {Folder.IFolderKey=} [properties] Properties to set
+         * @returns {Folder.FolderKey} FolderKey instance
+         */
+        FolderKey.create = function create(properties) {
+            return new FolderKey(properties);
+        };
+
+        /**
+         * Encodes the specified FolderKey message. Does not implicitly {@link Folder.FolderKey.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderKey
+         * @static
+         * @param {Folder.IFolderKey} message FolderKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderKey.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.parentUid != null && Object.hasOwnProperty.call(message, "parentUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.parentUid);
+            if (message.folderKey != null && Object.hasOwnProperty.call(message, "folderKey"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.folderKey);
+            if (message.encryptedBy != null && Object.hasOwnProperty.call(message, "encryptedBy"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.encryptedBy);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderKey message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderKey} FolderKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderKey.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderKey();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.parentUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.folderKey = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.encryptedBy = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderKey message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderKey
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderKey} FolderKey
+         */
+        FolderKey.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderKey)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderKey: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderKey();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.parentUid != null)
+                if (typeof object.parentUid === "string")
+                    $util.base64.decode(object.parentUid, message.parentUid = $util.newBuffer($util.base64.length(object.parentUid)), 0);
+                else if (object.parentUid.length >= 0)
+                    message.parentUid = object.parentUid;
+            if (object.folderKey != null)
+                if (typeof object.folderKey === "string")
+                    $util.base64.decode(object.folderKey, message.folderKey = $util.newBuffer($util.base64.length(object.folderKey)), 0);
+                else if (object.folderKey.length >= 0)
+                    message.folderKey = object.folderKey;
+            switch (object.encryptedBy) {
+            default:
+                if (typeof object.encryptedBy === "number") {
+                    message.encryptedBy = object.encryptedBy;
+                    break;
+                }
+                break;
+            case "ENCRYPTED_BY_USER_KEY":
+            case 0:
+                message.encryptedBy = 0;
+                break;
+            case "ENCRYPTED_BY_PARENT_KEY":
+            case 1:
+                message.encryptedBy = 1;
+                break;
+            case "ENCRYPTED_BY_TEAM_KEY":
+            case 2:
+                message.encryptedBy = 2;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderKey message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderKey
+         * @static
+         * @param {Folder.FolderKey} message FolderKey
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderKey.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.parentUid = "";
+                else {
+                    object.parentUid = [];
+                    if (options.bytes !== Array)
+                        object.parentUid = $util.newBuffer(object.parentUid);
+                }
+                if (options.bytes === String)
+                    object.folderKey = "";
+                else {
+                    object.folderKey = [];
+                    if (options.bytes !== Array)
+                        object.folderKey = $util.newBuffer(object.folderKey);
+                }
+                object.encryptedBy = options.enums === String ? "ENCRYPTED_BY_USER_KEY" : 0;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.parentUid != null && Object.hasOwnProperty.call(message, "parentUid"))
+                object.parentUid = options.bytes === String ? $util.base64.encode(message.parentUid, 0, message.parentUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.parentUid) : message.parentUid;
+            if (message.folderKey != null && Object.hasOwnProperty.call(message, "folderKey"))
+                object.folderKey = options.bytes === String ? $util.base64.encode(message.folderKey, 0, message.folderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderKey) : message.folderKey;
+            if (message.encryptedBy != null && Object.hasOwnProperty.call(message, "encryptedBy"))
+                object.encryptedBy = options.enums === String ? $root.Folder.FolderKeyEncryptionType[message.encryptedBy] === undefined ? message.encryptedBy : $root.Folder.FolderKeyEncryptionType[message.encryptedBy] : message.encryptedBy;
+            return object;
+        };
+
+        /**
+         * Converts this FolderKey to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderKey
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderKey.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderKey
+         * @function getTypeUrl
+         * @memberof Folder.FolderKey
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderKey.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderKey";
+        };
+
+        return FolderKey;
+    })();
+
+    /**
+     * FolderKeyEncryptionType enum.
+     * @name Folder.FolderKeyEncryptionType
+     * @enum {number}
+     * @property {number} ENCRYPTED_BY_USER_KEY=0 ENCRYPTED_BY_USER_KEY value
+     * @property {number} ENCRYPTED_BY_PARENT_KEY=1 ENCRYPTED_BY_PARENT_KEY value
+     * @property {number} ENCRYPTED_BY_TEAM_KEY=2 ENCRYPTED_BY_TEAM_KEY value
+     */
+    Folder.FolderKeyEncryptionType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "ENCRYPTED_BY_USER_KEY"] = 0;
+        values[valuesById[1] = "ENCRYPTED_BY_PARENT_KEY"] = 1;
+        values[valuesById[2] = "ENCRYPTED_BY_TEAM_KEY"] = 2;
+        return values;
+    })();
+
+    Folder.FolderAddRequest = (function() {
+
+        /**
+         * Properties of a FolderAddRequest.
+         * @memberof Folder
+         * @interface IFolderAddRequest
+         * @property {Array.<Folder.IFolderData>|null} [folderData] FolderAddRequest folderData
+         */
+
+        /**
+         * Constructs a new FolderAddRequest.
+         * @memberof Folder
+         * @classdesc Represents a FolderAddRequest.
+         * @implements IFolderAddRequest
+         * @constructor
+         * @param {Folder.IFolderAddRequest=} [properties] Properties to set
+         */
+        function FolderAddRequest(properties) {
+            this.folderData = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderAddRequest folderData.
+         * @member {Array.<Folder.IFolderData>} folderData
+         * @memberof Folder.FolderAddRequest
+         * @instance
+         */
+        FolderAddRequest.prototype.folderData = $util.emptyArray;
+
+        /**
+         * Creates a new FolderAddRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderAddRequest
+         * @static
+         * @param {Folder.IFolderAddRequest=} [properties] Properties to set
+         * @returns {Folder.FolderAddRequest} FolderAddRequest instance
+         */
+        FolderAddRequest.create = function create(properties) {
+            return new FolderAddRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FolderAddRequest message. Does not implicitly {@link Folder.FolderAddRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderAddRequest
+         * @static
+         * @param {Folder.IFolderAddRequest} message FolderAddRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderAddRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderData != null && message.folderData.length)
+                for (let i = 0; i < message.folderData.length; ++i)
+                    $root.Folder.FolderData.encode(message.folderData[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderAddRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderAddRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderAddRequest} FolderAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderAddRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderAddRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderData && message.folderData.length))
+                            message.folderData = [];
+                        message.folderData.push($root.Folder.FolderData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderAddRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderAddRequest} FolderAddRequest
+         */
+        FolderAddRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderAddRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderAddRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderAddRequest();
+            if (object.folderData) {
+                if (!Array.isArray(object.folderData))
+                    throw TypeError(".Folder.FolderAddRequest.folderData: array expected");
+                message.folderData = [];
+                for (let i = 0; i < object.folderData.length; ++i) {
+                    if (!$util.isObject(object.folderData[i]))
+                        throw TypeError(".Folder.FolderAddRequest.folderData: object expected");
+                    message.folderData[i] = $root.Folder.FolderData.fromObject(object.folderData[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderAddRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderAddRequest
+         * @static
+         * @param {Folder.FolderAddRequest} message FolderAddRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderAddRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.folderData = [];
+            if (message.folderData && message.folderData.length) {
+                object.folderData = [];
+                for (let j = 0; j < message.folderData.length; ++j)
+                    object.folderData[j] = $root.Folder.FolderData.toObject(message.folderData[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderAddRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderAddRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderAddRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderAddRequest
+         * @function getTypeUrl
+         * @memberof Folder.FolderAddRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderAddRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderAddRequest";
+        };
+
+        return FolderAddRequest;
+    })();
+
+    /**
+     * FolderModifyStatus enum.
+     * @name Folder.FolderModifyStatus
+     * @enum {number}
+     * @property {number} SUCCESS=0 SUCCESS value
+     * @property {number} BAD_REQUEST=1 BAD_REQUEST value
+     * @property {number} ACCESS_DENIED=2 ACCESS_DENIED value
+     * @property {number} NOT_FOUND=3 NOT_FOUND value
+     */
+    Folder.FolderModifyStatus = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "SUCCESS"] = 0;
+        values[valuesById[1] = "BAD_REQUEST"] = 1;
+        values[valuesById[2] = "ACCESS_DENIED"] = 2;
+        values[valuesById[3] = "NOT_FOUND"] = 3;
+        return values;
+    })();
+
+    Folder.FolderModifyResult = (function() {
+
+        /**
+         * Properties of a FolderModifyResult.
+         * @memberof Folder
+         * @interface IFolderModifyResult
+         * @property {Uint8Array|null} [folderUid] FolderModifyResult folderUid
+         * @property {Folder.FolderModifyStatus|null} [status] FolderModifyResult status
+         * @property {string|null} [message] FolderModifyResult message
+         */
+
+        /**
+         * Constructs a new FolderModifyResult.
+         * @memberof Folder
+         * @classdesc Represents a FolderModifyResult.
+         * @implements IFolderModifyResult
+         * @constructor
+         * @param {Folder.IFolderModifyResult=} [properties] Properties to set
+         */
+        function FolderModifyResult(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderModifyResult folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderModifyResult
+         * @instance
+         */
+        FolderModifyResult.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderModifyResult status.
+         * @member {Folder.FolderModifyStatus} status
+         * @memberof Folder.FolderModifyResult
+         * @instance
+         */
+        FolderModifyResult.prototype.status = 0;
+
+        /**
+         * FolderModifyResult message.
+         * @member {string} message
+         * @memberof Folder.FolderModifyResult
+         * @instance
+         */
+        FolderModifyResult.prototype.message = "";
+
+        /**
+         * Creates a new FolderModifyResult instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderModifyResult
+         * @static
+         * @param {Folder.IFolderModifyResult=} [properties] Properties to set
+         * @returns {Folder.FolderModifyResult} FolderModifyResult instance
+         */
+        FolderModifyResult.create = function create(properties) {
+            return new FolderModifyResult(properties);
+        };
+
+        /**
+         * Encodes the specified FolderModifyResult message. Does not implicitly {@link Folder.FolderModifyResult.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderModifyResult
+         * @static
+         * @param {Folder.IFolderModifyResult} message FolderModifyResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderModifyResult.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
+            if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.message);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderModifyResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderModifyResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderModifyResult} FolderModifyResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderModifyResult.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderModifyResult();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.status = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.message = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderModifyResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderModifyResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderModifyResult} FolderModifyResult
+         */
+        FolderModifyResult.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderModifyResult)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderModifyResult: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderModifyResult();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            switch (object.status) {
+            default:
+                if (typeof object.status === "number") {
+                    message.status = object.status;
+                    break;
+                }
+                break;
+            case "SUCCESS":
+            case 0:
+                message.status = 0;
+                break;
+            case "BAD_REQUEST":
+            case 1:
+                message.status = 1;
+                break;
+            case "ACCESS_DENIED":
+            case 2:
+                message.status = 2;
+                break;
+            case "NOT_FOUND":
+            case 3:
+                message.status = 3;
+                break;
+            }
+            if (object.message != null)
+                message.message = String(object.message);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderModifyResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderModifyResult
+         * @static
+         * @param {Folder.FolderModifyResult} message FolderModifyResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderModifyResult.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                object.status = options.enums === String ? "SUCCESS" : 0;
+                object.message = "";
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = options.enums === String ? $root.Folder.FolderModifyStatus[message.status] === undefined ? message.status : $root.Folder.FolderModifyStatus[message.status] : message.status;
+            if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                object.message = message.message;
+            return object;
+        };
+
+        /**
+         * Converts this FolderModifyResult to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderModifyResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderModifyResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderModifyResult
+         * @function getTypeUrl
+         * @memberof Folder.FolderModifyResult
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderModifyResult.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderModifyResult";
+        };
+
+        return FolderModifyResult;
+    })();
+
+    Folder.FolderAddResponse = (function() {
+
+        /**
+         * Properties of a FolderAddResponse.
+         * @memberof Folder
+         * @interface IFolderAddResponse
+         * @property {Array.<Folder.IFolderModifyResult>|null} [folderAddResults] FolderAddResponse folderAddResults
+         */
+
+        /**
+         * Constructs a new FolderAddResponse.
+         * @memberof Folder
+         * @classdesc Represents a FolderAddResponse.
+         * @implements IFolderAddResponse
+         * @constructor
+         * @param {Folder.IFolderAddResponse=} [properties] Properties to set
+         */
+        function FolderAddResponse(properties) {
+            this.folderAddResults = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderAddResponse folderAddResults.
+         * @member {Array.<Folder.IFolderModifyResult>} folderAddResults
+         * @memberof Folder.FolderAddResponse
+         * @instance
+         */
+        FolderAddResponse.prototype.folderAddResults = $util.emptyArray;
+
+        /**
+         * Creates a new FolderAddResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderAddResponse
+         * @static
+         * @param {Folder.IFolderAddResponse=} [properties] Properties to set
+         * @returns {Folder.FolderAddResponse} FolderAddResponse instance
+         */
+        FolderAddResponse.create = function create(properties) {
+            return new FolderAddResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FolderAddResponse message. Does not implicitly {@link Folder.FolderAddResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderAddResponse
+         * @static
+         * @param {Folder.IFolderAddResponse} message FolderAddResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderAddResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderAddResults != null && message.folderAddResults.length)
+                for (let i = 0; i < message.folderAddResults.length; ++i)
+                    $root.Folder.FolderModifyResult.encode(message.folderAddResults[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderAddResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderAddResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderAddResponse} FolderAddResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderAddResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderAddResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderAddResults && message.folderAddResults.length))
+                            message.folderAddResults = [];
+                        message.folderAddResults.push($root.Folder.FolderModifyResult.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderAddResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderAddResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderAddResponse} FolderAddResponse
+         */
+        FolderAddResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderAddResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderAddResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderAddResponse();
+            if (object.folderAddResults) {
+                if (!Array.isArray(object.folderAddResults))
+                    throw TypeError(".Folder.FolderAddResponse.folderAddResults: array expected");
+                message.folderAddResults = [];
+                for (let i = 0; i < object.folderAddResults.length; ++i) {
+                    if (!$util.isObject(object.folderAddResults[i]))
+                        throw TypeError(".Folder.FolderAddResponse.folderAddResults: object expected");
+                    message.folderAddResults[i] = $root.Folder.FolderModifyResult.fromObject(object.folderAddResults[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderAddResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderAddResponse
+         * @static
+         * @param {Folder.FolderAddResponse} message FolderAddResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderAddResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.folderAddResults = [];
+            if (message.folderAddResults && message.folderAddResults.length) {
+                object.folderAddResults = [];
+                for (let j = 0; j < message.folderAddResults.length; ++j)
+                    object.folderAddResults[j] = $root.Folder.FolderModifyResult.toObject(message.folderAddResults[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderAddResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderAddResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderAddResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderAddResponse
+         * @function getTypeUrl
+         * @memberof Folder.FolderAddResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderAddResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderAddResponse";
+        };
+
+        return FolderAddResponse;
+    })();
+
+    Folder.FolderUpdateRequest = (function() {
+
+        /**
+         * Properties of a FolderUpdateRequest.
+         * @memberof Folder
+         * @interface IFolderUpdateRequest
+         * @property {Array.<Folder.IFolderData>|null} [folderData] FolderUpdateRequest folderData
+         */
+
+        /**
+         * Constructs a new FolderUpdateRequest.
+         * @memberof Folder
+         * @classdesc Represents a FolderUpdateRequest.
+         * @implements IFolderUpdateRequest
+         * @constructor
+         * @param {Folder.IFolderUpdateRequest=} [properties] Properties to set
+         */
+        function FolderUpdateRequest(properties) {
+            this.folderData = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderUpdateRequest folderData.
+         * @member {Array.<Folder.IFolderData>} folderData
+         * @memberof Folder.FolderUpdateRequest
+         * @instance
+         */
+        FolderUpdateRequest.prototype.folderData = $util.emptyArray;
+
+        /**
+         * Creates a new FolderUpdateRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderUpdateRequest
+         * @static
+         * @param {Folder.IFolderUpdateRequest=} [properties] Properties to set
+         * @returns {Folder.FolderUpdateRequest} FolderUpdateRequest instance
+         */
+        FolderUpdateRequest.create = function create(properties) {
+            return new FolderUpdateRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FolderUpdateRequest message. Does not implicitly {@link Folder.FolderUpdateRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderUpdateRequest
+         * @static
+         * @param {Folder.IFolderUpdateRequest} message FolderUpdateRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderUpdateRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderData != null && message.folderData.length)
+                for (let i = 0; i < message.folderData.length; ++i)
+                    $root.Folder.FolderData.encode(message.folderData[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderUpdateRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderUpdateRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderUpdateRequest} FolderUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderUpdateRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderUpdateRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderData && message.folderData.length))
+                            message.folderData = [];
+                        message.folderData.push($root.Folder.FolderData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderUpdateRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderUpdateRequest} FolderUpdateRequest
+         */
+        FolderUpdateRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderUpdateRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderUpdateRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderUpdateRequest();
+            if (object.folderData) {
+                if (!Array.isArray(object.folderData))
+                    throw TypeError(".Folder.FolderUpdateRequest.folderData: array expected");
+                message.folderData = [];
+                for (let i = 0; i < object.folderData.length; ++i) {
+                    if (!$util.isObject(object.folderData[i]))
+                        throw TypeError(".Folder.FolderUpdateRequest.folderData: object expected");
+                    message.folderData[i] = $root.Folder.FolderData.fromObject(object.folderData[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderUpdateRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderUpdateRequest
+         * @static
+         * @param {Folder.FolderUpdateRequest} message FolderUpdateRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderUpdateRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.folderData = [];
+            if (message.folderData && message.folderData.length) {
+                object.folderData = [];
+                for (let j = 0; j < message.folderData.length; ++j)
+                    object.folderData[j] = $root.Folder.FolderData.toObject(message.folderData[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderUpdateRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderUpdateRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderUpdateRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderUpdateRequest
+         * @function getTypeUrl
+         * @memberof Folder.FolderUpdateRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderUpdateRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderUpdateRequest";
+        };
+
+        return FolderUpdateRequest;
+    })();
+
+    Folder.FolderUpdateResponse = (function() {
+
+        /**
+         * Properties of a FolderUpdateResponse.
+         * @memberof Folder
+         * @interface IFolderUpdateResponse
+         * @property {Array.<Folder.IFolderModifyResult>|null} [folderUpdateResults] FolderUpdateResponse folderUpdateResults
+         */
+
+        /**
+         * Constructs a new FolderUpdateResponse.
+         * @memberof Folder
+         * @classdesc Represents a FolderUpdateResponse.
+         * @implements IFolderUpdateResponse
+         * @constructor
+         * @param {Folder.IFolderUpdateResponse=} [properties] Properties to set
+         */
+        function FolderUpdateResponse(properties) {
+            this.folderUpdateResults = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderUpdateResponse folderUpdateResults.
+         * @member {Array.<Folder.IFolderModifyResult>} folderUpdateResults
+         * @memberof Folder.FolderUpdateResponse
+         * @instance
+         */
+        FolderUpdateResponse.prototype.folderUpdateResults = $util.emptyArray;
+
+        /**
+         * Creates a new FolderUpdateResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderUpdateResponse
+         * @static
+         * @param {Folder.IFolderUpdateResponse=} [properties] Properties to set
+         * @returns {Folder.FolderUpdateResponse} FolderUpdateResponse instance
+         */
+        FolderUpdateResponse.create = function create(properties) {
+            return new FolderUpdateResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FolderUpdateResponse message. Does not implicitly {@link Folder.FolderUpdateResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderUpdateResponse
+         * @static
+         * @param {Folder.IFolderUpdateResponse} message FolderUpdateResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderUpdateResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUpdateResults != null && message.folderUpdateResults.length)
+                for (let i = 0; i < message.folderUpdateResults.length; ++i)
+                    $root.Folder.FolderModifyResult.encode(message.folderUpdateResults[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderUpdateResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderUpdateResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderUpdateResponse} FolderUpdateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderUpdateResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderUpdateResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderUpdateResults && message.folderUpdateResults.length))
+                            message.folderUpdateResults = [];
+                        message.folderUpdateResults.push($root.Folder.FolderModifyResult.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderUpdateResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderUpdateResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderUpdateResponse} FolderUpdateResponse
+         */
+        FolderUpdateResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderUpdateResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderUpdateResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderUpdateResponse();
+            if (object.folderUpdateResults) {
+                if (!Array.isArray(object.folderUpdateResults))
+                    throw TypeError(".Folder.FolderUpdateResponse.folderUpdateResults: array expected");
+                message.folderUpdateResults = [];
+                for (let i = 0; i < object.folderUpdateResults.length; ++i) {
+                    if (!$util.isObject(object.folderUpdateResults[i]))
+                        throw TypeError(".Folder.FolderUpdateResponse.folderUpdateResults: object expected");
+                    message.folderUpdateResults[i] = $root.Folder.FolderModifyResult.fromObject(object.folderUpdateResults[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderUpdateResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderUpdateResponse
+         * @static
+         * @param {Folder.FolderUpdateResponse} message FolderUpdateResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderUpdateResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.folderUpdateResults = [];
+            if (message.folderUpdateResults && message.folderUpdateResults.length) {
+                object.folderUpdateResults = [];
+                for (let j = 0; j < message.folderUpdateResults.length; ++j)
+                    object.folderUpdateResults[j] = $root.Folder.FolderModifyResult.toObject(message.folderUpdateResults[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderUpdateResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderUpdateResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderUpdateResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderUpdateResponse
+         * @function getTypeUrl
+         * @memberof Folder.FolderUpdateResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderUpdateResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderUpdateResponse";
+        };
+
+        return FolderUpdateResponse;
+    })();
+
+    /**
+     * FolderPermissionBits enum.
+     * @name Folder.FolderPermissionBits
+     * @enum {number}
+     * @property {number} noBits=0 noBits value
+     * @property {number} canAdd=1 canAdd value
+     * @property {number} canRemove=2 canRemove value
+     * @property {number} canDelete=4 canDelete value
+     * @property {number} canListAccess=8 canListAccess value
+     * @property {number} canUpdateAccess=16 canUpdateAccess value
+     * @property {number} canChangeOwnership=32 canChangeOwnership value
+     * @property {number} canEditRecords=64 canEditRecords value
+     * @property {number} canViewRecords=128 canViewRecords value
+     * @property {number} canApproveAccess=256 canApproveAccess value
+     * @property {number} canRequestAccess=512 canRequestAccess value
+     * @property {number} canUpdateSetting=1024 canUpdateSetting value
+     * @property {number} canListRecords=2048 canListRecords value
+     * @property {number} canListFolders=4096 canListFolders value
+     */
+    Folder.FolderPermissionBits = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "noBits"] = 0;
+        values[valuesById[1] = "canAdd"] = 1;
+        values[valuesById[2] = "canRemove"] = 2;
+        values[valuesById[4] = "canDelete"] = 4;
+        values[valuesById[8] = "canListAccess"] = 8;
+        values[valuesById[16] = "canUpdateAccess"] = 16;
+        values[valuesById[32] = "canChangeOwnership"] = 32;
+        values[valuesById[64] = "canEditRecords"] = 64;
+        values[valuesById[128] = "canViewRecords"] = 128;
+        values[valuesById[256] = "canApproveAccess"] = 256;
+        values[valuesById[512] = "canRequestAccess"] = 512;
+        values[valuesById[1024] = "canUpdateSetting"] = 1024;
+        values[valuesById[2048] = "canListRecords"] = 2048;
+        values[valuesById[4096] = "canListFolders"] = 4096;
+        return values;
+    })();
+
+    Folder.FolderPermissions = (function() {
+
+        /**
+         * Properties of a FolderPermissions.
+         * @memberof Folder
+         * @interface IFolderPermissions
+         * @property {boolean|null} [canAdd] FolderPermissions canAdd
+         * @property {boolean|null} [canRemove] FolderPermissions canRemove
+         * @property {boolean|null} [canDelete] FolderPermissions canDelete
+         * @property {boolean|null} [canListAccess] FolderPermissions canListAccess
+         * @property {boolean|null} [canUpdateAccess] FolderPermissions canUpdateAccess
+         * @property {boolean|null} [canChangeOwnership] FolderPermissions canChangeOwnership
+         * @property {boolean|null} [canEditRecords] FolderPermissions canEditRecords
+         * @property {boolean|null} [canViewRecords] FolderPermissions canViewRecords
+         * @property {boolean|null} [canApproveAccess] FolderPermissions canApproveAccess
+         * @property {boolean|null} [canRequestAccess] FolderPermissions canRequestAccess
+         * @property {boolean|null} [canUpdateSetting] FolderPermissions canUpdateSetting
+         * @property {boolean|null} [canListRecords] FolderPermissions canListRecords
+         * @property {boolean|null} [canListFolders] FolderPermissions canListFolders
+         */
+
+        /**
+         * Constructs a new FolderPermissions.
+         * @memberof Folder
+         * @classdesc Represents a FolderPermissions.
+         * @implements IFolderPermissions
+         * @constructor
+         * @param {Folder.IFolderPermissions=} [properties] Properties to set
+         */
+        function FolderPermissions(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderPermissions canAdd.
+         * @member {boolean} canAdd
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canAdd = false;
+
+        /**
+         * FolderPermissions canRemove.
+         * @member {boolean} canRemove
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canRemove = false;
+
+        /**
+         * FolderPermissions canDelete.
+         * @member {boolean} canDelete
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canDelete = false;
+
+        /**
+         * FolderPermissions canListAccess.
+         * @member {boolean} canListAccess
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canListAccess = false;
+
+        /**
+         * FolderPermissions canUpdateAccess.
+         * @member {boolean} canUpdateAccess
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canUpdateAccess = false;
+
+        /**
+         * FolderPermissions canChangeOwnership.
+         * @member {boolean} canChangeOwnership
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canChangeOwnership = false;
+
+        /**
+         * FolderPermissions canEditRecords.
+         * @member {boolean} canEditRecords
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canEditRecords = false;
+
+        /**
+         * FolderPermissions canViewRecords.
+         * @member {boolean} canViewRecords
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canViewRecords = false;
+
+        /**
+         * FolderPermissions canApproveAccess.
+         * @member {boolean} canApproveAccess
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canApproveAccess = false;
+
+        /**
+         * FolderPermissions canRequestAccess.
+         * @member {boolean} canRequestAccess
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canRequestAccess = false;
+
+        /**
+         * FolderPermissions canUpdateSetting.
+         * @member {boolean} canUpdateSetting
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canUpdateSetting = false;
+
+        /**
+         * FolderPermissions canListRecords.
+         * @member {boolean} canListRecords
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canListRecords = false;
+
+        /**
+         * FolderPermissions canListFolders.
+         * @member {boolean} canListFolders
+         * @memberof Folder.FolderPermissions
+         * @instance
+         */
+        FolderPermissions.prototype.canListFolders = false;
+
+        /**
+         * Creates a new FolderPermissions instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderPermissions
+         * @static
+         * @param {Folder.IFolderPermissions=} [properties] Properties to set
+         * @returns {Folder.FolderPermissions} FolderPermissions instance
+         */
+        FolderPermissions.create = function create(properties) {
+            return new FolderPermissions(properties);
+        };
+
+        /**
+         * Encodes the specified FolderPermissions message. Does not implicitly {@link Folder.FolderPermissions.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderPermissions
+         * @static
+         * @param {Folder.IFolderPermissions} message FolderPermissions message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderPermissions.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.canAdd != null && Object.hasOwnProperty.call(message, "canAdd"))
+                writer.uint32(/* id 1, wireType 0 =*/8).bool(message.canAdd);
+            if (message.canRemove != null && Object.hasOwnProperty.call(message, "canRemove"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.canRemove);
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.canDelete);
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                writer.uint32(/* id 4, wireType 0 =*/32).bool(message.canListAccess);
+            if (message.canUpdateAccess != null && Object.hasOwnProperty.call(message, "canUpdateAccess"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.canUpdateAccess);
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.canChangeOwnership);
+            if (message.canEditRecords != null && Object.hasOwnProperty.call(message, "canEditRecords"))
+                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.canEditRecords);
+            if (message.canViewRecords != null && Object.hasOwnProperty.call(message, "canViewRecords"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.canViewRecords);
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                writer.uint32(/* id 9, wireType 0 =*/72).bool(message.canApproveAccess);
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.canRequestAccess);
+            if (message.canUpdateSetting != null && Object.hasOwnProperty.call(message, "canUpdateSetting"))
+                writer.uint32(/* id 11, wireType 0 =*/88).bool(message.canUpdateSetting);
+            if (message.canListRecords != null && Object.hasOwnProperty.call(message, "canListRecords"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.canListRecords);
+            if (message.canListFolders != null && Object.hasOwnProperty.call(message, "canListFolders"))
+                writer.uint32(/* id 13, wireType 0 =*/104).bool(message.canListFolders);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderPermissions message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderPermissions
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderPermissions} FolderPermissions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderPermissions.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderPermissions();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.canAdd = reader.bool();
+                        break;
+                    }
+                case 2: {
+                        message.canRemove = reader.bool();
+                        break;
+                    }
+                case 3: {
+                        message.canDelete = reader.bool();
+                        break;
+                    }
+                case 4: {
+                        message.canListAccess = reader.bool();
+                        break;
+                    }
+                case 5: {
+                        message.canUpdateAccess = reader.bool();
+                        break;
+                    }
+                case 6: {
+                        message.canChangeOwnership = reader.bool();
+                        break;
+                    }
+                case 7: {
+                        message.canEditRecords = reader.bool();
+                        break;
+                    }
+                case 8: {
+                        message.canViewRecords = reader.bool();
+                        break;
+                    }
+                case 9: {
+                        message.canApproveAccess = reader.bool();
+                        break;
+                    }
+                case 10: {
+                        message.canRequestAccess = reader.bool();
+                        break;
+                    }
+                case 11: {
+                        message.canUpdateSetting = reader.bool();
+                        break;
+                    }
+                case 12: {
+                        message.canListRecords = reader.bool();
+                        break;
+                    }
+                case 13: {
+                        message.canListFolders = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderPermissions message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderPermissions
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderPermissions} FolderPermissions
+         */
+        FolderPermissions.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderPermissions)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderPermissions: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderPermissions();
+            if (object.canAdd != null)
+                message.canAdd = Boolean(object.canAdd);
+            if (object.canRemove != null)
+                message.canRemove = Boolean(object.canRemove);
+            if (object.canDelete != null)
+                message.canDelete = Boolean(object.canDelete);
+            if (object.canListAccess != null)
+                message.canListAccess = Boolean(object.canListAccess);
+            if (object.canUpdateAccess != null)
+                message.canUpdateAccess = Boolean(object.canUpdateAccess);
+            if (object.canChangeOwnership != null)
+                message.canChangeOwnership = Boolean(object.canChangeOwnership);
+            if (object.canEditRecords != null)
+                message.canEditRecords = Boolean(object.canEditRecords);
+            if (object.canViewRecords != null)
+                message.canViewRecords = Boolean(object.canViewRecords);
+            if (object.canApproveAccess != null)
+                message.canApproveAccess = Boolean(object.canApproveAccess);
+            if (object.canRequestAccess != null)
+                message.canRequestAccess = Boolean(object.canRequestAccess);
+            if (object.canUpdateSetting != null)
+                message.canUpdateSetting = Boolean(object.canUpdateSetting);
+            if (object.canListRecords != null)
+                message.canListRecords = Boolean(object.canListRecords);
+            if (object.canListFolders != null)
+                message.canListFolders = Boolean(object.canListFolders);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderPermissions message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderPermissions
+         * @static
+         * @param {Folder.FolderPermissions} message FolderPermissions
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderPermissions.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                object.canAdd = false;
+                object.canRemove = false;
+                object.canDelete = false;
+                object.canListAccess = false;
+                object.canUpdateAccess = false;
+                object.canChangeOwnership = false;
+                object.canEditRecords = false;
+                object.canViewRecords = false;
+                object.canApproveAccess = false;
+                object.canRequestAccess = false;
+                object.canUpdateSetting = false;
+                object.canListRecords = false;
+                object.canListFolders = false;
+            }
+            if (message.canAdd != null && Object.hasOwnProperty.call(message, "canAdd"))
+                object.canAdd = message.canAdd;
+            if (message.canRemove != null && Object.hasOwnProperty.call(message, "canRemove"))
+                object.canRemove = message.canRemove;
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                object.canDelete = message.canDelete;
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                object.canListAccess = message.canListAccess;
+            if (message.canUpdateAccess != null && Object.hasOwnProperty.call(message, "canUpdateAccess"))
+                object.canUpdateAccess = message.canUpdateAccess;
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                object.canChangeOwnership = message.canChangeOwnership;
+            if (message.canEditRecords != null && Object.hasOwnProperty.call(message, "canEditRecords"))
+                object.canEditRecords = message.canEditRecords;
+            if (message.canViewRecords != null && Object.hasOwnProperty.call(message, "canViewRecords"))
+                object.canViewRecords = message.canViewRecords;
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                object.canApproveAccess = message.canApproveAccess;
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                object.canRequestAccess = message.canRequestAccess;
+            if (message.canUpdateSetting != null && Object.hasOwnProperty.call(message, "canUpdateSetting"))
+                object.canUpdateSetting = message.canUpdateSetting;
+            if (message.canListRecords != null && Object.hasOwnProperty.call(message, "canListRecords"))
+                object.canListRecords = message.canListRecords;
+            if (message.canListFolders != null && Object.hasOwnProperty.call(message, "canListFolders"))
+                object.canListFolders = message.canListFolders;
+            return object;
+        };
+
+        /**
+         * Converts this FolderPermissions to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderPermissions
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderPermissions.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderPermissions
+         * @function getTypeUrl
+         * @memberof Folder.FolderPermissions
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderPermissions.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderPermissions";
+        };
+
+        return FolderPermissions;
+    })();
+
+    Folder.Capabilities = (function() {
+
+        /**
+         * Properties of a Capabilities.
+         * @memberof Folder
+         * @interface ICapabilities
+         * @property {Folder.SetBooleanValue|null} [canAdd] Capabilities canAdd
+         * @property {Folder.SetBooleanValue|null} [canRemove] Capabilities canRemove
+         * @property {Folder.SetBooleanValue|null} [canDelete] Capabilities canDelete
+         * @property {Folder.SetBooleanValue|null} [canListAccess] Capabilities canListAccess
+         * @property {Folder.SetBooleanValue|null} [canUpdateAccess] Capabilities canUpdateAccess
+         * @property {Folder.SetBooleanValue|null} [canChangeOwnership] Capabilities canChangeOwnership
+         * @property {Folder.SetBooleanValue|null} [canEditRecords] Capabilities canEditRecords
+         * @property {Folder.SetBooleanValue|null} [canViewRecords] Capabilities canViewRecords
+         * @property {Folder.SetBooleanValue|null} [canApproveAccess] Capabilities canApproveAccess
+         * @property {Folder.SetBooleanValue|null} [canRequestAccess] Capabilities canRequestAccess
+         * @property {Folder.SetBooleanValue|null} [canUpdateSetting] Capabilities canUpdateSetting
+         * @property {Folder.SetBooleanValue|null} [canListRecords] Capabilities canListRecords
+         * @property {Folder.SetBooleanValue|null} [canListFolders] Capabilities canListFolders
+         */
+
+        /**
+         * Constructs a new Capabilities.
+         * @memberof Folder
+         * @classdesc Represents a Capabilities.
+         * @implements ICapabilities
+         * @constructor
+         * @param {Folder.ICapabilities=} [properties] Properties to set
+         */
+        function Capabilities(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Capabilities canAdd.
+         * @member {Folder.SetBooleanValue} canAdd
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canAdd = 0;
+
+        /**
+         * Capabilities canRemove.
+         * @member {Folder.SetBooleanValue} canRemove
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canRemove = 0;
+
+        /**
+         * Capabilities canDelete.
+         * @member {Folder.SetBooleanValue} canDelete
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canDelete = 0;
+
+        /**
+         * Capabilities canListAccess.
+         * @member {Folder.SetBooleanValue} canListAccess
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canListAccess = 0;
+
+        /**
+         * Capabilities canUpdateAccess.
+         * @member {Folder.SetBooleanValue} canUpdateAccess
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canUpdateAccess = 0;
+
+        /**
+         * Capabilities canChangeOwnership.
+         * @member {Folder.SetBooleanValue} canChangeOwnership
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canChangeOwnership = 0;
+
+        /**
+         * Capabilities canEditRecords.
+         * @member {Folder.SetBooleanValue} canEditRecords
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canEditRecords = 0;
+
+        /**
+         * Capabilities canViewRecords.
+         * @member {Folder.SetBooleanValue} canViewRecords
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canViewRecords = 0;
+
+        /**
+         * Capabilities canApproveAccess.
+         * @member {Folder.SetBooleanValue} canApproveAccess
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canApproveAccess = 0;
+
+        /**
+         * Capabilities canRequestAccess.
+         * @member {Folder.SetBooleanValue} canRequestAccess
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canRequestAccess = 0;
+
+        /**
+         * Capabilities canUpdateSetting.
+         * @member {Folder.SetBooleanValue} canUpdateSetting
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canUpdateSetting = 0;
+
+        /**
+         * Capabilities canListRecords.
+         * @member {Folder.SetBooleanValue} canListRecords
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canListRecords = 0;
+
+        /**
+         * Capabilities canListFolders.
+         * @member {Folder.SetBooleanValue} canListFolders
+         * @memberof Folder.Capabilities
+         * @instance
+         */
+        Capabilities.prototype.canListFolders = 0;
+
+        /**
+         * Creates a new Capabilities instance using the specified properties.
+         * @function create
+         * @memberof Folder.Capabilities
+         * @static
+         * @param {Folder.ICapabilities=} [properties] Properties to set
+         * @returns {Folder.Capabilities} Capabilities instance
+         */
+        Capabilities.create = function create(properties) {
+            return new Capabilities(properties);
+        };
+
+        /**
+         * Encodes the specified Capabilities message. Does not implicitly {@link Folder.Capabilities.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.Capabilities
+         * @static
+         * @param {Folder.ICapabilities} message Capabilities message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Capabilities.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.canAdd != null && Object.hasOwnProperty.call(message, "canAdd"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.canAdd);
+            if (message.canRemove != null && Object.hasOwnProperty.call(message, "canRemove"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.canRemove);
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.canDelete);
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.canListAccess);
+            if (message.canUpdateAccess != null && Object.hasOwnProperty.call(message, "canUpdateAccess"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.canUpdateAccess);
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.canChangeOwnership);
+            if (message.canEditRecords != null && Object.hasOwnProperty.call(message, "canEditRecords"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.canEditRecords);
+            if (message.canViewRecords != null && Object.hasOwnProperty.call(message, "canViewRecords"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int32(message.canViewRecords);
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.canApproveAccess);
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int32(message.canRequestAccess);
+            if (message.canUpdateSetting != null && Object.hasOwnProperty.call(message, "canUpdateSetting"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.canUpdateSetting);
+            if (message.canListRecords != null && Object.hasOwnProperty.call(message, "canListRecords"))
+                writer.uint32(/* id 12, wireType 0 =*/96).int32(message.canListRecords);
+            if (message.canListFolders != null && Object.hasOwnProperty.call(message, "canListFolders"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.canListFolders);
+            return writer;
+        };
+
+        /**
+         * Decodes a Capabilities message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.Capabilities
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.Capabilities} Capabilities
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Capabilities.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.Capabilities();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.canAdd = reader.int32();
+                        break;
+                    }
+                case 2: {
+                        message.canRemove = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.canDelete = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        message.canListAccess = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.canUpdateAccess = reader.int32();
+                        break;
+                    }
+                case 6: {
+                        message.canChangeOwnership = reader.int32();
+                        break;
+                    }
+                case 7: {
+                        message.canEditRecords = reader.int32();
+                        break;
+                    }
+                case 8: {
+                        message.canViewRecords = reader.int32();
+                        break;
+                    }
+                case 9: {
+                        message.canApproveAccess = reader.int32();
+                        break;
+                    }
+                case 10: {
+                        message.canRequestAccess = reader.int32();
+                        break;
+                    }
+                case 11: {
+                        message.canUpdateSetting = reader.int32();
+                        break;
+                    }
+                case 12: {
+                        message.canListRecords = reader.int32();
+                        break;
+                    }
+                case 13: {
+                        message.canListFolders = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a Capabilities message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.Capabilities
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.Capabilities} Capabilities
+         */
+        Capabilities.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.Capabilities)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.Capabilities: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.Capabilities();
+            switch (object.canAdd) {
+            default:
+                if (typeof object.canAdd === "number") {
+                    message.canAdd = object.canAdd;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canAdd = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canAdd = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canAdd = 2;
+                break;
+            }
+            switch (object.canRemove) {
+            default:
+                if (typeof object.canRemove === "number") {
+                    message.canRemove = object.canRemove;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canRemove = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canRemove = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canRemove = 2;
+                break;
+            }
+            switch (object.canDelete) {
+            default:
+                if (typeof object.canDelete === "number") {
+                    message.canDelete = object.canDelete;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canDelete = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canDelete = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canDelete = 2;
+                break;
+            }
+            switch (object.canListAccess) {
+            default:
+                if (typeof object.canListAccess === "number") {
+                    message.canListAccess = object.canListAccess;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canListAccess = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canListAccess = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canListAccess = 2;
+                break;
+            }
+            switch (object.canUpdateAccess) {
+            default:
+                if (typeof object.canUpdateAccess === "number") {
+                    message.canUpdateAccess = object.canUpdateAccess;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canUpdateAccess = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canUpdateAccess = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canUpdateAccess = 2;
+                break;
+            }
+            switch (object.canChangeOwnership) {
+            default:
+                if (typeof object.canChangeOwnership === "number") {
+                    message.canChangeOwnership = object.canChangeOwnership;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canChangeOwnership = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canChangeOwnership = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canChangeOwnership = 2;
+                break;
+            }
+            switch (object.canEditRecords) {
+            default:
+                if (typeof object.canEditRecords === "number") {
+                    message.canEditRecords = object.canEditRecords;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canEditRecords = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canEditRecords = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canEditRecords = 2;
+                break;
+            }
+            switch (object.canViewRecords) {
+            default:
+                if (typeof object.canViewRecords === "number") {
+                    message.canViewRecords = object.canViewRecords;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canViewRecords = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canViewRecords = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canViewRecords = 2;
+                break;
+            }
+            switch (object.canApproveAccess) {
+            default:
+                if (typeof object.canApproveAccess === "number") {
+                    message.canApproveAccess = object.canApproveAccess;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canApproveAccess = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canApproveAccess = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canApproveAccess = 2;
+                break;
+            }
+            switch (object.canRequestAccess) {
+            default:
+                if (typeof object.canRequestAccess === "number") {
+                    message.canRequestAccess = object.canRequestAccess;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canRequestAccess = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canRequestAccess = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canRequestAccess = 2;
+                break;
+            }
+            switch (object.canUpdateSetting) {
+            default:
+                if (typeof object.canUpdateSetting === "number") {
+                    message.canUpdateSetting = object.canUpdateSetting;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canUpdateSetting = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canUpdateSetting = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canUpdateSetting = 2;
+                break;
+            }
+            switch (object.canListRecords) {
+            default:
+                if (typeof object.canListRecords === "number") {
+                    message.canListRecords = object.canListRecords;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canListRecords = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canListRecords = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canListRecords = 2;
+                break;
+            }
+            switch (object.canListFolders) {
+            default:
+                if (typeof object.canListFolders === "number") {
+                    message.canListFolders = object.canListFolders;
+                    break;
+                }
+                break;
+            case "BOOLEAN_NO_CHANGE":
+            case 0:
+                message.canListFolders = 0;
+                break;
+            case "BOOLEAN_TRUE":
+            case 1:
+                message.canListFolders = 1;
+                break;
+            case "BOOLEAN_FALSE":
+            case 2:
+                message.canListFolders = 2;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Capabilities message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.Capabilities
+         * @static
+         * @param {Folder.Capabilities} message Capabilities
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Capabilities.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                object.canAdd = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canRemove = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canDelete = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canListAccess = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canUpdateAccess = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canChangeOwnership = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canEditRecords = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canViewRecords = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canApproveAccess = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canRequestAccess = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canUpdateSetting = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canListRecords = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+                object.canListFolders = options.enums === String ? "BOOLEAN_NO_CHANGE" : 0;
+            }
+            if (message.canAdd != null && Object.hasOwnProperty.call(message, "canAdd"))
+                object.canAdd = options.enums === String ? $root.Folder.SetBooleanValue[message.canAdd] === undefined ? message.canAdd : $root.Folder.SetBooleanValue[message.canAdd] : message.canAdd;
+            if (message.canRemove != null && Object.hasOwnProperty.call(message, "canRemove"))
+                object.canRemove = options.enums === String ? $root.Folder.SetBooleanValue[message.canRemove] === undefined ? message.canRemove : $root.Folder.SetBooleanValue[message.canRemove] : message.canRemove;
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                object.canDelete = options.enums === String ? $root.Folder.SetBooleanValue[message.canDelete] === undefined ? message.canDelete : $root.Folder.SetBooleanValue[message.canDelete] : message.canDelete;
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                object.canListAccess = options.enums === String ? $root.Folder.SetBooleanValue[message.canListAccess] === undefined ? message.canListAccess : $root.Folder.SetBooleanValue[message.canListAccess] : message.canListAccess;
+            if (message.canUpdateAccess != null && Object.hasOwnProperty.call(message, "canUpdateAccess"))
+                object.canUpdateAccess = options.enums === String ? $root.Folder.SetBooleanValue[message.canUpdateAccess] === undefined ? message.canUpdateAccess : $root.Folder.SetBooleanValue[message.canUpdateAccess] : message.canUpdateAccess;
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                object.canChangeOwnership = options.enums === String ? $root.Folder.SetBooleanValue[message.canChangeOwnership] === undefined ? message.canChangeOwnership : $root.Folder.SetBooleanValue[message.canChangeOwnership] : message.canChangeOwnership;
+            if (message.canEditRecords != null && Object.hasOwnProperty.call(message, "canEditRecords"))
+                object.canEditRecords = options.enums === String ? $root.Folder.SetBooleanValue[message.canEditRecords] === undefined ? message.canEditRecords : $root.Folder.SetBooleanValue[message.canEditRecords] : message.canEditRecords;
+            if (message.canViewRecords != null && Object.hasOwnProperty.call(message, "canViewRecords"))
+                object.canViewRecords = options.enums === String ? $root.Folder.SetBooleanValue[message.canViewRecords] === undefined ? message.canViewRecords : $root.Folder.SetBooleanValue[message.canViewRecords] : message.canViewRecords;
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                object.canApproveAccess = options.enums === String ? $root.Folder.SetBooleanValue[message.canApproveAccess] === undefined ? message.canApproveAccess : $root.Folder.SetBooleanValue[message.canApproveAccess] : message.canApproveAccess;
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                object.canRequestAccess = options.enums === String ? $root.Folder.SetBooleanValue[message.canRequestAccess] === undefined ? message.canRequestAccess : $root.Folder.SetBooleanValue[message.canRequestAccess] : message.canRequestAccess;
+            if (message.canUpdateSetting != null && Object.hasOwnProperty.call(message, "canUpdateSetting"))
+                object.canUpdateSetting = options.enums === String ? $root.Folder.SetBooleanValue[message.canUpdateSetting] === undefined ? message.canUpdateSetting : $root.Folder.SetBooleanValue[message.canUpdateSetting] : message.canUpdateSetting;
+            if (message.canListRecords != null && Object.hasOwnProperty.call(message, "canListRecords"))
+                object.canListRecords = options.enums === String ? $root.Folder.SetBooleanValue[message.canListRecords] === undefined ? message.canListRecords : $root.Folder.SetBooleanValue[message.canListRecords] : message.canListRecords;
+            if (message.canListFolders != null && Object.hasOwnProperty.call(message, "canListFolders"))
+                object.canListFolders = options.enums === String ? $root.Folder.SetBooleanValue[message.canListFolders] === undefined ? message.canListFolders : $root.Folder.SetBooleanValue[message.canListFolders] : message.canListFolders;
+            return object;
+        };
+
+        /**
+         * Converts this Capabilities to JSON.
+         * @function toJSON
+         * @memberof Folder.Capabilities
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Capabilities.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for Capabilities
+         * @function getTypeUrl
+         * @memberof Folder.Capabilities
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        Capabilities.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.Capabilities";
+        };
+
+        return Capabilities;
+    })();
+
+    Folder.FolderRecordUpdateRequest = (function() {
+
+        /**
+         * Properties of a FolderRecordUpdateRequest.
+         * @memberof Folder
+         * @interface IFolderRecordUpdateRequest
+         * @property {Uint8Array|null} [folderUid] FolderRecordUpdateRequest folderUid
+         * @property {Array.<Folder.IRecordMetadata>|null} [addRecords] FolderRecordUpdateRequest addRecords
+         * @property {Array.<Folder.IRecordMetadata>|null} [updateRecords] FolderRecordUpdateRequest updateRecords
+         * @property {Array.<Folder.IRecordMetadata>|null} [removeRecords] FolderRecordUpdateRequest removeRecords
+         */
+
+        /**
+         * Constructs a new FolderRecordUpdateRequest.
+         * @memberof Folder
+         * @classdesc Represents a FolderRecordUpdateRequest.
+         * @implements IFolderRecordUpdateRequest
+         * @constructor
+         * @param {Folder.IFolderRecordUpdateRequest=} [properties] Properties to set
+         */
+        function FolderRecordUpdateRequest(properties) {
+            this.addRecords = [];
+            this.updateRecords = [];
+            this.removeRecords = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderRecordUpdateRequest folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @instance
+         */
+        FolderRecordUpdateRequest.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderRecordUpdateRequest addRecords.
+         * @member {Array.<Folder.IRecordMetadata>} addRecords
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @instance
+         */
+        FolderRecordUpdateRequest.prototype.addRecords = $util.emptyArray;
+
+        /**
+         * FolderRecordUpdateRequest updateRecords.
+         * @member {Array.<Folder.IRecordMetadata>} updateRecords
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @instance
+         */
+        FolderRecordUpdateRequest.prototype.updateRecords = $util.emptyArray;
+
+        /**
+         * FolderRecordUpdateRequest removeRecords.
+         * @member {Array.<Folder.IRecordMetadata>} removeRecords
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @instance
+         */
+        FolderRecordUpdateRequest.prototype.removeRecords = $util.emptyArray;
+
+        /**
+         * Creates a new FolderRecordUpdateRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @static
+         * @param {Folder.IFolderRecordUpdateRequest=} [properties] Properties to set
+         * @returns {Folder.FolderRecordUpdateRequest} FolderRecordUpdateRequest instance
+         */
+        FolderRecordUpdateRequest.create = function create(properties) {
+            return new FolderRecordUpdateRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FolderRecordUpdateRequest message. Does not implicitly {@link Folder.FolderRecordUpdateRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @static
+         * @param {Folder.IFolderRecordUpdateRequest} message FolderRecordUpdateRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderRecordUpdateRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.addRecords != null && message.addRecords.length)
+                for (let i = 0; i < message.addRecords.length; ++i)
+                    $root.Folder.RecordMetadata.encode(message.addRecords[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            if (message.updateRecords != null && message.updateRecords.length)
+                for (let i = 0; i < message.updateRecords.length; ++i)
+                    $root.Folder.RecordMetadata.encode(message.updateRecords[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+            if (message.removeRecords != null && message.removeRecords.length)
+                for (let i = 0; i < message.removeRecords.length; ++i)
+                    $root.Folder.RecordMetadata.encode(message.removeRecords[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderRecordUpdateRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderRecordUpdateRequest} FolderRecordUpdateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderRecordUpdateRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderRecordUpdateRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        if (!(message.addRecords && message.addRecords.length))
+                            message.addRecords = [];
+                        message.addRecords.push($root.Folder.RecordMetadata.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 3: {
+                        if (!(message.updateRecords && message.updateRecords.length))
+                            message.updateRecords = [];
+                        message.updateRecords.push($root.Folder.RecordMetadata.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 4: {
+                        if (!(message.removeRecords && message.removeRecords.length))
+                            message.removeRecords = [];
+                        message.removeRecords.push($root.Folder.RecordMetadata.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderRecordUpdateRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderRecordUpdateRequest} FolderRecordUpdateRequest
+         */
+        FolderRecordUpdateRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderRecordUpdateRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderRecordUpdateRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderRecordUpdateRequest();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.addRecords) {
+                if (!Array.isArray(object.addRecords))
+                    throw TypeError(".Folder.FolderRecordUpdateRequest.addRecords: array expected");
+                message.addRecords = [];
+                for (let i = 0; i < object.addRecords.length; ++i) {
+                    if (!$util.isObject(object.addRecords[i]))
+                        throw TypeError(".Folder.FolderRecordUpdateRequest.addRecords: object expected");
+                    message.addRecords[i] = $root.Folder.RecordMetadata.fromObject(object.addRecords[i], long + 1);
+                }
+            }
+            if (object.updateRecords) {
+                if (!Array.isArray(object.updateRecords))
+                    throw TypeError(".Folder.FolderRecordUpdateRequest.updateRecords: array expected");
+                message.updateRecords = [];
+                for (let i = 0; i < object.updateRecords.length; ++i) {
+                    if (!$util.isObject(object.updateRecords[i]))
+                        throw TypeError(".Folder.FolderRecordUpdateRequest.updateRecords: object expected");
+                    message.updateRecords[i] = $root.Folder.RecordMetadata.fromObject(object.updateRecords[i], long + 1);
+                }
+            }
+            if (object.removeRecords) {
+                if (!Array.isArray(object.removeRecords))
+                    throw TypeError(".Folder.FolderRecordUpdateRequest.removeRecords: array expected");
+                message.removeRecords = [];
+                for (let i = 0; i < object.removeRecords.length; ++i) {
+                    if (!$util.isObject(object.removeRecords[i]))
+                        throw TypeError(".Folder.FolderRecordUpdateRequest.removeRecords: object expected");
+                    message.removeRecords[i] = $root.Folder.RecordMetadata.fromObject(object.removeRecords[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderRecordUpdateRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @static
+         * @param {Folder.FolderRecordUpdateRequest} message FolderRecordUpdateRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderRecordUpdateRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.addRecords = [];
+                object.updateRecords = [];
+                object.removeRecords = [];
+            }
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.addRecords && message.addRecords.length) {
+                object.addRecords = [];
+                for (let j = 0; j < message.addRecords.length; ++j)
+                    object.addRecords[j] = $root.Folder.RecordMetadata.toObject(message.addRecords[j], options, q + 1);
+            }
+            if (message.updateRecords && message.updateRecords.length) {
+                object.updateRecords = [];
+                for (let j = 0; j < message.updateRecords.length; ++j)
+                    object.updateRecords[j] = $root.Folder.RecordMetadata.toObject(message.updateRecords[j], options, q + 1);
+            }
+            if (message.removeRecords && message.removeRecords.length) {
+                object.removeRecords = [];
+                for (let j = 0; j < message.removeRecords.length; ++j)
+                    object.removeRecords[j] = $root.Folder.RecordMetadata.toObject(message.removeRecords[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderRecordUpdateRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderRecordUpdateRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderRecordUpdateRequest
+         * @function getTypeUrl
+         * @memberof Folder.FolderRecordUpdateRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderRecordUpdateRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderRecordUpdateRequest";
+        };
+
+        return FolderRecordUpdateRequest;
+    })();
+
+    Folder.RecordMetadata = (function() {
+
+        /**
+         * Properties of a RecordMetadata.
+         * @memberof Folder
+         * @interface IRecordMetadata
+         * @property {Uint8Array|null} [recordUid] The record uid
+         * @property {Uint8Array|null} [encryptedRecordKey] The record key encrypted with the folder key or the user’s data key if the record is located in the Vault root.
+         * @property {Folder.EncryptedKeyType|null} [encryptedRecordKeyType] Indicates the encryption scheme used to encrypt the record key.
+         * @property {common.tla.ITLAProperties|null} [tlaProperties] time limited access settings define expiration, notification and rotation policies.
+         */
+
+        /**
+         * Constructs a new RecordMetadata.
+         * @memberof Folder
+         * @classdesc Represents a RecordMetadata.
+         * @implements IRecordMetadata
+         * @constructor
+         * @param {Folder.IRecordMetadata=} [properties] Properties to set
+         */
+        function RecordMetadata(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * The record uid
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.RecordMetadata
+         * @instance
+         */
+        RecordMetadata.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * The record key encrypted with the folder key or the user’s data key if the record is located in the Vault root.
+         * @member {Uint8Array} encryptedRecordKey
+         * @memberof Folder.RecordMetadata
+         * @instance
+         */
+        RecordMetadata.prototype.encryptedRecordKey = $util.newBuffer([]);
+
+        /**
+         * Indicates the encryption scheme used to encrypt the record key.
+         * @member {Folder.EncryptedKeyType} encryptedRecordKeyType
+         * @memberof Folder.RecordMetadata
+         * @instance
+         */
+        RecordMetadata.prototype.encryptedRecordKeyType = 0;
+
+        /**
+         * time limited access settings define expiration, notification and rotation policies.
+         * @member {common.tla.ITLAProperties|null|undefined} tlaProperties
+         * @memberof Folder.RecordMetadata
+         * @instance
+         */
+        RecordMetadata.prototype.tlaProperties = null;
+
+        /**
+         * Creates a new RecordMetadata instance using the specified properties.
+         * @function create
+         * @memberof Folder.RecordMetadata
+         * @static
+         * @param {Folder.IRecordMetadata=} [properties] Properties to set
+         * @returns {Folder.RecordMetadata} RecordMetadata instance
+         */
+        RecordMetadata.create = function create(properties) {
+            return new RecordMetadata(properties);
+        };
+
+        /**
+         * Encodes the specified RecordMetadata message. Does not implicitly {@link Folder.RecordMetadata.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RecordMetadata
+         * @static
+         * @param {Folder.IRecordMetadata} message RecordMetadata message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordMetadata.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.encryptedRecordKey != null && Object.hasOwnProperty.call(message, "encryptedRecordKey"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.encryptedRecordKey);
+            if (message.encryptedRecordKeyType != null && Object.hasOwnProperty.call(message, "encryptedRecordKeyType"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.encryptedRecordKeyType);
+            if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
+                $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordMetadata message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RecordMetadata
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RecordMetadata} RecordMetadata
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordMetadata.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RecordMetadata();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.encryptedRecordKey = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.encryptedRecordKeyType = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordMetadata message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RecordMetadata
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RecordMetadata} RecordMetadata
+         */
+        RecordMetadata.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RecordMetadata)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RecordMetadata: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RecordMetadata();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.encryptedRecordKey != null)
+                if (typeof object.encryptedRecordKey === "string")
+                    $util.base64.decode(object.encryptedRecordKey, message.encryptedRecordKey = $util.newBuffer($util.base64.length(object.encryptedRecordKey)), 0);
+                else if (object.encryptedRecordKey.length >= 0)
+                    message.encryptedRecordKey = object.encryptedRecordKey;
+            switch (object.encryptedRecordKeyType) {
+            default:
+                if (typeof object.encryptedRecordKeyType === "number") {
+                    message.encryptedRecordKeyType = object.encryptedRecordKeyType;
+                    break;
+                }
+                break;
+            case "no_key":
+            case 0:
+                message.encryptedRecordKeyType = 0;
+                break;
+            case "encrypted_by_data_key":
+            case 1:
+                message.encryptedRecordKeyType = 1;
+                break;
+            case "encrypted_by_public_key":
+            case 2:
+                message.encryptedRecordKeyType = 2;
+                break;
+            case "encrypted_by_data_key_gcm":
+            case 3:
+                message.encryptedRecordKeyType = 3;
+                break;
+            case "encrypted_by_public_key_ecc":
+            case 4:
+                message.encryptedRecordKeyType = 4;
+                break;
+            }
+            if (object.tlaProperties != null) {
+                if (!$util.isObject(object.tlaProperties))
+                    throw TypeError(".Folder.RecordMetadata.tlaProperties: object expected");
+                message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordMetadata message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RecordMetadata
+         * @static
+         * @param {Folder.RecordMetadata} message RecordMetadata
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordMetadata.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if (options.bytes === String)
+                    object.encryptedRecordKey = "";
+                else {
+                    object.encryptedRecordKey = [];
+                    if (options.bytes !== Array)
+                        object.encryptedRecordKey = $util.newBuffer(object.encryptedRecordKey);
+                }
+                object.encryptedRecordKeyType = options.enums === String ? "no_key" : 0;
+                object.tlaProperties = null;
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.encryptedRecordKey != null && Object.hasOwnProperty.call(message, "encryptedRecordKey"))
+                object.encryptedRecordKey = options.bytes === String ? $util.base64.encode(message.encryptedRecordKey, 0, message.encryptedRecordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedRecordKey) : message.encryptedRecordKey;
+            if (message.encryptedRecordKeyType != null && Object.hasOwnProperty.call(message, "encryptedRecordKeyType"))
+                object.encryptedRecordKeyType = options.enums === String ? $root.Folder.EncryptedKeyType[message.encryptedRecordKeyType] === undefined ? message.encryptedRecordKeyType : $root.Folder.EncryptedKeyType[message.encryptedRecordKeyType] : message.encryptedRecordKeyType;
+            if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
+                object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this RecordMetadata to JSON.
+         * @function toJSON
+         * @memberof Folder.RecordMetadata
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordMetadata.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordMetadata
+         * @function getTypeUrl
+         * @memberof Folder.RecordMetadata
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordMetadata.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RecordMetadata";
+        };
+
+        return RecordMetadata;
+    })();
+
+    Folder.FolderRecord = (function() {
+
+        /**
+         * Properties of a FolderRecord.
+         * @memberof Folder
+         * @interface IFolderRecord
+         * @property {Uint8Array|null} [folderUid] the parent folder uid. Can reference the implicit root folder.
+         * @property {Folder.IRecordMetadata|null} [recordMetadata] record key and tla information
+         * @property {Folder.FolderKeyEncryptionType|null} [folderKeyEncryptionType] Indicates the encryption scheme used to encrypt the record key for this folder.
+         */
+
+        /**
+         * Constructs a new FolderRecord.
+         * @memberof Folder
+         * @classdesc Represents a FolderRecord.
+         * @implements IFolderRecord
+         * @constructor
+         * @param {Folder.IFolderRecord=} [properties] Properties to set
+         */
+        function FolderRecord(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * the parent folder uid. Can reference the implicit root folder.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderRecord
+         * @instance
+         */
+        FolderRecord.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * record key and tla information
+         * @member {Folder.IRecordMetadata|null|undefined} recordMetadata
+         * @memberof Folder.FolderRecord
+         * @instance
+         */
+        FolderRecord.prototype.recordMetadata = null;
+
+        /**
+         * Indicates the encryption scheme used to encrypt the record key for this folder.
+         * @member {Folder.FolderKeyEncryptionType} folderKeyEncryptionType
+         * @memberof Folder.FolderRecord
+         * @instance
+         */
+        FolderRecord.prototype.folderKeyEncryptionType = 0;
+
+        /**
+         * Creates a new FolderRecord instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderRecord
+         * @static
+         * @param {Folder.IFolderRecord=} [properties] Properties to set
+         * @returns {Folder.FolderRecord} FolderRecord instance
+         */
+        FolderRecord.create = function create(properties) {
+            return new FolderRecord(properties);
+        };
+
+        /**
+         * Encodes the specified FolderRecord message. Does not implicitly {@link Folder.FolderRecord.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderRecord
+         * @static
+         * @param {Folder.IFolderRecord} message FolderRecord message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderRecord.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.recordMetadata != null && Object.hasOwnProperty.call(message, "recordMetadata"))
+                $root.Folder.RecordMetadata.encode(message.recordMetadata, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            if (message.folderKeyEncryptionType != null && Object.hasOwnProperty.call(message, "folderKeyEncryptionType"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.folderKeyEncryptionType);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderRecord message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderRecord
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderRecord} FolderRecord
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderRecord.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderRecord();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.recordMetadata = $root.Folder.RecordMetadata.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 3: {
+                        message.folderKeyEncryptionType = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderRecord message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderRecord
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderRecord} FolderRecord
+         */
+        FolderRecord.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderRecord)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderRecord: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderRecord();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.recordMetadata != null) {
+                if (!$util.isObject(object.recordMetadata))
+                    throw TypeError(".Folder.FolderRecord.recordMetadata: object expected");
+                message.recordMetadata = $root.Folder.RecordMetadata.fromObject(object.recordMetadata, long + 1);
+            }
+            switch (object.folderKeyEncryptionType) {
+            default:
+                if (typeof object.folderKeyEncryptionType === "number") {
+                    message.folderKeyEncryptionType = object.folderKeyEncryptionType;
+                    break;
+                }
+                break;
+            case "ENCRYPTED_BY_USER_KEY":
+            case 0:
+                message.folderKeyEncryptionType = 0;
+                break;
+            case "ENCRYPTED_BY_PARENT_KEY":
+            case 1:
+                message.folderKeyEncryptionType = 1;
+                break;
+            case "ENCRYPTED_BY_TEAM_KEY":
+            case 2:
+                message.folderKeyEncryptionType = 2;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderRecord message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderRecord
+         * @static
+         * @param {Folder.FolderRecord} message FolderRecord
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderRecord.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                object.recordMetadata = null;
+                object.folderKeyEncryptionType = options.enums === String ? "ENCRYPTED_BY_USER_KEY" : 0;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.recordMetadata != null && Object.hasOwnProperty.call(message, "recordMetadata"))
+                object.recordMetadata = $root.Folder.RecordMetadata.toObject(message.recordMetadata, options, q + 1);
+            if (message.folderKeyEncryptionType != null && Object.hasOwnProperty.call(message, "folderKeyEncryptionType"))
+                object.folderKeyEncryptionType = options.enums === String ? $root.Folder.FolderKeyEncryptionType[message.folderKeyEncryptionType] === undefined ? message.folderKeyEncryptionType : $root.Folder.FolderKeyEncryptionType[message.folderKeyEncryptionType] : message.folderKeyEncryptionType;
+            return object;
+        };
+
+        /**
+         * Converts this FolderRecord to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderRecord
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderRecord.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderRecord
+         * @function getTypeUrl
+         * @memberof Folder.FolderRecord
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderRecord.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderRecord";
+        };
+
+        return FolderRecord;
+    })();
+
+    Folder.FolderRecordUpdateResponse = (function() {
+
+        /**
+         * Properties of a FolderRecordUpdateResponse.
+         * @memberof Folder
+         * @interface IFolderRecordUpdateResponse
+         * @property {Uint8Array|null} [folderUid] FolderRecordUpdateResponse folderUid
+         * @property {Array.<Folder.IFolderRecordUpdateResult>|null} [folderRecordUpdateResult] FolderRecordUpdateResponse folderRecordUpdateResult
+         */
+
+        /**
+         * Constructs a new FolderRecordUpdateResponse.
+         * @memberof Folder
+         * @classdesc Represents a FolderRecordUpdateResponse.
+         * @implements IFolderRecordUpdateResponse
+         * @constructor
+         * @param {Folder.IFolderRecordUpdateResponse=} [properties] Properties to set
+         */
+        function FolderRecordUpdateResponse(properties) {
+            this.folderRecordUpdateResult = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderRecordUpdateResponse folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @instance
+         */
+        FolderRecordUpdateResponse.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderRecordUpdateResponse folderRecordUpdateResult.
+         * @member {Array.<Folder.IFolderRecordUpdateResult>} folderRecordUpdateResult
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @instance
+         */
+        FolderRecordUpdateResponse.prototype.folderRecordUpdateResult = $util.emptyArray;
+
+        /**
+         * Creates a new FolderRecordUpdateResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @static
+         * @param {Folder.IFolderRecordUpdateResponse=} [properties] Properties to set
+         * @returns {Folder.FolderRecordUpdateResponse} FolderRecordUpdateResponse instance
+         */
+        FolderRecordUpdateResponse.create = function create(properties) {
+            return new FolderRecordUpdateResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FolderRecordUpdateResponse message. Does not implicitly {@link Folder.FolderRecordUpdateResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @static
+         * @param {Folder.IFolderRecordUpdateResponse} message FolderRecordUpdateResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderRecordUpdateResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.folderRecordUpdateResult != null && message.folderRecordUpdateResult.length)
+                for (let i = 0; i < message.folderRecordUpdateResult.length; ++i)
+                    $root.Folder.FolderRecordUpdateResult.encode(message.folderRecordUpdateResult[i], writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderRecordUpdateResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderRecordUpdateResponse} FolderRecordUpdateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderRecordUpdateResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderRecordUpdateResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        if (!(message.folderRecordUpdateResult && message.folderRecordUpdateResult.length))
+                            message.folderRecordUpdateResult = [];
+                        message.folderRecordUpdateResult.push($root.Folder.FolderRecordUpdateResult.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderRecordUpdateResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderRecordUpdateResponse} FolderRecordUpdateResponse
+         */
+        FolderRecordUpdateResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderRecordUpdateResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderRecordUpdateResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderRecordUpdateResponse();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.folderRecordUpdateResult) {
+                if (!Array.isArray(object.folderRecordUpdateResult))
+                    throw TypeError(".Folder.FolderRecordUpdateResponse.folderRecordUpdateResult: array expected");
+                message.folderRecordUpdateResult = [];
+                for (let i = 0; i < object.folderRecordUpdateResult.length; ++i) {
+                    if (!$util.isObject(object.folderRecordUpdateResult[i]))
+                        throw TypeError(".Folder.FolderRecordUpdateResponse.folderRecordUpdateResult: object expected");
+                    message.folderRecordUpdateResult[i] = $root.Folder.FolderRecordUpdateResult.fromObject(object.folderRecordUpdateResult[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderRecordUpdateResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @static
+         * @param {Folder.FolderRecordUpdateResponse} message FolderRecordUpdateResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderRecordUpdateResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.folderRecordUpdateResult = [];
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.folderRecordUpdateResult && message.folderRecordUpdateResult.length) {
+                object.folderRecordUpdateResult = [];
+                for (let j = 0; j < message.folderRecordUpdateResult.length; ++j)
+                    object.folderRecordUpdateResult[j] = $root.Folder.FolderRecordUpdateResult.toObject(message.folderRecordUpdateResult[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderRecordUpdateResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderRecordUpdateResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderRecordUpdateResponse
+         * @function getTypeUrl
+         * @memberof Folder.FolderRecordUpdateResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderRecordUpdateResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderRecordUpdateResponse";
+        };
+
+        return FolderRecordUpdateResponse;
+    })();
+
+    Folder.FolderRecordUpdateResult = (function() {
+
+        /**
+         * Properties of a FolderRecordUpdateResult.
+         * @memberof Folder
+         * @interface IFolderRecordUpdateResult
+         * @property {Uint8Array|null} [recordUid] FolderRecordUpdateResult recordUid
+         * @property {Folder.FolderModifyStatus|null} [status] FolderRecordUpdateResult status
+         * @property {string|null} [message] FolderRecordUpdateResult message
+         */
+
+        /**
+         * Constructs a new FolderRecordUpdateResult.
+         * @memberof Folder
+         * @classdesc Represents a FolderRecordUpdateResult.
+         * @implements IFolderRecordUpdateResult
+         * @constructor
+         * @param {Folder.IFolderRecordUpdateResult=} [properties] Properties to set
+         */
+        function FolderRecordUpdateResult(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderRecordUpdateResult recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.FolderRecordUpdateResult
+         * @instance
+         */
+        FolderRecordUpdateResult.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * FolderRecordUpdateResult status.
+         * @member {Folder.FolderModifyStatus} status
+         * @memberof Folder.FolderRecordUpdateResult
+         * @instance
+         */
+        FolderRecordUpdateResult.prototype.status = 0;
+
+        /**
+         * FolderRecordUpdateResult message.
+         * @member {string} message
+         * @memberof Folder.FolderRecordUpdateResult
+         * @instance
+         */
+        FolderRecordUpdateResult.prototype.message = "";
+
+        /**
+         * Creates a new FolderRecordUpdateResult instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderRecordUpdateResult
+         * @static
+         * @param {Folder.IFolderRecordUpdateResult=} [properties] Properties to set
+         * @returns {Folder.FolderRecordUpdateResult} FolderRecordUpdateResult instance
+         */
+        FolderRecordUpdateResult.create = function create(properties) {
+            return new FolderRecordUpdateResult(properties);
+        };
+
+        /**
+         * Encodes the specified FolderRecordUpdateResult message. Does not implicitly {@link Folder.FolderRecordUpdateResult.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderRecordUpdateResult
+         * @static
+         * @param {Folder.IFolderRecordUpdateResult} message FolderRecordUpdateResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderRecordUpdateResult.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
+            if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.message);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderRecordUpdateResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderRecordUpdateResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderRecordUpdateResult} FolderRecordUpdateResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderRecordUpdateResult.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderRecordUpdateResult();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.status = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.message = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderRecordUpdateResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderRecordUpdateResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderRecordUpdateResult} FolderRecordUpdateResult
+         */
+        FolderRecordUpdateResult.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderRecordUpdateResult)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderRecordUpdateResult: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderRecordUpdateResult();
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            switch (object.status) {
+            default:
+                if (typeof object.status === "number") {
+                    message.status = object.status;
+                    break;
+                }
+                break;
+            case "SUCCESS":
+            case 0:
+                message.status = 0;
+                break;
+            case "BAD_REQUEST":
+            case 1:
+                message.status = 1;
+                break;
+            case "ACCESS_DENIED":
+            case 2:
+                message.status = 2;
+                break;
+            case "NOT_FOUND":
+            case 3:
+                message.status = 3;
+                break;
+            }
+            if (object.message != null)
+                message.message = String(object.message);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderRecordUpdateResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderRecordUpdateResult
+         * @static
+         * @param {Folder.FolderRecordUpdateResult} message FolderRecordUpdateResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderRecordUpdateResult.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                object.status = options.enums === String ? "SUCCESS" : 0;
+                object.message = "";
+            }
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = options.enums === String ? $root.Folder.FolderModifyStatus[message.status] === undefined ? message.status : $root.Folder.FolderModifyStatus[message.status] : message.status;
+            if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                object.message = message.message;
+            return object;
+        };
+
+        /**
+         * Converts this FolderRecordUpdateResult to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderRecordUpdateResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderRecordUpdateResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderRecordUpdateResult
+         * @function getTypeUrl
+         * @memberof Folder.FolderRecordUpdateResult
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderRecordUpdateResult.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderRecordUpdateResult";
+        };
+
+        return FolderRecordUpdateResult;
+    })();
+
+    /**
+     * AccessRoleType enum.
+     * @name Folder.AccessRoleType
+     * @enum {number}
+     * @property {number} NAVIGATOR=0 NAVIGATOR value
+     * @property {number} REQUESTOR=1 REQUESTOR value
+     * @property {number} VIEWER=2 VIEWER value
+     * @property {number} SHARED_MANAGER=3 SHARED_MANAGER value
+     * @property {number} CONTENT_MANAGER=4 CONTENT_MANAGER value
+     * @property {number} CONTENT_SHARE_MANAGER=5 CONTENT_SHARE_MANAGER value
+     * @property {number} MANAGER=6 MANAGER value
+     * @property {number} UNRESOLVED=7 UNRESOLVED value
+     */
+    Folder.AccessRoleType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "NAVIGATOR"] = 0;
+        values[valuesById[1] = "REQUESTOR"] = 1;
+        values[valuesById[2] = "VIEWER"] = 2;
+        values[valuesById[3] = "SHARED_MANAGER"] = 3;
+        values[valuesById[4] = "CONTENT_MANAGER"] = 4;
+        values[valuesById[5] = "CONTENT_SHARE_MANAGER"] = 5;
+        values[valuesById[6] = "MANAGER"] = 6;
+        values[valuesById[7] = "UNRESOLVED"] = 7;
+        return values;
+    })();
+
+    Folder.FolderAccessData = (function() {
+
+        /**
+         * Properties of a FolderAccessData.
+         * @memberof Folder
+         * @interface IFolderAccessData
+         * @property {Uint8Array|null} [folderUid] FolderAccessData folderUid
+         * @property {Uint8Array|null} [accessTypeUid] FolderAccessData accessTypeUid
+         * @property {Folder.AccessType|null} [accessType] FolderAccessData accessType
+         * @property {Folder.AccessRoleType|null} [accessRoleType] FolderAccessData accessRoleType
+         * @property {Folder.IEncryptedDataKey|null} [folderKey] FolderAccessData folderKey
+         * @property {boolean|null} [inherited] FolderAccessData inherited
+         * @property {boolean|null} [hidden] FolderAccessData hidden
+         * @property {Folder.IFolderPermissions|null} [permissions] FolderAccessData permissions
+         * @property {common.tla.ITLAProperties|null} [tlaProperties] FolderAccessData tlaProperties
+         * @property {number|null} [dateCreated] FolderAccessData dateCreated
+         * @property {number|null} [lastModified] FolderAccessData lastModified
+         * @property {boolean|null} [deniedAccess] FolderAccessData deniedAccess
+         */
+
+        /**
+         * Constructs a new FolderAccessData.
+         * @memberof Folder
+         * @classdesc Represents a FolderAccessData.
+         * @implements IFolderAccessData
+         * @constructor
+         * @param {Folder.IFolderAccessData=} [properties] Properties to set
+         */
+        function FolderAccessData(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderAccessData folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderAccessData accessTypeUid.
+         * @member {Uint8Array} accessTypeUid
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.accessTypeUid = $util.newBuffer([]);
+
+        /**
+         * FolderAccessData accessType.
+         * @member {Folder.AccessType} accessType
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.accessType = 0;
+
+        /**
+         * FolderAccessData accessRoleType.
+         * @member {Folder.AccessRoleType} accessRoleType
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.accessRoleType = 0;
+
+        /**
+         * FolderAccessData folderKey.
+         * @member {Folder.IEncryptedDataKey|null|undefined} folderKey
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.folderKey = null;
+
+        /**
+         * FolderAccessData inherited.
+         * @member {boolean} inherited
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.inherited = false;
+
+        /**
+         * FolderAccessData hidden.
+         * @member {boolean} hidden
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.hidden = false;
+
+        /**
+         * FolderAccessData permissions.
+         * @member {Folder.IFolderPermissions|null|undefined} permissions
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.permissions = null;
+
+        /**
+         * FolderAccessData tlaProperties.
+         * @member {common.tla.ITLAProperties|null|undefined} tlaProperties
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.tlaProperties = null;
+
+        /**
+         * FolderAccessData dateCreated.
+         * @member {number} dateCreated
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.dateCreated = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * FolderAccessData lastModified.
+         * @member {number} lastModified
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.lastModified = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * FolderAccessData deniedAccess.
+         * @member {boolean} deniedAccess
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.deniedAccess = false;
+
+        /**
+         * Creates a new FolderAccessData instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderAccessData
+         * @static
+         * @param {Folder.IFolderAccessData=} [properties] Properties to set
+         * @returns {Folder.FolderAccessData} FolderAccessData instance
+         */
+        FolderAccessData.create = function create(properties) {
+            return new FolderAccessData(properties);
+        };
+
+        /**
+         * Encodes the specified FolderAccessData message. Does not implicitly {@link Folder.FolderAccessData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderAccessData
+         * @static
+         * @param {Folder.IFolderAccessData} message FolderAccessData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderAccessData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.accessTypeUid != null && Object.hasOwnProperty.call(message, "accessTypeUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.accessTypeUid);
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.accessType);
+            if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.accessRoleType);
+            if (message.folderKey != null && Object.hasOwnProperty.call(message, "folderKey"))
+                $root.Folder.EncryptedDataKey.encode(message.folderKey, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+            if (message.inherited != null && Object.hasOwnProperty.call(message, "inherited"))
+                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.inherited);
+            if (message.hidden != null && Object.hasOwnProperty.call(message, "hidden"))
+                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.hidden);
+            if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
+                $root.Folder.FolderPermissions.encode(message.permissions, writer.uint32(/* id 8, wireType 2 =*/66).fork(), q + 1).ldelim();
+            if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
+                $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
+            if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int64(message.dateCreated);
+            if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int64(message.lastModified);
+            if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.deniedAccess);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderAccessData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderAccessData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderAccessData} FolderAccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderAccessData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderAccessData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.accessTypeUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.accessType = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        message.accessRoleType = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.folderKey = $root.Folder.EncryptedDataKey.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 6: {
+                        message.inherited = reader.bool();
+                        break;
+                    }
+                case 7: {
+                        message.hidden = reader.bool();
+                        break;
+                    }
+                case 8: {
+                        message.permissions = $root.Folder.FolderPermissions.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 9: {
+                        message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 10: {
+                        message.dateCreated = reader.int64();
+                        break;
+                    }
+                case 11: {
+                        message.lastModified = reader.int64();
+                        break;
+                    }
+                case 12: {
+                        message.deniedAccess = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderAccessData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderAccessData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderAccessData} FolderAccessData
+         */
+        FolderAccessData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderAccessData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderAccessData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderAccessData();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.accessTypeUid != null)
+                if (typeof object.accessTypeUid === "string")
+                    $util.base64.decode(object.accessTypeUid, message.accessTypeUid = $util.newBuffer($util.base64.length(object.accessTypeUid)), 0);
+                else if (object.accessTypeUid.length >= 0)
+                    message.accessTypeUid = object.accessTypeUid;
+            switch (object.accessType) {
+            default:
+                if (typeof object.accessType === "number") {
+                    message.accessType = object.accessType;
+                    break;
+                }
+                break;
+            case "AT_UNKNOWN":
+            case 0:
+                message.accessType = 0;
+                break;
+            case "AT_OWNER":
+            case 1:
+                message.accessType = 1;
+                break;
+            case "AT_USER":
+            case 2:
+                message.accessType = 2;
+                break;
+            case "AT_TEAM":
+            case 3:
+                message.accessType = 3;
+                break;
+            case "AT_ENTERPRISE":
+            case 4:
+                message.accessType = 4;
+                break;
+            case "AT_FOLDER":
+            case 5:
+                message.accessType = 5;
+                break;
+            case "AT_APPLICATION":
+            case 6:
+                message.accessType = 6;
+                break;
+            }
+            switch (object.accessRoleType) {
+            default:
+                if (typeof object.accessRoleType === "number") {
+                    message.accessRoleType = object.accessRoleType;
+                    break;
+                }
+                break;
+            case "NAVIGATOR":
+            case 0:
+                message.accessRoleType = 0;
+                break;
+            case "REQUESTOR":
+            case 1:
+                message.accessRoleType = 1;
+                break;
+            case "VIEWER":
+            case 2:
+                message.accessRoleType = 2;
+                break;
+            case "SHARED_MANAGER":
+            case 3:
+                message.accessRoleType = 3;
+                break;
+            case "CONTENT_MANAGER":
+            case 4:
+                message.accessRoleType = 4;
+                break;
+            case "CONTENT_SHARE_MANAGER":
+            case 5:
+                message.accessRoleType = 5;
+                break;
+            case "MANAGER":
+            case 6:
+                message.accessRoleType = 6;
+                break;
+            case "UNRESOLVED":
+            case 7:
+                message.accessRoleType = 7;
+                break;
+            }
+            if (object.folderKey != null) {
+                if (!$util.isObject(object.folderKey))
+                    throw TypeError(".Folder.FolderAccessData.folderKey: object expected");
+                message.folderKey = $root.Folder.EncryptedDataKey.fromObject(object.folderKey, long + 1);
+            }
+            if (object.inherited != null)
+                message.inherited = Boolean(object.inherited);
+            if (object.hidden != null)
+                message.hidden = Boolean(object.hidden);
+            if (object.permissions != null) {
+                if (!$util.isObject(object.permissions))
+                    throw TypeError(".Folder.FolderAccessData.permissions: object expected");
+                message.permissions = $root.Folder.FolderPermissions.fromObject(object.permissions, long + 1);
+            }
+            if (object.tlaProperties != null) {
+                if (!$util.isObject(object.tlaProperties))
+                    throw TypeError(".Folder.FolderAccessData.tlaProperties: object expected");
+                message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
+            }
+            if (object.dateCreated != null)
+                if ($util.Long)
+                    message.dateCreated = $util.Long.fromValue(object.dateCreated, false);
+                else if (typeof object.dateCreated === "string")
+                    message.dateCreated = parseInt(object.dateCreated, 10);
+                else if (typeof object.dateCreated === "number")
+                    message.dateCreated = object.dateCreated;
+                else if (typeof object.dateCreated === "object")
+                    message.dateCreated = new $util.LongBits(object.dateCreated.low >>> 0, object.dateCreated.high >>> 0).toNumber();
+            if (object.lastModified != null)
+                if ($util.Long)
+                    message.lastModified = $util.Long.fromValue(object.lastModified, false);
+                else if (typeof object.lastModified === "string")
+                    message.lastModified = parseInt(object.lastModified, 10);
+                else if (typeof object.lastModified === "number")
+                    message.lastModified = object.lastModified;
+                else if (typeof object.lastModified === "object")
+                    message.lastModified = new $util.LongBits(object.lastModified.low >>> 0, object.lastModified.high >>> 0).toNumber();
+            if (object.deniedAccess != null)
+                message.deniedAccess = Boolean(object.deniedAccess);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderAccessData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderAccessData
+         * @static
+         * @param {Folder.FolderAccessData} message FolderAccessData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderAccessData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.accessTypeUid = "";
+                else {
+                    object.accessTypeUid = [];
+                    if (options.bytes !== Array)
+                        object.accessTypeUid = $util.newBuffer(object.accessTypeUid);
+                }
+                object.accessType = options.enums === String ? "AT_UNKNOWN" : 0;
+                object.accessRoleType = options.enums === String ? "NAVIGATOR" : 0;
+                object.folderKey = null;
+                object.inherited = false;
+                object.hidden = false;
+                object.permissions = null;
+                object.tlaProperties = null;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.dateCreated = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.dateCreated = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.lastModified = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.lastModified = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.deniedAccess = false;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.accessTypeUid != null && Object.hasOwnProperty.call(message, "accessTypeUid"))
+                object.accessTypeUid = options.bytes === String ? $util.base64.encode(message.accessTypeUid, 0, message.accessTypeUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accessTypeUid) : message.accessTypeUid;
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                object.accessType = options.enums === String ? $root.Folder.AccessType[message.accessType] === undefined ? message.accessType : $root.Folder.AccessType[message.accessType] : message.accessType;
+            if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
+                object.accessRoleType = options.enums === String ? $root.Folder.AccessRoleType[message.accessRoleType] === undefined ? message.accessRoleType : $root.Folder.AccessRoleType[message.accessRoleType] : message.accessRoleType;
+            if (message.folderKey != null && Object.hasOwnProperty.call(message, "folderKey"))
+                object.folderKey = $root.Folder.EncryptedDataKey.toObject(message.folderKey, options, q + 1);
+            if (message.inherited != null && Object.hasOwnProperty.call(message, "inherited"))
+                object.inherited = message.inherited;
+            if (message.hidden != null && Object.hasOwnProperty.call(message, "hidden"))
+                object.hidden = message.hidden;
+            if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
+                object.permissions = $root.Folder.FolderPermissions.toObject(message.permissions, options, q + 1);
+            if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
+                object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+            if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.dateCreated = typeof message.dateCreated === "number" ? BigInt(message.dateCreated) : $util.Long.fromBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0, false).toBigInt();
+                else if (typeof message.dateCreated === "number")
+                    object.dateCreated = options.longs === String ? String(message.dateCreated) : message.dateCreated;
+                else
+                    object.dateCreated = options.longs === String ? $util.Long.prototype.toString.call(message.dateCreated) : options.longs === Number ? new $util.LongBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0).toNumber() : message.dateCreated;
+            if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.lastModified = typeof message.lastModified === "number" ? BigInt(message.lastModified) : $util.Long.fromBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0, false).toBigInt();
+                else if (typeof message.lastModified === "number")
+                    object.lastModified = options.longs === String ? String(message.lastModified) : message.lastModified;
+                else
+                    object.lastModified = options.longs === String ? $util.Long.prototype.toString.call(message.lastModified) : options.longs === Number ? new $util.LongBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0).toNumber() : message.lastModified;
+            if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
+                object.deniedAccess = message.deniedAccess;
+            return object;
+        };
+
+        /**
+         * Converts this FolderAccessData to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderAccessData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderAccessData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderAccessData
+         * @function getTypeUrl
+         * @memberof Folder.FolderAccessData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderAccessData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderAccessData";
+        };
+
+        return FolderAccessData;
+    })();
+
+    Folder.RevokedAccess = (function() {
+
+        /**
+         * Properties of a RevokedAccess.
+         * @memberof Folder
+         * @interface IRevokedAccess
+         * @property {Uint8Array|null} [folderUid] the uid of the folder whose access have been revoked
+         * @property {Uint8Array|null} [actorUid] the uid of actor whose access has been revoked. can represent a Team or a User (an account)
+         * @property {Folder.AccessType|null} [accessType] discriminant to distinguish between user (account) and team
+         */
+
+        /**
+         * Constructs a new RevokedAccess.
+         * @memberof Folder
+         * @classdesc Represents a RevokedAccess.
+         * @implements IRevokedAccess
+         * @constructor
+         * @param {Folder.IRevokedAccess=} [properties] Properties to set
+         */
+        function RevokedAccess(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * the uid of the folder whose access have been revoked
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.RevokedAccess
+         * @instance
+         */
+        RevokedAccess.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * the uid of actor whose access has been revoked. can represent a Team or a User (an account)
+         * @member {Uint8Array} actorUid
+         * @memberof Folder.RevokedAccess
+         * @instance
+         */
+        RevokedAccess.prototype.actorUid = $util.newBuffer([]);
+
+        /**
+         * discriminant to distinguish between user (account) and team
+         * @member {Folder.AccessType} accessType
+         * @memberof Folder.RevokedAccess
+         * @instance
+         */
+        RevokedAccess.prototype.accessType = 0;
+
+        /**
+         * Creates a new RevokedAccess instance using the specified properties.
+         * @function create
+         * @memberof Folder.RevokedAccess
+         * @static
+         * @param {Folder.IRevokedAccess=} [properties] Properties to set
+         * @returns {Folder.RevokedAccess} RevokedAccess instance
+         */
+        RevokedAccess.create = function create(properties) {
+            return new RevokedAccess(properties);
+        };
+
+        /**
+         * Encodes the specified RevokedAccess message. Does not implicitly {@link Folder.RevokedAccess.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RevokedAccess
+         * @static
+         * @param {Folder.IRevokedAccess} message RevokedAccess message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RevokedAccess.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.actorUid != null && Object.hasOwnProperty.call(message, "actorUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.actorUid);
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.accessType);
+            return writer;
+        };
+
+        /**
+         * Decodes a RevokedAccess message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RevokedAccess
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RevokedAccess} RevokedAccess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RevokedAccess.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RevokedAccess();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.actorUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.accessType = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RevokedAccess message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RevokedAccess
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RevokedAccess} RevokedAccess
+         */
+        RevokedAccess.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RevokedAccess)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RevokedAccess: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RevokedAccess();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.actorUid != null)
+                if (typeof object.actorUid === "string")
+                    $util.base64.decode(object.actorUid, message.actorUid = $util.newBuffer($util.base64.length(object.actorUid)), 0);
+                else if (object.actorUid.length >= 0)
+                    message.actorUid = object.actorUid;
+            switch (object.accessType) {
+            default:
+                if (typeof object.accessType === "number") {
+                    message.accessType = object.accessType;
+                    break;
+                }
+                break;
+            case "AT_UNKNOWN":
+            case 0:
+                message.accessType = 0;
+                break;
+            case "AT_OWNER":
+            case 1:
+                message.accessType = 1;
+                break;
+            case "AT_USER":
+            case 2:
+                message.accessType = 2;
+                break;
+            case "AT_TEAM":
+            case 3:
+                message.accessType = 3;
+                break;
+            case "AT_ENTERPRISE":
+            case 4:
+                message.accessType = 4;
+                break;
+            case "AT_FOLDER":
+            case 5:
+                message.accessType = 5;
+                break;
+            case "AT_APPLICATION":
+            case 6:
+                message.accessType = 6;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RevokedAccess message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RevokedAccess
+         * @static
+         * @param {Folder.RevokedAccess} message RevokedAccess
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RevokedAccess.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.actorUid = "";
+                else {
+                    object.actorUid = [];
+                    if (options.bytes !== Array)
+                        object.actorUid = $util.newBuffer(object.actorUid);
+                }
+                object.accessType = options.enums === String ? "AT_UNKNOWN" : 0;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.actorUid != null && Object.hasOwnProperty.call(message, "actorUid"))
+                object.actorUid = options.bytes === String ? $util.base64.encode(message.actorUid, 0, message.actorUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.actorUid) : message.actorUid;
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                object.accessType = options.enums === String ? $root.Folder.AccessType[message.accessType] === undefined ? message.accessType : $root.Folder.AccessType[message.accessType] : message.accessType;
+            return object;
+        };
+
+        /**
+         * Converts this RevokedAccess to JSON.
+         * @function toJSON
+         * @memberof Folder.RevokedAccess
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RevokedAccess.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RevokedAccess
+         * @function getTypeUrl
+         * @memberof Folder.RevokedAccess
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RevokedAccess.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RevokedAccess";
+        };
+
+        return RevokedAccess;
+    })();
+
+    Folder.FolderRemoved = (function() {
+
+        /**
+         * Properties of a FolderRemoved.
+         * @memberof Folder
+         * @interface IFolderRemoved
+         * @property {Uint8Array|null} [folderUid] the uid of the folder that is either moved to trash or permanently deleted
+         */
+
+        /**
+         * Constructs a new FolderRemoved.
+         * @memberof Folder
+         * @classdesc Represents a FolderRemoved.
+         * @implements IFolderRemoved
+         * @constructor
+         * @param {Folder.IFolderRemoved=} [properties] Properties to set
+         */
+        function FolderRemoved(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * the uid of the folder that is either moved to trash or permanently deleted
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderRemoved
+         * @instance
+         */
+        FolderRemoved.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * Creates a new FolderRemoved instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderRemoved
+         * @static
+         * @param {Folder.IFolderRemoved=} [properties] Properties to set
+         * @returns {Folder.FolderRemoved} FolderRemoved instance
+         */
+        FolderRemoved.create = function create(properties) {
+            return new FolderRemoved(properties);
+        };
+
+        /**
+         * Encodes the specified FolderRemoved message. Does not implicitly {@link Folder.FolderRemoved.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderRemoved
+         * @static
+         * @param {Folder.IFolderRemoved} message FolderRemoved message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderRemoved.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderRemoved message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderRemoved
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderRemoved} FolderRemoved
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderRemoved.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderRemoved();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderRemoved message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderRemoved
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderRemoved} FolderRemoved
+         */
+        FolderRemoved.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderRemoved)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderRemoved: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderRemoved();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderRemoved message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderRemoved
+         * @static
+         * @param {Folder.FolderRemoved} message FolderRemoved
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderRemoved.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            return object;
+        };
+
+        /**
+         * Converts this FolderRemoved to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderRemoved
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderRemoved.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderRemoved
+         * @function getTypeUrl
+         * @memberof Folder.FolderRemoved
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderRemoved.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderRemoved";
+        };
+
+        return FolderRemoved;
+    })();
+
+    Folder.RecordAccessData = (function() {
+
+        /**
+         * Properties of a RecordAccessData.
+         * @memberof Folder
+         * @interface IRecordAccessData
+         * @property {Uint8Array|null} [accessTypeUid] RecordAccessData accessTypeUid
+         * @property {Folder.AccessType|null} [accessType] RecordAccessData accessType
+         * @property {Uint8Array|null} [recordUid] RecordAccessData recordUid
+         * @property {Folder.AccessRoleType|null} [accessRoleType] RecordAccessData accessRoleType
+         * @property {boolean|null} [owner] RecordAccessData owner
+         * @property {boolean|null} [inherited] RecordAccessData inherited
+         * @property {boolean|null} [hidden] RecordAccessData hidden
+         * @property {boolean|null} [deniedAccess] RecordAccessData deniedAccess
+         * @property {boolean|null} [canViewTitle] RecordAccessData canViewTitle
+         * @property {boolean|null} [canEdit] RecordAccessData canEdit
+         * @property {boolean|null} [canView] RecordAccessData canView
+         * @property {boolean|null} [canListAccess] RecordAccessData canListAccess
+         * @property {boolean|null} [canUpdateAccess] RecordAccessData canUpdateAccess
+         * @property {boolean|null} [canDelete] RecordAccessData canDelete
+         * @property {boolean|null} [canChangeOwnership] RecordAccessData canChangeOwnership
+         * @property {boolean|null} [canRequestAccess] RecordAccessData canRequestAccess
+         * @property {boolean|null} [canApproveAccess] RecordAccessData canApproveAccess
+         * @property {number|null} [dateCreated] RecordAccessData dateCreated
+         * @property {number|null} [lastModified] RecordAccessData lastModified
+         * @property {common.tla.ITLAProperties|null} [tlaProperties] RecordAccessData tlaProperties
+         */
+
+        /**
+         * Constructs a new RecordAccessData.
+         * @memberof Folder
+         * @classdesc Represents a RecordAccessData.
+         * @implements IRecordAccessData
+         * @constructor
+         * @param {Folder.IRecordAccessData=} [properties] Properties to set
+         */
+        function RecordAccessData(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RecordAccessData accessTypeUid.
+         * @member {Uint8Array} accessTypeUid
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.accessTypeUid = $util.newBuffer([]);
+
+        /**
+         * RecordAccessData accessType.
+         * @member {Folder.AccessType} accessType
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.accessType = 0;
+
+        /**
+         * RecordAccessData recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * RecordAccessData accessRoleType.
+         * @member {Folder.AccessRoleType} accessRoleType
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.accessRoleType = 0;
+
+        /**
+         * RecordAccessData owner.
+         * @member {boolean} owner
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.owner = false;
+
+        /**
+         * RecordAccessData inherited.
+         * @member {boolean} inherited
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.inherited = false;
+
+        /**
+         * RecordAccessData hidden.
+         * @member {boolean} hidden
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.hidden = false;
+
+        /**
+         * RecordAccessData deniedAccess.
+         * @member {boolean} deniedAccess
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.deniedAccess = false;
+
+        /**
+         * RecordAccessData canViewTitle.
+         * @member {boolean} canViewTitle
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canViewTitle = false;
+
+        /**
+         * RecordAccessData canEdit.
+         * @member {boolean} canEdit
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canEdit = false;
+
+        /**
+         * RecordAccessData canView.
+         * @member {boolean} canView
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canView = false;
+
+        /**
+         * RecordAccessData canListAccess.
+         * @member {boolean} canListAccess
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canListAccess = false;
+
+        /**
+         * RecordAccessData canUpdateAccess.
+         * @member {boolean} canUpdateAccess
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canUpdateAccess = false;
+
+        /**
+         * RecordAccessData canDelete.
+         * @member {boolean} canDelete
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canDelete = false;
+
+        /**
+         * RecordAccessData canChangeOwnership.
+         * @member {boolean} canChangeOwnership
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canChangeOwnership = false;
+
+        /**
+         * RecordAccessData canRequestAccess.
+         * @member {boolean} canRequestAccess
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canRequestAccess = false;
+
+        /**
+         * RecordAccessData canApproveAccess.
+         * @member {boolean} canApproveAccess
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.canApproveAccess = false;
+
+        /**
+         * RecordAccessData dateCreated.
+         * @member {number} dateCreated
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.dateCreated = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * RecordAccessData lastModified.
+         * @member {number} lastModified
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.lastModified = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * RecordAccessData tlaProperties.
+         * @member {common.tla.ITLAProperties|null|undefined} tlaProperties
+         * @memberof Folder.RecordAccessData
+         * @instance
+         */
+        RecordAccessData.prototype.tlaProperties = null;
+
+        /**
+         * Creates a new RecordAccessData instance using the specified properties.
+         * @function create
+         * @memberof Folder.RecordAccessData
+         * @static
+         * @param {Folder.IRecordAccessData=} [properties] Properties to set
+         * @returns {Folder.RecordAccessData} RecordAccessData instance
+         */
+        RecordAccessData.create = function create(properties) {
+            return new RecordAccessData(properties);
+        };
+
+        /**
+         * Encodes the specified RecordAccessData message. Does not implicitly {@link Folder.RecordAccessData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RecordAccessData
+         * @static
+         * @param {Folder.IRecordAccessData} message RecordAccessData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordAccessData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.accessTypeUid != null && Object.hasOwnProperty.call(message, "accessTypeUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.accessTypeUid);
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.accessType);
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordUid);
+            if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.accessRoleType);
+            if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.owner);
+            if (message.inherited != null && Object.hasOwnProperty.call(message, "inherited"))
+                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.inherited);
+            if (message.hidden != null && Object.hasOwnProperty.call(message, "hidden"))
+                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.hidden);
+            if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.deniedAccess);
+            if (message.canViewTitle != null && Object.hasOwnProperty.call(message, "canViewTitle"))
+                writer.uint32(/* id 9, wireType 0 =*/72).bool(message.canViewTitle);
+            if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
+                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.canEdit);
+            if (message.canView != null && Object.hasOwnProperty.call(message, "canView"))
+                writer.uint32(/* id 11, wireType 0 =*/88).bool(message.canView);
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.canListAccess);
+            if (message.canUpdateAccess != null && Object.hasOwnProperty.call(message, "canUpdateAccess"))
+                writer.uint32(/* id 13, wireType 0 =*/104).bool(message.canUpdateAccess);
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                writer.uint32(/* id 14, wireType 0 =*/112).bool(message.canDelete);
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                writer.uint32(/* id 15, wireType 0 =*/120).bool(message.canChangeOwnership);
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                writer.uint32(/* id 16, wireType 0 =*/128).bool(message.canRequestAccess);
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                writer.uint32(/* id 17, wireType 0 =*/136).bool(message.canApproveAccess);
+            if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
+                writer.uint32(/* id 18, wireType 0 =*/144).int64(message.dateCreated);
+            if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                writer.uint32(/* id 19, wireType 0 =*/152).int64(message.lastModified);
+            if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
+                $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 20, wireType 2 =*/162).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordAccessData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RecordAccessData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RecordAccessData} RecordAccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordAccessData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RecordAccessData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.accessTypeUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.accessType = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.accessRoleType = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.owner = reader.bool();
+                        break;
+                    }
+                case 6: {
+                        message.inherited = reader.bool();
+                        break;
+                    }
+                case 7: {
+                        message.hidden = reader.bool();
+                        break;
+                    }
+                case 8: {
+                        message.deniedAccess = reader.bool();
+                        break;
+                    }
+                case 9: {
+                        message.canViewTitle = reader.bool();
+                        break;
+                    }
+                case 10: {
+                        message.canEdit = reader.bool();
+                        break;
+                    }
+                case 11: {
+                        message.canView = reader.bool();
+                        break;
+                    }
+                case 12: {
+                        message.canListAccess = reader.bool();
+                        break;
+                    }
+                case 13: {
+                        message.canUpdateAccess = reader.bool();
+                        break;
+                    }
+                case 14: {
+                        message.canDelete = reader.bool();
+                        break;
+                    }
+                case 15: {
+                        message.canChangeOwnership = reader.bool();
+                        break;
+                    }
+                case 16: {
+                        message.canRequestAccess = reader.bool();
+                        break;
+                    }
+                case 17: {
+                        message.canApproveAccess = reader.bool();
+                        break;
+                    }
+                case 18: {
+                        message.dateCreated = reader.int64();
+                        break;
+                    }
+                case 19: {
+                        message.lastModified = reader.int64();
+                        break;
+                    }
+                case 20: {
+                        message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordAccessData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RecordAccessData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RecordAccessData} RecordAccessData
+         */
+        RecordAccessData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RecordAccessData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RecordAccessData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RecordAccessData();
+            if (object.accessTypeUid != null)
+                if (typeof object.accessTypeUid === "string")
+                    $util.base64.decode(object.accessTypeUid, message.accessTypeUid = $util.newBuffer($util.base64.length(object.accessTypeUid)), 0);
+                else if (object.accessTypeUid.length >= 0)
+                    message.accessTypeUid = object.accessTypeUid;
+            switch (object.accessType) {
+            default:
+                if (typeof object.accessType === "number") {
+                    message.accessType = object.accessType;
+                    break;
+                }
+                break;
+            case "AT_UNKNOWN":
+            case 0:
+                message.accessType = 0;
+                break;
+            case "AT_OWNER":
+            case 1:
+                message.accessType = 1;
+                break;
+            case "AT_USER":
+            case 2:
+                message.accessType = 2;
+                break;
+            case "AT_TEAM":
+            case 3:
+                message.accessType = 3;
+                break;
+            case "AT_ENTERPRISE":
+            case 4:
+                message.accessType = 4;
+                break;
+            case "AT_FOLDER":
+            case 5:
+                message.accessType = 5;
+                break;
+            case "AT_APPLICATION":
+            case 6:
+                message.accessType = 6;
+                break;
+            }
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            switch (object.accessRoleType) {
+            default:
+                if (typeof object.accessRoleType === "number") {
+                    message.accessRoleType = object.accessRoleType;
+                    break;
+                }
+                break;
+            case "NAVIGATOR":
+            case 0:
+                message.accessRoleType = 0;
+                break;
+            case "REQUESTOR":
+            case 1:
+                message.accessRoleType = 1;
+                break;
+            case "VIEWER":
+            case 2:
+                message.accessRoleType = 2;
+                break;
+            case "SHARED_MANAGER":
+            case 3:
+                message.accessRoleType = 3;
+                break;
+            case "CONTENT_MANAGER":
+            case 4:
+                message.accessRoleType = 4;
+                break;
+            case "CONTENT_SHARE_MANAGER":
+            case 5:
+                message.accessRoleType = 5;
+                break;
+            case "MANAGER":
+            case 6:
+                message.accessRoleType = 6;
+                break;
+            case "UNRESOLVED":
+            case 7:
+                message.accessRoleType = 7;
+                break;
+            }
+            if (object.owner != null)
+                message.owner = Boolean(object.owner);
+            if (object.inherited != null)
+                message.inherited = Boolean(object.inherited);
+            if (object.hidden != null)
+                message.hidden = Boolean(object.hidden);
+            if (object.deniedAccess != null)
+                message.deniedAccess = Boolean(object.deniedAccess);
+            if (object.canViewTitle != null)
+                message.canViewTitle = Boolean(object.canViewTitle);
+            if (object.canEdit != null)
+                message.canEdit = Boolean(object.canEdit);
+            if (object.canView != null)
+                message.canView = Boolean(object.canView);
+            if (object.canListAccess != null)
+                message.canListAccess = Boolean(object.canListAccess);
+            if (object.canUpdateAccess != null)
+                message.canUpdateAccess = Boolean(object.canUpdateAccess);
+            if (object.canDelete != null)
+                message.canDelete = Boolean(object.canDelete);
+            if (object.canChangeOwnership != null)
+                message.canChangeOwnership = Boolean(object.canChangeOwnership);
+            if (object.canRequestAccess != null)
+                message.canRequestAccess = Boolean(object.canRequestAccess);
+            if (object.canApproveAccess != null)
+                message.canApproveAccess = Boolean(object.canApproveAccess);
+            if (object.dateCreated != null)
+                if ($util.Long)
+                    message.dateCreated = $util.Long.fromValue(object.dateCreated, false);
+                else if (typeof object.dateCreated === "string")
+                    message.dateCreated = parseInt(object.dateCreated, 10);
+                else if (typeof object.dateCreated === "number")
+                    message.dateCreated = object.dateCreated;
+                else if (typeof object.dateCreated === "object")
+                    message.dateCreated = new $util.LongBits(object.dateCreated.low >>> 0, object.dateCreated.high >>> 0).toNumber();
+            if (object.lastModified != null)
+                if ($util.Long)
+                    message.lastModified = $util.Long.fromValue(object.lastModified, false);
+                else if (typeof object.lastModified === "string")
+                    message.lastModified = parseInt(object.lastModified, 10);
+                else if (typeof object.lastModified === "number")
+                    message.lastModified = object.lastModified;
+                else if (typeof object.lastModified === "object")
+                    message.lastModified = new $util.LongBits(object.lastModified.low >>> 0, object.lastModified.high >>> 0).toNumber();
+            if (object.tlaProperties != null) {
+                if (!$util.isObject(object.tlaProperties))
+                    throw TypeError(".Folder.RecordAccessData.tlaProperties: object expected");
+                message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordAccessData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RecordAccessData
+         * @static
+         * @param {Folder.RecordAccessData} message RecordAccessData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordAccessData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.accessTypeUid = "";
+                else {
+                    object.accessTypeUid = [];
+                    if (options.bytes !== Array)
+                        object.accessTypeUid = $util.newBuffer(object.accessTypeUid);
+                }
+                object.accessType = options.enums === String ? "AT_UNKNOWN" : 0;
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                object.accessRoleType = options.enums === String ? "NAVIGATOR" : 0;
+                object.owner = false;
+                object.inherited = false;
+                object.hidden = false;
+                object.deniedAccess = false;
+                object.canViewTitle = false;
+                object.canEdit = false;
+                object.canView = false;
+                object.canListAccess = false;
+                object.canUpdateAccess = false;
+                object.canDelete = false;
+                object.canChangeOwnership = false;
+                object.canRequestAccess = false;
+                object.canApproveAccess = false;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.dateCreated = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.dateCreated = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.lastModified = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.lastModified = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.tlaProperties = null;
+            }
+            if (message.accessTypeUid != null && Object.hasOwnProperty.call(message, "accessTypeUid"))
+                object.accessTypeUid = options.bytes === String ? $util.base64.encode(message.accessTypeUid, 0, message.accessTypeUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accessTypeUid) : message.accessTypeUid;
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                object.accessType = options.enums === String ? $root.Folder.AccessType[message.accessType] === undefined ? message.accessType : $root.Folder.AccessType[message.accessType] : message.accessType;
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
+                object.accessRoleType = options.enums === String ? $root.Folder.AccessRoleType[message.accessRoleType] === undefined ? message.accessRoleType : $root.Folder.AccessRoleType[message.accessRoleType] : message.accessRoleType;
+            if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
+                object.owner = message.owner;
+            if (message.inherited != null && Object.hasOwnProperty.call(message, "inherited"))
+                object.inherited = message.inherited;
+            if (message.hidden != null && Object.hasOwnProperty.call(message, "hidden"))
+                object.hidden = message.hidden;
+            if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
+                object.deniedAccess = message.deniedAccess;
+            if (message.canViewTitle != null && Object.hasOwnProperty.call(message, "canViewTitle"))
+                object.canViewTitle = message.canViewTitle;
+            if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
+                object.canEdit = message.canEdit;
+            if (message.canView != null && Object.hasOwnProperty.call(message, "canView"))
+                object.canView = message.canView;
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                object.canListAccess = message.canListAccess;
+            if (message.canUpdateAccess != null && Object.hasOwnProperty.call(message, "canUpdateAccess"))
+                object.canUpdateAccess = message.canUpdateAccess;
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                object.canDelete = message.canDelete;
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                object.canChangeOwnership = message.canChangeOwnership;
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                object.canRequestAccess = message.canRequestAccess;
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                object.canApproveAccess = message.canApproveAccess;
+            if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.dateCreated = typeof message.dateCreated === "number" ? BigInt(message.dateCreated) : $util.Long.fromBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0, false).toBigInt();
+                else if (typeof message.dateCreated === "number")
+                    object.dateCreated = options.longs === String ? String(message.dateCreated) : message.dateCreated;
+                else
+                    object.dateCreated = options.longs === String ? $util.Long.prototype.toString.call(message.dateCreated) : options.longs === Number ? new $util.LongBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0).toNumber() : message.dateCreated;
+            if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.lastModified = typeof message.lastModified === "number" ? BigInt(message.lastModified) : $util.Long.fromBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0, false).toBigInt();
+                else if (typeof message.lastModified === "number")
+                    object.lastModified = options.longs === String ? String(message.lastModified) : message.lastModified;
+                else
+                    object.lastModified = options.longs === String ? $util.Long.prototype.toString.call(message.lastModified) : options.longs === Number ? new $util.LongBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0).toNumber() : message.lastModified;
+            if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
+                object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this RecordAccessData to JSON.
+         * @function toJSON
+         * @memberof Folder.RecordAccessData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordAccessData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordAccessData
+         * @function getTypeUrl
+         * @memberof Folder.RecordAccessData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordAccessData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RecordAccessData";
+        };
+
+        return RecordAccessData;
+    })();
+
+    Folder.AccessData = (function() {
+
+        /**
+         * Properties of an AccessData.
+         * @memberof Folder
+         * @interface IAccessData
+         * @property {Uint8Array|null} [accessTypeUid] AccessData accessTypeUid
+         * @property {Folder.AccessRoleType|null} [accessRoleType] AccessData accessRoleType
+         * @property {boolean|null} [deniedAccess] AccessData deniedAccess
+         * @property {boolean|null} [inherited] AccessData inherited
+         * @property {boolean|null} [hidden] AccessData hidden
+         * @property {Folder.ICapabilities|null} [capabilities] AccessData capabilities
+         */
+
+        /**
+         * Constructs a new AccessData.
+         * @memberof Folder
+         * @classdesc Represents an AccessData.
+         * @implements IAccessData
+         * @constructor
+         * @param {Folder.IAccessData=} [properties] Properties to set
+         */
+        function AccessData(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AccessData accessTypeUid.
+         * @member {Uint8Array} accessTypeUid
+         * @memberof Folder.AccessData
+         * @instance
+         */
+        AccessData.prototype.accessTypeUid = $util.newBuffer([]);
+
+        /**
+         * AccessData accessRoleType.
+         * @member {Folder.AccessRoleType} accessRoleType
+         * @memberof Folder.AccessData
+         * @instance
+         */
+        AccessData.prototype.accessRoleType = 0;
+
+        /**
+         * AccessData deniedAccess.
+         * @member {boolean} deniedAccess
+         * @memberof Folder.AccessData
+         * @instance
+         */
+        AccessData.prototype.deniedAccess = false;
+
+        /**
+         * AccessData inherited.
+         * @member {boolean} inherited
+         * @memberof Folder.AccessData
+         * @instance
+         */
+        AccessData.prototype.inherited = false;
+
+        /**
+         * AccessData hidden.
+         * @member {boolean} hidden
+         * @memberof Folder.AccessData
+         * @instance
+         */
+        AccessData.prototype.hidden = false;
+
+        /**
+         * AccessData capabilities.
+         * @member {Folder.ICapabilities|null|undefined} capabilities
+         * @memberof Folder.AccessData
+         * @instance
+         */
+        AccessData.prototype.capabilities = null;
+
+        /**
+         * Creates a new AccessData instance using the specified properties.
+         * @function create
+         * @memberof Folder.AccessData
+         * @static
+         * @param {Folder.IAccessData=} [properties] Properties to set
+         * @returns {Folder.AccessData} AccessData instance
+         */
+        AccessData.create = function create(properties) {
+            return new AccessData(properties);
+        };
+
+        /**
+         * Encodes the specified AccessData message. Does not implicitly {@link Folder.AccessData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.AccessData
+         * @static
+         * @param {Folder.IAccessData} message AccessData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccessData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.accessTypeUid != null && Object.hasOwnProperty.call(message, "accessTypeUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.accessTypeUid);
+            if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.accessRoleType);
+            if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.deniedAccess);
+            if (message.inherited != null && Object.hasOwnProperty.call(message, "inherited"))
+                writer.uint32(/* id 4, wireType 0 =*/32).bool(message.inherited);
+            if (message.hidden != null && Object.hasOwnProperty.call(message, "hidden"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.hidden);
+            if (message.capabilities != null && Object.hasOwnProperty.call(message, "capabilities"))
+                $root.Folder.Capabilities.encode(message.capabilities, writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes an AccessData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.AccessData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.AccessData} AccessData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccessData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.AccessData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.accessTypeUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.accessRoleType = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.deniedAccess = reader.bool();
+                        break;
+                    }
+                case 4: {
+                        message.inherited = reader.bool();
+                        break;
+                    }
+                case 5: {
+                        message.hidden = reader.bool();
+                        break;
+                    }
+                case 6: {
+                        message.capabilities = $root.Folder.Capabilities.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an AccessData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.AccessData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.AccessData} AccessData
+         */
+        AccessData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.AccessData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.AccessData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.AccessData();
+            if (object.accessTypeUid != null)
+                if (typeof object.accessTypeUid === "string")
+                    $util.base64.decode(object.accessTypeUid, message.accessTypeUid = $util.newBuffer($util.base64.length(object.accessTypeUid)), 0);
+                else if (object.accessTypeUid.length >= 0)
+                    message.accessTypeUid = object.accessTypeUid;
+            switch (object.accessRoleType) {
+            default:
+                if (typeof object.accessRoleType === "number") {
+                    message.accessRoleType = object.accessRoleType;
+                    break;
+                }
+                break;
+            case "NAVIGATOR":
+            case 0:
+                message.accessRoleType = 0;
+                break;
+            case "REQUESTOR":
+            case 1:
+                message.accessRoleType = 1;
+                break;
+            case "VIEWER":
+            case 2:
+                message.accessRoleType = 2;
+                break;
+            case "SHARED_MANAGER":
+            case 3:
+                message.accessRoleType = 3;
+                break;
+            case "CONTENT_MANAGER":
+            case 4:
+                message.accessRoleType = 4;
+                break;
+            case "CONTENT_SHARE_MANAGER":
+            case 5:
+                message.accessRoleType = 5;
+                break;
+            case "MANAGER":
+            case 6:
+                message.accessRoleType = 6;
+                break;
+            case "UNRESOLVED":
+            case 7:
+                message.accessRoleType = 7;
+                break;
+            }
+            if (object.deniedAccess != null)
+                message.deniedAccess = Boolean(object.deniedAccess);
+            if (object.inherited != null)
+                message.inherited = Boolean(object.inherited);
+            if (object.hidden != null)
+                message.hidden = Boolean(object.hidden);
+            if (object.capabilities != null) {
+                if (!$util.isObject(object.capabilities))
+                    throw TypeError(".Folder.AccessData.capabilities: object expected");
+                message.capabilities = $root.Folder.Capabilities.fromObject(object.capabilities, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AccessData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.AccessData
+         * @static
+         * @param {Folder.AccessData} message AccessData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccessData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.accessTypeUid = "";
+                else {
+                    object.accessTypeUid = [];
+                    if (options.bytes !== Array)
+                        object.accessTypeUid = $util.newBuffer(object.accessTypeUid);
+                }
+                object.accessRoleType = options.enums === String ? "NAVIGATOR" : 0;
+                object.deniedAccess = false;
+                object.inherited = false;
+                object.hidden = false;
+                object.capabilities = null;
+            }
+            if (message.accessTypeUid != null && Object.hasOwnProperty.call(message, "accessTypeUid"))
+                object.accessTypeUid = options.bytes === String ? $util.base64.encode(message.accessTypeUid, 0, message.accessTypeUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accessTypeUid) : message.accessTypeUid;
+            if (message.accessRoleType != null && Object.hasOwnProperty.call(message, "accessRoleType"))
+                object.accessRoleType = options.enums === String ? $root.Folder.AccessRoleType[message.accessRoleType] === undefined ? message.accessRoleType : $root.Folder.AccessRoleType[message.accessRoleType] : message.accessRoleType;
+            if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
+                object.deniedAccess = message.deniedAccess;
+            if (message.inherited != null && Object.hasOwnProperty.call(message, "inherited"))
+                object.inherited = message.inherited;
+            if (message.hidden != null && Object.hasOwnProperty.call(message, "hidden"))
+                object.hidden = message.hidden;
+            if (message.capabilities != null && Object.hasOwnProperty.call(message, "capabilities"))
+                object.capabilities = $root.Folder.Capabilities.toObject(message.capabilities, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this AccessData to JSON.
+         * @function toJSON
+         * @memberof Folder.AccessData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccessData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for AccessData
+         * @function getTypeUrl
+         * @memberof Folder.AccessData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        AccessData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.AccessData";
+        };
+
+        return AccessData;
+    })();
+
+    Folder.FolderAccessRequest = (function() {
+
+        /**
+         * Properties of a FolderAccessRequest.
+         * @memberof Folder
+         * @interface IFolderAccessRequest
+         * @property {Array.<Folder.IFolderAccessData>|null} [folderAccessAdds] FolderAccessRequest folderAccessAdds
+         * @property {Array.<Folder.IFolderAccessData>|null} [folderAccessUpdates] FolderAccessRequest folderAccessUpdates
+         * @property {Array.<Folder.IFolderAccessData>|null} [folderAccessRemoves] FolderAccessRequest folderAccessRemoves
+         */
+
+        /**
+         * Constructs a new FolderAccessRequest.
+         * @memberof Folder
+         * @classdesc Request for rest/vault/folders/v3/access_update end-point.
+         * @implements IFolderAccessRequest
+         * @constructor
+         * @param {Folder.IFolderAccessRequest=} [properties] Properties to set
+         */
+        function FolderAccessRequest(properties) {
+            this.folderAccessAdds = [];
+            this.folderAccessUpdates = [];
+            this.folderAccessRemoves = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderAccessRequest folderAccessAdds.
+         * @member {Array.<Folder.IFolderAccessData>} folderAccessAdds
+         * @memberof Folder.FolderAccessRequest
+         * @instance
+         */
+        FolderAccessRequest.prototype.folderAccessAdds = $util.emptyArray;
+
+        /**
+         * FolderAccessRequest folderAccessUpdates.
+         * @member {Array.<Folder.IFolderAccessData>} folderAccessUpdates
+         * @memberof Folder.FolderAccessRequest
+         * @instance
+         */
+        FolderAccessRequest.prototype.folderAccessUpdates = $util.emptyArray;
+
+        /**
+         * FolderAccessRequest folderAccessRemoves.
+         * @member {Array.<Folder.IFolderAccessData>} folderAccessRemoves
+         * @memberof Folder.FolderAccessRequest
+         * @instance
+         */
+        FolderAccessRequest.prototype.folderAccessRemoves = $util.emptyArray;
+
+        /**
+         * Creates a new FolderAccessRequest instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderAccessRequest
+         * @static
+         * @param {Folder.IFolderAccessRequest=} [properties] Properties to set
+         * @returns {Folder.FolderAccessRequest} FolderAccessRequest instance
+         */
+        FolderAccessRequest.create = function create(properties) {
+            return new FolderAccessRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FolderAccessRequest message. Does not implicitly {@link Folder.FolderAccessRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderAccessRequest
+         * @static
+         * @param {Folder.IFolderAccessRequest} message FolderAccessRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderAccessRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderAccessAdds != null && message.folderAccessAdds.length)
+                for (let i = 0; i < message.folderAccessAdds.length; ++i)
+                    $root.Folder.FolderAccessData.encode(message.folderAccessAdds[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            if (message.folderAccessUpdates != null && message.folderAccessUpdates.length)
+                for (let i = 0; i < message.folderAccessUpdates.length; ++i)
+                    $root.Folder.FolderAccessData.encode(message.folderAccessUpdates[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+            if (message.folderAccessRemoves != null && message.folderAccessRemoves.length)
+                for (let i = 0; i < message.folderAccessRemoves.length; ++i)
+                    $root.Folder.FolderAccessData.encode(message.folderAccessRemoves[i], writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderAccessRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderAccessRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderAccessRequest} FolderAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderAccessRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderAccessRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderAccessAdds && message.folderAccessAdds.length))
+                            message.folderAccessAdds = [];
+                        message.folderAccessAdds.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 2: {
+                        if (!(message.folderAccessUpdates && message.folderAccessUpdates.length))
+                            message.folderAccessUpdates = [];
+                        message.folderAccessUpdates.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 3: {
+                        if (!(message.folderAccessRemoves && message.folderAccessRemoves.length))
+                            message.folderAccessRemoves = [];
+                        message.folderAccessRemoves.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderAccessRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderAccessRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderAccessRequest} FolderAccessRequest
+         */
+        FolderAccessRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderAccessRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderAccessRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderAccessRequest();
+            if (object.folderAccessAdds) {
+                if (!Array.isArray(object.folderAccessAdds))
+                    throw TypeError(".Folder.FolderAccessRequest.folderAccessAdds: array expected");
+                message.folderAccessAdds = [];
+                for (let i = 0; i < object.folderAccessAdds.length; ++i) {
+                    if (!$util.isObject(object.folderAccessAdds[i]))
+                        throw TypeError(".Folder.FolderAccessRequest.folderAccessAdds: object expected");
+                    message.folderAccessAdds[i] = $root.Folder.FolderAccessData.fromObject(object.folderAccessAdds[i], long + 1);
+                }
+            }
+            if (object.folderAccessUpdates) {
+                if (!Array.isArray(object.folderAccessUpdates))
+                    throw TypeError(".Folder.FolderAccessRequest.folderAccessUpdates: array expected");
+                message.folderAccessUpdates = [];
+                for (let i = 0; i < object.folderAccessUpdates.length; ++i) {
+                    if (!$util.isObject(object.folderAccessUpdates[i]))
+                        throw TypeError(".Folder.FolderAccessRequest.folderAccessUpdates: object expected");
+                    message.folderAccessUpdates[i] = $root.Folder.FolderAccessData.fromObject(object.folderAccessUpdates[i], long + 1);
+                }
+            }
+            if (object.folderAccessRemoves) {
+                if (!Array.isArray(object.folderAccessRemoves))
+                    throw TypeError(".Folder.FolderAccessRequest.folderAccessRemoves: array expected");
+                message.folderAccessRemoves = [];
+                for (let i = 0; i < object.folderAccessRemoves.length; ++i) {
+                    if (!$util.isObject(object.folderAccessRemoves[i]))
+                        throw TypeError(".Folder.FolderAccessRequest.folderAccessRemoves: object expected");
+                    message.folderAccessRemoves[i] = $root.Folder.FolderAccessData.fromObject(object.folderAccessRemoves[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderAccessRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderAccessRequest
+         * @static
+         * @param {Folder.FolderAccessRequest} message FolderAccessRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderAccessRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.folderAccessAdds = [];
+                object.folderAccessUpdates = [];
+                object.folderAccessRemoves = [];
+            }
+            if (message.folderAccessAdds && message.folderAccessAdds.length) {
+                object.folderAccessAdds = [];
+                for (let j = 0; j < message.folderAccessAdds.length; ++j)
+                    object.folderAccessAdds[j] = $root.Folder.FolderAccessData.toObject(message.folderAccessAdds[j], options, q + 1);
+            }
+            if (message.folderAccessUpdates && message.folderAccessUpdates.length) {
+                object.folderAccessUpdates = [];
+                for (let j = 0; j < message.folderAccessUpdates.length; ++j)
+                    object.folderAccessUpdates[j] = $root.Folder.FolderAccessData.toObject(message.folderAccessUpdates[j], options, q + 1);
+            }
+            if (message.folderAccessRemoves && message.folderAccessRemoves.length) {
+                object.folderAccessRemoves = [];
+                for (let j = 0; j < message.folderAccessRemoves.length; ++j)
+                    object.folderAccessRemoves[j] = $root.Folder.FolderAccessData.toObject(message.folderAccessRemoves[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderAccessRequest to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderAccessRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderAccessRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderAccessRequest
+         * @function getTypeUrl
+         * @memberof Folder.FolderAccessRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderAccessRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderAccessRequest";
+        };
+
+        return FolderAccessRequest;
+    })();
+
+    Folder.FolderAccessResult = (function() {
+
+        /**
+         * Properties of a FolderAccessResult.
+         * @memberof Folder
+         * @interface IFolderAccessResult
+         * @property {Uint8Array|null} [folderUid] FolderAccessResult folderUid
+         * @property {Uint8Array|null} [accessUid] FolderAccessResult accessUid
+         * @property {Folder.AccessType|null} [accessType] FolderAccessResult accessType
+         * @property {Folder.FolderModifyStatus|null} [status] FolderAccessResult status
+         * @property {string|null} [message] FolderAccessResult message
+         */
+
+        /**
+         * Constructs a new FolderAccessResult.
+         * @memberof Folder
+         * @classdesc Represents a FolderAccessResult.
+         * @implements IFolderAccessResult
+         * @constructor
+         * @param {Folder.IFolderAccessResult=} [properties] Properties to set
+         */
+        function FolderAccessResult(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderAccessResult folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Folder.FolderAccessResult
+         * @instance
+         */
+        FolderAccessResult.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * FolderAccessResult accessUid.
+         * @member {Uint8Array} accessUid
+         * @memberof Folder.FolderAccessResult
+         * @instance
+         */
+        FolderAccessResult.prototype.accessUid = $util.newBuffer([]);
+
+        /**
+         * FolderAccessResult accessType.
+         * @member {Folder.AccessType} accessType
+         * @memberof Folder.FolderAccessResult
+         * @instance
+         */
+        FolderAccessResult.prototype.accessType = 0;
+
+        /**
+         * FolderAccessResult status.
+         * @member {Folder.FolderModifyStatus} status
+         * @memberof Folder.FolderAccessResult
+         * @instance
+         */
+        FolderAccessResult.prototype.status = 0;
+
+        /**
+         * FolderAccessResult message.
+         * @member {string} message
+         * @memberof Folder.FolderAccessResult
+         * @instance
+         */
+        FolderAccessResult.prototype.message = "";
+
+        /**
+         * Creates a new FolderAccessResult instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderAccessResult
+         * @static
+         * @param {Folder.IFolderAccessResult=} [properties] Properties to set
+         * @returns {Folder.FolderAccessResult} FolderAccessResult instance
+         */
+        FolderAccessResult.create = function create(properties) {
+            return new FolderAccessResult(properties);
+        };
+
+        /**
+         * Encodes the specified FolderAccessResult message. Does not implicitly {@link Folder.FolderAccessResult.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderAccessResult
+         * @static
+         * @param {Folder.IFolderAccessResult} message FolderAccessResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderAccessResult.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.accessUid != null && Object.hasOwnProperty.call(message, "accessUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.accessUid);
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.accessType);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.status);
+            if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.message);
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderAccessResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderAccessResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderAccessResult} FolderAccessResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderAccessResult.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderAccessResult();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.accessUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.accessType = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        message.status = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.message = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderAccessResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderAccessResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderAccessResult} FolderAccessResult
+         */
+        FolderAccessResult.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderAccessResult)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderAccessResult: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderAccessResult();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.accessUid != null)
+                if (typeof object.accessUid === "string")
+                    $util.base64.decode(object.accessUid, message.accessUid = $util.newBuffer($util.base64.length(object.accessUid)), 0);
+                else if (object.accessUid.length >= 0)
+                    message.accessUid = object.accessUid;
+            switch (object.accessType) {
+            default:
+                if (typeof object.accessType === "number") {
+                    message.accessType = object.accessType;
+                    break;
+                }
+                break;
+            case "AT_UNKNOWN":
+            case 0:
+                message.accessType = 0;
+                break;
+            case "AT_OWNER":
+            case 1:
+                message.accessType = 1;
+                break;
+            case "AT_USER":
+            case 2:
+                message.accessType = 2;
+                break;
+            case "AT_TEAM":
+            case 3:
+                message.accessType = 3;
+                break;
+            case "AT_ENTERPRISE":
+            case 4:
+                message.accessType = 4;
+                break;
+            case "AT_FOLDER":
+            case 5:
+                message.accessType = 5;
+                break;
+            case "AT_APPLICATION":
+            case 6:
+                message.accessType = 6;
+                break;
+            }
+            switch (object.status) {
+            default:
+                if (typeof object.status === "number") {
+                    message.status = object.status;
+                    break;
+                }
+                break;
+            case "SUCCESS":
+            case 0:
+                message.status = 0;
+                break;
+            case "BAD_REQUEST":
+            case 1:
+                message.status = 1;
+                break;
+            case "ACCESS_DENIED":
+            case 2:
+                message.status = 2;
+                break;
+            case "NOT_FOUND":
+            case 3:
+                message.status = 3;
+                break;
+            }
+            if (object.message != null)
+                message.message = String(object.message);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderAccessResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderAccessResult
+         * @static
+         * @param {Folder.FolderAccessResult} message FolderAccessResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderAccessResult.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.accessUid = "";
+                else {
+                    object.accessUid = [];
+                    if (options.bytes !== Array)
+                        object.accessUid = $util.newBuffer(object.accessUid);
+                }
+                object.accessType = options.enums === String ? "AT_UNKNOWN" : 0;
+                object.status = options.enums === String ? "SUCCESS" : 0;
+                object.message = "";
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.accessUid != null && Object.hasOwnProperty.call(message, "accessUid"))
+                object.accessUid = options.bytes === String ? $util.base64.encode(message.accessUid, 0, message.accessUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accessUid) : message.accessUid;
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                object.accessType = options.enums === String ? $root.Folder.AccessType[message.accessType] === undefined ? message.accessType : $root.Folder.AccessType[message.accessType] : message.accessType;
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                object.status = options.enums === String ? $root.Folder.FolderModifyStatus[message.status] === undefined ? message.status : $root.Folder.FolderModifyStatus[message.status] : message.status;
+            if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                object.message = message.message;
+            return object;
+        };
+
+        /**
+         * Converts this FolderAccessResult to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderAccessResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderAccessResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderAccessResult
+         * @function getTypeUrl
+         * @memberof Folder.FolderAccessResult
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderAccessResult.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderAccessResult";
+        };
+
+        return FolderAccessResult;
+    })();
+
+    Folder.FolderAccessResponse = (function() {
+
+        /**
+         * Properties of a FolderAccessResponse.
+         * @memberof Folder
+         * @interface IFolderAccessResponse
+         * @property {Array.<Folder.IFolderAccessResult>|null} [folderAccessResults] FolderAccessResponse folderAccessResults
+         */
+
+        /**
+         * Constructs a new FolderAccessResponse.
+         * @memberof Folder
+         * @classdesc Response for rest/vault/folders/v3/access_update end-point.
+         * @implements IFolderAccessResponse
+         * @constructor
+         * @param {Folder.IFolderAccessResponse=} [properties] Properties to set
+         */
+        function FolderAccessResponse(properties) {
+            this.folderAccessResults = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FolderAccessResponse folderAccessResults.
+         * @member {Array.<Folder.IFolderAccessResult>} folderAccessResults
+         * @memberof Folder.FolderAccessResponse
+         * @instance
+         */
+        FolderAccessResponse.prototype.folderAccessResults = $util.emptyArray;
+
+        /**
+         * Creates a new FolderAccessResponse instance using the specified properties.
+         * @function create
+         * @memberof Folder.FolderAccessResponse
+         * @static
+         * @param {Folder.IFolderAccessResponse=} [properties] Properties to set
+         * @returns {Folder.FolderAccessResponse} FolderAccessResponse instance
+         */
+        FolderAccessResponse.create = function create(properties) {
+            return new FolderAccessResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FolderAccessResponse message. Does not implicitly {@link Folder.FolderAccessResponse.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.FolderAccessResponse
+         * @static
+         * @param {Folder.IFolderAccessResponse} message FolderAccessResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FolderAccessResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderAccessResults != null && message.folderAccessResults.length)
+                for (let i = 0; i < message.folderAccessResults.length; ++i)
+                    $root.Folder.FolderAccessResult.encode(message.folderAccessResults[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes a FolderAccessResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.FolderAccessResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.FolderAccessResponse} FolderAccessResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FolderAccessResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.FolderAccessResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.folderAccessResults && message.folderAccessResults.length))
+                            message.folderAccessResults = [];
+                        message.folderAccessResults.push($root.Folder.FolderAccessResult.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a FolderAccessResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.FolderAccessResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.FolderAccessResponse} FolderAccessResponse
+         */
+        FolderAccessResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.FolderAccessResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.FolderAccessResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.FolderAccessResponse();
+            if (object.folderAccessResults) {
+                if (!Array.isArray(object.folderAccessResults))
+                    throw TypeError(".Folder.FolderAccessResponse.folderAccessResults: array expected");
+                message.folderAccessResults = [];
+                for (let i = 0; i < object.folderAccessResults.length; ++i) {
+                    if (!$util.isObject(object.folderAccessResults[i]))
+                        throw TypeError(".Folder.FolderAccessResponse.folderAccessResults: object expected");
+                    message.folderAccessResults[i] = $root.Folder.FolderAccessResult.fromObject(object.folderAccessResults[i], long + 1);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FolderAccessResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.FolderAccessResponse
+         * @static
+         * @param {Folder.FolderAccessResponse} message FolderAccessResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FolderAccessResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults)
+                object.folderAccessResults = [];
+            if (message.folderAccessResults && message.folderAccessResults.length) {
+                object.folderAccessResults = [];
+                for (let j = 0; j < message.folderAccessResults.length; ++j)
+                    object.folderAccessResults[j] = $root.Folder.FolderAccessResult.toObject(message.folderAccessResults[j], options, q + 1);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FolderAccessResponse to JSON.
+         * @function toJSON
+         * @memberof Folder.FolderAccessResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FolderAccessResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for FolderAccessResponse
+         * @function getTypeUrl
+         * @memberof Folder.FolderAccessResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        FolderAccessResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.FolderAccessResponse";
+        };
+
+        return FolderAccessResponse;
+    })();
+
+    /**
+     * AccessType enum.
+     * @name Folder.AccessType
+     * @enum {number}
+     * @property {number} AT_UNKNOWN=0 AT_UNKNOWN value
+     * @property {number} AT_OWNER=1 AT_OWNER value
+     * @property {number} AT_USER=2 AT_USER value
+     * @property {number} AT_TEAM=3 AT_TEAM value
+     * @property {number} AT_ENTERPRISE=4 AT_ENTERPRISE value
+     * @property {number} AT_FOLDER=5 AT_FOLDER value
+     * @property {number} AT_APPLICATION=6 AT_APPLICATION value
+     */
+    Folder.AccessType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "AT_UNKNOWN"] = 0;
+        values[valuesById[1] = "AT_OWNER"] = 1;
+        values[valuesById[2] = "AT_USER"] = 2;
+        values[valuesById[3] = "AT_TEAM"] = 3;
+        values[valuesById[4] = "AT_ENTERPRISE"] = 4;
+        values[valuesById[5] = "AT_FOLDER"] = 5;
+        values[valuesById[6] = "AT_APPLICATION"] = 6;
+        return values;
+    })();
+
+    /**
+     * ObjectType enum.
+     * @name Folder.ObjectType
+     * @enum {number}
+     * @property {number} OT_UNKNOWN=0 OT_UNKNOWN value
+     * @property {number} OT_RECORD=1 OT_RECORD value
+     * @property {number} OT_FOLDER=2 OT_FOLDER value
+     */
+    Folder.ObjectType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "OT_UNKNOWN"] = 0;
+        values[valuesById[1] = "OT_RECORD"] = 1;
+        values[valuesById[2] = "OT_FOLDER"] = 2;
+        return values;
+    })();
+
+    Folder.UserInfo = (function() {
+
+        /**
+         * Properties of a UserInfo.
+         * @memberof Folder
+         * @interface IUserInfo
+         * @property {Uint8Array|null} [accountUid] UserInfo accountUid
+         * @property {string|null} [username] UserInfo username
+         */
+
+        /**
+         * Constructs a new UserInfo.
+         * @memberof Folder
+         * @classdesc Represents a UserInfo.
+         * @implements IUserInfo
+         * @constructor
+         * @param {Folder.IUserInfo=} [properties] Properties to set
+         */
+        function UserInfo(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UserInfo accountUid.
+         * @member {Uint8Array} accountUid
+         * @memberof Folder.UserInfo
+         * @instance
+         */
+        UserInfo.prototype.accountUid = $util.newBuffer([]);
+
+        /**
+         * UserInfo username.
+         * @member {string} username
+         * @memberof Folder.UserInfo
+         * @instance
+         */
+        UserInfo.prototype.username = "";
+
+        /**
+         * Creates a new UserInfo instance using the specified properties.
+         * @function create
+         * @memberof Folder.UserInfo
+         * @static
+         * @param {Folder.IUserInfo=} [properties] Properties to set
+         * @returns {Folder.UserInfo} UserInfo instance
+         */
+        UserInfo.create = function create(properties) {
+            return new UserInfo(properties);
+        };
+
+        /**
+         * Encodes the specified UserInfo message. Does not implicitly {@link Folder.UserInfo.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.UserInfo
+         * @static
+         * @param {Folder.IUserInfo} message UserInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserInfo.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.accountUid != null && Object.hasOwnProperty.call(message, "accountUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.accountUid);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            return writer;
+        };
+
+        /**
+         * Decodes a UserInfo message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.UserInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.UserInfo} UserInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserInfo.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.UserInfo();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.accountUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.username = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a UserInfo message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.UserInfo
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.UserInfo} UserInfo
+         */
+        UserInfo.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.UserInfo)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.UserInfo: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.UserInfo();
+            if (object.accountUid != null)
+                if (typeof object.accountUid === "string")
+                    $util.base64.decode(object.accountUid, message.accountUid = $util.newBuffer($util.base64.length(object.accountUid)), 0);
+                else if (object.accountUid.length >= 0)
+                    message.accountUid = object.accountUid;
+            if (object.username != null)
+                message.username = String(object.username);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UserInfo message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.UserInfo
+         * @static
+         * @param {Folder.UserInfo} message UserInfo
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserInfo.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.accountUid = "";
+                else {
+                    object.accountUid = [];
+                    if (options.bytes !== Array)
+                        object.accountUid = $util.newBuffer(object.accountUid);
+                }
+                object.username = "";
+            }
+            if (message.accountUid != null && Object.hasOwnProperty.call(message, "accountUid"))
+                object.accountUid = options.bytes === String ? $util.base64.encode(message.accountUid, 0, message.accountUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accountUid) : message.accountUid;
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                object.username = message.username;
+            return object;
+        };
+
+        /**
+         * Converts this UserInfo to JSON.
+         * @function toJSON
+         * @memberof Folder.UserInfo
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for UserInfo
+         * @function getTypeUrl
+         * @memberof Folder.UserInfo
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        UserInfo.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.UserInfo";
+        };
+
+        return UserInfo;
+    })();
+
+    Folder.RecordData = (function() {
+
+        /**
+         * Properties of a RecordData.
+         * @memberof Folder
+         * @interface IRecordData
+         * @property {Folder.IUserInfo|null} [user] RecordData user
+         * @property {Uint8Array|null} [data] RecordData data
+         * @property {Uint8Array|null} [recordUid] RecordData recordUid
+         */
+
+        /**
+         * Constructs a new RecordData.
+         * @memberof Folder
+         * @classdesc Represents a RecordData.
+         * @implements IRecordData
+         * @constructor
+         * @param {Folder.IRecordData=} [properties] Properties to set
+         */
+        function RecordData(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RecordData user.
+         * @member {Folder.IUserInfo|null|undefined} user
+         * @memberof Folder.RecordData
+         * @instance
+         */
+        RecordData.prototype.user = null;
+
+        /**
+         * RecordData data.
+         * @member {Uint8Array} data
+         * @memberof Folder.RecordData
+         * @instance
+         */
+        RecordData.prototype.data = $util.newBuffer([]);
+
+        /**
+         * RecordData recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.RecordData
+         * @instance
+         */
+        RecordData.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * Creates a new RecordData instance using the specified properties.
+         * @function create
+         * @memberof Folder.RecordData
+         * @static
+         * @param {Folder.IRecordData=} [properties] Properties to set
+         * @returns {Folder.RecordData} RecordData instance
+         */
+        RecordData.create = function create(properties) {
+            return new RecordData(properties);
+        };
+
+        /**
+         * Encodes the specified RecordData message. Does not implicitly {@link Folder.RecordData.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RecordData
+         * @static
+         * @param {Folder.IRecordData} message RecordData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordData.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.user != null && Object.hasOwnProperty.call(message, "user"))
+                $root.Folder.UserInfo.encode(message.user, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordUid);
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordData message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RecordData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RecordData} RecordData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordData.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RecordData();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.user = $root.Folder.UserInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 2: {
+                        message.data = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RecordData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RecordData} RecordData
+         */
+        RecordData.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RecordData)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RecordData: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RecordData();
+            if (object.user != null) {
+                if (!$util.isObject(object.user))
+                    throw TypeError(".Folder.RecordData.user: object expected");
+                message.user = $root.Folder.UserInfo.fromObject(object.user, long + 1);
+            }
+            if (object.data != null)
+                if (typeof object.data === "string")
+                    $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+                else if (object.data.length >= 0)
+                    message.data = object.data;
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RecordData
+         * @static
+         * @param {Folder.RecordData} message RecordData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordData.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                object.user = null;
+                if (options.bytes === String)
+                    object.data = "";
+                else {
+                    object.data = [];
+                    if (options.bytes !== Array)
+                        object.data = $util.newBuffer(object.data);
+                }
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+            }
+            if (message.user != null && Object.hasOwnProperty.call(message, "user"))
+                object.user = $root.Folder.UserInfo.toObject(message.user, options, q + 1);
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            return object;
+        };
+
+        /**
+         * Converts this RecordData to JSON.
+         * @function toJSON
+         * @memberof Folder.RecordData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordData
+         * @function getTypeUrl
+         * @memberof Folder.RecordData
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordData.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RecordData";
+        };
+
+        return RecordData;
+    })();
+
+    Folder.RecordKey = (function() {
+
+        /**
+         * Properties of a RecordKey.
+         * @memberof Folder
+         * @interface IRecordKey
+         * @property {Uint8Array|null} [userUid] RecordKey userUid
+         * @property {Uint8Array|null} [recordUid] RecordKey recordUid
+         * @property {Uint8Array|null} [recordKey] RecordKey recordKey
+         * @property {Folder.EncryptedKeyType|null} [encryptedKeyType] RecordKey encryptedKeyType
+         */
+
+        /**
+         * Constructs a new RecordKey.
+         * @memberof Folder
+         * @classdesc Represents a key for a record, which includes the user UID, record UID, and the encrypted key type.
+         * This is used to identify and manage access to the record's encrypted data.
+         * @implements IRecordKey
+         * @constructor
+         * @param {Folder.IRecordKey=} [properties] Properties to set
+         */
+        function RecordKey(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RecordKey userUid.
+         * @member {Uint8Array} userUid
+         * @memberof Folder.RecordKey
+         * @instance
+         */
+        RecordKey.prototype.userUid = $util.newBuffer([]);
+
+        /**
+         * RecordKey recordUid.
+         * @member {Uint8Array} recordUid
+         * @memberof Folder.RecordKey
+         * @instance
+         */
+        RecordKey.prototype.recordUid = $util.newBuffer([]);
+
+        /**
+         * RecordKey recordKey.
+         * @member {Uint8Array} recordKey
+         * @memberof Folder.RecordKey
+         * @instance
+         */
+        RecordKey.prototype.recordKey = $util.newBuffer([]);
+
+        /**
+         * RecordKey encryptedKeyType.
+         * @member {Folder.EncryptedKeyType} encryptedKeyType
+         * @memberof Folder.RecordKey
+         * @instance
+         */
+        RecordKey.prototype.encryptedKeyType = 0;
+
+        /**
+         * Creates a new RecordKey instance using the specified properties.
+         * @function create
+         * @memberof Folder.RecordKey
+         * @static
+         * @param {Folder.IRecordKey=} [properties] Properties to set
+         * @returns {Folder.RecordKey} RecordKey instance
+         */
+        RecordKey.create = function create(properties) {
+            return new RecordKey(properties);
+        };
+
+        /**
+         * Encodes the specified RecordKey message. Does not implicitly {@link Folder.RecordKey.verify|verify} messages.
+         * @function encode
+         * @memberof Folder.RecordKey
+         * @static
+         * @param {Folder.IRecordKey} message RecordKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RecordKey.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.userUid != null && Object.hasOwnProperty.call(message, "userUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.userUid);
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.recordUid);
+            if (message.recordKey != null && Object.hasOwnProperty.call(message, "recordKey"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordKey);
+            if (message.encryptedKeyType != null && Object.hasOwnProperty.call(message, "encryptedKeyType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.encryptedKeyType);
+            return writer;
+        };
+
+        /**
+         * Decodes a RecordKey message from the specified reader or buffer.
+         * @function decode
+         * @memberof Folder.RecordKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Folder.RecordKey} RecordKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RecordKey.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Folder.RecordKey();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.userUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.recordUid = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.recordKey = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.encryptedKeyType = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a RecordKey message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Folder.RecordKey
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Folder.RecordKey} RecordKey
+         */
+        RecordKey.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Folder.RecordKey)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Folder.RecordKey: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Folder.RecordKey();
+            if (object.userUid != null)
+                if (typeof object.userUid === "string")
+                    $util.base64.decode(object.userUid, message.userUid = $util.newBuffer($util.base64.length(object.userUid)), 0);
+                else if (object.userUid.length >= 0)
+                    message.userUid = object.userUid;
+            if (object.recordUid != null)
+                if (typeof object.recordUid === "string")
+                    $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                else if (object.recordUid.length >= 0)
+                    message.recordUid = object.recordUid;
+            if (object.recordKey != null)
+                if (typeof object.recordKey === "string")
+                    $util.base64.decode(object.recordKey, message.recordKey = $util.newBuffer($util.base64.length(object.recordKey)), 0);
+                else if (object.recordKey.length >= 0)
+                    message.recordKey = object.recordKey;
+            switch (object.encryptedKeyType) {
+            default:
+                if (typeof object.encryptedKeyType === "number") {
+                    message.encryptedKeyType = object.encryptedKeyType;
+                    break;
+                }
+                break;
+            case "no_key":
+            case 0:
+                message.encryptedKeyType = 0;
+                break;
+            case "encrypted_by_data_key":
+            case 1:
+                message.encryptedKeyType = 1;
+                break;
+            case "encrypted_by_public_key":
+            case 2:
+                message.encryptedKeyType = 2;
+                break;
+            case "encrypted_by_data_key_gcm":
+            case 3:
+                message.encryptedKeyType = 3;
+                break;
+            case "encrypted_by_public_key_ecc":
+            case 4:
+                message.encryptedKeyType = 4;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RecordKey message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Folder.RecordKey
+         * @static
+         * @param {Folder.RecordKey} message RecordKey
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RecordKey.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.userUid = "";
+                else {
+                    object.userUid = [];
+                    if (options.bytes !== Array)
+                        object.userUid = $util.newBuffer(object.userUid);
+                }
+                if (options.bytes === String)
+                    object.recordUid = "";
+                else {
+                    object.recordUid = [];
+                    if (options.bytes !== Array)
+                        object.recordUid = $util.newBuffer(object.recordUid);
+                }
+                if (options.bytes === String)
+                    object.recordKey = "";
+                else {
+                    object.recordKey = [];
+                    if (options.bytes !== Array)
+                        object.recordKey = $util.newBuffer(object.recordKey);
+                }
+                object.encryptedKeyType = options.enums === String ? "no_key" : 0;
+            }
+            if (message.userUid != null && Object.hasOwnProperty.call(message, "userUid"))
+                object.userUid = options.bytes === String ? $util.base64.encode(message.userUid, 0, message.userUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.userUid) : message.userUid;
+            if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+            if (message.recordKey != null && Object.hasOwnProperty.call(message, "recordKey"))
+                object.recordKey = options.bytes === String ? $util.base64.encode(message.recordKey, 0, message.recordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKey) : message.recordKey;
+            if (message.encryptedKeyType != null && Object.hasOwnProperty.call(message, "encryptedKeyType"))
+                object.encryptedKeyType = options.enums === String ? $root.Folder.EncryptedKeyType[message.encryptedKeyType] === undefined ? message.encryptedKeyType : $root.Folder.EncryptedKeyType[message.encryptedKeyType] : message.encryptedKeyType;
+            return object;
+        };
+
+        /**
+         * Converts this RecordKey to JSON.
+         * @function toJSON
+         * @memberof Folder.RecordKey
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RecordKey.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for RecordKey
+         * @function getTypeUrl
+         * @memberof Folder.RecordKey
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        RecordKey.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Folder.RecordKey";
+        };
+
+        return RecordKey;
+    })();
+
+    return Folder;
+})();

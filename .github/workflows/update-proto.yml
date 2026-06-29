@@ -42,7 +42,7 @@ jobs:
       - name: Check for changes
         id: diff
         run: |
-          if git diff --quiet keeperapi/src/proto.js keeperapi/src/proto.d.ts; then
+          if git diff --quiet keeperapi/src/proto.js keeperapi/src/proto.d.ts keeperapi/src/proto; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -54,7 +54,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "bot/update-proto"
-          git add keeperapi/src/proto.js keeperapi/src/proto.d.ts
+          git add keeperapi/src/proto.js keeperapi/src/proto.d.ts keeperapi/src/proto
           git commit -m "chore: regenerate protobuf files"
           git push --force origin "bot/update-proto"
 
