@@ -10715,6 +10715,7 @@ export const PAM = $root.PAM = (() => {
          * @property {string|null} [uid] NhiUidEntry uid
          * @property {PAM.NhiCategory|null} [category] NhiUidEntry category
          * @property {boolean|null} [ksmNhi] NhiUidEntry ksmNhi
+         * @property {string|null} [appUid] NhiUidEntry appUid
          */
 
         /**
@@ -10757,6 +10758,14 @@ export const PAM = $root.PAM = (() => {
         NhiUidEntry.prototype.ksmNhi = false;
 
         /**
+         * NhiUidEntry appUid.
+         * @member {string} appUid
+         * @memberof PAM.NhiUidEntry
+         * @instance
+         */
+        NhiUidEntry.prototype.appUid = "";
+
+        /**
          * Creates a new NhiUidEntry instance using the specified properties.
          * @function create
          * @memberof PAM.NhiUidEntry
@@ -10790,6 +10799,8 @@ export const PAM = $root.PAM = (() => {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.category);
             if (message.ksmNhi != null && Object.hasOwnProperty.call(message, "ksmNhi"))
                 writer.uint32(/* id 3, wireType 0 =*/24).bool(message.ksmNhi);
+            if (message.appUid != null && Object.hasOwnProperty.call(message, "appUid"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.appUid);
             return writer;
         };
 
@@ -10827,6 +10838,10 @@ export const PAM = $root.PAM = (() => {
                     }
                 case 3: {
                         message.ksmNhi = reader.bool();
+                        break;
+                    }
+                case 4: {
+                        message.appUid = reader.string();
                         break;
                     }
                 default:
@@ -10887,6 +10902,8 @@ export const PAM = $root.PAM = (() => {
             }
             if (object.ksmNhi != null)
                 message.ksmNhi = Boolean(object.ksmNhi);
+            if (object.appUid != null)
+                message.appUid = String(object.appUid);
             return message;
         };
 
@@ -10911,6 +10928,7 @@ export const PAM = $root.PAM = (() => {
                 object.uid = "";
                 object.category = options.enums === String ? "NHI_CATEGORY_UNKNOWN" : 0;
                 object.ksmNhi = false;
+                object.appUid = "";
             }
             if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
                 object.uid = message.uid;
@@ -10918,6 +10936,8 @@ export const PAM = $root.PAM = (() => {
                 object.category = options.enums === String ? $root.PAM.NhiCategory[message.category] === undefined ? message.category : $root.PAM.NhiCategory[message.category] : message.category;
             if (message.ksmNhi != null && Object.hasOwnProperty.call(message, "ksmNhi"))
                 object.ksmNhi = message.ksmNhi;
+            if (message.appUid != null && Object.hasOwnProperty.call(message, "appUid"))
+                object.appUid = message.appUid;
             return object;
         };
 
@@ -11370,6 +11390,429 @@ export const PAM = $root.PAM = (() => {
         };
 
         return GetNhiUidsResponse;
+    })();
+
+    PAM.SetNhiKsmEffectiveDateRequest = (function() {
+
+        /**
+         * Properties of a SetNhiKsmEffectiveDateRequest.
+         * @memberof PAM
+         * @interface ISetNhiKsmEffectiveDateRequest
+         * @property {number|null} [effectiveDate] SetNhiKsmEffectiveDateRequest effectiveDate
+         */
+
+        /**
+         * Constructs a new SetNhiKsmEffectiveDateRequest.
+         * @memberof PAM
+         * @classdesc Represents a SetNhiKsmEffectiveDateRequest.
+         * @implements ISetNhiKsmEffectiveDateRequest
+         * @constructor
+         * @param {PAM.ISetNhiKsmEffectiveDateRequest=} [properties] Properties to set
+         */
+        function SetNhiKsmEffectiveDateRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SetNhiKsmEffectiveDateRequest effectiveDate.
+         * @member {number} effectiveDate
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @instance
+         */
+        SetNhiKsmEffectiveDateRequest.prototype.effectiveDate = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new SetNhiKsmEffectiveDateRequest instance using the specified properties.
+         * @function create
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @static
+         * @param {PAM.ISetNhiKsmEffectiveDateRequest=} [properties] Properties to set
+         * @returns {PAM.SetNhiKsmEffectiveDateRequest} SetNhiKsmEffectiveDateRequest instance
+         */
+        SetNhiKsmEffectiveDateRequest.create = function create(properties) {
+            return new SetNhiKsmEffectiveDateRequest(properties);
+        };
+
+        /**
+         * Encodes the specified SetNhiKsmEffectiveDateRequest message. Does not implicitly {@link PAM.SetNhiKsmEffectiveDateRequest.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @static
+         * @param {PAM.ISetNhiKsmEffectiveDateRequest} message SetNhiKsmEffectiveDateRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetNhiKsmEffectiveDateRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.effectiveDate != null && Object.hasOwnProperty.call(message, "effectiveDate"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.effectiveDate);
+            return writer;
+        };
+
+        /**
+         * Decodes a SetNhiKsmEffectiveDateRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.SetNhiKsmEffectiveDateRequest} SetNhiKsmEffectiveDateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetNhiKsmEffectiveDateRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.SetNhiKsmEffectiveDateRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.effectiveDate = reader.int64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a SetNhiKsmEffectiveDateRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.SetNhiKsmEffectiveDateRequest} SetNhiKsmEffectiveDateRequest
+         */
+        SetNhiKsmEffectiveDateRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.SetNhiKsmEffectiveDateRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.SetNhiKsmEffectiveDateRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.SetNhiKsmEffectiveDateRequest();
+            if (object.effectiveDate != null)
+                if ($util.Long)
+                    message.effectiveDate = $util.Long.fromValue(object.effectiveDate, false);
+                else if (typeof object.effectiveDate === "string")
+                    message.effectiveDate = parseInt(object.effectiveDate, 10);
+                else if (typeof object.effectiveDate === "number")
+                    message.effectiveDate = object.effectiveDate;
+                else if (typeof object.effectiveDate === "object")
+                    message.effectiveDate = new $util.LongBits(object.effectiveDate.low >>> 0, object.effectiveDate.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SetNhiKsmEffectiveDateRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @static
+         * @param {PAM.SetNhiKsmEffectiveDateRequest} message SetNhiKsmEffectiveDateRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SetNhiKsmEffectiveDateRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults)
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.effectiveDate = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.effectiveDate = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            if (message.effectiveDate != null && Object.hasOwnProperty.call(message, "effectiveDate"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.effectiveDate = typeof message.effectiveDate === "number" ? BigInt(message.effectiveDate) : $util.Long.fromBits(message.effectiveDate.low >>> 0, message.effectiveDate.high >>> 0, false).toBigInt();
+                else if (typeof message.effectiveDate === "number")
+                    object.effectiveDate = options.longs === String ? String(message.effectiveDate) : message.effectiveDate;
+                else
+                    object.effectiveDate = options.longs === String ? $util.Long.prototype.toString.call(message.effectiveDate) : options.longs === Number ? new $util.LongBits(message.effectiveDate.low >>> 0, message.effectiveDate.high >>> 0).toNumber() : message.effectiveDate;
+            return object;
+        };
+
+        /**
+         * Converts this SetNhiKsmEffectiveDateRequest to JSON.
+         * @function toJSON
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SetNhiKsmEffectiveDateRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for SetNhiKsmEffectiveDateRequest
+         * @function getTypeUrl
+         * @memberof PAM.SetNhiKsmEffectiveDateRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        SetNhiKsmEffectiveDateRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.SetNhiKsmEffectiveDateRequest";
+        };
+
+        return SetNhiKsmEffectiveDateRequest;
+    })();
+
+    PAM.GetNhiKsmEffectiveDateResponse = (function() {
+
+        /**
+         * Properties of a GetNhiKsmEffectiveDateResponse.
+         * @memberof PAM
+         * @interface IGetNhiKsmEffectiveDateResponse
+         * @property {number|null} [effectiveDate] GetNhiKsmEffectiveDateResponse effectiveDate
+         * @property {number|null} [defaultDate] GetNhiKsmEffectiveDateResponse defaultDate
+         */
+
+        /**
+         * Constructs a new GetNhiKsmEffectiveDateResponse.
+         * @memberof PAM
+         * @classdesc Represents a GetNhiKsmEffectiveDateResponse.
+         * @implements IGetNhiKsmEffectiveDateResponse
+         * @constructor
+         * @param {PAM.IGetNhiKsmEffectiveDateResponse=} [properties] Properties to set
+         */
+        function GetNhiKsmEffectiveDateResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetNhiKsmEffectiveDateResponse effectiveDate.
+         * @member {number} effectiveDate
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @instance
+         */
+        GetNhiKsmEffectiveDateResponse.prototype.effectiveDate = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * GetNhiKsmEffectiveDateResponse defaultDate.
+         * @member {number} defaultDate
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @instance
+         */
+        GetNhiKsmEffectiveDateResponse.prototype.defaultDate = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new GetNhiKsmEffectiveDateResponse instance using the specified properties.
+         * @function create
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @static
+         * @param {PAM.IGetNhiKsmEffectiveDateResponse=} [properties] Properties to set
+         * @returns {PAM.GetNhiKsmEffectiveDateResponse} GetNhiKsmEffectiveDateResponse instance
+         */
+        GetNhiKsmEffectiveDateResponse.create = function create(properties) {
+            return new GetNhiKsmEffectiveDateResponse(properties);
+        };
+
+        /**
+         * Encodes the specified GetNhiKsmEffectiveDateResponse message. Does not implicitly {@link PAM.GetNhiKsmEffectiveDateResponse.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @static
+         * @param {PAM.IGetNhiKsmEffectiveDateResponse} message GetNhiKsmEffectiveDateResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetNhiKsmEffectiveDateResponse.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.effectiveDate != null && Object.hasOwnProperty.call(message, "effectiveDate"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.effectiveDate);
+            if (message.defaultDate != null && Object.hasOwnProperty.call(message, "defaultDate"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.defaultDate);
+            return writer;
+        };
+
+        /**
+         * Decodes a GetNhiKsmEffectiveDateResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.GetNhiKsmEffectiveDateResponse} GetNhiKsmEffectiveDateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetNhiKsmEffectiveDateResponse.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.GetNhiKsmEffectiveDateResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.effectiveDate = reader.int64();
+                        break;
+                    }
+                case 2: {
+                        message.defaultDate = reader.int64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a GetNhiKsmEffectiveDateResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.GetNhiKsmEffectiveDateResponse} GetNhiKsmEffectiveDateResponse
+         */
+        GetNhiKsmEffectiveDateResponse.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.GetNhiKsmEffectiveDateResponse)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.GetNhiKsmEffectiveDateResponse: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.GetNhiKsmEffectiveDateResponse();
+            if (object.effectiveDate != null)
+                if ($util.Long)
+                    message.effectiveDate = $util.Long.fromValue(object.effectiveDate, false);
+                else if (typeof object.effectiveDate === "string")
+                    message.effectiveDate = parseInt(object.effectiveDate, 10);
+                else if (typeof object.effectiveDate === "number")
+                    message.effectiveDate = object.effectiveDate;
+                else if (typeof object.effectiveDate === "object")
+                    message.effectiveDate = new $util.LongBits(object.effectiveDate.low >>> 0, object.effectiveDate.high >>> 0).toNumber();
+            if (object.defaultDate != null)
+                if ($util.Long)
+                    message.defaultDate = $util.Long.fromValue(object.defaultDate, false);
+                else if (typeof object.defaultDate === "string")
+                    message.defaultDate = parseInt(object.defaultDate, 10);
+                else if (typeof object.defaultDate === "number")
+                    message.defaultDate = object.defaultDate;
+                else if (typeof object.defaultDate === "object")
+                    message.defaultDate = new $util.LongBits(object.defaultDate.low >>> 0, object.defaultDate.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetNhiKsmEffectiveDateResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @static
+         * @param {PAM.GetNhiKsmEffectiveDateResponse} message GetNhiKsmEffectiveDateResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetNhiKsmEffectiveDateResponse.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.effectiveDate = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.effectiveDate = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.defaultDate = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.defaultDate = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            }
+            if (message.effectiveDate != null && Object.hasOwnProperty.call(message, "effectiveDate"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.effectiveDate = typeof message.effectiveDate === "number" ? BigInt(message.effectiveDate) : $util.Long.fromBits(message.effectiveDate.low >>> 0, message.effectiveDate.high >>> 0, false).toBigInt();
+                else if (typeof message.effectiveDate === "number")
+                    object.effectiveDate = options.longs === String ? String(message.effectiveDate) : message.effectiveDate;
+                else
+                    object.effectiveDate = options.longs === String ? $util.Long.prototype.toString.call(message.effectiveDate) : options.longs === Number ? new $util.LongBits(message.effectiveDate.low >>> 0, message.effectiveDate.high >>> 0).toNumber() : message.effectiveDate;
+            if (message.defaultDate != null && Object.hasOwnProperty.call(message, "defaultDate"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.defaultDate = typeof message.defaultDate === "number" ? BigInt(message.defaultDate) : $util.Long.fromBits(message.defaultDate.low >>> 0, message.defaultDate.high >>> 0, false).toBigInt();
+                else if (typeof message.defaultDate === "number")
+                    object.defaultDate = options.longs === String ? String(message.defaultDate) : message.defaultDate;
+                else
+                    object.defaultDate = options.longs === String ? $util.Long.prototype.toString.call(message.defaultDate) : options.longs === Number ? new $util.LongBits(message.defaultDate.low >>> 0, message.defaultDate.high >>> 0).toNumber() : message.defaultDate;
+            return object;
+        };
+
+        /**
+         * Converts this GetNhiKsmEffectiveDateResponse to JSON.
+         * @function toJSON
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetNhiKsmEffectiveDateResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GetNhiKsmEffectiveDateResponse
+         * @function getTypeUrl
+         * @memberof PAM.GetNhiKsmEffectiveDateResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GetNhiKsmEffectiveDateResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.GetNhiKsmEffectiveDateResponse";
+        };
+
+        return GetNhiKsmEffectiveDateResponse;
     })();
 
     PAM.PAMUniversalSyncPreCheckRequest = (function() {

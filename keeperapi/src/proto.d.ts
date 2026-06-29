@@ -88931,6 +88931,9 @@ export namespace PAM {
 
         /** NhiUidEntry ksmNhi */
         ksmNhi?: (boolean|null);
+
+        /** NhiUidEntry appUid */
+        appUid?: (string|null);
     }
 
     /** Represents a NhiUidEntry. */
@@ -88950,6 +88953,9 @@ export namespace PAM {
 
         /** NhiUidEntry ksmNhi. */
         public ksmNhi: boolean;
+
+        /** NhiUidEntry appUid. */
+        public appUid: string;
 
         /**
          * Creates a new NhiUidEntry instance using the specified properties.
@@ -89151,6 +89157,158 @@ export namespace PAM {
 
         /**
          * Gets the default type url for GetNhiUidsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SetNhiKsmEffectiveDateRequest. */
+    interface ISetNhiKsmEffectiveDateRequest {
+
+        /** SetNhiKsmEffectiveDateRequest effectiveDate */
+        effectiveDate?: (number|null);
+    }
+
+    /** Represents a SetNhiKsmEffectiveDateRequest. */
+    class SetNhiKsmEffectiveDateRequest implements ISetNhiKsmEffectiveDateRequest {
+
+        /**
+         * Constructs a new SetNhiKsmEffectiveDateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.ISetNhiKsmEffectiveDateRequest);
+
+        /** SetNhiKsmEffectiveDateRequest effectiveDate. */
+        public effectiveDate: number;
+
+        /**
+         * Creates a new SetNhiKsmEffectiveDateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetNhiKsmEffectiveDateRequest instance
+         */
+        public static create(properties?: PAM.ISetNhiKsmEffectiveDateRequest): PAM.SetNhiKsmEffectiveDateRequest;
+
+        /**
+         * Encodes the specified SetNhiKsmEffectiveDateRequest message. Does not implicitly {@link PAM.SetNhiKsmEffectiveDateRequest.verify|verify} messages.
+         * @param message SetNhiKsmEffectiveDateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.ISetNhiKsmEffectiveDateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetNhiKsmEffectiveDateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetNhiKsmEffectiveDateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.SetNhiKsmEffectiveDateRequest;
+
+        /**
+         * Creates a SetNhiKsmEffectiveDateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetNhiKsmEffectiveDateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.SetNhiKsmEffectiveDateRequest;
+
+        /**
+         * Creates a plain object from a SetNhiKsmEffectiveDateRequest message. Also converts values to other types if specified.
+         * @param message SetNhiKsmEffectiveDateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.SetNhiKsmEffectiveDateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetNhiKsmEffectiveDateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SetNhiKsmEffectiveDateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetNhiKsmEffectiveDateResponse. */
+    interface IGetNhiKsmEffectiveDateResponse {
+
+        /** GetNhiKsmEffectiveDateResponse effectiveDate */
+        effectiveDate?: (number|null);
+
+        /** GetNhiKsmEffectiveDateResponse defaultDate */
+        defaultDate?: (number|null);
+    }
+
+    /** Represents a GetNhiKsmEffectiveDateResponse. */
+    class GetNhiKsmEffectiveDateResponse implements IGetNhiKsmEffectiveDateResponse {
+
+        /**
+         * Constructs a new GetNhiKsmEffectiveDateResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IGetNhiKsmEffectiveDateResponse);
+
+        /** GetNhiKsmEffectiveDateResponse effectiveDate. */
+        public effectiveDate: number;
+
+        /** GetNhiKsmEffectiveDateResponse defaultDate. */
+        public defaultDate: number;
+
+        /**
+         * Creates a new GetNhiKsmEffectiveDateResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetNhiKsmEffectiveDateResponse instance
+         */
+        public static create(properties?: PAM.IGetNhiKsmEffectiveDateResponse): PAM.GetNhiKsmEffectiveDateResponse;
+
+        /**
+         * Encodes the specified GetNhiKsmEffectiveDateResponse message. Does not implicitly {@link PAM.GetNhiKsmEffectiveDateResponse.verify|verify} messages.
+         * @param message GetNhiKsmEffectiveDateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IGetNhiKsmEffectiveDateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetNhiKsmEffectiveDateResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetNhiKsmEffectiveDateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.GetNhiKsmEffectiveDateResponse;
+
+        /**
+         * Creates a GetNhiKsmEffectiveDateResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetNhiKsmEffectiveDateResponse
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.GetNhiKsmEffectiveDateResponse;
+
+        /**
+         * Creates a plain object from a GetNhiKsmEffectiveDateResponse message. Also converts values to other types if specified.
+         * @param message GetNhiKsmEffectiveDateResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.GetNhiKsmEffectiveDateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetNhiKsmEffectiveDateResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetNhiKsmEffectiveDateResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
