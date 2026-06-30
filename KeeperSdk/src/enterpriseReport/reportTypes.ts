@@ -148,7 +148,6 @@ export type AuditReportOptions = {
     timezone?: string
     limit?: number
     order?: AuditReportOrder
-    outputFormat?: AuditOutputFormat
     filter?: AuditReportFilter
     hasAram?: boolean
 }
@@ -158,18 +157,8 @@ export type AuditReportResult = {
     headers: string[]
     rows: string[][]
     events?: AuditEventOverviewReportRow[]
-    formatted: string
     syntaxHelp?: string
     eventTypeReference?: Array<{ id: number; name: string }>
-}
-
-export type FormattedAuditReportTable = {
-    headers: string[]
-    rows: string[][]
-}
-
-export type FormatAuditReportOptions = {
-    outputFormat?: AuditOutputFormat
 }
 
 export enum TargetUserStatus {
@@ -244,7 +233,6 @@ export type ActionReportOptions = {
     targetUser?: string
     dryRun?: boolean
     node?: string
-    outputFormat?: AuditOutputFormat
     timezone?: string
 }
 
@@ -260,17 +248,7 @@ export type ActionReportResult = {
     headers: string[]
     rows: string[][]
     entries: ActionReportEntry[]
-    formatted: string
     actionResult: ActionResult
-}
-
-export type FormattedActionReportTable = {
-    headers: string[]
-    rows: string[][]
-}
-
-export type FormatActionReportOptions = {
-    outputFormat?: AuditOutputFormat
 }
 
 export const PW_SPECIAL_CHARACTERS = '!@#$%()+;<>=?[]{}^.,'
@@ -317,23 +295,14 @@ export type PasswordReportOptions = {
     special?: number
     verbose?: boolean
     rowNumbers?: boolean
-    outputFormat?: AuditOutputFormat
 }
 
 export type PasswordReportResult = {
     policy: PasswordPolicy
     policySummary: string
-    headers: string[]
     rows: PasswordReportRow[]
-    formatted: string
     verbose: boolean
     rowNumbers: boolean
-    outputFormat: AuditOutputFormat
-}
-
-export type FormatPasswordReportOptions = {
-    rowNumbers?: boolean
-    outputFormat?: AuditOutputFormat
 }
 
 export const AUDIT_RAW_FIELDS = [

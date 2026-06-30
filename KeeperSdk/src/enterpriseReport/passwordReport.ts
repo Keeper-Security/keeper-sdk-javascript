@@ -9,21 +9,16 @@ import {
 } from '../records/RecordUtils'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import {
-    AuditOutputFormat,
     DEFAULT_TRUNCATION_LENGTH,
     PASSWORD_BREACHWATCH_STATUS_NAMES,
-    PASSWORD_REPORT_BASE_HEADERS,
-    PASSWORD_REPORT_VERBOSE_HEADERS,
     PW_SPECIAL_CHARACTERS,
     SUPPORTED_RECORD_VERSIONS,
-    type FormatPasswordReportOptions,
     type PasswordPolicy,
     type PasswordReportOptions,
     type PasswordReportResult,
     type PasswordReportRow,
     type PasswordStrength,
 } from './reportTypes'
-import { formatReportOutput } from './reportUtils'
 
 const POLICY_FIELD_COUNT = 5
 const SPECIAL_CHAR_SET = new Set(PW_SPECIAL_CHARACTERS.split(''))
@@ -37,11 +32,6 @@ const POLICY_SUMMARY_LABELS: ReadonlyArray<{ key: keyof PasswordPolicy; label: s
 ]
 
 type SupportedRecordVersion = (typeof SUPPORTED_RECORD_VERSIONS)[number]
-
-type PasswordReportTable = {
-    headers: string[]
-    rows: string[][]
-}
 
 type VerboseRowContext = {
     storage: InMemoryStorage
@@ -240,15 +230,6 @@ export function calculatePasswordScore(password: string): number {
     return score
 }
 
-export function formatPasswordReportResult(
-    result: PasswordReportResult,
-    options: FormatPasswordReportOptions = {}
-): string {
-    const outputFormat = options.outputFormat ?? result.outputFormat
-    const table = toPasswordReportTable(result, options)
-    return formatReportOutput(table.headers, table.rows, outputFormat)
-}
-
 export async function runPasswordReport(
     storage: InMemoryStorage,
     session: VaultFolderSession,
@@ -259,7 +240,6 @@ export async function runPasswordReport(
 
     const verbose = options.verbose === true
     const rowNumbers = options.rowNumbers !== false
-    const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
 
     const targetRecords = await resolveTargetRecords(storage, session, options.folder)
     const passwordCounts = buildPasswordCountMap(storage.getRecords())
@@ -274,17 +254,12 @@ export async function runPasswordReport(
         buildNonCompliantRow(record, policy, verbose, verboseContext)
     )
 
-    const table = buildPasswordReportTable(rows, verbose, rowNumbers)
-
     return {
         policy,
         policySummary: buildPasswordPolicySummary(policy),
-        headers: table.headers,
         rows,
-        formatted: formatReportOutput(table.headers, table.rows, outputFormat),
         verbose,
         rowNumbers,
-        outputFormat,
     }
 }
 
@@ -514,56 +489,4 @@ function applyVerboseFields(
     if (reuseCount > 1) {
         row.reused = String(reuseCount)
     }
-}
-
-function toPasswordReportTable(
-    result: PasswordReportResult,
-    options: FormatPasswordReportOptions = {}
-): PasswordReportTable {
-    const rowNumbers = options.rowNumbers ?? result.rowNumbers
-    return buildPasswordReportTable(result.rows, result.verbose, rowNumbers)
-}
-
-function buildPasswordReportTable(
-    rows: readonly PasswordReportRow[],
-    verbose: boolean,
-    rowNumbers: boolean
-): PasswordReportTable {
-    const headers = buildTableHeaders(verbose, rowNumbers)
-    const tableRows = rows.map((row, index) => toTableCells(row, verbose, rowNumbers, index + 1))
-    return { headers, rows: tableRows }
-}
-
-function buildTableHeaders(verbose: boolean, rowNumbers: boolean): string[] {
-    const headers = [...PASSWORD_REPORT_BASE_HEADERS]
-    if (verbose) headers.push(...PASSWORD_REPORT_VERBOSE_HEADERS)
-    if (rowNumbers) headers.unshift('#')
-    return headers
-}
-
-function toTableCells(
-    row: PasswordReportRow,
-    verbose: boolean,
-    rowNumbers: boolean,
-    rowNumber: number
-): string[] {
-    const cells = [
-        row.recordUid,
-        row.title,
-        row.description,
-        String(row.length),
-        String(row.lower),
-        String(row.upper),
-        String(row.digits),
-        String(row.special),
-    ]
-
-    if (verbose) {
-        cells.push(row.score ?? '', row.status ?? '', row.reused ?? '')
-    }
-    if (rowNumbers) {
-        cells.unshift(String(rowNumber))
-    }
-
-    return cells
 }

@@ -7,7 +7,6 @@ import {
 import { KeeperSdkError, ResultCodes } from '../utils'
 import {
     AuditAggregate,
-    AuditOutputFormat,
     AuditReportFormat,
     AuditReportOrder,
     AUDIT_CREATED_BETWEEN_PATTERN,
@@ -38,55 +37,31 @@ import type {
     CreatedFilterCriteria,
     CreatedPreset,
     EnterpriseAuditLicense,
-    FormatAuditReportOptions,
-    FormattedAuditReportTable,
 } from './reportTypes'
-import {
-    assertSucceeded,
-    fieldToTitle,
-    formatReportOutput,
-    resolveTimezone,
-    toAuditApiOrder,
-} from './reportUtils'
+import { assertSucceeded, resolveTimezone, toAuditApiOrder } from './reportUtils'
 
 let dimensionCache = new Map<string, AuditDimensionRow[]>()
 let cachedUsername = ''
 let syslogTemplates: Map<string, string> | null = null
 
 export async function runAuditReport(auth: Auth, options: AuditReportOptions = {}): Promise<AuditReportResult> {
-    const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
-
     if (options.syntaxHelp || !options.reportType) {
-        return buildSyntaxHelp(auth, outputFormat)
+        return buildSyntaxHelp(auth)
     }
 
     const hasAram = await resolveHasAram(auth, options.hasAram)
     const reportType = options.reportType
 
-    if (reportType === 'dim') return runDimensionReport(auth, options, outputFormat)
-    if (reportType === 'raw') return runRawReport(auth, options, outputFormat, hasAram)
+    if (reportType === 'dim') return runDimensionReport(auth, options)
+    if (reportType === 'raw') return runRawReport(auth, options, hasAram)
     if ((SUMMARY_REPORT_TYPES as readonly string[]).includes(reportType)) {
-        return runSummaryReport(auth, options, outputFormat, hasAram, reportType as AuditSummaryReportType)
+        return runSummaryReport(auth, options, hasAram, reportType as AuditSummaryReportType)
     }
 
     throw new KeeperSdkError(`Unsupported report type "${reportType}".`, ResultCodes.AUDIT_INVALID_REPORT_TYPE)
 }
 
-export function formatAuditReportResult(
-    result: AuditReportResult,
-    options: FormatAuditReportOptions = {}
-): FormattedAuditReportTable {
-    const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
-    const headers =
-        outputFormat === AuditOutputFormat.Json ? result.headers : result.headers.map(fieldToTitle)
-    return { headers, rows: result.rows }
-}
-
-export function renderAuditReportTable(table: FormattedAuditReportTable): string {
-    return formatReportOutput(table.headers, table.rows, AuditOutputFormat.Table)
-}
-
-async function buildSyntaxHelp(auth: Auth, outputFormat: AuditOutputFormat): Promise<AuditReportResult> {
+async function buildSyntaxHelp(auth: Auth): Promise<AuditReportResult> {
     const eventTypes = await loadDimension(auth, 'audit_event_type')
     const eventTypeReference = eventTypes
         .map((row) => {
@@ -98,23 +73,18 @@ async function buildSyntaxHelp(auth: Auth, outputFormat: AuditOutputFormat): Pro
         .filter((row): row is { id: number; name: string } => row !== null)
         .sort((a, b) => a.id - b.id)
 
-    const headers = ['Event ID', 'Event Name']
+    const headers = ['id', 'name']
     const rows = eventTypeReference.map((row) => [String(row.id), row.name])
     return {
         reportType: null,
         headers,
         rows,
-        formatted: `${AUDIT_SYNTAX_HELP}\n\nEvent type ids and names:\n\n${formatReportOutput(headers, rows, outputFormat)}`,
         syntaxHelp: AUDIT_SYNTAX_HELP,
         eventTypeReference,
     }
 }
 
-async function runDimensionReport(
-    auth: Auth,
-    options: AuditReportOptions,
-    outputFormat: AuditOutputFormat
-): Promise<AuditReportResult> {
+async function runDimensionReport(auth: Auth, options: AuditReportOptions): Promise<AuditReportResult> {
     const columns = options.columns
     if (!columns || columns.length !== 1) {
         throw new KeeperSdkError(
@@ -126,20 +96,17 @@ async function runDimensionReport(
     const column = columns[0]
     const fields = dimensionFields(column)
     const rows = (await loadDimension(auth, column)).map((row) => dimensionCells(row, fields))
-    const headers = outputFormat === AuditOutputFormat.Json ? fields : fields.map(fieldToTitle)
 
     return {
         reportType: 'dim',
-        headers,
+        headers: fields,
         rows,
-        formatted: formatReportOutput(headers, rows, outputFormat),
     }
 }
 
 async function runRawReport(
     auth: Auth,
     options: AuditReportOptions,
-    outputFormat: AuditOutputFormat,
     hasAram: boolean
 ): Promise<AuditReportResult> {
     let filter = await resolveFilter(auth, options.filter ?? {})
@@ -186,20 +153,17 @@ async function runRawReport(
         )
     }
 
-    const headers = outputFormat === AuditOutputFormat.Json ? fields : fields.map(fieldToTitle)
     return {
         reportType: 'raw',
-        headers,
+        headers: fields,
         rows,
         events,
-        formatted: formatReportOutput(headers, rows, outputFormat),
     }
 }
 
 async function runSummaryReport(
     auth: Auth,
     options: AuditReportOptions,
-    outputFormat: AuditOutputFormat,
     hasAram: boolean,
     reportType: (typeof SUMMARY_REPORT_TYPES)[number]
 ): Promise<AuditReportResult> {
@@ -231,14 +195,11 @@ async function runSummaryReport(
     const rows = events.map((event) =>
         fields.map((field) => formatFieldValue(field, getAuditEventField(event, field), reportType))
     )
-    const headers = outputFormat === AuditOutputFormat.Json ? fields : fields.map(fieldToTitle)
-
     return {
         reportType,
-        headers,
+        headers: fields,
         rows,
         events,
-        formatted: formatReportOutput(headers, rows, outputFormat),
     }
 }
 

@@ -14,6 +14,7 @@ import {
 import type { ActionReportOptions } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
 import { isYes } from '../utils/format'
+import { formatActionReportResult } from '../utils/reportFormat'
 
 async function actionReportExample() {
     const vault = await login()
@@ -88,8 +89,9 @@ async function actionReportExample() {
         }
 
         const outputRaw = (await prompt('Output format [table/json/csv, default table]: ')).trim().toLowerCase()
-        if (outputRaw === 'json') options.outputFormat = AuditOutputFormat.Json
-        else if (outputRaw === 'csv') options.outputFormat = AuditOutputFormat.Csv
+        let outputFormat = AuditOutputFormat.Table
+        if (outputRaw === 'json') outputFormat = AuditOutputFormat.Json
+        else if (outputRaw === 'csv') outputFormat = AuditOutputFormat.Csv
 
         const restore = suppressLogs()
         let result
@@ -100,7 +102,7 @@ async function actionReportExample() {
         }
 
         logger.info('')
-        logger.info(result.formatted)
+        logger.info(formatActionReportResult(result, outputFormat))
         logger.info('')
         logger.info(`Rows: ${result.rows.length}`)
         logger.info(

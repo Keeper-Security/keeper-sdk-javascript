@@ -1,18 +1,13 @@
 export {
     runAuditReport,
-    formatAuditReportResult,
-    renderAuditReportTable,
 } from './auditReport'
 export {
     runActionReport,
-    formatActionReportResult,
-    renderActionReportTable,
     getAllowedActions,
     getDefaultDaysSince,
 } from './actionReport'
 export {
     runPasswordReport,
-    formatPasswordReportResult,
     getPasswordStrength,
     calculatePasswordScore,
     parsePasswordPolicy,
@@ -44,8 +39,6 @@ export type {
     AuditReportFilter,
     CreatedFilterCriteria,
     CreatedPreset,
-    FormattedAuditReportTable,
-    FormatAuditReportOptions,
     AuditEventOverviewReportRow,
     AuditReportType,
     AuditSummaryReportType,
@@ -53,12 +46,9 @@ export type {
     ActionReportOptions,
     ActionReportResult,
     ActionResult,
-    FormattedActionReportTable,
-    FormatActionReportOptions,
     PasswordPolicy,
     PasswordStrength,
     PasswordReportRow,
     PasswordReportOptions,
     PasswordReportResult,
-    FormatPasswordReportOptions,
 } from './reportTypes'

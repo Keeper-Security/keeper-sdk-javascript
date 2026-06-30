@@ -30,7 +30,6 @@ import {
     ACTION_USERNAME_BATCH_SIZE,
     ActionReportColumn,
     AdminAction,
-    AuditOutputFormat,
     DEFAULT_ACTION_REPORT_COLUMNS,
     SECONDS_PER_DAY,
     SUPPORTED_ACTION_REPORT_COLUMNS,
@@ -40,10 +39,8 @@ import {
     type ActionReportResult,
     type ActionResult,
     type AuditReportFilterPayload,
-    type FormatActionReportOptions,
-    type FormattedActionReportTable,
 } from './reportTypes'
-import { assertSucceeded, chunkArray, formatReportOutput, resolveTimezone } from './reportUtils'
+import { assertSucceeded, chunkArray, resolveTimezone } from './reportUtils'
 
 const ACTION_REPORT_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
@@ -112,7 +109,6 @@ export async function runActionReport(
     const target = options.target ?? TargetUserStatus.NoLogon
     const daysSince = options.daysSince ?? ACTION_DEFAULT_DAYS_BY_TARGET[target] ?? ACTION_DEFAULT_DAYS
     const applyAction = options.applyAction ?? AdminAction.None
-    const outputFormat = options.outputFormat ?? AuditOutputFormat.Table
 
     validateActionReportOptions(target, applyAction, options.targetUser)
 
@@ -143,20 +139,8 @@ export async function runActionReport(
         headers,
         rows,
         entries,
-        formatted: formatReportOutput(headers, rows, outputFormat),
         actionResult,
     }
-}
-
-export function formatActionReportResult(
-    result: ActionReportResult,
-    _options: FormatActionReportOptions = {}
-): FormattedActionReportTable {
-    return { headers: result.headers, rows: result.rows }
-}
-
-export function renderActionReportTable(table: FormattedActionReportTable): string {
-    return formatReportOutput(table.headers, table.rows, AuditOutputFormat.Table)
 }
 
 export function getAllowedActions(target: TargetUserStatus): AdminAction[] {

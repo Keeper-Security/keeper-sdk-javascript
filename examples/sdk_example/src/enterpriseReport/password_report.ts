@@ -9,6 +9,7 @@ import {
 } from '@keeper-security/keeper-sdk-javascript'
 import type { PasswordReportOptions } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
+import { formatPasswordReportResult } from '../utils/reportFormat'
 
 function parseOptionalInt(value: string): number | undefined {
     const trimmed = value.trim()
@@ -49,8 +50,9 @@ async function passwordReportExample() {
         if (verboseRaw === 'y' || verboseRaw === 'yes') options.verbose = true
 
         const outputRaw = (await prompt('Output format [table/json/csv, default table]: ')).trim().toLowerCase()
-        if (outputRaw === 'json') options.outputFormat = AuditOutputFormat.Json
-        else if (outputRaw === 'csv') options.outputFormat = AuditOutputFormat.Csv
+        let outputFormat = AuditOutputFormat.Table
+        if (outputRaw === 'json') outputFormat = AuditOutputFormat.Json
+        else if (outputRaw === 'csv') outputFormat = AuditOutputFormat.Csv
 
         const restore = suppressLogs()
         let result
@@ -63,7 +65,7 @@ async function passwordReportExample() {
         logger.info('')
         logger.info(`Policy: ${result.policySummary}`)
         logger.info('')
-        logger.info(result.formatted)
+        logger.info(formatPasswordReportResult(result, outputFormat))
         logger.info('')
         logger.info(`Rows: ${result.rows.length}`)
     } catch (err) {

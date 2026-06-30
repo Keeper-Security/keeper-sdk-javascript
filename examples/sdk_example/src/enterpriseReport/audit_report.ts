@@ -11,6 +11,7 @@ import {
 } from '@keeper-security/keeper-sdk-javascript'
 import type { AuditReportFilter, AuditReportOptions } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
+import { formatAuditReportResult } from '../utils/reportFormat'
 
 async function promptAuditFilters(): Promise<AuditReportFilter | undefined> {
     const filter: AuditReportFilter = {}
@@ -151,8 +152,9 @@ async function auditReportExample() {
         }
 
         const outputRaw = (await prompt('Output format [table/json/csv, default table]: ')).trim().toLowerCase()
-        if (outputRaw === 'json') options.outputFormat = AuditOutputFormat.Json
-        else if (outputRaw === 'csv') options.outputFormat = AuditOutputFormat.Csv
+        let outputFormat = AuditOutputFormat.Table
+        if (outputRaw === 'json') outputFormat = AuditOutputFormat.Json
+        else if (outputRaw === 'csv') outputFormat = AuditOutputFormat.Csv
 
         const restore = suppressLogs()
         let result
@@ -163,7 +165,7 @@ async function auditReportExample() {
         }
 
         logger.info('')
-        logger.info(result.formatted)
+        logger.info(formatAuditReportResult(result, outputFormat))
         logger.info('')
         logger.info(`Rows: ${result.rows.length}`)
     } catch (err) {

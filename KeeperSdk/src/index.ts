@@ -289,13 +289,8 @@ export type {
 
 export {
     runAuditReport,
-    formatAuditReportResult,
-    renderAuditReportTable,
     runActionReport,
-    formatActionReportResult,
-    renderActionReportTable,
     runPasswordReport,
-    formatPasswordReportResult,
     getPasswordStrength,
     calculatePasswordScore,
     parsePasswordPolicy,
@@ -327,8 +322,6 @@ export type {
     AuditReportFilter,
     CreatedFilterCriteria,
     CreatedPreset,
-    FormattedAuditReportTable,
-    FormatAuditReportOptions,
     AuditEventOverviewReportRow,
     AuditReportType,
     AuditSummaryReportType,
@@ -336,14 +329,11 @@ export type {
     ActionReportOptions,
     ActionReportResult,
     ActionResult,
-    FormattedActionReportTable,
-    FormatActionReportOptions,
     PasswordPolicy,
     PasswordStrength,
     PasswordReportRow,
     PasswordReportOptions,
     PasswordReportResult,
-    FormatPasswordReportOptions,
 } from './enterpriseReport'
 
 export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'
