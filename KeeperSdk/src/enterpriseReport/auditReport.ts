@@ -9,7 +9,6 @@ import {
     AuditAggregate,
     AuditReportFormat,
     AuditReportOrder,
-    AUDIT_CREATED_BETWEEN_PATTERN,
     AUDIT_DEFAULT_RAW_LIMIT,
     AUDIT_DEFAULT_SUMMARY_LIMIT,
     AUDIT_DIMENSION_API_LIMIT,
@@ -559,11 +558,27 @@ function advanceCreatedFilter(
     return next
 }
 
+function parseBetweenCreatedFilter(trimmed: string): CreatedFilterCriteria | null {
+    const betweenPrefix = /^\s*between\s+/i.exec(trimmed)
+    if (!betweenPrefix) return null
+
+    const rest = trimmed.slice(betweenPrefix[0].length)
+    const andMarker = ' and '
+    const andIndex = rest.toLowerCase().indexOf(andMarker)
+    if (andIndex <= 0) return null
+
+    const fromDateStr = rest.slice(0, andIndex).trim()
+    const toDateStr = rest.slice(andIndex + andMarker.length).trim()
+    if (!fromDateStr || !toDateStr) return null
+
+    return { fromDate: toEpoch(fromDateStr), toDate: toEpoch(toDateStr) }
+}
+
 function parseCreatedFilter(value: string): CreatedFilterCriteria {
     const trimmed = value.trim()
-    const betweenMatch = AUDIT_CREATED_BETWEEN_PATTERN.exec(trimmed)
-    if (betweenMatch) {
-        return { fromDate: toEpoch(betweenMatch[1]), toDate: toEpoch(betweenMatch[2]) }
+    const betweenFilter = parseBetweenCreatedFilter(trimmed)
+    if (betweenFilter) {
+        return betweenFilter
     }
     for (const prefix of ['>=', '<=', '>', '<'] as const) {
         if (!trimmed.startsWith(prefix)) continue

@@ -334,7 +334,6 @@ export const AUDIT_DEFAULT_RAW_LIMIT = 50
 export const AUDIT_DEFAULT_SUMMARY_LIMIT = 100
 export const AUDIT_SUMMARY_MAX_LIMIT = 2000
 export const AUDIT_DIMENSION_API_LIMIT = 2000
-export const AUDIT_CREATED_BETWEEN_PATTERN = /^\s*between\s+(\S+)\s+and\s+(.*)$/i
 export const AUDIT_VIRTUAL_DIMENSIONS: Readonly<Record<string, string>> = {
     geo_location: 'ip_address',
     device_type: 'keeper_version',

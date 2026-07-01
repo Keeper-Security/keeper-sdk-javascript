@@ -19,6 +19,7 @@ export {
     setLogger,
     getLogger,
     resetLogger,
+    writeOutput,
     KeeperSdkError,
     isKeeperError,
     extractErrorMessage,

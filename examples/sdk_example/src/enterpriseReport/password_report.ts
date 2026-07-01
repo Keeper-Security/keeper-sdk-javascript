@@ -6,6 +6,7 @@ import {
     logger,
     prompt,
     suppressLogs,
+    writeOutput,
 } from '@keeper-security/keeper-sdk-javascript'
 import type { PasswordReportOptions } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
@@ -65,7 +66,7 @@ async function passwordReportExample() {
         logger.info('')
         logger.info(`Policy: ${result.policySummary}`)
         logger.info('')
-        logger.info(formatPasswordReportResult(result, outputFormat))
+        writeOutput(formatPasswordReportResult(result, outputFormat))
         logger.info('')
         logger.info(`Rows: ${result.rows.length}`)
     } catch (err) {
