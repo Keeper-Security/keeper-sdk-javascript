@@ -8,6 +8,9 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    AuditReportErrorCode,
+    ActionReportErrorCode,
+    PasswordReportErrorCode,
     NsfErrorCode,
     KEEPER_PUBLIC_HOSTS,
 } from './constants'
