@@ -95,7 +95,10 @@ async function main() {
     for (let i = 0; i < splits.length; i++) {
         const { name, startLine } = splits[i]
         const endLine = i + 1 < splits.length ? splits[i + 1].startLine : lines.length
-        const body = lines.slice(startLine, endLine).filter(l => l !== 'export { $root as default };').join('\n')
+        const body = lines
+            .slice(startLine, endLine)
+            .filter((l) => l !== 'export { $root as default };')
+            .join('\n')
         const filename = FILENAME_OVERRIDES[name] ?? name
 
         writeFileSync(

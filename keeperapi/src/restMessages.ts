@@ -1012,14 +1012,10 @@ export const updateWorkflowConfigMessage = (
 ): RestInMessage<Workflow.IWorkflowParameters> =>
     createInMessage(data, 'api/user/update_workflow_config', Workflow.WorkflowParameters)
 
-export const deleteWorkflowConfigMessage = (
-    data: GraphSync.IGraphSyncRef
-): RestInMessage<GraphSync.IGraphSyncRef> =>
+export const deleteWorkflowConfigMessage = (data: GraphSync.IGraphSyncRef): RestInMessage<GraphSync.IGraphSyncRef> =>
     createInMessage(data, 'api/user/delete_workflow_config', GraphSync.GraphSyncRef)
 
-export const addWorkflowApproversMessage = (
-    data: Workflow.IWorkflowConfig
-): RestInMessage<Workflow.IWorkflowConfig> =>
+export const addWorkflowApproversMessage = (data: Workflow.IWorkflowConfig): RestInMessage<Workflow.IWorkflowConfig> =>
     createInMessage(data, 'api/user/add_workflow_approvers', Workflow.WorkflowConfig)
 
 export const deleteWorkflowApproversMessage = (
@@ -1038,9 +1034,7 @@ export const getUserAccessStateMessage = (): RestOutMessage<Workflow.IUserAccess
 export const getApprovalRequestsMessage = (): RestOutMessage<Workflow.IApprovalRequests> =>
     createOutMessage('api/user/get_approval_requests', Workflow.ApprovalRequests)
 
-export const startWorkflowMessage = (
-    data: Workflow.IWorkflowState
-): RestInMessage<Workflow.IWorkflowState> =>
+export const startWorkflowMessage = (data: Workflow.IWorkflowState): RestInMessage<Workflow.IWorkflowState> =>
     createInMessage(data, 'api/user/start_workflow', Workflow.WorkflowState)
 
 export const requestWorkflowAccessMessage = (
@@ -1048,9 +1042,7 @@ export const requestWorkflowAccessMessage = (
 ): RestInMessage<Workflow.IWorkflowAccessRequest> =>
     createInMessage(data, 'api/user/request_workflow_access', Workflow.WorkflowAccessRequest)
 
-export const requestEscalationMessage = (
-    data: Workflow.IWorkflowState
-): RestInMessage<Workflow.IWorkflowState> =>
+export const requestEscalationMessage = (data: Workflow.IWorkflowState): RestInMessage<Workflow.IWorkflowState> =>
     createInMessage(data, 'api/user/request_escalation', Workflow.WorkflowState)
 
 export const approveOrDenyWorkflowAccessMessage = (
@@ -1058,14 +1050,10 @@ export const approveOrDenyWorkflowAccessMessage = (
 ): RestInMessage<Workflow.IWorkflowApprovalOrDenial> =>
     createInMessage(data, 'api/user/approve_or_deny_workflow_access', Workflow.WorkflowApprovalOrDenial)
 
-export const endWorkflowMessage = (
-    data: GraphSync.IGraphSyncRef
-): RestInMessage<GraphSync.IGraphSyncRef> =>
+export const endWorkflowMessage = (data: GraphSync.IGraphSyncRef): RestInMessage<GraphSync.IGraphSyncRef> =>
     createInMessage(data, 'api/user/end_workflow', GraphSync.GraphSyncRef)
 
-export const forceCheckinMessage = (
-    data: GraphSync.IGraphSyncRef
-): RestInMessage<GraphSync.IGraphSyncRef> =>
+export const forceCheckinMessage = (data: GraphSync.IGraphSyncRef): RestInMessage<GraphSync.IGraphSyncRef> =>
     createInMessage(data, 'api/user/force_checkin', GraphSync.GraphSyncRef)
 
 export const keeperDriveRecordsAdd = (
