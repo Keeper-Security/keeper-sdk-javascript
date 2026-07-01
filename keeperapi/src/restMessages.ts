@@ -12,7 +12,6 @@ import {
     GraphSync,
     PAM,
     Records,
-    Router,
     ServiceLogger,
     SsoCloud,
     Vault,
