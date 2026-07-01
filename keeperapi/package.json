@@ -6,7 +6,9 @@
     "main": "dist/index.cjs.js",
     "types": "dist/node/index.d.ts",
     "sideEffects": [
-        "**/configureProtobuf*"
+        "**/configureProtobuf*",
+        "**/browser/index.js",
+        "**/worker/browserWorker.js"
     ],
     "repository": "https://github.com/Keeper-Security/keeper-sdk-javascript",
     "license": "ISC",
