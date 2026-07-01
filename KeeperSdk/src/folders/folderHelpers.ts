@@ -72,9 +72,20 @@ export function folderKindFromString(value: string | undefined | null): FolderKi
     }
 }
 
+type UserFolderData = { title?: string; name?: string; color?: string }
+
 export function userFolderName(folder: DUserFolder): string {
-    const data = folder.data as { title?: string; name?: string } | undefined
+    const data = folder.data as UserFolderData | undefined
     return (data?.title || data?.name || folder.uid).trim() || folder.uid
+}
+
+/** Vault folder color from user-folder data (`none` and missing → undefined). */
+export function userFolderColor(folder: DUserFolder): string | undefined {
+    const color = (folder.data as UserFolderData | undefined)?.color
+    if (typeof color !== 'string') return undefined
+    const trimmed = color.trim().toLowerCase()
+    if (!trimmed || trimmed === 'none') return undefined
+    return trimmed
 }
 
 export function sharedFolderFolderName(folder: DSharedFolderFolder): string {

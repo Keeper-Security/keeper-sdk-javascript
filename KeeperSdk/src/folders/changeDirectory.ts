@@ -5,7 +5,7 @@ import { listFolder, listRootUserFolders } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
 import { FolderKind, VaultObjectKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
 
-const VAULT_ROOT_DISPLAY_NAME = 'My Vault'
+export const VAULT_ROOT_DISPLAY_NAME = 'My Vault'
 
 const ESCAPED_SEPARATOR_PLACEHOLDER = '\x00'
 

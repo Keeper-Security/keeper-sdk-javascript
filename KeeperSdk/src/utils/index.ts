@@ -8,6 +8,7 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    NsfErrorCode,
     KEEPER_PUBLIC_HOSTS,
 } from './constants'
 export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger } from './Logger'
@@ -20,7 +21,27 @@ export {
     EMAIL_LIST_SEPARATOR_PATTERN,
     TOKEN_SEPARATOR_PATTERN,
     REGEX_ESCAPE_PATTERN,
+    TRAILING_EQUALS_PATTERN,
+    WHITESPACE_PATTERN,
     isValidEmail,
     escapeRegExp,
     resolveSearchPattern,
 } from './patterns'
+export {
+    DEFAULT_PASSWORD_LENGTH,
+    PW_SPECIAL_CHARACTERS,
+    GEN_PASSWORD_ALGORITHMS,
+    KeeperPasswordGenerator,
+    generatePasswordFromOptions,
+    resolveGenPasswordAlgorithm,
+    generatePassword,
+    parseGenParametersFromValue,
+    isGenerateFieldValue,
+    parseGeneratePasswordFlag,
+} from './passwordGenerator'
+export type {
+    GenPasswordAlgorithm,
+    PasswordGenerationOptions,
+    PasswordComplexityPolicy,
+    PassphraseGenOptions,
+} from './passwordGenerator'

@@ -1,12 +1,13 @@
+import { connectSdkPlatform } from './platform'
+import { nodeSdkPlatform } from './platform/node/platform'
+
+connectSdkPlatform(nodeSdkPlatform)
+
+export * from './api'
+
+/** Node.js Commander / CLI helpers (readline, ~/.keeper config). */
 export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
-export { SessionManager, FileConfigLoader } from './auth/SessionManager'
-export type {
-    KeeperJsonConfig,
-    ConfigLoader,
-    ConfigurationUser,
-    ConfigurationServerConfig,
-    ConfigurationDeviceConfig,
-} from './auth/SessionManager'
+export { FileConfigLoader } from './auth/node/FileConfigLoader'
 export { login, cleanup, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
@@ -25,6 +26,7 @@ export {
     extractResultCode,
     SdkDefaults,
     AuthDefaults,
+    NsfErrorCode,
     ResultCodes,
     AuthErrorCode,
     SessionErrorCode,
@@ -43,8 +45,28 @@ export {
     EMAIL_LIST_SEPARATOR_PATTERN,
     isValidEmail,
     resolveSearchPattern,
+    DEFAULT_PASSWORD_LENGTH,
+    PW_SPECIAL_CHARACTERS,
+    GEN_PASSWORD_ALGORITHMS,
+    KeeperPasswordGenerator,
+    generatePasswordFromOptions,
+    resolveGenPasswordAlgorithm,
+    generatePassword,
+    parseGenParametersFromValue,
+    isGenerateFieldValue,
+    parseGeneratePasswordFlag,
 } from './utils'
-export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
+export type {
+    ILogger,
+    Nullable,
+    Optional,
+    DeepPartial,
+    Immutable,
+    GenPasswordAlgorithm,
+    PasswordGenerationOptions,
+    PasswordComplexityPolicy,
+    PassphraseGenOptions,
+} from './utils'
 
 export {
     searchRecords,
@@ -442,6 +464,59 @@ export {
 } from './users/teamUser'
 
 export { UserManager } from './users/UserManager'
+
+export {
+    KeeperDriveKind,
+    NsfItemType,
+    formatAccessRoleType,
+    formatAccessType,
+    normalizeParentUid,
+    isRootFolderUid,
+    resolveKeeperDriveRootParentUid,
+    getKeeperDriveFolders,
+    getKeeperDriveRecords,
+    findRecordFolderLocation,
+    buildFolderPath,
+    isSensitiveFieldType,
+    ListNsfFormat,
+    listNestedShareFolders,
+    formatListNsfTable,
+    renderListNsfAsciiTable,
+    formatListNsfCsv,
+    formatListNsfJson,
+    formatListNsfOutput,
+    GetNsfFormat,
+    resolveNsfFolder,
+    resolveNsfRecord,
+    getNestedShareFolder,
+    formatNsfFolderDetail,
+    formatNsfRecordDetail,
+    formatNsfDetail,
+    linkNestedShareRecord,
+    NsfRemoveOperation,
+    removeNestedShareRecords,
+    formatRemoveNsfPreview,
+    NestedShareFolderManager,
+} from './nestedShareFolders'
+export type {
+    ListNsfFormatInput,
+    ListNsfOptions,
+    ListNsfRow,
+    FormattedListNsfTable,
+    GetNsfFormatInput,
+    GetNsfOptions,
+    GetNsfResult,
+    NsfFolderView,
+    NsfRecordView,
+    NsfFolderPermission,
+    NsfFolderAccessRow,
+    NsfRecordPermission,
+    LinkNsfRecordResult,
+    NsfRemoveOperationInput,
+    RemoveNsfRecordInput,
+    NsfRemovePreviewItem,
+    RemoveNsfRecordResult,
+} from './nestedShareFolders'
 
 export type {
     DRecord,

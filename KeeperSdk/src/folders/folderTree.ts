@@ -11,7 +11,7 @@ import { webSafe64FromBytes } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { getRecordTitle } from '../records/RecordUtils'
 import { listFolder, listVaultRootFolders } from './listFolder'
-import { resolveSingleFolder, type VaultFolderSession } from './changeDirectory'
+import { resolveSingleFolder, VAULT_ROOT_DISPLAY_NAME, type VaultFolderSession } from './changeDirectory'
 import { FolderKind, VaultObjectKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
 
 enum TreeItemKind {
@@ -19,6 +19,12 @@ enum TreeItemKind {
     Record = 'record',
     Folder = 'folder',
 }
+
+const TREE_TAG = {
+    folder: '[folder]',
+    sharedFolder: '[shared folder]',
+    record: '[record]',
+} as const
 
 export type FolderTreeBuildOptions = {
     folderPath?: string | null
@@ -130,6 +136,26 @@ async function collectSharedFolderPermissions(
     return rows.map((row) => ({ display: row.display }))
 }
 
+function folderTreeTag(
+    userFolder: DUserFolder | undefined,
+    sharedFolder: DSharedFolder | undefined,
+    _sharedFolderFolder: DSharedFolderFolder | undefined
+): string {
+    if (sharedFolder) return TREE_TAG.sharedFolder
+    if (userFolder) return TREE_TAG.folder
+    return TREE_TAG.folder
+}
+
+function formatTreeNodeName(baseName: string, tag: string, verbose: boolean, uid?: string): string {
+    const name = verbose && uid ? `${baseName} (${uid})` : baseName
+    return `${name} ${tag}`
+}
+
+function formatTreeRecordName(title: string, verbose: boolean, recordUid?: string): string {
+    const name = verbose && recordUid ? `${title} (${recordUid})` : title
+    return `${name} ${TREE_TAG.record}`
+}
+
 type BuildOpts = Required<Pick<FolderTreeBuildOptions, 'verbose' | 'showRecords' | 'showShares' | 'hideSharesKey'>> & {
     promotedRootSharedUids?: Set<string>
     accountUidEmailMap: Map<string, string>
@@ -152,13 +178,12 @@ async function buildFolderSubtree(
     else if (sharedFolder) baseName = sharedFolderName(sharedFolder)
     else baseName = sharedFolderFolderName(sharedFolderFolder!)
 
-    let displayName = baseName
-    if (opts.verbose) {
-        displayName = `${baseName} (${folderUid})`
-    }
-    if (sharedFolder) {
-        displayName += ' [Shared]'
-    }
+    let displayName = formatTreeNodeName(
+        baseName,
+        folderTreeTag(userFolder, sharedFolder, sharedFolderFolder),
+        opts.verbose,
+        folderUid
+    )
 
     const node: FolderTreeNode = { displayName, children: [] }
 
@@ -188,8 +213,7 @@ async function buildFolderSubtree(
         node.records = records.map((recordRow) => {
             const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordRow.uid)
             const title = record ? getRecordTitle(record) : recordRow.name
-            const display = opts.verbose && record ? `${title} (${recordRow.uid}) [Record]` : `${title} [Record]`
-            return { display }
+            return { display: formatTreeRecordName(title, opts.verbose, recordRow.uid) }
         })
     }
 
@@ -197,7 +221,7 @@ async function buildFolderSubtree(
 }
 
 async function buildVaultRootTree(storage: InMemoryStorage, opts: BuildOpts): Promise<FolderTreeNode> {
-    const node: FolderTreeNode = { displayName: '', children: [] }
+    const node: FolderTreeNode = { displayName: VAULT_ROOT_DISPLAY_NAME, children: [] }
     const { rows, promotedRootSharedUids } = await listVaultRootFolders(storage)
     const optsWithPromoted: BuildOpts = { ...opts, promotedRootSharedUids }
     for (const folderRow of rows) {
@@ -212,8 +236,7 @@ async function buildVaultRootTree(storage: InMemoryStorage, opts: BuildOpts): Pr
         node.records = listed.records.map((recordRow) => {
             const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordRow.uid)
             const title = record ? getRecordTitle(record) : recordRow.name
-            const display = opts.verbose && record ? `${title} (${recordRow.uid}) [Record]` : `${title} [Record]`
-            return { display }
+            return { display: formatTreeRecordName(title, opts.verbose, recordRow.uid) }
         })
     }
     return node
@@ -293,17 +316,17 @@ function renderNode(node: FolderTreeNode, lines: string[], isRoot: boolean, pref
             lines.push(node.displayName)
         }
     } else {
-        const connector = isLast ? '\\-- ' : '+-- '
+        const connector = isLast ? '└── ' : '├── '
         lines.push(prefix + connector + node.displayName)
     }
 
-    const childBase = isRoot ? ' ' : prefix + (isLast ? '    ' : '|   ')
+    const childBase = isRoot ? '' : prefix + (isLast ? '    ' : '│   ')
     const items = gatherItems(node)
     for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
         const isLastItem = itemIndex === items.length - 1
         const item = items[itemIndex]
         if (item.kind === TreeItemKind.Permission || item.kind === TreeItemKind.Record) {
-            const connector = isLastItem ? '\\-- ' : '+-- '
+            const connector = isLastItem ? '└── ' : '├── '
             lines.push(childBase + connector + item.display)
         } else {
             renderNode(item.node, lines, false, childBase, isLastItem)

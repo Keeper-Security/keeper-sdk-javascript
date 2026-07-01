@@ -1,0 +1,78 @@
+name: Update Protobuf
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-proto:
+    name: Regenerate Protobuf Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout keeper-sdk-javascript
+        uses: actions/checkout@v4
+
+      - name: Clone keeperapp-protobuf
+        run: |
+          cd ../
+          git clone --depth 1 \
+            --branch master \
+            https://x-access-token:${{ secrets.PROTO_REPO_TOKEN }}@github.com/Keeper-Security/keeperapp-protobuf.git
+          cd keeper-sdk-javascript
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./keeperapi
+        env:
+          NPM_TOKEN: ""
+
+      - name: Regenerate protobuf files
+        run: npm run update-proto:es6
+        working-directory: ./keeperapi
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet keeperapi/src/proto.js keeperapi/src/proto.d.ts keeperapi/src/proto; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push branch
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "bot/update-proto"
+          git add keeperapi/src/proto.js keeperapi/src/proto.d.ts keeperapi/src/proto
+          git commit -m "chore: regenerate protobuf files"
+          git push --force origin "bot/update-proto"
+
+      - name: Open PR
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh pr list --head "bot/update-proto" --state open --json number --jq length)
+          if [ "$EXISTING" -eq 0 ]; then
+            gh pr create \
+              --title "chore: regenerate protobuf files" \
+              --body "Automated protobuf regeneration from keeperapp-protobuf master branch" \
+              --base main \
+              --head "bot/update-proto"
+          fi
+
+      - name: Skip PR creation
+        if: steps.diff.outputs.changed == 'false'
+        run: |
+          echo "No changes detected in protobuf files"

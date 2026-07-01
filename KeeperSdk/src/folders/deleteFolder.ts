@@ -1,6 +1,7 @@
 import type { Auth, DeleteObject, KeeperPreDeleteResponse } from '@keeper-security/keeperapi'
 import { preDeleteCommand, recordDeleteCommand } from '@keeper-security/keeperapi'
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
+import { getSdkPlatform } from '../platform'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, extractErrorMessage, logger } from '../utils'
 import { listFolder } from './listFolder'
@@ -26,6 +27,37 @@ export type RmdirOptions = {
     force?: boolean
     quiet?: boolean
     confirm?: (summary: string) => boolean | Promise<boolean>
+    /** Override prompt (e.g. browser shell UI). Defaults to SdkPlatform readline. */
+    ask?: (prompt: string) => Promise<string>
+}
+
+function isYesAnswer(answer: string): boolean {
+    const normalized = answer.trim().toLowerCase()
+    return normalized === 'y' || normalized === 'yes'
+}
+
+async function defaultAsk(prompt: string): Promise<string> {
+    const rl = getSdkPlatform().createReadline()
+    try {
+        return await rl.question(prompt)
+    } finally {
+        rl.close()
+    }
+}
+
+function resolveRmdirConfirm(
+    options: RmdirOptions
+): ((summary: string) => Promise<boolean>) | undefined {
+    if (options.force) return undefined
+    if (options.confirm) {
+        return async (summary) => Promise.resolve(options.confirm!(summary))
+    }
+    const ask = options.ask ?? defaultAsk
+    return async (summary) => {
+        logger.info(`\n${summary}\n`)
+        const answer = await ask('Do you want to proceed? (y/n) ')
+        return isYesAnswer(answer)
+    }
 }
 
 function folderKindOfUid(storage: InMemoryStorage, uid: string): FolderKind {
@@ -162,8 +194,8 @@ export async function deleteFolder(
     }
 
     const inner = preResp.pre_delete_response
-    const token = inner?.pre_delete_token
-    if (!token) {
+    let deleteToken = inner?.pre_delete_token
+    if (!deleteToken) {
         const reason =
             preResp.message ||
             preResp.result_code ||
@@ -177,21 +209,48 @@ export async function deleteFolder(
     if (confirm) {
         const wouldDelete = inner?.would_delete
         const summaryItems = wouldDelete?.deletion_summary
-        if (Array.isArray(summaryItems) && summaryItems.length > 0) {
-            const summary = summaryItems.join('\n')
-            const confirmed = await confirm(summary)
-            if (!confirmed) {
-                return { success: false, cancelled: true, message: 'Cancelled.' }
+        const summary = Array.isArray(summaryItems) ? summaryItems.join('\n') : ''
+        const confirmed = await confirm(summary)
+        if (!confirmed) {
+            return { success: false, cancelled: true, message: 'Cancelled.' }
+        }
+
+        // Interactive confirmation can outlive the pre_delete token; fetch a fresh one.
+        try {
+            preResp = await auth.executeRestCommand(preDeleteCommand({ objects }))
+        } catch (err) {
+            return {
+                success: false,
+                message: `pre_delete refresh failed for [${targetUids}]: ${extractErrorMessage(err)}`,
+            }
+        }
+        deleteToken = preResp.pre_delete_response?.pre_delete_token
+        if (!deleteToken) {
+            const reason =
+                preResp.message ||
+                preResp.result_code ||
+                `pre_delete refresh failed for [${targetUids}]: server did not return a pre_delete_token`
+            return {
+                success: false,
+                message: reason,
             }
         }
     }
 
     try {
-        await auth.executeRestCommand(recordDeleteCommand({ pre_delete_token: token }))
+        await auth.executeRestCommand(recordDeleteCommand({ pre_delete_token: deleteToken }))
     } catch (err) {
         return {
             success: false,
             message: `record_delete failed for [${targetUids}]: ${extractErrorMessage(err)}`,
+        }
+    }
+
+    for (const deleteObject of objects) {
+        try {
+            await storage.delete(deleteObject.object_type, deleteObject.object_uid)
+        } catch (err) {
+            logger.debug(`Failed to purge ${deleteObject.object_type} ${deleteObject.object_uid}:`, extractErrorMessage(err))
         }
     }
 
@@ -255,13 +314,7 @@ export async function rmdir(
     patterns: string[],
     options: RmdirOptions = {}
 ): Promise<DeleteFolderResult> {
-    const { force = false, quiet = false, confirm } = options
-    if (!force && !confirm) {
-        throw new KeeperSdkError(
-            'Confirmation is required: pass `confirm` or set `force: true`.',
-            'rmdir_confirm_required'
-        )
-    }
+    const { force = false, quiet = false } = options
     const folderUids = new Set<string>()
 
     for (const pattern of patterns) {
@@ -287,7 +340,5 @@ export async function rmdir(
         logger.info(`\nThe following folder(s) will be removed:\n${sortedNames.join(', ')}\n`)
     }
 
-    const confirmFn = force ? undefined : confirm
-
-    return deleteFolder(auth, storage, [...folderUids], confirmFn)
+    return deleteFolder(auth, storage, [...folderUids], resolveRmdirConfirm(options))
 }

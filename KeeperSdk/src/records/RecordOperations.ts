@@ -293,19 +293,19 @@ export async function updateRecord(
 
 export async function deleteRecord(
     auth: Auth,
+    storage: InMemoryStorage,
     recordUid: string
 ): Promise<DeleteRecordResult> {
-    const preDeleteRequest = {
-        objects: [
-            {
-                object_uid: recordUid,
-                object_type: VaultObjectKind.Record,
-                from_uid: '',
-                from_type: FolderKind.UserFolder,
-                delete_resolution: DeleteResolution.Unlink,
-            } as RecordPreDeleteObject,
-        ],
-    }
+    const folderLinks = await findAllRecordFolderLinks(recordUid, storage)
+    const objects: RecordPreDeleteObject[] = folderLinks.map((src) => ({
+        object_uid: recordUid,
+        object_type: 'record',
+        from_uid: src.uid || '',
+        from_type: src.folderType,
+        delete_resolution: DeleteResolution.Unlink,
+    }))
+
+    const preDeleteRequest = { objects }
 
     let preDeleteResponse: KeeperPreDeleteResponse
     try {
@@ -329,6 +329,17 @@ export async function deleteRecord(
         await auth.executeRestCommand(deleteCmd)
     } catch (err) {
         return { recordUid, success: false, message: extractErrorMessage(err) }
+    }
+
+    try {
+        await storage.delete(VaultObjectKind.Record, recordUid)
+        for (const src of folderLinks) {
+            if (src.uid) {
+                await storage.removeDependencies({ [src.uid]: new Set([recordUid]) })
+            }
+        }
+    } catch (err) {
+        logger.debug(`Failed to purge local record ${recordUid}:`, extractErrorMessage(err))
     }
 
     return { recordUid, success: true, message: ResultCode.Success }
@@ -443,7 +454,13 @@ function resolveFolder(uid: string, storage: InMemoryStorage): FolderInfo {
     return { uid, folderType: FolderKind.UserFolder, scopeUid: '' }
 }
 
-async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorage): Promise<string> {
+async function findAllRecordFolderLinks(
+    recordUid: string,
+    storage: InMemoryStorage
+): Promise<FolderInfo[]> {
+    const links: FolderInfo[] = []
+    const seen = new Set<string>()
+
     const folderKinds = [
         FolderKind.UserFolder,
         FolderKind.SharedFolder,
@@ -458,7 +475,12 @@ async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorag
                     (dependency) => dependency.kind === VaultObjectKind.Record && dependency.uid === recordUid
                 )
             ) {
-                return folder.uid
+                const info = resolveFolder(folder.uid, storage)
+                const key = `${info.folderType}:${info.uid}`
+                if (!seen.has(key)) {
+                    seen.add(key)
+                    links.push(info)
+                }
             }
         }
     }
@@ -466,7 +488,25 @@ async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorag
     const sharedFolderRecord = storage
         .getAll<DSharedFolderRecord>(VaultObjectKind.SharedFolderRecord)
         .find((candidate) => candidate.recordUid === recordUid)
-    return sharedFolderRecord ? sharedFolderRecord.sharedFolderUid : ''
+    if (sharedFolderRecord) {
+        const info = resolveFolder(sharedFolderRecord.sharedFolderUid, storage)
+        const key = `${info.folderType}:${info.uid}`
+        if (!seen.has(key)) {
+            seen.add(key)
+            links.push(info)
+        }
+    }
+
+    if (links.length === 0) {
+        links.push(resolveFolder('', storage))
+    }
+
+    return links
+}
+
+async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorage): Promise<string> {
+    const links = await findAllRecordFolderLinks(recordUid, storage)
+    return links[0]?.uid ?? ''
 }
 
 export async function moveRecord(

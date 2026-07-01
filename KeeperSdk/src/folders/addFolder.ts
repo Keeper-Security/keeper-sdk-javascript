@@ -24,6 +24,7 @@ export type AddFolderInput = {
     manageRecords?: boolean
     canShare?: boolean
     canEdit?: boolean
+    color?: string | null
 }
 
 export type AddFolderResult = {
@@ -40,6 +41,7 @@ export type MkdirOptions = {
     manageRecords?: boolean
     canShare?: boolean
     canEdit?: boolean
+    color?: string | null
 }
 
 type ParentContext = {
@@ -149,11 +151,17 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
 
     const encryptionKey = await getEncryptionKeyForNewFolder(auth, storage, folderType, sharedScope)
 
+    const folderData: Record<string, string> = { name, title: name }
+    const color = input.color?.trim().toLowerCase()
+    if (color && color !== 'none') {
+        folderData.color = color
+    }
+
     const request: FolderAddRequest = {
         folder_uid: folderUid,
         folder_type: folderType,
         key: await encryptForStorage(folderKey, encryptionKey),
-        data: await encryptObjectForStorage({ name, title: name }, folderKey),
+        data: await encryptObjectForStorage(folderData, folderKey),
         link: false,
     }
 
@@ -187,6 +195,7 @@ export async function addFolder(auth: Auth, storage: InMemoryStorage, input: Add
                 message: reason,
             }
         }
+
         return { folderUid, success: true }
     } catch (err) {
         return {
@@ -279,6 +288,7 @@ export async function mkdir(
             manageRecords: isLastSegment && createAsSharedFolder ? manageRecords : undefined,
             canShare: isLastSegment && createAsSharedFolder ? canShare : undefined,
             canEdit: isLastSegment && createAsSharedFolder ? canEdit : undefined,
+            color: isLastSegment ? options.color : undefined,
         })
 
         if (!lastResult.success) {

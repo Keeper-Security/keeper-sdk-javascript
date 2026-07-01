@@ -1157,7 +1157,54 @@ const processKdRemovedFolders = async (
     }
 }
 
-const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IFolderKey[] | null) => {
+type KdParentKeyUnwrap = {
+    folderKey: Uint8Array
+    folderUid: string
+    parentUid: string
+}
+
+async function parentFolderKeyReady(parentUid: string, storage: VaultStorage): Promise<boolean> {
+    const bytes = await storage.getKeyBytes?.(parentUid)
+    if (bytes?.length) {
+        return true
+    }
+    if (storage.getObject) {
+        if (await storage.getObject(`${parentUid}_gcm`)) return true
+        if (await storage.getObject(`${parentUid}_cbc`)) return true
+    }
+    return false
+}
+
+async function flushDeferredKdParentKeyUnwraps(
+    storage: VaultStorage,
+    deferred: KdParentKeyUnwrap[]
+): Promise<void> {
+    if (!deferred.length) return
+
+    let index = 0
+    while (index < deferred.length) {
+        const item = deferred[index]!
+        if (!(await parentFolderKeyReady(item.parentUid, storage))) {
+            index++
+            continue
+        }
+        try {
+            await platform.unwrapKey(item.folderKey, item.folderUid, item.parentUid, 'gcm', 'aes', storage)
+            deferred.splice(index, 1)
+        } catch (e: any) {
+            logger.error(
+                `The folder key for ${item.folderUid} cannot be decrypted using parent ${item.parentUid} (${e.message})`
+            )
+            index++
+        }
+    }
+}
+
+const processKdFolderKeys = async (
+    storage: VaultStorage,
+    folderKeys?: Folder.IFolderKey[] | null,
+    deferredParentKeyUnwraps?: KdParentKeyUnwrap[]
+) => {
     if (!folderKeys) return
     const encryptedByDataKeyMap: UnwrapKeyMap = {}
     const encryptedByDataKey = folderKeys.filter(
@@ -1182,7 +1229,32 @@ const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IF
         if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
         const folderUid = webSafe64FromBytes(key.folderUid)
         const parentUid = webSafe64FromBytes(key.parentUid)
-        await platform.unwrapKey(key.folderKey, folderUid, parentUid, 'gcm', 'aes', storage)
+        const wrappedFolderKey = key.folderKey
+        const unwrap = async () => {
+            await platform.unwrapKey(wrappedFolderKey, folderUid, parentUid, 'gcm', 'aes', storage)
+        }
+        if (await parentFolderKeyReady(parentUid, storage)) {
+            try {
+                await unwrap()
+            } catch (e: any) {
+                logger.error(
+                    `The folder key for ${folderUid} cannot be decrypted using parent ${parentUid} (${e.message})`
+                )
+                deferredParentKeyUnwraps?.push({ folderKey: wrappedFolderKey, folderUid, parentUid })
+            }
+            continue
+        }
+        if (deferredParentKeyUnwraps) {
+            deferredParentKeyUnwraps.push({ folderKey: wrappedFolderKey, folderUid, parentUid })
+            continue
+        }
+        try {
+            await unwrap()
+        } catch (e: any) {
+            logger.error(
+                `The folder key for ${folderUid} cannot be decrypted using parent ${parentUid} (${e.message})`
+            )
+        }
     }
 }
 
@@ -1591,21 +1663,21 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
         pageCount: 0,
     }
     let networkTime = 0
+    const deferredKdParentKeyUnwraps: KdParentKeyUnwrap[] = []
 
     try {
         const storage = wrapObjWithProxy(options.storage, controller)
         const dToken = await storage.get('continuationToken')
         let continuationToken = dToken ? platform.base64ToBytes(dToken.token) : undefined
 
-        await platform.importKey('data', auth.dataKey!, undefined, true)
+        await platform.importKey('data', auth.dataKey!, storage, true)
         await platform.importKeyEC(
             'pk_ecc',
             new Uint8Array(auth.eccPrivateKey!),
             new Uint8Array(auth.eccPublicKey!),
-            undefined,
-            true
+            storage
         )
-        await platform.importKeyRSA('pk_rsa', auth.privateKey!, undefined, true)
+        await platform.importKeyRSA('pk_rsa', auth.privateKey!, storage)
 
         while (true) {
             const msg = syncDownMessage({
@@ -1681,7 +1753,7 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await processKdFolderAccesses(storage, keeperDriveData.folderAccesses)
 
-            await processKdFolderKeys(storage, keeperDriveData.folderKeys)
+            await processKdFolderKeys(storage, keeperDriveData.folderKeys, deferredKdParentKeyUnwraps)
 
             await processKdFolders(storage, keeperDriveData.folders)
 
@@ -1775,6 +1847,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
 
             await storage.removeDependencies(removedDependencies)
 
+            await flushDeferredKdParentKeyUnwraps(storage, deferredKdParentKeyUnwraps)
+
             continuationToken = resp.continuationToken || undefined
             const respContinuationToken = platform.bytesToBase64(continuationToken)
             result.continuationToken = respContinuationToken
@@ -1788,6 +1862,8 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
                 break
             }
         }
+
+        await flushDeferredKdParentKeyUnwraps(storage, deferredKdParentKeyUnwraps)
     } catch (e: any) {
         logger.error(e)
         result.error = e.message

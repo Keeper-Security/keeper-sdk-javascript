@@ -1,4 +1,6 @@
 import type {
+    DRecord,
+    DRecordRotation,
     DSharedFolder,
     DSharedFolderRecord,
     DSharedFolderTeam,
@@ -7,11 +9,13 @@ import type {
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { TOKEN_SEPARATOR_PATTERN } from '../utils'
 import { FolderKind, VaultObjectKind } from '../folders/folderHelpers'
+import { getRecordType } from '../records/RecordUtils'
 
 export type ListSharedFoldersOptions = {
     pattern?: string | null
     verbose?: boolean
     includeDetails?: boolean
+    roeEligible?: boolean
 }
 
 export type ListSharedFolderRow = {
@@ -87,16 +91,39 @@ function countRecordsForFolder(storage: InMemoryStorage, sharedFolderUid: string
     )
 }
 
+function recordHasRotationConfigured(storage: InMemoryStorage, recordUid: string): boolean {
+    const rotation = storage.getByUid<DRecordRotation>('record_rotation', recordUid)
+    return rotation != null && rotation.disabled !== true
+}
+
+function sharedFolderHasPamUserWithRotation(storage: InMemoryStorage, sharedFolderUid: string): boolean {
+    for (const link of storage.getAll<DSharedFolderRecord>(VaultObjectKind.SharedFolderRecord)) {
+        if (link.sharedFolderUid !== sharedFolderUid) continue
+        const record = storage.getByUid<DRecord>(VaultObjectKind.Record, link.recordUid)
+        if (!record) continue
+        if (getRecordType(record).toLowerCase() !== 'pamuser') continue
+        if (recordHasRotationConfigured(storage, link.recordUid)) return true
+    }
+    return false
+}
+
 export function listSharedFolders(
     storage: InMemoryStorage,
     options: ListSharedFoldersOptions = {}
 ): ListSharedFolderRow[] {
-    const { pattern, includeDetails = false } = options
-    const sharedFolders: DSharedFolder[] = pattern
+    const { pattern, includeDetails = false, roeEligible = false } = options
+    let sharedFolders: DSharedFolder[] = pattern
         ? findSharedFolders(storage, pattern)
         : storage.getAll<DSharedFolder>(FolderKind.SharedFolder)
 
-    return sharedFolders.map((sharedFolder) => {
+    if (roeEligible) {
+        sharedFolders = sharedFolders.filter((folder) =>
+            sharedFolderHasPamUserWithRotation(storage, folder.uid)
+        )
+    }
+
+    return sharedFolders
+        .map((sharedFolder) => {
         const shared_folder_uid = sharedFolder.uid
         const name = sharedFolderDisplayName(sharedFolder)
         const row: ListSharedFolderRow = { shared_folder_uid, name }
@@ -110,7 +137,8 @@ export function listSharedFolders(
             row.default_can_share = sharedFolder.defaultCanShare
         }
         return row
-    })
+        })
+        .sort((rowA, rowB) => rowA.name.localeCompare(rowB.name, undefined, { sensitivity: 'base' }))
 }
 
 export type FormattedSharedFoldersTable = {
