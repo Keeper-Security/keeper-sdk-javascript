@@ -238,6 +238,34 @@ export type {
     UserViewTableRow,
 } from './users/userTypes'
 
+export {
+    listRoles,
+    formatRolesTable,
+    renderRolesAsciiTable,
+    RoleColumn,
+    SUPPORTED_ROLE_COLUMNS,
+    DEFAULT_ROLE_COLUMNS,
+    ALL_COLUMNS_WILDCARD,
+    viewRole,
+    formatRoleView,
+    roleViewTable,
+} from './roles'
+export type {
+    ListRolesOptions,
+    ListRoleRow,
+    RoleColumnInput,
+    FormattedRolesTable,
+    FormatRolesTableOptions,
+    RoleView,
+    RoleTeamInfo,
+    RoleUserInfo,
+    RoleManagedNodeInfo,
+    RoleEnforcementInfo,
+    FormatRoleViewOptions,
+    FormattedRoleViewTable,
+    RoleViewTableRow,
+} from './roles'
+
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 
 export type {

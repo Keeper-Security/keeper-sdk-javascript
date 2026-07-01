@@ -781,9 +781,17 @@ export class KeeperVault {
         return result
     }
 
-    public async deleteRecord(recordUid: string): Promise<DeleteRecordResult> {
+    public async deleteRecord(uidOrTitle: string): Promise<DeleteRecordResult> {
         const auth = this.getAuthOrThrow()
-        const result = await deleteRecordOp(auth, recordUid)
+        const record = this.getRecordByUid(uidOrTitle) || this.findRecord(uidOrTitle)
+        if (!record?.uid) {
+            return {
+                recordUid: uidOrTitle,
+                success: false,
+                message: `Record "${uidOrTitle}" not found`,
+            }
+        }
+        const result = await deleteRecordOp(auth, this.storage, record.uid)
         if (result.success) await this.syncIfNeeded()
         return result
     }
