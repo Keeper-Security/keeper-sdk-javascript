@@ -36,8 +36,28 @@ export {
     EMAIL_PATTERN,
     EMAIL_LIST_SEPARATOR_PATTERN,
     isValidEmail,
+    DEFAULT_PASSWORD_LENGTH,
+    PW_SPECIAL_CHARACTERS,
+    GEN_PASSWORD_ALGORITHMS,
+    KeeperPasswordGenerator,
+    generatePasswordFromOptions,
+    resolveGenPasswordAlgorithm,
+    generatePassword,
+    parseGenParametersFromValue,
+    isGenerateFieldValue,
+    parseGeneratePasswordFlag,
 } from './utils'
-export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
+export type {
+    ILogger,
+    Nullable,
+    Optional,
+    DeepPartial,
+    Immutable,
+    GenPasswordAlgorithm,
+    PasswordGenerationOptions,
+    PasswordComplexityPolicy,
+    PassphraseGenOptions,
+} from './utils'
 
 export {
     searchRecords,

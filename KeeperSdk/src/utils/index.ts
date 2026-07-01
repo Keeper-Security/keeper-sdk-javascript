@@ -27,3 +27,21 @@ export {
     escapeRegExp,
     resolveSearchPattern,
 } from './patterns'
+export {
+    DEFAULT_PASSWORD_LENGTH,
+    PW_SPECIAL_CHARACTERS,
+    GEN_PASSWORD_ALGORITHMS,
+    KeeperPasswordGenerator,
+    generatePasswordFromOptions,
+    resolveGenPasswordAlgorithm,
+    generatePassword,
+    parseGenParametersFromValue,
+    isGenerateFieldValue,
+    parseGeneratePasswordFlag,
+} from './passwordGenerator'
+export type {
+    GenPasswordAlgorithm,
+    PasswordGenerationOptions,
+    PasswordComplexityPolicy,
+    PassphraseGenOptions,
+} from './passwordGenerator'

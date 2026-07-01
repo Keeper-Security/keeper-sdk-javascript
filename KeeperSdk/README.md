@@ -1,6 +1,8 @@
 # @keeper-security/keeper-sdk-javascript
 
-Keeper JavaScript SDK for **Node** and **browser** — vault API, sharing, folders, and a Commander-style CLI (`dispatchCliLine`).
+Keeper JavaScript SDK for **Node** and **browser** — vault API, sharing, folders, and enterprise admin APIs.
+
+> **CLI:** Commander-style shell commands (`dispatchCliLine`, `help`, `get`, `ls`, …) live in [**@keeper-security/keeper-shell-component**](https://www.npmjs.com/package/@keeper-security/keeper-shell-component) (or this monorepo’s `commander-javascript-cli` package). This SDK package is API-only.
 
 [![NPM](https://img.shields.io/npm/v/@keeper-security/keeper-sdk-javascript?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/@keeper-security/keeper-sdk-javascript)
 
@@ -42,48 +44,11 @@ console.log(`Loaded ${vault.getRecords().length} records`)
 - **Folders**: List, get, create, rename, delete, change directory, folder tree
 - **Shared folders**: List shared folders, share with users, update permissions
 - **Sharing**: Share and unshare records, check share info
-- **Teams / users / roles** (enterprise admin): Available via the SDK API; not exposed as shell commands in this release
-
-## Built-in shell CLI
-
-The package includes a Commander-style CLI (`dispatchCliLine`, `createKeeperCliParser`) for auth, records, and folders.
-
-**Before login:** `help`, `login`, `restore-session`
-
-**After login:**
-
-| Area | Commands |
-|------|----------|
-| Session | `logout`, `sync` (`syncdown`, `sync-down`, `d`), `whoami` |
-| Records | `list` (`l`), `search` (`s`), `get` (`g`) |
-| Folders | `ls`, `cd`, `tree`, `mkdir`, `list-sf` (`lsf`) |
-| Vault info | `vault summary` |
-
-Every command supports `--help`. Record/folder write operations (`add`, `update`, `delete`, `share`, …) are SDK-only — see the examples below.
-
-### Finding records and folders
-
-| Goal | Command |
-|------|---------|
-| Record by UID (exact) | `get <record-uid>` |
-| Record by title | `get "Gmail Login"` or `search gmail` |
-| Text in title/fields | `search <terms…>` (all terms must match) |
-| Shared folder by UID | `get <sf-uid>` or `list-sf <pattern>` |
-| Folder by path/UID | `get <folder-uid>`, `ls`, `cd`, `tree` |
-| All records (table) | `list` or `list --verbose` |
-| Account summary | `whoami` or `vault summary` |
-
-`search` only covers **vault records** (title, fields, UID). It does not search teams or enterprise users — use the SDK API (`vault.viewTeam`, `vault.listTeams`, …) or `examples/sdk_example` scripts for those.
-
-```typescript
-import { dispatchCliLine, type KeeperCliHost } from '@keeper-security/keeper-sdk-javascript'
-
-await dispatchCliLine('restore-session --from-json session.json', host)
-await dispatchCliLine('list', host)
-await dispatchCliLine('ls', host)
-```
+- **Teams / users / roles** (enterprise admin): Available via the SDK API
 
 ## Examples
+
+Shell CLI (`dispatchCliLine`, categorized `help`, record/folder commands) is provided by **@keeper-security/keeper-shell-component** — see that package’s `src/keeper-cli/README.md`.
 
 Runnable SDK scripts are in [`examples/sdk_example`](../examples/sdk_example):
 
