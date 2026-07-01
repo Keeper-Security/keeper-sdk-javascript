@@ -1,9 +1,8 @@
 import { platform } from '@keeper-security/keeperapi'
-import { NSF_KNOWN_FIELD_TYPES, NSF_STRUCTURED_SUBKEYS } from './nsfConstants'
+import { NSF_KNOWN_FIELD_TYPES, NSF_LEGACY_RECORD_TYPES, NSF_STRUCTURED_SUBKEYS } from './nsfConstants'
 
 const MIN_RECORD_PAD_BYTES = 384
 const PAD_BLOCK_SIZE = 16
-const LEGACY_RECORD_TYPES = new Set(['legacy', 'general'])
 
 export type RecordFieldEntry = {
     type: string
@@ -303,7 +302,7 @@ export function buildNsfRecordData(input: BuildNsfRecordDataInput): Record<strin
     const title = input.title.trim()
     const recordType = input.recordType.trim()
     const data: Record<string, unknown> = {
-        type: LEGACY_RECORD_TYPES.has(recordType) ? 'login' : recordType,
+        type: NSF_LEGACY_RECORD_TYPES.has(recordType) ? 'login' : recordType,
         title,
         fields: input.fieldEntries ?? [],
         custom: input.customEntries ?? [],
@@ -327,7 +326,7 @@ export function mergeNsfRecordData(
     if (input.title !== undefined) data.title = input.title.trim()
     if (input.recordType !== undefined) {
         const recordType = input.recordType.trim()
-        data.type = LEGACY_RECORD_TYPES.has(recordType) ? 'login' : recordType
+        data.type = NSF_LEGACY_RECORD_TYPES.has(recordType) ? 'login' : recordType
     }
     if (input.notes !== undefined) data.notes = input.notes
 

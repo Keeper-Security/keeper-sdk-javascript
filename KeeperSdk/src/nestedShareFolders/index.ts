@@ -79,6 +79,7 @@ export {
     NsfRemoveOperation,
     removeNestedShareRecords,
     formatRemoveNsfPreview,
+    collectRemoveNsfWarnings,
 } from './removeNsfRecord'
 export type {
     NsfRemoveOperationInput,

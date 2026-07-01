@@ -6,6 +6,8 @@ export const NSF_LEGACY_RECORD_MSG =
 export const NSF_LEGACY_FOLDER_MSG =
     "Folder '{0}' is a legacy folder. Nested Share Folder commands operate only on Nested Share Folders."
 
+export const NSF_LEGACY_RECORD_TYPES = new Set(['legacy', 'general'])
+
 export const NSF_ACCESS_ROLE_LABELS: Record<number, string> = {
     [Folder.AccessRoleType.NAVIGATOR]: 'navigator',
     [Folder.AccessRoleType.REQUESTOR]: 'requestor',
@@ -13,7 +15,7 @@ export const NSF_ACCESS_ROLE_LABELS: Record<number, string> = {
     [Folder.AccessRoleType.SHARED_MANAGER]: 'shared-manager',
     [Folder.AccessRoleType.CONTENT_MANAGER]: 'content-manager',
     [Folder.AccessRoleType.CONTENT_SHARE_MANAGER]: 'content-share-manager',
-    [Folder.AccessRoleType.MANAGER]: 'manager',
+    [Folder.AccessRoleType.MANAGER]: 'full-manager',
     [Folder.AccessRoleType.UNRESOLVED]: 'unresolved',
 }
 
@@ -38,6 +40,7 @@ export const NSF_RECORD_LABEL_WIDTH = 17
 export const NSF_FOLDER_USER_PERMISSIONS_HEADING = 'User Permissions:'
 export const NSF_FOLDER_SHARE_ADMINS_HEADING = 'Share Administrators:'
 export const NSF_RECORD_USER_PERMISSIONS_HEADING = 'User Permissions:'
+export const NSF_SHARE_ADMINS_PREVIEW_LIMIT = 10
 
 export const NSF_LIST_TABLE_HEADERS = ['#', 'Item Type', 'UID', 'Title', 'Type', 'Description'] as const
 export const NSF_LIST_FULL_HEADERS = [

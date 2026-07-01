@@ -21,6 +21,7 @@ import {
     requireAuthDataKey,
     resolveNsfFolderIdentifier,
 } from './nsfHelpers'
+import { validateNsfRecordType } from './nsfRecordTypes'
 
 export type { RecordFieldEntry } from './nsfRecordData'
 
@@ -111,6 +112,10 @@ export async function addNestedShareRecord(
             'File attachments are not supported in nested share record add.',
             ResultCodes.NSF_ADD_FAILED
         )
+    }
+
+    if (!input.recordData && input.recordType?.trim()) {
+        await validateNsfRecordType(auth, input.recordType, ResultCodes.NSF_ADD_FAILED)
     }
 
     const recordData =

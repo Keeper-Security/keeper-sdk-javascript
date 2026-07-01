@@ -7,10 +7,10 @@ import type {
     DKdFolderRecord,
     DKdRecordAccess,
 } from '@keeper-security/keeperapi'
-import { Folder, Records, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import { Folder, Records, getFolderAccessMessage, getRecordAccessMessage, getShareObjectsMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
-import { KeeperSdkError, ResultCodes } from '../utils'
+import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { getRecordTitle } from '../records/RecordUtils'
 import {
     NSF_ACCESS_ROLE_LABELS,
@@ -92,7 +92,10 @@ export function parseRecordModifyStatus(
         throw new KeeperSdkError('No results from record operation.', failureCode)
     }
     const status = result.status ?? Records.RecordModifyResult.RS_SUCCESS
-    const statusName = Records.RecordModifyResult[status] ?? String(status)
+    const statusName =
+        status === Records.RecordModifyResult.RS_SUCCESS
+            ? 'SUCCESS'
+            : (Records.RecordModifyResult[status] ?? String(status))
     if (status !== Records.RecordModifyResult.RS_SUCCESS) {
         throw new KeeperSdkError(
             result.message || `Record operation failed (${statusName}).`,
@@ -299,6 +302,17 @@ export function findExistingChildFolder(
     segment: string,
     parentUid: string | null | undefined
 ): string | undefined {
+    const byUid = getKeeperDriveFolder(storage, segment)
+    if (byUid) {
+        if (parentUid == null || parentUid === '') {
+            return segment
+        }
+        if (normalizeParentUid(storage, byUid.parentUid) === normalizeParentUid(storage, parentUid)) {
+            return segment
+        }
+        return undefined
+    }
+
     const lower = segment.toLowerCase()
     const exactMatches: string[] = []
     const rootMatches: string[] = []
@@ -657,8 +671,12 @@ export function isSensitiveFieldType(fieldType: string): boolean {
 export function resolveAccessUsername(
     storage: InMemoryStorage,
     accessTypeUid: string,
-    folder?: DKdFolder
+    folder?: DKdFolder,
+    shareUsers?: Map<string, string>
 ): string {
+    const fromShare = shareUsers?.get(accessTypeUid)
+    if (fromShare) return fromShare
+
     for (const user of storage.getAll<DUser>('user')) {
         if (webSafe64FromBytes(user.accountUid) === accessTypeUid) {
             return user.username
@@ -668,6 +686,134 @@ export function resolveAccessUsername(
         return folder.ownerInfo.username
     }
     return accessTypeUid
+}
+
+function toFolderAccessEntry(folderUid: string, accessor: Folder.IFolderAccessData): DKdFolderAccess {
+    return {
+        kind: 'keeper_drive_folder_access',
+        accessUid: `${folderUid}:${webSafe64FromBytes(accessor.accessTypeUid!)}`,
+        folderUid,
+        accessTypeUid: webSafe64FromBytes(accessor.accessTypeUid!),
+        accessType: accessor.accessType!,
+        accessRoleType: accessor.accessRoleType!,
+        permission: accessor.permissions ?? {},
+        inherited: accessor.inherited ?? undefined,
+        hidden: accessor.hidden ?? undefined,
+    }
+}
+
+export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Promise<Map<string, string>> {
+    const map = new Map<string, string>()
+
+    for (const user of storage.getAll<DUser>('user')) {
+        if (user.accountUid?.length && user.username) {
+            map.set(webSafe64FromBytes(user.accountUid), user.username)
+        }
+    }
+
+    try {
+        const response = await auth.executeRest(getShareObjectsMessage())
+        for (const list of [
+            response.shareEnterpriseUsers,
+            response.shareFamilyUsers,
+            response.shareRelationships,
+            response.shareMCEnterpriseUsers,
+        ]) {
+            for (const entry of list ?? []) {
+                if (entry.userAccountUid?.length && entry.username) {
+                    map.set(webSafe64FromBytes(entry.userAccountUid), entry.username)
+                }
+            }
+        }
+    } catch {
+        // Fall back to vault user cache only.
+    }
+
+    return map
+}
+
+export async function fetchLiveFolderAccessEntries(auth: Auth, folderUid: string): Promise<DKdFolderAccess[]> {
+    try {
+        const response = await auth.executeRest(getFolderAccessMessage([folderUid]))
+        const result = response.folderAccessResults?.find(
+            (entry) => entry.folderUid?.length && webSafe64FromBytes(entry.folderUid) === folderUid
+        )
+        return (result?.accessors ?? [])
+            .filter(
+                (accessor) =>
+                    accessor.accessTypeUid?.length &&
+                    accessor.accessType != null &&
+                    accessor.accessRoleType != null
+            )
+            .map((accessor) => toFolderAccessEntry(folderUid, accessor))
+    } catch (err) {
+        throw new KeeperSdkError(
+            `Failed to fetch folder permissions for ${folderUid}: ${extractErrorMessage(err)}`,
+            ResultCodes.NSF_DETAILS_FAILED
+        )
+    }
+}
+
+export function isFolderOwnerAccessor(
+    folder: DKdFolder,
+    entry: DKdFolderAccess,
+    username: string
+): boolean {
+    const ownerUsername = folder.ownerInfo?.username?.trim().toLowerCase()
+    if (ownerUsername && username.toLowerCase() === ownerUsername) return true
+    if (folder.ownerInfo?.accountUid && folder.ownerInfo.accountUid === entry.accessTypeUid) return true
+    return entry.accessType === Folder.AccessType.AT_OWNER
+}
+
+export function recordAccessDisplayRole(data: Folder.IRecordAccessData): string {
+    return formatAccessRoleType(data.accessRoleType)
+}
+
+export async function fetchLiveRecordAccessEntries(
+    auth: Auth,
+    storage: InMemoryStorage,
+    recordUid: string
+): Promise<
+    {
+        username: string
+        accountUid?: string
+        data: Folder.IRecordAccessData
+    }[]
+> {
+    try {
+        const [response, shareUsers] = await Promise.all([
+            auth.executeRest(getRecordAccessMessage([recordUid])),
+            loadShareUserMap(auth, storage),
+        ])
+
+        return (response.recordAccesses ?? [])
+            .filter((entry) => {
+                const accessType = entry.data?.accessType
+                return (
+                    accessType === Folder.AccessType.AT_USER ||
+                    accessType === Folder.AccessType.AT_OWNER ||
+                    !!entry.data?.owner
+                )
+            })
+            .map((entry) => {
+                const data = entry.data
+                if (!data?.accessTypeUid?.length || data.accessType == null) return undefined
+
+                const accountUid = webSafe64FromBytes(data.accessTypeUid)
+                const username =
+                    entry.accessorInfo?.name?.trim() ||
+                    shareUsers.get(accountUid) ||
+                    resolveAccessUsername(storage, accountUid)
+
+                return { username, accountUid, data }
+            })
+            .filter((entry): entry is NonNullable<typeof entry> => !!entry && entry.username.length > 0)
+    } catch (err) {
+        throw new KeeperSdkError(
+            `Failed to fetch record permissions for ${recordUid}: ${extractErrorMessage(err)}`,
+            ResultCodes.NSF_DETAILS_FAILED
+        )
+    }
 }
 
 export function folderAccessDisplayRole(entry: DKdFolderAccess): string {

@@ -13,6 +13,7 @@ import {
     requireAuthAccountUid,
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
+import { validateNsfRecordType } from './nsfRecordTypes'
 
 export type { RecordFieldEntry as UpdateNsfRecordFieldEntry } from './nsfRecordData'
 
@@ -106,6 +107,10 @@ export async function updateNestedShareRecords(
 ): Promise<UpdateNsfRecordResult> {
     if (!input.records?.length) {
         throw new KeeperSdkError('Record UID is required.', ResultCodes.NSF_UPDATE_FAILED)
+    }
+
+    if (input.recordType?.trim()) {
+        await validateNsfRecordType(auth, input.recordType, ResultCodes.NSF_UPDATE_FAILED)
     }
 
     const accountUid = requireAuthAccountUid(auth)

@@ -478,6 +478,7 @@ export {
     NsfRemoveOperation,
     removeNestedShareRecords,
     formatRemoveNsfPreview,
+    collectRemoveNsfWarnings,
     mkdirNestedShareFolder,
     NSF_FOLDER_COLORS,
     NsfRemoveFolderOperation,
