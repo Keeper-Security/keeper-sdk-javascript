@@ -8,10 +8,13 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    AuditReportErrorCode,
+    ActionReportErrorCode,
+    PasswordReportErrorCode,
     NsfErrorCode,
     KEEPER_PUBLIC_HOSTS,
 } from './constants'
-export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger } from './Logger'
+export { Logger, ConsoleLogger, LogLevel, logger, setLogger, getLogger, resetLogger, writeOutput } from './Logger'
 export type { ILogger } from './Logger'
 export { KeeperSdkError, isKeeperError, extractErrorMessage, extractResultCode } from './errors'
 export type { Nullable, Optional, DeepPartial, Immutable } from './types'

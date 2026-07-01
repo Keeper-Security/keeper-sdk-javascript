@@ -46,6 +46,9 @@
         "users:action": "ts-node src/users/action_user.ts",
         "users:alias": "ts-node src/users/alias_user.ts",
         "users:user-team": "ts-node src/users/team_user.ts",
+        "reports:audit-report": "ts-node src/enterpriseReport/audit_report.ts",
+        "reports:action-report": "ts-node src/enterpriseReport/action_report.ts",
+        "reports:password-report": "ts-node src/enterpriseReport/password_report.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"
