@@ -19,6 +19,1255 @@ export const folder = $root.folder = (() => {
          */
         const v3 = {};
 
+        v3.FolderService = (function() {
+
+            /**
+             * Constructs a new FolderService service.
+             * @memberof folder.v3
+             * @classdesc RPC service for folder operations.
+             * @extends $protobuf.rpc.Service
+             * @constructor
+             * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+             * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+             * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+             */
+            function FolderService(rpcImpl, requestDelimited, responseDelimited) {
+                $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
+            }
+
+            (FolderService.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = FolderService;
+
+            /**
+             * Creates new FolderService service using the specified rpc implementation.
+             * @function create
+             * @memberof folder.v3.FolderService
+             * @static
+             * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+             * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+             * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+             * @returns {FolderService} RPC service. Useful where requests and/or responses are streamed.
+             */
+            FolderService.create = function create(rpcImpl, requestDelimited, responseDelimited) {
+                return new this(rpcImpl, requestDelimited, responseDelimited);
+            };
+
+            /**
+             * Callback as used by {@link folder.v3.FolderService#getFolderAccess}.
+             * @memberof folder.v3.FolderService
+             * @typedef GetFolderAccessCallback
+             * @type {function}
+             * @param {Error|null} error Error, if any
+             * @param {folder.v3.GetFolderAccessResponse} [response] GetFolderAccessResponse
+             */
+
+            /**
+             * Retrieve users and teams with access to specified folders.
+             * Requires can_change_user_permissions permission or Share Admin/MC Admin privileges.
+             * @function getFolderAccess
+             * @memberof folder.v3.FolderService
+             * @instance
+             * @param {folder.v3.IGetFolderAccessRequest} request GetFolderAccessRequest message or plain object
+             * @param {folder.v3.FolderService.GetFolderAccessCallback} callback Node-style callback called with the error, if any, and GetFolderAccessResponse
+             * @returns {undefined}
+             * @variation 1
+             */
+            Object.defineProperty(FolderService.prototype.getFolderAccess = function getFolderAccess(request, callback) {
+                return $protobuf.rpc.Service.prototype.rpcCall.call(this, getFolderAccess, $root.folder.v3.GetFolderAccessRequest, $root.folder.v3.GetFolderAccessResponse, request, callback);
+            }, "name", { value: "GetFolderAccess" });
+
+            /**
+             * Retrieve users and teams with access to specified folders.
+             * Requires can_change_user_permissions permission or Share Admin/MC Admin privileges.
+             * @function getFolderAccess
+             * @memberof folder.v3.FolderService
+             * @instance
+             * @param {folder.v3.IGetFolderAccessRequest} request GetFolderAccessRequest message or plain object
+             * @returns {Promise<folder.v3.GetFolderAccessResponse>} Promise
+             * @variation 2
+             */
+
+            return FolderService;
+        })();
+
+        v3.GetFolderAccessRequest = (function() {
+
+            /**
+             * Properties of a GetFolderAccessRequest.
+             * @memberof folder.v3
+             * @interface IGetFolderAccessRequest
+             * @property {Array.<Uint8Array>|null} [folderUid] List of folder UIDs to query (max: 100)
+             * @property {folder.v3.IContinuationToken|null} [continuationToken] Continuation token for pagination.
+             * Contains the last_modified timestamp from the previous page.
+             * Omit for the first page.
+             * @property {number|null} [pageSize] Maximum number of accessors to return per page.
+             * Default: 100, Max: 1000
+             */
+
+            /**
+             * Constructs a new GetFolderAccessRequest.
+             * @memberof folder.v3
+             * @classdesc Request to retrieve folder accessors (users and teams with access to folders).
+             * Supports cursor-based pagination using last_modified timestamps.
+             * @implements IGetFolderAccessRequest
+             * @constructor
+             * @param {folder.v3.IGetFolderAccessRequest=} [properties] Properties to set
+             */
+            function GetFolderAccessRequest(properties) {
+                this.folderUid = [];
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * List of folder UIDs to query (max: 100)
+             * @member {Array.<Uint8Array>} folderUid
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @instance
+             */
+            GetFolderAccessRequest.prototype.folderUid = $util.emptyArray;
+
+            /**
+             * Continuation token for pagination.
+             * Contains the last_modified timestamp from the previous page.
+             * Omit for the first page.
+             * @member {folder.v3.IContinuationToken|null|undefined} continuationToken
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @instance
+             */
+            GetFolderAccessRequest.prototype.continuationToken = null;
+
+            /**
+             * Maximum number of accessors to return per page.
+             * Default: 100, Max: 1000
+             * @member {number|null|undefined} pageSize
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @instance
+             */
+            GetFolderAccessRequest.prototype.pageSize = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            // Virtual OneOf for proto3 optional field
+            Object.defineProperty(GetFolderAccessRequest.prototype, "_continuationToken", {
+                get: $util.oneOfGetter($oneOfFields = ["continuationToken"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            // Virtual OneOf for proto3 optional field
+            Object.defineProperty(GetFolderAccessRequest.prototype, "_pageSize", {
+                get: $util.oneOfGetter($oneOfFields = ["pageSize"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new GetFolderAccessRequest instance using the specified properties.
+             * @function create
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @static
+             * @param {folder.v3.IGetFolderAccessRequest=} [properties] Properties to set
+             * @returns {folder.v3.GetFolderAccessRequest} GetFolderAccessRequest instance
+             */
+            GetFolderAccessRequest.create = function create(properties) {
+                return new GetFolderAccessRequest(properties);
+            };
+
+            /**
+             * Encodes the specified GetFolderAccessRequest message. Does not implicitly {@link folder.v3.GetFolderAccessRequest.verify|verify} messages.
+             * @function encode
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @static
+             * @param {folder.v3.IGetFolderAccessRequest} message GetFolderAccessRequest message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GetFolderAccessRequest.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.folderUid != null && message.folderUid.length)
+                    for (let i = 0; i < message.folderUid.length; ++i)
+                        writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid[i]);
+                if (message.continuationToken != null && Object.hasOwnProperty.call(message, "continuationToken"))
+                    $root.folder.v3.ContinuationToken.encode(message.continuationToken, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                if (message.pageSize != null && Object.hasOwnProperty.call(message, "pageSize"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.pageSize);
+                return writer;
+            };
+
+            /**
+             * Decodes a GetFolderAccessRequest message from the specified reader or buffer.
+             * @function decode
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {folder.v3.GetFolderAccessRequest} GetFolderAccessRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GetFolderAccessRequest.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.GetFolderAccessRequest();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            if (!(message.folderUid && message.folderUid.length))
+                                message.folderUid = [];
+                            message.folderUid.push(reader.bytes());
+                            break;
+                        }
+                    case 2: {
+                            message.continuationToken = $root.folder.v3.ContinuationToken.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 3: {
+                            message.pageSize = reader.int32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a GetFolderAccessRequest message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {folder.v3.GetFolderAccessRequest} GetFolderAccessRequest
+             */
+            GetFolderAccessRequest.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.folder.v3.GetFolderAccessRequest)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".folder.v3.GetFolderAccessRequest: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.folder.v3.GetFolderAccessRequest();
+                if (object.folderUid) {
+                    if (!Array.isArray(object.folderUid))
+                        throw TypeError(".folder.v3.GetFolderAccessRequest.folderUid: array expected");
+                    message.folderUid = [];
+                    for (let i = 0; i < object.folderUid.length; ++i)
+                        if (typeof object.folderUid[i] === "string")
+                            $util.base64.decode(object.folderUid[i], message.folderUid[i] = $util.newBuffer($util.base64.length(object.folderUid[i])), 0);
+                        else if (object.folderUid[i].length >= 0)
+                            message.folderUid[i] = object.folderUid[i];
+                }
+                if (object.continuationToken != null) {
+                    if (!$util.isObject(object.continuationToken))
+                        throw TypeError(".folder.v3.GetFolderAccessRequest.continuationToken: object expected");
+                    message.continuationToken = $root.folder.v3.ContinuationToken.fromObject(object.continuationToken, long + 1);
+                }
+                if (object.pageSize != null)
+                    message.pageSize = object.pageSize | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GetFolderAccessRequest message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @static
+             * @param {folder.v3.GetFolderAccessRequest} message GetFolderAccessRequest
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GetFolderAccessRequest.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.arrays || options.defaults)
+                    object.folderUid = [];
+                if (message.folderUid && message.folderUid.length) {
+                    object.folderUid = [];
+                    for (let j = 0; j < message.folderUid.length; ++j)
+                        object.folderUid[j] = options.bytes === String ? $util.base64.encode(message.folderUid[j], 0, message.folderUid[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid[j]) : message.folderUid[j];
+                }
+                if (message.continuationToken != null && Object.hasOwnProperty.call(message, "continuationToken")) {
+                    object.continuationToken = $root.folder.v3.ContinuationToken.toObject(message.continuationToken, options, q + 1);
+                    if (options.oneofs)
+                        object._continuationToken = "continuationToken";
+                }
+                if (message.pageSize != null && Object.hasOwnProperty.call(message, "pageSize")) {
+                    object.pageSize = message.pageSize;
+                    if (options.oneofs)
+                        object._pageSize = "pageSize";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this GetFolderAccessRequest to JSON.
+             * @function toJSON
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GetFolderAccessRequest.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for GetFolderAccessRequest
+             * @function getTypeUrl
+             * @memberof folder.v3.GetFolderAccessRequest
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            GetFolderAccessRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/folder.v3.GetFolderAccessRequest";
+            };
+
+            return GetFolderAccessRequest;
+        })();
+
+        v3.GetFolderAccessResponse = (function() {
+
+            /**
+             * Properties of a GetFolderAccessResponse.
+             * @memberof folder.v3
+             * @interface IGetFolderAccessResponse
+             * @property {Array.<folder.v3.IGetFolderAccessResult>|null} [folderAccessResults] Per-folder results (either success with accessors or error)
+             * @property {folder.v3.IContinuationToken|null} [continuationToken] Continuation token for the next page (only present if hasMore is true)
+             * @property {boolean|null} [hasMore] True if more results exist beyond this page
+             */
+
+            /**
+             * Constructs a new GetFolderAccessResponse.
+             * @memberof folder.v3
+             * @classdesc Response containing folder accessors with pagination support.
+             * @implements IGetFolderAccessResponse
+             * @constructor
+             * @param {folder.v3.IGetFolderAccessResponse=} [properties] Properties to set
+             */
+            function GetFolderAccessResponse(properties) {
+                this.folderAccessResults = [];
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Per-folder results (either success with accessors or error)
+             * @member {Array.<folder.v3.IGetFolderAccessResult>} folderAccessResults
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @instance
+             */
+            GetFolderAccessResponse.prototype.folderAccessResults = $util.emptyArray;
+
+            /**
+             * Continuation token for the next page (only present if hasMore is true)
+             * @member {folder.v3.IContinuationToken|null|undefined} continuationToken
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @instance
+             */
+            GetFolderAccessResponse.prototype.continuationToken = null;
+
+            /**
+             * True if more results exist beyond this page
+             * @member {boolean} hasMore
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @instance
+             */
+            GetFolderAccessResponse.prototype.hasMore = false;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            // Virtual OneOf for proto3 optional field
+            Object.defineProperty(GetFolderAccessResponse.prototype, "_continuationToken", {
+                get: $util.oneOfGetter($oneOfFields = ["continuationToken"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new GetFolderAccessResponse instance using the specified properties.
+             * @function create
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @static
+             * @param {folder.v3.IGetFolderAccessResponse=} [properties] Properties to set
+             * @returns {folder.v3.GetFolderAccessResponse} GetFolderAccessResponse instance
+             */
+            GetFolderAccessResponse.create = function create(properties) {
+                return new GetFolderAccessResponse(properties);
+            };
+
+            /**
+             * Encodes the specified GetFolderAccessResponse message. Does not implicitly {@link folder.v3.GetFolderAccessResponse.verify|verify} messages.
+             * @function encode
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @static
+             * @param {folder.v3.IGetFolderAccessResponse} message GetFolderAccessResponse message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GetFolderAccessResponse.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.folderAccessResults != null && message.folderAccessResults.length)
+                    for (let i = 0; i < message.folderAccessResults.length; ++i)
+                        $root.folder.v3.GetFolderAccessResult.encode(message.folderAccessResults[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                if (message.continuationToken != null && Object.hasOwnProperty.call(message, "continuationToken"))
+                    $root.folder.v3.ContinuationToken.encode(message.continuationToken, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                if (message.hasMore != null && Object.hasOwnProperty.call(message, "hasMore"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.hasMore);
+                return writer;
+            };
+
+            /**
+             * Decodes a GetFolderAccessResponse message from the specified reader or buffer.
+             * @function decode
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {folder.v3.GetFolderAccessResponse} GetFolderAccessResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GetFolderAccessResponse.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.GetFolderAccessResponse();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            if (!(message.folderAccessResults && message.folderAccessResults.length))
+                                message.folderAccessResults = [];
+                            message.folderAccessResults.push($root.folder.v3.GetFolderAccessResult.decode(reader, reader.uint32(), undefined, long + 1));
+                            break;
+                        }
+                    case 2: {
+                            message.continuationToken = $root.folder.v3.ContinuationToken.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 3: {
+                            message.hasMore = reader.bool();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a GetFolderAccessResponse message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {folder.v3.GetFolderAccessResponse} GetFolderAccessResponse
+             */
+            GetFolderAccessResponse.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.folder.v3.GetFolderAccessResponse)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".folder.v3.GetFolderAccessResponse: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.folder.v3.GetFolderAccessResponse();
+                if (object.folderAccessResults) {
+                    if (!Array.isArray(object.folderAccessResults))
+                        throw TypeError(".folder.v3.GetFolderAccessResponse.folderAccessResults: array expected");
+                    message.folderAccessResults = [];
+                    for (let i = 0; i < object.folderAccessResults.length; ++i) {
+                        if (!$util.isObject(object.folderAccessResults[i]))
+                            throw TypeError(".folder.v3.GetFolderAccessResponse.folderAccessResults: object expected");
+                        message.folderAccessResults[i] = $root.folder.v3.GetFolderAccessResult.fromObject(object.folderAccessResults[i], long + 1);
+                    }
+                }
+                if (object.continuationToken != null) {
+                    if (!$util.isObject(object.continuationToken))
+                        throw TypeError(".folder.v3.GetFolderAccessResponse.continuationToken: object expected");
+                    message.continuationToken = $root.folder.v3.ContinuationToken.fromObject(object.continuationToken, long + 1);
+                }
+                if (object.hasMore != null)
+                    message.hasMore = Boolean(object.hasMore);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GetFolderAccessResponse message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @static
+             * @param {folder.v3.GetFolderAccessResponse} message GetFolderAccessResponse
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GetFolderAccessResponse.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.arrays || options.defaults)
+                    object.folderAccessResults = [];
+                if (options.defaults)
+                    object.hasMore = false;
+                if (message.folderAccessResults && message.folderAccessResults.length) {
+                    object.folderAccessResults = [];
+                    for (let j = 0; j < message.folderAccessResults.length; ++j)
+                        object.folderAccessResults[j] = $root.folder.v3.GetFolderAccessResult.toObject(message.folderAccessResults[j], options, q + 1);
+                }
+                if (message.continuationToken != null && Object.hasOwnProperty.call(message, "continuationToken")) {
+                    object.continuationToken = $root.folder.v3.ContinuationToken.toObject(message.continuationToken, options, q + 1);
+                    if (options.oneofs)
+                        object._continuationToken = "continuationToken";
+                }
+                if (message.hasMore != null && Object.hasOwnProperty.call(message, "hasMore"))
+                    object.hasMore = message.hasMore;
+                return object;
+            };
+
+            /**
+             * Converts this GetFolderAccessResponse to JSON.
+             * @function toJSON
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GetFolderAccessResponse.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for GetFolderAccessResponse
+             * @function getTypeUrl
+             * @memberof folder.v3.GetFolderAccessResponse
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            GetFolderAccessResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/folder.v3.GetFolderAccessResponse";
+            };
+
+            return GetFolderAccessResponse;
+        })();
+
+        v3.ContinuationToken = (function() {
+
+            /**
+             * Properties of a ContinuationToken.
+             * @memberof folder.v3
+             * @interface IContinuationToken
+             * @property {number|null} [lastModified] Unix timestamp in milliseconds of the last processed accessor
+             */
+
+            /**
+             * Constructs a new ContinuationToken.
+             * @memberof folder.v3
+             * @classdesc Cursor for cursor-based pagination.
+             * Contains the timestamp of the last processed item.
+             * @implements IContinuationToken
+             * @constructor
+             * @param {folder.v3.IContinuationToken=} [properties] Properties to set
+             */
+            function ContinuationToken(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Unix timestamp in milliseconds of the last processed accessor
+             * @member {number} lastModified
+             * @memberof folder.v3.ContinuationToken
+             * @instance
+             */
+            ContinuationToken.prototype.lastModified = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new ContinuationToken instance using the specified properties.
+             * @function create
+             * @memberof folder.v3.ContinuationToken
+             * @static
+             * @param {folder.v3.IContinuationToken=} [properties] Properties to set
+             * @returns {folder.v3.ContinuationToken} ContinuationToken instance
+             */
+            ContinuationToken.create = function create(properties) {
+                return new ContinuationToken(properties);
+            };
+
+            /**
+             * Encodes the specified ContinuationToken message. Does not implicitly {@link folder.v3.ContinuationToken.verify|verify} messages.
+             * @function encode
+             * @memberof folder.v3.ContinuationToken
+             * @static
+             * @param {folder.v3.IContinuationToken} message ContinuationToken message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ContinuationToken.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int64(message.lastModified);
+                return writer;
+            };
+
+            /**
+             * Decodes a ContinuationToken message from the specified reader or buffer.
+             * @function decode
+             * @memberof folder.v3.ContinuationToken
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {folder.v3.ContinuationToken} ContinuationToken
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ContinuationToken.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.ContinuationToken();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.lastModified = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a ContinuationToken message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof folder.v3.ContinuationToken
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {folder.v3.ContinuationToken} ContinuationToken
+             */
+            ContinuationToken.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.folder.v3.ContinuationToken)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".folder.v3.ContinuationToken: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.folder.v3.ContinuationToken();
+                if (object.lastModified != null)
+                    if ($util.Long)
+                        message.lastModified = $util.Long.fromValue(object.lastModified, false);
+                    else if (typeof object.lastModified === "string")
+                        message.lastModified = parseInt(object.lastModified, 10);
+                    else if (typeof object.lastModified === "number")
+                        message.lastModified = object.lastModified;
+                    else if (typeof object.lastModified === "object")
+                        message.lastModified = new $util.LongBits(object.lastModified.low >>> 0, object.lastModified.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a ContinuationToken message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof folder.v3.ContinuationToken
+             * @static
+             * @param {folder.v3.ContinuationToken} message ContinuationToken
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            ContinuationToken.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults)
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.lastModified = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.lastModified = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.lastModified = typeof message.lastModified === "number" ? BigInt(message.lastModified) : $util.Long.fromBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0, false).toBigInt();
+                    else if (typeof message.lastModified === "number")
+                        object.lastModified = options.longs === String ? String(message.lastModified) : message.lastModified;
+                    else
+                        object.lastModified = options.longs === String ? $util.Long.prototype.toString.call(message.lastModified) : options.longs === Number ? new $util.LongBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0).toNumber() : message.lastModified;
+                return object;
+            };
+
+            /**
+             * Converts this ContinuationToken to JSON.
+             * @function toJSON
+             * @memberof folder.v3.ContinuationToken
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            ContinuationToken.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for ContinuationToken
+             * @function getTypeUrl
+             * @memberof folder.v3.ContinuationToken
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            ContinuationToken.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/folder.v3.ContinuationToken";
+            };
+
+            return ContinuationToken;
+        })();
+
+        v3.GetFolderAccessResult = (function() {
+
+            /**
+             * Properties of a GetFolderAccessResult.
+             * @memberof folder.v3
+             * @interface IGetFolderAccessResult
+             * @property {Uint8Array|null} [folderUid] Folder UID this result applies to
+             * @property {Array.<Folder.IFolderAccessData>|null} [accessors] List of users/teams with access to this folder (populated on success)
+             * @property {folder.v3.IFolderAccessError|null} [error] Error information (populated on failure, mutually exclusive with accessors)
+             */
+
+            /**
+             * Constructs a new GetFolderAccessResult.
+             * @memberof folder.v3
+             * @classdesc Result for a single folder.
+             * Contains either a list of accessors (success) or an error (failure).
+             * @implements IGetFolderAccessResult
+             * @constructor
+             * @param {folder.v3.IGetFolderAccessResult=} [properties] Properties to set
+             */
+            function GetFolderAccessResult(properties) {
+                this.accessors = [];
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Folder UID this result applies to
+             * @member {Uint8Array} folderUid
+             * @memberof folder.v3.GetFolderAccessResult
+             * @instance
+             */
+            GetFolderAccessResult.prototype.folderUid = $util.newBuffer([]);
+
+            /**
+             * List of users/teams with access to this folder (populated on success)
+             * @member {Array.<Folder.IFolderAccessData>} accessors
+             * @memberof folder.v3.GetFolderAccessResult
+             * @instance
+             */
+            GetFolderAccessResult.prototype.accessors = $util.emptyArray;
+
+            /**
+             * Error information (populated on failure, mutually exclusive with accessors)
+             * @member {folder.v3.IFolderAccessError|null|undefined} error
+             * @memberof folder.v3.GetFolderAccessResult
+             * @instance
+             */
+            GetFolderAccessResult.prototype.error = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            // Virtual OneOf for proto3 optional field
+            Object.defineProperty(GetFolderAccessResult.prototype, "_error", {
+                get: $util.oneOfGetter($oneOfFields = ["error"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new GetFolderAccessResult instance using the specified properties.
+             * @function create
+             * @memberof folder.v3.GetFolderAccessResult
+             * @static
+             * @param {folder.v3.IGetFolderAccessResult=} [properties] Properties to set
+             * @returns {folder.v3.GetFolderAccessResult} GetFolderAccessResult instance
+             */
+            GetFolderAccessResult.create = function create(properties) {
+                return new GetFolderAccessResult(properties);
+            };
+
+            /**
+             * Encodes the specified GetFolderAccessResult message. Does not implicitly {@link folder.v3.GetFolderAccessResult.verify|verify} messages.
+             * @function encode
+             * @memberof folder.v3.GetFolderAccessResult
+             * @static
+             * @param {folder.v3.IGetFolderAccessResult} message GetFolderAccessResult message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GetFolderAccessResult.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+                if (message.accessors != null && message.accessors.length)
+                    for (let i = 0; i < message.accessors.length; ++i)
+                        $root.Folder.FolderAccessData.encode(message.accessors[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                if (message.error != null && Object.hasOwnProperty.call(message, "error"))
+                    $root.folder.v3.FolderAccessError.encode(message.error, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                return writer;
+            };
+
+            /**
+             * Decodes a GetFolderAccessResult message from the specified reader or buffer.
+             * @function decode
+             * @memberof folder.v3.GetFolderAccessResult
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {folder.v3.GetFolderAccessResult} GetFolderAccessResult
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GetFolderAccessResult.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.GetFolderAccessResult();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.folderUid = reader.bytes();
+                            break;
+                        }
+                    case 2: {
+                            if (!(message.accessors && message.accessors.length))
+                                message.accessors = [];
+                            message.accessors.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                            break;
+                        }
+                    case 3: {
+                            message.error = $root.folder.v3.FolderAccessError.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a GetFolderAccessResult message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof folder.v3.GetFolderAccessResult
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {folder.v3.GetFolderAccessResult} GetFolderAccessResult
+             */
+            GetFolderAccessResult.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.folder.v3.GetFolderAccessResult)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".folder.v3.GetFolderAccessResult: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.folder.v3.GetFolderAccessResult();
+                if (object.folderUid != null)
+                    if (typeof object.folderUid === "string")
+                        $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                    else if (object.folderUid.length >= 0)
+                        message.folderUid = object.folderUid;
+                if (object.accessors) {
+                    if (!Array.isArray(object.accessors))
+                        throw TypeError(".folder.v3.GetFolderAccessResult.accessors: array expected");
+                    message.accessors = [];
+                    for (let i = 0; i < object.accessors.length; ++i) {
+                        if (!$util.isObject(object.accessors[i]))
+                            throw TypeError(".folder.v3.GetFolderAccessResult.accessors: object expected");
+                        message.accessors[i] = $root.Folder.FolderAccessData.fromObject(object.accessors[i], long + 1);
+                    }
+                }
+                if (object.error != null) {
+                    if (!$util.isObject(object.error))
+                        throw TypeError(".folder.v3.GetFolderAccessResult.error: object expected");
+                    message.error = $root.folder.v3.FolderAccessError.fromObject(object.error, long + 1);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GetFolderAccessResult message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof folder.v3.GetFolderAccessResult
+             * @static
+             * @param {folder.v3.GetFolderAccessResult} message GetFolderAccessResult
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GetFolderAccessResult.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.arrays || options.defaults)
+                    object.accessors = [];
+                if (options.defaults)
+                    if (options.bytes === String)
+                        object.folderUid = "";
+                    else {
+                        object.folderUid = [];
+                        if (options.bytes !== Array)
+                            object.folderUid = $util.newBuffer(object.folderUid);
+                    }
+                if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                    object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+                if (message.accessors && message.accessors.length) {
+                    object.accessors = [];
+                    for (let j = 0; j < message.accessors.length; ++j)
+                        object.accessors[j] = $root.Folder.FolderAccessData.toObject(message.accessors[j], options, q + 1);
+                }
+                if (message.error != null && Object.hasOwnProperty.call(message, "error")) {
+                    object.error = $root.folder.v3.FolderAccessError.toObject(message.error, options, q + 1);
+                    if (options.oneofs)
+                        object._error = "error";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this GetFolderAccessResult to JSON.
+             * @function toJSON
+             * @memberof folder.v3.GetFolderAccessResult
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GetFolderAccessResult.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for GetFolderAccessResult
+             * @function getTypeUrl
+             * @memberof folder.v3.GetFolderAccessResult
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            GetFolderAccessResult.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/folder.v3.GetFolderAccessResult";
+            };
+
+            return GetFolderAccessResult;
+        })();
+
+        v3.FolderAccessError = (function() {
+
+            /**
+             * Properties of a FolderAccessError.
+             * @memberof folder.v3
+             * @interface IFolderAccessError
+             * @property {Folder.FolderModifyStatus|null} [status] Status code (e.g., NOT_FOUND, ACCESS_DENIED)
+             * @property {string|null} [message] Human-readable error message
+             */
+
+            /**
+             * Constructs a new FolderAccessError.
+             * @memberof folder.v3
+             * @classdesc Error information for a folder that couldn't be processed.
+             * @implements IFolderAccessError
+             * @constructor
+             * @param {folder.v3.IFolderAccessError=} [properties] Properties to set
+             */
+            function FolderAccessError(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Status code (e.g., NOT_FOUND, ACCESS_DENIED)
+             * @member {Folder.FolderModifyStatus} status
+             * @memberof folder.v3.FolderAccessError
+             * @instance
+             */
+            FolderAccessError.prototype.status = 0;
+
+            /**
+             * Human-readable error message
+             * @member {string} message
+             * @memberof folder.v3.FolderAccessError
+             * @instance
+             */
+            FolderAccessError.prototype.message = "";
+
+            /**
+             * Creates a new FolderAccessError instance using the specified properties.
+             * @function create
+             * @memberof folder.v3.FolderAccessError
+             * @static
+             * @param {folder.v3.IFolderAccessError=} [properties] Properties to set
+             * @returns {folder.v3.FolderAccessError} FolderAccessError instance
+             */
+            FolderAccessError.create = function create(properties) {
+                return new FolderAccessError(properties);
+            };
+
+            /**
+             * Encodes the specified FolderAccessError message. Does not implicitly {@link folder.v3.FolderAccessError.verify|verify} messages.
+             * @function encode
+             * @memberof folder.v3.FolderAccessError
+             * @static
+             * @param {folder.v3.IFolderAccessError} message FolderAccessError message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            FolderAccessError.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.status);
+                if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.message);
+                return writer;
+            };
+
+            /**
+             * Decodes a FolderAccessError message from the specified reader or buffer.
+             * @function decode
+             * @memberof folder.v3.FolderAccessError
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {folder.v3.FolderAccessError} FolderAccessError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            FolderAccessError.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.folder.v3.FolderAccessError();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.status = reader.int32();
+                            break;
+                        }
+                    case 2: {
+                            message.message = reader.string();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a FolderAccessError message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof folder.v3.FolderAccessError
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {folder.v3.FolderAccessError} FolderAccessError
+             */
+            FolderAccessError.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.folder.v3.FolderAccessError)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".folder.v3.FolderAccessError: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.folder.v3.FolderAccessError();
+                switch (object.status) {
+                default:
+                    if (typeof object.status === "number") {
+                        message.status = object.status;
+                        break;
+                    }
+                    break;
+                case "SUCCESS":
+                case 0:
+                    message.status = 0;
+                    break;
+                case "BAD_REQUEST":
+                case 1:
+                    message.status = 1;
+                    break;
+                case "ACCESS_DENIED":
+                case 2:
+                    message.status = 2;
+                    break;
+                case "NOT_FOUND":
+                case 3:
+                    message.status = 3;
+                    break;
+                }
+                if (object.message != null)
+                    message.message = String(object.message);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a FolderAccessError message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof folder.v3.FolderAccessError
+             * @static
+             * @param {folder.v3.FolderAccessError} message FolderAccessError
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            FolderAccessError.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.status = options.enums === String ? "SUCCESS" : 0;
+                    object.message = "";
+                }
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    object.status = options.enums === String ? $root.Folder.FolderModifyStatus[message.status] === undefined ? message.status : $root.Folder.FolderModifyStatus[message.status] : message.status;
+                if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                    object.message = message.message;
+                return object;
+            };
+
+            /**
+             * Converts this FolderAccessError to JSON.
+             * @function toJSON
+             * @memberof folder.v3.FolderAccessError
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            FolderAccessError.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for FolderAccessError
+             * @function getTypeUrl
+             * @memberof folder.v3.FolderAccessError
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            FolderAccessError.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/folder.v3.FolderAccessError";
+            };
+
+            return FolderAccessError;
+        })();
+
         v3.remove = (function() {
 
             /**
@@ -4943,5 +6192,3 @@ export const folder = $root.folder = (() => {
 
     return folder;
 })();
-
-export { $root as default };
