@@ -20,7 +20,6 @@ export {
 export { InMemoryStorage } from "./storage/InMemoryStorage";
 
 export {
-  Logger,
   ConsoleLogger,
   LogLevel,
   logger,
