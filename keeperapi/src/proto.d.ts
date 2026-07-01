@@ -91277,3 +91277,1526 @@ export namespace folder {
         }
     }
 }
+
+/** Namespace Workflow. */
+export namespace Workflow {
+
+    /** Properties of a WorkflowApprover. */
+    interface IWorkflowApprover {
+
+        /** WorkflowApprover user */
+        user?: (string|null);
+
+        /** WorkflowApprover userId */
+        userId?: (number|null);
+
+        /** WorkflowApprover teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** WorkflowApprover escalation */
+        escalation?: (boolean|null);
+
+        /** WorkflowApprover escalationAfterMs */
+        escalationAfterMs?: (number|null);
+    }
+
+    /** Represents a WorkflowApprover. */
+    class WorkflowApprover implements IWorkflowApprover {
+
+        /**
+         * Constructs a new WorkflowApprover.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowApprover);
+
+        /** WorkflowApprover user. */
+        public user?: (string|null);
+
+        /** WorkflowApprover userId. */
+        public userId?: (number|null);
+
+        /** WorkflowApprover teamUid. */
+        public teamUid?: (Uint8Array|null);
+
+        /** WorkflowApprover escalation. */
+        public escalation: boolean;
+
+        /** WorkflowApprover escalationAfterMs. */
+        public escalationAfterMs: number;
+
+        /** WorkflowApprover approver. */
+        public approver?: ("user"|"userId"|"teamUid");
+
+        /**
+         * Creates a new WorkflowApprover instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowApprover instance
+         */
+        public static create(properties?: Workflow.IWorkflowApprover): Workflow.WorkflowApprover;
+
+        /**
+         * Encodes the specified WorkflowApprover message. Does not implicitly {@link Workflow.WorkflowApprover.verify|verify} messages.
+         * @param message WorkflowApprover message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowApprover, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowApprover message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowApprover
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowApprover;
+
+        /**
+         * Creates a WorkflowApprover message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowApprover
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowApprover;
+
+        /**
+         * Creates a plain object from a WorkflowApprover message. Also converts values to other types if specified.
+         * @param message WorkflowApprover
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowApprover, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowApprover to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowApprover
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowParameters. */
+    interface IWorkflowParameters {
+
+        /** WorkflowParameters resource */
+        resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowParameters approvalsNeeded */
+        approvalsNeeded?: (number|null);
+
+        /** WorkflowParameters checkoutNeeded */
+        checkoutNeeded?: (boolean|null);
+
+        /** WorkflowParameters startAccessOnApproval */
+        startAccessOnApproval?: (boolean|null);
+
+        /** WorkflowParameters requireReason */
+        requireReason?: (boolean|null);
+
+        /** WorkflowParameters requireTicket */
+        requireTicket?: (boolean|null);
+
+        /** WorkflowParameters requireMFA */
+        requireMFA?: (boolean|null);
+
+        /** WorkflowParameters accessLength */
+        accessLength?: (number|null);
+
+        /** WorkflowParameters allowedTimes */
+        allowedTimes?: (Workflow.ITemporalAccessFilter|null);
+    }
+
+    /** Represents a WorkflowParameters. */
+    class WorkflowParameters implements IWorkflowParameters {
+
+        /**
+         * Constructs a new WorkflowParameters.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowParameters);
+
+        /** WorkflowParameters resource. */
+        public resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowParameters approvalsNeeded. */
+        public approvalsNeeded: number;
+
+        /** WorkflowParameters checkoutNeeded. */
+        public checkoutNeeded: boolean;
+
+        /** WorkflowParameters startAccessOnApproval. */
+        public startAccessOnApproval: boolean;
+
+        /** WorkflowParameters requireReason. */
+        public requireReason: boolean;
+
+        /** WorkflowParameters requireTicket. */
+        public requireTicket: boolean;
+
+        /** WorkflowParameters requireMFA. */
+        public requireMFA: boolean;
+
+        /** WorkflowParameters accessLength. */
+        public accessLength: number;
+
+        /** WorkflowParameters allowedTimes. */
+        public allowedTimes?: (Workflow.ITemporalAccessFilter|null);
+
+        /**
+         * Creates a new WorkflowParameters instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowParameters instance
+         */
+        public static create(properties?: Workflow.IWorkflowParameters): Workflow.WorkflowParameters;
+
+        /**
+         * Encodes the specified WorkflowParameters message. Does not implicitly {@link Workflow.WorkflowParameters.verify|verify} messages.
+         * @param message WorkflowParameters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowParameters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowParameters message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowParameters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowParameters;
+
+        /**
+         * Creates a WorkflowParameters message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowParameters
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowParameters;
+
+        /**
+         * Creates a plain object from a WorkflowParameters message. Also converts values to other types if specified.
+         * @param message WorkflowParameters
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowParameters, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowParameters to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowParameters
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowConfig. */
+    interface IWorkflowConfig {
+
+        /** WorkflowConfig parameters */
+        parameters?: (Workflow.IWorkflowParameters|null);
+
+        /** WorkflowConfig approvers */
+        approvers?: (Workflow.IWorkflowApprover[]|null);
+
+        /** WorkflowConfig createdOn */
+        createdOn?: (number|null);
+    }
+
+    /** Represents a WorkflowConfig. */
+    class WorkflowConfig implements IWorkflowConfig {
+
+        /**
+         * Constructs a new WorkflowConfig.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowConfig);
+
+        /** WorkflowConfig parameters. */
+        public parameters?: (Workflow.IWorkflowParameters|null);
+
+        /** WorkflowConfig approvers. */
+        public approvers: Workflow.IWorkflowApprover[];
+
+        /** WorkflowConfig createdOn. */
+        public createdOn: number;
+
+        /**
+         * Creates a new WorkflowConfig instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowConfig instance
+         */
+        public static create(properties?: Workflow.IWorkflowConfig): Workflow.WorkflowConfig;
+
+        /**
+         * Encodes the specified WorkflowConfig message. Does not implicitly {@link Workflow.WorkflowConfig.verify|verify} messages.
+         * @param message WorkflowConfig message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowConfig message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowConfig
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowConfig;
+
+        /**
+         * Creates a WorkflowConfig message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowConfig
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowConfig;
+
+        /**
+         * Creates a plain object from a WorkflowConfig message. Also converts values to other types if specified.
+         * @param message WorkflowConfig
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowConfig to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowConfig
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** WorkflowStage enum. */
+    enum WorkflowStage {
+        WS_READY_TO_START = 0,
+        WS_STARTED = 1,
+        WS_NEEDS_ACTION = 2,
+        WS_WAITING = 3
+    }
+
+    /** AccessCondition enum. */
+    enum AccessCondition {
+        AC_APPROVAL = 0,
+        AC_CHECKIN = 1,
+        AC_MFA = 2,
+        AC_TIME = 3,
+        AC_REASON = 4,
+        AC_TICKET = 5
+    }
+
+    /** Properties of a WorkflowStatus. */
+    interface IWorkflowStatus {
+
+        /** WorkflowStatus stage */
+        stage?: (Workflow.WorkflowStage|null);
+
+        /** WorkflowStatus conditions */
+        conditions?: (Workflow.AccessCondition[]|null);
+
+        /** WorkflowStatus approvedBy */
+        approvedBy?: (Workflow.IWorkflowApproval[]|null);
+
+        /** WorkflowStatus startedOn */
+        startedOn?: (number|null);
+
+        /** WorkflowStatus expiresOn */
+        expiresOn?: (number|null);
+
+        /** WorkflowStatus escalated */
+        escalated?: (boolean|null);
+
+        /** WorkflowStatus checkedOutBy */
+        checkedOutBy?: (string|null);
+
+        /** WorkflowStatus canForceCheckIn */
+        canForceCheckIn?: (boolean|null);
+    }
+
+    /** Represents a WorkflowStatus. */
+    class WorkflowStatus implements IWorkflowStatus {
+
+        /**
+         * Constructs a new WorkflowStatus.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowStatus);
+
+        /** WorkflowStatus stage. */
+        public stage: Workflow.WorkflowStage;
+
+        /** WorkflowStatus conditions. */
+        public conditions: Workflow.AccessCondition[];
+
+        /** WorkflowStatus approvedBy. */
+        public approvedBy: Workflow.IWorkflowApproval[];
+
+        /** WorkflowStatus startedOn. */
+        public startedOn: number;
+
+        /** WorkflowStatus expiresOn. */
+        public expiresOn: number;
+
+        /** WorkflowStatus escalated. */
+        public escalated: boolean;
+
+        /** WorkflowStatus checkedOutBy. */
+        public checkedOutBy: string;
+
+        /** WorkflowStatus canForceCheckIn. */
+        public canForceCheckIn: boolean;
+
+        /**
+         * Creates a new WorkflowStatus instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowStatus instance
+         */
+        public static create(properties?: Workflow.IWorkflowStatus): Workflow.WorkflowStatus;
+
+        /**
+         * Encodes the specified WorkflowStatus message. Does not implicitly {@link Workflow.WorkflowStatus.verify|verify} messages.
+         * @param message WorkflowStatus message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowStatus message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowStatus
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowStatus;
+
+        /**
+         * Creates a WorkflowStatus message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowStatus
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowStatus;
+
+        /**
+         * Creates a plain object from a WorkflowStatus message. Also converts values to other types if specified.
+         * @param message WorkflowStatus
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowStatus to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowProcess. */
+    interface IWorkflowProcess {
+
+        /** WorkflowProcess flowUid */
+        flowUid?: (Uint8Array|null);
+
+        /** WorkflowProcess userId */
+        userId?: (number|null);
+
+        /** WorkflowProcess resource */
+        resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowProcess startedOn */
+        startedOn?: (number|null);
+
+        /** WorkflowProcess expiresOn */
+        expiresOn?: (number|null);
+
+        /** WorkflowProcess reason */
+        reason?: (Uint8Array|null);
+
+        /** WorkflowProcess mfaVerified */
+        mfaVerified?: (boolean|null);
+
+        /** WorkflowProcess externalRef */
+        externalRef?: (Uint8Array|null);
+
+        /** WorkflowProcess user */
+        user?: (string|null);
+
+        /** WorkflowProcess workflowParameters */
+        workflowParameters?: (NotificationCenter.INotificationParameter[]|null);
+
+        /** WorkflowProcess escalated */
+        escalated?: (boolean|null);
+
+        /** WorkflowProcess ephemeral */
+        ephemeral?: (boolean|null);
+    }
+
+    /** Represents a WorkflowProcess. */
+    class WorkflowProcess implements IWorkflowProcess {
+
+        /**
+         * Constructs a new WorkflowProcess.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowProcess);
+
+        /** WorkflowProcess flowUid. */
+        public flowUid: Uint8Array;
+
+        /** WorkflowProcess userId. */
+        public userId: number;
+
+        /** WorkflowProcess resource. */
+        public resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowProcess startedOn. */
+        public startedOn: number;
+
+        /** WorkflowProcess expiresOn. */
+        public expiresOn: number;
+
+        /** WorkflowProcess reason. */
+        public reason: Uint8Array;
+
+        /** WorkflowProcess mfaVerified. */
+        public mfaVerified: boolean;
+
+        /** WorkflowProcess externalRef. */
+        public externalRef: Uint8Array;
+
+        /** WorkflowProcess user. */
+        public user: string;
+
+        /** WorkflowProcess workflowParameters. */
+        public workflowParameters: NotificationCenter.INotificationParameter[];
+
+        /** WorkflowProcess escalated. */
+        public escalated: boolean;
+
+        /** WorkflowProcess ephemeral. */
+        public ephemeral: boolean;
+
+        /**
+         * Creates a new WorkflowProcess instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowProcess instance
+         */
+        public static create(properties?: Workflow.IWorkflowProcess): Workflow.WorkflowProcess;
+
+        /**
+         * Encodes the specified WorkflowProcess message. Does not implicitly {@link Workflow.WorkflowProcess.verify|verify} messages.
+         * @param message WorkflowProcess message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowProcess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowProcess message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowProcess
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowProcess;
+
+        /**
+         * Creates a WorkflowProcess message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowProcess
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowProcess;
+
+        /**
+         * Creates a plain object from a WorkflowProcess message. Also converts values to other types if specified.
+         * @param message WorkflowProcess
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowProcess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowProcess to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowProcess
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowApproval. */
+    interface IWorkflowApproval {
+
+        /** WorkflowApproval userId */
+        userId?: (number|null);
+
+        /** WorkflowApproval user */
+        user?: (string|null);
+
+        /** WorkflowApproval flowUid */
+        flowUid?: (Uint8Array|null);
+
+        /** WorkflowApproval approvedOn */
+        approvedOn?: (number|null);
+    }
+
+    /** Represents a WorkflowApproval. */
+    class WorkflowApproval implements IWorkflowApproval {
+
+        /**
+         * Constructs a new WorkflowApproval.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowApproval);
+
+        /** WorkflowApproval userId. */
+        public userId: number;
+
+        /** WorkflowApproval user. */
+        public user: string;
+
+        /** WorkflowApproval flowUid. */
+        public flowUid: Uint8Array;
+
+        /** WorkflowApproval approvedOn. */
+        public approvedOn: number;
+
+        /**
+         * Creates a new WorkflowApproval instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowApproval instance
+         */
+        public static create(properties?: Workflow.IWorkflowApproval): Workflow.WorkflowApproval;
+
+        /**
+         * Encodes the specified WorkflowApproval message. Does not implicitly {@link Workflow.WorkflowApproval.verify|verify} messages.
+         * @param message WorkflowApproval message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowApproval, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowApproval message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowApproval
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowApproval;
+
+        /**
+         * Creates a WorkflowApproval message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowApproval
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowApproval;
+
+        /**
+         * Creates a plain object from a WorkflowApproval message. Also converts values to other types if specified.
+         * @param message WorkflowApproval
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowApproval, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowApproval to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowApproval
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowContext. */
+    interface IWorkflowContext {
+
+        /** WorkflowContext workflowConfig */
+        workflowConfig?: (Workflow.IWorkflowConfig|null);
+
+        /** WorkflowContext workflow */
+        workflow?: (Workflow.IWorkflowProcess|null);
+
+        /** WorkflowContext approvals */
+        approvals?: (Workflow.IWorkflowApproval[]|null);
+
+        /** WorkflowContext blocker */
+        blocker?: (Workflow.IWorkflowProcess|null);
+    }
+
+    /** Represents a WorkflowContext. */
+    class WorkflowContext implements IWorkflowContext {
+
+        /**
+         * Constructs a new WorkflowContext.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowContext);
+
+        /** WorkflowContext workflowConfig. */
+        public workflowConfig?: (Workflow.IWorkflowConfig|null);
+
+        /** WorkflowContext workflow. */
+        public workflow?: (Workflow.IWorkflowProcess|null);
+
+        /** WorkflowContext approvals. */
+        public approvals: Workflow.IWorkflowApproval[];
+
+        /** WorkflowContext blocker. */
+        public blocker?: (Workflow.IWorkflowProcess|null);
+
+        /**
+         * Creates a new WorkflowContext instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowContext instance
+         */
+        public static create(properties?: Workflow.IWorkflowContext): Workflow.WorkflowContext;
+
+        /**
+         * Encodes the specified WorkflowContext message. Does not implicitly {@link Workflow.WorkflowContext.verify|verify} messages.
+         * @param message WorkflowContext message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowContext, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowContext message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowContext
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowContext;
+
+        /**
+         * Creates a WorkflowContext message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowContext
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowContext;
+
+        /**
+         * Creates a plain object from a WorkflowContext message. Also converts values to other types if specified.
+         * @param message WorkflowContext
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowContext, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowContext to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowContext
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowState. */
+    interface IWorkflowState {
+
+        /** WorkflowState flowUid */
+        flowUid?: (Uint8Array|null);
+
+        /** WorkflowState resource */
+        resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowState status */
+        status?: (Workflow.IWorkflowStatus|null);
+    }
+
+    /** Represents a WorkflowState. */
+    class WorkflowState implements IWorkflowState {
+
+        /**
+         * Constructs a new WorkflowState.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowState);
+
+        /** WorkflowState flowUid. */
+        public flowUid: Uint8Array;
+
+        /** WorkflowState resource. */
+        public resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowState status. */
+        public status?: (Workflow.IWorkflowStatus|null);
+
+        /**
+         * Creates a new WorkflowState instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowState instance
+         */
+        public static create(properties?: Workflow.IWorkflowState): Workflow.WorkflowState;
+
+        /**
+         * Encodes the specified WorkflowState message. Does not implicitly {@link Workflow.WorkflowState.verify|verify} messages.
+         * @param message WorkflowState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowState message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowState;
+
+        /**
+         * Creates a WorkflowState message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowState
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowState;
+
+        /**
+         * Creates a plain object from a WorkflowState message. Also converts values to other types if specified.
+         * @param message WorkflowState
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowState to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowAccessRequest. */
+    interface IWorkflowAccessRequest {
+
+        /** WorkflowAccessRequest resource */
+        resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowAccessRequest reason */
+        reason?: (Uint8Array|null);
+
+        /** WorkflowAccessRequest ticket */
+        ticket?: (Uint8Array|null);
+    }
+
+    /** Represents a WorkflowAccessRequest. */
+    class WorkflowAccessRequest implements IWorkflowAccessRequest {
+
+        /**
+         * Constructs a new WorkflowAccessRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowAccessRequest);
+
+        /** WorkflowAccessRequest resource. */
+        public resource?: (GraphSync.IGraphSyncRef|null);
+
+        /** WorkflowAccessRequest reason. */
+        public reason: Uint8Array;
+
+        /** WorkflowAccessRequest ticket. */
+        public ticket: Uint8Array;
+
+        /**
+         * Creates a new WorkflowAccessRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowAccessRequest instance
+         */
+        public static create(properties?: Workflow.IWorkflowAccessRequest): Workflow.WorkflowAccessRequest;
+
+        /**
+         * Encodes the specified WorkflowAccessRequest message. Does not implicitly {@link Workflow.WorkflowAccessRequest.verify|verify} messages.
+         * @param message WorkflowAccessRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowAccessRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowAccessRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowAccessRequest;
+
+        /**
+         * Creates a WorkflowAccessRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowAccessRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowAccessRequest;
+
+        /**
+         * Creates a plain object from a WorkflowAccessRequest message. Also converts values to other types if specified.
+         * @param message WorkflowAccessRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowAccessRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowAccessRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a WorkflowApprovalOrDenial. */
+    interface IWorkflowApprovalOrDenial {
+
+        /** WorkflowApprovalOrDenial flowUid */
+        flowUid?: (Uint8Array|null);
+
+        /** WorkflowApprovalOrDenial deny */
+        deny?: (boolean|null);
+
+        /** WorkflowApprovalOrDenial denialReason */
+        denialReason?: (Uint8Array|null);
+    }
+
+    /** Represents a WorkflowApprovalOrDenial. */
+    class WorkflowApprovalOrDenial implements IWorkflowApprovalOrDenial {
+
+        /**
+         * Constructs a new WorkflowApprovalOrDenial.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IWorkflowApprovalOrDenial);
+
+        /** WorkflowApprovalOrDenial flowUid. */
+        public flowUid: Uint8Array;
+
+        /** WorkflowApprovalOrDenial deny. */
+        public deny: boolean;
+
+        /** WorkflowApprovalOrDenial denialReason. */
+        public denialReason: Uint8Array;
+
+        /**
+         * Creates a new WorkflowApprovalOrDenial instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WorkflowApprovalOrDenial instance
+         */
+        public static create(properties?: Workflow.IWorkflowApprovalOrDenial): Workflow.WorkflowApprovalOrDenial;
+
+        /**
+         * Encodes the specified WorkflowApprovalOrDenial message. Does not implicitly {@link Workflow.WorkflowApprovalOrDenial.verify|verify} messages.
+         * @param message WorkflowApprovalOrDenial message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IWorkflowApprovalOrDenial, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WorkflowApprovalOrDenial message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WorkflowApprovalOrDenial
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.WorkflowApprovalOrDenial;
+
+        /**
+         * Creates a WorkflowApprovalOrDenial message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WorkflowApprovalOrDenial
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.WorkflowApprovalOrDenial;
+
+        /**
+         * Creates a plain object from a WorkflowApprovalOrDenial message. Also converts values to other types if specified.
+         * @param message WorkflowApprovalOrDenial
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.WorkflowApprovalOrDenial, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WorkflowApprovalOrDenial to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkflowApprovalOrDenial
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a UserAccessState. */
+    interface IUserAccessState {
+
+        /** UserAccessState workflows */
+        workflows?: (Workflow.IWorkflowState[]|null);
+    }
+
+    /** Represents a UserAccessState. */
+    class UserAccessState implements IUserAccessState {
+
+        /**
+         * Constructs a new UserAccessState.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IUserAccessState);
+
+        /** UserAccessState workflows. */
+        public workflows: Workflow.IWorkflowState[];
+
+        /**
+         * Creates a new UserAccessState instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserAccessState instance
+         */
+        public static create(properties?: Workflow.IUserAccessState): Workflow.UserAccessState;
+
+        /**
+         * Encodes the specified UserAccessState message. Does not implicitly {@link Workflow.UserAccessState.verify|verify} messages.
+         * @param message UserAccessState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IUserAccessState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserAccessState message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserAccessState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.UserAccessState;
+
+        /**
+         * Creates a UserAccessState message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserAccessState
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.UserAccessState;
+
+        /**
+         * Creates a plain object from a UserAccessState message. Also converts values to other types if specified.
+         * @param message UserAccessState
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.UserAccessState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserAccessState to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for UserAccessState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an ApprovalRequests. */
+    interface IApprovalRequests {
+
+        /** ApprovalRequests workflows */
+        workflows?: (Workflow.IWorkflowProcess[]|null);
+    }
+
+    /** Represents an ApprovalRequests. */
+    class ApprovalRequests implements IApprovalRequests {
+
+        /**
+         * Constructs a new ApprovalRequests.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IApprovalRequests);
+
+        /** ApprovalRequests workflows. */
+        public workflows: Workflow.IWorkflowProcess[];
+
+        /**
+         * Creates a new ApprovalRequests instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApprovalRequests instance
+         */
+        public static create(properties?: Workflow.IApprovalRequests): Workflow.ApprovalRequests;
+
+        /**
+         * Encodes the specified ApprovalRequests message. Does not implicitly {@link Workflow.ApprovalRequests.verify|verify} messages.
+         * @param message ApprovalRequests message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IApprovalRequests, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApprovalRequests message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApprovalRequests
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.ApprovalRequests;
+
+        /**
+         * Creates an ApprovalRequests message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApprovalRequests
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.ApprovalRequests;
+
+        /**
+         * Creates a plain object from an ApprovalRequests message. Also converts values to other types if specified.
+         * @param message ApprovalRequests
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.ApprovalRequests, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApprovalRequests to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApprovalRequests
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TimeOfDayRange. */
+    interface ITimeOfDayRange {
+
+        /** TimeOfDayRange startTime */
+        startTime?: (number|null);
+
+        /** TimeOfDayRange endTime */
+        endTime?: (number|null);
+    }
+
+    /** Represents a TimeOfDayRange. */
+    class TimeOfDayRange implements ITimeOfDayRange {
+
+        /**
+         * Constructs a new TimeOfDayRange.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.ITimeOfDayRange);
+
+        /** TimeOfDayRange startTime. */
+        public startTime: number;
+
+        /** TimeOfDayRange endTime. */
+        public endTime: number;
+
+        /**
+         * Creates a new TimeOfDayRange instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TimeOfDayRange instance
+         */
+        public static create(properties?: Workflow.ITimeOfDayRange): Workflow.TimeOfDayRange;
+
+        /**
+         * Encodes the specified TimeOfDayRange message. Does not implicitly {@link Workflow.TimeOfDayRange.verify|verify} messages.
+         * @param message TimeOfDayRange message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.ITimeOfDayRange, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TimeOfDayRange message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TimeOfDayRange
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.TimeOfDayRange;
+
+        /**
+         * Creates a TimeOfDayRange message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TimeOfDayRange
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.TimeOfDayRange;
+
+        /**
+         * Creates a plain object from a TimeOfDayRange message. Also converts values to other types if specified.
+         * @param message TimeOfDayRange
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.TimeOfDayRange, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TimeOfDayRange to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TimeOfDayRange
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** DayOfWeek enum. */
+    enum DayOfWeek {
+        DAY_OF_WEEK_UNSPECIFIED = 0,
+        MONDAY = 1,
+        TUESDAY = 2,
+        WEDNESDAY = 3,
+        THURSDAY = 4,
+        FRIDAY = 5,
+        SATURDAY = 6,
+        SUNDAY = 7
+    }
+
+    /** ApprovalQueueKind enum. */
+    enum ApprovalQueueKind {
+        AQK_APPROVAL = 0,
+        AQK_ESCALATION = 1
+    }
+
+    /** Properties of an ApprovalQueueEntry. */
+    interface IApprovalQueueEntry {
+
+        /** ApprovalQueueEntry flowRef */
+        flowRef?: (GraphSync.IGraphSyncRef|null);
+
+        /** ApprovalQueueEntry approverRef */
+        approverRef?: (GraphSync.IGraphSyncRef|null);
+
+        /** ApprovalQueueEntry kind */
+        kind?: (Workflow.ApprovalQueueKind|null);
+
+        /** ApprovalQueueEntry notifyAtMs */
+        notifyAtMs?: (number|null);
+
+        /** ApprovalQueueEntry requesterUserId */
+        requesterUserId?: (number|null);
+
+        /** ApprovalQueueEntry predefinedNotificationUid */
+        predefinedNotificationUid?: (Uint8Array|null);
+    }
+
+    /** Represents an ApprovalQueueEntry. */
+    class ApprovalQueueEntry implements IApprovalQueueEntry {
+
+        /**
+         * Constructs a new ApprovalQueueEntry.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IApprovalQueueEntry);
+
+        /** ApprovalQueueEntry flowRef. */
+        public flowRef?: (GraphSync.IGraphSyncRef|null);
+
+        /** ApprovalQueueEntry approverRef. */
+        public approverRef?: (GraphSync.IGraphSyncRef|null);
+
+        /** ApprovalQueueEntry kind. */
+        public kind: Workflow.ApprovalQueueKind;
+
+        /** ApprovalQueueEntry notifyAtMs. */
+        public notifyAtMs: number;
+
+        /** ApprovalQueueEntry requesterUserId. */
+        public requesterUserId?: (number|null);
+
+        /** ApprovalQueueEntry predefinedNotificationUid. */
+        public predefinedNotificationUid?: (Uint8Array|null);
+
+        /**
+         * Creates a new ApprovalQueueEntry instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ApprovalQueueEntry instance
+         */
+        public static create(properties?: Workflow.IApprovalQueueEntry): Workflow.ApprovalQueueEntry;
+
+        /**
+         * Encodes the specified ApprovalQueueEntry message. Does not implicitly {@link Workflow.ApprovalQueueEntry.verify|verify} messages.
+         * @param message ApprovalQueueEntry message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IApprovalQueueEntry, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ApprovalQueueEntry message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ApprovalQueueEntry
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.ApprovalQueueEntry;
+
+        /**
+         * Creates an ApprovalQueueEntry message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ApprovalQueueEntry
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.ApprovalQueueEntry;
+
+        /**
+         * Creates a plain object from an ApprovalQueueEntry message. Also converts values to other types if specified.
+         * @param message ApprovalQueueEntry
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.ApprovalQueueEntry, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ApprovalQueueEntry to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ApprovalQueueEntry
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a TemporalAccessFilter. */
+    interface ITemporalAccessFilter {
+
+        /** TemporalAccessFilter timeRanges */
+        timeRanges?: (Workflow.ITimeOfDayRange[]|null);
+
+        /** TemporalAccessFilter allowedDays */
+        allowedDays?: (Workflow.DayOfWeek[]|null);
+
+        /** TemporalAccessFilter timeZone */
+        timeZone?: (string|null);
+    }
+
+    /** Represents a TemporalAccessFilter. */
+    class TemporalAccessFilter implements ITemporalAccessFilter {
+
+        /**
+         * Constructs a new TemporalAccessFilter.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.ITemporalAccessFilter);
+
+        /** TemporalAccessFilter timeRanges. */
+        public timeRanges: Workflow.ITimeOfDayRange[];
+
+        /** TemporalAccessFilter allowedDays. */
+        public allowedDays: Workflow.DayOfWeek[];
+
+        /** TemporalAccessFilter timeZone. */
+        public timeZone: string;
+
+        /**
+         * Creates a new TemporalAccessFilter instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns TemporalAccessFilter instance
+         */
+        public static create(properties?: Workflow.ITemporalAccessFilter): Workflow.TemporalAccessFilter;
+
+        /**
+         * Encodes the specified TemporalAccessFilter message. Does not implicitly {@link Workflow.TemporalAccessFilter.verify|verify} messages.
+         * @param message TemporalAccessFilter message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.ITemporalAccessFilter, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a TemporalAccessFilter message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns TemporalAccessFilter
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.TemporalAccessFilter;
+
+        /**
+         * Creates a TemporalAccessFilter message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns TemporalAccessFilter
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.TemporalAccessFilter;
+
+        /**
+         * Creates a plain object from a TemporalAccessFilter message. Also converts values to other types if specified.
+         * @param message TemporalAccessFilter
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.TemporalAccessFilter, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this TemporalAccessFilter to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TemporalAccessFilter
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AuthorizedUsers. */
+    interface IAuthorizedUsers {
+
+        /** AuthorizedUsers username */
+        username?: (string[]|null);
+    }
+
+    /** Represents an AuthorizedUsers. */
+    class AuthorizedUsers implements IAuthorizedUsers {
+
+        /**
+         * Constructs a new AuthorizedUsers.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Workflow.IAuthorizedUsers);
+
+        /** AuthorizedUsers username. */
+        public username: string[];
+
+        /**
+         * Creates a new AuthorizedUsers instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AuthorizedUsers instance
+         */
+        public static create(properties?: Workflow.IAuthorizedUsers): Workflow.AuthorizedUsers;
+
+        /**
+         * Encodes the specified AuthorizedUsers message. Does not implicitly {@link Workflow.AuthorizedUsers.verify|verify} messages.
+         * @param message AuthorizedUsers message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Workflow.IAuthorizedUsers, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AuthorizedUsers message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AuthorizedUsers
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Workflow.AuthorizedUsers;
+
+        /**
+         * Creates an AuthorizedUsers message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AuthorizedUsers
+         */
+        public static fromObject(object: { [k: string]: any }): Workflow.AuthorizedUsers;
+
+        /**
+         * Creates a plain object from an AuthorizedUsers message. Also converts values to other types if specified.
+         * @param message AuthorizedUsers
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Workflow.AuthorizedUsers, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AuthorizedUsers to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuthorizedUsers
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}

@@ -23,3 +23,4 @@ export { google } from './google.js';
 export { Router } from './Router.js';
 export { PAM } from './PAM.js';
 export { folder } from './Remove.js';
+export { Workflow } from './Workflow.js';

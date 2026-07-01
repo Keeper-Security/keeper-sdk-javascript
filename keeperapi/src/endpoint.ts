@@ -193,7 +193,13 @@ export class KeeperEndpoint {
     async executeRouterRest<TIn, TOut>(
         message: RestMessage<TIn, TOut> | RestOutMessage<TOut>,
         sessionToken: string
-    ): Promise<TOut> {
+    ): Promise<TOut>
+    async executeRouterRest<TIn>(message: RestInMessage<TIn>, sessionToken: string): Promise<void>
+    async executeRouterRest<TOut>(message: RestOutMessage<TOut>, sessionToken: string): Promise<TOut>
+    async executeRouterRest<TIn, TOut>(
+        message: RestMessage<TIn, TOut> | RestOutMessage<TOut> | RestInMessage<TIn>,
+        sessionToken: string
+    ): Promise<TOut | void> {
         const transmissionKey = await this.getTransmissionKey()
         const sessionTokenBytes = normal64Bytes(sessionToken)
         const encryptedSessionToken = await platform.aesGcmEncrypt(sessionTokenBytes, transmissionKey.key)
@@ -211,7 +217,8 @@ export class KeeperEndpoint {
         const startTime = Date.now()
         const response = await platform.post(url, encryptedPayload, headers)
         if (!response.data || response.data.length === 0) {
-            throw new Error(`Empty response from router for ${message.path}`)
+            if ('fromBytes' in message) throw new Error(`Empty response from router for ${message.path}`)
+            return
         }
         if (response.statusCode !== 200) {
             logger.debug(`← ${requestId} Response code:`, response.statusCode)
@@ -233,6 +240,7 @@ export class KeeperEndpoint {
             } as KeeperError
         }
         const decryptedPayload = await platform.aesGcmDecrypt(routerResponse.encryptedPayload, transmissionKey.key)
+        if (!('fromBytes' in message)) return
         const result = message.fromBytes(decryptedPayload)
         if (isLevelEnabled('debug')) {
             logger.debug(...formatProto(`← ${requestId} ${formatTimeDiff(new Date(Date.now() - startTime))}s`, result))

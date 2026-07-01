@@ -4943,5 +4943,3 @@ export const folder = $root.folder = (() => {
 
     return folder;
 })();
-
-export { $root as default };
