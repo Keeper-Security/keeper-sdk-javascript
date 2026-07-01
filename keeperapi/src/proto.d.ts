@@ -60051,6 +60051,2214 @@ export namespace ExternalService {
     }
 }
 
+/** Namespace folder. */
+export namespace folder {
+
+    /** Namespace v3. */
+    namespace v3 {
+
+        /** RPC service for folder operations. */
+        class FolderService extends $protobuf.rpc.Service {
+
+            /**
+             * Constructs a new FolderService service.
+             * @param rpcImpl RPC implementation
+             * @param [requestDelimited=false] Whether requests are length-delimited
+             * @param [responseDelimited=false] Whether responses are length-delimited
+             */
+            constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+            /**
+             * Creates new FolderService service using the specified rpc implementation.
+             * @param rpcImpl RPC implementation
+             * @param [requestDelimited=false] Whether requests are length-delimited
+             * @param [responseDelimited=false] Whether responses are length-delimited
+             * @returns RPC service. Useful where requests and/or responses are streamed.
+             */
+            public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): FolderService;
+
+            /**
+             * Retrieve users and teams with access to specified folders.
+             * Requires can_change_user_permissions permission or Share Admin/MC Admin privileges.
+             * @param request GetFolderAccessRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and GetFolderAccessResponse
+             */
+            public getFolderAccess(request: folder.v3.IGetFolderAccessRequest, callback: folder.v3.FolderService.GetFolderAccessCallback): void;
+
+            /**
+             * Retrieve users and teams with access to specified folders.
+             * Requires can_change_user_permissions permission or Share Admin/MC Admin privileges.
+             * @param request GetFolderAccessRequest message or plain object
+             * @returns Promise
+             */
+            public getFolderAccess(request: folder.v3.IGetFolderAccessRequest): Promise<folder.v3.GetFolderAccessResponse>;
+        }
+
+        namespace FolderService {
+
+            /**
+             * Callback as used by {@link folder.v3.FolderService#getFolderAccess}.
+             * @param error Error, if any
+             * @param [response] GetFolderAccessResponse
+             */
+            type GetFolderAccessCallback = (error: (Error|null), response?: folder.v3.GetFolderAccessResponse) => void;
+        }
+
+        /** Properties of a GetFolderAccessRequest. */
+        interface IGetFolderAccessRequest {
+
+            /** List of folder UIDs to query (max: 100) */
+            folderUid?: (Uint8Array[]|null);
+
+            /**
+             * Continuation token for pagination.
+             * Contains the last_modified timestamp from the previous page.
+             * Omit for the first page.
+             */
+            continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /**
+             * Maximum number of accessors to return per page.
+             * Default: 100, Max: 1000
+             */
+            pageSize?: (number|null);
+        }
+
+        /**
+         * Request to retrieve folder accessors (users and teams with access to folders).
+         * Supports cursor-based pagination using last_modified timestamps.
+         */
+        class GetFolderAccessRequest implements IGetFolderAccessRequest {
+
+            /**
+             * Constructs a new GetFolderAccessRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IGetFolderAccessRequest);
+
+            /** List of folder UIDs to query (max: 100) */
+            public folderUid: Uint8Array[];
+
+            /**
+             * Continuation token for pagination.
+             * Contains the last_modified timestamp from the previous page.
+             * Omit for the first page.
+             */
+            public continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /**
+             * Maximum number of accessors to return per page.
+             * Default: 100, Max: 1000
+             */
+            public pageSize?: (number|null);
+
+            /**
+             * Creates a new GetFolderAccessRequest instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GetFolderAccessRequest instance
+             */
+            public static create(properties?: folder.v3.IGetFolderAccessRequest): folder.v3.GetFolderAccessRequest;
+
+            /**
+             * Encodes the specified GetFolderAccessRequest message. Does not implicitly {@link folder.v3.GetFolderAccessRequest.verify|verify} messages.
+             * @param message GetFolderAccessRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IGetFolderAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GetFolderAccessRequest message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GetFolderAccessRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.GetFolderAccessRequest;
+
+            /**
+             * Creates a GetFolderAccessRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetFolderAccessRequest
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.GetFolderAccessRequest;
+
+            /**
+             * Creates a plain object from a GetFolderAccessRequest message. Also converts values to other types if specified.
+             * @param message GetFolderAccessRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.GetFolderAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetFolderAccessRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GetFolderAccessRequest
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GetFolderAccessResponse. */
+        interface IGetFolderAccessResponse {
+
+            /** Per-folder results (either success with accessors or error) */
+            folderAccessResults?: (folder.v3.IGetFolderAccessResult[]|null);
+
+            /** Continuation token for the next page (only present if hasMore is true) */
+            continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /** True if more results exist beyond this page */
+            hasMore?: (boolean|null);
+        }
+
+        /** Response containing folder accessors with pagination support. */
+        class GetFolderAccessResponse implements IGetFolderAccessResponse {
+
+            /**
+             * Constructs a new GetFolderAccessResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IGetFolderAccessResponse);
+
+            /** Per-folder results (either success with accessors or error) */
+            public folderAccessResults: folder.v3.IGetFolderAccessResult[];
+
+            /** Continuation token for the next page (only present if hasMore is true) */
+            public continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /** True if more results exist beyond this page */
+            public hasMore: boolean;
+
+            /**
+             * Creates a new GetFolderAccessResponse instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GetFolderAccessResponse instance
+             */
+            public static create(properties?: folder.v3.IGetFolderAccessResponse): folder.v3.GetFolderAccessResponse;
+
+            /**
+             * Encodes the specified GetFolderAccessResponse message. Does not implicitly {@link folder.v3.GetFolderAccessResponse.verify|verify} messages.
+             * @param message GetFolderAccessResponse message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IGetFolderAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GetFolderAccessResponse message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GetFolderAccessResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.GetFolderAccessResponse;
+
+            /**
+             * Creates a GetFolderAccessResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetFolderAccessResponse
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.GetFolderAccessResponse;
+
+            /**
+             * Creates a plain object from a GetFolderAccessResponse message. Also converts values to other types if specified.
+             * @param message GetFolderAccessResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.GetFolderAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetFolderAccessResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GetFolderAccessResponse
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a ContinuationToken. */
+        interface IContinuationToken {
+
+            /** Unix timestamp in milliseconds of the last processed accessor */
+            lastModified?: (number|null);
+        }
+
+        /**
+         * Cursor for cursor-based pagination.
+         * Contains the timestamp of the last processed item.
+         */
+        class ContinuationToken implements IContinuationToken {
+
+            /**
+             * Constructs a new ContinuationToken.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IContinuationToken);
+
+            /** Unix timestamp in milliseconds of the last processed accessor */
+            public lastModified: number;
+
+            /**
+             * Creates a new ContinuationToken instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ContinuationToken instance
+             */
+            public static create(properties?: folder.v3.IContinuationToken): folder.v3.ContinuationToken;
+
+            /**
+             * Encodes the specified ContinuationToken message. Does not implicitly {@link folder.v3.ContinuationToken.verify|verify} messages.
+             * @param message ContinuationToken message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IContinuationToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ContinuationToken message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ContinuationToken
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.ContinuationToken;
+
+            /**
+             * Creates a ContinuationToken message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ContinuationToken
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.ContinuationToken;
+
+            /**
+             * Creates a plain object from a ContinuationToken message. Also converts values to other types if specified.
+             * @param message ContinuationToken
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.ContinuationToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ContinuationToken to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ContinuationToken
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GetFolderAccessResult. */
+        interface IGetFolderAccessResult {
+
+            /** Folder UID this result applies to */
+            folderUid?: (Uint8Array|null);
+
+            /** List of users/teams with access to this folder (populated on success) */
+            accessors?: (Folder.IFolderAccessData[]|null);
+
+            /** Error information (populated on failure, mutually exclusive with accessors) */
+            error?: (folder.v3.IFolderAccessError|null);
+        }
+
+        /**
+         * Result for a single folder.
+         * Contains either a list of accessors (success) or an error (failure).
+         */
+        class GetFolderAccessResult implements IGetFolderAccessResult {
+
+            /**
+             * Constructs a new GetFolderAccessResult.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IGetFolderAccessResult);
+
+            /** Folder UID this result applies to */
+            public folderUid: Uint8Array;
+
+            /** List of users/teams with access to this folder (populated on success) */
+            public accessors: Folder.IFolderAccessData[];
+
+            /** Error information (populated on failure, mutually exclusive with accessors) */
+            public error?: (folder.v3.IFolderAccessError|null);
+
+            /**
+             * Creates a new GetFolderAccessResult instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GetFolderAccessResult instance
+             */
+            public static create(properties?: folder.v3.IGetFolderAccessResult): folder.v3.GetFolderAccessResult;
+
+            /**
+             * Encodes the specified GetFolderAccessResult message. Does not implicitly {@link folder.v3.GetFolderAccessResult.verify|verify} messages.
+             * @param message GetFolderAccessResult message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IGetFolderAccessResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GetFolderAccessResult message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GetFolderAccessResult
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.GetFolderAccessResult;
+
+            /**
+             * Creates a GetFolderAccessResult message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetFolderAccessResult
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.GetFolderAccessResult;
+
+            /**
+             * Creates a plain object from a GetFolderAccessResult message. Also converts values to other types if specified.
+             * @param message GetFolderAccessResult
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.GetFolderAccessResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetFolderAccessResult to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GetFolderAccessResult
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a FolderAccessError. */
+        interface IFolderAccessError {
+
+            /** Status code (e.g., NOT_FOUND, ACCESS_DENIED) */
+            status?: (Folder.FolderModifyStatus|null);
+
+            /** Human-readable error message */
+            message?: (string|null);
+        }
+
+        /** Error information for a folder that couldn't be processed. */
+        class FolderAccessError implements IFolderAccessError {
+
+            /**
+             * Constructs a new FolderAccessError.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IFolderAccessError);
+
+            /** Status code (e.g., NOT_FOUND, ACCESS_DENIED) */
+            public status: Folder.FolderModifyStatus;
+
+            /** Human-readable error message */
+            public message: string;
+
+            /**
+             * Creates a new FolderAccessError instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns FolderAccessError instance
+             */
+            public static create(properties?: folder.v3.IFolderAccessError): folder.v3.FolderAccessError;
+
+            /**
+             * Encodes the specified FolderAccessError message. Does not implicitly {@link folder.v3.FolderAccessError.verify|verify} messages.
+             * @param message FolderAccessError message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IFolderAccessError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a FolderAccessError message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns FolderAccessError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.FolderAccessError;
+
+            /**
+             * Creates a FolderAccessError message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns FolderAccessError
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.FolderAccessError;
+
+            /**
+             * Creates a plain object from a FolderAccessError message. Also converts values to other types if specified.
+             * @param message FolderAccessError
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.FolderAccessError, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this FolderAccessError to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FolderAccessError
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Namespace remove. */
+        namespace remove {
+
+            /** Represents a RemoveService */
+            class RemoveService extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new RemoveService service.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 */
+                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+                /**
+                 * Creates new RemoveService service using the specified rpc implementation.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 * @returns RPC service. Useful where requests and/or responses are streamed.
+                 */
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): RemoveService;
+
+                /**
+                 * Preview or execute record removal from folders.
+                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
+                 * CONFIRM: Validates token and executes the removal operation.
+                 * @param request RemoveRecordRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RemoveResponse
+                 */
+                public removeRecord(request: folder.v3.remove.IRemoveRecordRequest, callback: folder.v3.remove.RemoveService.RemoveRecordCallback): void;
+
+                /**
+                 * Preview or execute record removal from folders.
+                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
+                 * CONFIRM: Validates token and executes the removal operation.
+                 * @param request RemoveRecordRequest message or plain object
+                 * @returns Promise
+                 */
+                public removeRecord(request: folder.v3.remove.IRemoveRecordRequest): Promise<folder.v3.remove.RemoveResponse>;
+
+                /**
+                 * Preview or execute folder deletion.
+                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
+                 * CONFIRM: Validates token and executes the deletion operation.
+                 * @param request RemoveFolderRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RemoveResponse
+                 */
+                public removeFolder(request: folder.v3.remove.IRemoveFolderRequest, callback: folder.v3.remove.RemoveService.RemoveFolderCallback): void;
+
+                /**
+                 * Preview or execute folder deletion.
+                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
+                 * CONFIRM: Validates token and executes the deletion operation.
+                 * @param request RemoveFolderRequest message or plain object
+                 * @returns Promise
+                 */
+                public removeFolder(request: folder.v3.remove.IRemoveFolderRequest): Promise<folder.v3.remove.RemoveResponse>;
+
+                /**
+                 * Restore records and/or folders from the caller's trashcan into a target folder (KA-8144).
+                 * Each input item is validated independently; failures are reported per-item via
+                 * TrashcanRestoreResponse.results — a failed item does not poison the batch.
+                 * @param request TrashcanRestoreRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and TrashcanRestoreResponse
+                 */
+                public trashcanRestore(request: folder.v3.remove.ITrashcanRestoreRequest, callback: folder.v3.remove.RemoveService.TrashcanRestoreCallback): void;
+
+                /**
+                 * Restore records and/or folders from the caller's trashcan into a target folder (KA-8144).
+                 * Each input item is validated independently; failures are reported per-item via
+                 * TrashcanRestoreResponse.results — a failed item does not poison the batch.
+                 * @param request TrashcanRestoreRequest message or plain object
+                 * @returns Promise
+                 */
+                public trashcanRestore(request: folder.v3.remove.ITrashcanRestoreRequest): Promise<folder.v3.remove.TrashcanRestoreResponse>;
+            }
+
+            namespace RemoveService {
+
+                /**
+                 * Callback as used by {@link folder.v3.remove.RemoveService#removeRecord}.
+                 * @param error Error, if any
+                 * @param [response] RemoveResponse
+                 */
+                type RemoveRecordCallback = (error: (Error|null), response?: folder.v3.remove.RemoveResponse) => void;
+
+                /**
+                 * Callback as used by {@link folder.v3.remove.RemoveService#removeFolder}.
+                 * @param error Error, if any
+                 * @param [response] RemoveResponse
+                 */
+                type RemoveFolderCallback = (error: (Error|null), response?: folder.v3.remove.RemoveResponse) => void;
+
+                /**
+                 * Callback as used by {@link folder.v3.remove.RemoveService#trashcanRestore}.
+                 * @param error Error, if any
+                 * @param [response] TrashcanRestoreResponse
+                 */
+                type TrashcanRestoreCallback = (error: (Error|null), response?: folder.v3.remove.TrashcanRestoreResponse) => void;
+            }
+
+            /** RemoveAction enum. */
+            enum RemoveAction {
+                REMOVE_ACTION_PREVIEW = 0,
+                REMOVE_ACTION_CONFIRM = 1
+            }
+
+            /** RecordOperationType enum. */
+            enum RecordOperationType {
+                RECORD_OPERATION_UNKNOWN = 0,
+                UNLINK_FROM_FOLDER = 1,
+                MOVE_TO_FOLDER_TRASH = 2,
+                MOVE_TO_OWNER_TRASH = 3
+            }
+
+            /** FolderOperationType enum. */
+            enum FolderOperationType {
+                FOLDER_OPERATION_UNKNOWN = 0,
+                FOLDER_MOVE_TO_FOLDER_TRASH = 1,
+                FOLDER_MOVE_TO_OWNER_TRASH = 2,
+                FOLDER_DELETE_PERMANENT = 3
+            }
+
+            /** RemoveErrorCode enum. */
+            enum RemoveErrorCode {
+                REMOVE_ERROR_UNKNOWN = 0,
+                REMOVE_ERROR_NOT_FOUND = 1,
+                REMOVE_ERROR_ACCESS_DENIED = 2,
+                REMOVE_ERROR_TRASHCAN_FOLDER = 3,
+                REMOVE_ERROR_ROOT_FOLDER = 4,
+                REMOVE_ERROR_DESCENDANT_DENIED = 5
+            }
+
+            /** RemoveStatus enum. */
+            enum RemoveStatus {
+                REMOVE_STATUS_UNKNOWN = 0,
+                REMOVE_STATUS_SUCCESS = 1,
+                REMOVE_STATUS_STALE_PREVIEW = 2,
+                REMOVE_STATUS_TOKEN_EXPIRED = 3,
+                REMOVE_STATUS_TOKEN_INVALID = 4,
+                REMOVE_STATUS_ACCESS_DENIED = 5,
+                REMOVE_STATUS_VALIDATION_ERROR = 6
+            }
+
+            /** Properties of a RecordRemoval. */
+            interface IRecordRemoval {
+
+                /** RecordRemoval folderUid */
+                folderUid?: (Uint8Array|null);
+
+                /** RecordRemoval recordUid */
+                recordUid?: (Uint8Array|null);
+
+                /** RecordRemoval operationType */
+                operationType?: (folder.v3.remove.RecordOperationType|null);
+            }
+
+            /** Represents a RecordRemoval. */
+            class RecordRemoval implements IRecordRemoval {
+
+                /**
+                 * Constructs a new RecordRemoval.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRecordRemoval);
+
+                /** RecordRemoval folderUid. */
+                public folderUid: Uint8Array;
+
+                /** RecordRemoval recordUid. */
+                public recordUid: Uint8Array;
+
+                /** RecordRemoval operationType. */
+                public operationType: folder.v3.remove.RecordOperationType;
+
+                /**
+                 * Creates a new RecordRemoval instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordRemoval instance
+                 */
+                public static create(properties?: folder.v3.remove.IRecordRemoval): folder.v3.remove.RecordRemoval;
+
+                /**
+                 * Encodes the specified RecordRemoval message. Does not implicitly {@link folder.v3.remove.RecordRemoval.verify|verify} messages.
+                 * @param message RecordRemoval message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRecordRemoval, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordRemoval message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordRemoval
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RecordRemoval;
+
+                /**
+                 * Creates a RecordRemoval message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordRemoval
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RecordRemoval;
+
+                /**
+                 * Creates a plain object from a RecordRemoval message. Also converts values to other types if specified.
+                 * @param message RecordRemoval
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RecordRemoval, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordRemoval to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordRemoval
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a FolderRemoval. */
+            interface IFolderRemoval {
+
+                /** FolderRemoval folderUid */
+                folderUid?: (Uint8Array|null);
+
+                /** FolderRemoval operationType */
+                operationType?: (folder.v3.remove.FolderOperationType|null);
+            }
+
+            /** Represents a FolderRemoval. */
+            class FolderRemoval implements IFolderRemoval {
+
+                /**
+                 * Constructs a new FolderRemoval.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IFolderRemoval);
+
+                /** FolderRemoval folderUid. */
+                public folderUid: Uint8Array;
+
+                /** FolderRemoval operationType. */
+                public operationType: folder.v3.remove.FolderOperationType;
+
+                /**
+                 * Creates a new FolderRemoval instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns FolderRemoval instance
+                 */
+                public static create(properties?: folder.v3.remove.IFolderRemoval): folder.v3.remove.FolderRemoval;
+
+                /**
+                 * Encodes the specified FolderRemoval message. Does not implicitly {@link folder.v3.remove.FolderRemoval.verify|verify} messages.
+                 * @param message FolderRemoval message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IFolderRemoval, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a FolderRemoval message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns FolderRemoval
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.FolderRemoval;
+
+                /**
+                 * Creates a FolderRemoval message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns FolderRemoval
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.FolderRemoval;
+
+                /**
+                 * Creates a plain object from a FolderRemoval message. Also converts values to other types if specified.
+                 * @param message FolderRemoval
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.FolderRemoval, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this FolderRemoval to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for FolderRemoval
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RemoveRecordRequest. */
+            interface IRemoveRecordRequest {
+
+                /** RemoveRecordRequest action */
+                action?: (folder.v3.remove.RemoveAction|null);
+
+                /** RemoveRecordRequest records */
+                records?: (folder.v3.remove.IRecordRemoval[]|null);
+
+                /** RemoveRecordRequest confirmationToken */
+                confirmationToken?: (Uint8Array|null);
+            }
+
+            /** Represents a RemoveRecordRequest. */
+            class RemoveRecordRequest implements IRemoveRecordRequest {
+
+                /**
+                 * Constructs a new RemoveRecordRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRemoveRecordRequest);
+
+                /** RemoveRecordRequest action. */
+                public action: folder.v3.remove.RemoveAction;
+
+                /** RemoveRecordRequest records. */
+                public records: folder.v3.remove.IRecordRemoval[];
+
+                /** RemoveRecordRequest confirmationToken. */
+                public confirmationToken: Uint8Array;
+
+                /**
+                 * Creates a new RemoveRecordRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RemoveRecordRequest instance
+                 */
+                public static create(properties?: folder.v3.remove.IRemoveRecordRequest): folder.v3.remove.RemoveRecordRequest;
+
+                /**
+                 * Encodes the specified RemoveRecordRequest message. Does not implicitly {@link folder.v3.remove.RemoveRecordRequest.verify|verify} messages.
+                 * @param message RemoveRecordRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRemoveRecordRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RemoveRecordRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RemoveRecordRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveRecordRequest;
+
+                /**
+                 * Creates a RemoveRecordRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RemoveRecordRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveRecordRequest;
+
+                /**
+                 * Creates a plain object from a RemoveRecordRequest message. Also converts values to other types if specified.
+                 * @param message RemoveRecordRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RemoveRecordRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RemoveRecordRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RemoveRecordRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RemoveFolderRequest. */
+            interface IRemoveFolderRequest {
+
+                /** RemoveFolderRequest action */
+                action?: (folder.v3.remove.RemoveAction|null);
+
+                /** RemoveFolderRequest folders */
+                folders?: (folder.v3.remove.IFolderRemoval[]|null);
+
+                /** RemoveFolderRequest confirmationToken */
+                confirmationToken?: (Uint8Array|null);
+            }
+
+            /** Represents a RemoveFolderRequest. */
+            class RemoveFolderRequest implements IRemoveFolderRequest {
+
+                /**
+                 * Constructs a new RemoveFolderRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRemoveFolderRequest);
+
+                /** RemoveFolderRequest action. */
+                public action: folder.v3.remove.RemoveAction;
+
+                /** RemoveFolderRequest folders. */
+                public folders: folder.v3.remove.IFolderRemoval[];
+
+                /** RemoveFolderRequest confirmationToken. */
+                public confirmationToken: Uint8Array;
+
+                /**
+                 * Creates a new RemoveFolderRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RemoveFolderRequest instance
+                 */
+                public static create(properties?: folder.v3.remove.IRemoveFolderRequest): folder.v3.remove.RemoveFolderRequest;
+
+                /**
+                 * Encodes the specified RemoveFolderRequest message. Does not implicitly {@link folder.v3.remove.RemoveFolderRequest.verify|verify} messages.
+                 * @param message RemoveFolderRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRemoveFolderRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RemoveFolderRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RemoveFolderRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveFolderRequest;
+
+                /**
+                 * Creates a RemoveFolderRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RemoveFolderRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveFolderRequest;
+
+                /**
+                 * Creates a plain object from a RemoveFolderRequest message. Also converts values to other types if specified.
+                 * @param message RemoveFolderRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RemoveFolderRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RemoveFolderRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RemoveFolderRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RemoveResponse. */
+            interface IRemoveResponse {
+
+                /** RemoveResponse confirmationToken */
+                confirmationToken?: (Uint8Array|null);
+
+                /** RemoveResponse tokenExpiresAt */
+                tokenExpiresAt?: (number|null);
+
+                /** RemoveResponse results */
+                results?: (folder.v3.remove.IRemoveResult[]|null);
+
+                /** RemoveResponse errorMessage */
+                errorMessage?: (string|null);
+            }
+
+            /**
+             * Response for remove operations (both record and folder).
+             *
+             * For PREVIEW: Contains confirmation_token and per-item results with impact.
+             * For CONFIRM: Contains per-item results with execution status.
+             */
+            class RemoveResponse implements IRemoveResponse {
+
+                /**
+                 * Constructs a new RemoveResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRemoveResponse);
+
+                /** RemoveResponse confirmationToken. */
+                public confirmationToken: Uint8Array;
+
+                /** RemoveResponse tokenExpiresAt. */
+                public tokenExpiresAt: number;
+
+                /** RemoveResponse results. */
+                public results: folder.v3.remove.IRemoveResult[];
+
+                /** RemoveResponse errorMessage. */
+                public errorMessage: string;
+
+                /**
+                 * Creates a new RemoveResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RemoveResponse instance
+                 */
+                public static create(properties?: folder.v3.remove.IRemoveResponse): folder.v3.remove.RemoveResponse;
+
+                /**
+                 * Encodes the specified RemoveResponse message. Does not implicitly {@link folder.v3.remove.RemoveResponse.verify|verify} messages.
+                 * @param message RemoveResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRemoveResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RemoveResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RemoveResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveResponse;
+
+                /**
+                 * Creates a RemoveResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RemoveResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveResponse;
+
+                /**
+                 * Creates a plain object from a RemoveResponse message. Also converts values to other types if specified.
+                 * @param message RemoveResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RemoveResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RemoveResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RemoveResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RemoveResult. */
+            interface IRemoveResult {
+
+                /** RemoveResult itemUid */
+                itemUid?: (Uint8Array|null);
+
+                /** RemoveResult folderUid */
+                folderUid?: (Uint8Array|null);
+
+                /** RemoveResult status */
+                status?: (folder.v3.remove.RemoveStatus|null);
+
+                /** RemoveResult impact */
+                impact?: (folder.v3.remove.IImpact|null);
+
+                /** RemoveResult error */
+                error?: (folder.v3.remove.IItemError|null);
+            }
+
+            /** Per-item result for a single record or folder. */
+            class RemoveResult implements IRemoveResult {
+
+                /**
+                 * Constructs a new RemoveResult.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRemoveResult);
+
+                /** RemoveResult itemUid. */
+                public itemUid: Uint8Array;
+
+                /** RemoveResult folderUid. */
+                public folderUid: Uint8Array;
+
+                /** RemoveResult status. */
+                public status: folder.v3.remove.RemoveStatus;
+
+                /** RemoveResult impact. */
+                public impact?: (folder.v3.remove.IImpact|null);
+
+                /** RemoveResult error. */
+                public error?: (folder.v3.remove.IItemError|null);
+
+                /**
+                 * Creates a new RemoveResult instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RemoveResult instance
+                 */
+                public static create(properties?: folder.v3.remove.IRemoveResult): folder.v3.remove.RemoveResult;
+
+                /**
+                 * Encodes the specified RemoveResult message. Does not implicitly {@link folder.v3.remove.RemoveResult.verify|verify} messages.
+                 * @param message RemoveResult message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRemoveResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RemoveResult message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RemoveResult
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveResult;
+
+                /**
+                 * Creates a RemoveResult message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RemoveResult
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveResult;
+
+                /**
+                 * Creates a plain object from a RemoveResult message. Also converts values to other types if specified.
+                 * @param message RemoveResult
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RemoveResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RemoveResult to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RemoveResult
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an Impact. */
+            interface IImpact {
+
+                /** Impact foldersCount */
+                foldersCount?: (number|null);
+
+                /** Impact recordsCount */
+                recordsCount?: (number|null);
+
+                /** Impact affectedUsersCount */
+                affectedUsersCount?: (number|null);
+
+                /** Impact affectedTeamsCount */
+                affectedTeamsCount?: (number|null);
+
+                /** Impact recordInfo */
+                recordInfo?: (folder.v3.remove.IRecordInfo[]|null);
+
+                /** Impact warnings */
+                warnings?: (string[]|null);
+            }
+
+            /** Impact metrics for a single item (record or folder tree). */
+            class Impact implements IImpact {
+
+                /**
+                 * Constructs a new Impact.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IImpact);
+
+                /** Impact foldersCount. */
+                public foldersCount: number;
+
+                /** Impact recordsCount. */
+                public recordsCount: number;
+
+                /** Impact affectedUsersCount. */
+                public affectedUsersCount: number;
+
+                /** Impact affectedTeamsCount. */
+                public affectedTeamsCount: number;
+
+                /** Impact recordInfo. */
+                public recordInfo: folder.v3.remove.IRecordInfo[];
+
+                /** Impact warnings. */
+                public warnings: string[];
+
+                /**
+                 * Creates a new Impact instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Impact instance
+                 */
+                public static create(properties?: folder.v3.remove.IImpact): folder.v3.remove.Impact;
+
+                /**
+                 * Encodes the specified Impact message. Does not implicitly {@link folder.v3.remove.Impact.verify|verify} messages.
+                 * @param message Impact message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IImpact, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an Impact message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Impact
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.Impact;
+
+                /**
+                 * Creates an Impact message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Impact
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.Impact;
+
+                /**
+                 * Creates a plain object from an Impact message. Also converts values to other types if specified.
+                 * @param message Impact
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.Impact, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Impact to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Impact
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordInfo. */
+            interface IRecordInfo {
+
+                /** RecordInfo recordUid */
+                recordUid?: (Uint8Array|null);
+
+                /** RecordInfo locationsCount */
+                locationsCount?: (number|null);
+            }
+
+            /**
+             * Additional info for a record being removed.
+             * Only populated for MOVE_TO_OWNER_TRASH to show "also in X other folders".
+             */
+            class RecordInfo implements IRecordInfo {
+
+                /**
+                 * Constructs a new RecordInfo.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRecordInfo);
+
+                /** RecordInfo recordUid. */
+                public recordUid: Uint8Array;
+
+                /** RecordInfo locationsCount. */
+                public locationsCount: number;
+
+                /**
+                 * Creates a new RecordInfo instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordInfo instance
+                 */
+                public static create(properties?: folder.v3.remove.IRecordInfo): folder.v3.remove.RecordInfo;
+
+                /**
+                 * Encodes the specified RecordInfo message. Does not implicitly {@link folder.v3.remove.RecordInfo.verify|verify} messages.
+                 * @param message RecordInfo message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRecordInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordInfo message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordInfo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RecordInfo;
+
+                /**
+                 * Creates a RecordInfo message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordInfo
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RecordInfo;
+
+                /**
+                 * Creates a plain object from a RecordInfo message. Also converts values to other types if specified.
+                 * @param message RecordInfo
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RecordInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordInfo to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordInfo
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an ItemError. */
+            interface IItemError {
+
+                /** ItemError code */
+                code?: (folder.v3.remove.RemoveErrorCode|null);
+
+                /** ItemError message */
+                message?: (string|null);
+            }
+
+            /** Error details for a failed item. */
+            class ItemError implements IItemError {
+
+                /**
+                 * Constructs a new ItemError.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IItemError);
+
+                /** ItemError code. */
+                public code: folder.v3.remove.RemoveErrorCode;
+
+                /** ItemError message. */
+                public message: string;
+
+                /**
+                 * Creates a new ItemError instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ItemError instance
+                 */
+                public static create(properties?: folder.v3.remove.IItemError): folder.v3.remove.ItemError;
+
+                /**
+                 * Encodes the specified ItemError message. Does not implicitly {@link folder.v3.remove.ItemError.verify|verify} messages.
+                 * @param message ItemError message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IItemError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an ItemError message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ItemError
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.ItemError;
+
+                /**
+                 * Creates an ItemError message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ItemError
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.ItemError;
+
+                /**
+                 * Creates a plain object from an ItemError message. Also converts values to other types if specified.
+                 * @param message ItemError
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.ItemError, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ItemError to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ItemError
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RemovalTokenPayload. */
+            interface IRemovalTokenPayload {
+
+                /** RemovalTokenPayload itemFingerprints */
+                itemFingerprints?: (folder.v3.remove.IItemFingerprint[]|null);
+
+                /** RemovalTokenPayload userId */
+                userId?: (number|null);
+
+                /** RemovalTokenPayload deviceId */
+                deviceId?: (number|null);
+
+                /** RemovalTokenPayload sessionUid */
+                sessionUid?: (Uint8Array|null);
+
+                /** RemovalTokenPayload expiresAtMillis */
+                expiresAtMillis?: (number|null);
+            }
+
+            /** Internal token payload (not exposed in API, just for serialization) */
+            class RemovalTokenPayload implements IRemovalTokenPayload {
+
+                /**
+                 * Constructs a new RemovalTokenPayload.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRemovalTokenPayload);
+
+                /** RemovalTokenPayload itemFingerprints. */
+                public itemFingerprints: folder.v3.remove.IItemFingerprint[];
+
+                /** RemovalTokenPayload userId. */
+                public userId: number;
+
+                /** RemovalTokenPayload deviceId. */
+                public deviceId: number;
+
+                /** RemovalTokenPayload sessionUid. */
+                public sessionUid: Uint8Array;
+
+                /** RemovalTokenPayload expiresAtMillis. */
+                public expiresAtMillis: number;
+
+                /**
+                 * Creates a new RemovalTokenPayload instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RemovalTokenPayload instance
+                 */
+                public static create(properties?: folder.v3.remove.IRemovalTokenPayload): folder.v3.remove.RemovalTokenPayload;
+
+                /**
+                 * Encodes the specified RemovalTokenPayload message. Does not implicitly {@link folder.v3.remove.RemovalTokenPayload.verify|verify} messages.
+                 * @param message RemovalTokenPayload message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRemovalTokenPayload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RemovalTokenPayload message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RemovalTokenPayload
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemovalTokenPayload;
+
+                /**
+                 * Creates a RemovalTokenPayload message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RemovalTokenPayload
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemovalTokenPayload;
+
+                /**
+                 * Creates a plain object from a RemovalTokenPayload message. Also converts values to other types if specified.
+                 * @param message RemovalTokenPayload
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RemovalTokenPayload, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RemovalTokenPayload to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RemovalTokenPayload
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an ItemFingerprint. */
+            interface IItemFingerprint {
+
+                /** ItemFingerprint record */
+                record?: (folder.v3.remove.IRecordTarget|null);
+
+                /** ItemFingerprint folder */
+                folder?: (folder.v3.remove.IFolderTarget|null);
+
+                /** ItemFingerprint fingerprint */
+                fingerprint?: (Uint8Array|null);
+            }
+
+            /** Represents an ItemFingerprint. */
+            class ItemFingerprint implements IItemFingerprint {
+
+                /**
+                 * Constructs a new ItemFingerprint.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IItemFingerprint);
+
+                /** ItemFingerprint record. */
+                public record?: (folder.v3.remove.IRecordTarget|null);
+
+                /** ItemFingerprint folder. */
+                public folder?: (folder.v3.remove.IFolderTarget|null);
+
+                /** ItemFingerprint fingerprint. */
+                public fingerprint: Uint8Array;
+
+                /** ItemFingerprint target. */
+                public target?: ("record"|"folder");
+
+                /**
+                 * Creates a new ItemFingerprint instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns ItemFingerprint instance
+                 */
+                public static create(properties?: folder.v3.remove.IItemFingerprint): folder.v3.remove.ItemFingerprint;
+
+                /**
+                 * Encodes the specified ItemFingerprint message. Does not implicitly {@link folder.v3.remove.ItemFingerprint.verify|verify} messages.
+                 * @param message ItemFingerprint message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IItemFingerprint, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an ItemFingerprint message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns ItemFingerprint
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.ItemFingerprint;
+
+                /**
+                 * Creates an ItemFingerprint message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns ItemFingerprint
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.ItemFingerprint;
+
+                /**
+                 * Creates a plain object from an ItemFingerprint message. Also converts values to other types if specified.
+                 * @param message ItemFingerprint
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.ItemFingerprint, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this ItemFingerprint to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for ItemFingerprint
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordTarget. */
+            interface IRecordTarget {
+
+                /** RecordTarget folderUid */
+                folderUid?: (Uint8Array|null);
+
+                /** RecordTarget recordUid */
+                recordUid?: (Uint8Array|null);
+
+                /** RecordTarget operationType */
+                operationType?: (folder.v3.remove.RecordOperationType|null);
+            }
+
+            /** Represents a RecordTarget. */
+            class RecordTarget implements IRecordTarget {
+
+                /**
+                 * Constructs a new RecordTarget.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRecordTarget);
+
+                /** RecordTarget folderUid. */
+                public folderUid: Uint8Array;
+
+                /** RecordTarget recordUid. */
+                public recordUid: Uint8Array;
+
+                /** RecordTarget operationType. */
+                public operationType: folder.v3.remove.RecordOperationType;
+
+                /**
+                 * Creates a new RecordTarget instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordTarget instance
+                 */
+                public static create(properties?: folder.v3.remove.IRecordTarget): folder.v3.remove.RecordTarget;
+
+                /**
+                 * Encodes the specified RecordTarget message. Does not implicitly {@link folder.v3.remove.RecordTarget.verify|verify} messages.
+                 * @param message RecordTarget message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRecordTarget, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordTarget message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordTarget
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RecordTarget;
+
+                /**
+                 * Creates a RecordTarget message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordTarget
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RecordTarget;
+
+                /**
+                 * Creates a plain object from a RecordTarget message. Also converts values to other types if specified.
+                 * @param message RecordTarget
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RecordTarget, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordTarget to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordTarget
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a FolderTarget. */
+            interface IFolderTarget {
+
+                /** FolderTarget folderUid */
+                folderUid?: (Uint8Array|null);
+
+                /** FolderTarget operationType */
+                operationType?: (folder.v3.remove.FolderOperationType|null);
+            }
+
+            /** Represents a FolderTarget. */
+            class FolderTarget implements IFolderTarget {
+
+                /**
+                 * Constructs a new FolderTarget.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IFolderTarget);
+
+                /** FolderTarget folderUid. */
+                public folderUid: Uint8Array;
+
+                /** FolderTarget operationType. */
+                public operationType: folder.v3.remove.FolderOperationType;
+
+                /**
+                 * Creates a new FolderTarget instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns FolderTarget instance
+                 */
+                public static create(properties?: folder.v3.remove.IFolderTarget): folder.v3.remove.FolderTarget;
+
+                /**
+                 * Encodes the specified FolderTarget message. Does not implicitly {@link folder.v3.remove.FolderTarget.verify|verify} messages.
+                 * @param message FolderTarget message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IFolderTarget, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a FolderTarget message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns FolderTarget
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.FolderTarget;
+
+                /**
+                 * Creates a FolderTarget message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns FolderTarget
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.FolderTarget;
+
+                /**
+                 * Creates a plain object from a FolderTarget message. Also converts values to other types if specified.
+                 * @param message FolderTarget
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.FolderTarget, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this FolderTarget to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for FolderTarget
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** RestoreStatus enum. */
+            enum RestoreStatus {
+                RESTORE_STATUS_UNKNOWN = 0,
+                RS_SUCCESS = 1,
+                RS_NOT_IN_TRASHCAN = 2,
+                RS_ACCESS_DENIED = 3,
+                RS_TARGET_FOLDER_NOT_FOUND = 4,
+                RS_ALREADY_EXISTS_IN_TARGET = 5,
+                RS_FAIL = 6
+            }
+
+            /** RestoreItemType enum. */
+            enum RestoreItemType {
+                RESTORE_ITEM_UNKNOWN = 0,
+                RESTORE_ITEM_RECORD = 1,
+                RESTORE_ITEM_FOLDER = 2
+            }
+
+            /** Properties of a RestoreResult. */
+            interface IRestoreResult {
+
+                /** RestoreResult itemUid */
+                itemUid?: (Uint8Array|null);
+
+                /** RestoreResult itemType */
+                itemType?: (folder.v3.remove.RestoreItemType|null);
+
+                /** RestoreResult status */
+                status?: (folder.v3.remove.RestoreStatus|null);
+
+                /** RestoreResult errorMessage */
+                errorMessage?: (string|null);
+            }
+
+            /** Represents a RestoreResult. */
+            class RestoreResult implements IRestoreResult {
+
+                /**
+                 * Constructs a new RestoreResult.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRestoreResult);
+
+                /** RestoreResult itemUid. */
+                public itemUid: Uint8Array;
+
+                /** RestoreResult itemType. */
+                public itemType: folder.v3.remove.RestoreItemType;
+
+                /** RestoreResult status. */
+                public status: folder.v3.remove.RestoreStatus;
+
+                /** RestoreResult errorMessage. */
+                public errorMessage: string;
+
+                /**
+                 * Creates a new RestoreResult instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RestoreResult instance
+                 */
+                public static create(properties?: folder.v3.remove.IRestoreResult): folder.v3.remove.RestoreResult;
+
+                /**
+                 * Encodes the specified RestoreResult message. Does not implicitly {@link folder.v3.remove.RestoreResult.verify|verify} messages.
+                 * @param message RestoreResult message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRestoreResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RestoreResult message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RestoreResult
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RestoreResult;
+
+                /**
+                 * Creates a RestoreResult message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RestoreResult
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RestoreResult;
+
+                /**
+                 * Creates a plain object from a RestoreResult message. Also converts values to other types if specified.
+                 * @param message RestoreResult
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RestoreResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RestoreResult to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RestoreResult
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a TrashcanRestoreResponse. */
+            interface ITrashcanRestoreResponse {
+
+                /** TrashcanRestoreResponse results */
+                results?: (folder.v3.remove.IRestoreResult[]|null);
+
+                /** TrashcanRestoreResponse errorMessage */
+                errorMessage?: (string|null);
+            }
+
+            /** Represents a TrashcanRestoreResponse. */
+            class TrashcanRestoreResponse implements ITrashcanRestoreResponse {
+
+                /**
+                 * Constructs a new TrashcanRestoreResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.ITrashcanRestoreResponse);
+
+                /** TrashcanRestoreResponse results. */
+                public results: folder.v3.remove.IRestoreResult[];
+
+                /** TrashcanRestoreResponse errorMessage. */
+                public errorMessage: string;
+
+                /**
+                 * Creates a new TrashcanRestoreResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns TrashcanRestoreResponse instance
+                 */
+                public static create(properties?: folder.v3.remove.ITrashcanRestoreResponse): folder.v3.remove.TrashcanRestoreResponse;
+
+                /**
+                 * Encodes the specified TrashcanRestoreResponse message. Does not implicitly {@link folder.v3.remove.TrashcanRestoreResponse.verify|verify} messages.
+                 * @param message TrashcanRestoreResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.ITrashcanRestoreResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a TrashcanRestoreResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns TrashcanRestoreResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.TrashcanRestoreResponse;
+
+                /**
+                 * Creates a TrashcanRestoreResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns TrashcanRestoreResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.TrashcanRestoreResponse;
+
+                /**
+                 * Creates a plain object from a TrashcanRestoreResponse message. Also converts values to other types if specified.
+                 * @param message TrashcanRestoreResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.TrashcanRestoreResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this TrashcanRestoreResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for TrashcanRestoreResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RestoreRecord. */
+            interface IRestoreRecord {
+
+                /** RestoreRecord recordUid */
+                recordUid?: (Uint8Array|null);
+
+                /** RestoreRecord encryptedRecordKey */
+                encryptedRecordKey?: (Uint8Array|null);
+
+                /** RestoreRecord sourceFolderUid */
+                sourceFolderUid?: (Uint8Array|null);
+            }
+
+            /** Represents a RestoreRecord. */
+            class RestoreRecord implements IRestoreRecord {
+
+                /**
+                 * Constructs a new RestoreRecord.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRestoreRecord);
+
+                /** RestoreRecord recordUid. */
+                public recordUid: Uint8Array;
+
+                /** RestoreRecord encryptedRecordKey. */
+                public encryptedRecordKey: Uint8Array;
+
+                /** RestoreRecord sourceFolderUid. */
+                public sourceFolderUid: Uint8Array;
+
+                /**
+                 * Creates a new RestoreRecord instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RestoreRecord instance
+                 */
+                public static create(properties?: folder.v3.remove.IRestoreRecord): folder.v3.remove.RestoreRecord;
+
+                /**
+                 * Encodes the specified RestoreRecord message. Does not implicitly {@link folder.v3.remove.RestoreRecord.verify|verify} messages.
+                 * @param message RestoreRecord message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRestoreRecord, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RestoreRecord message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RestoreRecord
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RestoreRecord;
+
+                /**
+                 * Creates a RestoreRecord message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RestoreRecord
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RestoreRecord;
+
+                /**
+                 * Creates a plain object from a RestoreRecord message. Also converts values to other types if specified.
+                 * @param message RestoreRecord
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RestoreRecord, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RestoreRecord to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RestoreRecord
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RestoreFolder. */
+            interface IRestoreFolder {
+
+                /** RestoreFolder folderUid */
+                folderUid?: (Uint8Array|null);
+
+                /** RestoreFolder encryptedFolderKey */
+                encryptedFolderKey?: (Uint8Array|null);
+            }
+
+            /** Represents a RestoreFolder. */
+            class RestoreFolder implements IRestoreFolder {
+
+                /**
+                 * Constructs a new RestoreFolder.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IRestoreFolder);
+
+                /** RestoreFolder folderUid. */
+                public folderUid: Uint8Array;
+
+                /** RestoreFolder encryptedFolderKey. */
+                public encryptedFolderKey: Uint8Array;
+
+                /**
+                 * Creates a new RestoreFolder instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RestoreFolder instance
+                 */
+                public static create(properties?: folder.v3.remove.IRestoreFolder): folder.v3.remove.RestoreFolder;
+
+                /**
+                 * Encodes the specified RestoreFolder message. Does not implicitly {@link folder.v3.remove.RestoreFolder.verify|verify} messages.
+                 * @param message RestoreFolder message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IRestoreFolder, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RestoreFolder message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RestoreFolder
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RestoreFolder;
+
+                /**
+                 * Creates a RestoreFolder message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RestoreFolder
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RestoreFolder;
+
+                /**
+                 * Creates a plain object from a RestoreFolder message. Also converts values to other types if specified.
+                 * @param message RestoreFolder
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.RestoreFolder, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RestoreFolder to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RestoreFolder
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a TrashcanRestoreRequest. */
+            interface ITrashcanRestoreRequest {
+
+                /** TrashcanRestoreRequest records */
+                records?: (folder.v3.remove.IRestoreRecord[]|null);
+
+                /** TrashcanRestoreRequest folders */
+                folders?: (folder.v3.remove.IRestoreFolder[]|null);
+
+                /** TrashcanRestoreRequest targetFolderUid */
+                targetFolderUid?: (Uint8Array|null);
+            }
+
+            /** Represents a TrashcanRestoreRequest. */
+            class TrashcanRestoreRequest implements ITrashcanRestoreRequest {
+
+                /**
+                 * Constructs a new TrashcanRestoreRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.ITrashcanRestoreRequest);
+
+                /** TrashcanRestoreRequest records. */
+                public records: folder.v3.remove.IRestoreRecord[];
+
+                /** TrashcanRestoreRequest folders. */
+                public folders: folder.v3.remove.IRestoreFolder[];
+
+                /** TrashcanRestoreRequest targetFolderUid. */
+                public targetFolderUid: Uint8Array;
+
+                /**
+                 * Creates a new TrashcanRestoreRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns TrashcanRestoreRequest instance
+                 */
+                public static create(properties?: folder.v3.remove.ITrashcanRestoreRequest): folder.v3.remove.TrashcanRestoreRequest;
+
+                /**
+                 * Encodes the specified TrashcanRestoreRequest message. Does not implicitly {@link folder.v3.remove.TrashcanRestoreRequest.verify|verify} messages.
+                 * @param message TrashcanRestoreRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.ITrashcanRestoreRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a TrashcanRestoreRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns TrashcanRestoreRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.TrashcanRestoreRequest;
+
+                /**
+                 * Creates a TrashcanRestoreRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns TrashcanRestoreRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.TrashcanRestoreRequest;
+
+                /**
+                 * Creates a plain object from a TrashcanRestoreRequest message. Also converts values to other types if specified.
+                 * @param message TrashcanRestoreRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.TrashcanRestoreRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this TrashcanRestoreRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for TrashcanRestoreRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
+    }
+}
+
 /** Namespace Push. */
 export namespace Push {
 
@@ -60588,6 +62796,1869 @@ export namespace Push {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
+/** Namespace record. */
+export namespace record {
+
+    /** Namespace v3. */
+    namespace v3 {
+
+        /** Namespace details. */
+        namespace details {
+
+            /** Represents a RecordDetailsService */
+            class RecordDetailsService extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new RecordDetailsService service.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 */
+                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+                /**
+                 * Creates new RecordDetailsService service using the specified rpc implementation.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 * @returns RPC service. Useful where requests and/or responses are streamed.
+                 */
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): RecordDetailsService;
+
+                /**
+                 * Calls GetRecordData.
+                 * @param request RecordDataRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RecordDataResponse
+                 */
+                public getRecordData(request: record.v3.details.IRecordDataRequest, callback: record.v3.details.RecordDetailsService.GetRecordDataCallback): void;
+
+                /**
+                 * Calls GetRecordData.
+                 * @param request RecordDataRequest message or plain object
+                 * @returns Promise
+                 */
+                public getRecordData(request: record.v3.details.IRecordDataRequest): Promise<record.v3.details.RecordDataResponse>;
+
+                /**
+                 * Calls GetRecordAccessors.
+                 * @param request RecordAccessRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RecordAccessResponse
+                 */
+                public getRecordAccessors(request: record.v3.details.IRecordAccessRequest, callback: record.v3.details.RecordDetailsService.GetRecordAccessorsCallback): void;
+
+                /**
+                 * Calls GetRecordAccessors.
+                 * @param request RecordAccessRequest message or plain object
+                 * @returns Promise
+                 */
+                public getRecordAccessors(request: record.v3.details.IRecordAccessRequest): Promise<record.v3.details.RecordAccessResponse>;
+
+                /**
+                 * Calls GetRecordAccessorDetails.
+                 * @param request RecordAccessorDetailsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RecordAccessorDetailsResponse
+                 */
+                public getRecordAccessorDetails(request: record.v3.details.IRecordAccessorDetailsRequest, callback: record.v3.details.RecordDetailsService.GetRecordAccessorDetailsCallback): void;
+
+                /**
+                 * Calls GetRecordAccessorDetails.
+                 * @param request RecordAccessorDetailsRequest message or plain object
+                 * @returns Promise
+                 */
+                public getRecordAccessorDetails(request: record.v3.details.IRecordAccessorDetailsRequest): Promise<record.v3.details.RecordAccessorDetailsResponse>;
+            }
+
+            namespace RecordDetailsService {
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordData}.
+                 * @param error Error, if any
+                 * @param [response] RecordDataResponse
+                 */
+                type GetRecordDataCallback = (error: (Error|null), response?: record.v3.details.RecordDataResponse) => void;
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordAccessors}.
+                 * @param error Error, if any
+                 * @param [response] RecordAccessResponse
+                 */
+                type GetRecordAccessorsCallback = (error: (Error|null), response?: record.v3.details.RecordAccessResponse) => void;
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordAccessorDetails}.
+                 * @param error Error, if any
+                 * @param [response] RecordAccessorDetailsResponse
+                 */
+                type GetRecordAccessorDetailsCallback = (error: (Error|null), response?: record.v3.details.RecordAccessorDetailsResponse) => void;
+            }
+
+            /** Properties of a RecordDataRequest. */
+            interface IRecordDataRequest {
+
+                /**
+                 * represents the client time in milliseconds. Client time is used to
+                 * adjust the record client_modified_time for each record.
+                 */
+                clientTime?: (number|null);
+
+                /** the list of record UIDs to retrieve information for. */
+                recordUids?: (Uint8Array[]|null);
+            }
+
+            /** Represents a record data request. Record details include the record [meta]data (title, color, etc.) */
+            class RecordDataRequest implements IRecordDataRequest {
+
+                /**
+                 * Constructs a new RecordDataRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordDataRequest);
+
+                /**
+                 * represents the client time in milliseconds. Client time is used to
+                 * adjust the record client_modified_time for each record.
+                 */
+                public clientTime: number;
+
+                /** the list of record UIDs to retrieve information for. */
+                public recordUids: Uint8Array[];
+
+                /**
+                 * Creates a new RecordDataRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordDataRequest instance
+                 */
+                public static create(properties?: record.v3.details.IRecordDataRequest): record.v3.details.RecordDataRequest;
+
+                /**
+                 * Encodes the specified RecordDataRequest message. Does not implicitly {@link record.v3.details.RecordDataRequest.verify|verify} messages.
+                 * @param message RecordDataRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordDataRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordDataRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordDataRequest;
+
+                /**
+                 * Creates a RecordDataRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordDataRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordDataRequest;
+
+                /**
+                 * Creates a plain object from a RecordDataRequest message. Also converts values to other types if specified.
+                 * @param message RecordDataRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordDataRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordDataRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordDataRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordDataResponse. */
+            interface IRecordDataResponse {
+
+                /** The data associated with the record. */
+                data?: (Records.IRecordData[]|null);
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                forbiddenRecords?: (Uint8Array[]|null);
+            }
+
+            /** Response message containing records' data and a list of inaccessible records for the calling user. */
+            class RecordDataResponse implements IRecordDataResponse {
+
+                /**
+                 * Constructs a new RecordDataResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordDataResponse);
+
+                /** The data associated with the record. */
+                public data: Records.IRecordData[];
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                public forbiddenRecords: Uint8Array[];
+
+                /**
+                 * Creates a new RecordDataResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordDataResponse instance
+                 */
+                public static create(properties?: record.v3.details.IRecordDataResponse): record.v3.details.RecordDataResponse;
+
+                /**
+                 * Encodes the specified RecordDataResponse message. Does not implicitly {@link record.v3.details.RecordDataResponse.verify|verify} messages.
+                 * @param message RecordDataResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordDataResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordDataResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordDataResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordDataResponse;
+
+                /**
+                 * Creates a RecordDataResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordDataResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordDataResponse;
+
+                /**
+                 * Creates a plain object from a RecordDataResponse message. Also converts values to other types if specified.
+                 * @param message RecordDataResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordDataResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordDataResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordDataResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessRequest. */
+            interface IRecordAccessRequest {
+
+                /** the list of record UIDs to retrieve information for. */
+                recordUids?: (Uint8Array[]|null);
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                page?: (keeper.api.common.IPage|null);
+            }
+
+            /**
+             * Represents a record accessors request. Record details include whom the record has been
+             * shared with (user or team), and what role and permissions the accessors have over the record.
+             */
+            class RecordAccessRequest implements IRecordAccessRequest {
+
+                /**
+                 * Constructs a new RecordAccessRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessRequest);
+
+                /** the list of record UIDs to retrieve information for. */
+                public recordUids: Uint8Array[];
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                public page?: (keeper.api.common.IPage|null);
+
+                /**
+                 * Creates a new RecordAccessRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessRequest instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessRequest): record.v3.details.RecordAccessRequest;
+
+                /**
+                 * Encodes the specified RecordAccessRequest message. Does not implicitly {@link record.v3.details.RecordAccessRequest.verify|verify} messages.
+                 * @param message RecordAccessRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessRequest;
+
+                /**
+                 * Creates a RecordAccessRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessRequest;
+
+                /**
+                 * Creates a plain object from a RecordAccessRequest message. Also converts values to other types if specified.
+                 * @param message RecordAccessRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessResponse. */
+            interface IRecordAccessResponse {
+
+                /** List of record access permissions, detailing the accessors and their roles. */
+                recordAccesses?: (record.v3.details.IRecordAccess[]|null);
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                forbiddenRecords?: (Uint8Array[]|null);
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+                pageInfo?: (keeper.api.common.IPageInfo|null);
+            }
+
+            /** Response message containing records' accesses and a list of inaccessible records for the calling user. */
+            class RecordAccessResponse implements IRecordAccessResponse {
+
+                /**
+                 * Constructs a new RecordAccessResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessResponse);
+
+                /** List of record access permissions, detailing the accessors and their roles. */
+                public recordAccesses: record.v3.details.IRecordAccess[];
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                public forbiddenRecords: Uint8Array[];
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+                public pageInfo?: (keeper.api.common.IPageInfo|null);
+
+                /**
+                 * Creates a new RecordAccessResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessResponse instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessResponse): record.v3.details.RecordAccessResponse;
+
+                /**
+                 * Encodes the specified RecordAccessResponse message. Does not implicitly {@link record.v3.details.RecordAccessResponse.verify|verify} messages.
+                 * @param message RecordAccessResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessResponse;
+
+                /**
+                 * Creates a RecordAccessResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessResponse;
+
+                /**
+                 * Creates a plain object from a RecordAccessResponse message. Also converts values to other types if specified.
+                 * @param message RecordAccessResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessorDetailsRequest. */
+            interface IRecordAccessorDetailsRequest {
+
+                /** The record UID to retrieve information for. */
+                recordUid?: (Uint8Array|null);
+
+                /** The accessor UID (user or team) to retrieve information for. */
+                accessorUid?: (Uint8Array|null);
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                page?: (keeper.api.common.IPage|null);
+            }
+
+            /** Represents a record accessor details request. */
+            class RecordAccessorDetailsRequest implements IRecordAccessorDetailsRequest {
+
+                /**
+                 * Constructs a new RecordAccessorDetailsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessorDetailsRequest);
+
+                /** The record UID to retrieve information for. */
+                public recordUid: Uint8Array;
+
+                /** The accessor UID (user or team) to retrieve information for. */
+                public accessorUid: Uint8Array;
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                public page?: (keeper.api.common.IPage|null);
+
+                /**
+                 * Creates a new RecordAccessorDetailsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessorDetailsRequest instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessorDetailsRequest): record.v3.details.RecordAccessorDetailsRequest;
+
+                /**
+                 * Encodes the specified RecordAccessorDetailsRequest message. Does not implicitly {@link record.v3.details.RecordAccessorDetailsRequest.verify|verify} messages.
+                 * @param message RecordAccessorDetailsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessorDetailsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessorDetailsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessorDetailsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessorDetailsRequest;
+
+                /**
+                 * Creates a RecordAccessorDetailsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessorDetailsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessorDetailsRequest;
+
+                /**
+                 * Creates a plain object from a RecordAccessorDetailsRequest message. Also converts values to other types if specified.
+                 * @param message RecordAccessorDetailsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessorDetailsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessorDetailsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessorDetailsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessorDetailsResponse. */
+            interface IRecordAccessorDetailsResponse {
+
+                /** Set if has direct access to the record. */
+                recordAccessData?: (Folder.IRecordAccessData|null);
+
+                /** The list of folder the user has access and that contain the record. */
+                folderAccessData?: (Folder.IFolderAccessData[]|null);
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+                pageInfo?: (keeper.api.common.IPageInfo|null);
+            }
+
+            /**
+             * Represents a record accessor details response.
+             * Record accessor details include information on how a specific accessor obtained access to a record.
+             */
+            class RecordAccessorDetailsResponse implements IRecordAccessorDetailsResponse {
+
+                /**
+                 * Constructs a new RecordAccessorDetailsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessorDetailsResponse);
+
+                /** Set if has direct access to the record. */
+                public recordAccessData?: (Folder.IRecordAccessData|null);
+
+                /** The list of folder the user has access and that contain the record. */
+                public folderAccessData: Folder.IFolderAccessData[];
+
+                /**
+                 * * Pagination metadata for this response.
+                 * * Contains current page info, total count, and whether more pages exist.
+                 */
+                public pageInfo?: (keeper.api.common.IPageInfo|null);
+
+                /**
+                 * Creates a new RecordAccessorDetailsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessorDetailsResponse instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessorDetailsResponse): record.v3.details.RecordAccessorDetailsResponse;
+
+                /**
+                 * Encodes the specified RecordAccessorDetailsResponse message. Does not implicitly {@link record.v3.details.RecordAccessorDetailsResponse.verify|verify} messages.
+                 * @param message RecordAccessorDetailsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessorDetailsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessorDetailsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessorDetailsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessorDetailsResponse;
+
+                /**
+                 * Creates a RecordAccessorDetailsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessorDetailsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessorDetailsResponse;
+
+                /**
+                 * Creates a plain object from a RecordAccessorDetailsResponse message. Also converts values to other types if specified.
+                 * @param message RecordAccessorDetailsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessorDetailsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessorDetailsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessorDetailsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccess. */
+            interface IRecordAccess {
+
+                /** Core access details including permissions, role, and metadata. */
+                data?: (Folder.IRecordAccessData|null);
+
+                /** The record accessor. */
+                accessorInfo?: (record.v3.details.IAccessorInfo|null);
+            }
+
+            /**
+             * Describes the access a user has to a specific record.
+             * Includes ownership, access roles, and additional sharing metadata.
+             */
+            class RecordAccess implements IRecordAccess {
+
+                /**
+                 * Constructs a new RecordAccess.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccess);
+
+                /** Core access details including permissions, role, and metadata. */
+                public data?: (Folder.IRecordAccessData|null);
+
+                /** The record accessor. */
+                public accessorInfo?: (record.v3.details.IAccessorInfo|null);
+
+                /**
+                 * Creates a new RecordAccess instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccess instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccess): record.v3.details.RecordAccess;
+
+                /**
+                 * Encodes the specified RecordAccess message. Does not implicitly {@link record.v3.details.RecordAccess.verify|verify} messages.
+                 * @param message RecordAccess message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccess message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccess
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccess;
+
+                /**
+                 * Creates a RecordAccess message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccess
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccess;
+
+                /**
+                 * Creates a plain object from a RecordAccess message. Also converts values to other types if specified.
+                 * @param message RecordAccess
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccess to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccess
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an AccessorInfo. */
+            interface IAccessorInfo {
+
+                /** accessor name */
+                name?: (string|null);
+            }
+
+            /** The entity representing the record accessor. Either a team or a user */
+            class AccessorInfo implements IAccessorInfo {
+
+                /**
+                 * Constructs a new AccessorInfo.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IAccessorInfo);
+
+                /** accessor name */
+                public name: string;
+
+                /**
+                 * Creates a new AccessorInfo instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns AccessorInfo instance
+                 */
+                public static create(properties?: record.v3.details.IAccessorInfo): record.v3.details.AccessorInfo;
+
+                /**
+                 * Encodes the specified AccessorInfo message. Does not implicitly {@link record.v3.details.AccessorInfo.verify|verify} messages.
+                 * @param message AccessorInfo message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IAccessorInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an AccessorInfo message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns AccessorInfo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.AccessorInfo;
+
+                /**
+                 * Creates an AccessorInfo message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns AccessorInfo
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.AccessorInfo;
+
+                /**
+                 * Creates a plain object from an AccessorInfo message. Also converts values to other types if specified.
+                 * @param message AccessorInfo
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.AccessorInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this AccessorInfo to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for AccessorInfo
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
+
+        /** Namespace sharing. */
+        namespace sharing {
+
+            /** Represents a RecordSharingService */
+            class RecordSharingService extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new RecordSharingService service.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 */
+                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+                /**
+                 * Creates new RecordSharingService service using the specified rpc implementation.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 * @returns RPC service. Useful where requests and/or responses are streamed.
+                 */
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): RecordSharingService;
+
+                /**
+                 * Manage direct sharing of records: grant, update and revoke user access to
+                 * records in the same request
+                 * @param request Request message or plain object
+                 * @param callback Node-style callback called with the error, if any, and Response
+                 */
+                public shareRecord(request: record.v3.sharing.IRequest, callback: record.v3.sharing.RecordSharingService.ShareRecordCallback): void;
+
+                /**
+                 * Manage direct sharing of records: grant, update and revoke user access to
+                 * records in the same request
+                 * @param request Request message or plain object
+                 * @returns Promise
+                 */
+                public shareRecord(request: record.v3.sharing.IRequest): Promise<record.v3.sharing.Response>;
+            }
+
+            namespace RecordSharingService {
+
+                /**
+                 * Callback as used by {@link record.v3.sharing.RecordSharingService#shareRecord}.
+                 * @param error Error, if any
+                 * @param [response] Response
+                 */
+                type ShareRecordCallback = (error: (Error|null), response?: record.v3.sharing.Response) => void;
+            }
+
+            /** Properties of a Request. */
+            interface IRequest {
+
+                /**
+                 * add new permissions to a list of existing records
+                 * corresponds to creating new records shares, directly with "someone", whether a team or a specific user
+                 */
+                createSharingPermissions?: (record.v3.sharing.IPermissions[]|null);
+
+                /** update existing permissions of a list of existing records shared with a team or a user */
+                updateSharingPermissions?: (record.v3.sharing.IPermissions[]|null);
+
+                /**
+                 * remove all sharing permissions from existing records
+                 * specified records that were previously shared with "someone" (user or team) directly will be "unshared"
+                 */
+                revokeSharingPermissions?: (record.v3.sharing.IPermissions[]|null);
+
+                /** A string that is sent back in the push notification to identify the user who initiated the push (device id) */
+                echo?: (string|null);
+            }
+
+            /**
+             * Represents a request encapsulating new, updated and deleted record sharing permissions.
+             * References:
+             * https://keeper.atlassian.net/wiki/spaces/FEAT/pages/1540653191/Shared+Subfolder+Permissions+aka+best+project+ever
+             * https://keeper.atlassian.net/wiki/spaces/KA/pages/2520711174/records_share_update+v3
+             */
+            class Request implements IRequest {
+
+                /**
+                 * Constructs a new Request.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.sharing.IRequest);
+
+                /**
+                 * add new permissions to a list of existing records
+                 * corresponds to creating new records shares, directly with "someone", whether a team or a specific user
+                 */
+                public createSharingPermissions: record.v3.sharing.IPermissions[];
+
+                /** update existing permissions of a list of existing records shared with a team or a user */
+                public updateSharingPermissions: record.v3.sharing.IPermissions[];
+
+                /**
+                 * remove all sharing permissions from existing records
+                 * specified records that were previously shared with "someone" (user or team) directly will be "unshared"
+                 */
+                public revokeSharingPermissions: record.v3.sharing.IPermissions[];
+
+                /** A string that is sent back in the push notification to identify the user who initiated the push (device id) */
+                public echo: string;
+
+                /**
+                 * Creates a new Request instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Request instance
+                 */
+                public static create(properties?: record.v3.sharing.IRequest): record.v3.sharing.Request;
+
+                /**
+                 * Encodes the specified Request message. Does not implicitly {@link record.v3.sharing.Request.verify|verify} messages.
+                 * @param message Request message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.sharing.IRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Request message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Request
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Request;
+
+                /**
+                 * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Request
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Request;
+
+                /**
+                 * Creates a plain object from a Request message. Also converts values to other types if specified.
+                 * @param message Request
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.sharing.Request, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Request to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Request
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a Permissions. */
+            interface IPermissions {
+
+                /** The uid of the recipient the record is shared with. Must be either a team uid or a user uid. */
+                recipientUid?: (Uint8Array|null);
+
+                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
+                recordUid?: (Uint8Array|null);
+
+                /** The record key encrypted with the recipient's public key (see. @username) */
+                recordKey?: (Uint8Array|null);
+
+                /** Use ECIES algorithm instead of RSA to share to the recipient's public ECC key (see. @username) */
+                useEccKey?: (boolean|null);
+
+                /**
+                 * The set of record permissions granted to the recipient (@username).
+                 * Permissions apply in the context of the specified folder.
+                 */
+                rules?: (Folder.IRecordAccessData|null);
+            }
+
+            /** Represents a Permissions. */
+            class Permissions implements IPermissions {
+
+                /**
+                 * Constructs a new Permissions.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.sharing.IPermissions);
+
+                /** The uid of the recipient the record is shared with. Must be either a team uid or a user uid. */
+                public recipientUid: Uint8Array;
+
+                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
+                public recordUid: Uint8Array;
+
+                /** The record key encrypted with the recipient's public key (see. @username) */
+                public recordKey: Uint8Array;
+
+                /** Use ECIES algorithm instead of RSA to share to the recipient's public ECC key (see. @username) */
+                public useEccKey: boolean;
+
+                /**
+                 * The set of record permissions granted to the recipient (@username).
+                 * Permissions apply in the context of the specified folder.
+                 */
+                public rules?: (Folder.IRecordAccessData|null);
+
+                /**
+                 * Creates a new Permissions instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Permissions instance
+                 */
+                public static create(properties?: record.v3.sharing.IPermissions): record.v3.sharing.Permissions;
+
+                /**
+                 * Encodes the specified Permissions message. Does not implicitly {@link record.v3.sharing.Permissions.verify|verify} messages.
+                 * @param message Permissions message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.sharing.IPermissions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Permissions message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Permissions
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Permissions;
+
+                /**
+                 * Creates a Permissions message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Permissions
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Permissions;
+
+                /**
+                 * Creates a plain object from a Permissions message. Also converts values to other types if specified.
+                 * @param message Permissions
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.sharing.Permissions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Permissions to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Permissions
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a Response. */
+            interface IResponse {
+
+                /** The list of the respective sharing status of the newly shared records */
+                createdSharingStatus?: (record.v3.sharing.IStatus[]|null);
+
+                /** The list of the respective sharing status of the updated shared records */
+                updatedSharingStatus?: (record.v3.sharing.IStatus[]|null);
+
+                /** The list of the respective sharing status of records that have been "unshared" */
+                revokedSharingStatus?: (record.v3.sharing.IStatus[]|null);
+            }
+
+            /** Represents a Response. */
+            class Response implements IResponse {
+
+                /**
+                 * Constructs a new Response.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.sharing.IResponse);
+
+                /** The list of the respective sharing status of the newly shared records */
+                public createdSharingStatus: record.v3.sharing.IStatus[];
+
+                /** The list of the respective sharing status of the updated shared records */
+                public updatedSharingStatus: record.v3.sharing.IStatus[];
+
+                /** The list of the respective sharing status of records that have been "unshared" */
+                public revokedSharingStatus: record.v3.sharing.IStatus[];
+
+                /**
+                 * Creates a new Response instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Response instance
+                 */
+                public static create(properties?: record.v3.sharing.IResponse): record.v3.sharing.Response;
+
+                /**
+                 * Encodes the specified Response message. Does not implicitly {@link record.v3.sharing.Response.verify|verify} messages.
+                 * @param message Response message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.sharing.IResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Response message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Response
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Response;
+
+                /**
+                 * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Response
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Response;
+
+                /**
+                 * Creates a plain object from a Response message. Also converts values to other types if specified.
+                 * @param message Response
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.sharing.Response, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Response to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Response
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a Status. */
+            interface IStatus {
+
+                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
+                recordUid?: (Uint8Array|null);
+
+                /** Status of the request (success or error) */
+                status?: (record.v3.sharing.SharingStatus|null);
+
+                /** Translatable, human-readable message */
+                message?: (string|null);
+
+                /** XOR(userUid, teamUid); the recipient the record was shared with */
+                recipientUid?: (Uint8Array|null);
+            }
+
+            /** Represents a Status. */
+            class Status implements IStatus {
+
+                /**
+                 * Constructs a new Status.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.sharing.IStatus);
+
+                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
+                public recordUid: Uint8Array;
+
+                /** Status of the request (success or error) */
+                public status: record.v3.sharing.SharingStatus;
+
+                /** Translatable, human-readable message */
+                public message: string;
+
+                /** XOR(userUid, teamUid); the recipient the record was shared with */
+                public recipientUid: Uint8Array;
+
+                /**
+                 * Creates a new Status instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Status instance
+                 */
+                public static create(properties?: record.v3.sharing.IStatus): record.v3.sharing.Status;
+
+                /**
+                 * Encodes the specified Status message. Does not implicitly {@link record.v3.sharing.Status.verify|verify} messages.
+                 * @param message Status message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.sharing.IStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Status message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Status
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Status;
+
+                /**
+                 * Creates a Status message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Status
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Status;
+
+                /**
+                 * Creates a plain object from a Status message. Also converts values to other types if specified.
+                 * @param message Status
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.sharing.Status, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Status to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Status
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** SharingStatus enum. */
+            enum SharingStatus {
+                SUCCESS = 0,
+                PENDING_ACCEPT = 1,
+                USER_NOT_FOUND = 2,
+                ALREADY_SHARED = 3,
+                NOT_ALLOWED_TO_SHARE = 4,
+                ACCESS_DENIED = 5,
+                NOT_ALLOWED_TO_SET_PERMISSIONS = 6
+            }
+
+            /** Properties of a RevokedAccess. */
+            interface IRevokedAccess {
+
+                /** the uid of the record whose access have been revoked */
+                recordUid?: (Uint8Array|null);
+
+                /** the uid of actor whose access has been revoked. represents a User (an account) */
+                actorUid?: (Uint8Array|null);
+            }
+
+            /** Represents a RevokedAccess. */
+            class RevokedAccess implements IRevokedAccess {
+
+                /**
+                 * Constructs a new RevokedAccess.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.sharing.IRevokedAccess);
+
+                /** the uid of the record whose access have been revoked */
+                public recordUid: Uint8Array;
+
+                /** the uid of actor whose access has been revoked. represents a User (an account) */
+                public actorUid: Uint8Array;
+
+                /**
+                 * Creates a new RevokedAccess instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RevokedAccess instance
+                 */
+                public static create(properties?: record.v3.sharing.IRevokedAccess): record.v3.sharing.RevokedAccess;
+
+                /**
+                 * Encodes the specified RevokedAccess message. Does not implicitly {@link record.v3.sharing.RevokedAccess.verify|verify} messages.
+                 * @param message RevokedAccess message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.sharing.IRevokedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RevokedAccess message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RevokedAccess
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.RevokedAccess;
+
+                /**
+                 * Creates a RevokedAccess message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RevokedAccess
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.sharing.RevokedAccess;
+
+                /**
+                 * Creates a plain object from a RevokedAccess message. Also converts values to other types if specified.
+                 * @param message RevokedAccess
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.sharing.RevokedAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RevokedAccess to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RevokedAccess
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordSharingState. */
+            interface IRecordSharingState {
+
+                /** The UID of the record this sharing state relates to. */
+                recordUid?: (Uint8Array|null);
+
+                /** True if the record is directly shared with non-owner actors. */
+                isDirectlyShared?: (boolean|null);
+
+                /** True if the record is indirectly shared via folder access with non-owner actors. */
+                isIndirectlyShared?: (boolean|null);
+
+                /** Synthetic convenience property: {@code isDirectlyShared || isIndirectlyShared}. */
+                isShared?: (boolean|null);
+            }
+
+            /**
+             * Represents the sharing state of a single record.
+             *
+             * <p>This message captures whether a record is shared either directly (via explicit grants)
+             * or indirectly (via folder access). It includes a computed convenience field
+             * {@code isShared}, which is true if the record is shared through either mechanism.
+             *
+             * <p>This message is typically stored in a DAG edge and used by clients during sync
+             */
+            class RecordSharingState implements IRecordSharingState {
+
+                /**
+                 * Constructs a new RecordSharingState.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.sharing.IRecordSharingState);
+
+                /** The UID of the record this sharing state relates to. */
+                public recordUid: Uint8Array;
+
+                /** True if the record is directly shared with non-owner actors. */
+                public isDirectlyShared: boolean;
+
+                /** True if the record is indirectly shared via folder access with non-owner actors. */
+                public isIndirectlyShared: boolean;
+
+                /** Synthetic convenience property: {@code isDirectlyShared || isIndirectlyShared}. */
+                public isShared: boolean;
+
+                /**
+                 * Creates a new RecordSharingState instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordSharingState instance
+                 */
+                public static create(properties?: record.v3.sharing.IRecordSharingState): record.v3.sharing.RecordSharingState;
+
+                /**
+                 * Encodes the specified RecordSharingState message. Does not implicitly {@link record.v3.sharing.RecordSharingState.verify|verify} messages.
+                 * @param message RecordSharingState message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.sharing.IRecordSharingState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordSharingState message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordSharingState
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.RecordSharingState;
+
+                /**
+                 * Creates a RecordSharingState message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordSharingState
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.sharing.RecordSharingState;
+
+                /**
+                 * Creates a plain object from a RecordSharingState message. Also converts values to other types if specified.
+                 * @param message RecordSharingState
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.sharing.RecordSharingState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordSharingState to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordSharingState
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
+
+        /** Properties of a RecordsAddRequest. */
+        interface IRecordsAddRequest {
+
+            /** RecordsAddRequest records */
+            records?: (record.v3.IRecordAdd[]|null);
+
+            /** RecordsAddRequest clientTime */
+            clientTime?: (number|null);
+
+            /** RecordsAddRequest securityDataKeyType */
+            securityDataKeyType?: (Records.RecordKeyType|null);
+        }
+
+        /** Represents a RecordsAddRequest. */
+        class RecordsAddRequest implements IRecordsAddRequest {
+
+            /**
+             * Constructs a new RecordsAddRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: record.v3.IRecordsAddRequest);
+
+            /** RecordsAddRequest records. */
+            public records: record.v3.IRecordAdd[];
+
+            /** RecordsAddRequest clientTime. */
+            public clientTime: number;
+
+            /** RecordsAddRequest securityDataKeyType. */
+            public securityDataKeyType: Records.RecordKeyType;
+
+            /**
+             * Creates a new RecordsAddRequest instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns RecordsAddRequest instance
+             */
+            public static create(properties?: record.v3.IRecordsAddRequest): record.v3.RecordsAddRequest;
+
+            /**
+             * Encodes the specified RecordsAddRequest message. Does not implicitly {@link record.v3.RecordsAddRequest.verify|verify} messages.
+             * @param message RecordsAddRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: record.v3.IRecordsAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a RecordsAddRequest message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns RecordsAddRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.RecordsAddRequest;
+
+            /**
+             * Creates a RecordsAddRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns RecordsAddRequest
+             */
+            public static fromObject(object: { [k: string]: any }): record.v3.RecordsAddRequest;
+
+            /**
+             * Creates a plain object from a RecordsAddRequest message. Also converts values to other types if specified.
+             * @param message RecordsAddRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: record.v3.RecordsAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this RecordsAddRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for RecordsAddRequest
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a RecordAdd. */
+        interface IRecordAdd {
+
+            /** RecordAdd recordUid */
+            recordUid?: (Uint8Array|null);
+
+            /** RecordAdd recordKey */
+            recordKey?: (Uint8Array|null);
+
+            /** RecordAdd recordKeyType */
+            recordKeyType?: (Folder.EncryptedKeyType|null);
+
+            /**
+             * Record creates in root folder is encrypted by user key.
+             * Record creates in non-root folder is encrypted by folder key.
+             */
+            recordKeyEncryptedBy?: (Folder.FolderKeyEncryptionType|null);
+
+            /** RecordAdd clientModifiedTime */
+            clientModifiedTime?: (number|null);
+
+            /** RecordAdd data */
+            data?: (Uint8Array|null);
+
+            /** RecordAdd nonSharedData */
+            nonSharedData?: (Uint8Array|null);
+
+            /** RecordAdd folderUid */
+            folderUid?: (Uint8Array|null);
+
+            /** RecordAdd recordLinks */
+            recordLinks?: (Records.IRecordLink[]|null);
+
+            /** RecordAdd audit */
+            audit?: (Records.IRecordAudit|null);
+
+            /** RecordAdd securityData */
+            securityData?: (Records.ISecurityData|null);
+
+            /** RecordAdd securityScoreData */
+            securityScoreData?: (Records.ISecurityScoreData|null);
+        }
+
+        /** Represents a RecordAdd. */
+        class RecordAdd implements IRecordAdd {
+
+            /**
+             * Constructs a new RecordAdd.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: record.v3.IRecordAdd);
+
+            /** RecordAdd recordUid. */
+            public recordUid: Uint8Array;
+
+            /** RecordAdd recordKey. */
+            public recordKey: Uint8Array;
+
+            /** RecordAdd recordKeyType. */
+            public recordKeyType: Folder.EncryptedKeyType;
+
+            /**
+             * Record creates in root folder is encrypted by user key.
+             * Record creates in non-root folder is encrypted by folder key.
+             */
+            public recordKeyEncryptedBy: Folder.FolderKeyEncryptionType;
+
+            /** RecordAdd clientModifiedTime. */
+            public clientModifiedTime: number;
+
+            /** RecordAdd data. */
+            public data: Uint8Array;
+
+            /** RecordAdd nonSharedData. */
+            public nonSharedData: Uint8Array;
+
+            /** RecordAdd folderUid. */
+            public folderUid: Uint8Array;
+
+            /** RecordAdd recordLinks. */
+            public recordLinks: Records.IRecordLink[];
+
+            /** RecordAdd audit. */
+            public audit?: (Records.IRecordAudit|null);
+
+            /** RecordAdd securityData. */
+            public securityData?: (Records.ISecurityData|null);
+
+            /** RecordAdd securityScoreData. */
+            public securityScoreData?: (Records.ISecurityScoreData|null);
+
+            /**
+             * Creates a new RecordAdd instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns RecordAdd instance
+             */
+            public static create(properties?: record.v3.IRecordAdd): record.v3.RecordAdd;
+
+            /**
+             * Encodes the specified RecordAdd message. Does not implicitly {@link record.v3.RecordAdd.verify|verify} messages.
+             * @param message RecordAdd message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: record.v3.IRecordAdd, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a RecordAdd message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns RecordAdd
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.RecordAdd;
+
+            /**
+             * Creates a RecordAdd message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns RecordAdd
+             */
+            public static fromObject(object: { [k: string]: any }): record.v3.RecordAdd;
+
+            /**
+             * Creates a plain object from a RecordAdd message. Also converts values to other types if specified.
+             * @param message RecordAdd
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: record.v3.RecordAdd, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this RecordAdd to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for RecordAdd
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+    }
+}
+
+/** Namespace keeper. */
+export namespace keeper {
+
+    /** Namespace api. */
+    namespace api {
+
+        /** Namespace common. */
+        namespace common {
+
+            /** Properties of a Page. */
+            interface IPage {
+
+                /**
+                 * Zero-indexed page number.
+                 * Default: 0 (first page)
+                 */
+                pageNumber?: (number|null);
+
+                /** Number of items per page. */
+                pageSize?: (number|null);
+
+                /** Use as cursor to the next page. */
+                cursorToken?: (string|null);
+            }
+
+            /**
+             * Pagination parameters for paginated requests.
+             * Used to specify which page of results to retrieve.
+             */
+            class Page implements IPage {
+
+                /**
+                 * Constructs a new Page.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: keeper.api.common.IPage);
+
+                /**
+                 * Zero-indexed page number.
+                 * Default: 0 (first page)
+                 */
+                public pageNumber: number;
+
+                /** Number of items per page. */
+                public pageSize: number;
+
+                /** Use as cursor to the next page. */
+                public cursorToken: string;
+
+                /**
+                 * Creates a new Page instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Page instance
+                 */
+                public static create(properties?: keeper.api.common.IPage): keeper.api.common.Page;
+
+                /**
+                 * Encodes the specified Page message. Does not implicitly {@link keeper.api.common.Page.verify|verify} messages.
+                 * @param message Page message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: keeper.api.common.IPage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Page message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Page
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): keeper.api.common.Page;
+
+                /**
+                 * Creates a Page message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Page
+                 */
+                public static fromObject(object: { [k: string]: any }): keeper.api.common.Page;
+
+                /**
+                 * Creates a plain object from a Page message. Also converts values to other types if specified.
+                 * @param message Page
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: keeper.api.common.Page, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Page to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Page
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a PageInfo. */
+            interface IPageInfo {
+
+                /** Current page number (zero-indexed). */
+                pageNumber?: (number|null);
+
+                /** Number of items per page. */
+                pageSize?: (number|null);
+
+                /** Total number of items available across all pages. */
+                totalCount?: (number|null);
+
+                /**
+                 * Indicates whether more pages are available.
+                 * True if (page_number + 1) * page_size < total_count
+                 */
+                hasMore?: (boolean|null);
+
+                /** Use as cursor to the next page. */
+                cursorToken?: (string|null);
+            }
+
+            /**
+             * Pagination metadata included in paginated responses.
+             * Provides information about the current page and total available items.
+             */
+            class PageInfo implements IPageInfo {
+
+                /**
+                 * Constructs a new PageInfo.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: keeper.api.common.IPageInfo);
+
+                /** Current page number (zero-indexed). */
+                public pageNumber: number;
+
+                /** Number of items per page. */
+                public pageSize: number;
+
+                /** Total number of items available across all pages. */
+                public totalCount: number;
+
+                /**
+                 * Indicates whether more pages are available.
+                 * True if (page_number + 1) * page_size < total_count
+                 */
+                public hasMore: boolean;
+
+                /** Use as cursor to the next page. */
+                public cursorToken: string;
+
+                /**
+                 * Creates a new PageInfo instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PageInfo instance
+                 */
+                public static create(properties?: keeper.api.common.IPageInfo): keeper.api.common.PageInfo;
+
+                /**
+                 * Encodes the specified PageInfo message. Does not implicitly {@link keeper.api.common.PageInfo.verify|verify} messages.
+                 * @param message PageInfo message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: keeper.api.common.IPageInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PageInfo message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PageInfo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): keeper.api.common.PageInfo;
+
+                /**
+                 * Creates a PageInfo message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PageInfo
+                 */
+                public static fromObject(object: { [k: string]: any }): keeper.api.common.PageInfo;
+
+                /**
+                 * Creates a plain object from a PageInfo message. Also converts values to other types if specified.
+                 * @param message PageInfo
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: keeper.api.common.PageInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PageInfo to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PageInfo
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
     }
 }
 
@@ -68853,871 +72924,6 @@ export namespace Dag {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-}
-
-/** Namespace record. */
-export namespace record {
-
-    /** Namespace v3. */
-    namespace v3 {
-
-        /** Namespace sharing. */
-        namespace sharing {
-
-            /** Represents a RecordSharingService */
-            class RecordSharingService extends $protobuf.rpc.Service {
-
-                /**
-                 * Constructs a new RecordSharingService service.
-                 * @param rpcImpl RPC implementation
-                 * @param [requestDelimited=false] Whether requests are length-delimited
-                 * @param [responseDelimited=false] Whether responses are length-delimited
-                 */
-                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
-
-                /**
-                 * Creates new RecordSharingService service using the specified rpc implementation.
-                 * @param rpcImpl RPC implementation
-                 * @param [requestDelimited=false] Whether requests are length-delimited
-                 * @param [responseDelimited=false] Whether responses are length-delimited
-                 * @returns RPC service. Useful where requests and/or responses are streamed.
-                 */
-                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): RecordSharingService;
-
-                /**
-                 * Manage direct sharing of records: grant, update and revoke user access to
-                 * records in the same request
-                 * @param request Request message or plain object
-                 * @param callback Node-style callback called with the error, if any, and Response
-                 */
-                public shareRecord(request: record.v3.sharing.IRequest, callback: record.v3.sharing.RecordSharingService.ShareRecordCallback): void;
-
-                /**
-                 * Manage direct sharing of records: grant, update and revoke user access to
-                 * records in the same request
-                 * @param request Request message or plain object
-                 * @returns Promise
-                 */
-                public shareRecord(request: record.v3.sharing.IRequest): Promise<record.v3.sharing.Response>;
-            }
-
-            namespace RecordSharingService {
-
-                /**
-                 * Callback as used by {@link record.v3.sharing.RecordSharingService#shareRecord}.
-                 * @param error Error, if any
-                 * @param [response] Response
-                 */
-                type ShareRecordCallback = (error: (Error|null), response?: record.v3.sharing.Response) => void;
-            }
-
-            /** Properties of a Request. */
-            interface IRequest {
-
-                /**
-                 * add new permissions to a list of existing records
-                 * corresponds to creating new records shares, directly with "someone", whether a team or a specific user
-                 */
-                createSharingPermissions?: (record.v3.sharing.IPermissions[]|null);
-
-                /** update existing permissions of a list of existing records shared with a team or a user */
-                updateSharingPermissions?: (record.v3.sharing.IPermissions[]|null);
-
-                /**
-                 * remove all sharing permissions from existing records
-                 * specified records that were previously shared with "someone" (user or team) directly will be "unshared"
-                 */
-                revokeSharingPermissions?: (record.v3.sharing.IPermissions[]|null);
-
-                /** A string that is sent back in the push notification to identify the user who initiated the push (device id) */
-                echo?: (string|null);
-            }
-
-            /**
-             * Represents a request encapsulating new, updated and deleted record sharing permissions.
-             * References:
-             * https://keeper.atlassian.net/wiki/spaces/FEAT/pages/1540653191/Shared+Subfolder+Permissions+aka+best+project+ever
-             * https://keeper.atlassian.net/wiki/spaces/KA/pages/2520711174/records_share_update+v3
-             */
-            class Request implements IRequest {
-
-                /**
-                 * Constructs a new Request.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: record.v3.sharing.IRequest);
-
-                /**
-                 * add new permissions to a list of existing records
-                 * corresponds to creating new records shares, directly with "someone", whether a team or a specific user
-                 */
-                public createSharingPermissions: record.v3.sharing.IPermissions[];
-
-                /** update existing permissions of a list of existing records shared with a team or a user */
-                public updateSharingPermissions: record.v3.sharing.IPermissions[];
-
-                /**
-                 * remove all sharing permissions from existing records
-                 * specified records that were previously shared with "someone" (user or team) directly will be "unshared"
-                 */
-                public revokeSharingPermissions: record.v3.sharing.IPermissions[];
-
-                /** A string that is sent back in the push notification to identify the user who initiated the push (device id) */
-                public echo: string;
-
-                /**
-                 * Creates a new Request instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Request instance
-                 */
-                public static create(properties?: record.v3.sharing.IRequest): record.v3.sharing.Request;
-
-                /**
-                 * Encodes the specified Request message. Does not implicitly {@link record.v3.sharing.Request.verify|verify} messages.
-                 * @param message Request message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: record.v3.sharing.IRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a Request message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Request
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Request;
-
-                /**
-                 * Creates a Request message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Request
-                 */
-                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Request;
-
-                /**
-                 * Creates a plain object from a Request message. Also converts values to other types if specified.
-                 * @param message Request
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: record.v3.sharing.Request, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Request to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for Request
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a Permissions. */
-            interface IPermissions {
-
-                /** The uid of the recipient the record is shared with. Must be either a team uid or a user uid. */
-                recipientUid?: (Uint8Array|null);
-
-                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
-                recordUid?: (Uint8Array|null);
-
-                /** The record key encrypted with the recipient's public key (see. @username) */
-                recordKey?: (Uint8Array|null);
-
-                /** Use ECIES algorithm instead of RSA to share to the recipient's public ECC key (see. @username) */
-                useEccKey?: (boolean|null);
-
-                /**
-                 * The set of record permissions granted to the recipient (@username).
-                 * Permissions apply in the context of the specified folder.
-                 */
-                rules?: (Folder.IRecordAccessData|null);
-            }
-
-            /** Represents a Permissions. */
-            class Permissions implements IPermissions {
-
-                /**
-                 * Constructs a new Permissions.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: record.v3.sharing.IPermissions);
-
-                /** The uid of the recipient the record is shared with. Must be either a team uid or a user uid. */
-                public recipientUid: Uint8Array;
-
-                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
-                public recordUid: Uint8Array;
-
-                /** The record key encrypted with the recipient's public key (see. @username) */
-                public recordKey: Uint8Array;
-
-                /** Use ECIES algorithm instead of RSA to share to the recipient's public ECC key (see. @username) */
-                public useEccKey: boolean;
-
-                /**
-                 * The set of record permissions granted to the recipient (@username).
-                 * Permissions apply in the context of the specified folder.
-                 */
-                public rules?: (Folder.IRecordAccessData|null);
-
-                /**
-                 * Creates a new Permissions instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Permissions instance
-                 */
-                public static create(properties?: record.v3.sharing.IPermissions): record.v3.sharing.Permissions;
-
-                /**
-                 * Encodes the specified Permissions message. Does not implicitly {@link record.v3.sharing.Permissions.verify|verify} messages.
-                 * @param message Permissions message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: record.v3.sharing.IPermissions, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a Permissions message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Permissions
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Permissions;
-
-                /**
-                 * Creates a Permissions message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Permissions
-                 */
-                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Permissions;
-
-                /**
-                 * Creates a plain object from a Permissions message. Also converts values to other types if specified.
-                 * @param message Permissions
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: record.v3.sharing.Permissions, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Permissions to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for Permissions
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a Response. */
-            interface IResponse {
-
-                /** The list of the respective sharing status of the newly shared records */
-                createdSharingStatus?: (record.v3.sharing.IStatus[]|null);
-
-                /** The list of the respective sharing status of the updated shared records */
-                updatedSharingStatus?: (record.v3.sharing.IStatus[]|null);
-
-                /** The list of the respective sharing status of records that have been "unshared" */
-                revokedSharingStatus?: (record.v3.sharing.IStatus[]|null);
-            }
-
-            /** Represents a Response. */
-            class Response implements IResponse {
-
-                /**
-                 * Constructs a new Response.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: record.v3.sharing.IResponse);
-
-                /** The list of the respective sharing status of the newly shared records */
-                public createdSharingStatus: record.v3.sharing.IStatus[];
-
-                /** The list of the respective sharing status of the updated shared records */
-                public updatedSharingStatus: record.v3.sharing.IStatus[];
-
-                /** The list of the respective sharing status of records that have been "unshared" */
-                public revokedSharingStatus: record.v3.sharing.IStatus[];
-
-                /**
-                 * Creates a new Response instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Response instance
-                 */
-                public static create(properties?: record.v3.sharing.IResponse): record.v3.sharing.Response;
-
-                /**
-                 * Encodes the specified Response message. Does not implicitly {@link record.v3.sharing.Response.verify|verify} messages.
-                 * @param message Response message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: record.v3.sharing.IResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a Response message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Response
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Response;
-
-                /**
-                 * Creates a Response message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Response
-                 */
-                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Response;
-
-                /**
-                 * Creates a plain object from a Response message. Also converts values to other types if specified.
-                 * @param message Response
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: record.v3.sharing.Response, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Response to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for Response
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a Status. */
-            interface IStatus {
-
-                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
-                recordUid?: (Uint8Array|null);
-
-                /** Status of the request (success or error) */
-                status?: (record.v3.sharing.SharingStatus|null);
-
-                /** Translatable, human-readable message */
-                message?: (string|null);
-
-                /** XOR(userUid, teamUid); the recipient the record was shared with */
-                recipientUid?: (Uint8Array|null);
-            }
-
-            /** Represents a Status. */
-            class Status implements IStatus {
-
-                /**
-                 * Constructs a new Status.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: record.v3.sharing.IStatus);
-
-                /** Identifier of the record being shared or whose sharing permissions are being updated/removed */
-                public recordUid: Uint8Array;
-
-                /** Status of the request (success or error) */
-                public status: record.v3.sharing.SharingStatus;
-
-                /** Translatable, human-readable message */
-                public message: string;
-
-                /** XOR(userUid, teamUid); the recipient the record was shared with */
-                public recipientUid: Uint8Array;
-
-                /**
-                 * Creates a new Status instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Status instance
-                 */
-                public static create(properties?: record.v3.sharing.IStatus): record.v3.sharing.Status;
-
-                /**
-                 * Encodes the specified Status message. Does not implicitly {@link record.v3.sharing.Status.verify|verify} messages.
-                 * @param message Status message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: record.v3.sharing.IStatus, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a Status message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Status
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.Status;
-
-                /**
-                 * Creates a Status message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Status
-                 */
-                public static fromObject(object: { [k: string]: any }): record.v3.sharing.Status;
-
-                /**
-                 * Creates a plain object from a Status message. Also converts values to other types if specified.
-                 * @param message Status
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: record.v3.sharing.Status, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Status to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for Status
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** SharingStatus enum. */
-            enum SharingStatus {
-                SUCCESS = 0,
-                PENDING_ACCEPT = 1,
-                USER_NOT_FOUND = 2,
-                ALREADY_SHARED = 3,
-                NOT_ALLOWED_TO_SHARE = 4,
-                ACCESS_DENIED = 5,
-                NOT_ALLOWED_TO_SET_PERMISSIONS = 6
-            }
-
-            /** Properties of a RevokedAccess. */
-            interface IRevokedAccess {
-
-                /** the uid of the record whose access have been revoked */
-                recordUid?: (Uint8Array|null);
-
-                /** the uid of actor whose access has been revoked. represents a User (an account) */
-                actorUid?: (Uint8Array|null);
-            }
-
-            /** Represents a RevokedAccess. */
-            class RevokedAccess implements IRevokedAccess {
-
-                /**
-                 * Constructs a new RevokedAccess.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: record.v3.sharing.IRevokedAccess);
-
-                /** the uid of the record whose access have been revoked */
-                public recordUid: Uint8Array;
-
-                /** the uid of actor whose access has been revoked. represents a User (an account) */
-                public actorUid: Uint8Array;
-
-                /**
-                 * Creates a new RevokedAccess instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RevokedAccess instance
-                 */
-                public static create(properties?: record.v3.sharing.IRevokedAccess): record.v3.sharing.RevokedAccess;
-
-                /**
-                 * Encodes the specified RevokedAccess message. Does not implicitly {@link record.v3.sharing.RevokedAccess.verify|verify} messages.
-                 * @param message RevokedAccess message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: record.v3.sharing.IRevokedAccess, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RevokedAccess message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RevokedAccess
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.RevokedAccess;
-
-                /**
-                 * Creates a RevokedAccess message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RevokedAccess
-                 */
-                public static fromObject(object: { [k: string]: any }): record.v3.sharing.RevokedAccess;
-
-                /**
-                 * Creates a plain object from a RevokedAccess message. Also converts values to other types if specified.
-                 * @param message RevokedAccess
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: record.v3.sharing.RevokedAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RevokedAccess to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RevokedAccess
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RecordSharingState. */
-            interface IRecordSharingState {
-
-                /** The UID of the record this sharing state relates to. */
-                recordUid?: (Uint8Array|null);
-
-                /** True if the record is directly shared with non-owner actors. */
-                isDirectlyShared?: (boolean|null);
-
-                /** True if the record is indirectly shared via folder access with non-owner actors. */
-                isIndirectlyShared?: (boolean|null);
-
-                /** Synthetic convenience property: {@code isDirectlyShared || isIndirectlyShared}. */
-                isShared?: (boolean|null);
-            }
-
-            /**
-             * Represents the sharing state of a single record.
-             *
-             * <p>This message captures whether a record is shared either directly (via explicit grants)
-             * or indirectly (via folder access). It includes a computed convenience field
-             * {@code isShared}, which is true if the record is shared through either mechanism.
-             *
-             * <p>This message is typically stored in a DAG edge and used by clients during sync
-             */
-            class RecordSharingState implements IRecordSharingState {
-
-                /**
-                 * Constructs a new RecordSharingState.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: record.v3.sharing.IRecordSharingState);
-
-                /** The UID of the record this sharing state relates to. */
-                public recordUid: Uint8Array;
-
-                /** True if the record is directly shared with non-owner actors. */
-                public isDirectlyShared: boolean;
-
-                /** True if the record is indirectly shared via folder access with non-owner actors. */
-                public isIndirectlyShared: boolean;
-
-                /** Synthetic convenience property: {@code isDirectlyShared || isIndirectlyShared}. */
-                public isShared: boolean;
-
-                /**
-                 * Creates a new RecordSharingState instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RecordSharingState instance
-                 */
-                public static create(properties?: record.v3.sharing.IRecordSharingState): record.v3.sharing.RecordSharingState;
-
-                /**
-                 * Encodes the specified RecordSharingState message. Does not implicitly {@link record.v3.sharing.RecordSharingState.verify|verify} messages.
-                 * @param message RecordSharingState message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: record.v3.sharing.IRecordSharingState, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RecordSharingState message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RecordSharingState
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.sharing.RecordSharingState;
-
-                /**
-                 * Creates a RecordSharingState message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RecordSharingState
-                 */
-                public static fromObject(object: { [k: string]: any }): record.v3.sharing.RecordSharingState;
-
-                /**
-                 * Creates a plain object from a RecordSharingState message. Also converts values to other types if specified.
-                 * @param message RecordSharingState
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: record.v3.sharing.RecordSharingState, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RecordSharingState to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RecordSharingState
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-        }
-
-        /** Properties of a RecordsAddRequest. */
-        interface IRecordsAddRequest {
-
-            /** RecordsAddRequest records */
-            records?: (record.v3.IRecordAdd[]|null);
-
-            /** RecordsAddRequest clientTime */
-            clientTime?: (number|null);
-
-            /** RecordsAddRequest securityDataKeyType */
-            securityDataKeyType?: (Records.RecordKeyType|null);
-        }
-
-        /** Represents a RecordsAddRequest. */
-        class RecordsAddRequest implements IRecordsAddRequest {
-
-            /**
-             * Constructs a new RecordsAddRequest.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: record.v3.IRecordsAddRequest);
-
-            /** RecordsAddRequest records. */
-            public records: record.v3.IRecordAdd[];
-
-            /** RecordsAddRequest clientTime. */
-            public clientTime: number;
-
-            /** RecordsAddRequest securityDataKeyType. */
-            public securityDataKeyType: Records.RecordKeyType;
-
-            /**
-             * Creates a new RecordsAddRequest instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns RecordsAddRequest instance
-             */
-            public static create(properties?: record.v3.IRecordsAddRequest): record.v3.RecordsAddRequest;
-
-            /**
-             * Encodes the specified RecordsAddRequest message. Does not implicitly {@link record.v3.RecordsAddRequest.verify|verify} messages.
-             * @param message RecordsAddRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: record.v3.IRecordsAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a RecordsAddRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns RecordsAddRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.RecordsAddRequest;
-
-            /**
-             * Creates a RecordsAddRequest message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns RecordsAddRequest
-             */
-            public static fromObject(object: { [k: string]: any }): record.v3.RecordsAddRequest;
-
-            /**
-             * Creates a plain object from a RecordsAddRequest message. Also converts values to other types if specified.
-             * @param message RecordsAddRequest
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: record.v3.RecordsAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this RecordsAddRequest to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for RecordsAddRequest
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a RecordAdd. */
-        interface IRecordAdd {
-
-            /** RecordAdd recordUid */
-            recordUid?: (Uint8Array|null);
-
-            /** RecordAdd recordKey */
-            recordKey?: (Uint8Array|null);
-
-            /** RecordAdd recordKeyType */
-            recordKeyType?: (Folder.EncryptedKeyType|null);
-
-            /**
-             * Record creates in root folder is encrypted by user key.
-             * Record creates in non-root folder is encrypted by folder key.
-             */
-            recordKeyEncryptedBy?: (Folder.FolderKeyEncryptionType|null);
-
-            /** RecordAdd clientModifiedTime */
-            clientModifiedTime?: (number|null);
-
-            /** RecordAdd data */
-            data?: (Uint8Array|null);
-
-            /** RecordAdd nonSharedData */
-            nonSharedData?: (Uint8Array|null);
-
-            /** RecordAdd folderUid */
-            folderUid?: (Uint8Array|null);
-
-            /** RecordAdd recordLinks */
-            recordLinks?: (Records.IRecordLink[]|null);
-
-            /** RecordAdd audit */
-            audit?: (Records.IRecordAudit|null);
-
-            /** RecordAdd securityData */
-            securityData?: (Records.ISecurityData|null);
-
-            /** RecordAdd securityScoreData */
-            securityScoreData?: (Records.ISecurityScoreData|null);
-        }
-
-        /** Represents a RecordAdd. */
-        class RecordAdd implements IRecordAdd {
-
-            /**
-             * Constructs a new RecordAdd.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: record.v3.IRecordAdd);
-
-            /** RecordAdd recordUid. */
-            public recordUid: Uint8Array;
-
-            /** RecordAdd recordKey. */
-            public recordKey: Uint8Array;
-
-            /** RecordAdd recordKeyType. */
-            public recordKeyType: Folder.EncryptedKeyType;
-
-            /**
-             * Record creates in root folder is encrypted by user key.
-             * Record creates in non-root folder is encrypted by folder key.
-             */
-            public recordKeyEncryptedBy: Folder.FolderKeyEncryptionType;
-
-            /** RecordAdd clientModifiedTime. */
-            public clientModifiedTime: number;
-
-            /** RecordAdd data. */
-            public data: Uint8Array;
-
-            /** RecordAdd nonSharedData. */
-            public nonSharedData: Uint8Array;
-
-            /** RecordAdd folderUid. */
-            public folderUid: Uint8Array;
-
-            /** RecordAdd recordLinks. */
-            public recordLinks: Records.IRecordLink[];
-
-            /** RecordAdd audit. */
-            public audit?: (Records.IRecordAudit|null);
-
-            /** RecordAdd securityData. */
-            public securityData?: (Records.ISecurityData|null);
-
-            /** RecordAdd securityScoreData. */
-            public securityScoreData?: (Records.ISecurityScoreData|null);
-
-            /**
-             * Creates a new RecordAdd instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns RecordAdd instance
-             */
-            public static create(properties?: record.v3.IRecordAdd): record.v3.RecordAdd;
-
-            /**
-             * Encodes the specified RecordAdd message. Does not implicitly {@link record.v3.RecordAdd.verify|verify} messages.
-             * @param message RecordAdd message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: record.v3.IRecordAdd, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a RecordAdd message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns RecordAdd
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.RecordAdd;
-
-            /**
-             * Creates a RecordAdd message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns RecordAdd
-             */
-            public static fromObject(object: { [k: string]: any }): record.v3.RecordAdd;
-
-            /**
-             * Creates a plain object from a RecordAdd message. Also converts values to other types if specified.
-             * @param message RecordAdd
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: record.v3.RecordAdd, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this RecordAdd to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for RecordAdd
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
     }
 }
 
@@ -89544,1736 +92750,5 @@ export namespace PAM {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-}
-
-/** Namespace folder. */
-export namespace folder {
-
-    /** Namespace v3. */
-    namespace v3 {
-
-        /** Namespace remove. */
-        namespace remove {
-
-            /** Represents a RemoveService */
-            class RemoveService extends $protobuf.rpc.Service {
-
-                /**
-                 * Constructs a new RemoveService service.
-                 * @param rpcImpl RPC implementation
-                 * @param [requestDelimited=false] Whether requests are length-delimited
-                 * @param [responseDelimited=false] Whether responses are length-delimited
-                 */
-                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
-
-                /**
-                 * Creates new RemoveService service using the specified rpc implementation.
-                 * @param rpcImpl RPC implementation
-                 * @param [requestDelimited=false] Whether requests are length-delimited
-                 * @param [responseDelimited=false] Whether responses are length-delimited
-                 * @returns RPC service. Useful where requests and/or responses are streamed.
-                 */
-                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): RemoveService;
-
-                /**
-                 * Preview or execute record removal from folders.
-                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
-                 * CONFIRM: Validates token and executes the removal operation.
-                 * @param request RemoveRecordRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and RemoveResponse
-                 */
-                public removeRecord(request: folder.v3.remove.IRemoveRecordRequest, callback: folder.v3.remove.RemoveService.RemoveRecordCallback): void;
-
-                /**
-                 * Preview or execute record removal from folders.
-                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
-                 * CONFIRM: Validates token and executes the removal operation.
-                 * @param request RemoveRecordRequest message or plain object
-                 * @returns Promise
-                 */
-                public removeRecord(request: folder.v3.remove.IRemoveRecordRequest): Promise<folder.v3.remove.RemoveResponse>;
-
-                /**
-                 * Preview or execute folder deletion.
-                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
-                 * CONFIRM: Validates token and executes the deletion operation.
-                 * @param request RemoveFolderRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and RemoveResponse
-                 */
-                public removeFolder(request: folder.v3.remove.IRemoveFolderRequest, callback: folder.v3.remove.RemoveService.RemoveFolderCallback): void;
-
-                /**
-                 * Preview or execute folder deletion.
-                 * PREVIEW: Computes impact metrics and returns a signed confirmation token.
-                 * CONFIRM: Validates token and executes the deletion operation.
-                 * @param request RemoveFolderRequest message or plain object
-                 * @returns Promise
-                 */
-                public removeFolder(request: folder.v3.remove.IRemoveFolderRequest): Promise<folder.v3.remove.RemoveResponse>;
-
-                /**
-                 * Restore records and/or folders from the caller's trashcan into a target folder (KA-8144).
-                 * Each input item is validated independently; failures are reported per-item via
-                 * TrashcanRestoreResponse.results — a failed item does not poison the batch.
-                 * @param request TrashcanRestoreRequest message or plain object
-                 * @param callback Node-style callback called with the error, if any, and TrashcanRestoreResponse
-                 */
-                public trashcanRestore(request: folder.v3.remove.ITrashcanRestoreRequest, callback: folder.v3.remove.RemoveService.TrashcanRestoreCallback): void;
-
-                /**
-                 * Restore records and/or folders from the caller's trashcan into a target folder (KA-8144).
-                 * Each input item is validated independently; failures are reported per-item via
-                 * TrashcanRestoreResponse.results — a failed item does not poison the batch.
-                 * @param request TrashcanRestoreRequest message or plain object
-                 * @returns Promise
-                 */
-                public trashcanRestore(request: folder.v3.remove.ITrashcanRestoreRequest): Promise<folder.v3.remove.TrashcanRestoreResponse>;
-            }
-
-            namespace RemoveService {
-
-                /**
-                 * Callback as used by {@link folder.v3.remove.RemoveService#removeRecord}.
-                 * @param error Error, if any
-                 * @param [response] RemoveResponse
-                 */
-                type RemoveRecordCallback = (error: (Error|null), response?: folder.v3.remove.RemoveResponse) => void;
-
-                /**
-                 * Callback as used by {@link folder.v3.remove.RemoveService#removeFolder}.
-                 * @param error Error, if any
-                 * @param [response] RemoveResponse
-                 */
-                type RemoveFolderCallback = (error: (Error|null), response?: folder.v3.remove.RemoveResponse) => void;
-
-                /**
-                 * Callback as used by {@link folder.v3.remove.RemoveService#trashcanRestore}.
-                 * @param error Error, if any
-                 * @param [response] TrashcanRestoreResponse
-                 */
-                type TrashcanRestoreCallback = (error: (Error|null), response?: folder.v3.remove.TrashcanRestoreResponse) => void;
-            }
-
-            /** RemoveAction enum. */
-            enum RemoveAction {
-                REMOVE_ACTION_PREVIEW = 0,
-                REMOVE_ACTION_CONFIRM = 1
-            }
-
-            /** RecordOperationType enum. */
-            enum RecordOperationType {
-                RECORD_OPERATION_UNKNOWN = 0,
-                UNLINK_FROM_FOLDER = 1,
-                MOVE_TO_FOLDER_TRASH = 2,
-                MOVE_TO_OWNER_TRASH = 3
-            }
-
-            /** FolderOperationType enum. */
-            enum FolderOperationType {
-                FOLDER_OPERATION_UNKNOWN = 0,
-                FOLDER_MOVE_TO_FOLDER_TRASH = 1,
-                FOLDER_MOVE_TO_OWNER_TRASH = 2,
-                FOLDER_DELETE_PERMANENT = 3
-            }
-
-            /** RemoveErrorCode enum. */
-            enum RemoveErrorCode {
-                REMOVE_ERROR_UNKNOWN = 0,
-                REMOVE_ERROR_NOT_FOUND = 1,
-                REMOVE_ERROR_ACCESS_DENIED = 2,
-                REMOVE_ERROR_TRASHCAN_FOLDER = 3,
-                REMOVE_ERROR_ROOT_FOLDER = 4,
-                REMOVE_ERROR_DESCENDANT_DENIED = 5
-            }
-
-            /** RemoveStatus enum. */
-            enum RemoveStatus {
-                REMOVE_STATUS_UNKNOWN = 0,
-                REMOVE_STATUS_SUCCESS = 1,
-                REMOVE_STATUS_STALE_PREVIEW = 2,
-                REMOVE_STATUS_TOKEN_EXPIRED = 3,
-                REMOVE_STATUS_TOKEN_INVALID = 4,
-                REMOVE_STATUS_ACCESS_DENIED = 5,
-                REMOVE_STATUS_VALIDATION_ERROR = 6
-            }
-
-            /** Properties of a RecordRemoval. */
-            interface IRecordRemoval {
-
-                /** RecordRemoval folderUid */
-                folderUid?: (Uint8Array|null);
-
-                /** RecordRemoval recordUid */
-                recordUid?: (Uint8Array|null);
-
-                /** RecordRemoval operationType */
-                operationType?: (folder.v3.remove.RecordOperationType|null);
-            }
-
-            /** Represents a RecordRemoval. */
-            class RecordRemoval implements IRecordRemoval {
-
-                /**
-                 * Constructs a new RecordRemoval.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRecordRemoval);
-
-                /** RecordRemoval folderUid. */
-                public folderUid: Uint8Array;
-
-                /** RecordRemoval recordUid. */
-                public recordUid: Uint8Array;
-
-                /** RecordRemoval operationType. */
-                public operationType: folder.v3.remove.RecordOperationType;
-
-                /**
-                 * Creates a new RecordRemoval instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RecordRemoval instance
-                 */
-                public static create(properties?: folder.v3.remove.IRecordRemoval): folder.v3.remove.RecordRemoval;
-
-                /**
-                 * Encodes the specified RecordRemoval message. Does not implicitly {@link folder.v3.remove.RecordRemoval.verify|verify} messages.
-                 * @param message RecordRemoval message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRecordRemoval, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RecordRemoval message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RecordRemoval
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RecordRemoval;
-
-                /**
-                 * Creates a RecordRemoval message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RecordRemoval
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RecordRemoval;
-
-                /**
-                 * Creates a plain object from a RecordRemoval message. Also converts values to other types if specified.
-                 * @param message RecordRemoval
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RecordRemoval, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RecordRemoval to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RecordRemoval
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a FolderRemoval. */
-            interface IFolderRemoval {
-
-                /** FolderRemoval folderUid */
-                folderUid?: (Uint8Array|null);
-
-                /** FolderRemoval operationType */
-                operationType?: (folder.v3.remove.FolderOperationType|null);
-            }
-
-            /** Represents a FolderRemoval. */
-            class FolderRemoval implements IFolderRemoval {
-
-                /**
-                 * Constructs a new FolderRemoval.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IFolderRemoval);
-
-                /** FolderRemoval folderUid. */
-                public folderUid: Uint8Array;
-
-                /** FolderRemoval operationType. */
-                public operationType: folder.v3.remove.FolderOperationType;
-
-                /**
-                 * Creates a new FolderRemoval instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns FolderRemoval instance
-                 */
-                public static create(properties?: folder.v3.remove.IFolderRemoval): folder.v3.remove.FolderRemoval;
-
-                /**
-                 * Encodes the specified FolderRemoval message. Does not implicitly {@link folder.v3.remove.FolderRemoval.verify|verify} messages.
-                 * @param message FolderRemoval message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IFolderRemoval, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a FolderRemoval message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns FolderRemoval
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.FolderRemoval;
-
-                /**
-                 * Creates a FolderRemoval message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns FolderRemoval
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.FolderRemoval;
-
-                /**
-                 * Creates a plain object from a FolderRemoval message. Also converts values to other types if specified.
-                 * @param message FolderRemoval
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.FolderRemoval, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this FolderRemoval to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for FolderRemoval
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RemoveRecordRequest. */
-            interface IRemoveRecordRequest {
-
-                /** RemoveRecordRequest action */
-                action?: (folder.v3.remove.RemoveAction|null);
-
-                /** RemoveRecordRequest records */
-                records?: (folder.v3.remove.IRecordRemoval[]|null);
-
-                /** RemoveRecordRequest confirmationToken */
-                confirmationToken?: (Uint8Array|null);
-            }
-
-            /** Represents a RemoveRecordRequest. */
-            class RemoveRecordRequest implements IRemoveRecordRequest {
-
-                /**
-                 * Constructs a new RemoveRecordRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRemoveRecordRequest);
-
-                /** RemoveRecordRequest action. */
-                public action: folder.v3.remove.RemoveAction;
-
-                /** RemoveRecordRequest records. */
-                public records: folder.v3.remove.IRecordRemoval[];
-
-                /** RemoveRecordRequest confirmationToken. */
-                public confirmationToken: Uint8Array;
-
-                /**
-                 * Creates a new RemoveRecordRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RemoveRecordRequest instance
-                 */
-                public static create(properties?: folder.v3.remove.IRemoveRecordRequest): folder.v3.remove.RemoveRecordRequest;
-
-                /**
-                 * Encodes the specified RemoveRecordRequest message. Does not implicitly {@link folder.v3.remove.RemoveRecordRequest.verify|verify} messages.
-                 * @param message RemoveRecordRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRemoveRecordRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RemoveRecordRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RemoveRecordRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveRecordRequest;
-
-                /**
-                 * Creates a RemoveRecordRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RemoveRecordRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveRecordRequest;
-
-                /**
-                 * Creates a plain object from a RemoveRecordRequest message. Also converts values to other types if specified.
-                 * @param message RemoveRecordRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RemoveRecordRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RemoveRecordRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RemoveRecordRequest
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RemoveFolderRequest. */
-            interface IRemoveFolderRequest {
-
-                /** RemoveFolderRequest action */
-                action?: (folder.v3.remove.RemoveAction|null);
-
-                /** RemoveFolderRequest folders */
-                folders?: (folder.v3.remove.IFolderRemoval[]|null);
-
-                /** RemoveFolderRequest confirmationToken */
-                confirmationToken?: (Uint8Array|null);
-            }
-
-            /** Represents a RemoveFolderRequest. */
-            class RemoveFolderRequest implements IRemoveFolderRequest {
-
-                /**
-                 * Constructs a new RemoveFolderRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRemoveFolderRequest);
-
-                /** RemoveFolderRequest action. */
-                public action: folder.v3.remove.RemoveAction;
-
-                /** RemoveFolderRequest folders. */
-                public folders: folder.v3.remove.IFolderRemoval[];
-
-                /** RemoveFolderRequest confirmationToken. */
-                public confirmationToken: Uint8Array;
-
-                /**
-                 * Creates a new RemoveFolderRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RemoveFolderRequest instance
-                 */
-                public static create(properties?: folder.v3.remove.IRemoveFolderRequest): folder.v3.remove.RemoveFolderRequest;
-
-                /**
-                 * Encodes the specified RemoveFolderRequest message. Does not implicitly {@link folder.v3.remove.RemoveFolderRequest.verify|verify} messages.
-                 * @param message RemoveFolderRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRemoveFolderRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RemoveFolderRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RemoveFolderRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveFolderRequest;
-
-                /**
-                 * Creates a RemoveFolderRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RemoveFolderRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveFolderRequest;
-
-                /**
-                 * Creates a plain object from a RemoveFolderRequest message. Also converts values to other types if specified.
-                 * @param message RemoveFolderRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RemoveFolderRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RemoveFolderRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RemoveFolderRequest
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RemoveResponse. */
-            interface IRemoveResponse {
-
-                /** RemoveResponse confirmationToken */
-                confirmationToken?: (Uint8Array|null);
-
-                /** RemoveResponse tokenExpiresAt */
-                tokenExpiresAt?: (number|null);
-
-                /** RemoveResponse results */
-                results?: (folder.v3.remove.IRemoveResult[]|null);
-
-                /** RemoveResponse errorMessage */
-                errorMessage?: (string|null);
-            }
-
-            /**
-             * Response for remove operations (both record and folder).
-             *
-             * For PREVIEW: Contains confirmation_token and per-item results with impact.
-             * For CONFIRM: Contains per-item results with execution status.
-             */
-            class RemoveResponse implements IRemoveResponse {
-
-                /**
-                 * Constructs a new RemoveResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRemoveResponse);
-
-                /** RemoveResponse confirmationToken. */
-                public confirmationToken: Uint8Array;
-
-                /** RemoveResponse tokenExpiresAt. */
-                public tokenExpiresAt: number;
-
-                /** RemoveResponse results. */
-                public results: folder.v3.remove.IRemoveResult[];
-
-                /** RemoveResponse errorMessage. */
-                public errorMessage: string;
-
-                /**
-                 * Creates a new RemoveResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RemoveResponse instance
-                 */
-                public static create(properties?: folder.v3.remove.IRemoveResponse): folder.v3.remove.RemoveResponse;
-
-                /**
-                 * Encodes the specified RemoveResponse message. Does not implicitly {@link folder.v3.remove.RemoveResponse.verify|verify} messages.
-                 * @param message RemoveResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRemoveResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RemoveResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RemoveResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveResponse;
-
-                /**
-                 * Creates a RemoveResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RemoveResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveResponse;
-
-                /**
-                 * Creates a plain object from a RemoveResponse message. Also converts values to other types if specified.
-                 * @param message RemoveResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RemoveResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RemoveResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RemoveResponse
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RemoveResult. */
-            interface IRemoveResult {
-
-                /** RemoveResult itemUid */
-                itemUid?: (Uint8Array|null);
-
-                /** RemoveResult folderUid */
-                folderUid?: (Uint8Array|null);
-
-                /** RemoveResult status */
-                status?: (folder.v3.remove.RemoveStatus|null);
-
-                /** RemoveResult impact */
-                impact?: (folder.v3.remove.IImpact|null);
-
-                /** RemoveResult error */
-                error?: (folder.v3.remove.IItemError|null);
-            }
-
-            /** Per-item result for a single record or folder. */
-            class RemoveResult implements IRemoveResult {
-
-                /**
-                 * Constructs a new RemoveResult.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRemoveResult);
-
-                /** RemoveResult itemUid. */
-                public itemUid: Uint8Array;
-
-                /** RemoveResult folderUid. */
-                public folderUid: Uint8Array;
-
-                /** RemoveResult status. */
-                public status: folder.v3.remove.RemoveStatus;
-
-                /** RemoveResult impact. */
-                public impact?: (folder.v3.remove.IImpact|null);
-
-                /** RemoveResult error. */
-                public error?: (folder.v3.remove.IItemError|null);
-
-                /**
-                 * Creates a new RemoveResult instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RemoveResult instance
-                 */
-                public static create(properties?: folder.v3.remove.IRemoveResult): folder.v3.remove.RemoveResult;
-
-                /**
-                 * Encodes the specified RemoveResult message. Does not implicitly {@link folder.v3.remove.RemoveResult.verify|verify} messages.
-                 * @param message RemoveResult message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRemoveResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RemoveResult message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RemoveResult
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemoveResult;
-
-                /**
-                 * Creates a RemoveResult message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RemoveResult
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemoveResult;
-
-                /**
-                 * Creates a plain object from a RemoveResult message. Also converts values to other types if specified.
-                 * @param message RemoveResult
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RemoveResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RemoveResult to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RemoveResult
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of an Impact. */
-            interface IImpact {
-
-                /** Impact foldersCount */
-                foldersCount?: (number|null);
-
-                /** Impact recordsCount */
-                recordsCount?: (number|null);
-
-                /** Impact affectedUsersCount */
-                affectedUsersCount?: (number|null);
-
-                /** Impact affectedTeamsCount */
-                affectedTeamsCount?: (number|null);
-
-                /** Impact recordInfo */
-                recordInfo?: (folder.v3.remove.IRecordInfo[]|null);
-
-                /** Impact warnings */
-                warnings?: (string[]|null);
-            }
-
-            /** Impact metrics for a single item (record or folder tree). */
-            class Impact implements IImpact {
-
-                /**
-                 * Constructs a new Impact.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IImpact);
-
-                /** Impact foldersCount. */
-                public foldersCount: number;
-
-                /** Impact recordsCount. */
-                public recordsCount: number;
-
-                /** Impact affectedUsersCount. */
-                public affectedUsersCount: number;
-
-                /** Impact affectedTeamsCount. */
-                public affectedTeamsCount: number;
-
-                /** Impact recordInfo. */
-                public recordInfo: folder.v3.remove.IRecordInfo[];
-
-                /** Impact warnings. */
-                public warnings: string[];
-
-                /**
-                 * Creates a new Impact instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns Impact instance
-                 */
-                public static create(properties?: folder.v3.remove.IImpact): folder.v3.remove.Impact;
-
-                /**
-                 * Encodes the specified Impact message. Does not implicitly {@link folder.v3.remove.Impact.verify|verify} messages.
-                 * @param message Impact message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IImpact, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an Impact message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns Impact
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.Impact;
-
-                /**
-                 * Creates an Impact message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns Impact
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.Impact;
-
-                /**
-                 * Creates a plain object from an Impact message. Also converts values to other types if specified.
-                 * @param message Impact
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.Impact, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this Impact to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for Impact
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RecordInfo. */
-            interface IRecordInfo {
-
-                /** RecordInfo recordUid */
-                recordUid?: (Uint8Array|null);
-
-                /** RecordInfo locationsCount */
-                locationsCount?: (number|null);
-            }
-
-            /**
-             * Additional info for a record being removed.
-             * Only populated for MOVE_TO_OWNER_TRASH to show "also in X other folders".
-             */
-            class RecordInfo implements IRecordInfo {
-
-                /**
-                 * Constructs a new RecordInfo.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRecordInfo);
-
-                /** RecordInfo recordUid. */
-                public recordUid: Uint8Array;
-
-                /** RecordInfo locationsCount. */
-                public locationsCount: number;
-
-                /**
-                 * Creates a new RecordInfo instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RecordInfo instance
-                 */
-                public static create(properties?: folder.v3.remove.IRecordInfo): folder.v3.remove.RecordInfo;
-
-                /**
-                 * Encodes the specified RecordInfo message. Does not implicitly {@link folder.v3.remove.RecordInfo.verify|verify} messages.
-                 * @param message RecordInfo message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRecordInfo, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RecordInfo message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RecordInfo
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RecordInfo;
-
-                /**
-                 * Creates a RecordInfo message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RecordInfo
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RecordInfo;
-
-                /**
-                 * Creates a plain object from a RecordInfo message. Also converts values to other types if specified.
-                 * @param message RecordInfo
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RecordInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RecordInfo to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RecordInfo
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of an ItemError. */
-            interface IItemError {
-
-                /** ItemError code */
-                code?: (folder.v3.remove.RemoveErrorCode|null);
-
-                /** ItemError message */
-                message?: (string|null);
-            }
-
-            /** Error details for a failed item. */
-            class ItemError implements IItemError {
-
-                /**
-                 * Constructs a new ItemError.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IItemError);
-
-                /** ItemError code. */
-                public code: folder.v3.remove.RemoveErrorCode;
-
-                /** ItemError message. */
-                public message: string;
-
-                /**
-                 * Creates a new ItemError instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ItemError instance
-                 */
-                public static create(properties?: folder.v3.remove.IItemError): folder.v3.remove.ItemError;
-
-                /**
-                 * Encodes the specified ItemError message. Does not implicitly {@link folder.v3.remove.ItemError.verify|verify} messages.
-                 * @param message ItemError message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IItemError, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an ItemError message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ItemError
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.ItemError;
-
-                /**
-                 * Creates an ItemError message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ItemError
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.ItemError;
-
-                /**
-                 * Creates a plain object from an ItemError message. Also converts values to other types if specified.
-                 * @param message ItemError
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.ItemError, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ItemError to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for ItemError
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RemovalTokenPayload. */
-            interface IRemovalTokenPayload {
-
-                /** RemovalTokenPayload itemFingerprints */
-                itemFingerprints?: (folder.v3.remove.IItemFingerprint[]|null);
-
-                /** RemovalTokenPayload userId */
-                userId?: (number|null);
-
-                /** RemovalTokenPayload deviceId */
-                deviceId?: (number|null);
-
-                /** RemovalTokenPayload sessionUid */
-                sessionUid?: (Uint8Array|null);
-
-                /** RemovalTokenPayload expiresAtMillis */
-                expiresAtMillis?: (number|null);
-            }
-
-            /** Internal token payload (not exposed in API, just for serialization) */
-            class RemovalTokenPayload implements IRemovalTokenPayload {
-
-                /**
-                 * Constructs a new RemovalTokenPayload.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRemovalTokenPayload);
-
-                /** RemovalTokenPayload itemFingerprints. */
-                public itemFingerprints: folder.v3.remove.IItemFingerprint[];
-
-                /** RemovalTokenPayload userId. */
-                public userId: number;
-
-                /** RemovalTokenPayload deviceId. */
-                public deviceId: number;
-
-                /** RemovalTokenPayload sessionUid. */
-                public sessionUid: Uint8Array;
-
-                /** RemovalTokenPayload expiresAtMillis. */
-                public expiresAtMillis: number;
-
-                /**
-                 * Creates a new RemovalTokenPayload instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RemovalTokenPayload instance
-                 */
-                public static create(properties?: folder.v3.remove.IRemovalTokenPayload): folder.v3.remove.RemovalTokenPayload;
-
-                /**
-                 * Encodes the specified RemovalTokenPayload message. Does not implicitly {@link folder.v3.remove.RemovalTokenPayload.verify|verify} messages.
-                 * @param message RemovalTokenPayload message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRemovalTokenPayload, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RemovalTokenPayload message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RemovalTokenPayload
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RemovalTokenPayload;
-
-                /**
-                 * Creates a RemovalTokenPayload message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RemovalTokenPayload
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RemovalTokenPayload;
-
-                /**
-                 * Creates a plain object from a RemovalTokenPayload message. Also converts values to other types if specified.
-                 * @param message RemovalTokenPayload
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RemovalTokenPayload, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RemovalTokenPayload to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RemovalTokenPayload
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of an ItemFingerprint. */
-            interface IItemFingerprint {
-
-                /** ItemFingerprint record */
-                record?: (folder.v3.remove.IRecordTarget|null);
-
-                /** ItemFingerprint folder */
-                folder?: (folder.v3.remove.IFolderTarget|null);
-
-                /** ItemFingerprint fingerprint */
-                fingerprint?: (Uint8Array|null);
-            }
-
-            /** Represents an ItemFingerprint. */
-            class ItemFingerprint implements IItemFingerprint {
-
-                /**
-                 * Constructs a new ItemFingerprint.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IItemFingerprint);
-
-                /** ItemFingerprint record. */
-                public record?: (folder.v3.remove.IRecordTarget|null);
-
-                /** ItemFingerprint folder. */
-                public folder?: (folder.v3.remove.IFolderTarget|null);
-
-                /** ItemFingerprint fingerprint. */
-                public fingerprint: Uint8Array;
-
-                /** ItemFingerprint target. */
-                public target?: ("record"|"folder");
-
-                /**
-                 * Creates a new ItemFingerprint instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns ItemFingerprint instance
-                 */
-                public static create(properties?: folder.v3.remove.IItemFingerprint): folder.v3.remove.ItemFingerprint;
-
-                /**
-                 * Encodes the specified ItemFingerprint message. Does not implicitly {@link folder.v3.remove.ItemFingerprint.verify|verify} messages.
-                 * @param message ItemFingerprint message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IItemFingerprint, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes an ItemFingerprint message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns ItemFingerprint
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.ItemFingerprint;
-
-                /**
-                 * Creates an ItemFingerprint message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns ItemFingerprint
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.ItemFingerprint;
-
-                /**
-                 * Creates a plain object from an ItemFingerprint message. Also converts values to other types if specified.
-                 * @param message ItemFingerprint
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.ItemFingerprint, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this ItemFingerprint to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for ItemFingerprint
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RecordTarget. */
-            interface IRecordTarget {
-
-                /** RecordTarget folderUid */
-                folderUid?: (Uint8Array|null);
-
-                /** RecordTarget recordUid */
-                recordUid?: (Uint8Array|null);
-
-                /** RecordTarget operationType */
-                operationType?: (folder.v3.remove.RecordOperationType|null);
-            }
-
-            /** Represents a RecordTarget. */
-            class RecordTarget implements IRecordTarget {
-
-                /**
-                 * Constructs a new RecordTarget.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRecordTarget);
-
-                /** RecordTarget folderUid. */
-                public folderUid: Uint8Array;
-
-                /** RecordTarget recordUid. */
-                public recordUid: Uint8Array;
-
-                /** RecordTarget operationType. */
-                public operationType: folder.v3.remove.RecordOperationType;
-
-                /**
-                 * Creates a new RecordTarget instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RecordTarget instance
-                 */
-                public static create(properties?: folder.v3.remove.IRecordTarget): folder.v3.remove.RecordTarget;
-
-                /**
-                 * Encodes the specified RecordTarget message. Does not implicitly {@link folder.v3.remove.RecordTarget.verify|verify} messages.
-                 * @param message RecordTarget message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRecordTarget, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RecordTarget message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RecordTarget
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RecordTarget;
-
-                /**
-                 * Creates a RecordTarget message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RecordTarget
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RecordTarget;
-
-                /**
-                 * Creates a plain object from a RecordTarget message. Also converts values to other types if specified.
-                 * @param message RecordTarget
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RecordTarget, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RecordTarget to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RecordTarget
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a FolderTarget. */
-            interface IFolderTarget {
-
-                /** FolderTarget folderUid */
-                folderUid?: (Uint8Array|null);
-
-                /** FolderTarget operationType */
-                operationType?: (folder.v3.remove.FolderOperationType|null);
-            }
-
-            /** Represents a FolderTarget. */
-            class FolderTarget implements IFolderTarget {
-
-                /**
-                 * Constructs a new FolderTarget.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IFolderTarget);
-
-                /** FolderTarget folderUid. */
-                public folderUid: Uint8Array;
-
-                /** FolderTarget operationType. */
-                public operationType: folder.v3.remove.FolderOperationType;
-
-                /**
-                 * Creates a new FolderTarget instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns FolderTarget instance
-                 */
-                public static create(properties?: folder.v3.remove.IFolderTarget): folder.v3.remove.FolderTarget;
-
-                /**
-                 * Encodes the specified FolderTarget message. Does not implicitly {@link folder.v3.remove.FolderTarget.verify|verify} messages.
-                 * @param message FolderTarget message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IFolderTarget, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a FolderTarget message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns FolderTarget
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.FolderTarget;
-
-                /**
-                 * Creates a FolderTarget message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns FolderTarget
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.FolderTarget;
-
-                /**
-                 * Creates a plain object from a FolderTarget message. Also converts values to other types if specified.
-                 * @param message FolderTarget
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.FolderTarget, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this FolderTarget to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for FolderTarget
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** RestoreStatus enum. */
-            enum RestoreStatus {
-                RESTORE_STATUS_UNKNOWN = 0,
-                RS_SUCCESS = 1,
-                RS_NOT_IN_TRASHCAN = 2,
-                RS_ACCESS_DENIED = 3,
-                RS_TARGET_FOLDER_NOT_FOUND = 4,
-                RS_ALREADY_EXISTS_IN_TARGET = 5,
-                RS_FAIL = 6
-            }
-
-            /** RestoreItemType enum. */
-            enum RestoreItemType {
-                RESTORE_ITEM_UNKNOWN = 0,
-                RESTORE_ITEM_RECORD = 1,
-                RESTORE_ITEM_FOLDER = 2
-            }
-
-            /** Properties of a RestoreResult. */
-            interface IRestoreResult {
-
-                /** RestoreResult itemUid */
-                itemUid?: (Uint8Array|null);
-
-                /** RestoreResult itemType */
-                itemType?: (folder.v3.remove.RestoreItemType|null);
-
-                /** RestoreResult status */
-                status?: (folder.v3.remove.RestoreStatus|null);
-
-                /** RestoreResult errorMessage */
-                errorMessage?: (string|null);
-            }
-
-            /** Represents a RestoreResult. */
-            class RestoreResult implements IRestoreResult {
-
-                /**
-                 * Constructs a new RestoreResult.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRestoreResult);
-
-                /** RestoreResult itemUid. */
-                public itemUid: Uint8Array;
-
-                /** RestoreResult itemType. */
-                public itemType: folder.v3.remove.RestoreItemType;
-
-                /** RestoreResult status. */
-                public status: folder.v3.remove.RestoreStatus;
-
-                /** RestoreResult errorMessage. */
-                public errorMessage: string;
-
-                /**
-                 * Creates a new RestoreResult instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RestoreResult instance
-                 */
-                public static create(properties?: folder.v3.remove.IRestoreResult): folder.v3.remove.RestoreResult;
-
-                /**
-                 * Encodes the specified RestoreResult message. Does not implicitly {@link folder.v3.remove.RestoreResult.verify|verify} messages.
-                 * @param message RestoreResult message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRestoreResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RestoreResult message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RestoreResult
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RestoreResult;
-
-                /**
-                 * Creates a RestoreResult message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RestoreResult
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RestoreResult;
-
-                /**
-                 * Creates a plain object from a RestoreResult message. Also converts values to other types if specified.
-                 * @param message RestoreResult
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RestoreResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RestoreResult to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RestoreResult
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a TrashcanRestoreResponse. */
-            interface ITrashcanRestoreResponse {
-
-                /** TrashcanRestoreResponse results */
-                results?: (folder.v3.remove.IRestoreResult[]|null);
-
-                /** TrashcanRestoreResponse errorMessage */
-                errorMessage?: (string|null);
-            }
-
-            /** Represents a TrashcanRestoreResponse. */
-            class TrashcanRestoreResponse implements ITrashcanRestoreResponse {
-
-                /**
-                 * Constructs a new TrashcanRestoreResponse.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.ITrashcanRestoreResponse);
-
-                /** TrashcanRestoreResponse results. */
-                public results: folder.v3.remove.IRestoreResult[];
-
-                /** TrashcanRestoreResponse errorMessage. */
-                public errorMessage: string;
-
-                /**
-                 * Creates a new TrashcanRestoreResponse instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns TrashcanRestoreResponse instance
-                 */
-                public static create(properties?: folder.v3.remove.ITrashcanRestoreResponse): folder.v3.remove.TrashcanRestoreResponse;
-
-                /**
-                 * Encodes the specified TrashcanRestoreResponse message. Does not implicitly {@link folder.v3.remove.TrashcanRestoreResponse.verify|verify} messages.
-                 * @param message TrashcanRestoreResponse message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.ITrashcanRestoreResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a TrashcanRestoreResponse message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns TrashcanRestoreResponse
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.TrashcanRestoreResponse;
-
-                /**
-                 * Creates a TrashcanRestoreResponse message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns TrashcanRestoreResponse
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.TrashcanRestoreResponse;
-
-                /**
-                 * Creates a plain object from a TrashcanRestoreResponse message. Also converts values to other types if specified.
-                 * @param message TrashcanRestoreResponse
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.TrashcanRestoreResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this TrashcanRestoreResponse to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for TrashcanRestoreResponse
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RestoreRecord. */
-            interface IRestoreRecord {
-
-                /** RestoreRecord recordUid */
-                recordUid?: (Uint8Array|null);
-
-                /** RestoreRecord encryptedRecordKey */
-                encryptedRecordKey?: (Uint8Array|null);
-
-                /** RestoreRecord sourceFolderUid */
-                sourceFolderUid?: (Uint8Array|null);
-            }
-
-            /** Represents a RestoreRecord. */
-            class RestoreRecord implements IRestoreRecord {
-
-                /**
-                 * Constructs a new RestoreRecord.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRestoreRecord);
-
-                /** RestoreRecord recordUid. */
-                public recordUid: Uint8Array;
-
-                /** RestoreRecord encryptedRecordKey. */
-                public encryptedRecordKey: Uint8Array;
-
-                /** RestoreRecord sourceFolderUid. */
-                public sourceFolderUid: Uint8Array;
-
-                /**
-                 * Creates a new RestoreRecord instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RestoreRecord instance
-                 */
-                public static create(properties?: folder.v3.remove.IRestoreRecord): folder.v3.remove.RestoreRecord;
-
-                /**
-                 * Encodes the specified RestoreRecord message. Does not implicitly {@link folder.v3.remove.RestoreRecord.verify|verify} messages.
-                 * @param message RestoreRecord message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRestoreRecord, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RestoreRecord message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RestoreRecord
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RestoreRecord;
-
-                /**
-                 * Creates a RestoreRecord message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RestoreRecord
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RestoreRecord;
-
-                /**
-                 * Creates a plain object from a RestoreRecord message. Also converts values to other types if specified.
-                 * @param message RestoreRecord
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RestoreRecord, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RestoreRecord to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RestoreRecord
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a RestoreFolder. */
-            interface IRestoreFolder {
-
-                /** RestoreFolder folderUid */
-                folderUid?: (Uint8Array|null);
-
-                /** RestoreFolder encryptedFolderKey */
-                encryptedFolderKey?: (Uint8Array|null);
-            }
-
-            /** Represents a RestoreFolder. */
-            class RestoreFolder implements IRestoreFolder {
-
-                /**
-                 * Constructs a new RestoreFolder.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.IRestoreFolder);
-
-                /** RestoreFolder folderUid. */
-                public folderUid: Uint8Array;
-
-                /** RestoreFolder encryptedFolderKey. */
-                public encryptedFolderKey: Uint8Array;
-
-                /**
-                 * Creates a new RestoreFolder instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns RestoreFolder instance
-                 */
-                public static create(properties?: folder.v3.remove.IRestoreFolder): folder.v3.remove.RestoreFolder;
-
-                /**
-                 * Encodes the specified RestoreFolder message. Does not implicitly {@link folder.v3.remove.RestoreFolder.verify|verify} messages.
-                 * @param message RestoreFolder message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.IRestoreFolder, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a RestoreFolder message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns RestoreFolder
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.RestoreFolder;
-
-                /**
-                 * Creates a RestoreFolder message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns RestoreFolder
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.RestoreFolder;
-
-                /**
-                 * Creates a plain object from a RestoreFolder message. Also converts values to other types if specified.
-                 * @param message RestoreFolder
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.RestoreFolder, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this RestoreFolder to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for RestoreFolder
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-
-            /** Properties of a TrashcanRestoreRequest. */
-            interface ITrashcanRestoreRequest {
-
-                /** TrashcanRestoreRequest records */
-                records?: (folder.v3.remove.IRestoreRecord[]|null);
-
-                /** TrashcanRestoreRequest folders */
-                folders?: (folder.v3.remove.IRestoreFolder[]|null);
-
-                /** TrashcanRestoreRequest targetFolderUid */
-                targetFolderUid?: (Uint8Array|null);
-            }
-
-            /** Represents a TrashcanRestoreRequest. */
-            class TrashcanRestoreRequest implements ITrashcanRestoreRequest {
-
-                /**
-                 * Constructs a new TrashcanRestoreRequest.
-                 * @param [properties] Properties to set
-                 */
-                constructor(properties?: folder.v3.remove.ITrashcanRestoreRequest);
-
-                /** TrashcanRestoreRequest records. */
-                public records: folder.v3.remove.IRestoreRecord[];
-
-                /** TrashcanRestoreRequest folders. */
-                public folders: folder.v3.remove.IRestoreFolder[];
-
-                /** TrashcanRestoreRequest targetFolderUid. */
-                public targetFolderUid: Uint8Array;
-
-                /**
-                 * Creates a new TrashcanRestoreRequest instance using the specified properties.
-                 * @param [properties] Properties to set
-                 * @returns TrashcanRestoreRequest instance
-                 */
-                public static create(properties?: folder.v3.remove.ITrashcanRestoreRequest): folder.v3.remove.TrashcanRestoreRequest;
-
-                /**
-                 * Encodes the specified TrashcanRestoreRequest message. Does not implicitly {@link folder.v3.remove.TrashcanRestoreRequest.verify|verify} messages.
-                 * @param message TrashcanRestoreRequest message or plain object to encode
-                 * @param [writer] Writer to encode to
-                 * @returns Writer
-                 */
-                public static encode(message: folder.v3.remove.ITrashcanRestoreRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-                /**
-                 * Decodes a TrashcanRestoreRequest message from the specified reader or buffer.
-                 * @param reader Reader or buffer to decode from
-                 * @param [length] Message length if known beforehand
-                 * @returns TrashcanRestoreRequest
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.TrashcanRestoreRequest;
-
-                /**
-                 * Creates a TrashcanRestoreRequest message from a plain object. Also converts values to their respective internal types.
-                 * @param object Plain object
-                 * @returns TrashcanRestoreRequest
-                 */
-                public static fromObject(object: { [k: string]: any }): folder.v3.remove.TrashcanRestoreRequest;
-
-                /**
-                 * Creates a plain object from a TrashcanRestoreRequest message. Also converts values to other types if specified.
-                 * @param message TrashcanRestoreRequest
-                 * @param [options] Conversion options
-                 * @returns Plain object
-                 */
-                public static toObject(message: folder.v3.remove.TrashcanRestoreRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-                /**
-                 * Converts this TrashcanRestoreRequest to JSON.
-                 * @returns JSON object
-                 */
-                public toJSON(): { [k: string]: any };
-
-                /**
-                 * Gets the default type url for TrashcanRestoreRequest
-                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-                 * @returns The default type url
-                 */
-                public static getTypeUrl(typeUrlPrefix?: string): string;
-            }
-        }
     }
 }

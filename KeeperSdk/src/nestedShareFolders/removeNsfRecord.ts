@@ -191,19 +191,28 @@ async function executeRemove(
     )
 }
 
+export function collectRemoveNsfWarnings(preview: NsfRemovePreviewItem[]): string[] {
+    const warnings = new Set<string>()
+    for (const item of preview) {
+        for (const warning of item.impact?.warnings ?? []) {
+            if (warning) warnings.add(warning)
+        }
+    }
+    return [...warnings]
+}
+
 export function formatRemoveNsfPreview(preview: NsfRemovePreviewItem[]): string {
     const lines: string[] = []
     for (const item of preview) {
         lines.push(`Record: ${item.recordUid}`)
         if (item.folderUid) lines.push(`  Folder: ${item.folderUid}`)
-        lines.push(`  Status: ${item.status}`)
+        if (item.status !== REMOVE_SUCCESS_STATUS) {
+            lines.push(`  Status: ${item.status}`)
+        }
         if (item.impact) {
             lines.push(
                 `  Impact: folders=${item.impact.foldersCount}, records=${item.impact.recordsCount}, users=${item.impact.affectedUsersCount}, teams=${item.impact.affectedTeamsCount}`
             )
-            for (const warning of item.impact.warnings) {
-                lines.push(`  Warning: ${warning}`)
-            }
         }
         if (item.error?.message) {
             lines.push(`  Error: ${item.error.message}`)

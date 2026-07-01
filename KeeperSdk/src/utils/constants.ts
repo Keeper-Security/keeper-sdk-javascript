@@ -64,7 +64,12 @@ export enum NsfErrorCode {
     RemoveFailed = 'nsf_remove_failed',
     FolderRequired = 'nsf_folder_required',
     TooManyRecords = 'nsf_too_many_records',
+    TooManyFolders = 'nsf_too_many_folders',
     MissingKey = 'nsf_missing_key',
+    MkdirFailed = 'nsf_mkdir_failed',
+    UpdateFailed = 'nsf_update_failed',
+    DetailsFailed = 'nsf_details_failed',
+    AddFailed = 'nsf_add_failed',
 }
 
 export enum TeamErrorCode {
@@ -143,7 +148,12 @@ export const ResultCodes = {
     NSF_REMOVE_FAILED: NsfErrorCode.RemoveFailed,
     NSF_FOLDER_REQUIRED: NsfErrorCode.FolderRequired,
     NSF_TOO_MANY_RECORDS: NsfErrorCode.TooManyRecords,
+    NSF_TOO_MANY_FOLDERS: NsfErrorCode.TooManyFolders,
     NSF_MISSING_KEY: NsfErrorCode.MissingKey,
+    NSF_MKDIR_FAILED: NsfErrorCode.MkdirFailed,
+    NSF_UPDATE_FAILED: NsfErrorCode.UpdateFailed,
+    NSF_DETAILS_FAILED: NsfErrorCode.DetailsFailed,
+    NSF_ADD_FAILED: NsfErrorCode.AddFailed,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,

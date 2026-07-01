@@ -13,6 +13,7 @@ import {
 } from './listNsf'
 import {
     formatNsfDetail as renderNsfDetail,
+    formatNsfJson as renderNsfJson,
     formatNsfFolderDetail as renderNsfFolderDetail,
     formatNsfRecordDetail as renderNsfRecordDetail,
     getNestedShareFolder,
@@ -28,6 +29,25 @@ import {
     type RemoveNsfRecordInput,
     type RemoveNsfRecordResult,
 } from './removeNsfRecord'
+import { mkdirNestedShareFolder, type MkdirNsfInput, type MkdirNsfResult } from './mkdirNsf'
+import {
+    formatRemoveNsfFolderPreview,
+    removeNestedShareFolders,
+    type RemoveNsfFolderInput,
+    type RemoveNsfFolderResult,
+} from './removeNsfFolder'
+import {
+    getNestedShareRecordDetails,
+    formatNsfRecordDetailsOutput,
+    type GetNsfRecordDetailsInput,
+    type GetNsfRecordDetailsResult,
+} from './getNsfRecordDetails'
+import {
+    updateNestedShareRecords,
+    type UpdateNsfRecordInput,
+    type UpdateNsfRecordResult,
+} from './updateNsfRecord'
+import { addNestedShareRecord, type AddNsfRecordInput, type AddNsfRecordResult } from './addNsfRecord'
 
 export type AuthProvider = () => Auth
 
@@ -72,6 +92,10 @@ export class NestedShareFolderManager {
         return renderNsfDetail(result, verbose)
     }
 
+    public formatNsfJson(result: GetNsfResult): string {
+        return renderNsfJson(result)
+    }
+
     public formatNsfFolderDetail(view: NsfFolderView, verbose = false): string {
         return renderNsfFolderDetail(view, verbose)
     }
@@ -93,5 +117,42 @@ export class NestedShareFolderManager {
 
     public formatRemoveNsfPreview(preview: RemoveNsfRecordResult['preview']): string {
         return formatRemoveNsfPreview(preview)
+    }
+
+    public async mkdirNestedShareFolder(input: MkdirNsfInput): Promise<MkdirNsfResult> {
+        return mkdirNestedShareFolder(this.storage, this.requireAuth(), input)
+    }
+
+    public async removeNestedShareFolders(input: RemoveNsfFolderInput): Promise<RemoveNsfFolderResult> {
+        return removeNestedShareFolders(this.storage, this.requireAuth(), input)
+    }
+
+    public formatRemoveNsfFolderPreview(
+        preview: RemoveNsfFolderResult['preview'],
+        operation: RemoveNsfFolderResult['operation'],
+        quiet?: boolean
+    ): string {
+        return formatRemoveNsfFolderPreview(preview, operation, quiet)
+    }
+
+    public async getNestedShareRecordDetails(
+        input: GetNsfRecordDetailsInput
+    ): Promise<GetNsfRecordDetailsResult> {
+        return getNestedShareRecordDetails(this.storage, this.requireAuth(), input)
+    }
+
+    public formatNsfRecordDetailsOutput(
+        result: GetNsfRecordDetailsResult,
+        format?: GetNsfRecordDetailsInput['format']
+    ): string {
+        return formatNsfRecordDetailsOutput(result, format)
+    }
+
+    public async updateNestedShareRecords(input: UpdateNsfRecordInput): Promise<UpdateNsfRecordResult> {
+        return updateNestedShareRecords(this.storage, this.requireAuth(), input)
+    }
+
+    public async addNestedShareRecord(input: AddNsfRecordInput): Promise<AddNsfRecordResult> {
+        return addNestedShareRecord(this.storage, this.requireAuth(), input)
     }
 }
