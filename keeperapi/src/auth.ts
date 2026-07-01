@@ -1300,6 +1300,10 @@ export class Auth {
         return this.endpoint.executeRouterRest(message, this._sessionToken)
     }
 
+    async executeRouterRestAction<TIn>(message: RestInMessage<TIn>): Promise<void> {
+        return this.endpoint.executeRouterRest(message, this._sessionToken)
+    }
+
     async executeRestCommand<Request, Response>(command: RestCommand<Request, Response>): Promise<Response> {
         if (!command.baseRequest.username) {
             command.baseRequest.username = this._username

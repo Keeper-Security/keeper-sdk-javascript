@@ -9,7 +9,7 @@ import { ClientConfigurationInternal, TransmissionKey } from '../configuration'
 import { AllowedMlKemKeyIds, isAllowedEcKeyId, isAllowedMlKemKeyId } from '../transmissionKeys'
 import { KeeperError } from '../configuration'
 import { Authentication, Router, GraphSync, PAM } from '../proto'
-import { startLoginMessage, pamGetLeafsMessage, getControllers } from '../restMessages'
+import { startLoginMessage, pamGetLeafsMessage, getControllers, requestWorkflowAccessMessage } from '../restMessages'
 import { HPKE_ECDH_KYBER, Ciphersuite, MlKemVariant, mlKemKeygen, encodeMlKemPublicKeyToPem } from '../qrc'
 import { getKeeperMlKemKeyVariant } from '../transmissionKeys'
 import { KeeperHttpResponse } from '../commands'
@@ -604,6 +604,18 @@ describe('executeRouterRest', () => {
     it('getControllers uses correct KA API path', () => {
         const message = getControllers()
         expect(message.path).toBe('pam/get_controllers')
+    })
+
+    it('returns void for RestInMessage with empty 200 response', async () => {
+        jest.spyOn(platform, 'post').mockResolvedValue({
+            data: new Uint8Array(0),
+            statusCode: 200,
+            headers: new Headers(),
+        })
+
+        const message = requestWorkflowAccessMessage({ resource: { value: new Uint8Array([1, 2, 3]) } })
+        const result = await endpoint.executeRouterRest(message, sessionToken)
+        expect(result).toBeUndefined()
     })
 })
 
