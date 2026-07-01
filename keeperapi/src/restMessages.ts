@@ -12,6 +12,7 @@ import {
     GraphSync,
     PAM,
     Records,
+    Router,
     ServiceLogger,
     SsoCloud,
     Vault,
@@ -19,6 +20,7 @@ import {
     NotificationCenter,
     record,
     folder,
+    Workflow,
 } from './proto'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
@@ -960,6 +962,11 @@ export const automatorAdminResetMessage = (
 export const getControllers = (): RestOutMessage<PAM.IPAMControllersResponse> =>
     createOutMessage('pam/get_controllers', PAM.PAMControllersResponse)
 
+export const getConfigurationControllerMessage = (
+    data: PAM.IPAMGenericUidRequest
+): RestMessage<PAM.IPAMGenericUidRequest, PAM.IPAMController> =>
+    createMessage(data, 'pam/get_configuration_controller', PAM.PAMGenericUidRequest, PAM.PAMController)
+
 /* -- PAM Router (DAG GraphSync) -- */
 
 export const pamSyncMessage = (
@@ -989,6 +996,77 @@ export const pamGetLeafsMessage = (
 
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
+
+export const readWorkflowConfigMessage = (
+    data: GraphSync.IGraphSyncRef
+): RestMessage<GraphSync.IGraphSyncRef, Workflow.IWorkflowConfig> =>
+    createMessage(data, 'api/user/read_workflow_config', GraphSync.GraphSyncRef, Workflow.WorkflowConfig)
+
+export const createWorkflowConfigMessage = (
+    data: Workflow.IWorkflowParameters
+): RestInMessage<Workflow.IWorkflowParameters> =>
+    createInMessage(data, 'api/user/create_workflow_config', Workflow.WorkflowParameters)
+
+export const updateWorkflowConfigMessage = (
+    data: Workflow.IWorkflowParameters
+): RestInMessage<Workflow.IWorkflowParameters> =>
+    createInMessage(data, 'api/user/update_workflow_config', Workflow.WorkflowParameters)
+
+export const deleteWorkflowConfigMessage = (
+    data: GraphSync.IGraphSyncRef
+): RestInMessage<GraphSync.IGraphSyncRef> =>
+    createInMessage(data, 'api/user/delete_workflow_config', GraphSync.GraphSyncRef)
+
+export const addWorkflowApproversMessage = (
+    data: Workflow.IWorkflowConfig
+): RestInMessage<Workflow.IWorkflowConfig> =>
+    createInMessage(data, 'api/user/add_workflow_approvers', Workflow.WorkflowConfig)
+
+export const deleteWorkflowApproversMessage = (
+    data: Workflow.IWorkflowConfig
+): RestInMessage<Workflow.IWorkflowConfig> =>
+    createInMessage(data, 'api/user/delete_workflow_approvers', Workflow.WorkflowConfig)
+
+export const getWorkflowStateMessage = (
+    data: Workflow.IWorkflowState
+): RestMessage<Workflow.IWorkflowState, Workflow.IWorkflowState> =>
+    createMessage(data, 'api/user/get_workflow_state', Workflow.WorkflowState, Workflow.WorkflowState)
+
+export const getUserAccessStateMessage = (): RestOutMessage<Workflow.IUserAccessState> =>
+    createOutMessage('api/user/get_user_access_state', Workflow.UserAccessState)
+
+export const getApprovalRequestsMessage = (): RestOutMessage<Workflow.IApprovalRequests> =>
+    createOutMessage('api/user/get_approval_requests', Workflow.ApprovalRequests)
+
+export const startWorkflowMessage = (
+    data: Workflow.IWorkflowState
+): RestInMessage<Workflow.IWorkflowState> =>
+    createInMessage(data, 'api/user/start_workflow', Workflow.WorkflowState)
+
+export const requestWorkflowAccessMessage = (
+    data: Workflow.IWorkflowAccessRequest
+): RestInMessage<Workflow.IWorkflowAccessRequest> =>
+    createInMessage(data, 'api/user/request_workflow_access', Workflow.WorkflowAccessRequest)
+
+export const requestEscalationMessage = (
+    data: Workflow.IWorkflowState
+): RestInMessage<Workflow.IWorkflowState> =>
+    createInMessage(data, 'api/user/request_escalation', Workflow.WorkflowState)
+
+export const approveOrDenyWorkflowAccessMessage = (
+    data: Workflow.IWorkflowApprovalOrDenial
+): RestInMessage<Workflow.IWorkflowApprovalOrDenial> =>
+    createInMessage(data, 'api/user/approve_or_deny_workflow_access', Workflow.WorkflowApprovalOrDenial)
+
+export const endWorkflowMessage = (
+    data: GraphSync.IGraphSyncRef
+): RestInMessage<GraphSync.IGraphSyncRef> =>
+    createInMessage(data, 'api/user/end_workflow', GraphSync.GraphSyncRef)
+
+export const forceCheckinMessage = (
+    data: GraphSync.IGraphSyncRef
+): RestInMessage<GraphSync.IGraphSyncRef> =>
+    createInMessage(data, 'api/user/force_checkin', GraphSync.GraphSyncRef)
 
 export const keeperDriveRecordsAdd = (
     data: record.v3.IRecordsAddRequest
