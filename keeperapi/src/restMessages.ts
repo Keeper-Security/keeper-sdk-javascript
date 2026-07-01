@@ -1,4 +1,4 @@
-import { Reader, Writer } from 'protobufjs'
+import { Writer } from 'protobufjs'
 import {
     AccountSummary,
     Authentication,
@@ -18,7 +18,6 @@ import {
     record,
     folder,
 } from './proto'
-import { normal64Bytes, webSafe64FromBytes } from './utils'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
 export type NN<T> = Required<{ [prop in keyof T]: NonNullable<T[prop]> }>
@@ -1019,251 +1018,37 @@ export const removeFolderMessage = (
         folder.v3.remove.RemoveResponse
     )
 
-export interface IRecordDetailsDataRequest {
-    recordUids: Uint8Array[]
-    clientTime?: number
-}
-
-export interface IRecordDetailsDataResponse {
-    data: Records.IRecordData[]
-    forbiddenRecords: Uint8Array[]
-}
-
-const RecordDetailsDataRequest = {
-    create(properties?: IRecordDetailsDataRequest): IRecordDetailsDataRequest {
-        return {
-            recordUids: properties?.recordUids ?? [],
-            clientTime: properties?.clientTime,
-        }
-    },
-    encode(message: IRecordDetailsDataRequest, writer?: Writer): Writer {
-        if (!writer) writer = Writer.create()
-        if (message.clientTime != null) {
-            writer.uint32(8).int64(message.clientTime)
-        }
-        for (const uid of message.recordUids) {
-            writer.uint32(26).bytes(uid)
-        }
-        return writer
-    },
-}
-
-const RecordDetailsDataResponse = {
-    decode(data: Uint8Array): IRecordDetailsDataResponse {
-        const reader = Reader.create(data)
-        const response: IRecordDetailsDataResponse = {
-            data: [],
-            forbiddenRecords: [],
-        }
-        while (reader.pos < reader.len) {
-            const tag = reader.uint32()
-            switch (tag >>> 3) {
-                case 1:
-                    response.data.push(Records.RecordData.decode(reader, reader.uint32()))
-                    break
-                case 2:
-                    response.forbiddenRecords.push(reader.bytes() as Uint8Array)
-                    break
-                default:
-                    reader.skipType(tag & 7)
-                    break
-            }
-        }
-        return response
-    },
-}
-
 export const recordDetailsDataMessage = (
-    data: IRecordDetailsDataRequest
-): RestMessage<IRecordDetailsDataRequest, IRecordDetailsDataResponse> =>
-    createMessage(data, 'vault/records/v3/details/data', RecordDetailsDataRequest, RecordDetailsDataResponse)
+    data: record.v3.details.IRecordDataRequest
+): RestMessage<record.v3.details.IRecordDataRequest, record.v3.details.IRecordDataResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/details/data',
+        record.v3.details.RecordDataRequest,
+        record.v3.details.RecordDataResponse
+    )
 
 export const folderAddMessage = (
     data: Folder.IFolderAddRequest
 ): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
     createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
 
-export interface IGetFolderAccessRequest {
-    folderUid?: Uint8Array[] | null
-}
-
-export interface IGetFolderAccessResult {
-    folderUid?: Uint8Array | null
-    accessors?: Folder.IFolderAccessData[] | null
-}
-
-export interface IGetFolderAccessResponse {
-    folderAccessResults?: IGetFolderAccessResult[] | null
-    hasMore?: boolean | null
-}
-
-const GetFolderAccessRequest = {
-    create(properties?: IGetFolderAccessRequest): IGetFolderAccessRequest {
-        return { folderUid: properties?.folderUid ?? [] }
-    },
-    encode(message: IGetFolderAccessRequest, writer?: Writer): Writer {
-        const w = writer ?? Writer.create()
-        for (const uid of message.folderUid ?? []) {
-            w.uint32((1 << 3) | 2).bytes(uid)
-        }
-        return w
-    },
-}
-
-function decodeGetFolderAccessResult(reader: Reader, end: number): IGetFolderAccessResult | null {
-    let folderUid: Uint8Array | null = null
-    const accessors: Folder.IFolderAccessData[] = []
-
-    while (reader.pos < end) {
-        const tag = reader.uint32()
-        switch (tag) {
-            case 10:
-                folderUid = reader.bytes()
-                break
-            case 18:
-                accessors.push(Folder.FolderAccessData.decode(reader, reader.uint32()))
-                break
-            default:
-                reader.skipType(tag & 7)
-        }
-    }
-
-    return folderUid?.length ? { folderUid, accessors } : null
-}
-
-const GetFolderAccessResponse = {
-    decode(reader: Uint8Array): IGetFolderAccessResponse {
-        const r = Reader.create(reader)
-        const response: IGetFolderAccessResponse = { folderAccessResults: [] }
-
-        while (r.pos < r.len) {
-            const tag = r.uint32()
-            if (tag === 10) {
-                const length = r.uint32()
-                const end = r.pos + length
-                const result = decodeGetFolderAccessResult(r, end)
-                if (result) response.folderAccessResults!.push(result)
-                r.pos = end
-            } else if (tag === 24) {
-                response.hasMore = r.bool()
-            } else {
-                r.skipType(tag & 7)
-            }
-        }
-
-        return response
-    },
-}
+export const folderUpdateMessage = (
+    data: Folder.IFolderUpdateRequest
+): RestMessage<Folder.IFolderUpdateRequest, Folder.IFolderUpdateResponse> =>
+    createMessage(data, 'vault/folders/v3/update', Folder.FolderUpdateRequest, Folder.FolderUpdateResponse)
 
 export const getFolderAccessMessage = (
-    folderUids: string[]
-): RestMessage<IGetFolderAccessRequest, IGetFolderAccessResponse> =>
-    createMessage(
-        { folderUid: folderUids.map(normal64Bytes) },
-        'vault/folders/v3/access',
-        GetFolderAccessRequest,
-        GetFolderAccessResponse
-    )
-
-export interface IRecordAccessRequest {
-    recordUids?: Uint8Array[] | null
-}
-
-export interface IAccessorInfo {
-    name?: string | null
-}
-
-export interface IRecordAccess {
-    data?: Folder.IRecordAccessData | null
-    accessorInfo?: IAccessorInfo | null
-}
-
-export interface IRecordAccessResponse {
-    recordAccesses?: IRecordAccess[] | null
-    forbiddenRecords?: Uint8Array[] | null
-}
-
-const RecordAccessRequest = {
-    create(properties?: IRecordAccessRequest): IRecordAccessRequest {
-        return { recordUids: properties?.recordUids ?? [] }
-    },
-    encode(message: IRecordAccessRequest, writer?: Writer): Writer {
-        const w = writer ?? Writer.create()
-        for (const uid of message.recordUids ?? []) {
-            w.uint32(26).bytes(uid)
-        }
-        return w
-    },
-}
-
-function decodeAccessorInfo(reader: Reader, end: number): IAccessorInfo {
-    let name: string | null = null
-    while (reader.pos < end) {
-        const tag = reader.uint32()
-        if (tag === 10) {
-            name = reader.string()
-        } else {
-            reader.skipType(tag & 7)
-        }
-    }
-    return { name }
-}
-
-function decodeRecordAccess(reader: Reader, end: number): IRecordAccess | null {
-    let data: Folder.IRecordAccessData | null = null
-    let accessorInfo: IAccessorInfo | null = null
-
-    while (reader.pos < end) {
-        const tag = reader.uint32()
-        switch (tag) {
-            case 10:
-                data = Folder.RecordAccessData.decode(reader, reader.uint32())
-                break
-            case 18: {
-                const length = reader.uint32()
-                const infoEnd = reader.pos + length
-                accessorInfo = decodeAccessorInfo(reader, infoEnd)
-                reader.pos = infoEnd
-                break
-            }
-            default:
-                reader.skipType(tag & 7)
-        }
-    }
-
-    return data ? { data, accessorInfo } : null
-}
-
-const RecordAccessResponse = {
-    decode(reader: Uint8Array): IRecordAccessResponse {
-        const r = Reader.create(reader)
-        const response: IRecordAccessResponse = { recordAccesses: [], forbiddenRecords: [] }
-
-        while (r.pos < r.len) {
-            const tag = r.uint32()
-            if (tag === 10) {
-                const length = r.uint32()
-                const end = r.pos + length
-                const item = decodeRecordAccess(r, end)
-                if (item) response.recordAccesses!.push(item)
-                r.pos = end
-            } else if (tag === 18) {
-                response.forbiddenRecords!.push(r.bytes())
-            } else {
-                r.skipType(tag & 7)
-            }
-        }
-
-        return response
-    },
-}
+    data: folder.v3.IGetFolderAccessRequest
+): RestMessage<folder.v3.IGetFolderAccessRequest, folder.v3.IGetFolderAccessResponse> =>
+    createMessage(data, 'vault/folders/v3/access', folder.v3.GetFolderAccessRequest, folder.v3.GetFolderAccessResponse)
 
 export const getRecordAccessMessage = (
-    recordUids: string[]
-): RestMessage<IRecordAccessRequest, IRecordAccessResponse> =>
+    data: record.v3.details.IRecordAccessRequest
+): RestMessage<record.v3.details.IRecordAccessRequest, record.v3.details.IRecordAccessResponse> =>
     createMessage(
-        { recordUids: recordUids.map(normal64Bytes) },
+        data,
         'vault/records/v3/details/access',
-        RecordAccessRequest,
-        RecordAccessResponse
+        record.v3.details.RecordAccessRequest,
+        record.v3.details.RecordAccessResponse
     )

@@ -7,7 +7,15 @@ import type {
     DKdFolderRecord,
     DKdRecordAccess,
 } from '@keeper-security/keeperapi'
-import { Folder, Records, getFolderAccessMessage, getRecordAccessMessage, getShareObjectsMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import {
+    Folder,
+    Records,
+    getFolderAccessMessage,
+    getRecordAccessMessage,
+    getShareObjectsMessage,
+    normal64Bytes,
+    webSafe64FromBytes,
+} from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
@@ -734,7 +742,9 @@ export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Pr
 
 export async function fetchLiveFolderAccessEntries(auth: Auth, folderUid: string): Promise<DKdFolderAccess[]> {
     try {
-        const response = await auth.executeRest(getFolderAccessMessage([folderUid]))
+        const response = await auth.executeRest(
+            getFolderAccessMessage({ folderUid: [normal64Bytes(folderUid)] })
+        )
         const result = response.folderAccessResults?.find(
             (entry) => entry.folderUid?.length && webSafe64FromBytes(entry.folderUid) === folderUid
         )
@@ -782,7 +792,7 @@ export async function fetchLiveRecordAccessEntries(
 > {
     try {
         const [response, shareUsers] = await Promise.all([
-            auth.executeRest(getRecordAccessMessage([recordUid])),
+            auth.executeRest(getRecordAccessMessage({ recordUids: [normal64Bytes(recordUid)] })),
             loadShareUserMap(auth, storage),
         ])
 
