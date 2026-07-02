@@ -27,6 +27,7 @@ export {
   setLogger,
   getLogger,
   resetLogger,
+  writeOutput,
   KeeperSdkError,
   isKeeperError,
   extractErrorMessage,
@@ -41,6 +42,9 @@ export {
   RoleErrorCode,
   TeamErrorCode,
   UserErrorCode,
+  AuditReportErrorCode,
+  ActionReportErrorCode,
+  PasswordReportErrorCode,
   KEEPER_PUBLIC_HOSTS,
   isBoolean,
   isString,
@@ -75,22 +79,6 @@ export type {
   PassphraseGenOptions,
 } from "./utils";
 
-export {
-  searchRecords,
-  formatRecord,
-  getRecordTitle,
-  getRecordType,
-  getRecordFields,
-  getRecordSummary,
-  getRecordPassword,
-  getRecordLogin,
-  getRecordUrl,
-  getRecordTotpUrl,
-  RecordVersion,
-} from "./records/RecordUtils";
-export type { RecordSummary } from "./records/RecordUtils";
-export { parseTotpUrl, getTotpCode } from "./records/Totp";
-export type { TotpAlgorithm, TotpParams, TotpCode } from "./records/Totp";
 export {
   addRecord,
   updateRecord,
@@ -236,6 +224,55 @@ export {
   userPermissionToText,
   recordPermissionToText,
 } from "./folders/folderTree";
+
+export {
+  runAuditReport,
+  runActionReport,
+  runPasswordReport,
+  getPasswordStrength,
+  calculatePasswordScore,
+  parsePasswordPolicy,
+  isPasswordCompliant,
+  buildPasswordPolicySummary,
+  getAllowedActions,
+  getDefaultDaysSince,
+  AuditReportManager,
+  ActionReportManager,
+  EnterpriseReportManager,
+  AuditReportOrder,
+  AuditReportFormat,
+  AuditOutputFormat,
+  AuditAggregate,
+  SUMMARY_REPORT_TYPES,
+  CREATED_PRESETS,
+  TargetUserStatus,
+  AdminAction,
+  ActionReportColumn,
+  DEFAULT_ACTION_REPORT_COLUMNS,
+  SUPPORTED_ACTION_REPORT_COLUMNS,
+  DEFAULT_TRUNCATION_LENGTH,
+  SUPPORTED_RECORD_VERSIONS,
+} from "./enterpriseReport";
+export type {
+  AuditReportOptions,
+  AuditReportResult,
+  AuditReportFilter,
+  CreatedFilterCriteria,
+  CreatedPreset,
+  AuditEventOverviewReportRow,
+  AuditReportType,
+  AuditSummaryReportType,
+  ActionReportEntry,
+  ActionReportOptions,
+  ActionReportResult,
+  ActionResult,
+  PasswordPolicy,
+  PasswordStrength,
+  PasswordReportRow,
+  PasswordReportOptions,
+  PasswordReportResult,
+} from "./enterpriseReport";
+
 export type {
   FolderTreeBuildOptions,
   FolderTreeNode,

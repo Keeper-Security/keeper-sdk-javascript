@@ -38,6 +38,16 @@ import {
   getRecordHistory as getRecordHistoryOp,
   moveRecord as moveRecordOp,
 } from "../records/RecordOperations";
+import {
+  EnterpriseReportManager,
+  runPasswordReport,
+  type AuditReportOptions,
+  type AuditReportResult,
+  type ActionReportOptions,
+  type ActionReportResult,
+  type PasswordReportOptions,
+  type PasswordReportResult,
+} from "../enterpriseReport";
 import type {
   NewRecordInput,
   TypedRecordData,
@@ -206,6 +216,7 @@ export class KeeperVault {
   private readonly sharedFolderManager: SharedFolderManager;
   private readonly teamManager: TeamManager;
   private readonly roleManager: RoleManager;
+  private readonly enterpriseReportManager: EnterpriseReportManager;
   private readonly userManager: UserManager;
   private readonly nestedShareFolderManager: NestedShareFolderManager;
 
@@ -241,6 +252,7 @@ export class KeeperVault {
     );
     this.teamManager = new TeamManager(authProvider);
     this.roleManager = new RoleManager(authProvider);
+    this.enterpriseReportManager = new EnterpriseReportManager(authProvider);
     this.userManager = new UserManager(authProvider);
     this.nestedShareFolderManager = new NestedShareFolderManager(
       this.storage,
@@ -266,6 +278,20 @@ export class KeeperVault {
 
   public getRoleManager(): RoleManager {
     return this.roleManager;
+  }
+
+  public getEnterpriseReportManager(): EnterpriseReportManager {
+    return this.enterpriseReportManager;
+  }
+
+  /** @deprecated Use getEnterpriseReportManager() */
+  public getAuditReportManager(): EnterpriseReportManager {
+    return this.enterpriseReportManager;
+  }
+
+  /** @deprecated Use getEnterpriseReportManager() */
+  public getActionReportManager(): EnterpriseReportManager {
+    return this.enterpriseReportManager;
   }
 
   private async createAuth(options?: {
@@ -781,6 +807,24 @@ export class KeeperVault {
     const result = await this.roleManager.deleteRoles(input);
     if (result.deleted > 0) await this.syncIfNeeded();
     return result;
+  }
+
+  public async runAuditReport(
+    options?: AuditReportOptions,
+  ): Promise<AuditReportResult> {
+    return this.enterpriseReportManager.runAuditReport(options ?? {});
+  }
+
+  public async runActionReport(
+    options?: ActionReportOptions,
+  ): Promise<ActionReportResult> {
+    return this.enterpriseReportManager.runActionReport(options ?? {});
+  }
+
+  public async runPasswordReport(
+    options?: PasswordReportOptions,
+  ): Promise<PasswordReportResult> {
+    return runPasswordReport(this.storage, this.folderSession, options ?? {});
   }
 
   public async changeDirectory(path: string): Promise<ChangeDirectoryResult> {

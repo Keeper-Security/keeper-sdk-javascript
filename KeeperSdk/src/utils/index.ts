@@ -8,6 +8,9 @@ export {
   RoleErrorCode,
   TeamErrorCode,
   UserErrorCode,
+  AuditReportErrorCode,
+  ActionReportErrorCode,
+  PasswordReportErrorCode,
   NsfErrorCode,
   KEEPER_PUBLIC_HOSTS,
 } from "./constants";
@@ -19,6 +22,7 @@ export {
   setLogger,
   getLogger,
   resetLogger,
+  writeOutput,
 } from "./Logger";
 export type { ILogger } from "./Logger";
 export {
