@@ -12438,3 +12438,5 @@ export const PAM = $root.PAM = (() => {
 
     return PAM;
 })();
+
+export { $root as default };

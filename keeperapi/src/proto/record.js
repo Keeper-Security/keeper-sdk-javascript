@@ -19,6 +19,1954 @@ export const record = $root.record = (() => {
          */
         const v3 = {};
 
+        v3.details = (function() {
+
+            /**
+             * Namespace details.
+             * @memberof record.v3
+             * @namespace
+             */
+            const details = {};
+
+            details.RecordDetailsService = (function() {
+
+                /**
+                 * Constructs a new RecordDetailsService service.
+                 * @memberof record.v3.details
+                 * @classdesc Represents a RecordDetailsService
+                 * @extends $protobuf.rpc.Service
+                 * @constructor
+                 * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+                 * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+                 * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+                 */
+                function RecordDetailsService(rpcImpl, requestDelimited, responseDelimited) {
+                    $protobuf.rpc.Service.call(this, rpcImpl, requestDelimited, responseDelimited);
+                }
+
+                (RecordDetailsService.prototype = Object.create($protobuf.rpc.Service.prototype)).constructor = RecordDetailsService;
+
+                /**
+                 * Creates new RecordDetailsService service using the specified rpc implementation.
+                 * @function create
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @static
+                 * @param {$protobuf.RPCImpl} rpcImpl RPC implementation
+                 * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+                 * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+                 * @returns {RecordDetailsService} RPC service. Useful where requests and/or responses are streamed.
+                 */
+                RecordDetailsService.create = function create(rpcImpl, requestDelimited, responseDelimited) {
+                    return new this(rpcImpl, requestDelimited, responseDelimited);
+                };
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordData}.
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @typedef GetRecordDataCallback
+                 * @type {function}
+                 * @param {Error|null} error Error, if any
+                 * @param {record.v3.details.RecordDataResponse} [response] RecordDataResponse
+                 */
+
+                /**
+                 * Calls GetRecordData.
+                 * @function getRecordData
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @instance
+                 * @param {record.v3.details.IRecordDataRequest} request RecordDataRequest message or plain object
+                 * @param {record.v3.details.RecordDetailsService.GetRecordDataCallback} callback Node-style callback called with the error, if any, and RecordDataResponse
+                 * @returns {undefined}
+                 * @variation 1
+                 */
+                Object.defineProperty(RecordDetailsService.prototype.getRecordData = function getRecordData(request, callback) {
+                    return $protobuf.rpc.Service.prototype.rpcCall.call(this, getRecordData, $root.record.v3.details.RecordDataRequest, $root.record.v3.details.RecordDataResponse, request, callback);
+                }, "name", { value: "GetRecordData" });
+
+                /**
+                 * Calls GetRecordData.
+                 * @function getRecordData
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @instance
+                 * @param {record.v3.details.IRecordDataRequest} request RecordDataRequest message or plain object
+                 * @returns {Promise<record.v3.details.RecordDataResponse>} Promise
+                 * @variation 2
+                 */
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordAccessors}.
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @typedef GetRecordAccessorsCallback
+                 * @type {function}
+                 * @param {Error|null} error Error, if any
+                 * @param {record.v3.details.RecordAccessResponse} [response] RecordAccessResponse
+                 */
+
+                /**
+                 * Calls GetRecordAccessors.
+                 * @function getRecordAccessors
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @instance
+                 * @param {record.v3.details.IRecordAccessRequest} request RecordAccessRequest message or plain object
+                 * @param {record.v3.details.RecordDetailsService.GetRecordAccessorsCallback} callback Node-style callback called with the error, if any, and RecordAccessResponse
+                 * @returns {undefined}
+                 * @variation 1
+                 */
+                Object.defineProperty(RecordDetailsService.prototype.getRecordAccessors = function getRecordAccessors(request, callback) {
+                    return $protobuf.rpc.Service.prototype.rpcCall.call(this, getRecordAccessors, $root.record.v3.details.RecordAccessRequest, $root.record.v3.details.RecordAccessResponse, request, callback);
+                }, "name", { value: "GetRecordAccessors" });
+
+                /**
+                 * Calls GetRecordAccessors.
+                 * @function getRecordAccessors
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @instance
+                 * @param {record.v3.details.IRecordAccessRequest} request RecordAccessRequest message or plain object
+                 * @returns {Promise<record.v3.details.RecordAccessResponse>} Promise
+                 * @variation 2
+                 */
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordAccessorDetails}.
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @typedef GetRecordAccessorDetailsCallback
+                 * @type {function}
+                 * @param {Error|null} error Error, if any
+                 * @param {record.v3.details.RecordAccessorDetailsResponse} [response] RecordAccessorDetailsResponse
+                 */
+
+                /**
+                 * Calls GetRecordAccessorDetails.
+                 * @function getRecordAccessorDetails
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @instance
+                 * @param {record.v3.details.IRecordAccessorDetailsRequest} request RecordAccessorDetailsRequest message or plain object
+                 * @param {record.v3.details.RecordDetailsService.GetRecordAccessorDetailsCallback} callback Node-style callback called with the error, if any, and RecordAccessorDetailsResponse
+                 * @returns {undefined}
+                 * @variation 1
+                 */
+                Object.defineProperty(RecordDetailsService.prototype.getRecordAccessorDetails = function getRecordAccessorDetails(request, callback) {
+                    return $protobuf.rpc.Service.prototype.rpcCall.call(this, getRecordAccessorDetails, $root.record.v3.details.RecordAccessorDetailsRequest, $root.record.v3.details.RecordAccessorDetailsResponse, request, callback);
+                }, "name", { value: "GetRecordAccessorDetails" });
+
+                /**
+                 * Calls GetRecordAccessorDetails.
+                 * @function getRecordAccessorDetails
+                 * @memberof record.v3.details.RecordDetailsService
+                 * @instance
+                 * @param {record.v3.details.IRecordAccessorDetailsRequest} request RecordAccessorDetailsRequest message or plain object
+                 * @returns {Promise<record.v3.details.RecordAccessorDetailsResponse>} Promise
+                 * @variation 2
+                 */
+
+                return RecordDetailsService;
+            })();
+
+            details.RecordDataRequest = (function() {
+
+                /**
+                 * Properties of a RecordDataRequest.
+                 * @memberof record.v3.details
+                 * @interface IRecordDataRequest
+                 * @property {number|null} [clientTime] represents the client time in milliseconds. Client time is used to
+                 * adjust the record client_modified_time for each record.
+                 * @property {Array.<Uint8Array>|null} [recordUids] the list of record UIDs to retrieve information for.
+                 */
+
+                /**
+                 * Constructs a new RecordDataRequest.
+                 * @memberof record.v3.details
+                 * @classdesc Represents a record data request. Record details include the record [meta]data (title, color, etc.)
+                 * @implements IRecordDataRequest
+                 * @constructor
+                 * @param {record.v3.details.IRecordDataRequest=} [properties] Properties to set
+                 */
+                function RecordDataRequest(properties) {
+                    this.recordUids = [];
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * represents the client time in milliseconds. Client time is used to
+                 * adjust the record client_modified_time for each record.
+                 * @member {number} clientTime
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @instance
+                 */
+                RecordDataRequest.prototype.clientTime = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+                /**
+                 * the list of record UIDs to retrieve information for.
+                 * @member {Array.<Uint8Array>} recordUids
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @instance
+                 */
+                RecordDataRequest.prototype.recordUids = $util.emptyArray;
+
+                /**
+                 * Creates a new RecordDataRequest instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @static
+                 * @param {record.v3.details.IRecordDataRequest=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordDataRequest} RecordDataRequest instance
+                 */
+                RecordDataRequest.create = function create(properties) {
+                    return new RecordDataRequest(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordDataRequest message. Does not implicitly {@link record.v3.details.RecordDataRequest.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @static
+                 * @param {record.v3.details.IRecordDataRequest} message RecordDataRequest message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordDataRequest.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.clientTime != null && Object.hasOwnProperty.call(message, "clientTime"))
+                        writer.uint32(/* id 1, wireType 0 =*/8).int64(message.clientTime);
+                    if (message.recordUids != null && message.recordUids.length)
+                        for (let i = 0; i < message.recordUids.length; ++i)
+                            writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordUids[i]);
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordDataRequest message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordDataRequest} RecordDataRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordDataRequest.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordDataRequest();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.clientTime = reader.int64();
+                                break;
+                            }
+                        case 3: {
+                                if (!(message.recordUids && message.recordUids.length))
+                                    message.recordUids = [];
+                                message.recordUids.push(reader.bytes());
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordDataRequest message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordDataRequest} RecordDataRequest
+                 */
+                RecordDataRequest.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordDataRequest)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordDataRequest: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordDataRequest();
+                    if (object.clientTime != null)
+                        if ($util.Long)
+                            message.clientTime = $util.Long.fromValue(object.clientTime, false);
+                        else if (typeof object.clientTime === "string")
+                            message.clientTime = parseInt(object.clientTime, 10);
+                        else if (typeof object.clientTime === "number")
+                            message.clientTime = object.clientTime;
+                        else if (typeof object.clientTime === "object")
+                            message.clientTime = new $util.LongBits(object.clientTime.low >>> 0, object.clientTime.high >>> 0).toNumber();
+                    if (object.recordUids) {
+                        if (!Array.isArray(object.recordUids))
+                            throw TypeError(".record.v3.details.RecordDataRequest.recordUids: array expected");
+                        message.recordUids = [];
+                        for (let i = 0; i < object.recordUids.length; ++i)
+                            if (typeof object.recordUids[i] === "string")
+                                $util.base64.decode(object.recordUids[i], message.recordUids[i] = $util.newBuffer($util.base64.length(object.recordUids[i])), 0);
+                            else if (object.recordUids[i].length >= 0)
+                                message.recordUids[i] = object.recordUids[i];
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordDataRequest message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @static
+                 * @param {record.v3.details.RecordDataRequest} message RecordDataRequest
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordDataRequest.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.arrays || options.defaults)
+                        object.recordUids = [];
+                    if (options.defaults)
+                        if ($util.Long) {
+                            let long = new $util.Long(0, 0, false);
+                            object.clientTime = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                        } else
+                            object.clientTime = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                    if (message.clientTime != null && Object.hasOwnProperty.call(message, "clientTime"))
+                        if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                            object.clientTime = typeof message.clientTime === "number" ? BigInt(message.clientTime) : $util.Long.fromBits(message.clientTime.low >>> 0, message.clientTime.high >>> 0, false).toBigInt();
+                        else if (typeof message.clientTime === "number")
+                            object.clientTime = options.longs === String ? String(message.clientTime) : message.clientTime;
+                        else
+                            object.clientTime = options.longs === String ? $util.Long.prototype.toString.call(message.clientTime) : options.longs === Number ? new $util.LongBits(message.clientTime.low >>> 0, message.clientTime.high >>> 0).toNumber() : message.clientTime;
+                    if (message.recordUids && message.recordUids.length) {
+                        object.recordUids = [];
+                        for (let j = 0; j < message.recordUids.length; ++j)
+                            object.recordUids[j] = options.bytes === String ? $util.base64.encode(message.recordUids[j], 0, message.recordUids[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUids[j]) : message.recordUids[j];
+                    }
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordDataRequest to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordDataRequest.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordDataRequest
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordDataRequest
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordDataRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordDataRequest";
+                };
+
+                return RecordDataRequest;
+            })();
+
+            details.RecordDataResponse = (function() {
+
+                /**
+                 * Properties of a RecordDataResponse.
+                 * @memberof record.v3.details
+                 * @interface IRecordDataResponse
+                 * @property {Array.<Records.IRecordData>|null} [data] The data associated with the record.
+                 * @property {Array.<Uint8Array>|null} [forbiddenRecords] A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+
+                /**
+                 * Constructs a new RecordDataResponse.
+                 * @memberof record.v3.details
+                 * @classdesc Response message containing records' data and a list of inaccessible records for the calling user.
+                 * @implements IRecordDataResponse
+                 * @constructor
+                 * @param {record.v3.details.IRecordDataResponse=} [properties] Properties to set
+                 */
+                function RecordDataResponse(properties) {
+                    this.data = [];
+                    this.forbiddenRecords = [];
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * The data associated with the record.
+                 * @member {Array.<Records.IRecordData>} data
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @instance
+                 */
+                RecordDataResponse.prototype.data = $util.emptyArray;
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 * @member {Array.<Uint8Array>} forbiddenRecords
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @instance
+                 */
+                RecordDataResponse.prototype.forbiddenRecords = $util.emptyArray;
+
+                /**
+                 * Creates a new RecordDataResponse instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @static
+                 * @param {record.v3.details.IRecordDataResponse=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordDataResponse} RecordDataResponse instance
+                 */
+                RecordDataResponse.create = function create(properties) {
+                    return new RecordDataResponse(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordDataResponse message. Does not implicitly {@link record.v3.details.RecordDataResponse.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @static
+                 * @param {record.v3.details.IRecordDataResponse} message RecordDataResponse message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordDataResponse.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.data != null && message.data.length)
+                        for (let i = 0; i < message.data.length; ++i)
+                            $root.Records.RecordData.encode(message.data[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                    if (message.forbiddenRecords != null && message.forbiddenRecords.length)
+                        for (let i = 0; i < message.forbiddenRecords.length; ++i)
+                            writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.forbiddenRecords[i]);
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordDataResponse message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordDataResponse} RecordDataResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordDataResponse.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordDataResponse();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                if (!(message.data && message.data.length))
+                                    message.data = [];
+                                message.data.push($root.Records.RecordData.decode(reader, reader.uint32(), undefined, long + 1));
+                                break;
+                            }
+                        case 2: {
+                                if (!(message.forbiddenRecords && message.forbiddenRecords.length))
+                                    message.forbiddenRecords = [];
+                                message.forbiddenRecords.push(reader.bytes());
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordDataResponse message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordDataResponse} RecordDataResponse
+                 */
+                RecordDataResponse.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordDataResponse)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordDataResponse: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordDataResponse();
+                    if (object.data) {
+                        if (!Array.isArray(object.data))
+                            throw TypeError(".record.v3.details.RecordDataResponse.data: array expected");
+                        message.data = [];
+                        for (let i = 0; i < object.data.length; ++i) {
+                            if (!$util.isObject(object.data[i]))
+                                throw TypeError(".record.v3.details.RecordDataResponse.data: object expected");
+                            message.data[i] = $root.Records.RecordData.fromObject(object.data[i], long + 1);
+                        }
+                    }
+                    if (object.forbiddenRecords) {
+                        if (!Array.isArray(object.forbiddenRecords))
+                            throw TypeError(".record.v3.details.RecordDataResponse.forbiddenRecords: array expected");
+                        message.forbiddenRecords = [];
+                        for (let i = 0; i < object.forbiddenRecords.length; ++i)
+                            if (typeof object.forbiddenRecords[i] === "string")
+                                $util.base64.decode(object.forbiddenRecords[i], message.forbiddenRecords[i] = $util.newBuffer($util.base64.length(object.forbiddenRecords[i])), 0);
+                            else if (object.forbiddenRecords[i].length >= 0)
+                                message.forbiddenRecords[i] = object.forbiddenRecords[i];
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordDataResponse message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @static
+                 * @param {record.v3.details.RecordDataResponse} message RecordDataResponse
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordDataResponse.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.arrays || options.defaults) {
+                        object.data = [];
+                        object.forbiddenRecords = [];
+                    }
+                    if (message.data && message.data.length) {
+                        object.data = [];
+                        for (let j = 0; j < message.data.length; ++j)
+                            object.data[j] = $root.Records.RecordData.toObject(message.data[j], options, q + 1);
+                    }
+                    if (message.forbiddenRecords && message.forbiddenRecords.length) {
+                        object.forbiddenRecords = [];
+                        for (let j = 0; j < message.forbiddenRecords.length; ++j)
+                            object.forbiddenRecords[j] = options.bytes === String ? $util.base64.encode(message.forbiddenRecords[j], 0, message.forbiddenRecords[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.forbiddenRecords[j]) : message.forbiddenRecords[j];
+                    }
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordDataResponse to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordDataResponse.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordDataResponse
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordDataResponse
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordDataResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordDataResponse";
+                };
+
+                return RecordDataResponse;
+            })();
+
+            details.RecordAccessRequest = (function() {
+
+                /**
+                 * Properties of a RecordAccessRequest.
+                 * @memberof record.v3.details
+                 * @interface IRecordAccessRequest
+                 * @property {Array.<Uint8Array>|null} [recordUids] the list of record UIDs to retrieve information for.
+                 * @property {keeper.api.common.IPage|null} [page] Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+
+                /**
+                 * Constructs a new RecordAccessRequest.
+                 * @memberof record.v3.details
+                 * @classdesc Represents a record accessors request. Record details include whom the record has been
+                 * shared with (user or team), and what role and permissions the accessors have over the record.
+                 * @implements IRecordAccessRequest
+                 * @constructor
+                 * @param {record.v3.details.IRecordAccessRequest=} [properties] Properties to set
+                 */
+                function RecordAccessRequest(properties) {
+                    this.recordUids = [];
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * the list of record UIDs to retrieve information for.
+                 * @member {Array.<Uint8Array>} recordUids
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @instance
+                 */
+                RecordAccessRequest.prototype.recordUids = $util.emptyArray;
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 * @member {keeper.api.common.IPage|null|undefined} page
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @instance
+                 */
+                RecordAccessRequest.prototype.page = null;
+
+                /**
+                 * Creates a new RecordAccessRequest instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @static
+                 * @param {record.v3.details.IRecordAccessRequest=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordAccessRequest} RecordAccessRequest instance
+                 */
+                RecordAccessRequest.create = function create(properties) {
+                    return new RecordAccessRequest(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordAccessRequest message. Does not implicitly {@link record.v3.details.RecordAccessRequest.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @static
+                 * @param {record.v3.details.IRecordAccessRequest} message RecordAccessRequest message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordAccessRequest.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.page != null && Object.hasOwnProperty.call(message, "page"))
+                        $root.keeper.api.common.Page.encode(message.page, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                    if (message.recordUids != null && message.recordUids.length)
+                        for (let i = 0; i < message.recordUids.length; ++i)
+                            writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordUids[i]);
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordAccessRequest message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordAccessRequest} RecordAccessRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordAccessRequest.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordAccessRequest();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 3: {
+                                if (!(message.recordUids && message.recordUids.length))
+                                    message.recordUids = [];
+                                message.recordUids.push(reader.bytes());
+                                break;
+                            }
+                        case 2: {
+                                message.page = $root.keeper.api.common.Page.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordAccessRequest message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordAccessRequest} RecordAccessRequest
+                 */
+                RecordAccessRequest.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordAccessRequest)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordAccessRequest: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordAccessRequest();
+                    if (object.recordUids) {
+                        if (!Array.isArray(object.recordUids))
+                            throw TypeError(".record.v3.details.RecordAccessRequest.recordUids: array expected");
+                        message.recordUids = [];
+                        for (let i = 0; i < object.recordUids.length; ++i)
+                            if (typeof object.recordUids[i] === "string")
+                                $util.base64.decode(object.recordUids[i], message.recordUids[i] = $util.newBuffer($util.base64.length(object.recordUids[i])), 0);
+                            else if (object.recordUids[i].length >= 0)
+                                message.recordUids[i] = object.recordUids[i];
+                    }
+                    if (object.page != null) {
+                        if (!$util.isObject(object.page))
+                            throw TypeError(".record.v3.details.RecordAccessRequest.page: object expected");
+                        message.page = $root.keeper.api.common.Page.fromObject(object.page, long + 1);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordAccessRequest message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @static
+                 * @param {record.v3.details.RecordAccessRequest} message RecordAccessRequest
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordAccessRequest.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.arrays || options.defaults)
+                        object.recordUids = [];
+                    if (options.defaults)
+                        object.page = null;
+                    if (message.page != null && Object.hasOwnProperty.call(message, "page"))
+                        object.page = $root.keeper.api.common.Page.toObject(message.page, options, q + 1);
+                    if (message.recordUids && message.recordUids.length) {
+                        object.recordUids = [];
+                        for (let j = 0; j < message.recordUids.length; ++j)
+                            object.recordUids[j] = options.bytes === String ? $util.base64.encode(message.recordUids[j], 0, message.recordUids[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUids[j]) : message.recordUids[j];
+                    }
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordAccessRequest to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordAccessRequest.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordAccessRequest
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordAccessRequest
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordAccessRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordAccessRequest";
+                };
+
+                return RecordAccessRequest;
+            })();
+
+            details.RecordAccessResponse = (function() {
+
+                /**
+                 * Properties of a RecordAccessResponse.
+                 * @memberof record.v3.details
+                 * @interface IRecordAccessResponse
+                 * @property {Array.<record.v3.details.IRecordAccess>|null} [recordAccesses] List of record access permissions, detailing the accessors and their roles.
+                 * @property {Array.<Uint8Array>|null} [forbiddenRecords] A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 * @property {keeper.api.common.IPageInfo|null} [pageInfo] Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+
+                /**
+                 * Constructs a new RecordAccessResponse.
+                 * @memberof record.v3.details
+                 * @classdesc Response message containing records' accesses and a list of inaccessible records for the calling user.
+                 * @implements IRecordAccessResponse
+                 * @constructor
+                 * @param {record.v3.details.IRecordAccessResponse=} [properties] Properties to set
+                 */
+                function RecordAccessResponse(properties) {
+                    this.recordAccesses = [];
+                    this.forbiddenRecords = [];
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * List of record access permissions, detailing the accessors and their roles.
+                 * @member {Array.<record.v3.details.IRecordAccess>} recordAccesses
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @instance
+                 */
+                RecordAccessResponse.prototype.recordAccesses = $util.emptyArray;
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 * @member {Array.<Uint8Array>} forbiddenRecords
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @instance
+                 */
+                RecordAccessResponse.prototype.forbiddenRecords = $util.emptyArray;
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 * @member {keeper.api.common.IPageInfo|null|undefined} pageInfo
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @instance
+                 */
+                RecordAccessResponse.prototype.pageInfo = null;
+
+                /**
+                 * Creates a new RecordAccessResponse instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @static
+                 * @param {record.v3.details.IRecordAccessResponse=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordAccessResponse} RecordAccessResponse instance
+                 */
+                RecordAccessResponse.create = function create(properties) {
+                    return new RecordAccessResponse(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordAccessResponse message. Does not implicitly {@link record.v3.details.RecordAccessResponse.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @static
+                 * @param {record.v3.details.IRecordAccessResponse} message RecordAccessResponse message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordAccessResponse.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.recordAccesses != null && message.recordAccesses.length)
+                        for (let i = 0; i < message.recordAccesses.length; ++i)
+                            $root.record.v3.details.RecordAccess.encode(message.recordAccesses[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                    if (message.forbiddenRecords != null && message.forbiddenRecords.length)
+                        for (let i = 0; i < message.forbiddenRecords.length; ++i)
+                            writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.forbiddenRecords[i]);
+                    if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
+                        $root.keeper.api.common.PageInfo.encode(message.pageInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordAccessResponse message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordAccessResponse} RecordAccessResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordAccessResponse.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordAccessResponse();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                if (!(message.recordAccesses && message.recordAccesses.length))
+                                    message.recordAccesses = [];
+                                message.recordAccesses.push($root.record.v3.details.RecordAccess.decode(reader, reader.uint32(), undefined, long + 1));
+                                break;
+                            }
+                        case 2: {
+                                if (!(message.forbiddenRecords && message.forbiddenRecords.length))
+                                    message.forbiddenRecords = [];
+                                message.forbiddenRecords.push(reader.bytes());
+                                break;
+                            }
+                        case 3: {
+                                message.pageInfo = $root.keeper.api.common.PageInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordAccessResponse message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordAccessResponse} RecordAccessResponse
+                 */
+                RecordAccessResponse.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordAccessResponse)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordAccessResponse: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordAccessResponse();
+                    if (object.recordAccesses) {
+                        if (!Array.isArray(object.recordAccesses))
+                            throw TypeError(".record.v3.details.RecordAccessResponse.recordAccesses: array expected");
+                        message.recordAccesses = [];
+                        for (let i = 0; i < object.recordAccesses.length; ++i) {
+                            if (!$util.isObject(object.recordAccesses[i]))
+                                throw TypeError(".record.v3.details.RecordAccessResponse.recordAccesses: object expected");
+                            message.recordAccesses[i] = $root.record.v3.details.RecordAccess.fromObject(object.recordAccesses[i], long + 1);
+                        }
+                    }
+                    if (object.forbiddenRecords) {
+                        if (!Array.isArray(object.forbiddenRecords))
+                            throw TypeError(".record.v3.details.RecordAccessResponse.forbiddenRecords: array expected");
+                        message.forbiddenRecords = [];
+                        for (let i = 0; i < object.forbiddenRecords.length; ++i)
+                            if (typeof object.forbiddenRecords[i] === "string")
+                                $util.base64.decode(object.forbiddenRecords[i], message.forbiddenRecords[i] = $util.newBuffer($util.base64.length(object.forbiddenRecords[i])), 0);
+                            else if (object.forbiddenRecords[i].length >= 0)
+                                message.forbiddenRecords[i] = object.forbiddenRecords[i];
+                    }
+                    if (object.pageInfo != null) {
+                        if (!$util.isObject(object.pageInfo))
+                            throw TypeError(".record.v3.details.RecordAccessResponse.pageInfo: object expected");
+                        message.pageInfo = $root.keeper.api.common.PageInfo.fromObject(object.pageInfo, long + 1);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordAccessResponse message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @static
+                 * @param {record.v3.details.RecordAccessResponse} message RecordAccessResponse
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordAccessResponse.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.arrays || options.defaults) {
+                        object.recordAccesses = [];
+                        object.forbiddenRecords = [];
+                    }
+                    if (options.defaults)
+                        object.pageInfo = null;
+                    if (message.recordAccesses && message.recordAccesses.length) {
+                        object.recordAccesses = [];
+                        for (let j = 0; j < message.recordAccesses.length; ++j)
+                            object.recordAccesses[j] = $root.record.v3.details.RecordAccess.toObject(message.recordAccesses[j], options, q + 1);
+                    }
+                    if (message.forbiddenRecords && message.forbiddenRecords.length) {
+                        object.forbiddenRecords = [];
+                        for (let j = 0; j < message.forbiddenRecords.length; ++j)
+                            object.forbiddenRecords[j] = options.bytes === String ? $util.base64.encode(message.forbiddenRecords[j], 0, message.forbiddenRecords[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.forbiddenRecords[j]) : message.forbiddenRecords[j];
+                    }
+                    if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
+                        object.pageInfo = $root.keeper.api.common.PageInfo.toObject(message.pageInfo, options, q + 1);
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordAccessResponse to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordAccessResponse.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordAccessResponse
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordAccessResponse
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordAccessResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordAccessResponse";
+                };
+
+                return RecordAccessResponse;
+            })();
+
+            details.RecordAccessorDetailsRequest = (function() {
+
+                /**
+                 * Properties of a RecordAccessorDetailsRequest.
+                 * @memberof record.v3.details
+                 * @interface IRecordAccessorDetailsRequest
+                 * @property {Uint8Array|null} [recordUid] The record UID to retrieve information for.
+                 * @property {Uint8Array|null} [accessorUid] The accessor UID (user or team) to retrieve information for.
+                 * @property {keeper.api.common.IPage|null} [page] Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+
+                /**
+                 * Constructs a new RecordAccessorDetailsRequest.
+                 * @memberof record.v3.details
+                 * @classdesc Represents a record accessor details request.
+                 * @implements IRecordAccessorDetailsRequest
+                 * @constructor
+                 * @param {record.v3.details.IRecordAccessorDetailsRequest=} [properties] Properties to set
+                 */
+                function RecordAccessorDetailsRequest(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * The record UID to retrieve information for.
+                 * @member {Uint8Array} recordUid
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @instance
+                 */
+                RecordAccessorDetailsRequest.prototype.recordUid = $util.newBuffer([]);
+
+                /**
+                 * The accessor UID (user or team) to retrieve information for.
+                 * @member {Uint8Array} accessorUid
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @instance
+                 */
+                RecordAccessorDetailsRequest.prototype.accessorUid = $util.newBuffer([]);
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 * @member {keeper.api.common.IPage|null|undefined} page
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @instance
+                 */
+                RecordAccessorDetailsRequest.prototype.page = null;
+
+                /**
+                 * Creates a new RecordAccessorDetailsRequest instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @static
+                 * @param {record.v3.details.IRecordAccessorDetailsRequest=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordAccessorDetailsRequest} RecordAccessorDetailsRequest instance
+                 */
+                RecordAccessorDetailsRequest.create = function create(properties) {
+                    return new RecordAccessorDetailsRequest(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordAccessorDetailsRequest message. Does not implicitly {@link record.v3.details.RecordAccessorDetailsRequest.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @static
+                 * @param {record.v3.details.IRecordAccessorDetailsRequest} message RecordAccessorDetailsRequest message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordAccessorDetailsRequest.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.recordUid);
+                    if (message.accessorUid != null && Object.hasOwnProperty.call(message, "accessorUid"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.accessorUid);
+                    if (message.page != null && Object.hasOwnProperty.call(message, "page"))
+                        $root.keeper.api.common.Page.encode(message.page, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordAccessorDetailsRequest message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordAccessorDetailsRequest} RecordAccessorDetailsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordAccessorDetailsRequest.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordAccessorDetailsRequest();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.recordUid = reader.bytes();
+                                break;
+                            }
+                        case 2: {
+                                message.accessorUid = reader.bytes();
+                                break;
+                            }
+                        case 3: {
+                                message.page = $root.keeper.api.common.Page.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordAccessorDetailsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordAccessorDetailsRequest} RecordAccessorDetailsRequest
+                 */
+                RecordAccessorDetailsRequest.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordAccessorDetailsRequest)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordAccessorDetailsRequest: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordAccessorDetailsRequest();
+                    if (object.recordUid != null)
+                        if (typeof object.recordUid === "string")
+                            $util.base64.decode(object.recordUid, message.recordUid = $util.newBuffer($util.base64.length(object.recordUid)), 0);
+                        else if (object.recordUid.length >= 0)
+                            message.recordUid = object.recordUid;
+                    if (object.accessorUid != null)
+                        if (typeof object.accessorUid === "string")
+                            $util.base64.decode(object.accessorUid, message.accessorUid = $util.newBuffer($util.base64.length(object.accessorUid)), 0);
+                        else if (object.accessorUid.length >= 0)
+                            message.accessorUid = object.accessorUid;
+                    if (object.page != null) {
+                        if (!$util.isObject(object.page))
+                            throw TypeError(".record.v3.details.RecordAccessorDetailsRequest.page: object expected");
+                        message.page = $root.keeper.api.common.Page.fromObject(object.page, long + 1);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordAccessorDetailsRequest message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @static
+                 * @param {record.v3.details.RecordAccessorDetailsRequest} message RecordAccessorDetailsRequest
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordAccessorDetailsRequest.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.defaults) {
+                        if (options.bytes === String)
+                            object.recordUid = "";
+                        else {
+                            object.recordUid = [];
+                            if (options.bytes !== Array)
+                                object.recordUid = $util.newBuffer(object.recordUid);
+                        }
+                        if (options.bytes === String)
+                            object.accessorUid = "";
+                        else {
+                            object.accessorUid = [];
+                            if (options.bytes !== Array)
+                                object.accessorUid = $util.newBuffer(object.accessorUid);
+                        }
+                        object.page = null;
+                    }
+                    if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
+                        object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
+                    if (message.accessorUid != null && Object.hasOwnProperty.call(message, "accessorUid"))
+                        object.accessorUid = options.bytes === String ? $util.base64.encode(message.accessorUid, 0, message.accessorUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accessorUid) : message.accessorUid;
+                    if (message.page != null && Object.hasOwnProperty.call(message, "page"))
+                        object.page = $root.keeper.api.common.Page.toObject(message.page, options, q + 1);
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordAccessorDetailsRequest to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordAccessorDetailsRequest.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordAccessorDetailsRequest
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordAccessorDetailsRequest
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordAccessorDetailsRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordAccessorDetailsRequest";
+                };
+
+                return RecordAccessorDetailsRequest;
+            })();
+
+            details.RecordAccessorDetailsResponse = (function() {
+
+                /**
+                 * Properties of a RecordAccessorDetailsResponse.
+                 * @memberof record.v3.details
+                 * @interface IRecordAccessorDetailsResponse
+                 * @property {Folder.IRecordAccessData|null} [recordAccessData] Set if has direct access to the record.
+                 * @property {Array.<Folder.IFolderAccessData>|null} [folderAccessData] The list of folder the user has access and that contain the record.
+                 * @property {keeper.api.common.IPageInfo|null} [pageInfo] * Pagination metadata for this response.
+                 * * Contains current page info, total count, and whether more pages exist.
+                 */
+
+                /**
+                 * Constructs a new RecordAccessorDetailsResponse.
+                 * @memberof record.v3.details
+                 * @classdesc Represents a record accessor details response.
+                 * Record accessor details include information on how a specific accessor obtained access to a record.
+                 * @implements IRecordAccessorDetailsResponse
+                 * @constructor
+                 * @param {record.v3.details.IRecordAccessorDetailsResponse=} [properties] Properties to set
+                 */
+                function RecordAccessorDetailsResponse(properties) {
+                    this.folderAccessData = [];
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Set if has direct access to the record.
+                 * @member {Folder.IRecordAccessData|null|undefined} recordAccessData
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @instance
+                 */
+                RecordAccessorDetailsResponse.prototype.recordAccessData = null;
+
+                /**
+                 * The list of folder the user has access and that contain the record.
+                 * @member {Array.<Folder.IFolderAccessData>} folderAccessData
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @instance
+                 */
+                RecordAccessorDetailsResponse.prototype.folderAccessData = $util.emptyArray;
+
+                /**
+                 * * Pagination metadata for this response.
+                 * * Contains current page info, total count, and whether more pages exist.
+                 * @member {keeper.api.common.IPageInfo|null|undefined} pageInfo
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @instance
+                 */
+                RecordAccessorDetailsResponse.prototype.pageInfo = null;
+
+                /**
+                 * Creates a new RecordAccessorDetailsResponse instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @static
+                 * @param {record.v3.details.IRecordAccessorDetailsResponse=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordAccessorDetailsResponse} RecordAccessorDetailsResponse instance
+                 */
+                RecordAccessorDetailsResponse.create = function create(properties) {
+                    return new RecordAccessorDetailsResponse(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordAccessorDetailsResponse message. Does not implicitly {@link record.v3.details.RecordAccessorDetailsResponse.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @static
+                 * @param {record.v3.details.IRecordAccessorDetailsResponse} message RecordAccessorDetailsResponse message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordAccessorDetailsResponse.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.recordAccessData != null && Object.hasOwnProperty.call(message, "recordAccessData"))
+                        $root.Folder.RecordAccessData.encode(message.recordAccessData, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                    if (message.folderAccessData != null && message.folderAccessData.length)
+                        for (let i = 0; i < message.folderAccessData.length; ++i)
+                            $root.Folder.FolderAccessData.encode(message.folderAccessData[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                    if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
+                        $root.keeper.api.common.PageInfo.encode(message.pageInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordAccessorDetailsResponse message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordAccessorDetailsResponse} RecordAccessorDetailsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordAccessorDetailsResponse.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordAccessorDetailsResponse();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.recordAccessData = $root.Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        case 2: {
+                                if (!(message.folderAccessData && message.folderAccessData.length))
+                                    message.folderAccessData = [];
+                                message.folderAccessData.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                                break;
+                            }
+                        case 3: {
+                                message.pageInfo = $root.keeper.api.common.PageInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordAccessorDetailsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordAccessorDetailsResponse} RecordAccessorDetailsResponse
+                 */
+                RecordAccessorDetailsResponse.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordAccessorDetailsResponse)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordAccessorDetailsResponse: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordAccessorDetailsResponse();
+                    if (object.recordAccessData != null) {
+                        if (!$util.isObject(object.recordAccessData))
+                            throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.recordAccessData: object expected");
+                        message.recordAccessData = $root.Folder.RecordAccessData.fromObject(object.recordAccessData, long + 1);
+                    }
+                    if (object.folderAccessData) {
+                        if (!Array.isArray(object.folderAccessData))
+                            throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.folderAccessData: array expected");
+                        message.folderAccessData = [];
+                        for (let i = 0; i < object.folderAccessData.length; ++i) {
+                            if (!$util.isObject(object.folderAccessData[i]))
+                                throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.folderAccessData: object expected");
+                            message.folderAccessData[i] = $root.Folder.FolderAccessData.fromObject(object.folderAccessData[i], long + 1);
+                        }
+                    }
+                    if (object.pageInfo != null) {
+                        if (!$util.isObject(object.pageInfo))
+                            throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.pageInfo: object expected");
+                        message.pageInfo = $root.keeper.api.common.PageInfo.fromObject(object.pageInfo, long + 1);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordAccessorDetailsResponse message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @static
+                 * @param {record.v3.details.RecordAccessorDetailsResponse} message RecordAccessorDetailsResponse
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordAccessorDetailsResponse.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.arrays || options.defaults)
+                        object.folderAccessData = [];
+                    if (options.defaults) {
+                        object.recordAccessData = null;
+                        object.pageInfo = null;
+                    }
+                    if (message.recordAccessData != null && Object.hasOwnProperty.call(message, "recordAccessData"))
+                        object.recordAccessData = $root.Folder.RecordAccessData.toObject(message.recordAccessData, options, q + 1);
+                    if (message.folderAccessData && message.folderAccessData.length) {
+                        object.folderAccessData = [];
+                        for (let j = 0; j < message.folderAccessData.length; ++j)
+                            object.folderAccessData[j] = $root.Folder.FolderAccessData.toObject(message.folderAccessData[j], options, q + 1);
+                    }
+                    if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
+                        object.pageInfo = $root.keeper.api.common.PageInfo.toObject(message.pageInfo, options, q + 1);
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordAccessorDetailsResponse to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordAccessorDetailsResponse.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordAccessorDetailsResponse
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordAccessorDetailsResponse
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordAccessorDetailsResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordAccessorDetailsResponse";
+                };
+
+                return RecordAccessorDetailsResponse;
+            })();
+
+            details.RecordAccess = (function() {
+
+                /**
+                 * Properties of a RecordAccess.
+                 * @memberof record.v3.details
+                 * @interface IRecordAccess
+                 * @property {Folder.IRecordAccessData|null} [data] Core access details including permissions, role, and metadata.
+                 * @property {record.v3.details.IAccessorInfo|null} [accessorInfo] The record accessor.
+                 */
+
+                /**
+                 * Constructs a new RecordAccess.
+                 * @memberof record.v3.details
+                 * @classdesc Describes the access a user has to a specific record.
+                 * Includes ownership, access roles, and additional sharing metadata.
+                 * @implements IRecordAccess
+                 * @constructor
+                 * @param {record.v3.details.IRecordAccess=} [properties] Properties to set
+                 */
+                function RecordAccess(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Core access details including permissions, role, and metadata.
+                 * @member {Folder.IRecordAccessData|null|undefined} data
+                 * @memberof record.v3.details.RecordAccess
+                 * @instance
+                 */
+                RecordAccess.prototype.data = null;
+
+                /**
+                 * The record accessor.
+                 * @member {record.v3.details.IAccessorInfo|null|undefined} accessorInfo
+                 * @memberof record.v3.details.RecordAccess
+                 * @instance
+                 */
+                RecordAccess.prototype.accessorInfo = null;
+
+                /**
+                 * Creates a new RecordAccess instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.RecordAccess
+                 * @static
+                 * @param {record.v3.details.IRecordAccess=} [properties] Properties to set
+                 * @returns {record.v3.details.RecordAccess} RecordAccess instance
+                 */
+                RecordAccess.create = function create(properties) {
+                    return new RecordAccess(properties);
+                };
+
+                /**
+                 * Encodes the specified RecordAccess message. Does not implicitly {@link record.v3.details.RecordAccess.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.RecordAccess
+                 * @static
+                 * @param {record.v3.details.IRecordAccess} message RecordAccess message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                RecordAccess.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                        $root.Folder.RecordAccessData.encode(message.data, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                    if (message.accessorInfo != null && Object.hasOwnProperty.call(message, "accessorInfo"))
+                        $root.record.v3.details.AccessorInfo.encode(message.accessorInfo, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Decodes a RecordAccess message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.RecordAccess
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.RecordAccess} RecordAccess
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                RecordAccess.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.RecordAccess();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.data = $root.Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        case 2: {
+                                message.accessorInfo = $root.record.v3.details.AccessorInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a RecordAccess message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.RecordAccess
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.RecordAccess} RecordAccess
+                 */
+                RecordAccess.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.RecordAccess)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.RecordAccess: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.RecordAccess();
+                    if (object.data != null) {
+                        if (!$util.isObject(object.data))
+                            throw TypeError(".record.v3.details.RecordAccess.data: object expected");
+                        message.data = $root.Folder.RecordAccessData.fromObject(object.data, long + 1);
+                    }
+                    if (object.accessorInfo != null) {
+                        if (!$util.isObject(object.accessorInfo))
+                            throw TypeError(".record.v3.details.RecordAccess.accessorInfo: object expected");
+                        message.accessorInfo = $root.record.v3.details.AccessorInfo.fromObject(object.accessorInfo, long + 1);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a RecordAccess message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.RecordAccess
+                 * @static
+                 * @param {record.v3.details.RecordAccess} message RecordAccess
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                RecordAccess.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.defaults) {
+                        object.data = null;
+                        object.accessorInfo = null;
+                    }
+                    if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                        object.data = $root.Folder.RecordAccessData.toObject(message.data, options, q + 1);
+                    if (message.accessorInfo != null && Object.hasOwnProperty.call(message, "accessorInfo"))
+                        object.accessorInfo = $root.record.v3.details.AccessorInfo.toObject(message.accessorInfo, options, q + 1);
+                    return object;
+                };
+
+                /**
+                 * Converts this RecordAccess to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.RecordAccess
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                RecordAccess.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for RecordAccess
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.RecordAccess
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                RecordAccess.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.RecordAccess";
+                };
+
+                return RecordAccess;
+            })();
+
+            details.AccessorInfo = (function() {
+
+                /**
+                 * Properties of an AccessorInfo.
+                 * @memberof record.v3.details
+                 * @interface IAccessorInfo
+                 * @property {string|null} [name] accessor name
+                 */
+
+                /**
+                 * Constructs a new AccessorInfo.
+                 * @memberof record.v3.details
+                 * @classdesc The entity representing the record accessor. Either a team or a user
+                 * @implements IAccessorInfo
+                 * @constructor
+                 * @param {record.v3.details.IAccessorInfo=} [properties] Properties to set
+                 */
+                function AccessorInfo(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * accessor name
+                 * @member {string} name
+                 * @memberof record.v3.details.AccessorInfo
+                 * @instance
+                 */
+                AccessorInfo.prototype.name = "";
+
+                /**
+                 * Creates a new AccessorInfo instance using the specified properties.
+                 * @function create
+                 * @memberof record.v3.details.AccessorInfo
+                 * @static
+                 * @param {record.v3.details.IAccessorInfo=} [properties] Properties to set
+                 * @returns {record.v3.details.AccessorInfo} AccessorInfo instance
+                 */
+                AccessorInfo.create = function create(properties) {
+                    return new AccessorInfo(properties);
+                };
+
+                /**
+                 * Encodes the specified AccessorInfo message. Does not implicitly {@link record.v3.details.AccessorInfo.verify|verify} messages.
+                 * @function encode
+                 * @memberof record.v3.details.AccessorInfo
+                 * @static
+                 * @param {record.v3.details.IAccessorInfo} message AccessorInfo message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                AccessorInfo.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
+                    return writer;
+                };
+
+                /**
+                 * Decodes an AccessorInfo message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof record.v3.details.AccessorInfo
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {record.v3.details.AccessorInfo} AccessorInfo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                AccessorInfo.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.record.v3.details.AccessorInfo();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.name = reader.string();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates an AccessorInfo message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof record.v3.details.AccessorInfo
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {record.v3.details.AccessorInfo} AccessorInfo
+                 */
+                AccessorInfo.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.record.v3.details.AccessorInfo)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".record.v3.details.AccessorInfo: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.record.v3.details.AccessorInfo();
+                    if (object.name != null)
+                        message.name = String(object.name);
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from an AccessorInfo message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof record.v3.details.AccessorInfo
+                 * @static
+                 * @param {record.v3.details.AccessorInfo} message AccessorInfo
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                AccessorInfo.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.defaults)
+                        object.name = "";
+                    if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                        object.name = message.name;
+                    return object;
+                };
+
+                /**
+                 * Converts this AccessorInfo to JSON.
+                 * @function toJSON
+                 * @memberof record.v3.details.AccessorInfo
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                AccessorInfo.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for AccessorInfo
+                 * @function getTypeUrl
+                 * @memberof record.v3.details.AccessorInfo
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                AccessorInfo.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/record.v3.details.AccessorInfo";
+                };
+
+                return AccessorInfo;
+            })();
+
+            return details;
+        })();
+
         v3.sharing = (function() {
 
             /**
