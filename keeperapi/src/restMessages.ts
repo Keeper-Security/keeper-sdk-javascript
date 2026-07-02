@@ -1075,66 +1075,66 @@ export const getSharingAdminsMessage = (
         Enterprise.GetSharingAdminsResponse
     )
 
-    export const removeFolderMessage = (
-        data: folder.v3.remove.IRemoveFolderRequest
-    ): RestMessage<folder.v3.remove.IRemoveFolderRequest, folder.v3.remove.IRemoveResponse> =>
-        createMessage(
-            data,
-            'vault/folders/v3/remove_folder',
-            folder.v3.remove.RemoveFolderRequest,
-            folder.v3.remove.RemoveResponse
-        )
-    
-    export const recordDetailsDataMessage = (
-        data: record.v3.details.IRecordDataRequest
-    ): RestMessage<record.v3.details.IRecordDataRequest, record.v3.details.IRecordDataResponse> =>
-        createMessage(
-            data,
-            'vault/records/v3/details/data',
-            record.v3.details.RecordDataRequest,
-            record.v3.details.RecordDataResponse
-        )
-    
-    export const folderAddMessage = (
-        data: Folder.IFolderAddRequest
-    ): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
-        createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
-    
-    export const folderUpdateMessage = (
-        data: Folder.IFolderUpdateRequest
-    ): RestMessage<Folder.IFolderUpdateRequest, Folder.IFolderUpdateResponse> =>
-        createMessage(data, 'vault/folders/v3/update', Folder.FolderUpdateRequest, Folder.FolderUpdateResponse)
-    
-    export const getFolderAccessMessage = (
-        data: folder.v3.IGetFolderAccessRequest
-    ): RestMessage<folder.v3.IGetFolderAccessRequest, folder.v3.IGetFolderAccessResponse> =>
-        createMessage(data, 'vault/folders/v3/access', folder.v3.GetFolderAccessRequest, folder.v3.GetFolderAccessResponse)
-    
-    export const getRecordAccessMessage = (
-        data: record.v3.details.IRecordAccessRequest
-    ): RestMessage<record.v3.details.IRecordAccessRequest, record.v3.details.IRecordAccessResponse> =>
-        createMessage(
-            data,
-            'vault/records/v3/details/access',
-            record.v3.details.RecordAccessRequest,
-            record.v3.details.RecordAccessResponse
-        )
-    export const folderAccessUpdateMessage = (
-        data: Folder.IFolderAccessRequest
-    ): RestMessage<Folder.IFolderAccessRequest, Folder.IFolderAccessResponse> =>
-        createMessage(data, 'vault/folders/v3/access_update', Folder.FolderAccessRequest, Folder.FolderAccessResponse)
-    
-    export const recordsShareV3Message = (
-        data: record.v3.sharing.IRequest
-    ): RestMessage<record.v3.sharing.IRequest, record.v3.sharing.IResponse> =>
-        createMessage(data, 'vault/records/v3/share', record.v3.sharing.Request, record.v3.sharing.Response)
-    
-    export const recordsTransferV3Message = (
-        data: Records.IRecordsOnwershipTransferRequest
-    ): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
-        createMessage(
-            data,
-            'vault/records/v3/transfer',
-            Records.RecordsOnwershipTransferRequest,
-            Records.RecordsOnwershipTransferResponse
-        )
+export const removeFolderMessage = (
+    data: folder.v3.remove.IRemoveFolderRequest
+): RestMessage<folder.v3.remove.IRemoveFolderRequest, folder.v3.remove.IRemoveResponse> =>
+    createMessage(
+        data,
+        'vault/folders/v3/remove_folder',
+        folder.v3.remove.RemoveFolderRequest,
+        folder.v3.remove.RemoveResponse
+    )
+
+export const recordDetailsDataMessage = (
+    data: record.v3.details.IRecordDataRequest
+): RestMessage<record.v3.details.IRecordDataRequest, record.v3.details.IRecordDataResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/details/data',
+        record.v3.details.RecordDataRequest,
+        record.v3.details.RecordDataResponse
+    )
+
+export const folderAddMessage = (
+    data: Folder.IFolderAddRequest
+): RestMessage<Folder.IFolderAddRequest, Folder.IFolderAddResponse> =>
+    createMessage(data, 'vault/folders/v3/add', Folder.FolderAddRequest, Folder.FolderAddResponse)
+
+export const folderUpdateMessage = (
+    data: Folder.IFolderUpdateRequest
+): RestMessage<Folder.IFolderUpdateRequest, Folder.IFolderUpdateResponse> =>
+    createMessage(data, 'vault/folders/v3/update', Folder.FolderUpdateRequest, Folder.FolderUpdateResponse)
+
+export const getFolderAccessMessage = (
+    data: folder.v3.IGetFolderAccessRequest
+): RestMessage<folder.v3.IGetFolderAccessRequest, folder.v3.IGetFolderAccessResponse> =>
+    createMessage(data, 'vault/folders/v3/access', folder.v3.GetFolderAccessRequest, folder.v3.GetFolderAccessResponse)
+
+export const getRecordAccessMessage = (
+    data: record.v3.details.IRecordAccessRequest
+): RestMessage<record.v3.details.IRecordAccessRequest, record.v3.details.IRecordAccessResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/details/access',
+        record.v3.details.RecordAccessRequest,
+        record.v3.details.RecordAccessResponse
+    )
+export const folderAccessUpdateMessage = (
+    data: Folder.IFolderAccessRequest
+): RestMessage<Folder.IFolderAccessRequest, Folder.IFolderAccessResponse> =>
+    createMessage(data, 'vault/folders/v3/access_update', Folder.FolderAccessRequest, Folder.FolderAccessResponse)
+
+export const recordsShareV3Message = (
+    data: record.v3.sharing.IRequest
+): RestMessage<record.v3.sharing.IRequest, record.v3.sharing.IResponse> =>
+    createMessage(data, 'vault/records/v3/share', record.v3.sharing.Request, record.v3.sharing.Response)
+
+export const recordsTransferV3Message = (
+    data: Records.IRecordsOnwershipTransferRequest
+): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/transfer',
+        Records.RecordsOnwershipTransferRequest,
+        Records.RecordsOnwershipTransferResponse
+    )
