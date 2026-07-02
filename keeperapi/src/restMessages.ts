@@ -1052,3 +1052,33 @@ export const getRecordAccessMessage = (
         record.v3.details.RecordAccessRequest,
         record.v3.details.RecordAccessResponse
     )
+    export const folderAccessUpdateMessage = (
+        data: Folder.IFolderAccessRequest
+    ): RestMessage<Folder.IFolderAccessRequest, Folder.IFolderAccessResponse> =>
+        createMessage(
+            data,
+            'vault/folders/v3/access_update',
+            Folder.FolderAccessRequest,
+            Folder.FolderAccessResponse
+        )
+    
+    export const recordsShareV3Message = (
+        data: record.v3.sharing.IRequest
+    ): RestMessage<record.v3.sharing.IRequest, record.v3.sharing.IResponse> =>
+        createMessage(
+            data,
+            'vault/records/v3/share',
+            record.v3.sharing.Request,
+            record.v3.sharing.Response
+        )
+    
+    export const recordsTransferV3Message = (
+        data: Records.IRecordsOnwershipTransferRequest
+    ): RestMessage<Records.IRecordsOnwershipTransferRequest, Records.IRecordsOnwershipTransferResponse> =>
+        createMessage(
+            data,
+            'vault/records/v3/transfer',
+            Records.RecordsOnwershipTransferRequest,
+            Records.RecordsOnwershipTransferResponse
+        )
+    
