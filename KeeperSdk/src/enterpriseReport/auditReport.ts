@@ -514,7 +514,7 @@ function serializeFilter(filter: AuditReportFilter | undefined): AuditReportFilt
             payload.created = createdCriteria(filter.created)
         }
     }
-    if (filter.eventType !== undefined) payload.event_type = filter.eventType
+    if (filter.eventType !== undefined) payload.audit_event_type = filter.eventType
     if (filter.keeperVersion !== undefined) payload.keeper_version = filter.keeperVersion
     if (filter.username !== undefined) payload.username = filter.username
     if (filter.toUsername !== undefined) payload.to_username = filter.toUsername

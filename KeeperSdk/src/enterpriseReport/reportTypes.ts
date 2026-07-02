@@ -64,7 +64,6 @@ export type AuditReportFilterPayload = {
               exclude_min?: boolean
               exclude_max?: boolean
           }
-    event_type?: string | number | Array<string | number>
     audit_event_type?: string | number | Array<string | number>
     keeper_version?: number | number[]
     username?: string | string[]
