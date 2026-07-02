@@ -15,9 +15,18 @@ export interface ILogger {
 
 const CREDENTIAL_PATTERN = /\b(password|passwd|pwd|secret|api[_-]?key|auth[_-]?token)\s*[:=]\s*\S+/gi
 
+function redactSensitiveString(value: string): string {
+    return value.replace(CREDENTIAL_PATTERN, (_, key: string) => `${key}=[REDACTED]`)
+}
+
 function sanitizeArg(arg: unknown): unknown {
-    if (typeof arg !== 'string') return arg
-    return arg.replace(CREDENTIAL_PATTERN, (_, key: string) => `${key}=[REDACTED]`)
+    if (typeof arg === 'string') return redactSensitiveString(arg)
+    if (Array.isArray(arg)) return arg.map(sanitizeArg)
+    return arg
+}
+
+export function writeOutput(message: string): void {
+    process.stdout.write(message.endsWith('\n') ? message : `${message}\n`)
 }
 
 export class ConsoleLogger implements ILogger {
