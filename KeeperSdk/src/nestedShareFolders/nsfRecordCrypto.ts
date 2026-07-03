@@ -1,6 +1,7 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import { Records, normal64Bytes, platform, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
+import { extractErrorMessage, logger } from '../utils'
 import { findNestedShareFoldersForRecord } from './nsfHelpers'
 
 const UNKNOWN_RECORD_LABEL = 'Unknown'
@@ -21,10 +22,13 @@ async function decryptWithFolderKeys(
         if (!folderKey) continue
         try {
             return await platform.aesGcmDecrypt(encryptedKey, folderKey)
-        } catch {
+        } catch (gcmErr) {
             try {
                 return await platform.aesCbcDecrypt(encryptedKey, folderKey, true)
-            } catch {
+            } catch (cbcErr) {
+                logger.debug(
+                    `NSF record key decrypt failed for record ${recordUid} with folder ${folderUid}: ${extractErrorMessage(cbcErr)} (GCM: ${extractErrorMessage(gcmErr)})`
+                )
                 continue
             }
         }
@@ -51,7 +55,10 @@ export async function resolveRecordKeyBytes(
             return await platform.aesCbcDecrypt(encryptedKey, auth.dataKey, true)
         }
         return await platform.aesGcmDecrypt(encryptedKey, auth.dataKey)
-    } catch {
+    } catch (err) {
+        logger.debug(
+            `NSF record key decrypt with data key failed for ${recordUid}, trying folder keys: ${extractErrorMessage(err)}`
+        )
         return decryptWithFolderKeys(storage, recordUid, encryptedKey)
     }
 }
@@ -71,11 +78,13 @@ export async function decryptRecordTitleAndType(
         recordData.recordKeyType
     )
     if (!recordKey) {
+        logger.debug(`NSF record key unavailable for ${uid}`)
         return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }
     }
 
     const encryptedData = decodePayload(recordData.encryptedRecordData)
     if (!encryptedData.length) {
+        logger.debug(`NSF record data empty for ${uid}`)
         return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }
     }
 
@@ -89,7 +98,8 @@ export async function decryptRecordTitleAndType(
             title: parsed.title?.trim() || UNKNOWN_RECORD_LABEL,
             type: parsed.type?.trim() || UNKNOWN_RECORD_LABEL,
         }
-    } catch {
+    } catch (err) {
+        logger.debug(`NSF record title/type decrypt failed for ${uid}: ${extractErrorMessage(err)}`)
         return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }
     }
 }

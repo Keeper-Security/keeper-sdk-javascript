@@ -8,8 +8,17 @@ type RecordTypeSchema = {
     fields?: unknown[]
 }
 
+const RECORD_TYPE_CACHE_TTL_MS = 5 * 60 * 1000
+
 let cachedAuth: Auth | undefined
 let cachedRecordTypes: Records.IRecordType[] | undefined
+let cachedAt = 0
+
+export function clearNsfRecordTypeCache(): void {
+    cachedAuth = undefined
+    cachedRecordTypes = undefined
+    cachedAt = 0
+}
 
 function parseRecordTypeSchema(content: string): RecordTypeSchema | undefined {
     try {
@@ -24,7 +33,10 @@ function parseRecordTypeSchema(content: string): RecordTypeSchema | undefined {
 }
 
 async function loadRecordTypes(auth: Auth): Promise<Records.IRecordType[]> {
-    if (cachedAuth === auth && cachedRecordTypes) return cachedRecordTypes
+    const now = Date.now()
+    if (cachedAuth === auth && cachedRecordTypes && now - cachedAt < RECORD_TYPE_CACHE_TTL_MS) {
+        return cachedRecordTypes
+    }
 
     try {
         const response = await auth.executeRest(
@@ -37,6 +49,7 @@ async function loadRecordTypes(auth: Auth): Promise<Records.IRecordType[]> {
         )
         cachedRecordTypes = response.recordTypes ?? []
         cachedAuth = auth
+        cachedAt = now
         return cachedRecordTypes
     } catch (err) {
         throw new KeeperSdkError(

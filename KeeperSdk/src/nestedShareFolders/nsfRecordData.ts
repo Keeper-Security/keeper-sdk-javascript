@@ -1,4 +1,5 @@
 import { platform } from '@keeper-security/keeperapi'
+import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { NSF_KNOWN_FIELD_TYPES, NSF_LEGACY_RECORD_TYPES, NSF_STRUCTURED_SUBKEYS } from './nsfConstants'
 
 const MIN_RECORD_PAD_BYTES = 384
@@ -58,7 +59,14 @@ export function resolveNsfFieldValue(raw: string): NsfFieldValue {
     if (trimmed.startsWith('$JSON')) {
         let jsonStr = trimmed.slice(5)
         if (jsonStr.startsWith(':')) jsonStr = jsonStr.slice(1)
-        return JSON.parse(jsonStr) as Record<string, unknown>
+        try {
+            return JSON.parse(jsonStr) as Record<string, unknown>
+        } catch (err) {
+            throw new KeeperSdkError(
+                `Invalid $JSON value: ${extractErrorMessage(err)}`,
+                ResultCodes.NSF_ADD_FAILED
+            )
+        }
     }
     return trimmed
 }
@@ -162,27 +170,58 @@ function splitFieldTokens(input: string, delimiter: 'comma' | 'space'): string[]
 
     const token = current.trim()
     if (token) result.push(token)
+
+    if (inSingleQuote) {
+        throw new KeeperSdkError('Unclosed single quote in field input.', ResultCodes.NSF_ADD_FAILED)
+    }
+    if (inDoubleQuote) {
+        throw new KeeperSdkError('Unclosed double quote in field input.', ResultCodes.NSF_ADD_FAILED)
+    }
+    if (braceDepth > 0) {
+        throw new KeeperSdkError('Unclosed "{" in field input.', ResultCodes.NSF_ADD_FAILED)
+    }
+
     return result
 }
 
-function parseFieldToken(raw: string): FieldAssignment | 'file' | undefined {
+function parseFieldToken(raw: string, position: number): FieldAssignment | 'file' | undefined {
     const field = raw.trim()
     if (!field) return undefined
 
     const separator = field.indexOf('=')
-    if (separator <= 0) return undefined
+    if (separator <= 0) {
+        throw new KeeperSdkError(
+            `Invalid field at position ${position}: "${field}" (expected key=value format).`,
+            ResultCodes.NSF_ADD_FAILED
+        )
+    }
 
     const key = field.slice(0, separator).trim()
     const value = field.slice(separator + 1).trim()
-    if (!key) return undefined
+    if (!key) {
+        throw new KeeperSdkError(
+            `Invalid field at position ${position}: "${field}" (missing field key).`,
+            ResultCodes.NSF_ADD_FAILED
+        )
+    }
     if (key.toLowerCase() === 'file') return 'file'
 
     const parsedKey = parseFieldKey(key)
-    return {
-        section: parsedKey.section,
-        fieldType: parsedKey.fieldType,
-        fieldLabel: parsedKey.fieldLabel,
-        value: resolveNsfFieldValue(value),
+    try {
+        return {
+            section: parsedKey.section,
+            fieldType: parsedKey.fieldType,
+            fieldLabel: parsedKey.fieldLabel,
+            value: resolveNsfFieldValue(value),
+        }
+    } catch (err) {
+        if (err instanceof KeeperSdkError) {
+            throw new KeeperSdkError(
+                `Invalid field at position ${position} for key "${key}": ${err.message}`,
+                err.resultCode
+            )
+        }
+        throw err
     }
 }
 
@@ -278,8 +317,8 @@ function parseNsfFields(rawFields: string[]): ParsedNsfFields {
     let hasFileFields = false
     const assignments: FieldAssignment[] = []
 
-    for (const raw of rawFields) {
-        const parsed = parseFieldToken(raw)
+    for (let i = 0; i < rawFields.length; i++) {
+        const parsed = parseFieldToken(rawFields[i], i + 1)
         if (!parsed) continue
         if (parsed === 'file') {
             hasFileFields = true

@@ -129,6 +129,8 @@ export type {
 export { addNestedShareRecord } from './addNsfRecord'
 export type { AddNsfRecordInput, AddNsfRecordResult } from './addNsfRecord'
 
+export { clearNsfRecordTypeCache } from './nsfRecordTypes'
+
 export {
     buildNsfRecordData,
     parseNsfFieldInput,

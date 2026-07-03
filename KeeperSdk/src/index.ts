@@ -494,6 +494,7 @@ export {
     parseNsfFieldInput,
     parseNsfFieldSpaceInput,
     resolveNsfFieldValue,
+    clearNsfRecordTypeCache,
     checkRecordEditPermission,
     NestedShareFolderManager,
 } from './nestedShareFolders'
