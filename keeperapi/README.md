@@ -25,3 +25,7 @@ Manual protobuf regeneration is not recommended. Instead, use the **Update Proto
 Trigger it manually via Actions → Update Protobuf → Run workflow.
 
 If there are changes, the workflow opens a PR from `bot/update-proto`. If a PR is already open, it updates the branch in place instead of creating a duplicate.
+
+### Modifying the generation script
+
+If you need to change the protobuf generation script itself (e.g. `scripts/generate-proto.mjs`), push your changes to a feature branch first, then trigger the **Update Protobuf** workflow from that branch. This ensures the workflow runs with your updated script and the generated output reflects your changes correctly. See [#199](https://github.com/Keeper-Security/keeper-sdk-javascript/pull/199) as an example.
