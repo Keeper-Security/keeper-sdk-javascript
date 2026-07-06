@@ -27,6 +27,8 @@ const PROTO_FILES = [
     'record_endpoints.proto',
     'remove.proto',
     'workflow.proto',
+    'folder_access.proto',
+    'record_details.proto',
 ]
 
 // Explicit filename overrides. 'folder' (lowercase) collides with 'Folder' on case-insensitive
