@@ -2358,6 +2358,7 @@ export const Router = $root.Router = (() => {
          * @property {string|null} [scriptName] RouterRotationInfo scriptName
          * @property {string|null} [pwdComplexity] RouterRotationInfo pwdComplexity
          * @property {boolean|null} [disabled] RouterRotationInfo disabled
+         * @property {Array.<Uint8Array>|null} [scripts] RouterRotationInfo scripts
          */
 
         /**
@@ -2369,6 +2370,7 @@ export const Router = $root.Router = (() => {
          * @param {Router.IRouterRotationInfo=} [properties] Properties to set
          */
         function RouterRotationInfo(properties) {
+            this.scripts = [];
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -2448,6 +2450,14 @@ export const Router = $root.Router = (() => {
         RouterRotationInfo.prototype.disabled = false;
 
         /**
+         * RouterRotationInfo scripts.
+         * @member {Array.<Uint8Array>} scripts
+         * @memberof Router.RouterRotationInfo
+         * @instance
+         */
+        RouterRotationInfo.prototype.scripts = $util.emptyArray;
+
+        /**
          * Creates a new RouterRotationInfo instance using the specified properties.
          * @function create
          * @memberof Router.RouterRotationInfo
@@ -2493,6 +2503,9 @@ export const Router = $root.Router = (() => {
                 writer.uint32(/* id 8, wireType 2 =*/66).string(message.pwdComplexity);
             if (message.disabled != null && Object.hasOwnProperty.call(message, "disabled"))
                 writer.uint32(/* id 9, wireType 0 =*/72).bool(message.disabled);
+            if (message.scripts != null && message.scripts.length)
+                for (let i = 0; i < message.scripts.length; ++i)
+                    writer.uint32(/* id 10, wireType 2 =*/82).bytes(message.scripts[i]);
             return writer;
         };
 
@@ -2554,6 +2567,12 @@ export const Router = $root.Router = (() => {
                     }
                 case 9: {
                         message.disabled = reader.bool();
+                        break;
+                    }
+                case 10: {
+                        if (!(message.scripts && message.scripts.length))
+                            message.scripts = [];
+                        message.scripts.push(reader.bytes());
                         break;
                     }
                 default:
@@ -2638,6 +2657,16 @@ export const Router = $root.Router = (() => {
                 message.pwdComplexity = String(object.pwdComplexity);
             if (object.disabled != null)
                 message.disabled = Boolean(object.disabled);
+            if (object.scripts) {
+                if (!Array.isArray(object.scripts))
+                    throw TypeError(".Router.RouterRotationInfo.scripts: array expected");
+                message.scripts = [];
+                for (let i = 0; i < object.scripts.length; ++i)
+                    if (typeof object.scripts[i] === "string")
+                        $util.base64.decode(object.scripts[i], message.scripts[i] = $util.newBuffer($util.base64.length(object.scripts[i])), 0);
+                    else if (object.scripts[i].length >= 0)
+                        message.scripts[i] = object.scripts[i];
+            }
             return message;
         };
 
@@ -2658,6 +2687,8 @@ export const Router = $root.Router = (() => {
             if (q > $util.recursionLimit)
                 throw Error("max depth exceeded");
             let object = {};
+            if (options.arrays || options.defaults)
+                object.scripts = [];
             if (options.defaults) {
                 object.status = options.enums === String ? "RRS_ONLINE" : 0;
                 if (options.bytes === String)
@@ -2714,6 +2745,11 @@ export const Router = $root.Router = (() => {
                 object.pwdComplexity = message.pwdComplexity;
             if (message.disabled != null && Object.hasOwnProperty.call(message, "disabled"))
                 object.disabled = message.disabled;
+            if (message.scripts && message.scripts.length) {
+                object.scripts = [];
+                for (let j = 0; j < message.scripts.length; ++j)
+                    object.scripts[j] = options.bytes === String ? $util.base64.encode(message.scripts[j], 0, message.scripts[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.scripts[j]) : message.scripts[j];
+            }
             return object;
         };
 

@@ -69718,6 +69718,792 @@ export namespace record {
              */
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
+
+        /** Namespace details. */
+        namespace details {
+
+            /** Represents a RecordDetailsService */
+            class RecordDetailsService extends $protobuf.rpc.Service {
+
+                /**
+                 * Constructs a new RecordDetailsService service.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 */
+                constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+                /**
+                 * Creates new RecordDetailsService service using the specified rpc implementation.
+                 * @param rpcImpl RPC implementation
+                 * @param [requestDelimited=false] Whether requests are length-delimited
+                 * @param [responseDelimited=false] Whether responses are length-delimited
+                 * @returns RPC service. Useful where requests and/or responses are streamed.
+                 */
+                public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): RecordDetailsService;
+
+                /**
+                 * Calls GetRecordData.
+                 * @param request RecordDataRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RecordDataResponse
+                 */
+                public getRecordData(request: record.v3.details.IRecordDataRequest, callback: record.v3.details.RecordDetailsService.GetRecordDataCallback): void;
+
+                /**
+                 * Calls GetRecordData.
+                 * @param request RecordDataRequest message or plain object
+                 * @returns Promise
+                 */
+                public getRecordData(request: record.v3.details.IRecordDataRequest): Promise<record.v3.details.RecordDataResponse>;
+
+                /**
+                 * Calls GetRecordAccessors.
+                 * @param request RecordAccessRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RecordAccessResponse
+                 */
+                public getRecordAccessors(request: record.v3.details.IRecordAccessRequest, callback: record.v3.details.RecordDetailsService.GetRecordAccessorsCallback): void;
+
+                /**
+                 * Calls GetRecordAccessors.
+                 * @param request RecordAccessRequest message or plain object
+                 * @returns Promise
+                 */
+                public getRecordAccessors(request: record.v3.details.IRecordAccessRequest): Promise<record.v3.details.RecordAccessResponse>;
+
+                /**
+                 * Calls GetRecordAccessorDetails.
+                 * @param request RecordAccessorDetailsRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and RecordAccessorDetailsResponse
+                 */
+                public getRecordAccessorDetails(request: record.v3.details.IRecordAccessorDetailsRequest, callback: record.v3.details.RecordDetailsService.GetRecordAccessorDetailsCallback): void;
+
+                /**
+                 * Calls GetRecordAccessorDetails.
+                 * @param request RecordAccessorDetailsRequest message or plain object
+                 * @returns Promise
+                 */
+                public getRecordAccessorDetails(request: record.v3.details.IRecordAccessorDetailsRequest): Promise<record.v3.details.RecordAccessorDetailsResponse>;
+            }
+
+            namespace RecordDetailsService {
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordData}.
+                 * @param error Error, if any
+                 * @param [response] RecordDataResponse
+                 */
+                type GetRecordDataCallback = (error: (Error|null), response?: record.v3.details.RecordDataResponse) => void;
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordAccessors}.
+                 * @param error Error, if any
+                 * @param [response] RecordAccessResponse
+                 */
+                type GetRecordAccessorsCallback = (error: (Error|null), response?: record.v3.details.RecordAccessResponse) => void;
+
+                /**
+                 * Callback as used by {@link record.v3.details.RecordDetailsService#getRecordAccessorDetails}.
+                 * @param error Error, if any
+                 * @param [response] RecordAccessorDetailsResponse
+                 */
+                type GetRecordAccessorDetailsCallback = (error: (Error|null), response?: record.v3.details.RecordAccessorDetailsResponse) => void;
+            }
+
+            /** Properties of a RecordDataRequest. */
+            interface IRecordDataRequest {
+
+                /**
+                 * represents the client time in milliseconds. Client time is used to
+                 * adjust the record client_modified_time for each record.
+                 */
+                clientTime?: (number|null);
+
+                /** the list of record UIDs to retrieve information for. */
+                recordUids?: (Uint8Array[]|null);
+            }
+
+            /** Represents a record data request. Record details include the record [meta]data (title, color, etc.) */
+            class RecordDataRequest implements IRecordDataRequest {
+
+                /**
+                 * Constructs a new RecordDataRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordDataRequest);
+
+                /**
+                 * represents the client time in milliseconds. Client time is used to
+                 * adjust the record client_modified_time for each record.
+                 */
+                public clientTime: number;
+
+                /** the list of record UIDs to retrieve information for. */
+                public recordUids: Uint8Array[];
+
+                /**
+                 * Creates a new RecordDataRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordDataRequest instance
+                 */
+                public static create(properties?: record.v3.details.IRecordDataRequest): record.v3.details.RecordDataRequest;
+
+                /**
+                 * Encodes the specified RecordDataRequest message. Does not implicitly {@link record.v3.details.RecordDataRequest.verify|verify} messages.
+                 * @param message RecordDataRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordDataRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordDataRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordDataRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordDataRequest;
+
+                /**
+                 * Creates a RecordDataRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordDataRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordDataRequest;
+
+                /**
+                 * Creates a plain object from a RecordDataRequest message. Also converts values to other types if specified.
+                 * @param message RecordDataRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordDataRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordDataRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordDataRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordDataResponse. */
+            interface IRecordDataResponse {
+
+                /** The data associated with the record. */
+                data?: (Records.IRecordData[]|null);
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                forbiddenRecords?: (Uint8Array[]|null);
+            }
+
+            /** Response message containing records' data and a list of inaccessible records for the calling user. */
+            class RecordDataResponse implements IRecordDataResponse {
+
+                /**
+                 * Constructs a new RecordDataResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordDataResponse);
+
+                /** The data associated with the record. */
+                public data: Records.IRecordData[];
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                public forbiddenRecords: Uint8Array[];
+
+                /**
+                 * Creates a new RecordDataResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordDataResponse instance
+                 */
+                public static create(properties?: record.v3.details.IRecordDataResponse): record.v3.details.RecordDataResponse;
+
+                /**
+                 * Encodes the specified RecordDataResponse message. Does not implicitly {@link record.v3.details.RecordDataResponse.verify|verify} messages.
+                 * @param message RecordDataResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordDataResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordDataResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordDataResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordDataResponse;
+
+                /**
+                 * Creates a RecordDataResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordDataResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordDataResponse;
+
+                /**
+                 * Creates a plain object from a RecordDataResponse message. Also converts values to other types if specified.
+                 * @param message RecordDataResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordDataResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordDataResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordDataResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessRequest. */
+            interface IRecordAccessRequest {
+
+                /** the list of record UIDs to retrieve information for. */
+                recordUids?: (Uint8Array[]|null);
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                page?: (keeper.api.common.IPage|null);
+            }
+
+            /**
+             * Represents a record accessors request. Record details include whom the record has been
+             * shared with (user or team), and what role and permissions the accessors have over the record.
+             */
+            class RecordAccessRequest implements IRecordAccessRequest {
+
+                /**
+                 * Constructs a new RecordAccessRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessRequest);
+
+                /** the list of record UIDs to retrieve information for. */
+                public recordUids: Uint8Array[];
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                public page?: (keeper.api.common.IPage|null);
+
+                /**
+                 * Creates a new RecordAccessRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessRequest instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessRequest): record.v3.details.RecordAccessRequest;
+
+                /**
+                 * Encodes the specified RecordAccessRequest message. Does not implicitly {@link record.v3.details.RecordAccessRequest.verify|verify} messages.
+                 * @param message RecordAccessRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessRequest;
+
+                /**
+                 * Creates a RecordAccessRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessRequest;
+
+                /**
+                 * Creates a plain object from a RecordAccessRequest message. Also converts values to other types if specified.
+                 * @param message RecordAccessRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessResponse. */
+            interface IRecordAccessResponse {
+
+                /** List of record access permissions, detailing the accessors and their roles. */
+                recordAccesses?: (record.v3.details.IRecordAccess[]|null);
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                forbiddenRecords?: (Uint8Array[]|null);
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+                pageInfo?: (keeper.api.common.IPageInfo|null);
+            }
+
+            /** Response message containing records' accesses and a list of inaccessible records for the calling user. */
+            class RecordAccessResponse implements IRecordAccessResponse {
+
+                /**
+                 * Constructs a new RecordAccessResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessResponse);
+
+                /** List of record access permissions, detailing the accessors and their roles. */
+                public recordAccesses: record.v3.details.IRecordAccess[];
+
+                /**
+                 * A list of record UIDs from the request that the calling user does not have access to.
+                 * Each UID in this list corresponds to a record the user has no permission to access.
+                 */
+                public forbiddenRecords: Uint8Array[];
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+                public pageInfo?: (keeper.api.common.IPageInfo|null);
+
+                /**
+                 * Creates a new RecordAccessResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessResponse instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessResponse): record.v3.details.RecordAccessResponse;
+
+                /**
+                 * Encodes the specified RecordAccessResponse message. Does not implicitly {@link record.v3.details.RecordAccessResponse.verify|verify} messages.
+                 * @param message RecordAccessResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessResponse;
+
+                /**
+                 * Creates a RecordAccessResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessResponse;
+
+                /**
+                 * Creates a plain object from a RecordAccessResponse message. Also converts values to other types if specified.
+                 * @param message RecordAccessResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessorDetailsRequest. */
+            interface IRecordAccessorDetailsRequest {
+
+                /** The record UID to retrieve information for. */
+                recordUid?: (Uint8Array|null);
+
+                /** The accessor UID (user or team) to retrieve information for. */
+                accessorUid?: (Uint8Array|null);
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                page?: (keeper.api.common.IPage|null);
+            }
+
+            /** Represents a record accessor details request. */
+            class RecordAccessorDetailsRequest implements IRecordAccessorDetailsRequest {
+
+                /**
+                 * Constructs a new RecordAccessorDetailsRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessorDetailsRequest);
+
+                /** The record UID to retrieve information for. */
+                public recordUid: Uint8Array;
+
+                /** The accessor UID (user or team) to retrieve information for. */
+                public accessorUid: Uint8Array;
+
+                /**
+                 * Pagination parameters.
+                 * If not provided, uses defaults (page 0, size 100).
+                 */
+                public page?: (keeper.api.common.IPage|null);
+
+                /**
+                 * Creates a new RecordAccessorDetailsRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessorDetailsRequest instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessorDetailsRequest): record.v3.details.RecordAccessorDetailsRequest;
+
+                /**
+                 * Encodes the specified RecordAccessorDetailsRequest message. Does not implicitly {@link record.v3.details.RecordAccessorDetailsRequest.verify|verify} messages.
+                 * @param message RecordAccessorDetailsRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessorDetailsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessorDetailsRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessorDetailsRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessorDetailsRequest;
+
+                /**
+                 * Creates a RecordAccessorDetailsRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessorDetailsRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessorDetailsRequest;
+
+                /**
+                 * Creates a plain object from a RecordAccessorDetailsRequest message. Also converts values to other types if specified.
+                 * @param message RecordAccessorDetailsRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessorDetailsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessorDetailsRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessorDetailsRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccessorDetailsResponse. */
+            interface IRecordAccessorDetailsResponse {
+
+                /** Set if has direct access to the record. */
+                recordAccessData?: (Folder.IRecordAccessData|null);
+
+                /** The list of folder the user has access and that contain the record. */
+                folderAccessData?: (Folder.IFolderAccessData[]|null);
+
+                /**
+                 * Pagination metadata for this response.
+                 * Contains current page info, total count, and whether more pages exist.
+                 */
+                pageInfo?: (keeper.api.common.IPageInfo|null);
+            }
+
+            /**
+             * Represents a record accessor details response.
+             * Record accessor details include information on how a specific accessor obtained access to a record.
+             */
+            class RecordAccessorDetailsResponse implements IRecordAccessorDetailsResponse {
+
+                /**
+                 * Constructs a new RecordAccessorDetailsResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccessorDetailsResponse);
+
+                /** Set if has direct access to the record. */
+                public recordAccessData?: (Folder.IRecordAccessData|null);
+
+                /** The list of folder the user has access and that contain the record. */
+                public folderAccessData: Folder.IFolderAccessData[];
+
+                /**
+                 * * Pagination metadata for this response.
+                 * * Contains current page info, total count, and whether more pages exist.
+                 */
+                public pageInfo?: (keeper.api.common.IPageInfo|null);
+
+                /**
+                 * Creates a new RecordAccessorDetailsResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccessorDetailsResponse instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccessorDetailsResponse): record.v3.details.RecordAccessorDetailsResponse;
+
+                /**
+                 * Encodes the specified RecordAccessorDetailsResponse message. Does not implicitly {@link record.v3.details.RecordAccessorDetailsResponse.verify|verify} messages.
+                 * @param message RecordAccessorDetailsResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccessorDetailsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccessorDetailsResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccessorDetailsResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccessorDetailsResponse;
+
+                /**
+                 * Creates a RecordAccessorDetailsResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccessorDetailsResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccessorDetailsResponse;
+
+                /**
+                 * Creates a plain object from a RecordAccessorDetailsResponse message. Also converts values to other types if specified.
+                 * @param message RecordAccessorDetailsResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccessorDetailsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccessorDetailsResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccessorDetailsResponse
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a RecordAccess. */
+            interface IRecordAccess {
+
+                /** Core access details including permissions, role, and metadata. */
+                data?: (Folder.IRecordAccessData|null);
+
+                /** The record accessor. */
+                accessorInfo?: (record.v3.details.IAccessorInfo|null);
+            }
+
+            /**
+             * Describes the access a user has to a specific record.
+             * Includes ownership, access roles, and additional sharing metadata.
+             */
+            class RecordAccess implements IRecordAccess {
+
+                /**
+                 * Constructs a new RecordAccess.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IRecordAccess);
+
+                /** Core access details including permissions, role, and metadata. */
+                public data?: (Folder.IRecordAccessData|null);
+
+                /** The record accessor. */
+                public accessorInfo?: (record.v3.details.IAccessorInfo|null);
+
+                /**
+                 * Creates a new RecordAccess instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns RecordAccess instance
+                 */
+                public static create(properties?: record.v3.details.IRecordAccess): record.v3.details.RecordAccess;
+
+                /**
+                 * Encodes the specified RecordAccess message. Does not implicitly {@link record.v3.details.RecordAccess.verify|verify} messages.
+                 * @param message RecordAccess message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IRecordAccess, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a RecordAccess message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns RecordAccess
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.RecordAccess;
+
+                /**
+                 * Creates a RecordAccess message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns RecordAccess
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.RecordAccess;
+
+                /**
+                 * Creates a plain object from a RecordAccess message. Also converts values to other types if specified.
+                 * @param message RecordAccess
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.RecordAccess, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this RecordAccess to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for RecordAccess
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an AccessorInfo. */
+            interface IAccessorInfo {
+
+                /** accessor name */
+                name?: (string|null);
+            }
+
+            /** The entity representing the record accessor. Either a team or a user */
+            class AccessorInfo implements IAccessorInfo {
+
+                /**
+                 * Constructs a new AccessorInfo.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: record.v3.details.IAccessorInfo);
+
+                /** accessor name */
+                public name: string;
+
+                /**
+                 * Creates a new AccessorInfo instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns AccessorInfo instance
+                 */
+                public static create(properties?: record.v3.details.IAccessorInfo): record.v3.details.AccessorInfo;
+
+                /**
+                 * Encodes the specified AccessorInfo message. Does not implicitly {@link record.v3.details.AccessorInfo.verify|verify} messages.
+                 * @param message AccessorInfo message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: record.v3.details.IAccessorInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an AccessorInfo message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns AccessorInfo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): record.v3.details.AccessorInfo;
+
+                /**
+                 * Creates an AccessorInfo message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns AccessorInfo
+                 */
+                public static fromObject(object: { [k: string]: any }): record.v3.details.AccessorInfo;
+
+                /**
+                 * Creates a plain object from an AccessorInfo message. Also converts values to other types if specified.
+                 * @param message AccessorInfo
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: record.v3.details.AccessorInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this AccessorInfo to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for AccessorInfo
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
     }
 }
 
@@ -82342,6 +83128,9 @@ export namespace Router {
 
         /** RouterRotationInfo disabled */
         disabled?: (boolean|null);
+
+        /** RouterRotationInfo scripts */
+        scripts?: (Uint8Array[]|null);
     }
 
     /** Represents a RouterRotationInfo. */
@@ -82379,6 +83168,9 @@ export namespace Router {
 
         /** RouterRotationInfo disabled. */
         public disabled: boolean;
+
+        /** RouterRotationInfo scripts. */
+        public scripts: Uint8Array[];
 
         /**
          * Creates a new RouterRotationInfo instance using the specified properties.
@@ -91275,6 +92067,483 @@ export namespace folder {
                 public static getTypeUrl(typeUrlPrefix?: string): string;
             }
         }
+
+        /** RPC service for folder operations. */
+        class FolderService extends $protobuf.rpc.Service {
+
+            /**
+             * Constructs a new FolderService service.
+             * @param rpcImpl RPC implementation
+             * @param [requestDelimited=false] Whether requests are length-delimited
+             * @param [responseDelimited=false] Whether responses are length-delimited
+             */
+            constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+            /**
+             * Creates new FolderService service using the specified rpc implementation.
+             * @param rpcImpl RPC implementation
+             * @param [requestDelimited=false] Whether requests are length-delimited
+             * @param [responseDelimited=false] Whether responses are length-delimited
+             * @returns RPC service. Useful where requests and/or responses are streamed.
+             */
+            public static create(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean): FolderService;
+
+            /**
+             * Retrieve users and teams with access to specified folders.
+             * Requires can_change_user_permissions permission or Share Admin/MC Admin privileges.
+             * @param request GetFolderAccessRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and GetFolderAccessResponse
+             */
+            public getFolderAccess(request: folder.v3.IGetFolderAccessRequest, callback: folder.v3.FolderService.GetFolderAccessCallback): void;
+
+            /**
+             * Retrieve users and teams with access to specified folders.
+             * Requires can_change_user_permissions permission or Share Admin/MC Admin privileges.
+             * @param request GetFolderAccessRequest message or plain object
+             * @returns Promise
+             */
+            public getFolderAccess(request: folder.v3.IGetFolderAccessRequest): Promise<folder.v3.GetFolderAccessResponse>;
+        }
+
+        namespace FolderService {
+
+            /**
+             * Callback as used by {@link folder.v3.FolderService#getFolderAccess}.
+             * @param error Error, if any
+             * @param [response] GetFolderAccessResponse
+             */
+            type GetFolderAccessCallback = (error: (Error|null), response?: folder.v3.GetFolderAccessResponse) => void;
+        }
+
+        /** Properties of a GetFolderAccessRequest. */
+        interface IGetFolderAccessRequest {
+
+            /** List of folder UIDs to query (max: 100) */
+            folderUid?: (Uint8Array[]|null);
+
+            /**
+             * Continuation token for pagination.
+             * Contains the last_modified timestamp from the previous page.
+             * Omit for the first page.
+             */
+            continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /**
+             * Maximum number of accessors to return per page.
+             * Default: 100, Max: 1000
+             */
+            pageSize?: (number|null);
+        }
+
+        /**
+         * Request to retrieve folder accessors (users and teams with access to folders).
+         * Supports cursor-based pagination using last_modified timestamps.
+         */
+        class GetFolderAccessRequest implements IGetFolderAccessRequest {
+
+            /**
+             * Constructs a new GetFolderAccessRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IGetFolderAccessRequest);
+
+            /** List of folder UIDs to query (max: 100) */
+            public folderUid: Uint8Array[];
+
+            /**
+             * Continuation token for pagination.
+             * Contains the last_modified timestamp from the previous page.
+             * Omit for the first page.
+             */
+            public continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /**
+             * Maximum number of accessors to return per page.
+             * Default: 100, Max: 1000
+             */
+            public pageSize?: (number|null);
+
+            /**
+             * Creates a new GetFolderAccessRequest instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GetFolderAccessRequest instance
+             */
+            public static create(properties?: folder.v3.IGetFolderAccessRequest): folder.v3.GetFolderAccessRequest;
+
+            /**
+             * Encodes the specified GetFolderAccessRequest message. Does not implicitly {@link folder.v3.GetFolderAccessRequest.verify|verify} messages.
+             * @param message GetFolderAccessRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IGetFolderAccessRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GetFolderAccessRequest message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GetFolderAccessRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.GetFolderAccessRequest;
+
+            /**
+             * Creates a GetFolderAccessRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetFolderAccessRequest
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.GetFolderAccessRequest;
+
+            /**
+             * Creates a plain object from a GetFolderAccessRequest message. Also converts values to other types if specified.
+             * @param message GetFolderAccessRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.GetFolderAccessRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetFolderAccessRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GetFolderAccessRequest
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GetFolderAccessResponse. */
+        interface IGetFolderAccessResponse {
+
+            /** Per-folder results (either success with accessors or error) */
+            folderAccessResults?: (folder.v3.IGetFolderAccessResult[]|null);
+
+            /** Continuation token for the next page (only present if hasMore is true) */
+            continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /** True if more results exist beyond this page */
+            hasMore?: (boolean|null);
+        }
+
+        /** Response containing folder accessors with pagination support. */
+        class GetFolderAccessResponse implements IGetFolderAccessResponse {
+
+            /**
+             * Constructs a new GetFolderAccessResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IGetFolderAccessResponse);
+
+            /** Per-folder results (either success with accessors or error) */
+            public folderAccessResults: folder.v3.IGetFolderAccessResult[];
+
+            /** Continuation token for the next page (only present if hasMore is true) */
+            public continuationToken?: (folder.v3.IContinuationToken|null);
+
+            /** True if more results exist beyond this page */
+            public hasMore: boolean;
+
+            /**
+             * Creates a new GetFolderAccessResponse instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GetFolderAccessResponse instance
+             */
+            public static create(properties?: folder.v3.IGetFolderAccessResponse): folder.v3.GetFolderAccessResponse;
+
+            /**
+             * Encodes the specified GetFolderAccessResponse message. Does not implicitly {@link folder.v3.GetFolderAccessResponse.verify|verify} messages.
+             * @param message GetFolderAccessResponse message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IGetFolderAccessResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GetFolderAccessResponse message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GetFolderAccessResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.GetFolderAccessResponse;
+
+            /**
+             * Creates a GetFolderAccessResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetFolderAccessResponse
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.GetFolderAccessResponse;
+
+            /**
+             * Creates a plain object from a GetFolderAccessResponse message. Also converts values to other types if specified.
+             * @param message GetFolderAccessResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.GetFolderAccessResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetFolderAccessResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GetFolderAccessResponse
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a ContinuationToken. */
+        interface IContinuationToken {
+
+            /** Unix timestamp in milliseconds of the last processed accessor */
+            lastModified?: (number|null);
+        }
+
+        /**
+         * Cursor for cursor-based pagination.
+         * Contains the timestamp of the last processed item.
+         */
+        class ContinuationToken implements IContinuationToken {
+
+            /**
+             * Constructs a new ContinuationToken.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IContinuationToken);
+
+            /** Unix timestamp in milliseconds of the last processed accessor */
+            public lastModified: number;
+
+            /**
+             * Creates a new ContinuationToken instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ContinuationToken instance
+             */
+            public static create(properties?: folder.v3.IContinuationToken): folder.v3.ContinuationToken;
+
+            /**
+             * Encodes the specified ContinuationToken message. Does not implicitly {@link folder.v3.ContinuationToken.verify|verify} messages.
+             * @param message ContinuationToken message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IContinuationToken, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ContinuationToken message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ContinuationToken
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.ContinuationToken;
+
+            /**
+             * Creates a ContinuationToken message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ContinuationToken
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.ContinuationToken;
+
+            /**
+             * Creates a plain object from a ContinuationToken message. Also converts values to other types if specified.
+             * @param message ContinuationToken
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.ContinuationToken, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ContinuationToken to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ContinuationToken
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GetFolderAccessResult. */
+        interface IGetFolderAccessResult {
+
+            /** Folder UID this result applies to */
+            folderUid?: (Uint8Array|null);
+
+            /** List of users/teams with access to this folder (populated on success) */
+            accessors?: (Folder.IFolderAccessData[]|null);
+
+            /** Error information (populated on failure, mutually exclusive with accessors) */
+            error?: (folder.v3.IFolderAccessError|null);
+        }
+
+        /**
+         * Result for a single folder.
+         * Contains either a list of accessors (success) or an error (failure).
+         */
+        class GetFolderAccessResult implements IGetFolderAccessResult {
+
+            /**
+             * Constructs a new GetFolderAccessResult.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IGetFolderAccessResult);
+
+            /** Folder UID this result applies to */
+            public folderUid: Uint8Array;
+
+            /** List of users/teams with access to this folder (populated on success) */
+            public accessors: Folder.IFolderAccessData[];
+
+            /** Error information (populated on failure, mutually exclusive with accessors) */
+            public error?: (folder.v3.IFolderAccessError|null);
+
+            /**
+             * Creates a new GetFolderAccessResult instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GetFolderAccessResult instance
+             */
+            public static create(properties?: folder.v3.IGetFolderAccessResult): folder.v3.GetFolderAccessResult;
+
+            /**
+             * Encodes the specified GetFolderAccessResult message. Does not implicitly {@link folder.v3.GetFolderAccessResult.verify|verify} messages.
+             * @param message GetFolderAccessResult message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IGetFolderAccessResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GetFolderAccessResult message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GetFolderAccessResult
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.GetFolderAccessResult;
+
+            /**
+             * Creates a GetFolderAccessResult message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetFolderAccessResult
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.GetFolderAccessResult;
+
+            /**
+             * Creates a plain object from a GetFolderAccessResult message. Also converts values to other types if specified.
+             * @param message GetFolderAccessResult
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.GetFolderAccessResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetFolderAccessResult to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GetFolderAccessResult
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a FolderAccessError. */
+        interface IFolderAccessError {
+
+            /** Status code (e.g., NOT_FOUND, ACCESS_DENIED) */
+            status?: (Folder.FolderModifyStatus|null);
+
+            /** Human-readable error message */
+            message?: (string|null);
+        }
+
+        /** Error information for a folder that couldn't be processed. */
+        class FolderAccessError implements IFolderAccessError {
+
+            /**
+             * Constructs a new FolderAccessError.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: folder.v3.IFolderAccessError);
+
+            /** Status code (e.g., NOT_FOUND, ACCESS_DENIED) */
+            public status: Folder.FolderModifyStatus;
+
+            /** Human-readable error message */
+            public message: string;
+
+            /**
+             * Creates a new FolderAccessError instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns FolderAccessError instance
+             */
+            public static create(properties?: folder.v3.IFolderAccessError): folder.v3.FolderAccessError;
+
+            /**
+             * Encodes the specified FolderAccessError message. Does not implicitly {@link folder.v3.FolderAccessError.verify|verify} messages.
+             * @param message FolderAccessError message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: folder.v3.IFolderAccessError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a FolderAccessError message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns FolderAccessError
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.FolderAccessError;
+
+            /**
+             * Creates a FolderAccessError message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns FolderAccessError
+             */
+            public static fromObject(object: { [k: string]: any }): folder.v3.FolderAccessError;
+
+            /**
+             * Creates a plain object from a FolderAccessError message. Also converts values to other types if specified.
+             * @param message FolderAccessError
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: folder.v3.FolderAccessError, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this FolderAccessError to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for FolderAccessError
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
     }
 }
 
@@ -92798,5 +94067,217 @@ export namespace Workflow {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
+/** Namespace keeper. */
+export namespace keeper {
+
+    /** Namespace api. */
+    namespace api {
+
+        /** Namespace common. */
+        namespace common {
+
+            /** Properties of a Page. */
+            interface IPage {
+
+                /**
+                 * Zero-indexed page number.
+                 * Default: 0 (first page)
+                 */
+                pageNumber?: (number|null);
+
+                /** Number of items per page. */
+                pageSize?: (number|null);
+
+                /** Use as cursor to the next page. */
+                cursorToken?: (string|null);
+            }
+
+            /**
+             * Pagination parameters for paginated requests.
+             * Used to specify which page of results to retrieve.
+             */
+            class Page implements IPage {
+
+                /**
+                 * Constructs a new Page.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: keeper.api.common.IPage);
+
+                /**
+                 * Zero-indexed page number.
+                 * Default: 0 (first page)
+                 */
+                public pageNumber: number;
+
+                /** Number of items per page. */
+                public pageSize: number;
+
+                /** Use as cursor to the next page. */
+                public cursorToken: string;
+
+                /**
+                 * Creates a new Page instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns Page instance
+                 */
+                public static create(properties?: keeper.api.common.IPage): keeper.api.common.Page;
+
+                /**
+                 * Encodes the specified Page message. Does not implicitly {@link keeper.api.common.Page.verify|verify} messages.
+                 * @param message Page message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: keeper.api.common.IPage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a Page message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns Page
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): keeper.api.common.Page;
+
+                /**
+                 * Creates a Page message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns Page
+                 */
+                public static fromObject(object: { [k: string]: any }): keeper.api.common.Page;
+
+                /**
+                 * Creates a plain object from a Page message. Also converts values to other types if specified.
+                 * @param message Page
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: keeper.api.common.Page, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this Page to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for Page
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a PageInfo. */
+            interface IPageInfo {
+
+                /** Current page number (zero-indexed). */
+                pageNumber?: (number|null);
+
+                /** Number of items per page. */
+                pageSize?: (number|null);
+
+                /** Total number of items available across all pages. */
+                totalCount?: (number|null);
+
+                /**
+                 * Indicates whether more pages are available.
+                 * True if (page_number + 1) * page_size < total_count
+                 */
+                hasMore?: (boolean|null);
+
+                /** Use as cursor to the next page. */
+                cursorToken?: (string|null);
+            }
+
+            /**
+             * Pagination metadata included in paginated responses.
+             * Provides information about the current page and total available items.
+             */
+            class PageInfo implements IPageInfo {
+
+                /**
+                 * Constructs a new PageInfo.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: keeper.api.common.IPageInfo);
+
+                /** Current page number (zero-indexed). */
+                public pageNumber: number;
+
+                /** Number of items per page. */
+                public pageSize: number;
+
+                /** Total number of items available across all pages. */
+                public totalCount: number;
+
+                /**
+                 * Indicates whether more pages are available.
+                 * True if (page_number + 1) * page_size < total_count
+                 */
+                public hasMore: boolean;
+
+                /** Use as cursor to the next page. */
+                public cursorToken: string;
+
+                /**
+                 * Creates a new PageInfo instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PageInfo instance
+                 */
+                public static create(properties?: keeper.api.common.IPageInfo): keeper.api.common.PageInfo;
+
+                /**
+                 * Encodes the specified PageInfo message. Does not implicitly {@link keeper.api.common.PageInfo.verify|verify} messages.
+                 * @param message PageInfo message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: keeper.api.common.IPageInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PageInfo message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PageInfo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): keeper.api.common.PageInfo;
+
+                /**
+                 * Creates a PageInfo message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PageInfo
+                 */
+                public static fromObject(object: { [k: string]: any }): keeper.api.common.PageInfo;
+
+                /**
+                 * Creates a plain object from a PageInfo message. Also converts values to other types if specified.
+                 * @param message PageInfo
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: keeper.api.common.PageInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PageInfo to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PageInfo
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
     }
 }
