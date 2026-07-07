@@ -6,16 +6,7 @@ export const NSF_LEGACY_RECORD_MSG =
 export const NSF_LEGACY_FOLDER_MSG =
     "Folder '{0}' is a legacy folder. Nested Share Folder commands operate only on Nested Share Folders."
 
-export const NSF_ACCESS_ROLE_LABELS: Record<number, string> = {
-    [Folder.AccessRoleType.NAVIGATOR]: 'navigator',
-    [Folder.AccessRoleType.REQUESTOR]: 'requestor',
-    [Folder.AccessRoleType.VIEWER]: 'viewer',
-    [Folder.AccessRoleType.SHARED_MANAGER]: 'shared-manager',
-    [Folder.AccessRoleType.CONTENT_MANAGER]: 'content-manager',
-    [Folder.AccessRoleType.CONTENT_SHARE_MANAGER]: 'content-share-manager',
-    [Folder.AccessRoleType.MANAGER]: 'manager',
-    [Folder.AccessRoleType.UNRESOLVED]: 'unresolved',
-}
+export const NSF_LEGACY_RECORD_TYPES = new Set(['legacy', 'general'])
 
 export const NSF_ACCESS_TYPE_LABELS: Record<number, string> = {
     [Folder.AccessType.AT_USER]: 'user',
@@ -35,9 +26,9 @@ export const NSF_RECORD_DESCRIPTION_MAX_LENGTH = 120
 export const NSF_MASKED_VALUE = '********'
 export const NSF_FOLDER_LABEL_WIDTH = 22
 export const NSF_RECORD_LABEL_WIDTH = 17
-export const NSF_FOLDER_USER_PERMISSIONS_HEADING = 'User Permissions:'
+export const NSF_USER_PERMISSIONS_HEADING = 'User Permissions:'
 export const NSF_FOLDER_SHARE_ADMINS_HEADING = 'Share Administrators:'
-export const NSF_RECORD_USER_PERMISSIONS_HEADING = 'User Permissions:'
+export const NSF_SHARE_ADMINS_PREVIEW_LIMIT = 10
 
 export const NSF_LIST_TABLE_HEADERS = ['#', 'Item Type', 'UID', 'Title', 'Type', 'Description'] as const
 export const NSF_LIST_FULL_HEADERS = [
@@ -51,4 +42,46 @@ export const NSF_LIST_FULL_HEADERS = [
 export const NSF_LIST_DEFAULT_COLUMN_WIDTH = 40
 export const NSF_LIST_MIN_TRUNCATE_PREFIX = 3
 
-export const NSF_MAX_REMOVALS = 500
+export const NSF_MAX_RECORD_BATCH = 500
+export const NSF_MAX_FOLDER_REMOVALS = 100
+
+export const NSF_PATH_SENTINEL = '\x00'
+
+export const NSF_FOLDER_COLORS = ['none', 'red', 'orange', 'yellow', 'green', 'blue', 'gray'] as const
+export type NsfFolderColor = (typeof NSF_FOLDER_COLORS)[number]
+
+
+export const NSF_KNOWN_FIELD_TYPES = new Set([
+    'login',
+    'password',
+    'url',
+    'email',
+    'text',
+    'multiline',
+    'secret',
+    'note',
+    'onetimecode',
+    'date',
+    'phone',
+    'name',
+    'address',
+    'paymentcard',
+    'bankaccount',
+    'securityquestion',
+    'host',
+    'keypair',
+    'fileref',
+    'passkey',
+    'pincode',
+])
+
+
+export const NSF_STRUCTURED_SUBKEYS: Record<string, ReadonlySet<string>> = {
+    name: new Set(['first', 'middle', 'last']),
+    host: new Set(['hostName', 'port', 'host']),
+    address: new Set(['street1', 'street2', 'city', 'state', 'zip', 'country', 'address']),
+    paymentcard: new Set(['cardNumber', 'cardExpirationDate', 'cardSecurityCode', 'cardPin']),
+    bankaccount: new Set(['accountNumber', 'routingNumber', 'accountType']),
+    securityquestion: new Set(['question', 'answer']),
+    phone: new Set(['number', 'region', 'type', 'ext']),
+}

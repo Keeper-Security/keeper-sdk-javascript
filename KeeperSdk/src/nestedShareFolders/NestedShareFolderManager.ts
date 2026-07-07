@@ -1,33 +1,39 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes } from '../utils'
-import {
-    formatListNsfOutput,
-    formatListNsfTable,
-    listNestedShareFolders,
-    renderListNsfAsciiTable,
-    type FormattedListNsfTable,
-    type ListNsfFormatInput,
-    type ListNsfOptions,
-    type ListNsfRow,
-} from './listNsf'
-import {
-    formatNsfDetail as renderNsfDetail,
-    formatNsfFolderDetail as renderNsfFolderDetail,
-    formatNsfRecordDetail as renderNsfRecordDetail,
-    getNestedShareFolder,
-    type GetNsfOptions,
-    type GetNsfResult,
-    type NsfFolderView,
-    type NsfRecordView,
-} from './getNsf'
-import { linkNestedShareRecord, type LinkNsfRecordResult } from './linkNsfRecord'
-import {
-    formatRemoveNsfPreview,
-    removeNestedShareRecords,
-    type RemoveNsfRecordInput,
-    type RemoveNsfRecordResult,
-} from './removeNsfRecord'
+import { listNestedShareFolders } from './listNsf'
+import { getNestedShareFolder } from './getNsf'
+import { linkNestedShareRecord } from './linkNsfRecord'
+import { removeNestedShareRecords } from './removeNsfRecord'
+import { mkdirNestedShareFolder } from './mkdirNsf'
+import { removeNestedShareFolders } from './removeNsfFolder'
+import { getNestedShareRecordDetails } from './getNsfRecordDetails'
+import { updateNestedShareRecords, updateNestedShareRecord } from './updateNsfRecord'
+import { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
+import type {
+    AddNsfRecordInput,
+    AddNsfRecordResult,
+    AddNsfRecordsInput,
+    AddNsfRecordsResult,
+    GetNsfOptions,
+    GetNsfResult,
+    GetNsfRecordDetailsInput,
+    GetNsfRecordDetailsResult,
+    LinkNsfRecordResult,
+    ListNsfOptions,
+    ListNsfRow,
+    MkdirNsfInput,
+    MkdirNsfResult,
+    RemoveNsfFolderInput,
+    RemoveNsfFolderResult,
+    RemoveNsfRecordInput,
+    RemoveNsfRecordResult,
+    UpdateNsfRecordInput,
+    UpdateNsfRecordItemInput,
+    UpdateNsfRecordsInput,
+    UpdateNsfRecordResult,
+    UpdateNsfRecordResultItem,
+} from './nsfTypes'
 
 export type AuthProvider = () => Auth
 
@@ -52,32 +58,8 @@ export class NestedShareFolderManager {
         return listNestedShareFolders(this.storage, options)
     }
 
-    public formatListNsfTable(rows: ListNsfRow[], options: { columnWidth?: number } = {}): FormattedListNsfTable {
-        return formatListNsfTable(rows, options)
-    }
-
-    public renderListNsfAsciiTable(table: FormattedListNsfTable, options: { minColWidth?: number } = {}): string {
-        return renderListNsfAsciiTable(table, options)
-    }
-
-    public formatListNsfOutput(rows: ListNsfRow[], format: ListNsfFormatInput = 'table'): string {
-        return formatListNsfOutput(rows, format)
-    }
-
     public async getNestedShareFolder(identifier: string, options: GetNsfOptions = {}): Promise<GetNsfResult> {
         return getNestedShareFolder(this.storage, this.requireAuth(), identifier, options)
-    }
-
-    public formatNsfDetail(result: GetNsfResult, verbose = false): string {
-        return renderNsfDetail(result, verbose)
-    }
-
-    public formatNsfFolderDetail(view: NsfFolderView, verbose = false): string {
-        return renderNsfFolderDetail(view, verbose)
-    }
-
-    public formatNsfRecordDetail(view: NsfRecordView, verbose = false): string {
-        return renderNsfRecordDetail(view, verbose)
     }
 
     public async linkNestedShareRecord(
@@ -91,7 +73,35 @@ export class NestedShareFolderManager {
         return removeNestedShareRecords(this.storage, this.requireAuth(), input)
     }
 
-    public formatRemoveNsfPreview(preview: RemoveNsfRecordResult['preview']): string {
-        return formatRemoveNsfPreview(preview)
+    public async mkdirNestedShareFolder(input: MkdirNsfInput): Promise<MkdirNsfResult> {
+        return mkdirNestedShareFolder(this.storage, this.requireAuth(), input)
+    }
+
+    public async removeNestedShareFolders(input: RemoveNsfFolderInput): Promise<RemoveNsfFolderResult> {
+        return removeNestedShareFolders(this.storage, this.requireAuth(), input)
+    }
+
+    public async getNestedShareRecordDetails(
+        input: GetNsfRecordDetailsInput
+    ): Promise<GetNsfRecordDetailsResult> {
+        return getNestedShareRecordDetails(this.storage, this.requireAuth(), input)
+    }
+
+    public async updateNestedShareRecords(
+        input: UpdateNsfRecordInput | UpdateNsfRecordsInput
+    ): Promise<UpdateNsfRecordResult> {
+        return updateNestedShareRecords(this.storage, this.requireAuth(), input)
+    }
+
+    public async updateNestedShareRecord(input: UpdateNsfRecordItemInput): Promise<UpdateNsfRecordResultItem> {
+        return updateNestedShareRecord(this.storage, this.requireAuth(), input)
+    }
+
+    public async addNestedShareRecords(input: AddNsfRecordsInput): Promise<AddNsfRecordsResult> {
+        return addNestedShareRecords(this.storage, this.requireAuth(), input)
+    }
+
+    public async addNestedShareRecord(input: AddNsfRecordInput): Promise<AddNsfRecordResult> {
+        return addNestedShareRecord(this.storage, this.requireAuth(), input)
     }
 }
