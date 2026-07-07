@@ -30,7 +30,6 @@ export {
 } from './nsfHelpers'
 
 export {
-    ListNsfFormat,
     listNestedShareFolders,
     formatListNsfTable,
     renderListNsfAsciiTable,
@@ -38,15 +37,8 @@ export {
     formatListNsfJson,
     formatListNsfOutput,
 } from './listNsf'
-export type {
-    ListNsfFormatInput,
-    ListNsfOptions,
-    ListNsfRow,
-    FormattedListNsfTable,
-} from './listNsf'
 
 export {
-    GetNsfFormat,
     resolveNsfFolder,
     resolveNsfRecord,
     getNestedShareFolder,
@@ -57,7 +49,25 @@ export {
     formatNsfJson,
     toNsfRecordJsonView,
 } from './getNsf'
+
+export {
+    ListNsfFormat,
+    GetNsfFormat,
+    NsfAccessRoleLabel,
+    NsfObjectKind,
+    NsfRemoveOperation,
+    NsfRemoveFolderOperation,
+    GetNsfRecordDetailsFormat,
+    NSF_ACCESS_ROLE_LABELS,
+    resolveRecordPermissionRole,
+    toNsfAccessRoleLabel,
+} from './nsfTypes'
+
 export type {
+    ListNsfFormatInput,
+    ListNsfOptions,
+    ListNsfRow,
+    FormattedListNsfTable,
     GetNsfFormatInput,
     GetNsfOptions,
     GetNsfResult,
@@ -70,69 +80,60 @@ export type {
     NsfFolderPermission,
     NsfFolderAccessRow,
     NsfRecordPermission,
-} from './getNsf'
-
-export { linkNestedShareRecord } from './linkNsfRecord'
-export type { LinkNsfRecordResult } from './linkNsfRecord'
-
-export {
-    NsfRemoveOperation,
-    removeNestedShareRecords,
-    formatRemoveNsfPreview,
-    collectRemoveNsfWarnings,
-} from './removeNsfRecord'
-export type {
-    NsfRemoveOperationInput,
-    RemoveNsfRecordInput,
-    NsfRemovePreviewItem,
-    RemoveNsfRecordResult,
-} from './removeNsfRecord'
-
-export { mkdirNestedShareFolder } from './mkdirNsf'
-export type { MkdirNsfInput, MkdirNsfResult, NsfFolderColorInput } from './mkdirNsf'
-export { NSF_FOLDER_COLORS } from './nsfConstants'
-export type { NsfFolderColor } from './nsfConstants'
-
-export {
-    NsfRemoveFolderOperation,
-    removeNestedShareFolders,
-    formatRemoveNsfFolderPreview,
-} from './removeNsfFolder'
-export type {
-    NsfRemoveFolderOperationInput,
-    RemoveNsfFolderInput,
-    NsfRemoveFolderPreviewItem,
-    RemoveNsfFolderResult,
-} from './removeNsfFolder'
-
-export {
-    GetNsfRecordDetailsFormat,
-    getNestedShareRecordDetails,
-    formatNsfRecordDetailsTable,
-    formatNsfRecordDetailsOutput,
-} from './getNsfRecordDetails'
-export type {
-    GetNsfRecordDetailsFormatInput,
-    GetNsfRecordDetailsInput,
-    GetNsfRecordDetailsResult,
-    NsfRecordDetailsItem,
-} from './getNsfRecordDetails'
-
-export { updateNestedShareRecords } from './updateNsfRecord'
-export type {
-    UpdateNsfRecordInput,
-    UpdateNsfRecordResult,
-    UpdateNsfRecordResultItem,
-    UpdateNsfRecordFieldEntry,
-} from './updateNsfRecord'
-
-export { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
-export type {
+    MkdirNsfInput,
+    MkdirNsfResult,
+    NsfFolderColorInput,
     AddNsfRecordInput,
     AddNsfRecordResult,
     AddNsfRecordsInput,
     AddNsfRecordsResult,
-} from './addNsfRecord'
+    UpdateNsfRecordInput,
+    UpdateNsfRecordResult,
+    UpdateNsfRecordResultItem,
+    RecordAddPayload,
+    RecordUpdatePayload,
+    FolderCreatePayload,
+    LinkNsfRecordResult,
+    NsfRemoveOperationInput,
+    RemoveNsfRecordInput,
+    NsfRemovePreviewItem,
+    RemoveNsfRecordResult,
+    NsfRemoveFolderOperationInput,
+    RemoveNsfFolderInput,
+    NsfRemoveFolderPreviewItem,
+    RemoveNsfFolderResult,
+    GetNsfRecordDetailsFormatInput,
+    GetNsfRecordDetailsInput,
+    GetNsfRecordDetailsResult,
+    NsfRecordDetailsItem,
+} from './nsfTypes'
+
+export { linkNestedShareRecord } from './linkNsfRecord'
+
+export {
+    removeNestedShareRecords,
+    formatRemoveNsfPreview,
+    collectRemoveNsfWarnings,
+} from './removeNsfRecord'
+
+export { mkdirNestedShareFolder } from './mkdirNsf'
+export { NSF_FOLDER_COLORS, NSF_MAX_RECORD_BATCH } from './nsfConstants'
+export type { NsfFolderColor } from './nsfConstants'
+
+export {
+    removeNestedShareFolders,
+    formatRemoveNsfFolderPreview,
+} from './removeNsfFolder'
+
+export {
+    getNestedShareRecordDetails,
+    formatNsfRecordDetailsTable,
+    formatNsfRecordDetailsOutput,
+} from './getNsfRecordDetails'
+
+export { updateNestedShareRecords } from './updateNsfRecord'
+
+export { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
 
 export { clearNsfRecordTypeCache } from './nsfRecordTypes'
 

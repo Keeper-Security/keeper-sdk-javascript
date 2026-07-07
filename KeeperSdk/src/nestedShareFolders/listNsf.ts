@@ -15,34 +15,13 @@ import {
     NSF_LIST_MIN_TRUNCATE_PREFIX,
     NSF_LIST_TABLE_HEADERS,
 } from './nsfConstants'
-
-export enum ListNsfFormat {
-    Table = 'table',
-    CSV = 'csv',
-    JSON = 'json',
-}
-
-export type ListNsfFormatInput = ListNsfFormat | `${ListNsfFormat}`
-
-export type ListNsfOptions = {
-    folders?: boolean
-    records?: boolean
-    format?: ListNsfFormatInput
-}
-
-export type ListNsfRow = {
-    itemType: NsfItemType
-    uid: string
-    title: string
-    type: string
-    description: string
-    parentOrFolder: string
-}
-
-export type FormattedListNsfTable = {
-    headers: string[]
-    rows: string[][]
-}
+import {
+    ListNsfFormat,
+    type FormattedListNsfTable,
+    type ListNsfFormatInput,
+    type ListNsfOptions,
+    type ListNsfRow,
+} from './nsfTypes'
 
 function compareRows(a: ListNsfRow, b: ListNsfRow): number {
     const typeCompare = a.itemType.localeCompare(b.itemType)

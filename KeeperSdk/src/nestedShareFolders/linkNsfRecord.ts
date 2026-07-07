@@ -16,6 +16,7 @@ import {
     resolveNsfFolderIdentifier,
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
+import type { LinkNsfRecordResult } from './nsfTypes'
 
 function resolveRecordKeyType(
     storage: InMemoryStorage,
@@ -32,14 +33,6 @@ function resolveRecordKeyType(
         encryptionType: 'gcm',
         keyType: Folder.EncryptedKeyType.encrypted_by_data_key_gcm,
     }
-}
-
-export type LinkNsfRecordResult = {
-    success: boolean
-    recordUid: string
-    folderUid: string
-    status: string
-    message: string
 }
 
 async function buildRecordMetadata(

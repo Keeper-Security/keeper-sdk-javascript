@@ -4,31 +4,13 @@ import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { decryptRecordTitleAndType } from './nsfRecordCrypto'
 import { ensureNestedShareRecord, nsfToNumber, resolveNsfRecordIdentifier } from './nsfHelpers'
-
-export enum GetNsfRecordDetailsFormat {
-    Table = 'table',
-    JSON = 'json',
-}
-
-export type GetNsfRecordDetailsFormatInput = GetNsfRecordDetailsFormat | `${GetNsfRecordDetailsFormat}`
-
-export type NsfRecordDetailsItem = {
-    recordUid: string
-    title: string
-    type: string
-    revision: number
-    version: number
-}
-
-export type GetNsfRecordDetailsResult = {
-    data: NsfRecordDetailsItem[]
-    forbiddenRecords: string[]
-}
-
-export type GetNsfRecordDetailsInput = {
-    records: string[]
-    format?: GetNsfRecordDetailsFormatInput
-}
+import {
+    GetNsfRecordDetailsFormat,
+    type GetNsfRecordDetailsFormatInput,
+    type GetNsfRecordDetailsInput,
+    type GetNsfRecordDetailsResult,
+    type NsfRecordDetailsItem,
+} from './nsfTypes'
 
 function resolveRecordUids(storage: InMemoryStorage, identifiers: string[]): string[] {
     if (identifiers.length === 0) {

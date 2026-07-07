@@ -9,11 +9,10 @@ import {
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
-import { NSF_MAX_REMOVALS } from './nsfConstants'
+import { NSF_MAX_RECORD_BATCH } from './nsfConstants'
 import {
     buildNsfRecordData,
     getPaddedJsonBytes,
-    type RecordFieldEntry,
 } from './nsfRecordData'
 import {
     ensureNestedShareFolder,
@@ -23,37 +22,13 @@ import {
     resolveNsfFolderIdentifier,
 } from './nsfHelpers'
 import { validateNsfRecordType } from './nsfRecordTypes'
-
-export type { RecordFieldEntry } from './nsfRecordData'
-
-export type AddNsfRecordInput = {
-    title: string
-    recordType: string
-    folder?: string
-    notes?: string
-    fieldEntries?: RecordFieldEntry[]
-    customEntries?: RecordFieldEntry[]
-    recordData?: Record<string, unknown>
-    force?: boolean
-    hasFileFields?: boolean
-}
-
-export type AddNsfRecordsInput = {
-    records: AddNsfRecordInput[]
-}
-
-export type AddNsfRecordResult = {
-    recordUid: string
-    success: boolean
-    status: string
-    message?: string
-    revision?: number
-}
-
-export type AddNsfRecordsResult = {
-    added: AddNsfRecordResult[]
-    revision?: number
-}
+import type {
+    AddNsfRecordInput,
+    AddNsfRecordResult,
+    AddNsfRecordsInput,
+    AddNsfRecordsResult,
+    RecordAddPayload,
+} from './nsfTypes'
 
 function resolveFolderUid(storage: InMemoryStorage, folderInput?: string): string | undefined {
     const trimmed = folderInput?.trim()
@@ -76,12 +51,12 @@ async function requireFolderKey(storage: InMemoryStorage, folderUid: string): Pr
     )
 }
 
-async function buildRecordAdd(
+async function buildRecordAddPayload(
     storage: InMemoryStorage,
     auth: Auth,
     recordData: Record<string, unknown>,
     folderUid?: string
-): Promise<{ recordUid: string; recordAdd: RecordProto.v3.IRecordAdd }> {
+): Promise<RecordAddPayload> {
     const recordUid = generateUid()
     const recordKey = generateEncryptionKey()
     await storage.saveKeyBytes(recordUid, recordKey)
@@ -143,19 +118,16 @@ export async function addNestedShareRecords(
     if (recordInputs.length === 0) {
         throw new KeeperSdkError('At least one record is required.', ResultCodes.NSF_ADD_FAILED)
     }
-    if (recordInputs.length > NSF_MAX_REMOVALS) {
+    if (recordInputs.length > NSF_MAX_RECORD_BATCH) {
         throw new KeeperSdkError(
-            `Maximum ${NSF_MAX_REMOVALS} records per request.`,
+            `Maximum ${NSF_MAX_RECORD_BATCH} records per request.`,
             ResultCodes.NSF_TOO_MANY_RECORDS
         )
     }
 
-    for (const recordInput of recordInputs) {
-        validateAddNsfRecordInput(recordInput)
-    }
-
     const recordTypes = new Set<string>()
     for (const recordInput of recordInputs) {
+        validateAddNsfRecordInput(recordInput)
         if (!recordInput.recordData && recordInput.recordType?.trim()) {
             recordTypes.add(recordInput.recordType.trim())
         }
@@ -165,9 +137,9 @@ export async function addNestedShareRecords(
     }
 
     try {
-        const prepared = await Promise.all(
+        const payloads = await Promise.all(
             recordInputs.map(async (recordInput) =>
-                buildRecordAdd(
+                buildRecordAddPayload(
                     storage,
                     auth,
                     buildRecordDataFromInput(recordInput),
@@ -178,19 +150,19 @@ export async function addNestedShareRecords(
 
         const response = await auth.executeRest(
             keeperDriveRecordsAdd({
-                records: prepared.map((entry) => entry.recordAdd),
+                records: payloads.map((entry) => entry.recordAdd),
                 clientTime: Date.now(),
             })
         )
         const revision = nsfToNumber(response.revision)
 
-        const added = prepared.map((entry, index) => {
+        const added = payloads.map((payload, index) => {
             const { statusName, message } = parseRecordModifyStatus(
                 response.records?.[index],
                 ResultCodes.NSF_ADD_FAILED
             )
             return {
-                recordUid: entry.recordUid,
+                recordUid: payload.recordUid,
                 success: true,
                 status: statusName,
                 message,
@@ -214,5 +186,8 @@ export async function addNestedShareRecord(
     input: AddNsfRecordInput
 ): Promise<AddNsfRecordResult> {
     const { added } = await addNestedShareRecords(storage, auth, { records: [input] })
+    if (!added[0]) {
+        throw new KeeperSdkError('Failed to add nested share record.', ResultCodes.NSF_ADD_FAILED)
+    }
     return added[0]
 }

@@ -1,11 +1,11 @@
-import type { Auth, DRecord, Records } from '@keeper-security/keeperapi'
+import type { Auth, DRecord } from '@keeper-security/keeperapi'
 import { keeperDriveRecordsUpdate, normal64Bytes, platform } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
-import { NSF_MAX_REMOVALS } from './nsfConstants'
+import { NSF_MAX_RECORD_BATCH } from './nsfConstants'
 import { resolveRecordKeyBytes } from './nsfRecordCrypto'
-import { getPaddedJsonBytes, mergeNsfRecordData, type RecordFieldEntry } from './nsfRecordData'
+import { getPaddedJsonBytes, mergeNsfRecordData } from './nsfRecordData'
 import {
     checkRecordEditPermission,
     ensureNestedShareRecord,
@@ -15,38 +15,14 @@ import {
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
 import { validateNsfRecordType } from './nsfRecordTypes'
+import type {
+    RecordUpdatePayload,
+    UpdateNsfRecordInput,
+    UpdateNsfRecordResult,
+    UpdateNsfRecordResultItem,
+} from './nsfTypes'
 
-export type { RecordFieldEntry as UpdateNsfRecordFieldEntry } from './nsfRecordData'
-
-export type UpdateNsfRecordInput = {
-    records: string[]
-    title?: string
-    recordType?: string
-    notes?: string
-    fieldEntries?: RecordFieldEntry[]
-    customEntries?: RecordFieldEntry[]
-}
-
-export type UpdateNsfRecordResultItem = {
-    recordUid: string
-    success: boolean
-    status: string
-    message?: string
-    revision?: number
-}
-
-export type UpdateNsfRecordResult = {
-    updated: UpdateNsfRecordResultItem[]
-}
-
-type PreparedRecordUpdate = {
-    recordUid: string
-    record: DRecord | undefined
-    merged: Record<string, unknown>
-    recordUpdate: Records.IRecordUpdate
-}
-
-function loadExistingRecordData(storage: InMemoryStorage, recordUid: string): Record<string, unknown> {
+function loadStoredRecordData(storage: InMemoryStorage, recordUid: string): Record<string, unknown> {
     const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid)
     if (record?.data && typeof record.data === 'object') {
         return structuredClone(record.data) as Record<string, unknown>
@@ -54,13 +30,13 @@ function loadExistingRecordData(storage: InMemoryStorage, recordUid: string): Re
     return { fields: [] }
 }
 
-async function prepareRecordUpdate(
+async function buildRecordUpdatePayload(
     storage: InMemoryStorage,
     auth: Auth,
     recordUid: string,
     input: UpdateNsfRecordInput
-): Promise<PreparedRecordUpdate> {
-    const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid)
+): Promise<RecordUpdatePayload> {
+    const storedRecord = storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid)
     const recordKey = await resolveRecordKeyBytes(storage, auth, recordUid)
     if (!recordKey) {
         throw new KeeperSdkError(
@@ -69,16 +45,16 @@ async function prepareRecordUpdate(
         )
     }
 
-    const merged = mergeNsfRecordData(loadExistingRecordData(storage, recordUid), input)
+    const mergedRecordData = mergeNsfRecordData(loadStoredRecordData(storage, recordUid), input)
     return {
         recordUid,
-        record,
-        merged,
+        storedRecord,
+        mergedRecordData,
         recordUpdate: {
             recordUid: normal64Bytes(recordUid),
             clientModifiedTime: Date.now(),
-            revision: record?.revision ?? 0,
-            data: await platform.aesGcmEncrypt(getPaddedJsonBytes(merged), recordKey),
+            revision: storedRecord?.revision ?? 0,
+            data: await platform.aesGcmEncrypt(getPaddedJsonBytes(mergedRecordData), recordKey),
         },
     }
 }
@@ -91,9 +67,9 @@ export async function updateNestedShareRecords(
     if (!input.records?.length) {
         throw new KeeperSdkError('Record UID is required.', ResultCodes.NSF_UPDATE_FAILED)
     }
-    if (input.records.length > NSF_MAX_REMOVALS) {
+    if (input.records.length > NSF_MAX_RECORD_BATCH) {
         throw new KeeperSdkError(
-            `Maximum ${NSF_MAX_REMOVALS} records per request.`,
+            `Maximum ${NSF_MAX_RECORD_BATCH} records per request.`,
             ResultCodes.NSF_TOO_MANY_RECORDS
         )
     }
@@ -105,7 +81,7 @@ export async function updateNestedShareRecords(
     const accountUid = requireAuthAccountUid(auth)
 
     try {
-        const prepared: PreparedRecordUpdate[] = []
+        const payloads: RecordUpdatePayload[] = []
         for (const identifier of input.records) {
             const recordUid = resolveNsfRecordIdentifier(storage, identifier)
             if (!recordUid) {
@@ -113,37 +89,37 @@ export async function updateNestedShareRecords(
             }
             ensureNestedShareRecord(storage, recordUid, identifier)
             checkRecordEditPermission(storage, recordUid, auth.username, accountUid)
-            prepared.push(await prepareRecordUpdate(storage, auth, recordUid, input))
+            payloads.push(await buildRecordUpdatePayload(storage, auth, recordUid, input))
         }
 
         const response = await auth.executeRest(
             keeperDriveRecordsUpdate({
-                records: prepared.map((entry) => entry.recordUpdate),
+                records: payloads.map((entry) => entry.recordUpdate),
                 clientTime: Date.now(),
             })
         )
         const revision = nsfToNumber(response.revision)
 
         const updated: UpdateNsfRecordResultItem[] = []
-        for (let index = 0; index < prepared.length; index++) {
-            const entry = prepared[index]
+        for (let index = 0; index < payloads.length; index++) {
+            const payload = payloads[index]
             const { statusName, message } = parseRecordModifyStatus(
                 response.records?.[index],
                 ResultCodes.NSF_UPDATE_FAILED
             )
-            const itemRevision = revision ?? entry.record?.revision
+            const itemRevision = revision ?? payload.storedRecord?.revision
 
-            if (entry.record) {
+            if (payload.storedRecord) {
                 await storage.put({
-                    ...entry.record,
-                    data: entry.merged,
-                    revision: itemRevision ?? entry.record.revision,
+                    ...payload.storedRecord,
+                    data: payload.mergedRecordData,
+                    revision: itemRevision ?? payload.storedRecord.revision,
                     clientModifiedTime: Date.now(),
                 })
             }
 
             updated.push({
-                recordUid: entry.recordUid,
+                recordUid: payload.recordUid,
                 success: true,
                 status: statusName,
                 message,

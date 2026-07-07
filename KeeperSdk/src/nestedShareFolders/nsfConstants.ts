@@ -8,17 +8,6 @@ export const NSF_LEGACY_FOLDER_MSG =
 
 export const NSF_LEGACY_RECORD_TYPES = new Set(['legacy', 'general'])
 
-export const NSF_ACCESS_ROLE_LABELS: Record<number, string> = {
-    [Folder.AccessRoleType.NAVIGATOR]: 'navigator',
-    [Folder.AccessRoleType.REQUESTOR]: 'requestor',
-    [Folder.AccessRoleType.VIEWER]: 'viewer',
-    [Folder.AccessRoleType.SHARED_MANAGER]: 'shared-manager',
-    [Folder.AccessRoleType.CONTENT_MANAGER]: 'content-manager',
-    [Folder.AccessRoleType.CONTENT_SHARE_MANAGER]: 'content-share-manager',
-    [Folder.AccessRoleType.MANAGER]: 'full-manager',
-    [Folder.AccessRoleType.UNRESOLVED]: 'unresolved',
-}
-
 export const NSF_ACCESS_TYPE_LABELS: Record<number, string> = {
     [Folder.AccessType.AT_USER]: 'user',
     [Folder.AccessType.AT_TEAM]: 'team',
@@ -37,9 +26,8 @@ export const NSF_RECORD_DESCRIPTION_MAX_LENGTH = 120
 export const NSF_MASKED_VALUE = '********'
 export const NSF_FOLDER_LABEL_WIDTH = 22
 export const NSF_RECORD_LABEL_WIDTH = 17
-export const NSF_FOLDER_USER_PERMISSIONS_HEADING = 'User Permissions:'
+export const NSF_USER_PERMISSIONS_HEADING = 'User Permissions:'
 export const NSF_FOLDER_SHARE_ADMINS_HEADING = 'Share Administrators:'
-export const NSF_RECORD_USER_PERMISSIONS_HEADING = 'User Permissions:'
 export const NSF_SHARE_ADMINS_PREVIEW_LIMIT = 10
 
 export const NSF_LIST_TABLE_HEADERS = ['#', 'Item Type', 'UID', 'Title', 'Type', 'Description'] as const
@@ -54,7 +42,7 @@ export const NSF_LIST_FULL_HEADERS = [
 export const NSF_LIST_DEFAULT_COLUMN_WIDTH = 40
 export const NSF_LIST_MIN_TRUNCATE_PREFIX = 3
 
-export const NSF_MAX_REMOVALS = 500
+export const NSF_MAX_RECORD_BATCH = 500
 export const NSF_MAX_FOLDER_REMOVALS = 100
 
 export const NSF_PATH_SENTINEL = '\x00'

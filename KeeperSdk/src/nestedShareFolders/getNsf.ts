@@ -42,15 +42,31 @@ import {
 import {
     NSF_FOLDER_LABEL_WIDTH,
     NSF_FOLDER_SHARE_ADMINS_HEADING,
-    NSF_FOLDER_USER_PERMISSIONS_HEADING,
+    NSF_USER_PERMISSIONS_HEADING,
     NSF_MASKED_VALUE,
     NSF_RECORD_LABEL_WIDTH,
-    NSF_RECORD_USER_PERMISSIONS_HEADING,
     NSF_SHARE_ADMINS_PREVIEW_LIMIT,
     NSF_TOP_LEVEL_FIELD_TYPES,
     NSF_UNKNOWN_RECORD_TITLES,
 } from './nsfConstants'
-
+import {
+    GetNsfFormat,
+    NsfAccessRoleLabel,
+    NsfObjectKind,
+    resolveRecordPermissionRole,
+    type GetNsfFormatInput,
+    type GetNsfOptions,
+    type GetNsfResult,
+    type NsfFolderAccessRow,
+    type NsfFolderPermission,
+    type NsfFolderView,
+    type NsfRecordFieldView,
+    type NsfRecordFolderView,
+    type NsfRecordJsonUserPermission,
+    type NsfRecordJsonView,
+    type NsfRecordPermission,
+    type NsfRecordView,
+} from './nsfTypes'
 
 function formatNsfFieldParts(values: unknown[]): string[] {
     return values
@@ -71,116 +87,6 @@ function formatNsfFieldValue(value: unknown): string {
     }
     return String(value)
 }
-
-export enum GetNsfFormat {
-    Detail = 'detail',
-    JSON = 'json',
-}
-
-export type GetNsfFormatInput = GetNsfFormat | `${GetNsfFormat}`
-
-export type GetNsfOptions = {
-    format?: GetNsfFormatInput
-    verbose?: boolean
-    unmask?: boolean
-}
-
-export type NsfFolderAccessRow = {
-    username: string
-    role: string
-}
-
-export type NsfFolderPermission = {
-    accessTypeUid: string
-    accessType: string
-    accessRoleType: string
-    inherited?: boolean
-    hidden?: boolean
-    canAdd?: boolean
-    canRemove?: boolean
-    canDelete?: boolean
-    canListAccess?: boolean
-    canUpdateAccess?: boolean
-    canEditRecords?: boolean
-    canViewRecords?: boolean
-    canListRecords?: boolean
-}
-
-export type NsfRecordPermission = {
-    username: string
-    accountUid?: string
-    owner: boolean
-    shareAdmin: boolean
-    shareable: boolean
-    editable: boolean
-    awaitingApproval: boolean
-    expiration?: number
-    role?: string
-}
-
-export type NsfFolderView = {
-    objectType: 'folder'
-    folderUid: string
-    name: string
-    parentUid: string
-    path: string
-    userPermissions: NsfFolderAccessRow[]
-    shareAdmins: NsfFolderAccessRow[]
-    teamPermissions: NsfFolderPermission[]
-    records: { uid: string; title: string; type: string }[]
-}
-
-export type NsfRecordFieldView = {
-    type: string
-    label?: string
-    value: string[]
-}
-
-export type NsfRecordFolderView = {
-    uid: string
-    path: string
-}
-
-export type NsfRecordJsonUserPermission = {
-    username: string
-    owner: boolean
-    shareable: boolean
-    editable: boolean
-    role: string
-}
-
-export type NsfRecordJsonView = {
-    record_uid: string
-    title: string
-    type: string
-    version: number
-    revision: number
-    folder?: NsfRecordFolderView
-    fields: { type: string; value: unknown[] }[]
-    notes?: string
-    user_permissions: NsfRecordJsonUserPermission[]
-    share_admins: string[]
-}
-
-export type NsfRecordView = {
-    objectType: 'record'
-    recordUid: string
-    title: string
-    type: string
-    revision: number
-    version: number
-    folder?: NsfRecordFolderView
-    folderLocation: string
-    login?: string
-    password?: string
-    url?: string
-    notes?: string
-    fields: NsfRecordFieldView[]
-    userPermissions: NsfRecordPermission[]
-    shareAdmins: string[]
-}
-
-export type GetNsfResult = { kind: 'folder'; view: NsfFolderView } | { kind: 'record'; view: NsfRecordView }
 
 function folderDetailRow(label: string, value: string): string {
     return `${label.padStart(NSF_FOLDER_LABEL_WIDTH)}: ${value}`
@@ -225,7 +131,7 @@ function buildFolderAccessRow(
 ): NsfFolderAccessRow {
     const username = resolveAccessUsername(storage, entry.accessTypeUid, folder, shareUsers)
     const role = isFolderOwnerAccessor(folder, entry, username)
-        ? 'owner'
+        ? NsfAccessRoleLabel.Owner
         : folderAccessDisplayRole(entry)
     return { username, role }
 }
@@ -257,7 +163,7 @@ function splitFolderPermissions(
 
 function prependOwnerRow(rows: NsfFolderAccessRow[], ownerUsername: string): NsfFolderAccessRow[] {
     if (rows.some((entry) => entry.username === ownerUsername)) return rows
-    return [{ username: ownerUsername, role: 'owner' }, ...rows]
+    return [{ username: ownerUsername, role: NsfAccessRoleLabel.Owner }, ...rows]
 }
 
 function ensureFolderOwnerListed(
@@ -358,13 +264,6 @@ function formatRecordFieldDetailLines(field: NsfRecordFieldView): string[] {
     return [recordDetailRow(label.charAt(0).toUpperCase() + label.slice(1), displayValue)]
 }
 
-function recordPermissionRole(entry: NsfRecordPermission): string {
-    if (entry.owner) return 'owner'
-    if (entry.role) return entry.role
-    if (entry.shareAdmin) return 'shared-manager'
-    return 'content-manager'
-}
-
 function jsonFieldValues(type: string, value: string[]): unknown[] {
     return value.map((part) => {
         if ((type === 'host' || type === 'address') && part.startsWith('{')) {
@@ -393,7 +292,7 @@ export function toNsfRecordJsonView(view: NsfRecordView): NsfRecordJsonView {
             owner: entry.owner,
             shareable: entry.shareable,
             editable: entry.editable,
-            role: recordPermissionRole(entry),
+            role: resolveRecordPermissionRole(entry),
         })),
         share_admins: view.shareAdmins,
     }
@@ -481,7 +380,7 @@ async function buildFolderView(
     )
 
     return {
-        objectType: 'folder',
+        objectType: NsfObjectKind.Folder,
         folderUid,
         name: folder.data.name || 'Unnamed',
         parentUid: normalizeParentUid(storage, folder.parentUid),
@@ -526,7 +425,7 @@ async function buildRecordView(
         typeof record.data?.notes === 'string' && record.data.notes.trim() ? record.data.notes.trim() : undefined
 
     return {
-        objectType: 'record',
+        objectType: NsfObjectKind.Record,
         recordUid,
         title,
         type: getRecordType(record),
@@ -567,13 +466,13 @@ export async function getNestedShareFolder(
 
     const folderUid = resolveNsfFolder(storage, trimmed)
     if (folderUid) {
-        return { kind: 'folder', view: await buildFolderView(auth, storage, folderUid) }
+        return { kind: NsfObjectKind.Folder, view: await buildFolderView(auth, storage, folderUid) }
     }
 
     const recordUid = resolveNsfRecord(storage, trimmed)
     if (recordUid) {
         const view = await buildRecordView(auth, storage, recordUid, options.unmask ?? false)
-        return { kind: 'record', view }
+        return { kind: NsfObjectKind.Record, view }
     }
 
     throw new KeeperSdkError(
@@ -587,7 +486,7 @@ export function formatNsfFolderDetail(view: NsfFolderView, verbose = false): str
         folderDetailRow('Nested Share Folder UID', view.folderUid),
         folderDetailRow('Name', view.name),
         '',
-        NSF_FOLDER_USER_PERMISSIONS_HEADING,
+        NSF_USER_PERMISSIONS_HEADING,
         ...view.userPermissions.map((entry) => `${entry.username}: ${entry.role}`),
         '',
         NSF_FOLDER_SHARE_ADMINS_HEADING,
@@ -629,7 +528,7 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
     }
 
     if (view.userPermissions.length > 0) {
-        lines.push('', NSF_RECORD_USER_PERMISSIONS_HEADING)
+        lines.push('', NSF_USER_PERMISSIONS_HEADING)
         for (const entry of view.userPermissions) {
             lines.push('', ...formatRecordUserPermissionBlock(entry))
         }
@@ -667,13 +566,13 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
 }
 
 export function formatNsfDetail(result: GetNsfResult, verbose = false): string {
-    return result.kind === 'folder'
+    return result.kind === NsfObjectKind.Folder
         ? formatNsfFolderDetail(result.view, verbose)
         : formatNsfRecordDetail(result.view, verbose)
 }
 
 export function formatNsfJson(result: GetNsfResult): string {
-    if (result.kind === 'record') {
+    if (result.kind === NsfObjectKind.Record) {
         return formatNsfRecordJson(result.view)
     }
     return JSON.stringify(result.view, null, 2)

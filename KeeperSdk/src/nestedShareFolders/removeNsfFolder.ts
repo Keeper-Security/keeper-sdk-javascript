@@ -11,47 +11,18 @@ import {
     resolveNsfFolderIdentifier,
 } from './nsfHelpers'
 
+import {
+    NsfRemoveFolderOperation,
+    type NsfRemoveFolderOperationInput,
+    type NsfRemoveFolderPreviewItem,
+    type RemoveNsfFolderInput,
+    type RemoveNsfFolderResult,
+} from './nsfTypes'
+
 const { RemoveAction, FolderOperationType, RemoveStatus } = folder.v3.remove
 const REMOVE_SUCCESS_STATUS = RemoveStatus[RemoveStatus.REMOVE_STATUS_SUCCESS]
 const TRASH_ACTION_LABEL = 'moved to trash'
 const PERMANENT_DELETE_ACTION_LABEL = 'permanently deleted'
-
-export enum NsfRemoveFolderOperation {
-    FolderTrash = 'folder-trash',
-    DeletePermanent = 'delete-permanent',
-}
-
-export type NsfRemoveFolderOperationInput = NsfRemoveFolderOperation | `${NsfRemoveFolderOperation}`
-
-export type RemoveNsfFolderInput = {
-    folders: string[]
-    operation?: NsfRemoveFolderOperationInput
-    force?: boolean
-    dryRun?: boolean
-    quiet?: boolean
-}
-
-export type NsfRemoveFolderPreviewItem = {
-    folderUid: string
-    name: string
-    status: string
-    impact?: {
-        foldersCount: number
-        recordsCount: number
-        affectedUsersCount: number
-        affectedTeamsCount: number
-        warnings: string[]
-    }
-    error?: { code: number; message: string }
-}
-
-export type RemoveNsfFolderResult = {
-    confirmed: boolean
-    dryRun: boolean
-    operation: NsfRemoveFolderOperation
-    preview: NsfRemoveFolderPreviewItem[]
-    message?: string
-}
 
 const OPERATION_MAP: Record<NsfRemoveFolderOperation, FolderProto.v3.remove.FolderOperationType> = {
     [NsfRemoveFolderOperation.FolderTrash]: FolderOperationType.FOLDER_MOVE_TO_FOLDER_TRASH,

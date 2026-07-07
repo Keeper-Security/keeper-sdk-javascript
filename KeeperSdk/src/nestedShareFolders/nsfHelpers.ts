@@ -21,7 +21,6 @@ import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { getRecordTitle } from '../records/RecordUtils'
 import {
-    NSF_ACCESS_ROLE_LABELS,
     NSF_ACCESS_TYPE_LABELS,
     NSF_LEGACY_FOLDER_MSG,
     NSF_LEGACY_RECORD_MSG,
@@ -30,6 +29,7 @@ import {
     NSF_RECORD_DESCRIPTION_MAX_LENGTH,
     NSF_SENSITIVE_FIELD_TYPES,
 } from './nsfConstants'
+import { NsfAccessRoleLabel, NSF_ACCESS_ROLE_LABELS } from './nsfTypes'
 
 export enum KeeperDriveKind {
     Folder = 'keeper_drive_folder',
@@ -124,7 +124,6 @@ function getKnownKeeperDriveFolderUids(storage: InMemoryStorage): Set<string> {
     return new Set(getKeeperDriveFolders(storage).map((folder) => folder.uid))
 }
 
-/** Per-account drive root UID inferred from sync (parentUid of top-level folders). */
 export function resolveKeeperDriveRootParentUid(storage: InMemoryStorage): string | undefined {
     const knownFolderUids = getKnownKeeperDriveFolderUids(storage)
     for (const folder of getKeeperDriveFolders(storage)) {
@@ -531,9 +530,6 @@ export function checkFolderRemovePermission(
     accountUid: Uint8Array
 ): void {
     if (hasFolderPermission(storage, folderUid, username, accountUid, 'canRemove')) return
-    // Folder-trash and unlink are less destructive than owner-trash. Allow when the user
-    // can permanently delete the record, or owns it without explicit record-access entries
-    // (common for records in a personal drive root with no folder-access sync data).
     if (canRecordBeDeleted(storage, recordUid, username, accountUid, folderUid)) return
     throw new KeeperSdkError(
         'You do not have permission to remove records from this folder.',
@@ -579,9 +575,9 @@ export function checkRecordEditPermission(
     )
 }
 
-export function formatAccessRoleType(role: Folder.AccessRoleType | null | undefined): string {
-    if (role == null) return 'unknown'
-    return NSF_ACCESS_ROLE_LABELS[role] ?? `role-${role}`
+export function formatAccessRoleType(role: Folder.AccessRoleType | null | undefined): NsfAccessRoleLabel {
+    if (role == null) return NsfAccessRoleLabel.Unknown
+    return NSF_ACCESS_ROLE_LABELS[role] ?? NsfAccessRoleLabel.Unknown
 }
 
 export function formatAccessType(type: Folder.AccessType | null | undefined): string {
@@ -734,7 +730,6 @@ export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Pr
             }
         }
     } catch {
-        // Fall back to vault user cache only.
     }
 
     return map
@@ -775,7 +770,7 @@ export function isFolderOwnerAccessor(
     return entry.accessType === Folder.AccessType.AT_OWNER
 }
 
-export function recordAccessDisplayRole(data: Folder.IRecordAccessData): string {
+export function recordAccessDisplayRole(data: Folder.IRecordAccessData): NsfAccessRoleLabel {
     return formatAccessRoleType(data.accessRoleType)
 }
 
@@ -826,8 +821,8 @@ export async function fetchLiveRecordAccessEntries(
     }
 }
 
-export function folderAccessDisplayRole(entry: DKdFolderAccess): string {
-    if (entry.accessType === Folder.AccessType.AT_OWNER) return 'owner'
+export function folderAccessDisplayRole(entry: DKdFolderAccess): NsfAccessRoleLabel {
+    if (entry.accessType === Folder.AccessType.AT_OWNER) return NsfAccessRoleLabel.Owner
     return formatAccessRoleType(entry.accessRoleType)
 }
 

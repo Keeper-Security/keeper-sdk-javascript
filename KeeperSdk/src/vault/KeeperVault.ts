@@ -76,20 +76,27 @@ import {
 } from '../roles'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
-import type { ListNsfOptions, ListNsfRow } from '../nestedShareFolders/listNsf'
-import type { GetNsfOptions, GetNsfResult } from '../nestedShareFolders/getNsf'
-import type { LinkNsfRecordResult } from '../nestedShareFolders/linkNsfRecord'
-import type { RemoveNsfRecordInput, RemoveNsfRecordResult } from '../nestedShareFolders/removeNsfRecord'
-import type { MkdirNsfInput, MkdirNsfResult } from '../nestedShareFolders/mkdirNsf'
-import type { RemoveNsfFolderInput, RemoveNsfFolderResult } from '../nestedShareFolders/removeNsfFolder'
-import type { GetNsfRecordDetailsInput, GetNsfRecordDetailsResult } from '../nestedShareFolders/getNsfRecordDetails'
-import type { UpdateNsfRecordInput, UpdateNsfRecordResult } from '../nestedShareFolders/updateNsfRecord'
 import type {
     AddNsfRecordInput,
     AddNsfRecordResult,
     AddNsfRecordsInput,
     AddNsfRecordsResult,
-} from '../nestedShareFolders/addNsfRecord'
+    GetNsfOptions,
+    GetNsfResult,
+    GetNsfRecordDetailsInput,
+    GetNsfRecordDetailsResult,
+    LinkNsfRecordResult,
+    ListNsfOptions,
+    ListNsfRow,
+    MkdirNsfInput,
+    MkdirNsfResult,
+    RemoveNsfFolderInput,
+    RemoveNsfFolderResult,
+    RemoveNsfRecordInput,
+    RemoveNsfRecordResult,
+    UpdateNsfRecordInput,
+    UpdateNsfRecordResult,
+} from '../nestedShareFolders/nsfTypes'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
 import type {
     ListUserRow,

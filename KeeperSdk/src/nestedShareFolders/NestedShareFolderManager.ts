@@ -1,30 +1,36 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes } from '../utils'
-import { listNestedShareFolders, type ListNsfOptions, type ListNsfRow } from './listNsf'
-import { getNestedShareFolder, type GetNsfOptions, type GetNsfResult } from './getNsf'
-import { linkNestedShareRecord, type LinkNsfRecordResult } from './linkNsfRecord'
-import { removeNestedShareRecords, type RemoveNsfRecordInput, type RemoveNsfRecordResult } from './removeNsfRecord'
-import { mkdirNestedShareFolder, type MkdirNsfInput, type MkdirNsfResult } from './mkdirNsf'
-import { removeNestedShareFolders, type RemoveNsfFolderInput, type RemoveNsfFolderResult } from './removeNsfFolder'
-import {
-    getNestedShareRecordDetails,
-    type GetNsfRecordDetailsInput,
-    type GetNsfRecordDetailsResult,
-} from './getNsfRecordDetails'
-import {
-    updateNestedShareRecords,
-    type UpdateNsfRecordInput,
-    type UpdateNsfRecordResult,
-} from './updateNsfRecord'
-import {
-    addNestedShareRecord,
-    addNestedShareRecords,
-    type AddNsfRecordInput,
-    type AddNsfRecordResult,
-    type AddNsfRecordsInput,
-    type AddNsfRecordsResult,
-} from './addNsfRecord'
+import { listNestedShareFolders } from './listNsf'
+import { getNestedShareFolder } from './getNsf'
+import { linkNestedShareRecord } from './linkNsfRecord'
+import { removeNestedShareRecords } from './removeNsfRecord'
+import { mkdirNestedShareFolder } from './mkdirNsf'
+import { removeNestedShareFolders } from './removeNsfFolder'
+import { getNestedShareRecordDetails } from './getNsfRecordDetails'
+import { updateNestedShareRecords } from './updateNsfRecord'
+import { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
+import type {
+    AddNsfRecordInput,
+    AddNsfRecordResult,
+    AddNsfRecordsInput,
+    AddNsfRecordsResult,
+    GetNsfOptions,
+    GetNsfResult,
+    GetNsfRecordDetailsInput,
+    GetNsfRecordDetailsResult,
+    LinkNsfRecordResult,
+    ListNsfOptions,
+    ListNsfRow,
+    MkdirNsfInput,
+    MkdirNsfResult,
+    RemoveNsfFolderInput,
+    RemoveNsfFolderResult,
+    RemoveNsfRecordInput,
+    RemoveNsfRecordResult,
+    UpdateNsfRecordInput,
+    UpdateNsfRecordResult,
+} from './nsfTypes'
 
 export type AuthProvider = () => Auth
 

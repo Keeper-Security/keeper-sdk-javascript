@@ -20,30 +20,22 @@ import {
     requireAuthDataKey,
     resolveKeeperDriveParentUid,
 } from './nsfHelpers'
+import type {
+    FolderCreatePayload,
+    FolderSegmentCreateSpec,
+    MkdirNsfInput,
+    MkdirNsfResult,
+    NsfFolderColorInput,
+} from './nsfTypes'
 
 type NsfFolderMetadata = {
     name: string
     color?: string
 }
 
-export type NsfFolderColorInput = NsfFolderColor | `${NsfFolderColor}`
-
-export type MkdirNsfInput = {
-    folder: string
-    color?: NsfFolderColorInput
-    noInheritPermissions?: boolean
-    baseFolderUid?: string | null
-}
-
-export type MkdirNsfResult = {
-    folderUid: string
-    created: boolean
-    message?: string
-}
-
 function normalizeColor(color?: NsfFolderColorInput): NsfFolderColor | undefined {
     if (!color) return undefined
-    if (!(NSF_FOLDER_COLORS as readonly string[]).includes(color)) {
+    if (!NSF_FOLDER_COLORS.some((candidate) => candidate === color)) {
         throw new KeeperSdkError(
             `Invalid color '${color}'. Use: ${NSF_FOLDER_COLORS.join(', ')}.`,
             ResultCodes.NSF_MKDIR_FAILED
@@ -72,14 +64,14 @@ async function resolveFolderKeyEncryptionKey(
     return requireAuthDataKey(auth)
 }
 
-async function prepareFolderData(
+async function buildFolderCreatePayload(
     storage: InMemoryStorage,
     auth: Auth,
     folderName: string,
     parentUid: string | null,
     color: NsfFolderColor | undefined,
     inheritPermissions: boolean
-): Promise<{ folderUid: string; folderData: Folder.IFolderData }> {
+): Promise<FolderCreatePayload> {
     const folderUid = generateUid()
     const folderKey = generateEncryptionKey()
     await storage.saveKeyBytes(folderUid, folderKey)
@@ -97,6 +89,9 @@ async function prepareFolderData(
 
     return {
         folderUid,
+        folderName,
+        parentUid,
+        inheritPermissions,
         folderData: Folder.FolderData.create({
             folderUid: normal64Bytes(folderUid),
             parentUid: resolvedParentUid ? normal64Bytes(resolvedParentUid) : undefined,
@@ -111,28 +106,46 @@ async function prepareFolderData(
     }
 }
 
-async function createFolderV3(
+async function createFolderSegmentsBatch(
     storage: InMemoryStorage,
     auth: Auth,
-    folderName: string,
-    parentUid: string | null,
-    color: NsfFolderColor | undefined,
-    inheritPermissions: boolean
-): Promise<{ folderUid: string; message: string }> {
-    const { folderUid, folderData } = await prepareFolderData(
-        storage,
-        auth,
-        folderName,
-        parentUid,
-        color,
-        inheritPermissions
+    segments: FolderSegmentCreateSpec[],
+    parentUid: string | null
+): Promise<{ folderUid: string }> {
+    let currentParentUid = parentUid
+    const payloads: FolderCreatePayload[] = []
+
+    for (const segment of segments) {
+        const payload = await buildFolderCreatePayload(
+            storage,
+            auth,
+            segment.segmentName,
+            currentParentUid,
+            segment.color,
+            segment.inheritPermissions
+        )
+        payloads.push(payload)
+        currentParentUid = payload.folderUid
+    }
+
+    const response = await auth.executeRest(
+        folderAddMessage({ folderData: payloads.map((entry) => entry.folderData) })
     )
 
-    const response = await auth.executeRest(folderAddMessage({ folderData: [folderData] }))
-    const message = parseFolderModifyStatus(response.folderAddResults?.[0], ResultCodes.NSF_MKDIR_FAILED)
+    for (let index = 0; index < payloads.length; index++) {
+        const payload = payloads[index]
+        parseFolderModifyStatus(response.folderAddResults?.[index], ResultCodes.NSF_MKDIR_FAILED)
+        await cacheNewNsfFolder(
+            storage,
+            auth,
+            payload.folderUid,
+            payload.folderName,
+            payload.parentUid,
+            payload.inheritPermissions
+        )
+    }
 
-    await cacheNewNsfFolder(storage, auth, folderUid, folderName, parentUid, inheritPermissions)
-    return { folderUid, message }
+    return { folderUid: payloads[payloads.length - 1].folderUid }
 }
 
 export async function mkdirNestedShareFolder(
@@ -151,6 +164,15 @@ export async function mkdirNestedShareFolder(
     let parentUid: string | null = resolveBaseFolderUid(storage, input.baseFolderUid)
     const lastIdx = segments.length - 1
     let createdUid: string | undefined
+    const pendingSegments: FolderSegmentCreateSpec[] = []
+
+    const flushPendingSegments = async (): Promise<void> => {
+        if (pendingSegments.length === 0) return
+        const result = await createFolderSegmentsBatch(storage, auth, pendingSegments, parentUid)
+        createdUid = result.folderUid
+        parentUid = result.folderUid
+        pendingSegments.length = 0
+    }
 
     try {
         for (let idx = 0; idx < segments.length; idx++) {
@@ -159,6 +181,7 @@ export async function mkdirNestedShareFolder(
             const existingUid = findExistingChildFolder(storage, segment, parentUid)
 
             if (existingUid) {
+                await flushPendingSegments()
                 if (isLeaf) {
                     return {
                         folderUid: existingUid,
@@ -170,17 +193,14 @@ export async function mkdirNestedShareFolder(
                 continue
             }
 
-            const result = await createFolderV3(
-                storage,
-                auth,
-                segment,
-                parentUid,
-                isLeaf ? color : undefined,
-                isLeaf ? inheritPermissions : true
-            )
-            createdUid = result.folderUid
-            parentUid = createdUid
+            pendingSegments.push({
+                segmentName: segment,
+                color: isLeaf ? color : undefined,
+                inheritPermissions: isLeaf ? inheritPermissions : true,
+            })
         }
+
+        await flushPendingSegments()
 
         if (!createdUid) {
             throw new KeeperSdkError('Folder creation did not return a UID.', ResultCodes.NSF_MKDIR_FAILED)
