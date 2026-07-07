@@ -76,7 +76,7 @@ import {
 } from '../roles'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
-import type { ListNsfOptions, ListNsfRow, ListNsfFormatInput, FormattedListNsfTable } from '../nestedShareFolders/listNsf'
+import type { ListNsfOptions, ListNsfRow } from '../nestedShareFolders/listNsf'
 import type { GetNsfOptions, GetNsfResult } from '../nestedShareFolders/getNsf'
 import type { LinkNsfRecordResult } from '../nestedShareFolders/linkNsfRecord'
 import type { RemoveNsfRecordInput, RemoveNsfRecordResult } from '../nestedShareFolders/removeNsfRecord'
@@ -84,7 +84,12 @@ import type { MkdirNsfInput, MkdirNsfResult } from '../nestedShareFolders/mkdirN
 import type { RemoveNsfFolderInput, RemoveNsfFolderResult } from '../nestedShareFolders/removeNsfFolder'
 import type { GetNsfRecordDetailsInput, GetNsfRecordDetailsResult } from '../nestedShareFolders/getNsfRecordDetails'
 import type { UpdateNsfRecordInput, UpdateNsfRecordResult } from '../nestedShareFolders/updateNsfRecord'
-import type { AddNsfRecordInput, AddNsfRecordResult } from '../nestedShareFolders/addNsfRecord'
+import type {
+    AddNsfRecordInput,
+    AddNsfRecordResult,
+    AddNsfRecordsInput,
+    AddNsfRecordsResult,
+} from '../nestedShareFolders/addNsfRecord'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
 import type {
     ListUserRow,
@@ -718,28 +723,8 @@ export class KeeperVault {
         return this.nestedShareFolderManager.listNestedShareFolders(options ?? {})
     }
 
-    public formatListNsfTable(rows: ListNsfRow[], options?: { columnWidth?: number }): FormattedListNsfTable {
-        return this.nestedShareFolderManager.formatListNsfTable(rows, options ?? {})
-    }
-
-    public renderListNsfAsciiTable(table: FormattedListNsfTable, options?: { minColWidth?: number }): string {
-        return this.nestedShareFolderManager.renderListNsfAsciiTable(table, options ?? {})
-    }
-
-    public formatListNsfOutput(rows: ListNsfRow[], format?: ListNsfFormatInput): string {
-        return this.nestedShareFolderManager.formatListNsfOutput(rows, format)
-    }
-
     public async getNestedShareFolder(identifier: string, options?: GetNsfOptions): Promise<GetNsfResult> {
         return this.nestedShareFolderManager.getNestedShareFolder(identifier, options ?? {})
-    }
-
-    public formatNsfDetail(result: GetNsfResult, verbose?: boolean): string {
-        return this.nestedShareFolderManager.formatNsfDetail(result, verbose ?? false)
-    }
-
-    public formatNsfJson(result: GetNsfResult): string {
-        return this.nestedShareFolderManager.formatNsfJson(result)
     }
 
     public async linkNestedShareRecord(
@@ -755,10 +740,6 @@ export class KeeperVault {
         const result = await this.nestedShareFolderManager.removeNestedShareRecords(input)
         if (result.confirmed) await this.syncIfNeeded()
         return result
-    }
-
-    public formatRemoveNsfPreview(preview: RemoveNsfRecordResult['preview']): string {
-        return this.nestedShareFolderManager.formatRemoveNsfPreview(preview)
     }
 
     public async mkdirNestedShareFolder(input: Omit<MkdirNsfInput, 'baseFolderUid'>): Promise<MkdirNsfResult> {
@@ -779,30 +760,21 @@ export class KeeperVault {
         return result
     }
 
-    public formatRemoveNsfFolderPreview(
-        preview: RemoveNsfFolderResult['preview'],
-        operation: RemoveNsfFolderResult['operation'],
-        quiet?: boolean
-    ): string {
-        return this.nestedShareFolderManager.formatRemoveNsfFolderPreview(preview, operation, quiet)
-    }
-
     public async getNestedShareRecordDetails(
         input: GetNsfRecordDetailsInput
     ): Promise<GetNsfRecordDetailsResult> {
         return this.nestedShareFolderManager.getNestedShareRecordDetails(input)
     }
 
-    public formatNsfRecordDetailsOutput(
-        result: GetNsfRecordDetailsResult,
-        format?: GetNsfRecordDetailsInput['format']
-    ): string {
-        return this.nestedShareFolderManager.formatNsfRecordDetailsOutput(result, format)
-    }
-
     public async updateNestedShareRecords(input: UpdateNsfRecordInput): Promise<UpdateNsfRecordResult> {
         const result = await this.nestedShareFolderManager.updateNestedShareRecords(input)
         if (result.updated.some((item) => item.success)) await this.syncIfNeeded()
+        return result
+    }
+
+    public async addNestedShareRecords(input: AddNsfRecordsInput): Promise<AddNsfRecordsResult> {
+        const result = await this.nestedShareFolderManager.addNestedShareRecords(input)
+        if (result.added.some((item) => item.success)) await this.syncIfNeeded()
         return result
     }
 

@@ -2,6 +2,7 @@ import fs from 'fs/promises'
 import {
     cleanup,
     extractErrorMessage,
+    formatListNsfOutput,
     ListNsfFormat,
     login,
     logger,
@@ -42,7 +43,7 @@ async function listNsf() {
             return
         }
 
-        const output = vault.formatListNsfOutput(rows, format)
+        const output = formatListNsfOutput(rows, format)
         if (outputPath && format !== ListNsfFormat.Table) {
             await fs.writeFile(outputPath, output, 'utf-8')
             logger.info(`Wrote ${rows.length} row(s) to ${outputPath}`)

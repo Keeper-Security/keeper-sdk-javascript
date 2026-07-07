@@ -126,8 +126,13 @@ export type {
     UpdateNsfRecordFieldEntry,
 } from './updateNsfRecord'
 
-export { addNestedShareRecord } from './addNsfRecord'
-export type { AddNsfRecordInput, AddNsfRecordResult } from './addNsfRecord'
+export { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
+export type {
+    AddNsfRecordInput,
+    AddNsfRecordResult,
+    AddNsfRecordsInput,
+    AddNsfRecordsResult,
+} from './addNsfRecord'
 
 export { clearNsfRecordTypeCache } from './nsfRecordTypes'
 

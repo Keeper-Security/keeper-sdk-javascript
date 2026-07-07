@@ -1,6 +1,8 @@
 import {
     cleanup,
     extractErrorMessage,
+    formatNsfDetail,
+    formatNsfJson,
     GetNsfFormat,
     login,
     logger,
@@ -32,7 +34,7 @@ async function getNsf() {
         }
 
         logger.info('')
-        const output = asJson ? vault.formatNsfJson(result) : vault.formatNsfDetail(result, verbose)
+        const output = asJson ? formatNsfJson(result) : formatNsfDetail(result, verbose)
         process.stdout.write(`${output}\n`)
         logger.info('')
     } catch (err) {

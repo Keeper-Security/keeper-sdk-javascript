@@ -9,6 +9,7 @@ import {
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
+import { NSF_MAX_REMOVALS } from './nsfConstants'
 import {
     buildNsfRecordData,
     getPaddedJsonBytes,
@@ -37,11 +38,20 @@ export type AddNsfRecordInput = {
     hasFileFields?: boolean
 }
 
+export type AddNsfRecordsInput = {
+    records: AddNsfRecordInput[]
+}
+
 export type AddNsfRecordResult = {
     recordUid: string
     success: boolean
     status: string
     message?: string
+    revision?: number
+}
+
+export type AddNsfRecordsResult = {
+    added: AddNsfRecordResult[]
     revision?: number
 }
 
@@ -96,11 +106,7 @@ async function buildRecordAdd(
     return { recordUid, recordAdd }
 }
 
-export async function addNestedShareRecord(
-    storage: InMemoryStorage,
-    auth: Auth,
-    input: AddNsfRecordInput
-): Promise<AddNsfRecordResult> {
+function validateAddNsfRecordInput(input: AddNsfRecordInput): void {
     if (!input.title?.trim()) {
         throw new KeeperSdkError('Record title is required.', ResultCodes.NSF_ADD_FAILED)
     }
@@ -113,12 +119,10 @@ export async function addNestedShareRecord(
             ResultCodes.NSF_ADD_FAILED
         )
     }
+}
 
-    if (!input.recordData && input.recordType?.trim()) {
-        await validateNsfRecordType(auth, input.recordType, ResultCodes.NSF_ADD_FAILED)
-    }
-
-    const recordData =
+function buildRecordDataFromInput(input: AddNsfRecordInput): Record<string, unknown> {
+    return (
         input.recordData ??
         buildNsfRecordData({
             title: input.title,
@@ -127,37 +131,88 @@ export async function addNestedShareRecord(
             fieldEntries: input.fieldEntries,
             customEntries: input.customEntries,
         })
+    )
+}
+
+export async function addNestedShareRecords(
+    storage: InMemoryStorage,
+    auth: Auth,
+    input: AddNsfRecordsInput
+): Promise<AddNsfRecordsResult> {
+    const recordInputs = input.records ?? []
+    if (recordInputs.length === 0) {
+        throw new KeeperSdkError('At least one record is required.', ResultCodes.NSF_ADD_FAILED)
+    }
+    if (recordInputs.length > NSF_MAX_REMOVALS) {
+        throw new KeeperSdkError(
+            `Maximum ${NSF_MAX_REMOVALS} records per request.`,
+            ResultCodes.NSF_TOO_MANY_RECORDS
+        )
+    }
+
+    for (const recordInput of recordInputs) {
+        validateAddNsfRecordInput(recordInput)
+    }
+
+    const recordTypes = new Set<string>()
+    for (const recordInput of recordInputs) {
+        if (!recordInput.recordData && recordInput.recordType?.trim()) {
+            recordTypes.add(recordInput.recordType.trim())
+        }
+    }
+    for (const recordType of recordTypes) {
+        await validateNsfRecordType(auth, recordType, ResultCodes.NSF_ADD_FAILED)
+    }
 
     try {
-        const { recordUid, recordAdd } = await buildRecordAdd(
-            storage,
-            auth,
-            recordData,
-            resolveFolderUid(storage, input.folder)
+        const prepared = await Promise.all(
+            recordInputs.map(async (recordInput) =>
+                buildRecordAdd(
+                    storage,
+                    auth,
+                    buildRecordDataFromInput(recordInput),
+                    resolveFolderUid(storage, recordInput.folder)
+                )
+            )
         )
+
         const response = await auth.executeRest(
             keeperDriveRecordsAdd({
-                records: [recordAdd],
+                records: prepared.map((entry) => entry.recordAdd),
                 clientTime: Date.now(),
             })
         )
-        const { statusName, message } = parseRecordModifyStatus(
-            response.records?.[0],
-            ResultCodes.NSF_ADD_FAILED
-        )
+        const revision = nsfToNumber(response.revision)
 
-        return {
-            recordUid,
-            success: true,
-            status: statusName,
-            message,
-            revision: nsfToNumber(response.revision),
-        }
+        const added = prepared.map((entry, index) => {
+            const { statusName, message } = parseRecordModifyStatus(
+                response.records?.[index],
+                ResultCodes.NSF_ADD_FAILED
+            )
+            return {
+                recordUid: entry.recordUid,
+                success: true,
+                status: statusName,
+                message,
+                revision,
+            }
+        })
+
+        return { added, revision }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
         throw new KeeperSdkError(
-            `Failed to add nested share record: ${extractErrorMessage(err)}`,
+            `Failed to add nested share record(s): ${extractErrorMessage(err)}`,
             ResultCodes.NSF_ADD_FAILED
         )
     }
+}
+
+export async function addNestedShareRecord(
+    storage: InMemoryStorage,
+    auth: Auth,
+    input: AddNsfRecordInput
+): Promise<AddNsfRecordResult> {
+    const { added } = await addNestedShareRecords(storage, auth, { records: [input] })
+    return added[0]
 }

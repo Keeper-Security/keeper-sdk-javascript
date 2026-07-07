@@ -2,6 +2,7 @@ import {
     cleanup,
     collectRemoveNsfWarnings,
     extractErrorMessage,
+    formatRemoveNsfPreview,
     login,
     logger,
     NsfRemoveOperation,
@@ -10,7 +11,7 @@ import {
     type RemoveNsfRecordResult,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-import { splitCommaSeparated, withSuppressedLogs } from '../utils/format'
+import { splitCommaSeparated } from '../utils/format'
 import {
     promptChoice,
     promptOptional,
@@ -30,10 +31,10 @@ const OPERATION_CHOICES: Record<string, NsfRemoveOperation> = {
     unlink: NsfRemoveOperation.Unlink,
 }
 
-function printPreview(vault: Awaited<ReturnType<typeof login>>, result: RemoveNsfRecordResult): void {
+function printPreview(result: RemoveNsfRecordResult): void {
     if (result.preview.length === 0) return
     logger.info('')
-    logger.info(vault.formatRemoveNsfPreview(result.preview))
+    logger.info(formatRemoveNsfPreview(result.preview))
     logger.info('')
 }
 
@@ -81,14 +82,14 @@ async function removeNsf() {
 
         if (dryRun) {
             const result = await removeNestedShareRecords(vault, { ...baseInput, dryRun: true })
-            printPreview(vault, result)
+            printPreview(result)
             logger.info('[Dry-run] No records were removed.')
             return
         }
 
         if (force) {
             const result = await removeNestedShareRecords(vault, { ...baseInput, force: true })
-            printPreview(vault, result)
+            printPreview(result)
             if (result.confirmed && result.message) {
                 logger.info(result.message)
             }
@@ -96,7 +97,7 @@ async function removeNsf() {
         }
 
         const preview = await removeNestedShareRecords(vault, { ...baseInput, force: false })
-        printPreview(vault, preview)
+        printPreview(preview)
         printPreviewWarnings(preview)
 
         if (!(await promptYesNo(yesNoPrompt('Do you want to proceed with deletion?')))) {

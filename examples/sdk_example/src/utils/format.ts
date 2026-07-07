@@ -40,6 +40,13 @@ export function isYes(answer: string): boolean {
     return normalized === 'y' || normalized === 'yes'
 }
 
+export function splitCommaSeparated(input: string): string[] {
+    return input
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+}
+
 export function parseEmails(raw: string): { emails: string[]; invalid: string[] } {
     const tokens = raw
         .split(EMAIL_LIST_SEPARATOR_PATTERN)
