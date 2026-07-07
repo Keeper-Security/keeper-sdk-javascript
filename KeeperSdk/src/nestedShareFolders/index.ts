@@ -88,6 +88,8 @@ export type {
     AddNsfRecordsInput,
     AddNsfRecordsResult,
     UpdateNsfRecordInput,
+    UpdateNsfRecordItemInput,
+    UpdateNsfRecordsInput,
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
     RecordAddPayload,
@@ -131,7 +133,7 @@ export {
     formatNsfRecordDetailsOutput,
 } from './getNsfRecordDetails'
 
-export { updateNestedShareRecords } from './updateNsfRecord'
+export { updateNestedShareRecords, updateNestedShareRecord } from './updateNsfRecord'
 
 export { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
 
@@ -143,7 +145,6 @@ export {
     parseNsfFieldSpaceInput,
     resolveNsfFieldValue,
     type ParsedNsfFields,
-    type ParsedNsfFieldStrings,
     type RecordFieldEntry,
 } from './nsfRecordData'
 

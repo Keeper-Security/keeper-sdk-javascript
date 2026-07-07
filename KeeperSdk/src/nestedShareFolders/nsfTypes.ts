@@ -225,6 +225,19 @@ export type UpdateNsfRecordInput = {
     customEntries?: RecordFieldEntry[]
 }
 
+export type UpdateNsfRecordItemInput = {
+    record: string
+    title?: string
+    recordType?: string
+    notes?: string
+    fieldEntries?: RecordFieldEntry[]
+    customEntries?: RecordFieldEntry[]
+}
+
+export type UpdateNsfRecordsInput = {
+    records: UpdateNsfRecordItemInput[]
+}
+
 export type UpdateNsfRecordResultItem = NsfRecordOperationResult
 
 export type UpdateNsfRecordResult = {

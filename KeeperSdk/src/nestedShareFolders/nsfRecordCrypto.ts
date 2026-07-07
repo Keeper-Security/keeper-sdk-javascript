@@ -24,7 +24,11 @@ async function decryptWithFolderKeys(
             return await platform.aesGcmDecrypt(encryptedKey, folderKey)
         } catch (gcmErr) {
             try {
-                return await platform.aesCbcDecrypt(encryptedKey, folderKey, true)
+                const recordKey = await platform.aesCbcDecrypt(encryptedKey, folderKey, true)
+                logger.debug(
+                    `NSF record key for ${recordUid} decrypted with CBC via folder ${folderUid} after GCM failed: ${extractErrorMessage(gcmErr)}`
+                )
+                return recordKey
             } catch (cbcErr) {
                 logger.debug(
                     `NSF record key decrypt failed for record ${recordUid} with folder ${folderUid}: ${extractErrorMessage(cbcErr)} (GCM: ${extractErrorMessage(gcmErr)})`
@@ -33,6 +37,7 @@ async function decryptWithFolderKeys(
             }
         }
     }
+    logger.debug(`NSF record key decrypt failed for ${recordUid}: no folder key succeeded`)
     return undefined
 }
 

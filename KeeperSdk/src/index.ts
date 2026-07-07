@@ -495,6 +495,7 @@ export {
     formatNsfRecordDetailsTable,
     formatNsfRecordDetailsOutput,
     updateNestedShareRecords,
+    updateNestedShareRecord,
     addNestedShareRecord,
     addNestedShareRecords,
     buildNsfRecordData,
@@ -540,6 +541,8 @@ export type {
     GetNsfRecordDetailsResult,
     NsfRecordDetailsItem,
     UpdateNsfRecordInput,
+    UpdateNsfRecordItemInput,
+    UpdateNsfRecordsInput,
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
     AddNsfRecordInput,
@@ -550,7 +553,6 @@ export type {
     RecordUpdatePayload,
     FolderCreatePayload,
     ParsedNsfFields,
-    ParsedNsfFieldStrings,
     RecordFieldEntry,
 } from './nestedShareFolders'
 

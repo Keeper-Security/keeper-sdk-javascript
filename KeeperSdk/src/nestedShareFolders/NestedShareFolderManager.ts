@@ -8,7 +8,7 @@ import { removeNestedShareRecords } from './removeNsfRecord'
 import { mkdirNestedShareFolder } from './mkdirNsf'
 import { removeNestedShareFolders } from './removeNsfFolder'
 import { getNestedShareRecordDetails } from './getNsfRecordDetails'
-import { updateNestedShareRecords } from './updateNsfRecord'
+import { updateNestedShareRecords, updateNestedShareRecord } from './updateNsfRecord'
 import { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
 import type {
     AddNsfRecordInput,
@@ -29,7 +29,10 @@ import type {
     RemoveNsfRecordInput,
     RemoveNsfRecordResult,
     UpdateNsfRecordInput,
+    UpdateNsfRecordItemInput,
+    UpdateNsfRecordsInput,
     UpdateNsfRecordResult,
+    UpdateNsfRecordResultItem,
 } from './nsfTypes'
 
 export type AuthProvider = () => Auth
@@ -84,8 +87,14 @@ export class NestedShareFolderManager {
         return getNestedShareRecordDetails(this.storage, this.requireAuth(), input)
     }
 
-    public async updateNestedShareRecords(input: UpdateNsfRecordInput): Promise<UpdateNsfRecordResult> {
+    public async updateNestedShareRecords(
+        input: UpdateNsfRecordInput | UpdateNsfRecordsInput
+    ): Promise<UpdateNsfRecordResult> {
         return updateNestedShareRecords(this.storage, this.requireAuth(), input)
+    }
+
+    public async updateNestedShareRecord(input: UpdateNsfRecordItemInput): Promise<UpdateNsfRecordResultItem> {
+        return updateNestedShareRecord(this.storage, this.requireAuth(), input)
     }
 
     public async addNestedShareRecords(input: AddNsfRecordsInput): Promise<AddNsfRecordsResult> {

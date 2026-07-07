@@ -25,9 +25,6 @@ export type ParsedNsfFields = {
     hasFileFields: boolean
 }
 
-/** @deprecated Use ParsedNsfFields */
-export type ParsedNsfFieldStrings = ParsedNsfFields
-
 type NsfFieldValue = string | string[] | Record<string, unknown> | Record<string, unknown>[]
 
 type FieldAssignment = {
