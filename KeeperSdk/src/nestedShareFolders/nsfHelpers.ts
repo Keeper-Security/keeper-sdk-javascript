@@ -10,7 +10,6 @@ import type {
 import {
     Folder,
     Records,
-    getFolderAccessMessage,
     getRecordAccessMessage,
     getShareObjectsMessage,
     normal64Bytes,
@@ -692,20 +691,6 @@ export function resolveAccessUsername(
     return accessTypeUid
 }
 
-function toFolderAccessEntry(folderUid: string, accessor: Folder.IFolderAccessData): DKdFolderAccess {
-    return {
-        kind: 'keeper_drive_folder_access',
-        accessUid: `${folderUid}:${webSafe64FromBytes(accessor.accessTypeUid!)}`,
-        folderUid,
-        accessTypeUid: webSafe64FromBytes(accessor.accessTypeUid!),
-        accessType: accessor.accessType!,
-        accessRoleType: accessor.accessRoleType!,
-        permission: accessor.permissions ?? {},
-        inherited: accessor.inherited ?? undefined,
-        hidden: accessor.hidden ?? undefined,
-    }
-}
-
 export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Promise<Map<string, string>> {
     const map = new Map<string, string>()
 
@@ -733,30 +718,6 @@ export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Pr
     }
 
     return map
-}
-
-export async function fetchLiveFolderAccessEntries(auth: Auth, folderUid: string): Promise<DKdFolderAccess[]> {
-    try {
-        const response = await auth.executeRest(
-            getFolderAccessMessage({ folderUid: [normal64Bytes(folderUid)] })
-        )
-        const result = response.folderAccessResults?.find(
-            (entry) => entry.folderUid?.length && webSafe64FromBytes(entry.folderUid) === folderUid
-        )
-        return (result?.accessors ?? [])
-            .filter(
-                (accessor) =>
-                    accessor.accessTypeUid?.length &&
-                    accessor.accessType != null &&
-                    accessor.accessRoleType != null
-            )
-            .map((accessor) => toFolderAccessEntry(folderUid, accessor))
-    } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to fetch folder permissions for ${folderUid}: ${extractErrorMessage(err)}`,
-            ResultCodes.NSF_DETAILS_FAILED
-        )
-    }
 }
 
 export function isFolderOwnerAccessor(
