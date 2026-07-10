@@ -11,47 +11,17 @@ import {
     resolveNsfFolderIdentifier,
     resolveNsfRecordIdentifier,
 } from './nsfHelpers'
-import { NSF_MAX_REMOVALS } from './nsfConstants'
+import { NSF_MAX_RECORD_BATCH } from './nsfConstants'
+import {
+    NsfRemoveOperation,
+    type NsfRemoveOperationInput,
+    type NsfRemovePreviewItem,
+    type RemoveNsfRecordInput,
+    type RemoveNsfRecordResult,
+} from './nsfTypes'
 
 const { RemoveAction, RecordOperationType, RemoveStatus } = folder.v3.remove
 const REMOVE_SUCCESS_STATUS = RemoveStatus[RemoveStatus.REMOVE_STATUS_SUCCESS]
-
-export enum NsfRemoveOperation {
-    OwnerTrash = 'owner-trash',
-    FolderTrash = 'folder-trash',
-    Unlink = 'unlink',
-}
-
-export type NsfRemoveOperationInput = NsfRemoveOperation | `${NsfRemoveOperation}`
-
-export type RemoveNsfRecordInput = {
-    records: string[]
-    folder?: string
-    operation?: NsfRemoveOperationInput
-    force?: boolean
-    dryRun?: boolean
-}
-
-export type NsfRemovePreviewItem = {
-    recordUid: string
-    folderUid: string
-    status: string
-    impact?: {
-        foldersCount: number
-        recordsCount: number
-        affectedUsersCount: number
-        affectedTeamsCount: number
-        warnings: string[]
-    }
-    error?: { code: number; message: string }
-}
-
-export type RemoveNsfRecordResult = {
-    confirmed: boolean
-    dryRun: boolean
-    preview: NsfRemovePreviewItem[]
-    message?: string
-}
 
 const OPERATION_MAP: Record<NsfRemoveOperation, FolderProto.v3.remove.RecordOperationType> = {
     [NsfRemoveOperation.Unlink]: RecordOperationType.UNLINK_FROM_FOLDER,
@@ -111,8 +81,8 @@ function buildRemovals(
     if (recordIdentifiers.length === 0) {
         throw new KeeperSdkError('At least one record UID or title is required.', ResultCodes.NSF_NOT_FOUND)
     }
-    if (recordIdentifiers.length > NSF_MAX_REMOVALS) {
-        throw new KeeperSdkError(`Maximum ${NSF_MAX_REMOVALS} records per request.`, ResultCodes.NSF_TOO_MANY_RECORDS)
+    if (recordIdentifiers.length > NSF_MAX_RECORD_BATCH) {
+        throw new KeeperSdkError(`Maximum ${NSF_MAX_RECORD_BATCH} records per request.`, ResultCodes.NSF_TOO_MANY_RECORDS)
     }
     if (operation === NsfRemoveOperation.Unlink && !folderIdentifier?.trim()) {
         throw new KeeperSdkError(
@@ -191,19 +161,28 @@ async function executeRemove(
     )
 }
 
+export function collectRemoveNsfWarnings(preview: NsfRemovePreviewItem[]): string[] {
+    const warnings = new Set<string>()
+    for (const item of preview) {
+        for (const warning of item.impact?.warnings ?? []) {
+            if (warning) warnings.add(warning)
+        }
+    }
+    return [...warnings]
+}
+
 export function formatRemoveNsfPreview(preview: NsfRemovePreviewItem[]): string {
     const lines: string[] = []
     for (const item of preview) {
         lines.push(`Record: ${item.recordUid}`)
         if (item.folderUid) lines.push(`  Folder: ${item.folderUid}`)
-        lines.push(`  Status: ${item.status}`)
+        if (item.status !== REMOVE_SUCCESS_STATUS) {
+            lines.push(`  Status: ${item.status}`)
+        }
         if (item.impact) {
             lines.push(
                 `  Impact: folders=${item.impact.foldersCount}, records=${item.impact.recordsCount}, users=${item.impact.affectedUsersCount}, teams=${item.impact.affectedTeamsCount}`
             )
-            for (const warning of item.impact.warnings) {
-                lines.push(`  Warning: ${warning}`)
-            }
         }
         if (item.error?.message) {
             lines.push(`  Error: ${item.error.message}`)
