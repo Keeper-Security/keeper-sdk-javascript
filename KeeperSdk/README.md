@@ -14,25 +14,29 @@ npm install @keeper-security/keeper-sdk-javascript
 
 ## Entry points
 
-| Environment | Import | Notes |
-|-------------|--------|--------|
-| Node | `@keeper-security/keeper-sdk-javascript` → `dist/index.js` | `ConsoleAuthUI`, `FileConfigLoader`, full auth |
-| Browser | same package → `dist/browser.js` | Platform shim only; use in-memory session + `restore-session` |
+| Environment | Import                                                     | Notes                                                         |
+| ----------- | ---------------------------------------------------------- | ------------------------------------------------------------- |
+| Node        | `@keeper-security/keeper-sdk-javascript` → `dist/index.js` | `ConsoleAuthUI`, `FileConfigLoader`, full auth                |
+| Browser     | same package → `dist/browser.js`                           | Platform shim only; use in-memory session + `restore-session` |
 
 ## Quickstart (Node)
 
 ```typescript
-import { KeeperVault, ConsoleAuthUI, FileConfigLoader } from '@keeper-security/keeper-sdk-javascript'
+import {
+  KeeperVault,
+  ConsoleAuthUI,
+  FileConfigLoader,
+} from "@keeper-security/keeper-sdk-javascript";
 
 const vault = new KeeperVault({
-    authUI: new ConsoleAuthUI(),
-    sessionStorage: new FileConfigLoader('./keeper-config.json'),
-})
+  authUI: new ConsoleAuthUI(),
+  sessionStorage: new FileConfigLoader("./keeper-config.json"),
+});
 
-await vault.login('user@example.com', 'password')
-await vault.sync()
+await vault.login("user@example.com", "password");
+await vault.sync();
 
-console.log(`Loaded ${vault.getRecords().length} records`)
+console.log(`Loaded ${vault.getRecords().length} records`);
 ```
 
 ## Supported functionality

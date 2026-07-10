@@ -1,536 +1,588 @@
-import { connectSdkPlatform } from './platform'
-import { nodeSdkPlatform } from './platform/node/platform'
+import { connectSdkPlatform } from "./platform";
+import { nodeSdkPlatform } from "./platform/node/platform";
 
-connectSdkPlatform(nodeSdkPlatform)
+connectSdkPlatform(nodeSdkPlatform);
 
-export * from './api'
+export * from "./api";
 
 /** Node.js Commander / CLI helpers (readline, ~/.keeper config). */
-export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
-export { FileConfigLoader } from './auth/node/FileConfigLoader'
-export { login, cleanup, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
+export { ConsoleAuthUI } from "./auth/ConsoleAuthUI";
+export { FileConfigLoader } from "./auth/node/FileConfigLoader";
+export {
+  login,
+  cleanup,
+  prompt,
+  suppressLogs,
+  loadKeeperConfig,
+  resolveServer,
+} from "./auth/ConsoleLogin";
 
-export { InMemoryStorage } from './storage/InMemoryStorage'
+export { InMemoryStorage } from "./storage/InMemoryStorage";
 
 export {
-    Logger,
-    ConsoleLogger,
-    LogLevel,
-    logger,
-    setLogger,
-    getLogger,
-    resetLogger,
-    KeeperSdkError,
-    isKeeperError,
-    extractErrorMessage,
-    extractResultCode,
-    SdkDefaults,
-    AuthDefaults,
-    NsfErrorCode,
-    ResultCodes,
-    AuthErrorCode,
-    SessionErrorCode,
-    ValidationErrorCode,
-    RoleErrorCode,
-    TeamErrorCode,
-    UserErrorCode,
-    KEEPER_PUBLIC_HOSTS,
-    isBoolean,
-    isString,
-    isNonEmptyString,
-    isNumber,
-    isObject,
-    anyIsBoolean,
-    EMAIL_PATTERN,
-    EMAIL_LIST_SEPARATOR_PATTERN,
-    isValidEmail,
-    resolveSearchPattern,
-    DEFAULT_PASSWORD_LENGTH,
-    PW_SPECIAL_CHARACTERS,
-    GEN_PASSWORD_ALGORITHMS,
-    KeeperPasswordGenerator,
-    generatePasswordFromOptions,
-    resolveGenPasswordAlgorithm,
-    generatePassword,
-    parseGenParametersFromValue,
-    isGenerateFieldValue,
-    parseGeneratePasswordFlag,
-} from './utils'
+  Logger,
+  ConsoleLogger,
+  LogLevel,
+  logger,
+  setLogger,
+  getLogger,
+  resetLogger,
+  KeeperSdkError,
+  isKeeperError,
+  extractErrorMessage,
+  extractResultCode,
+  SdkDefaults,
+  AuthDefaults,
+  NsfErrorCode,
+  ResultCodes,
+  AuthErrorCode,
+  SessionErrorCode,
+  ValidationErrorCode,
+  RoleErrorCode,
+  TeamErrorCode,
+  UserErrorCode,
+  KEEPER_PUBLIC_HOSTS,
+  isBoolean,
+  isString,
+  isNonEmptyString,
+  isNumber,
+  isObject,
+  anyIsBoolean,
+  EMAIL_PATTERN,
+  EMAIL_LIST_SEPARATOR_PATTERN,
+  isValidEmail,
+  resolveSearchPattern,
+  DEFAULT_PASSWORD_LENGTH,
+  PW_SPECIAL_CHARACTERS,
+  GEN_PASSWORD_ALGORITHMS,
+  KeeperPasswordGenerator,
+  generatePasswordFromOptions,
+  resolveGenPasswordAlgorithm,
+  generatePassword,
+  parseGenParametersFromValue,
+  isGenerateFieldValue,
+  parseGeneratePasswordFlag,
+} from "./utils";
 export type {
-    ILogger,
-    Nullable,
-    Optional,
-    DeepPartial,
-    Immutable,
-    GenPasswordAlgorithm,
-    PasswordGenerationOptions,
-    PasswordComplexityPolicy,
-    PassphraseGenOptions,
-} from './utils'
+  ILogger,
+  Nullable,
+  Optional,
+  DeepPartial,
+  Immutable,
+  GenPasswordAlgorithm,
+  PasswordGenerationOptions,
+  PasswordComplexityPolicy,
+  PassphraseGenOptions,
+} from "./utils";
 
 export {
-    searchRecords,
-    formatRecord,
-    getRecordTitle,
-    getRecordType,
-    getRecordFields,
-    getRecordSummary,
-    getRecordPassword,
-    getRecordLogin,
-    getRecordUrl,
-    getRecordTotpUrl,
-    RecordVersion,
-} from './records/RecordUtils'
-export type { RecordSummary } from './records/RecordUtils'
-export { parseTotpUrl, getTotpCode } from './records/Totp'
-export type { TotpAlgorithm, TotpParams, TotpCode } from './records/Totp'
-export { addRecord, updateRecord, deleteRecord, getRecordHistory, moveRecord } from './records/RecordOperations'
+  searchRecords,
+  formatRecord,
+  getRecordTitle,
+  getRecordType,
+  getRecordFields,
+  getRecordSummary,
+  getRecordPassword,
+  getRecordLogin,
+  getRecordUrl,
+  getRecordTotpUrl,
+  RecordVersion,
+} from "./records/RecordUtils";
+export type { RecordSummary } from "./records/RecordUtils";
+export { parseTotpUrl, getTotpCode } from "./records/Totp";
+export type { TotpAlgorithm, TotpParams, TotpCode } from "./records/Totp";
+export {
+  addRecord,
+  updateRecord,
+  deleteRecord,
+  getRecordHistory,
+  moveRecord,
+} from "./records/RecordOperations";
 export type {
-    PasswordRecordData,
-    TypedRecordData,
-    RecordFieldInput,
-    NewRecordInput,
-    AddRecordResult,
-    UpdateRecordResult,
-    DeleteRecordResult,
-    HistoryEntry,
-    RecordHistoryResult,
-    MoveRecordInput,
-    MoveRecordResult,
-} from './records/RecordOperations'
+  PasswordRecordData,
+  TypedRecordData,
+  RecordFieldInput,
+  NewRecordInput,
+  AddRecordResult,
+  UpdateRecordResult,
+  DeleteRecordResult,
+  HistoryEntry,
+  RecordHistoryResult,
+  MoveRecordInput,
+  MoveRecordResult,
+} from "./records/RecordOperations";
 
-export { shareRecord, removeRecordShare, getRecordShareInfo } from './sharing/Sharing'
+export {
+  shareRecord,
+  removeRecordShare,
+  getRecordShareInfo,
+} from "./sharing/Sharing";
 export type {
-    ShareRecordInput,
-    ShareRecordResult,
-    RemoveShareInput,
-    RemoveShareResult,
-    RecordShareInfo,
-    RecordUserPermission,
-    RecordSharedFolderPermission,
-} from './sharing/Sharing'
+  ShareRecordInput,
+  ShareRecordResult,
+  RemoveShareInput,
+  RemoveShareResult,
+  RecordShareInfo,
+  RecordUserPermission,
+  RecordSharedFolderPermission,
+} from "./sharing/Sharing";
 
-export { KeeperVault } from './vault/KeeperVault'
-export type { KeeperVaultConfig, VaultSummary } from './vault/KeeperVault'
+export { KeeperVault } from "./vault/KeeperVault";
+export type { KeeperVaultConfig, VaultSummary } from "./vault/KeeperVault";
 
-export { getFolder, findFolder, GetFolderFormat } from './folders/getFolder'
+export { getFolder, findFolder, GetFolderFormat } from "./folders/getFolder";
 export type {
-    GetFolderOptions,
-    GetFolderResult,
-    GetFolderResultFolder,
-    GetFolderResultSharedFolder,
-    GetFolderFormatInput,
-    FoundFolder,
-} from './folders/getFolder'
+  GetFolderOptions,
+  GetFolderResult,
+  GetFolderResultFolder,
+  GetFolderResultSharedFolder,
+  GetFolderFormatInput,
+  FoundFolder,
+} from "./folders/getFolder";
 
 export {
-    FolderKind,
-    ParentFolderKind,
-    FolderObjectType,
-    FolderResultStatus,
-    DeleteResolution,
-    DeleteObjectType,
-    folderKindFromString,
-} from './folders/folderHelpers'
-export type { FolderKindOrLiteral } from './folders/folderHelpers'
+  FolderKind,
+  ParentFolderKind,
+  FolderObjectType,
+  FolderResultStatus,
+  DeleteResolution,
+  DeleteObjectType,
+  folderKindFromString,
+} from "./folders/folderHelpers";
+export type { FolderKindOrLiteral } from "./folders/folderHelpers";
 
-export { listFolder, findFolderUidByNameOrUid, listRootUserFolders } from './folders/listFolder'
+export {
+  listFolder,
+  findFolderUidByNameOrUid,
+  listRootUserFolders,
+} from "./folders/listFolder";
 export type {
-    ListFolderOptions,
-    ListFolderResult,
-    ListFolderFolderSimple,
-    ListFolderRecordSimple,
-    ListFolderFolderDetail,
-    ListFolderRecordDetail,
-} from './folders/listFolder'
+  ListFolderOptions,
+  ListFolderResult,
+  ListFolderFolderSimple,
+  ListFolderRecordSimple,
+  ListFolderFolderDetail,
+  ListFolderRecordDetail,
+} from "./folders/listFolder";
 
 export {
-    listSharedFolders,
-    formatSharedFoldersTable,
-    renderSharedFoldersAsciiTable,
-} from './sharedFolders/listSharedFolders'
+  listSharedFolders,
+  formatSharedFoldersTable,
+  renderSharedFoldersAsciiTable,
+} from "./sharedFolders/listSharedFolders";
 export type {
-    ListSharedFoldersOptions,
-    ListSharedFolderRow,
-    FormattedSharedFoldersTable,
-} from './sharedFolders/listSharedFolders'
+  ListSharedFoldersOptions,
+  ListSharedFolderRow,
+  FormattedSharedFoldersTable,
+} from "./sharedFolders/listSharedFolders";
 
-export { shareFolder, ShareFolderAction, ShareFolderUserResultStatus } from './sharedFolders/shareFolder'
+export {
+  shareFolder,
+  ShareFolderAction,
+  ShareFolderUserResultStatus,
+} from "./sharedFolders/shareFolder";
 export type {
-    ShareFolderActionInput,
-    ShareFolderInput,
-    ShareFolderResult,
-    ShareFolderUserStatus,
-} from './sharedFolders/shareFolder'
+  ShareFolderActionInput,
+  ShareFolderInput,
+  ShareFolderResult,
+  ShareFolderUserStatus,
+} from "./sharedFolders/shareFolder";
 
 export {
-    changeDirectory,
-    createVaultFolderSession,
-    tryResolvePath,
-    resolveSingleFolder,
-    getWorkingFolderDisplayName,
-    findParentFolderUid,
-    splitPathComponents,
-} from './folders/changeDirectory'
-export type { VaultFolderSession, ChangeDirectoryResult, TryResolvePathResult } from './folders/changeDirectory'
-
-export { addFolder, mkdir } from './folders/addFolder'
-export type { AddFolderInput, AddFolderResult, MkdirOptions } from './folders/addFolder'
-
-export { updateFolder, renameFolder, updateSharedFolderPermissions } from './folders/updateFolder'
-export type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from './folders/updateFolder'
-
-export {
-    deleteFolder,
-    rmdir,
-    resolveRmdirPatternsToFolderUids,
-    buildFolderDeleteObject,
-} from './folders/deleteFolder'
-export type { DeleteFolderResult, RmdirOptions } from './folders/deleteFolder'
-
-export {
-    buildFolderTree,
-    renderFolderTreeAscii,
-    folderTreeAscii,
-    userPermissionToText,
-    recordPermissionToText,
-} from './folders/folderTree'
-export type { FolderTreeBuildOptions, FolderTreeNode, FolderTreeResult } from './folders/folderTree'
-
-export { FolderManager } from './folders/FolderManager'
-export type { AuthProvider, SharedFolderPermissionsInput } from './folders/FolderManager'
-
-export { SharedFolderManager } from './sharedFolders/SharedFolderManager'
-
-export {
-    listTeams,
-    formatTeamsTable,
-    renderTeamsAsciiTable,
-    formatTeamRestricts,
-    TeamColumn,
-    SUPPORTED_TEAM_COLUMNS,
-    DEFAULT_TEAM_COLUMNS,
-} from './teams/listTeams'
+  changeDirectory,
+  createVaultFolderSession,
+  tryResolvePath,
+  resolveSingleFolder,
+  getWorkingFolderDisplayName,
+  findParentFolderUid,
+  splitPathComponents,
+} from "./folders/changeDirectory";
 export type {
-    ListTeamsOptions,
-    ListTeamRow,
-    TeamColumnInput,
-    FormattedTeamsTable,
-    FormatTeamsTableOptions,
-} from './teams/listTeams'
+  VaultFolderSession,
+  ChangeDirectoryResult,
+  TryResolvePathResult,
+} from "./folders/changeDirectory";
 
-export {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-} from './teams/enterpriseData'
+export { addFolder, mkdir } from "./folders/addFolder";
 export type {
-    EnterpriseDataManagerApi,
-    GetEnterpriseDataResponse,
-    EnterpriseTeamRecord,
-    EnterpriseTeamUserLink,
-    EnterpriseRoleUserLink,
-    EnterpriseRoleTeamLink,
-    EnterpriseRolePrivilegeLink,
-    EnterpriseRoleManagedNodeLink,
-    EnterpriseRoleEnforcementLink,
-    EnterpriseQueuedTeamRecord,
-    EnterpriseQueuedTeamUserLink,
-    EnterpriseUserAliasLink,
-    EnterpriseUser,
-    EnterpriseRole,
-    EnterpriseNode,
-    DecryptedNodeNames,
-    DecryptedRoleNames,
-    EnterpriseDisplayNames,
-    NodePathOptions,
-} from './teams/enterpriseData'
+  AddFolderInput,
+  AddFolderResult,
+  MkdirOptions,
+} from "./folders/addFolder";
 
 export {
-    listRoles,
-    formatRolesTable,
-    renderRolesAsciiTable,
-    RoleColumn,
-    SUPPORTED_ROLE_COLUMNS,
-    DEFAULT_ROLE_COLUMNS,
-    ALL_COLUMNS_WILDCARD,
-    viewRole,
-    formatRoleView,
-    roleViewTable,
-    RoleManager,
-    addRoles,
-    formatAddRoleResult,
-    renderAddRoleAsciiTable,
-    AddRoleStatus,
-    AddRoleSkipReason,
-    updateRoles,
-    formatUpdateRoleResult,
-    renderUpdateRoleAsciiTable,
-    UpdateRoleStatus,
-    deleteRoles,
-    formatDeleteRoleResult,
-    renderDeleteRoleAsciiTable,
-    DeleteRoleStatus,
-} from './roles'
+  updateFolder,
+  renameFolder,
+  updateSharedFolderPermissions,
+} from "./folders/updateFolder";
 export type {
-    ListRolesOptions,
-    ListRoleRow,
-    RoleColumnInput,
-    FormattedRolesTable,
-    FormatRolesTableOptions,
-    RoleView,
-    RoleTeamInfo,
-    RoleUserInfo,
-    RoleManagedNodeInfo,
-    RoleEnforcementInfo,
-    FormatRoleViewOptions,
-    FormattedRoleViewTable,
-    FormattedManagedNodePrivilegeTable,
-    RoleViewTableRow,
-    AddRoleInput,
-    AddRoleResult,
-    AddRoleItemResult,
-    AddRoleConfirm,
-    AddRoleConflictPrompt,
-    FormattedAddRoleTable,
-    UpdateRoleInput,
-    UpdateRoleResult,
-    UpdateRoleItemResult,
-    FormattedUpdateRoleTable,
-    DeleteRoleInput,
-    DeleteRoleResult,
-    DeleteRoleItemResult,
-    FormattedDeleteRoleTable,
-    RoleToggleInput,
-    RoleToggle,
-    EnforcementPair,
-} from './roles'
+  UpdateFolderInput,
+  UpdateFolderResult,
+  RenameFolderResult,
+} from "./folders/updateFolder";
 
-export { viewTeam, formatTeamView, teamViewTable } from './teams/viewTeam'
+export {
+  deleteFolder,
+  rmdir,
+  resolveRmdirPatternsToFolderUids,
+  buildFolderDeleteObject,
+} from "./folders/deleteFolder";
+export type { DeleteFolderResult, RmdirOptions } from "./folders/deleteFolder";
+
+export {
+  buildFolderTree,
+  renderFolderTreeAscii,
+  folderTreeAscii,
+  userPermissionToText,
+  recordPermissionToText,
+} from "./folders/folderTree";
 export type {
-    TeamView,
-    TeamRoleInfo,
-    TeamUserInfo,
-    FormatTeamViewOptions,
-    FormattedTeamViewTable,
-    TeamViewTableRow,
-} from './teams/viewTeam'
+  FolderTreeBuildOptions,
+  FolderTreeNode,
+  FolderTreeResult,
+} from "./folders/folderTree";
 
-export {
-    addTeams,
-    formatAddTeamResult,
-    renderAddTeamAsciiTable,
-    AddTeamSourceKind,
-    AddTeamSkipReason,
-    AddTeamStatus,
-    TeamRestriction,
-} from './teams/addTeam'
+export { FolderManager } from "./folders/FolderManager";
 export type {
-    AddTeamInput,
-    AddTeamResult,
-    AddTeamItemResult,
-    AddTeamConfirm,
-    AddTeamConflictPrompt,
-    TeamRestrictionInput,
-    FormatAddTeamResultOptions,
-    FormattedAddTeamTable,
-    FormattedAddTeamRow,
-} from './teams/addTeam'
+  AuthProvider,
+  SharedFolderPermissionsInput,
+} from "./folders/FolderManager";
+
+export { SharedFolderManager } from "./sharedFolders/SharedFolderManager";
 
 export {
-    updateTeams,
-    formatUpdateTeamResult,
-    renderUpdateTeamAsciiTable,
-    UpdateTeamStatus,
-} from './teams/updateTeam'
+  listTeams,
+  formatTeamsTable,
+  renderTeamsAsciiTable,
+  formatTeamRestricts,
+  TeamColumn,
+  SUPPORTED_TEAM_COLUMNS,
+  DEFAULT_TEAM_COLUMNS,
+} from "./teams/listTeams";
 export type {
-    UpdateTeamInput,
-    UpdateTeamResult,
-    UpdateTeamItemResult,
-    FormattedUpdateTeamTable,
-    FormattedUpdateTeamRow,
-} from './teams/updateTeam'
+  ListTeamsOptions,
+  ListTeamRow,
+  TeamColumnInput,
+  FormattedTeamsTable,
+  FormatTeamsTableOptions,
+} from "./teams/listTeams";
 
 export {
-    deleteTeams,
-    formatDeleteTeamResult,
-    renderDeleteTeamAsciiTable,
-    DeleteTeamStatus,
-} from './teams/deleteTeam'
+  EnterpriseDataInclude,
+  EnterpriseDataManager,
+} from "./teams/enterpriseData";
 export type {
-    DeleteTeamInput,
-    DeleteTeamResult,
-    DeleteTeamItemResult,
-    FormattedDeleteTeamTable,
-    FormattedDeleteTeamRow,
-} from './teams/deleteTeam'
-
-export { TeamManager } from './teams/TeamManager'
-
-export {
-    listUsers,
-    formatUsersTable,
-    renderUsersAsciiTable,
-    UserColumn,
-    SUPPORTED_USER_COLUMNS,
-    DEFAULT_USER_COLUMNS,
-} from './users/listUsers'
-
-export { viewUser, formatUserView, userViewTable } from './users/viewUser'
-
-export {
-    addUsers,
-    formatAddUserResult,
-    renderAddUserAsciiTable,
-    AddUserStatus,
-    AddUserSkipReason,
-} from './users/addUser'
+  EnterpriseDataManagerApi,
+  GetEnterpriseDataResponse,
+  EnterpriseTeamRecord,
+  EnterpriseTeamUserLink,
+  EnterpriseRoleUserLink,
+  EnterpriseRoleTeamLink,
+  EnterpriseRolePrivilegeLink,
+  EnterpriseRoleManagedNodeLink,
+  EnterpriseRoleEnforcementLink,
+  EnterpriseQueuedTeamRecord,
+  EnterpriseQueuedTeamUserLink,
+  EnterpriseUserAliasLink,
+  EnterpriseUser,
+  EnterpriseRole,
+  EnterpriseNode,
+  DecryptedNodeNames,
+  DecryptedRoleNames,
+  EnterpriseDisplayNames,
+  NodePathOptions,
+} from "./teams/enterpriseData";
 
 export {
-    updateUsers,
-    formatUpdateUserResult,
-    renderUpdateUserAsciiTable,
-    UpdateUserStatus,
-} from './users/updateUser'
-
-export {
-    deleteUsers,
-    formatDeleteUserResult,
-    renderDeleteUserAsciiTable,
-    DeleteUserStatus,
-} from './users/deleteUser'
-
-export {
-    actionUsers,
-    formatUserActionResult,
-    renderUserActionAsciiTable,
-    UserAction,
-    UserActionStatus,
-    UserActionSkipReason,
-} from './users/actionUser'
-
+  listRoles,
+  formatRolesTable,
+  renderRolesAsciiTable,
+  RoleColumn,
+  SUPPORTED_ROLE_COLUMNS,
+  DEFAULT_ROLE_COLUMNS,
+  ALL_COLUMNS_WILDCARD,
+  viewRole,
+  formatRoleView,
+  roleViewTable,
+  RoleManager,
+  addRoles,
+  formatAddRoleResult,
+  renderAddRoleAsciiTable,
+  AddRoleStatus,
+  AddRoleSkipReason,
+  updateRoles,
+  formatUpdateRoleResult,
+  renderUpdateRoleAsciiTable,
+  UpdateRoleStatus,
+  deleteRoles,
+  formatDeleteRoleResult,
+  renderDeleteRoleAsciiTable,
+  DeleteRoleStatus,
+} from "./roles";
 export type {
-    UserColumnInput,
-    ListUsersOptions,
-    ListUserRow,
-    FormattedUsersTable,
-    FormatUsersTableOptions,
-    UserTeamInfo,
-    UserRoleInfo,
-    UserView,
-    FormatUserViewOptions,
-    FormattedUserViewTable,
-    UserViewTableRow,
-    AddUserInput,
-    AddUserItemResult,
-    AddUserResult,
-    FormatAddUserResultOptions,
-    FormattedAddUserTable,
-    UpdateUserInput,
-    UpdateUserItemResult,
-    UpdateUserResult,
-    FormattedUpdateUserTable,
-    DeleteUserInput,
-    DeleteUserItemResult,
-    DeleteUserResult,
-    FormattedDeleteUserTable,
-    UserActionInput,
-    UserActionItemResult,
-    UserActionResult,
-    FormattedUserActionTable,
-    AliasUserInput,
-    AliasUserResult,
-    FormattedUserStatus,
-    AddUsersToTeamsInput,
-    RemoveUsersFromTeamsInput,
-    TeamUserItemResult,
-    TeamUserResult,
-    FormattedTeamUserTable,
-} from './users/userTypes'
+  ListRolesOptions,
+  ListRoleRow,
+  RoleColumnInput,
+  FormattedRolesTable,
+  FormatRolesTableOptions,
+  RoleView,
+  RoleTeamInfo,
+  RoleUserInfo,
+  RoleManagedNodeInfo,
+  RoleEnforcementInfo,
+  FormatRoleViewOptions,
+  FormattedRoleViewTable,
+  FormattedManagedNodePrivilegeTable,
+  RoleViewTableRow,
+  AddRoleInput,
+  AddRoleResult,
+  AddRoleItemResult,
+  AddRoleConfirm,
+  AddRoleConflictPrompt,
+  FormattedAddRoleTable,
+  UpdateRoleInput,
+  UpdateRoleResult,
+  UpdateRoleItemResult,
+  FormattedUpdateRoleTable,
+  DeleteRoleInput,
+  DeleteRoleResult,
+  DeleteRoleItemResult,
+  FormattedDeleteRoleTable,
+  RoleToggleInput,
+  RoleToggle,
+  EnforcementPair,
+} from "./roles";
 
-export { EnterpriseUserStatus } from './users/userTypes'
-
-export {
-    aliasUser,
-    AliasOperation,
-} from './users/aliasUser'
-
-export {
-    addUsersToTeams,
-    removeUsersFromTeams,
-    formatTeamUserResult,
-    renderTeamUserAsciiTable,
-    TeamUserStatus,
-    TeamUserSkipReason,
-} from './users/teamUser'
-
-export { UserManager } from './users/UserManager'
-
-export {
-    KeeperDriveKind,
-    NsfItemType,
-    formatAccessRoleType,
-    formatAccessType,
-    normalizeParentUid,
-    isRootFolderUid,
-    resolveKeeperDriveRootParentUid,
-    getKeeperDriveFolders,
-    getKeeperDriveRecords,
-    findRecordFolderLocation,
-    buildFolderPath,
-    isSensitiveFieldType,
-    ListNsfFormat,
-    listNestedShareFolders,
-    formatListNsfTable,
-    renderListNsfAsciiTable,
-    formatListNsfCsv,
-    formatListNsfJson,
-    formatListNsfOutput,
-    GetNsfFormat,
-    resolveNsfFolder,
-    resolveNsfRecord,
-    getNestedShareFolder,
-    formatNsfFolderDetail,
-    formatNsfRecordDetail,
-    formatNsfDetail,
-    linkNestedShareRecord,
-    NsfRemoveOperation,
-    removeNestedShareRecords,
-    formatRemoveNsfPreview,
-    NestedShareFolderManager,
-} from './nestedShareFolders'
+export { viewTeam, formatTeamView, teamViewTable } from "./teams/viewTeam";
 export type {
-    ListNsfFormatInput,
-    ListNsfOptions,
-    ListNsfRow,
-    FormattedListNsfTable,
-    GetNsfFormatInput,
-    GetNsfOptions,
-    GetNsfResult,
-    NsfFolderView,
-    NsfRecordView,
-    NsfFolderPermission,
-    NsfFolderAccessRow,
-    NsfRecordPermission,
-    LinkNsfRecordResult,
-    NsfRemoveOperationInput,
-    RemoveNsfRecordInput,
-    NsfRemovePreviewItem,
-    RemoveNsfRecordResult,
-} from './nestedShareFolders'
+  TeamView,
+  TeamRoleInfo,
+  TeamUserInfo,
+  FormatTeamViewOptions,
+  FormattedTeamViewTable,
+  TeamViewTableRow,
+} from "./teams/viewTeam";
+
+export {
+  addTeams,
+  formatAddTeamResult,
+  renderAddTeamAsciiTable,
+  AddTeamSourceKind,
+  AddTeamSkipReason,
+  AddTeamStatus,
+  TeamRestriction,
+} from "./teams/addTeam";
+export type {
+  AddTeamInput,
+  AddTeamResult,
+  AddTeamItemResult,
+  AddTeamConfirm,
+  AddTeamConflictPrompt,
+  TeamRestrictionInput,
+  FormatAddTeamResultOptions,
+  FormattedAddTeamTable,
+  FormattedAddTeamRow,
+} from "./teams/addTeam";
+
+export {
+  updateTeams,
+  formatUpdateTeamResult,
+  renderUpdateTeamAsciiTable,
+  UpdateTeamStatus,
+} from "./teams/updateTeam";
+export type {
+  UpdateTeamInput,
+  UpdateTeamResult,
+  UpdateTeamItemResult,
+  FormattedUpdateTeamTable,
+  FormattedUpdateTeamRow,
+} from "./teams/updateTeam";
+
+export {
+  deleteTeams,
+  formatDeleteTeamResult,
+  renderDeleteTeamAsciiTable,
+  DeleteTeamStatus,
+} from "./teams/deleteTeam";
+export type {
+  DeleteTeamInput,
+  DeleteTeamResult,
+  DeleteTeamItemResult,
+  FormattedDeleteTeamTable,
+  FormattedDeleteTeamRow,
+} from "./teams/deleteTeam";
+
+export { changeTeamRoles, TeamRoleStatus } from "./teams/teamRole";
+export type {
+  ChangeTeamRolesInput,
+  TeamRoleResult,
+  TeamRoleItemResult,
+} from "./teams/teamRole";
+
+export { TeamManager } from "./teams/TeamManager";
+
+export {
+  listUsers,
+  formatUsersTable,
+  renderUsersAsciiTable,
+  UserColumn,
+  SUPPORTED_USER_COLUMNS,
+  DEFAULT_USER_COLUMNS,
+} from "./users/listUsers";
+
+export { viewUser, formatUserView, userViewTable } from "./users/viewUser";
+
+export {
+  addUsers,
+  formatAddUserResult,
+  renderAddUserAsciiTable,
+  AddUserStatus,
+  AddUserSkipReason,
+} from "./users/addUser";
+
+export {
+  updateUsers,
+  formatUpdateUserResult,
+  renderUpdateUserAsciiTable,
+  UpdateUserStatus,
+} from "./users/updateUser";
+
+export {
+  deleteUsers,
+  formatDeleteUserResult,
+  renderDeleteUserAsciiTable,
+  DeleteUserStatus,
+} from "./users/deleteUser";
+
+export {
+  actionUsers,
+  formatUserActionResult,
+  renderUserActionAsciiTable,
+  UserAction,
+  UserActionStatus,
+  UserActionSkipReason,
+} from "./users/actionUser";
 
 export type {
-    DRecord,
-    DRecordMetadata,
-    DSharedFolder,
-    DTeam,
-    DUserFolder,
-    VaultStorage,
-    SyncResult,
-    SyncDownOptions,
-    ClientConfiguration,
-    DeviceConfig,
-    SessionStorage,
-    AuthUI3,
-    KeeperError,
-    LoginError,
-} from '@keeper-security/keeperapi'
+  UserColumnInput,
+  ListUsersOptions,
+  ListUserRow,
+  FormattedUsersTable,
+  FormatUsersTableOptions,
+  UserTeamInfo,
+  UserRoleInfo,
+  UserView,
+  FormatUserViewOptions,
+  FormattedUserViewTable,
+  UserViewTableRow,
+  AddUserInput,
+  AddUserItemResult,
+  AddUserResult,
+  FormatAddUserResultOptions,
+  FormattedAddUserTable,
+  UpdateUserInput,
+  UpdateUserItemResult,
+  UpdateUserResult,
+  FormattedUpdateUserTable,
+  DeleteUserInput,
+  DeleteUserItemResult,
+  DeleteUserResult,
+  FormattedDeleteUserTable,
+  UserActionInput,
+  UserActionItemResult,
+  UserActionResult,
+  FormattedUserActionTable,
+  AliasUserInput,
+  AliasUserResult,
+  FormattedUserStatus,
+  AddUsersToTeamsInput,
+  RemoveUsersFromTeamsInput,
+  TeamUserItemResult,
+  TeamUserResult,
+  FormattedTeamUserTable,
+} from "./users/userTypes";
+
+export { EnterpriseUserStatus } from "./users/userTypes";
+
+export { aliasUser, AliasOperation } from "./users/aliasUser";
+
+export {
+  addUsersToTeams,
+  removeUsersFromTeams,
+  formatTeamUserResult,
+  renderTeamUserAsciiTable,
+  TeamUserStatus,
+  TeamUserSkipReason,
+} from "./users/teamUser";
+
+export { UserManager } from "./users/UserManager";
+
+export {
+  KeeperDriveKind,
+  NsfItemType,
+  formatAccessRoleType,
+  formatAccessType,
+  normalizeParentUid,
+  isRootFolderUid,
+  resolveKeeperDriveRootParentUid,
+  getKeeperDriveFolders,
+  getKeeperDriveRecords,
+  findRecordFolderLocation,
+  buildFolderPath,
+  isSensitiveFieldType,
+  ListNsfFormat,
+  listNestedShareFolders,
+  formatListNsfTable,
+  renderListNsfAsciiTable,
+  formatListNsfCsv,
+  formatListNsfJson,
+  formatListNsfOutput,
+  GetNsfFormat,
+  resolveNsfFolder,
+  resolveNsfRecord,
+  getNestedShareFolder,
+  formatNsfFolderDetail,
+  formatNsfRecordDetail,
+  formatNsfDetail,
+  linkNestedShareRecord,
+  NsfRemoveOperation,
+  removeNestedShareRecords,
+  formatRemoveNsfPreview,
+  NestedShareFolderManager,
+} from "./nestedShareFolders";
+export type {
+  ListNsfFormatInput,
+  ListNsfOptions,
+  ListNsfRow,
+  FormattedListNsfTable,
+  GetNsfFormatInput,
+  GetNsfOptions,
+  GetNsfResult,
+  NsfFolderView,
+  NsfRecordView,
+  NsfFolderPermission,
+  NsfFolderAccessRow,
+  NsfRecordPermission,
+  LinkNsfRecordResult,
+  NsfRemoveOperationInput,
+  RemoveNsfRecordInput,
+  NsfRemovePreviewItem,
+  RemoveNsfRecordResult,
+} from "./nestedShareFolders";
+
+export type {
+  DRecord,
+  DRecordMetadata,
+  DSharedFolder,
+  DTeam,
+  DUserFolder,
+  VaultStorage,
+  SyncResult,
+  SyncDownOptions,
+  ClientConfiguration,
+  DeviceConfig,
+  SessionStorage,
+  AuthUI3,
+  KeeperError,
+  LoginError,
+} from "@keeper-security/keeperapi";

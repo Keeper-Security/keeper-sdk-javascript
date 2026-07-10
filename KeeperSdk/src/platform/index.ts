@@ -1,20 +1,22 @@
-import type { SdkPlatform } from './types'
+import type { SdkPlatform } from "./types";
 
-let active: SdkPlatform | undefined
+let active: SdkPlatform | undefined;
 
-export type { SdkPlatform, SdkReadline, SdkRuntime } from './types'
+export type { SdkPlatform, SdkReadline, SdkRuntime } from "./types";
 
 export function connectSdkPlatform(platform: SdkPlatform): void {
-    active = platform
+  active = platform;
 }
 
 export function getSdkPlatform(): SdkPlatform {
-    if (!active) {
-        throw new Error('Keeper SDK platform is not initialized. Import @keeper-security/keeper-sdk-javascript or /browser entry first.')
-    }
-    return active
+  if (!active) {
+    throw new Error(
+      "Keeper SDK platform is not initialized. Import @keeper-security/keeper-sdk-javascript or /browser entry first.",
+    );
+  }
+  return active;
 }
 
 export function isSdkPlatformConnected(): boolean {
-    return active !== undefined
+  return active !== undefined;
 }

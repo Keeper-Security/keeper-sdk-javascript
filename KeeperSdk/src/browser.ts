@@ -1,6 +1,6 @@
-import { connectSdkPlatform } from './platform'
-import { browserSdkPlatform } from './platform/browser/platform'
+import { connectSdkPlatform } from "./platform";
+import { browserSdkPlatform } from "./platform/browser/platform";
 
-connectSdkPlatform(browserSdkPlatform)
+connectSdkPlatform(browserSdkPlatform);
 
-export * from './api'
+export * from "./api";
