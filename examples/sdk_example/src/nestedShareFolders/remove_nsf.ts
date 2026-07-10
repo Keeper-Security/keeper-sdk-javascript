@@ -1,18 +1,27 @@
 import {
     cleanup,
+    collectRemoveNsfWarnings,
     extractErrorMessage,
+    formatRemoveNsfPreview,
     login,
     logger,
     NsfRemoveOperation,
-    prompt,
     suppressLogs,
     type RemoveNsfRecordInput,
     type RemoveNsfRecordResult,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-import { isYes } from '../utils/format'
+import { splitCommaSeparated } from '../utils/format'
+import {
+    promptChoice,
+    promptOptional,
+    promptRequired,
+    promptRequiredList,
+    promptYesNo,
+    yesNoPrompt,
+} from '../utils/promptCommands'
 
-const OPERATION_BY_INPUT: Record<string, NsfRemoveOperation> = {
+const OPERATION_CHOICES: Record<string, NsfRemoveOperation> = {
     '': NsfRemoveOperation.OwnerTrash,
     '1': NsfRemoveOperation.OwnerTrash,
     '2': NsfRemoveOperation.FolderTrash,
@@ -22,22 +31,16 @@ const OPERATION_BY_INPUT: Record<string, NsfRemoveOperation> = {
     unlink: NsfRemoveOperation.Unlink,
 }
 
-function parseOperation(input: string): NsfRemoveOperation {
-    return OPERATION_BY_INPUT[input.trim().toLowerCase()] ?? NsfRemoveOperation.OwnerTrash
-}
-
-function printPreview(vault: Awaited<ReturnType<typeof login>>, result: RemoveNsfRecordResult): void {
+function printPreview(result: RemoveNsfRecordResult): void {
     if (result.preview.length === 0) return
     logger.info('')
-    logger.info(vault.formatRemoveNsfPreview(result.preview))
+    logger.info(formatRemoveNsfPreview(result.preview))
     logger.info('')
 }
 
 function printPreviewWarnings(result: RemoveNsfRecordResult): void {
-    for (const item of result.preview) {
-        for (const warning of item.impact?.warnings ?? []) {
-            logger.info(`Warning: ${warning}`)
-        }
+    for (const warning of collectRemoveNsfWarnings(result.preview)) {
+        logger.info(`Warning: ${warning}`)
     }
 }
 
@@ -57,21 +60,19 @@ async function removeNsf() {
     const vault = await login()
 
     try {
-        const recordsInput = (await prompt('Record UID(s) or title(s), comma-separated: ')).trim()
-        const records = recordsInput.split(',').map((value) => value.trim()).filter(Boolean)
-        if (records.length === 0) {
-            logger.info('At least one record is required.')
-            return
-        }
+        const records = await promptRequiredList(
+            'Record UID(s) or title(s), comma-separated: ',
+            splitCommaSeparated
+        )
 
         logger.info('Operation: 1) owner-trash  2) folder-trash  3) unlink')
-        const operation = parseOperation(await prompt('Choose [1]: '))
+        const operation = await promptChoice('Choose [1]: ', OPERATION_CHOICES)
         const folder =
             operation === NsfRemoveOperation.Unlink
-                ? (await prompt('Folder UID or name (required for unlink): ')).trim()
-                : (await prompt('Folder UID or name (optional): ')).trim()
-        const dryRun = isYes(await prompt('Dry run (preview only)? [y/N]: '))
-        const force = dryRun ? false : isYes(await prompt('Force confirm without prompt? [y/N]: '))
+                ? await promptRequired('Folder UID or name (required for unlink): ')
+                : await promptOptional('Folder UID or name (optional): ')
+        const dryRun = await promptYesNo(yesNoPrompt('Dry run (preview only)?'))
+        const force = dryRun ? false : await promptYesNo(yesNoPrompt('Force confirm without prompt?'))
 
         const baseInput: RemoveNsfRecordInput = {
             records,
@@ -81,14 +82,14 @@ async function removeNsf() {
 
         if (dryRun) {
             const result = await removeNestedShareRecords(vault, { ...baseInput, dryRun: true })
-            printPreview(vault, result)
+            printPreview(result)
             logger.info('[Dry-run] No records were removed.')
             return
         }
 
         if (force) {
             const result = await removeNestedShareRecords(vault, { ...baseInput, force: true })
-            printPreview(vault, result)
+            printPreview(result)
             if (result.confirmed && result.message) {
                 logger.info(result.message)
             }
@@ -96,10 +97,10 @@ async function removeNsf() {
         }
 
         const preview = await removeNestedShareRecords(vault, { ...baseInput, force: false })
-        printPreview(vault, preview)
+        printPreview(preview)
         printPreviewWarnings(preview)
 
-        if (!isYes(await prompt('Do you want to proceed with deletion? [y/n]: '))) {
+        if (!(await promptYesNo(yesNoPrompt('Do you want to proceed with deletion?')))) {
             logger.info('Removal cancelled.')
             return
         }
