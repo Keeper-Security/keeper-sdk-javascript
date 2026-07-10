@@ -8,9 +8,9 @@ import {
   renderListNsfAsciiTable,
 } from "./listNsf";
 import {
-  formatNsfDetail,
-  formatNsfFolderDetail,
-  formatNsfRecordDetail,
+  formatNsfDetail as renderNsfDetail,
+  formatNsfFolderDetail as renderNsfFolderDetail,
+  formatNsfRecordDetail as renderNsfRecordDetail,
   getNestedShareFolder,
 } from "./getNsf";
 import { linkNestedShareRecord } from "./linkNsfRecord";
@@ -115,15 +115,15 @@ export class NestedShareFolderManager {
   }
 
   public formatNsfDetail(result: GetNsfResult, verbose = false): string {
-    return formatNsfDetail(result, verbose);
+    return renderNsfDetail(result, verbose);
   }
 
   public formatNsfFolderDetail(view: NsfFolderView, verbose = false): string {
-    return formatNsfFolderDetail(view, verbose);
+    return renderNsfFolderDetail(view, verbose);
   }
 
   public formatNsfRecordDetail(view: NsfRecordView, verbose = false): string {
-    return formatNsfRecordDetail(view, verbose);
+    return renderNsfRecordDetail(view, verbose);
   }
 
   public async linkNestedShareRecord(

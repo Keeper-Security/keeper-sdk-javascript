@@ -17,7 +17,10 @@ const CREDENTIAL_PATTERN =
   /\b(password|passwd|pwd|secret|api[_-]?key|auth[_-]?token)\s*[:=]\s*\S+/gi;
 
 function redactSensitiveString(value: string): string {
-    return value.replace(CREDENTIAL_PATTERN, (_, key: string) => `${key}=[REDACTED]`)
+  return value.replace(
+    CREDENTIAL_PATTERN,
+    (_, key: string) => `${key}=[REDACTED]`,
+  );
 }
 
 function sanitizeArg(arg: unknown): unknown {

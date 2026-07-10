@@ -231,7 +231,8 @@ export const ResultCodes = {
   ACTION_REPORT_FAILED: ActionReportErrorCode.ReportFailed,
   ACTION_REPORT_INVALID_ACTION: ActionReportErrorCode.InvalidAction,
   ACTION_REPORT_TARGET_USER_REQUIRED: ActionReportErrorCode.TargetUserRequired,
-  ACTION_REPORT_TRANSFER_NOT_SUPPORTED: ActionReportErrorCode.TransferNotSupported,
+  ACTION_REPORT_TRANSFER_NOT_SUPPORTED:
+    ActionReportErrorCode.TransferNotSupported,
   ACTION_REPORT_NODE_NOT_FOUND: ActionReportErrorCode.NodeNotFound,
   ACTION_REPORT_NODE_NOT_UNIQUE: ActionReportErrorCode.NodeNotUnique,
   PASSWORD_REPORT_POLICY_REQUIRED: PasswordReportErrorCode.PolicyRequired,
