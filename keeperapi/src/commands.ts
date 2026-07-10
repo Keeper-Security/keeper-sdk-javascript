@@ -379,6 +379,23 @@ export const teamEnterpriseUserRemoveCommand = (
     request: TeamUserCommandRequest
 ): RestCommand<TeamUserCommandRequest, KeeperResponse> => createCommand(request, 'team_enterprise_user_remove')
 
+export type TeamGetKeysRequest = {
+    teams: string[]
+}
+
+export type TeamGetKeyEntry = {
+    team_uid?: string
+    key?: string
+    type?: number
+}
+
+export type TeamGetKeysResponse = KeeperResponse & {
+    keys?: TeamGetKeyEntry[]
+}
+
+export const teamGetKeysCommand = (request: TeamGetKeysRequest): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> =>
+    createCommand(request, 'team_get_keys')
+
 export type GetRecordHistoryRequest = {
     record_uid: string
     client_time: number

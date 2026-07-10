@@ -27,6 +27,13 @@ export {
     checkFolderDeletePermission,
     parseNsfPath,
     findExistingChildFolder,
+    resolveNsfRoleName,
+    getNsfAccessRoleLabel,
+    normalizeNsfRecordPermissionRole,
+    parseShareExpiration,
+    parseShareExpirationValue,
+    validateShareExpirationTimestamp,
+    isShareExpirationNoop,
 } from './nsfHelpers'
 
 export {
@@ -58,6 +65,9 @@ export {
     NsfRemoveOperation,
     NsfRemoveFolderOperation,
     GetNsfRecordDetailsFormat,
+    NsfFolderShareAction,
+    NsfRecordShareAction,
+    NsfRecordPermissionAction,
     NSF_ACCESS_ROLE_LABELS,
     resolveRecordPermissionRole,
     toNsfAccessRoleLabel,
@@ -108,7 +118,44 @@ export type {
     GetNsfRecordDetailsInput,
     GetNsfRecordDetailsResult,
     NsfRecordDetailsItem,
+    NsfFolderShareActionInput,
+    ShareNestedShareFolderInput,
+    ShareNestedShareFolderResult,
+    NsfFolderShareResultItem,
+    NsfRecordShareActionInput,
+    ShareNestedShareRecordInput,
+    ShareNestedShareRecordResult,
+    NsfRecordSharePlanItem,
+    NsfRecordShareResultItem,
+    NsfRecordPermissionActionInput,
+    UpdateNsfRecordPermissionInput,
+    UpdateNsfRecordPermissionResult,
+    NsfRecordPermissionPlan,
+    NsfRecordPermissionPlanItem,
+    NsfRecordPermissionFailure,
+    NsfShortcutRow,
+    ListNsfShortcutsOptions,
+    KeepNsfShortcutInput,
+    KeepNsfShortcutPlanItem,
+    KeepNsfShortcutResult,
+    KeepNsfShortcutResultItem,
+    TransferNestedShareRecordInput,
+    TransferNestedShareRecordResult,
+    TransferNestedShareRecordResultItem,
+    UpdateNsfFolderInput,
+    UpdateNsfFolderResult,
+    ParseShareExpirationInput,
+    NsfTeamPublicKeys,
+    NsfResolvedShareRecipient,
 } from './nsfTypes'
+
+export {
+    fetchNsfTeamPublicKeys,
+    encryptNsfFolderKeyForTeam,
+    resolveNsfShareRecipient,
+} from './nsfTeamShare'
+
+export type { UserShareKeys } from './nsfShareKeys'
 
 export { linkNestedShareRecord } from './linkNsfRecord'
 
@@ -119,7 +166,12 @@ export {
 } from './removeNsfRecord'
 
 export { mkdirNestedShareFolder } from './mkdirNsf'
-export { NSF_FOLDER_COLORS, NSF_MAX_RECORD_BATCH } from './nsfConstants'
+export {
+    NSF_FOLDER_COLORS,
+    NSF_MAX_RECORD_BATCH,
+    MIN_SHARE_EXPIRATION_MS,
+    TeamGetKeysResponseKeyType,
+} from './nsfConstants'
 export type { NsfFolderColor } from './nsfConstants'
 
 export {
@@ -149,3 +201,41 @@ export {
 } from './nsfRecordData'
 
 export { NestedShareFolderManager } from './NestedShareFolderManager'
+
+export {
+    shareNestedShareFolder,
+    shareNestedShareRecord,
+    formatNsfRecordSharePlan,
+    formatNsfRecordShareResults,
+    formatNsfFolderShareResults,
+} from './nsfShare'
+
+export {
+    collectNsfRecordUidsInFolder,
+    updateNestedShareRecordPermissions,
+    buildNsfRecordPermissionPlan,
+    formatNsfRecordPermissionPlan,
+    formatNsfRecordPermissionRequestHeader,
+    formatNsfRecordPermissionFailures,
+} from './nsfRecordPermission'
+
+export {
+    getNsfRecordShortcuts,
+    listNsfShortcuts,
+    keepNsfShortcut,
+    formatNsfShortcutOutput,
+    formatKeepNsfShortcutPlan,
+} from './nsfShortcut'
+
+export {
+    transferNestedShareRecords,
+    formatTransferNestedShareRecordResults,
+} from './nsfTransferRecord'
+
+export { updateNestedShareFolder } from './updateNsfFolder'
+
+export {
+    NSF_RECORD_PERMISSION_ROLES,
+    getFolderPermissionsForRole,
+} from './nsfConstants'
+export type { NsfRecordPermissionRole } from './nsfConstants'
