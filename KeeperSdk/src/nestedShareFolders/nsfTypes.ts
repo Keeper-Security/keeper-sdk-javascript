@@ -57,14 +57,6 @@ export type NsfFolderPermission = {
     accessRoleType: string
     inherited?: boolean
     hidden?: boolean
-    canAdd?: boolean
-    canRemove?: boolean
-    canDelete?: boolean
-    canListAccess?: boolean
-    canUpdateAccess?: boolean
-    canEditRecords?: boolean
-    canViewRecords?: boolean
-    canListRecords?: boolean
 }
 
 export type NsfRecordPermission = {

@@ -20,8 +20,8 @@ import { KeeperSdkError, ResultCodes } from '../utils'
 import {
     buildFolderPath,
     collectRecordsInFolder,
-    fetchLiveFolderAccessEntries,
     fetchLiveRecordAccessEntries,
+    getFolderAccessEntries,
     findNestedShareFoldersForRecord,
     findRecordFolderLocation,
     folderAccessDisplayRole,
@@ -105,21 +105,12 @@ function recordDetailsMessage(recordUid: string, include: Records.RecordDetailsI
 }
 
 function mapFolderPermission(entry: DKdFolderAccess): NsfFolderPermission {
-    const permission = entry.permission
     return {
         accessTypeUid: entry.accessTypeUid,
         accessType: formatAccessType(entry.accessType),
         accessRoleType: folderAccessDisplayRole(entry),
         inherited: entry.inherited,
         hidden: entry.hidden,
-        canAdd: permission?.canAdd ?? undefined,
-        canRemove: permission?.canRemove ?? undefined,
-        canDelete: permission?.canDelete ?? undefined,
-        canListAccess: permission?.canListAccess ?? undefined,
-        canUpdateAccess: permission?.canUpdateAccess ?? undefined,
-        canEditRecords: permission?.canEditRecords ?? undefined,
-        canViewRecords: permission?.canViewRecords ?? undefined,
-        canListRecords: permission?.canListRecords ?? undefined,
     }
 }
 
@@ -368,10 +359,8 @@ async function buildFolderView(
         throw new KeeperSdkError(`Nested share folder not found: ${folderUid}`, ResultCodes.NSF_NOT_FOUND)
     }
 
-    const [entries, shareUsers] = await Promise.all([
-        fetchLiveFolderAccessEntries(auth, folderUid),
-        loadShareUserMap(auth, storage),
-    ])
+    const entries = getFolderAccessEntries(storage, folderUid)
+    const shareUsers = await loadShareUserMap(auth, storage)
     const split = splitFolderPermissions(storage, folder, entries, shareUsers)
     const { userPermissions, shareAdmins } = ensureFolderOwnerListed(
         folder,
