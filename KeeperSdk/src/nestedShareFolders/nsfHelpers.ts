@@ -14,6 +14,7 @@ import {
     getRecordAccessMessage,
     getShareObjectsMessage,
     normal64Bytes,
+    record,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
@@ -27,9 +28,17 @@ import {
     NSF_NOTE_FIELD_TYPES,
     NSF_PATH_SENTINEL,
     NSF_RECORD_DESCRIPTION_MAX_LENGTH,
+    NSF_RECORD_PERMISSION_ROLE_LABELS,
+    NSF_RECORD_PERMISSION_ROLE_MAP,
+    NSF_RECORD_PERMISSION_ROLES,
     NSF_SENSITIVE_FIELD_TYPES,
+    NSF_SHARE_BATCH_SIZE,
+    MIN_SHARE_EXPIRATION_MS,
+    NSF_TLA_EXPIRATION_TOLERANCE_MS,
+    NSF_SHARE_EXPIRATION_RE,
+    NSF_SHARE_EXPIRATION_UNIT_MS,
 } from './nsfConstants'
-import { NsfAccessRoleLabel, NSF_ACCESS_ROLE_LABELS } from './nsfTypes'
+import { NsfAccessRoleLabel, NSF_ACCESS_ROLE_LABELS, type ParseShareExpirationInput } from './nsfTypes'
 
 export enum KeeperDriveKind {
     Folder = 'keeper_drive_folder',
@@ -426,12 +435,18 @@ function isCurrentUserRecordAccess(
     username: string,
     accountUidStr: string
 ): boolean {
+    if (
+        entry.accessType !== Folder.AccessType.AT_USER &&
+        entry.accessType !== Folder.AccessType.AT_OWNER
+    ) {
+        return false
+    }
     return (
-        (entry.accessType === Folder.AccessType.AT_USER && entry.accessTypeUid === accountUidStr) ||
+        entry.accessTypeUid === accountUidStr ||
         (username.length > 0 &&
             storage.getAll<DUser>('user').some(
                 (user) =>
-                    user.username === username &&
+                    user.username.toLowerCase() === username.toLowerCase() &&
                     webSafe64FromBytes(user.accountUid) === entry.accessTypeUid
             ))
     )
@@ -466,7 +481,12 @@ function isFolderOwnerAccount(storage: InMemoryStorage, folderUid: string, accou
     return folder?.ownerInfo?.accountUid === accountUidStr
 }
 
-type FolderPermissionFlag = 'canRemove' | 'canDelete'
+type FolderPermissionFlag =
+    | 'canRemove'
+    | 'canDelete'
+    | 'canUpdateAccess'
+    | 'canEditRecords'
+    | 'canChangeOwnership'
 
 function hasFolderPermission(
     storage: InMemoryStorage,
@@ -519,6 +539,102 @@ function canRecordBeDeleted(
         !!folderUid &&
         !isRootFolderUid(storage, folderUid) &&
         hasFolderPermission(storage, folderUid, username, accountUid, 'canDelete')
+    )
+}
+
+function canShareRecord(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array,
+    folderUid?: string
+): boolean {
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getRecordAccessEntries(storage, recordUid)
+    if (entries.length === 0) return true
+
+    for (const entry of entries) {
+        if (!isCurrentUserRecordAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.owner || entry.canUpdateAccess) return true
+        if (
+            folderUid &&
+            !isRootFolderUid(storage, folderUid) &&
+            hasFolderPermission(storage, folderUid, username, accountUid, 'canUpdateAccess')
+        ) {
+            return true
+        }
+        for (const parentFolderUid of findNestedShareFoldersForRecord(storage, recordUid)) {
+            if (
+                !isRootFolderUid(storage, parentFolderUid) &&
+                hasFolderPermission(storage, parentFolderUid, username, accountUid, 'canUpdateAccess')
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
+    for (const parentFolderUid of findNestedShareFoldersForRecord(storage, recordUid)) {
+        if (
+            !isRootFolderUid(storage, parentFolderUid) &&
+            hasFolderPermission(storage, parentFolderUid, username, accountUid, 'canUpdateAccess')
+        ) {
+            return true
+        }
+    }
+
+    return (
+        !!folderUid &&
+        !isRootFolderUid(storage, folderUid) &&
+        hasFolderPermission(storage, folderUid, username, accountUid, 'canUpdateAccess')
+    )
+}
+
+function canChangeRecordOwnership(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array,
+    folderUid?: string
+): boolean {
+    const accountUidStr = toRequiredAccountUidStr(accountUid)
+    const entries = getRecordAccessEntries(storage, recordUid)
+    if (entries.length === 0) return true
+
+    for (const entry of entries) {
+        if (!isCurrentUserRecordAccess(storage, entry, username, accountUidStr)) continue
+        if (entry.owner || entry.canChangeOwnership) return true
+        if (
+            folderUid &&
+            !isRootFolderUid(storage, folderUid) &&
+            hasFolderPermission(storage, folderUid, username, accountUid, 'canChangeOwnership')
+        ) {
+            return true
+        }
+        for (const parentFolderUid of findNestedShareFoldersForRecord(storage, recordUid)) {
+            if (
+                !isRootFolderUid(storage, parentFolderUid) &&
+                hasFolderPermission(storage, parentFolderUid, username, accountUid, 'canChangeOwnership')
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
+    for (const parentFolderUid of findNestedShareFoldersForRecord(storage, recordUid)) {
+        if (
+            !isRootFolderUid(storage, parentFolderUid) &&
+            hasFolderPermission(storage, parentFolderUid, username, accountUid, 'canChangeOwnership')
+        ) {
+            return true
+        }
+    }
+
+    return (
+        !!folderUid &&
+        !isRootFolderUid(storage, folderUid) &&
+        hasFolderPermission(storage, folderUid, username, accountUid, 'canChangeOwnership')
     )
 }
 
@@ -840,4 +956,382 @@ export function isFolderUserPermission(entry: DKdFolderAccess): boolean {
         entry.accessType === Folder.AccessType.AT_USER ||
         entry.accessType === Folder.AccessType.AT_OWNER
     )
+}
+
+export async function patchNsfFolderMetadata(
+    storage: InMemoryStorage,
+    folderUid: string,
+    metadata: { name: string; color?: string }
+): Promise<void> {
+    const folder = getKeeperDriveFolder(storage, folderUid)
+    if (!folder) return
+    await storage.put({
+        ...folder,
+        data: {
+            ...folder.data,
+            name: metadata.name,
+            ...(metadata.color ? { color: metadata.color } : {}),
+        },
+    })
+}
+
+export function checkFolderEditPermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (hasFolderPermission(storage, folderUid, username, accountUid, 'canEditRecords')) return
+    throw new KeeperSdkError(
+        'You do not have permission to edit this folder.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export function checkFolderSharePermission(
+    storage: InMemoryStorage,
+    folderUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (hasFolderPermission(storage, folderUid, username, accountUid, 'canUpdateAccess')) return
+    throw new KeeperSdkError(
+        'You do not have permission to share this folder.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export function checkRecordSharePermission(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (canShareRecord(storage, recordUid, username, accountUid)) return
+    throw new KeeperSdkError(
+        'You do not have permission to share this record.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export function checkRecordChangeOwnershipPermission(
+    storage: InMemoryStorage,
+    recordUid: string,
+    username: string,
+    accountUid: Uint8Array
+): void {
+    if (canChangeRecordOwnership(storage, recordUid, username, accountUid)) return
+    throw new KeeperSdkError(
+        'You do not have permission to transfer ownership of this record.',
+        ResultCodes.NSF_PERMISSION_DENIED
+    )
+}
+
+export function findFolderAccessEntry(
+    storage: InMemoryStorage,
+    folderUid: string,
+    accessTypeUid: string,
+    accessType: Folder.AccessType
+): DKdFolderAccess | undefined {
+    return getFolderAccessEntries(storage, folderUid).find(
+        (entry) => entry.accessTypeUid === accessTypeUid && entry.accessType === accessType
+    )
+}
+
+export function collectExistingFolderShareTargets(
+    storage: InMemoryStorage,
+    folderUid: string,
+    currentUsername: string
+): Array<{ recipient: string; isTeam: boolean; accountUid?: string }> {
+    const targets: Array<{ recipient: string; isTeam: boolean; accountUid?: string }> = []
+    for (const entry of getFolderAccessEntries(storage, folderUid)) {
+        if (entry.accessType === Folder.AccessType.AT_TEAM) {
+            targets.push({ recipient: entry.accessTypeUid, isTeam: true, accountUid: entry.accessTypeUid })
+            continue
+        }
+        if (entry.accessType !== Folder.AccessType.AT_USER) continue
+        const username = resolveAccessUsername(storage, entry.accessTypeUid)
+        if (!username || username.toLowerCase() === currentUsername.toLowerCase()) continue
+        targets.push({ recipient: username, isTeam: false, accountUid: entry.accessTypeUid })
+    }
+    return targets
+}
+
+export function resolveNsfRoleName(role: string): Folder.AccessRoleType {
+    const normalized = role.trim().toLowerCase().replace(/\s+/g, '-')
+    const mapped = NSF_RECORD_PERMISSION_ROLE_MAP[normalized]
+    if (mapped != null) return mapped
+    throw new KeeperSdkError(
+        `Invalid role '${role}'. Use: ${NSF_RECORD_PERMISSION_ROLES.join(', ')}.`,
+        ResultCodes.NSF_SHARE_FAILED
+    )
+}
+
+export function getNsfRecordPermissionRoleLabel(
+    accessRoleType: Folder.AccessRoleType | number | null | undefined
+): string {
+    if (accessRoleType == null) return 'unresolved'
+    return NSF_RECORD_PERMISSION_ROLE_LABELS[accessRoleType] ?? `role-${accessRoleType}`
+}
+
+export type NsfRecordAccessFlags = {
+    accessRoleType?: number
+    owner?: boolean
+}
+
+export function getNsfAccessRoleLabel(access: NsfRecordAccessFlags): string {
+    if (access.owner) return 'owner'
+    return getNsfRecordPermissionRoleLabel(access.accessRoleType)
+}
+
+export function normalizeNsfRecordPermissionRole(role?: string): string | undefined {
+    if (!role?.trim()) return undefined
+    const normalized = role.trim().toLowerCase().replace(/\s+/g, '-')
+    if ((NSF_RECORD_PERMISSION_ROLES as readonly string[]).includes(normalized)) return normalized
+    if (normalized in NSF_RECORD_PERMISSION_ROLE_MAP) return normalized
+    throw new KeeperSdkError(
+        `Invalid role '${role}'. Use: ${NSF_RECORD_PERMISSION_ROLES.join(', ')}.`,
+        ResultCodes.NSF_RECORD_PERMISSION_FAILED
+    )
+}
+
+export type NsfLiveRecordAccessEntry = {
+    recordUid: string
+    accessorName: string
+    accessTypeUid: string
+    owner: boolean
+    inherited: boolean
+    accessRoleType: number
+    canViewTitle: boolean
+    canEdit: boolean
+    canView: boolean
+    canListAccess: boolean
+    canUpdateAccess: boolean
+    canDelete: boolean
+    canChangeOwnership: boolean
+    canRequestAccess: boolean
+    canApproveAccess: boolean
+}
+
+function mapLiveRecordAccessEntry(
+    storage: InMemoryStorage,
+    shareUsers: Map<string, string>,
+    entry: record.v3.details.IRecordAccess
+): NsfLiveRecordAccessEntry | undefined {
+    const data = entry.data
+    if (!data?.recordUid?.length || !data.accessTypeUid?.length || data.accessType == null) return undefined
+
+    const accessType = data.accessType
+    if (
+        accessType !== Folder.AccessType.AT_USER &&
+        accessType !== Folder.AccessType.AT_OWNER &&
+        !data.owner
+    ) {
+        return undefined
+    }
+
+    const recordUid = webSafe64FromBytes(data.recordUid)
+    const accessTypeUid = webSafe64FromBytes(data.accessTypeUid)
+    const accessorName =
+        entry.accessorInfo?.name?.trim() ||
+        shareUsers.get(accessTypeUid) ||
+        resolveAccessUsername(storage, accessTypeUid)
+
+    if (!accessorName) return undefined
+
+    return {
+        recordUid,
+        accessorName,
+        accessTypeUid,
+        owner: !!data.owner,
+        inherited: !!data.inherited,
+        accessRoleType: data.accessRoleType ?? Folder.AccessRoleType.UNRESOLVED,
+        canViewTitle: data.canViewTitle ?? true,
+        canEdit: !!data.canEdit,
+        canView: !!data.canView,
+        canListAccess: !!data.canListAccess,
+        canUpdateAccess: !!data.canUpdateAccess,
+        canDelete: !!data.canDelete,
+        canChangeOwnership: !!data.canChangeOwnership,
+        canRequestAccess: !!data.canRequestAccess,
+        canApproveAccess: !!data.canApproveAccess,
+    }
+}
+
+export async function fetchLiveRecordAccessesV3(
+    auth: Auth,
+    storage: InMemoryStorage,
+    recordUids: string[]
+): Promise<{ recordAccesses: NsfLiveRecordAccessEntry[]; forbiddenRecords: string[] }> {
+    if (recordUids.length === 0) {
+        return { recordAccesses: [], forbiddenRecords: [] }
+    }
+
+    const shareUsers = await loadShareUserMap(auth, storage)
+    const recordAccesses: NsfLiveRecordAccessEntry[] = []
+    const forbiddenRecords: string[] = []
+
+    for (let index = 0; index < recordUids.length; index += NSF_SHARE_BATCH_SIZE) {
+        const chunk = recordUids.slice(index, index + NSF_SHARE_BATCH_SIZE)
+        let response: record.v3.details.IRecordAccessResponse
+        try {
+            response = await auth.executeRest(
+                getRecordAccessMessage({ recordUids: chunk.map((uid) => normal64Bytes(uid)) })
+            )
+        } catch (err) {
+            throw new KeeperSdkError(
+                `Failed to fetch record permissions: ${extractErrorMessage(err)}`,
+                ResultCodes.NSF_RECORD_PERMISSION_FAILED
+            )
+        }
+
+        for (const uid of response.forbiddenRecords ?? []) {
+            forbiddenRecords.push(webSafe64FromBytes(uid))
+        }
+
+        for (const entry of response.recordAccesses ?? []) {
+            const mapped = mapLiveRecordAccessEntry(storage, shareUsers, entry)
+            if (mapped) recordAccesses.push(mapped)
+        }
+    }
+
+    return { recordAccesses, forbiddenRecords }
+}
+
+export function findUserRecordShareEntry(
+    storage: InMemoryStorage,
+    recordUid: string,
+    email: string,
+    accountUidStr?: string,
+    shareUsers?: Map<string, string>
+): DKdRecordAccess | undefined {
+    const lower = email.toLowerCase()
+    const normalizedUid = accountUidStr?.trim()
+    for (const entry of getRecordAccessEntries(storage, recordUid)) {
+        if (entry.owner || entry.accessType !== Folder.AccessType.AT_USER) continue
+        if (normalizedUid && entry.accessTypeUid === normalizedUid) {
+            return entry
+        }
+        const accessorName = resolveAccessUsername(storage, entry.accessTypeUid, undefined, shareUsers)
+        if (accessorName.toLowerCase() === lower) return entry
+    }
+    return undefined
+}
+
+export function findDirectUserRecordShare(
+    storage: InMemoryStorage,
+    recordUid: string,
+    email: string
+): { recordUid: string; email: string; accessRoleType: number; expiration?: number } | undefined {
+    const entry = findUserRecordShareEntry(storage, recordUid, email)
+    if (!entry || entry.inherited) return undefined
+    return {
+        recordUid,
+        email,
+        accessRoleType: entry.accessRoleType ?? Folder.AccessRoleType.UNRESOLVED,
+        expiration: entry.tlaProperties?.expiration ?? undefined,
+    }
+}
+
+export function validateShareExpirationTimestamp(
+    expirationMs: number | null | undefined,
+    cmdName: string
+): void {
+    if (expirationMs == null || expirationMs === -1) return
+    const minAllowed = Date.now() + MIN_SHARE_EXPIRATION_MS
+    if (expirationMs < minAllowed) {
+        throw new KeeperSdkError(
+            `[${cmdName}] Share expiration must be at least 1 minute.`,
+            ResultCodes.NSF_SHARE_FAILED
+        )
+    }
+}
+
+export function parseShareExpiration(input: ParseShareExpirationInput): number | undefined {
+    const { expireAt, expireIn, expirationTimestamp, cmdName = 'nsf-share' } = input
+    const expireAtValue = expireAt?.trim()
+    const expireInValue = expireIn?.trim()
+
+    if (expireAtValue && expireInValue) {
+        throw new KeeperSdkError(
+            `[${cmdName}] Cannot specify both expire-at and expire-in.`,
+            ResultCodes.NSF_SHARE_FAILED
+        )
+    }
+
+    if (expirationTimestamp != null && (expireAtValue || expireInValue)) {
+        throw new KeeperSdkError(
+            `[${cmdName}] Cannot specify both expirationTimestamp and expire-at/expire-in.`,
+            ResultCodes.NSF_SHARE_FAILED
+        )
+    }
+
+    if (expirationTimestamp != null) {
+        validateShareExpirationTimestamp(expirationTimestamp, cmdName)
+        return expirationTimestamp
+    }
+
+    const raw = expireAtValue || expireInValue
+    if (!raw) return undefined
+
+    if (raw.toLowerCase() === 'never') return -1
+
+    if (expireAtValue) {
+        const normalized = raw.replace('Z', '+00:00')
+        const dt = new Date(normalized)
+        if (Number.isNaN(dt.getTime())) {
+            throw new KeeperSdkError(
+                `[${cmdName}] Invalid expire-at datetime '${raw}'.`,
+                ResultCodes.NSF_SHARE_FAILED
+            )
+        }
+        const expirationMs = dt.getTime()
+        validateShareExpirationTimestamp(expirationMs, cmdName)
+        return expirationMs
+    }
+
+    const match = NSF_SHARE_EXPIRATION_RE.exec(raw)
+    if (!match) {
+        throw new KeeperSdkError(
+            `[${cmdName}] Invalid expire-in period '${raw}'. Use e.g. 30d, 6mo, 1y, 24h, 30mi.`,
+            ResultCodes.NSF_SHARE_FAILED
+        )
+    }
+
+    const amount = Number.parseInt(match[1], 10)
+    const unitMs = NSF_SHARE_EXPIRATION_UNIT_MS[match[2].toLowerCase()]
+    if (!unitMs) {
+        throw new KeeperSdkError(
+            `[${cmdName}] Invalid expire-in period '${raw}'.`,
+            ResultCodes.NSF_SHARE_FAILED
+        )
+    }
+
+    const expirationMs = Date.now() + amount * unitMs
+    validateShareExpirationTimestamp(expirationMs, cmdName)
+    return expirationMs
+}
+
+export function parseShareExpirationValue(
+    value: string,
+    cmdName: string = 'nsf-share'
+): number | undefined {
+    const raw = value.trim()
+    if (!raw) return undefined
+    if (NSF_SHARE_EXPIRATION_RE.test(raw)) {
+        return parseShareExpiration({ expireIn: raw, cmdName })
+    }
+    return parseShareExpiration({ expireAt: raw, cmdName })
+}
+
+export function isShareExpirationNoop(
+    existingExpiration: number | undefined,
+    requestedExpiration: number | undefined
+): boolean {
+    if (requestedExpiration == null) return true
+    if (requestedExpiration === -1) {
+        return existingExpiration == null || existingExpiration === -1 || existingExpiration === 0
+    }
+    if (existingExpiration == null || existingExpiration === 0) return false
+    return Math.abs(existingExpiration - requestedExpiration) <= NSF_TLA_EXPIRATION_TOLERANCE_MS
 }

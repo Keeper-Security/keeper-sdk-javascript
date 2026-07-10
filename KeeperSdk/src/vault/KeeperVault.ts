@@ -94,6 +94,18 @@ import {
 } from '../nestedShareFolders/listNsf'
 import { formatNsfDetail } from '../nestedShareFolders/getNsf'
 import { formatRemoveNsfPreview } from '../nestedShareFolders/removeNsfRecord'
+import {
+    formatNsfRecordSharePlan,
+    formatNsfRecordShareResults,
+    formatNsfFolderShareResults,
+} from '../nestedShareFolders/nsfShare'
+import {
+    formatNsfRecordPermissionPlan,
+    formatNsfRecordPermissionRequestHeader,
+    formatNsfRecordPermissionFailures,
+} from '../nestedShareFolders/nsfRecordPermission'
+import { formatNsfShortcutOutput, formatKeepNsfShortcutPlan } from '../nestedShareFolders/nsfShortcut'
+import { formatTransferNestedShareRecordResults } from '../nestedShareFolders/nsfTransferRecord'
 import type {
     AddNsfRecordInput,
     AddNsfRecordResult,
@@ -103,20 +115,34 @@ import type {
     GetNsfResult,
     GetNsfRecordDetailsInput,
     GetNsfRecordDetailsResult,
+    KeepNsfShortcutInput,
+    KeepNsfShortcutResult,
     LinkNsfRecordResult,
     ListNsfFormatInput,
     ListNsfOptions,
     ListNsfRow,
     FormattedListNsfTable,
+    ListNsfShortcutsOptions,
     MkdirNsfInput,
     MkdirNsfResult,
+    NsfShortcutRow,
     RemoveNsfFolderInput,
     RemoveNsfFolderResult,
     RemoveNsfRecordInput,
     RemoveNsfRecordResult,
+    ShareNestedShareFolderInput,
+    ShareNestedShareFolderResult,
+    ShareNestedShareRecordInput,
+    ShareNestedShareRecordResult,
+    TransferNestedShareRecordInput,
+    TransferNestedShareRecordResult,
+    UpdateNsfFolderInput,
+    UpdateNsfFolderResult,
     UpdateNsfRecordInput,
     UpdateNsfRecordItemInput,
     UpdateNsfRecordsInput,
+    UpdateNsfRecordPermissionInput,
+    UpdateNsfRecordPermissionResult,
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
 } from '../nestedShareFolders/nsfTypes'
@@ -867,6 +893,104 @@ export class KeeperVault {
         const result = await this.nestedShareFolderManager.addNestedShareRecord(input)
         if (result.success) await this.syncIfNeeded()
         return result
+    }
+
+    public async updateNestedShareFolder(input: UpdateNsfFolderInput): Promise<UpdateNsfFolderResult> {
+        const result = await this.nestedShareFolderManager.updateNestedShareFolder(input)
+        if (result.updated) await this.syncIfNeeded()
+        return result
+    }
+
+    public async shareNestedShareFolder(
+        input: ShareNestedShareFolderInput
+    ): Promise<ShareNestedShareFolderResult> {
+        const result = await this.nestedShareFolderManager.shareNestedShareFolder(input)
+        if (result.results.some((item) => item.success)) await this.syncIfNeeded()
+        return result
+    }
+
+    public async shareNestedShareRecord(
+        input: ShareNestedShareRecordInput
+    ): Promise<ShareNestedShareRecordResult> {
+        const result = await this.nestedShareFolderManager.shareNestedShareRecord(input)
+        if (!result.dryRun && result.results.some((item) => item.success)) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatNsfRecordSharePlan(result: ShareNestedShareRecordResult): string {
+        return formatNsfRecordSharePlan(result.plan, result.dryRun)
+    }
+
+    public formatNsfRecordShareResults(results: ShareNestedShareRecordResult['results']): string {
+        return formatNsfRecordShareResults(results)
+    }
+
+    public formatNsfFolderShareResults(results: ShareNestedShareFolderResult['results']): string {
+        return formatNsfFolderShareResults(results)
+    }
+
+    public listNsfShortcuts(options?: ListNsfShortcutsOptions): NsfShortcutRow[] {
+        this.getAuthOrThrow()
+        return this.nestedShareFolderManager.listNsfShortcuts(options ?? {})
+    }
+
+    public formatNsfShortcutOutput(rows: NsfShortcutRow[], format?: ListNsfShortcutsOptions['format']): string {
+        return formatNsfShortcutOutput(rows, format)
+    }
+
+    public async keepNsfShortcut(input: KeepNsfShortcutInput): Promise<KeepNsfShortcutResult> {
+        const current = this.folderSession.currentFolderUid
+        const defaultFolderUid =
+            current && isNestedShareFolder(this.storage, current) ? current : undefined
+        const result = await this.nestedShareFolderManager.keepNsfShortcut(input, defaultFolderUid)
+        if (!result.dryRun && result.results.some((item) => item.success)) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatKeepNsfShortcutPlan(result: KeepNsfShortcutResult): string {
+        return formatKeepNsfShortcutPlan(result.plan)
+    }
+
+    public async transferNestedShareRecords(
+        input: TransferNestedShareRecordInput
+    ): Promise<TransferNestedShareRecordResult> {
+        const result = await this.nestedShareFolderManager.transferNestedShareRecords(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatTransferNestedShareRecordResults(
+        results: TransferNestedShareRecordResult['results']
+    ): string {
+        return formatTransferNestedShareRecordResults(results)
+    }
+
+    public async updateNestedShareRecordPermissions(
+        input: UpdateNsfRecordPermissionInput
+    ): Promise<UpdateNsfRecordPermissionResult> {
+        const result = await this.nestedShareFolderManager.updateNestedShareRecordPermissions(input)
+        if (result.confirmed) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatNsfRecordPermissionPlan(result: UpdateNsfRecordPermissionResult): string {
+        return formatNsfRecordPermissionPlan(result.plan)
+    }
+
+    public formatNsfRecordPermissionRequestHeader(
+        action: UpdateNsfRecordPermissionInput['action'],
+        role: string | undefined,
+        folderDisplayName: string,
+        recursive: boolean
+    ): string {
+        return formatNsfRecordPermissionRequestHeader(action, role, folderDisplayName, recursive)
+    }
+
+    public formatNsfRecordPermissionFailures(
+        failures: UpdateNsfRecordPermissionResult['grantFailures'],
+        kind: 'GRANT' | 'REVOKE'
+    ): string {
+        return formatNsfRecordPermissionFailures(failures, kind)
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
