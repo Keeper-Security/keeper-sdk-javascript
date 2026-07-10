@@ -393,9 +393,8 @@ export type TeamGetKeysResponse = KeeperResponse & {
     keys?: TeamGetKeyEntry[]
 }
 
-export const teamGetKeysCommand = (
-    request: TeamGetKeysRequest
-): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> => createCommand(request, 'team_get_keys')
+export const teamGetKeysCommand = (request: TeamGetKeysRequest): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> =>
+    createCommand(request, 'team_get_keys')
 
 export type GetRecordHistoryRequest = {
     record_uid: string
