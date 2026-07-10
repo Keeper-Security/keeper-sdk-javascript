@@ -6,31 +6,54 @@ import {
   formatListNsfTable,
   listNestedShareFolders,
   renderListNsfAsciiTable,
-  type FormattedListNsfTable,
-  type ListNsfFormatInput,
-  type ListNsfOptions,
-  type ListNsfRow,
 } from "./listNsf";
 import {
-  formatNsfDetail as renderNsfDetail,
-  formatNsfFolderDetail as renderNsfFolderDetail,
-  formatNsfRecordDetail as renderNsfRecordDetail,
+  formatNsfDetail,
+  formatNsfFolderDetail,
+  formatNsfRecordDetail,
   getNestedShareFolder,
-  type GetNsfOptions,
-  type GetNsfResult,
-  type NsfFolderView,
-  type NsfRecordView,
 } from "./getNsf";
-import {
-  linkNestedShareRecord,
-  type LinkNsfRecordResult,
-} from "./linkNsfRecord";
+import { linkNestedShareRecord } from "./linkNsfRecord";
 import {
   formatRemoveNsfPreview,
   removeNestedShareRecords,
-  type RemoveNsfRecordInput,
-  type RemoveNsfRecordResult,
 } from "./removeNsfRecord";
+import { mkdirNestedShareFolder } from "./mkdirNsf";
+import { removeNestedShareFolders } from "./removeNsfFolder";
+import { getNestedShareRecordDetails } from "./getNsfRecordDetails";
+import {
+  updateNestedShareRecords,
+  updateNestedShareRecord,
+} from "./updateNsfRecord";
+import { addNestedShareRecord, addNestedShareRecords } from "./addNsfRecord";
+import type {
+  AddNsfRecordInput,
+  AddNsfRecordResult,
+  AddNsfRecordsInput,
+  AddNsfRecordsResult,
+  FormattedListNsfTable,
+  GetNsfOptions,
+  GetNsfResult,
+  GetNsfRecordDetailsInput,
+  GetNsfRecordDetailsResult,
+  LinkNsfRecordResult,
+  ListNsfFormatInput,
+  ListNsfOptions,
+  ListNsfRow,
+  MkdirNsfInput,
+  MkdirNsfResult,
+  NsfFolderView,
+  NsfRecordView,
+  RemoveNsfFolderInput,
+  RemoveNsfFolderResult,
+  RemoveNsfRecordInput,
+  RemoveNsfRecordResult,
+  UpdateNsfRecordInput,
+  UpdateNsfRecordItemInput,
+  UpdateNsfRecordsInput,
+  UpdateNsfRecordResult,
+  UpdateNsfRecordResultItem,
+} from "./nsfTypes";
 
 export type AuthProvider = () => Auth;
 
@@ -92,15 +115,15 @@ export class NestedShareFolderManager {
   }
 
   public formatNsfDetail(result: GetNsfResult, verbose = false): string {
-    return renderNsfDetail(result, verbose);
+    return formatNsfDetail(result, verbose);
   }
 
   public formatNsfFolderDetail(view: NsfFolderView, verbose = false): string {
-    return renderNsfFolderDetail(view, verbose);
+    return formatNsfFolderDetail(view, verbose);
   }
 
   public formatNsfRecordDetail(view: NsfRecordView, verbose = false): string {
-    return renderNsfRecordDetail(view, verbose);
+    return formatNsfRecordDetail(view, verbose);
   }
 
   public async linkNestedShareRecord(
@@ -125,5 +148,47 @@ export class NestedShareFolderManager {
     preview: RemoveNsfRecordResult["preview"],
   ): string {
     return formatRemoveNsfPreview(preview);
+  }
+
+  public async mkdirNestedShareFolder(
+    input: MkdirNsfInput,
+  ): Promise<MkdirNsfResult> {
+    return mkdirNestedShareFolder(this.storage, this.requireAuth(), input);
+  }
+
+  public async removeNestedShareFolders(
+    input: RemoveNsfFolderInput,
+  ): Promise<RemoveNsfFolderResult> {
+    return removeNestedShareFolders(this.storage, this.requireAuth(), input);
+  }
+
+  public async getNestedShareRecordDetails(
+    input: GetNsfRecordDetailsInput,
+  ): Promise<GetNsfRecordDetailsResult> {
+    return getNestedShareRecordDetails(this.storage, this.requireAuth(), input);
+  }
+
+  public async updateNestedShareRecords(
+    input: UpdateNsfRecordInput | UpdateNsfRecordsInput,
+  ): Promise<UpdateNsfRecordResult> {
+    return updateNestedShareRecords(this.storage, this.requireAuth(), input);
+  }
+
+  public async updateNestedShareRecord(
+    input: UpdateNsfRecordItemInput,
+  ): Promise<UpdateNsfRecordResultItem> {
+    return updateNestedShareRecord(this.storage, this.requireAuth(), input);
+  }
+
+  public async addNestedShareRecords(
+    input: AddNsfRecordsInput,
+  ): Promise<AddNsfRecordsResult> {
+    return addNestedShareRecords(this.storage, this.requireAuth(), input);
+  }
+
+  public async addNestedShareRecord(
+    input: AddNsfRecordInput,
+  ): Promise<AddNsfRecordResult> {
+    return addNestedShareRecord(this.storage, this.requireAuth(), input);
   }
 }
