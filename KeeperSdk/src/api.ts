@@ -283,10 +283,7 @@ export type {
   TeamViewTableRow,
 } from "./teams/viewTeam";
 
-export {
-  changeTeamRoles,
-  TeamRoleStatus,
-} from "./teams/teamRole";
+export { changeTeamRoles, TeamRoleStatus } from "./teams/teamRole";
 export type {
   ChangeTeamRolesInput,
   TeamRoleResult,

@@ -350,9 +350,7 @@ async function loadTeamKeys(
     const batch = pending.splice(0, TEAM_GET_KEYS_BATCH_SIZE);
     let response;
     try {
-      response = await auth.executeRestCommand(
-        teamGetKeysCommand(batch),
-      );
+      response = await auth.executeRestCommand(teamGetKeysCommand(batch));
     } catch (err) {
       throw new KeeperSdkError(
         `Failed to fetch team keys: ${extractErrorMessage(err)}`,
@@ -364,7 +362,10 @@ async function loadTeamKeys(
       if (!teamUid || !entry.key) continue;
       try {
         const encryptedKey = normal64Bytes(entry.key);
-        keysByTeam.set(teamUid, await decryptTeamKeyEntry(auth, encryptedKey, entry.type));
+        keysByTeam.set(
+          teamUid,
+          await decryptTeamKeyEntry(auth, encryptedKey, entry.type),
+        );
       } catch (err) {
         throw new KeeperSdkError(
           `Failed to decrypt team key for "${teamUid}": ${extractErrorMessage(err)}`,

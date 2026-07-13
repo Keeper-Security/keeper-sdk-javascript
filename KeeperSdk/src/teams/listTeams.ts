@@ -145,7 +145,8 @@ export function formatTeamsTable(
   options: FormatTeamsTableOptions = {},
 ): FormattedTeamsTable {
   const columns = resolveColumns(options.columns);
-  const usersTitle = options.usersColumnTitle?.trim() || HEADER_BY_COLUMN[TeamColumn.Users];
+  const usersTitle =
+    options.usersColumnTitle?.trim() || HEADER_BY_COLUMN[TeamColumn.Users];
   const headers: string[] = [
     "#",
     "Company",
