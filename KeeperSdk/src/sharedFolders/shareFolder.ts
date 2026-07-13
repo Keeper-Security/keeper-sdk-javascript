@@ -3,7 +3,9 @@ import type {
   Authentication,
   DSharedFolder,
   DSharedFolderFolder,
+  DSharedFolderTeam,
   DSharedFolderUser,
+  DTeam,
   DUserFolder,
 } from "@keeper-security/keeperapi";
 import {
@@ -12,8 +14,15 @@ import {
   normal64Bytes,
   platform,
   sharedFolderUpdateV3Message,
+  webSafe64FromBytes,
+  type RestCommand,
 } from "@keeper-security/keeperapi";
 import { InMemoryStorage } from "../storage/InMemoryStorage";
+import {
+  EnterpriseDataInclude,
+  EnterpriseDataManager,
+} from "../teams/enterpriseData";
+import { resolveExistingTeams } from "../teams/teamUtils";
 import {
   extractErrorMessage,
   isBoolean,
@@ -80,13 +89,31 @@ type ResolvedFolder =
     }
   | { kind: FolderKind.UserFolder; folderUid: string; displayName: string };
 
-type UserPublicKeys = {
+type TeamPublicKeys = {
   rsaPublicKey: Uint8Array | null;
   eccPublicKey: Uint8Array | null;
-  errorCode?: string;
-  message?: string;
-  username: string;
+  aesKey: Uint8Array | null;
 };
+
+const TEAM_GET_KEYS_BATCH_SIZE = 90;
+
+type TeamGetKeysResponse = {
+  keys?: Array<{
+    team_uid: string;
+    key: string;
+    type: number;
+  }>;
+};
+
+function teamGetKeysCommand(
+  teams: string[],
+): RestCommand<{ teams: string[] }, TeamGetKeysResponse> {
+  return {
+    baseRequest: { command: "team_get_keys" },
+    request: { teams },
+    authorization: {},
+  };
+}
 
 function toSetBoolean(value: boolean | undefined): Folder.SetBooleanValue {
   if (value === true) return Folder.SetBooleanValue.BOOLEAN_TRUE;
@@ -226,17 +253,211 @@ async function fetchUserPublicKeys(
   return usernameToKeys;
 }
 
-function dedupeEmails(emails: string[]): string[] {
-  const seen = new Set<string>();
-  const dedupedEmails: string[] = [];
-  for (const rawEmail of emails) {
-    const normalized = (rawEmail || "").trim().toLowerCase();
-    if (!normalized) continue;
-    if (seen.has(normalized)) continue;
-    seen.add(normalized);
-    dedupedEmails.push(normalized);
+type UserPublicKeys = {
+  rsaPublicKey: Uint8Array | null;
+  eccPublicKey: Uint8Array | null;
+  errorCode?: string;
+  message?: string;
+  username: string;
+};
+
+function splitShareTargets(targets: string[]): {
+  userEmails: string[];
+  teamIdentifiers: string[];
+} {
+  const userEmails: string[] = [];
+  const teamIdentifiers: string[] = [];
+  for (const target of targets) {
+    if (isValidEmail(target)) userEmails.push(target);
+    else teamIdentifiers.push(target);
   }
-  return dedupedEmails;
+  return { userEmails, teamIdentifiers };
+}
+
+function dedupeTargets(targets: string[]): string[] {
+  const seen = new Set<string>();
+  const deduped: string[] = [];
+  for (const rawTarget of targets) {
+    const normalized = (rawTarget || "").trim();
+    if (!normalized) continue;
+    const key = isValidEmail(normalized)
+      ? normalized.toLowerCase()
+      : normalized;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(isValidEmail(normalized) ? key : normalized);
+  }
+  return deduped;
+}
+
+async function resolveTeamUids(
+  auth: Auth,
+  storage: InMemoryStorage,
+  identifiers: string[],
+): Promise<string[]> {
+  if (identifiers.length === 0) return [];
+
+  const vaultTeams = storage.getAll<DTeam>(VaultObjectKind.Team);
+  const byUid = new Map(vaultTeams.map((team) => [team.uid, team.uid]));
+  const byLowerName = new Map<string, string>();
+  for (const team of vaultTeams) {
+    const name = (team.name || "").trim().toLowerCase();
+    if (name && !byLowerName.has(name)) byLowerName.set(name, team.uid);
+  }
+
+  const toResolve: string[] = [];
+  const resolved: string[] = [];
+  for (const raw of identifiers) {
+    const id = raw.trim();
+    if (byUid.has(id)) {
+      resolved.push(byUid.get(id)!);
+      continue;
+    }
+    const nameMatch = byLowerName.get(id.toLowerCase());
+    if (nameMatch) {
+      resolved.push(nameMatch);
+      continue;
+    }
+    toResolve.push(id);
+  }
+
+  if (toResolve.length > 0) {
+    const enterpriseData = new EnterpriseDataManager(auth);
+    const data = await enterpriseData.getData([
+      EnterpriseDataInclude.Teams,
+      EnterpriseDataInclude.QueuedTeams,
+    ]);
+    const teams = resolveExistingTeams(
+      data.teams || [],
+      toResolve,
+      data.queued_teams || [],
+    );
+    resolved.push(...teams.map((team) => team.team_uid));
+  }
+
+  return [...new Set(resolved)];
+}
+
+async function loadTeamKeys(
+  auth: Auth,
+  teamUids: string[],
+): Promise<Map<string, TeamPublicKeys>> {
+  const keysByTeam = new Map<string, TeamPublicKeys>();
+  if (teamUids.length === 0) return keysByTeam;
+
+  const pending = [...new Set(teamUids)];
+  while (pending.length > 0) {
+    const batch = pending.splice(0, TEAM_GET_KEYS_BATCH_SIZE);
+    let response;
+    try {
+      response = await auth.executeRestCommand(
+        teamGetKeysCommand(batch),
+      );
+    } catch (err) {
+      throw new KeeperSdkError(
+        `Failed to fetch team keys: ${extractErrorMessage(err)}`,
+      );
+    }
+
+    for (const entry of response.keys || []) {
+      const teamUid = (entry.team_uid || "").trim();
+      if (!teamUid || !entry.key) continue;
+      try {
+        const encryptedKey = normal64Bytes(entry.key);
+        keysByTeam.set(teamUid, await decryptTeamKeyEntry(auth, encryptedKey, entry.type));
+      } catch (err) {
+        throw new KeeperSdkError(
+          `Failed to decrypt team key for "${teamUid}": ${extractErrorMessage(err)}`,
+        );
+      }
+    }
+  }
+
+  return keysByTeam;
+}
+
+async function decryptTeamKeyEntry(
+  auth: Auth,
+  encryptedKey: Uint8Array,
+  keyType: number,
+): Promise<TeamPublicKeys> {
+  const empty: TeamPublicKeys = {
+    rsaPublicKey: null,
+    eccPublicKey: null,
+    aesKey: null,
+  };
+  switch (keyType) {
+    case 1:
+      return {
+        ...empty,
+        aesKey: await platform.aesCbcDecrypt(encryptedKey, auth.dataKey, true),
+      };
+    case 2:
+      if (!auth.privateKey) return empty;
+      return {
+        ...empty,
+        aesKey: platform.privateDecrypt(encryptedKey, auth.privateKey),
+      };
+    case 3:
+      return {
+        ...empty,
+        aesKey: await platform.aesGcmDecrypt(encryptedKey, auth.dataKey),
+      };
+    case 4:
+      if (!auth.eccPrivateKey) return empty;
+      return {
+        ...empty,
+        aesKey: await platform.privateDecryptEC(
+          encryptedKey,
+          auth.eccPrivateKey,
+        ),
+      };
+    case -1:
+      return { ...empty, eccPublicKey: encryptedKey };
+    case -3:
+      return { ...empty, rsaPublicKey: encryptedKey };
+    default:
+      return empty;
+  }
+}
+
+async function encryptSharedFolderKeyForTeam(
+  sharedFolderKey: Uint8Array,
+  teamKeys: TeamPublicKeys,
+): Promise<Folder.IEncryptedDataKey | undefined> {
+  if (teamKeys.aesKey) {
+    return {
+      encryptedKey: await platform.aesCbcEncrypt(
+        sharedFolderKey,
+        teamKeys.aesKey,
+        true,
+      ),
+      encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_data_key,
+    };
+  }
+  if (teamKeys.eccPublicKey) {
+    return {
+      encryptedKey: await platform.publicEncryptEC(
+        sharedFolderKey,
+        teamKeys.eccPublicKey,
+      ),
+      encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_public_key_ecc,
+    };
+  }
+  if (teamKeys.rsaPublicKey) {
+    return {
+      encryptedKey: platform.publicEncrypt(
+        sharedFolderKey,
+        platform.bytesToBase64(teamKeys.rsaPublicKey),
+      ),
+      encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_public_key,
+    };
+  }
+  return undefined;
+}
+
+function teamUidFromStatus(teamUid: Uint8Array | null | undefined): string {
+  return teamUid && teamUid.length > 0 ? webSafe64FromBytes(teamUid) : "";
 }
 
 async function removeFromSharedFolder(
@@ -246,14 +467,30 @@ async function removeFromSharedFolder(
     ResolvedFolder,
     { kind: FolderKind.SharedFolder | FolderKind.SharedFolderFolder }
   >,
-  emails: string[],
+  userEmails: string[],
+  teamUids: string[],
 ): Promise<ShareFolderResult> {
   const updateRequest: Folder.ISharedFolderUpdateV3Request = {
     sharedFolderUid: normal64Bytes(sharedFolder.uid),
     revision: sharedFolder.revision,
     forceUpdate: false,
-    sharedFolderRemoveUser: emails,
   };
+  if (userEmails.length > 0) updateRequest.sharedFolderRemoveUser = userEmails;
+  if (teamUids.length > 0) {
+    updateRequest.sharedFolderRemoveTeam = teamUids.map((teamUid) =>
+      normal64Bytes(teamUid),
+    );
+  }
+
+  if (
+    (updateRequest.sharedFolderRemoveUser || []).length === 0 &&
+    (updateRequest.sharedFolderRemoveTeam || []).length === 0
+  ) {
+    throw new KeeperSdkError(
+      "Provide at least one user or team to remove.",
+      "no_targets",
+    );
+  }
 
   let response: Folder.ISharedFolderUpdateV3ResponseV2;
   try {
@@ -285,10 +522,19 @@ async function removeFromSharedFolder(
       status,
     });
   }
+  for (const teamStatus of innerResponse?.sharedFolderRemoveTeamStatus || []) {
+    const status = teamStatus.status || ShareFolderUserResultStatus.Unknown;
+    userResults.push({
+      email: teamUidFromStatus(teamStatus.teamUid as Uint8Array),
+      success: status === FolderResultStatus.Success,
+      status,
+    });
+  }
 
   const allUsersOk =
-    userResults.length > 0 &&
-    userResults.every((userResult) => userResult.success);
+    userResults.length === 0
+      ? requestOk
+      : userResults.every((userResult) => userResult.success);
 
   const failureReason = !requestOk
     ? innerResponse?.status ||
@@ -332,21 +578,25 @@ async function shareWithSharedFolder(
     );
   }
 
-  const emails = dedupeEmails(input.emails);
-  if (emails.length === 0) {
-    throw new KeeperSdkError("Provide at least one user email.", "no_emails");
-  }
-
-  const invalidEmails = emails.filter((email) => !isValidEmail(email));
-  if (invalidEmails.length > 0) {
+  const targets = dedupeTargets(input.emails);
+  if (targets.length === 0) {
     throw new KeeperSdkError(
-      `Invalid email(s): ${invalidEmails.join(", ")}`,
-      "invalid_email",
+      "Provide at least one user email or team.",
+      "no_targets",
     );
   }
 
+  const { userEmails, teamIdentifiers } = splitShareTargets(targets);
+  const teamUids = await resolveTeamUids(auth, storage, teamIdentifiers);
+
   if (input.action === ShareFolderAction.Remove) {
-    return removeFromSharedFolder(auth, sharedFolder, resolved, emails);
+    return removeFromSharedFolder(
+      auth,
+      sharedFolder,
+      resolved,
+      userEmails,
+      teamUids,
+    );
   }
 
   const existingMembers = new Set<string>();
@@ -361,11 +611,29 @@ async function shareWithSharedFolder(
     }
   }
 
-  const newEmails = emails.filter((email) => !existingMembers.has(email));
+  const existingTeams = new Set<string>();
+  const existingTeamByUid = new Map<string, DSharedFolderTeam>();
+  for (const sharedFolderTeam of storage.getAll<DSharedFolderTeam>(
+    VaultObjectKind.SharedFolderTeam,
+  )) {
+    if (
+      sharedFolderTeam.sharedFolderUid === sharedFolder.uid &&
+      sharedFolderTeam.teamUid
+    ) {
+      existingTeams.add(sharedFolderTeam.teamUid);
+      existingTeamByUid.set(sharedFolderTeam.teamUid, sharedFolderTeam);
+    }
+  }
+
+  const newEmails = userEmails.filter((email) => !existingMembers.has(email));
+  const newTeamUids = teamUids.filter((teamUid) => !existingTeams.has(teamUid));
   const usernameToKeys = await fetchUserPublicKeys(auth, newEmails);
+  const teamKeysByUid = await loadTeamKeys(auth, newTeamUids);
 
   const usersToAdd: Folder.ISharedFolderUpdateUser[] = [];
   const usersToUpdate: Folder.ISharedFolderUpdateUser[] = [];
+  const teamsToAdd: Folder.ISharedFolderUpdateTeam[] = [];
+  const teamsToUpdate: Folder.ISharedFolderUpdateTeam[] = [];
   const userResults: ShareFolderUserStatus[] = [];
 
   const newUserManageRecords = isBoolean(input.manageRecords)
@@ -374,14 +642,30 @@ async function shareWithSharedFolder(
   const newUserManageUsers = isBoolean(input.manageUsers)
     ? input.manageUsers
     : sharedFolder.defaultManageUsers;
+  const hasPermissionChange =
+    isBoolean(input.manageRecords) || isBoolean(input.manageUsers);
+  const newTeamManageRecords = isBoolean(input.manageRecords)
+    ? input.manageRecords
+    : sharedFolder.defaultManageRecords === true;
+  const newTeamManageUsers = isBoolean(input.manageUsers)
+    ? input.manageUsers
+    : sharedFolder.defaultManageUsers === true;
 
-  for (const email of emails) {
+  for (const email of userEmails) {
     if (existingMembers.has(email)) {
-      usersToUpdate.push({
-        username: email,
-        manageRecords: toSetBoolean(input.manageRecords),
-        manageUsers: toSetBoolean(input.manageUsers),
-      });
+      if (hasPermissionChange) {
+        usersToUpdate.push({
+          username: email,
+          manageRecords: toSetBoolean(input.manageRecords),
+          manageUsers: toSetBoolean(input.manageUsers),
+        });
+      } else {
+        userResults.push({
+          email,
+          success: true,
+          status: FolderResultStatus.Success,
+        });
+      }
       continue;
     }
 
@@ -440,13 +724,68 @@ async function shareWithSharedFolder(
     });
   }
 
-  if (usersToAdd.length === 0 && usersToUpdate.length === 0) {
+  for (const teamUid of teamUids) {
+    if (existingTeams.has(teamUid)) {
+      if (hasPermissionChange) {
+        const existingTeam = existingTeamByUid.get(teamUid);
+        teamsToUpdate.push({
+          teamUid: normal64Bytes(teamUid),
+          manageRecords: isBoolean(input.manageRecords)
+            ? input.manageRecords
+            : existingTeam?.manageRecords === true,
+          manageUsers: isBoolean(input.manageUsers)
+            ? input.manageUsers
+            : existingTeam?.manageUsers === true,
+        });
+      } else {
+        userResults.push({
+          email: teamUid,
+          success: true,
+          status: FolderResultStatus.Success,
+        });
+      }
+      continue;
+    }
+
+    const teamKeys = teamKeysByUid.get(teamUid);
+    const typedSharedFolderKey = teamKeys
+      ? await encryptSharedFolderKeyForTeam(sharedFolderKey, teamKeys)
+      : undefined;
+    if (!typedSharedFolderKey) {
+      userResults.push({
+        email: teamUid,
+        success: false,
+        status: ShareFolderUserResultStatus.MissingPublicKey,
+        message: `No usable team key for "${teamUid}" (folder="${resolved.displayName}")`,
+      });
+      continue;
+    }
+
+    teamsToAdd.push({
+      teamUid: normal64Bytes(teamUid),
+      manageRecords: newTeamManageRecords,
+      manageUsers: newTeamManageUsers,
+      typedSharedFolderKey,
+    });
+  }
+
+  if (
+    usersToAdd.length === 0 &&
+    usersToUpdate.length === 0 &&
+    teamsToAdd.length === 0 &&
+    teamsToUpdate.length === 0
+  ) {
+    const allOk =
+      userResults.length > 0 &&
+      userResults.every((userResult) => userResult.success);
     return {
-      success: false,
+      success: allOk,
       folderUid: resolved.folderUid,
       sharedFolderUid: sharedFolder.uid,
       folderKind: FolderKind.SharedFolder,
-      message: `No users could be processed for shared folder "${resolved.displayName}" (uid=${sharedFolder.uid}).`,
+      message: allOk
+        ? undefined
+        : `No users or teams could be processed for shared folder "${resolved.displayName}" (uid=${sharedFolder.uid}).`,
       results: userResults,
     };
   }
@@ -459,6 +798,9 @@ async function shareWithSharedFolder(
   if (usersToAdd.length > 0) updateRequest.sharedFolderAddUser = usersToAdd;
   if (usersToUpdate.length > 0)
     updateRequest.sharedFolderUpdateUser = usersToUpdate;
+  if (teamsToAdd.length > 0) updateRequest.sharedFolderAddTeam = teamsToAdd;
+  if (teamsToUpdate.length > 0)
+    updateRequest.sharedFolderUpdateTeam = teamsToUpdate;
 
   let response: Folder.ISharedFolderUpdateV3ResponseV2;
   try {
@@ -502,10 +844,57 @@ async function shareWithSharedFolder(
       status,
     });
   }
+  for (const addTeamStatus of innerResponse?.sharedFolderAddTeamStatus || []) {
+    const status = addTeamStatus.status || ShareFolderUserResultStatus.Unknown;
+    userResults.push({
+      email: teamUidFromStatus(addTeamStatus.teamUid as Uint8Array),
+      success: status === FolderResultStatus.Success,
+      status,
+    });
+  }
+  for (const updateTeamStatus of innerResponse?.sharedFolderUpdateTeamStatus ||
+    []) {
+    const status =
+      updateTeamStatus.status || ShareFolderUserResultStatus.Unknown;
+    userResults.push({
+      email: teamUidFromStatus(updateTeamStatus.teamUid as Uint8Array),
+      success: status === FolderResultStatus.Success,
+      status,
+    });
+  }
+
+  if (requestOk) {
+    const reported = new Set(
+      userResults.map((userResult) => (userResult.email || "").toLowerCase()),
+    );
+    for (const user of [...usersToAdd, ...usersToUpdate]) {
+      const email = (user.username || "").trim();
+      const key = email.toLowerCase();
+      if (!key || reported.has(key)) continue;
+      userResults.push({
+        email,
+        success: true,
+        status: FolderResultStatus.Success,
+      });
+      reported.add(key);
+    }
+    for (const team of [...teamsToAdd, ...teamsToUpdate]) {
+      const email = teamUidFromStatus(team.teamUid as Uint8Array);
+      const key = email.toLowerCase();
+      if (!key || reported.has(key)) continue;
+      userResults.push({
+        email,
+        success: true,
+        status: FolderResultStatus.Success,
+      });
+      reported.add(key);
+    }
+  }
 
   const allUsersOk =
-    userResults.length > 0 &&
-    userResults.every((userResult) => userResult.success);
+    userResults.length === 0
+      ? requestOk
+      : userResults.every((userResult) => userResult.success);
 
   const failureReason = !requestOk
     ? innerResponse?.status ||

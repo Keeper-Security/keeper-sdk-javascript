@@ -179,6 +179,24 @@ export const syncDownCommand = (request: SyncDownRequest): RestCommand<SyncDownR
         'sync_down'
     )
 
+export type TeamGetKeysRequest = {
+    teams: string[]
+}
+
+export type TeamKeyResponse = {
+    team_uid: string
+    key: string
+    type: number
+}
+
+export type TeamGetKeysResponse = KeeperResponse & {
+    keys?: TeamKeyResponse[]
+}
+
+export const teamGetKeysCommand = (
+    request: TeamGetKeysRequest
+): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> => createCommand(request, 'team_get_keys')
+
 export type RoleEnforcementAddRequest = {
     role_id: number
     enforcement: string
