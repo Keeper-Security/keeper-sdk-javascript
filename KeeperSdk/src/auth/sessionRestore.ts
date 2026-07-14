@@ -195,22 +195,38 @@ function looksLikeFilePath(text: string): boolean {
   return false;
 }
 
-/**
- * Parse session JSON. One JSON.parse when the payload is an object; two when the CLI
- * value is a JSON-encoded string (e.g. JSON.stringify(conf) wrapped in quotes).
- */
-export function sessionRestoreFromJson(json: string): SessionRestoreInput {
-  const text = json.trim().replace(/^\uFEFF/, "");
-  let parsed: unknown;
+function unwrapShellQuotedJson(text: string): string | null {
+  if (text.length < 2) return null;
+  const q = text[0];
+  if ((q !== '"' && q !== "'") || text[text.length - 1] !== q) return null;
+  const inner = text.slice(1, -1).trim();
+  if (!inner.startsWith("{") && !inner.startsWith("[")) return null;
+  return inner;
+}
+
+function parseJsonPayload(text: string): unknown {
   try {
-    parsed = JSON.parse(text);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
+    return JSON.parse(text);
+  } catch (first) {
+    const unwrapped = unwrapShellQuotedJson(text);
+    if (unwrapped !== null) {
+      try {
+        return JSON.parse(unwrapped);
+      } catch {
+        /* fall through to original error */
+      }
+    }
+    const msg = first instanceof Error ? first.message : String(first);
     throw new KeeperSdkError(
       `restore-session: invalid JSON: ${msg}`,
       ResultCodes.INVALID_CREDENTIALS,
     );
   }
+}
+
+export function sessionRestoreFromJson(json: string): SessionRestoreInput {
+  const text = json.trim().replace(/^\uFEFF/, "");
+  let parsed: unknown = parseJsonPayload(text);
   if (typeof parsed === "string") {
     try {
       parsed = JSON.parse(parsed);
