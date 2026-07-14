@@ -107,6 +107,13 @@ export {
   shareRecord,
   removeRecordShare,
   getRecordShareInfo,
+  loadUserShareKeys,
+  encryptKeyForRecipient,
+  sendShareInviteIfNeeded,
+  loadUserShareKeysOrInvite,
+  parseRecordSharingStatus,
+  buildNsfRecordSharePermission,
+  buildNsfRecordRevokePermission,
 } from "./sharing/Sharing";
 export type {
   ShareRecordInput,
@@ -116,6 +123,7 @@ export type {
   RecordShareInfo,
   RecordUserPermission,
   RecordSharedFolderPermission,
+  UserShareKeys,
 } from "./sharing/Sharing";
 
 export { KeeperVault } from "./vault/KeeperVault";

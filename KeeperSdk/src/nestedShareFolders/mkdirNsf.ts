@@ -28,6 +28,8 @@ import type {
   NsfFolderColorInput,
 } from "./nsfTypes";
 
+export type { NsfFolderColorInput } from "./nsfTypes";
+
 type NsfFolderMetadata = {
   name: string;
   color?: string;

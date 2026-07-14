@@ -56,7 +56,13 @@
         "reports:password-report": "ts-node src/enterpriseReport/password_report.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
-        "types:ci": "tsc"
+        "types:ci": "tsc",
+        "nsf:folder": "ts-node src/nestedShareFolders/nsf_folder.ts",
+        "nsf:rndir": "ts-node src/nestedShareFolders/rndir_nsf.ts",
+        "nsf:share": "ts-node src/nestedShareFolders/share_nsf.ts",
+        "nsf:shortcut": "ts-node src/nestedShareFolders/shortcut_nsf.ts",
+        "nsf:transfer-record": "ts-node src/nestedShareFolders/transfer_nsf_record.ts",
+        "nsf:record-permission": "ts-node src/nestedShareFolders/nsf_record_permission.ts"
     },
     "dependencies": {
         "@keeper-security/keeperapi": "17.1.0",

@@ -1,4 +1,5 @@
 export {
+  ROOT_FOLDER_UID,
   KeeperDriveKind,
   NsfItemType,
   formatAccessRoleType,
@@ -25,9 +26,18 @@ export {
   checkRecordDeletePermission,
   checkRecordEditPermission,
   checkFolderDeletePermission,
+  checkFolderEditPermission,
+  checkFolderSharePermission,
+  checkRecordSharePermission,
   parseNsfPath,
   findExistingChildFolder,
+  resolveNsfRoleName,
+  getNsfAccessRoleLabel,
+  getNsfRecordPermissionRoleLabel,
+  normalizeNsfRecordPermissionRole,
 } from "./nsfHelpers";
+
+export type { NsfRecordAccessFlags } from "./nsfHelpers";
 
 export {
   listNestedShareFolders,
@@ -119,8 +129,78 @@ export {
 } from "./removeNsfRecord";
 
 export { mkdirNestedShareFolder } from "./mkdirNsf";
-export { NSF_FOLDER_COLORS, NSF_MAX_RECORD_BATCH } from "./nsfConstants";
-export type { NsfFolderColor } from "./nsfConstants";
+
+export {
+  updateNestedShareFolder,
+  updateNestedShareFolders,
+} from "./updateNsfFolder";
+export type {
+  UpdateNsfFolderInput,
+  UpdateNsfFolderResult,
+  UpdateNsfFolderBatchItem,
+  UpdateNsfFolderBatchResultItem,
+  UpdateNsfFoldersResult,
+} from "./updateNsfFolder";
+
+export {
+  NsfFolderShareAction,
+  NsfRecordShareAction,
+  shareNestedShareFolder,
+  shareNestedShareRecord,
+  formatNsfRecordSharePlan,
+  formatNsfRecordShareResults,
+} from "./nsfShare";
+export type {
+  NsfFolderShareActionInput,
+  ShareNestedShareFolderInput,
+  ShareNestedShareFolderResult,
+  NsfFolderShareResultItem,
+  NsfRecordShareActionInput,
+  ShareNestedShareRecordInput,
+  ShareNestedShareRecordResult,
+  NsfRecordSharePlanItem,
+  NsfRecordShareResultItem,
+} from "./nsfShare";
+
+export {
+  getNsfRecordShortcuts,
+  listNsfShortcuts,
+  keepNsfShortcut,
+  formatNsfShortcutOutput,
+  formatKeepNsfShortcutPlan,
+} from "./nsfShortcut";
+export type {
+  NsfShortcutRow,
+  ListNsfShortcutsOptions,
+  KeepNsfShortcutInput,
+  KeepNsfShortcutPlanItem,
+  KeepNsfShortcutResult,
+  KeepNsfShortcutResultItem,
+} from "./nsfShortcut";
+
+export {
+  transferNestedShareRecords,
+  formatTransferNestedShareRecordResults,
+} from "./nsfTransferRecord";
+export type {
+  TransferNestedShareRecordInput,
+  TransferNestedShareRecordResult,
+  TransferNestedShareRecordResultItem,
+} from "./nsfTransferRecord";
+
+export {
+  NSF_FOLDER_COLORS,
+  NSF_MAX_RECORD_BATCH,
+  NSF_MAX_FOLDER_UPDATES,
+  NSF_RECORD_PERMISSION_ROLES,
+  NSF_SHARE_BATCH_SIZE,
+  getFolderPermissionsForRole,
+} from "./nsfConstants";
+export type {
+  NsfFolderColor,
+  NsfRecordPermissionRole,
+  NsfRecordPermissionRoleInput,
+} from "./nsfConstants";
 
 export {
   removeNestedShareFolders,
@@ -139,6 +219,23 @@ export {
 } from "./updateNsfRecord";
 
 export { addNestedShareRecord, addNestedShareRecords } from "./addNsfRecord";
+
+export {
+  NsfRecordPermissionAction,
+  collectNsfRecordUidsInFolder,
+  updateNestedShareRecordPermissions,
+  buildNsfRecordPermissionPlan,
+  formatNsfRecordPermissionPlan,
+  formatNsfRecordPermissionFailures,
+} from "./nsfRecordPermission";
+export type {
+  NsfRecordPermissionActionInput,
+  UpdateNsfRecordPermissionInput,
+  UpdateNsfRecordPermissionResult,
+  NsfRecordPermissionPlan,
+  NsfRecordPermissionPlanItem,
+  NsfRecordPermissionFailure,
+} from "./nsfRecordPermission";
 
 export { clearNsfRecordTypeCache } from "./nsfRecordTypes";
 

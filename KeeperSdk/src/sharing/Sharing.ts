@@ -1,310 +1,402 @@
 import {
-  Auth,
-  Records,
-  Authentication,
-  platform,
-  getPublicKeysMessage,
-  getRecordsDetailsMessage,
-  webSafe64FromBytes,
-  recordsShareUpdateMessage,
-  normal64Bytes,
-} from "@keeper-security/keeperapi";
-import { extractErrorMessage, KeeperSdkError } from "../utils/errors";
+    Auth,
+    Records,
+    Authentication,
+    platform,
+    getPublicKeysMessage,
+    getRecordsDetailsMessage,
+    webSafe64FromBytes,
+    recordsShareUpdateMessage,
+    normal64Bytes,
+    sendShareInviteMessage,
+    record,
+    Folder,
+} from '@keeper-security/keeperapi'
+import { extractErrorMessage, KeeperSdkError } from '../utils/errors'
 
 enum ShareStatus {
-  Success = "success",
-  PendingAccept = "pending_accept",
-  MissingPublicKey = "missing_public_key",
-  Error = "error",
-  Unknown = "unknown",
+    Success = 'success',
+    PendingAccept = 'pending_accept',
+    MissingPublicKey = 'missing_public_key',
+    Error = 'error',
+    Unknown = 'unknown',
 }
 
 export type ShareRecordInput = {
-  recordUid: string;
-  email: string;
-  canEdit?: boolean;
-  canShare?: boolean;
-};
+    recordUid: string
+    email: string
+    canEdit?: boolean
+    canShare?: boolean
+}
 
 export type ShareRecordResult = {
-  recordUid: string;
-  email: string;
-  success: boolean;
-  status: string;
-  message: string;
-};
+    recordUid: string
+    email: string
+    success: boolean
+    status: string
+    message: string
+}
 
 export type RemoveShareInput = {
-  recordUid: string;
-  email: string;
-};
+    recordUid: string
+    email: string
+}
 
 export type RemoveShareResult = {
-  recordUid: string;
-  email: string;
-  success: boolean;
-  status: string;
-  message: string;
-};
+    recordUid: string
+    email: string
+    success: boolean
+    status: string
+    message: string
+}
 
-type UserKeys = {
-  username: string;
-  rsaPublicKey: Uint8Array | null;
-  eccPublicKey: Uint8Array | null;
-  errorCode: string | null;
-};
+export type UserShareKeys = {
+    username: string
+    accountUid?: Uint8Array
+    rsaPublicKey: Uint8Array | null
+    eccPublicKey: Uint8Array | null
+    errorCode: string | null
+}
 
-async function loadUserPublicKey(auth: Auth, email: string): Promise<UserKeys> {
-  const msg = getPublicKeysMessage({ usernames: [email] });
-  let response: Authentication.IGetPublicKeysResponse;
+export async function loadUserShareKeys(auth: Auth, email: string): Promise<UserShareKeys> {
+    const msg = getPublicKeysMessage({ usernames: [email] })
+    let response: Authentication.IGetPublicKeysResponse
 
-  try {
-    response = await auth.executeRest(msg);
-  } catch (err) {
+    try {
+        response = await auth.executeRest(msg)
+    } catch (err) {
+        throw new KeeperSdkError(`Failed to fetch public key for ${email}: ${extractErrorMessage(err)}`)
+    }
+
+    const keyResponses = response.keyResponses || []
+    if (keyResponses.length === 0) {
+        throw new KeeperSdkError(`No public key returned for ${email}`, 'missing_public_key')
+    }
+
+    const entry = keyResponses[0]
+    if (entry.errorCode) {
+        throw new KeeperSdkError(
+            `Public key lookup failed for ${email}: ${entry.errorCode} - ${entry.message || ''}`,
+            entry.errorCode
+        )
+    }
+
+    return {
+        username: entry.username || email,
+        accountUid: entry.accountUid?.length ? (entry.accountUid as Uint8Array) : undefined,
+        rsaPublicKey: entry.publicKey && entry.publicKey.length > 0 ? (entry.publicKey as Uint8Array) : null,
+        eccPublicKey: entry.publicEccKey && entry.publicEccKey.length > 0 ? (entry.publicEccKey as Uint8Array) : null,
+        errorCode: entry.errorCode || null,
+    }
+}
+
+export async function encryptKeyForRecipient(
+    key: Uint8Array,
+    userKeys: UserShareKeys
+): Promise<{ encryptedKey: Uint8Array; useEccKey: boolean }> {
+    if (userKeys.eccPublicKey) {
+        return {
+            encryptedKey: await platform.publicEncryptEC(key, userKeys.eccPublicKey),
+            useEccKey: true,
+        }
+    }
+    if (userKeys.rsaPublicKey) {
+        return {
+            encryptedKey: platform.publicEncrypt(key, platform.bytesToBase64(userKeys.rsaPublicKey)),
+            useEccKey: false,
+        }
+    }
     throw new KeeperSdkError(
-      `Failed to fetch public key for ${email}: ${extractErrorMessage(err)}`,
-    );
-  }
+        `No usable public key available for ${userKeys.username}`,
+        ShareStatus.MissingPublicKey
+    )
+}
 
-  const keyResponses = response.keyResponses || [];
-  if (keyResponses.length === 0) {
-    throw new KeeperSdkError(
-      `No public key returned for ${email}`,
-      "missing_public_key",
-    );
-  }
+export async function sendShareInviteIfNeeded(auth: Auth, email: string): Promise<void> {
+    await auth.executeRestAction(
+        sendShareInviteMessage(Authentication.SendShareInviteRequest.create({ email }))
+    )
+}
 
-  const entry = keyResponses[0];
-  if (entry.errorCode) {
-    throw new KeeperSdkError(
-      `Public key lookup failed for ${email}: ${entry.errorCode} - ${entry.message || ""}`,
-      entry.errorCode,
-    );
-  }
+export async function loadUserShareKeysOrInvite(
+    auth: Auth,
+    email: string,
+    errorCode: string = ShareStatus.MissingPublicKey
+): Promise<UserShareKeys & { accountUid: Uint8Array }> {
+    const userKeys = await loadUserShareKeys(auth, email)
+    if (!userKeys.rsaPublicKey && !userKeys.eccPublicKey) {
+        await sendShareInviteIfNeeded(auth, email)
+        throw new KeeperSdkError(
+            `User '${email}' has no public key. Share invitation sent.`,
+            errorCode
+        )
+    }
+    if (!userKeys.accountUid?.length) {
+        throw new KeeperSdkError(`User ${email} not found`, errorCode)
+    }
+    return { ...userKeys, accountUid: userKeys.accountUid }
+}
 
-  return {
-    username: entry.username || email,
-    rsaPublicKey:
-      entry.publicKey && entry.publicKey.length > 0
-        ? (entry.publicKey as Uint8Array)
-        : null,
-    eccPublicKey:
-      entry.publicEccKey && entry.publicEccKey.length > 0
-        ? (entry.publicEccKey as Uint8Array)
-        : null,
-    errorCode: entry.errorCode || null,
-  };
+export function parseRecordSharingStatus(
+    status: record.v3.sharing.IStatus | null | undefined
+): { recordUid: string; success: boolean; message: string } {
+    if (!status?.recordUid?.length) {
+        return { recordUid: '', success: false, message: 'No status returned' }
+    }
+    const recordUid = webSafe64FromBytes(status.recordUid)
+    const sharingStatus = status.status ?? record.v3.sharing.SharingStatus.SUCCESS
+    const statusName = record.v3.sharing.SharingStatus[sharingStatus] ?? String(sharingStatus)
+    const success =
+        sharingStatus === record.v3.sharing.SharingStatus.SUCCESS ||
+        sharingStatus === record.v3.sharing.SharingStatus.PENDING_ACCEPT
+    return { recordUid, success, message: status.message || statusName }
+}
+
+export async function buildNsfRecordSharePermission(
+    auth: Auth,
+    recordUid: string,
+    recordKey: Uint8Array,
+    email: string,
+    accessRoleType: Folder.AccessRoleType,
+    expirationTimestamp?: number,
+    errorCode: string = ShareStatus.MissingPublicKey
+): Promise<record.v3.sharing.IPermissions> {
+    const userKeys = await loadUserShareKeysOrInvite(auth, email, errorCode)
+    const { encryptedKey, useEccKey } = await encryptKeyForRecipient(recordKey, userKeys)
+    const recordUidBytes = normal64Bytes(recordUid)
+    const rules: Folder.IRecordAccessData = {
+        accessTypeUid: userKeys.accountUid,
+        accessType: Folder.AccessType.AT_USER,
+        recordUid: recordUidBytes,
+        owner: false,
+        accessRoleType,
+    }
+    if (expirationTimestamp != null) {
+        rules.tlaProperties = { expiration: expirationTimestamp }
+    }
+    return {
+        recipientUid: userKeys.accountUid,
+        recordUid: recordUidBytes,
+        recordKey: encryptedKey,
+        useEccKey,
+        rules,
+    }
+}
+
+export async function buildNsfRecordRevokePermission(
+    auth: Auth,
+    recordUid: string,
+    email: string,
+    errorCode: string = ShareStatus.MissingPublicKey
+): Promise<record.v3.sharing.IPermissions> {
+    const userKeys = await loadUserShareKeys(auth, email)
+    if (!userKeys.accountUid?.length) {
+        throw new KeeperSdkError(`User ${email} not found`, errorCode)
+    }
+    const recordUidBytes = normal64Bytes(recordUid)
+    return {
+        recipientUid: userKeys.accountUid,
+        recordUid: recordUidBytes,
+        rules: {
+            accessTypeUid: userKeys.accountUid,
+            accessType: Folder.AccessType.AT_USER,
+            recordUid: recordUidBytes,
+        },
+    }
 }
 
 export async function shareRecord(
-  auth: Auth,
-  recordKey: Uint8Array,
-  input: ShareRecordInput,
+    auth: Auth,
+    recordKey: Uint8Array,
+    input: ShareRecordInput
 ): Promise<ShareRecordResult> {
-  const { recordUid, email, canEdit = false, canShare = false } = input;
+    const { recordUid, email, canEdit = false, canShare = false } = input
 
-  const userKeys = await loadUserPublicKey(auth, email);
+    const userKeys = await loadUserShareKeys(auth, email)
 
-  let encryptedRecordKey: Uint8Array;
-  let useEccKey = false;
+    let encryptedRecordKey: Uint8Array
+    let useEccKey = false
 
-  if (userKeys.eccPublicKey) {
-    encryptedRecordKey = await platform.publicEncryptEC(
-      recordKey,
-      userKeys.eccPublicKey,
-    );
-    useEccKey = true;
-  } else if (userKeys.rsaPublicKey) {
-    const rsaKeyBase64 = platform.bytesToBase64(userKeys.rsaPublicKey);
-    encryptedRecordKey = platform.publicEncrypt(recordKey, rsaKeyBase64);
-    useEccKey = false;
-  } else {
-    return {
-      recordUid,
-      email,
-      success: false,
-      status: ShareStatus.MissingPublicKey,
-      message: `No usable public key available for ${email}`,
-    };
-  }
+    if (userKeys.eccPublicKey) {
+        encryptedRecordKey = await platform.publicEncryptEC(recordKey, userKeys.eccPublicKey)
+        useEccKey = true
+    } else if (userKeys.rsaPublicKey) {
+        const rsaKeyBase64 = platform.bytesToBase64(userKeys.rsaPublicKey)
+        encryptedRecordKey = platform.publicEncrypt(recordKey, rsaKeyBase64)
+        useEccKey = false
+    } else {
+        return {
+            recordUid,
+            email,
+            success: false,
+            status: ShareStatus.MissingPublicKey,
+            message: `No usable public key available for ${email}`,
+        }
+    }
 
-  const sharedRecord: Records.ISharedRecord = {
-    toUsername: email,
-    recordUid: normal64Bytes(recordUid),
-    recordKey: encryptedRecordKey,
-    editable: canEdit,
-    shareable: canShare,
-    useEccKey,
-  };
-
-  const msg = recordsShareUpdateMessage({ addSharedRecord: [sharedRecord] });
-
-  let response: Records.IRecordShareUpdateResponse;
-  try {
-    response = await auth.executeRest(msg);
-  } catch (err) {
-    return {
-      recordUid,
-      email,
-      success: false,
-      status: ShareStatus.Error,
-      message: extractErrorMessage(err),
-    };
-  }
-
-  const addStatuses = response.addSharedRecordStatus || [];
-  if (addStatuses.length > 0) {
-    const st = addStatuses[0];
-    const isSuccess =
-      st.status === ShareStatus.Success ||
-      st.status === ShareStatus.PendingAccept;
-    return {
-      recordUid,
-      email: st.username || email,
-      success: isSuccess,
-      status: st.status || ShareStatus.Unknown,
-      message: st.message || st.status || "",
-    };
-  }
-
-  return {
-    recordUid,
-    email,
-    success: true,
-    status: ShareStatus.Success,
-    message: "Record shared successfully",
-  };
-}
-
-export async function removeRecordShare(
-  auth: Auth,
-  input: RemoveShareInput,
-): Promise<RemoveShareResult> {
-  const { recordUid, email } = input;
-
-  const msg = recordsShareUpdateMessage({
-    removeSharedRecord: [
-      {
+    const sharedRecord: Records.ISharedRecord = {
         toUsername: email,
         recordUid: normal64Bytes(recordUid),
-      },
-    ],
-  });
+        recordKey: encryptedRecordKey,
+        editable: canEdit,
+        shareable: canShare,
+        useEccKey,
+    }
 
-  let response: Records.IRecordShareUpdateResponse;
-  try {
-    response = await auth.executeRest(msg);
-  } catch (err) {
+    const msg = recordsShareUpdateMessage({ addSharedRecord: [sharedRecord] })
+
+    let response: Records.IRecordShareUpdateResponse
+    try {
+        response = await auth.executeRest(msg)
+    } catch (err) {
+        return {
+            recordUid,
+            email,
+            success: false,
+            status: ShareStatus.Error,
+            message: extractErrorMessage(err),
+        }
+    }
+
+    const addStatuses = response.addSharedRecordStatus || []
+    if (addStatuses.length > 0) {
+        const st = addStatuses[0]
+        const isSuccess = st.status === ShareStatus.Success || st.status === ShareStatus.PendingAccept
+        return {
+            recordUid,
+            email: st.username || email,
+            success: isSuccess,
+            status: st.status || ShareStatus.Unknown,
+            message: st.message || st.status || '',
+        }
+    }
+
     return {
-      recordUid,
-      email,
-      success: false,
-      status: ShareStatus.Error,
-      message: extractErrorMessage(err),
-    };
-  }
+        recordUid,
+        email,
+        success: true,
+        status: ShareStatus.Success,
+        message: 'Record shared successfully',
+    }
+}
 
-  const removeStatuses = response.removeSharedRecordStatus || [];
-  if (removeStatuses.length > 0) {
-    const st = removeStatuses[0];
+export async function removeRecordShare(auth: Auth, input: RemoveShareInput): Promise<RemoveShareResult> {
+    const { recordUid, email } = input
+
+    const msg = recordsShareUpdateMessage({
+        removeSharedRecord: [
+            {
+                toUsername: email,
+                recordUid: normal64Bytes(recordUid),
+            },
+        ],
+    })
+
+    let response: Records.IRecordShareUpdateResponse
+    try {
+        response = await auth.executeRest(msg)
+    } catch (err) {
+        return {
+            recordUid,
+            email,
+            success: false,
+            status: ShareStatus.Error,
+            message: extractErrorMessage(err),
+        }
+    }
+
+    const removeStatuses = response.removeSharedRecordStatus || []
+    if (removeStatuses.length > 0) {
+        const st = removeStatuses[0]
+        return {
+            recordUid,
+            email: st.username || email,
+            success: st.status === ShareStatus.Success,
+            status: st.status || ShareStatus.Unknown,
+            message: st.message || st.status || '',
+        }
+    }
+
     return {
-      recordUid,
-      email: st.username || email,
-      success: st.status === ShareStatus.Success,
-      status: st.status || ShareStatus.Unknown,
-      message: st.message || st.status || "",
-    };
-  }
-
-  return {
-    recordUid,
-    email,
-    success: true,
-    status: ShareStatus.Success,
-    message: "Share removed successfully",
-  };
+        recordUid,
+        email,
+        success: true,
+        status: ShareStatus.Success,
+        message: 'Share removed successfully',
+    }
 }
 
 export type RecordUserPermission = {
-  username: string;
-  accountUid?: string;
-  owner: boolean;
-  shareAdmin: boolean;
-  shareable: boolean;
-  editable: boolean;
-  awaitingApproval: boolean;
-  expiration?: number;
-};
+    username: string
+    accountUid?: string
+    owner: boolean
+    shareAdmin: boolean
+    shareable: boolean
+    editable: boolean
+    awaitingApproval: boolean
+    expiration?: number
+}
 
 export type RecordSharedFolderPermission = {
-  sharedFolderUid: string;
-  resharable: boolean;
-  editable: boolean;
-  revision?: number;
-  expiration?: number;
-};
+    sharedFolderUid: string
+    resharable: boolean
+    editable: boolean
+    revision?: number
+    expiration?: number
+}
 
 export type RecordShareInfo = {
-  recordUid: string;
-  userPermissions: RecordUserPermission[];
-  sharedFolderPermissions: RecordSharedFolderPermission[];
-};
+    recordUid: string
+    userPermissions: RecordUserPermission[]
+    sharedFolderPermissions: RecordSharedFolderPermission[]
+}
 
 function bytesToUid(bytes: Uint8Array | null | undefined): string | undefined {
-  return bytes && bytes.length > 0 ? webSafe64FromBytes(bytes) : undefined;
+    return bytes && bytes.length > 0 ? webSafe64FromBytes(bytes) : undefined
 }
 
-function longToNumber(
-  value: number | { toNumber: () => number } | null | undefined,
-): number | undefined {
-  if (value == null) return undefined;
-  return typeof value === "number" ? value : value.toNumber();
+function longToNumber(value: number | { toNumber: () => number } | null | undefined): number | undefined {
+    if (value == null) return undefined
+    return typeof value === 'number' ? value : value.toNumber()
 }
 
-export async function getRecordShareInfo(
-  auth: Auth,
-  recordUid: string,
-): Promise<RecordShareInfo | null> {
-  const msg = getRecordsDetailsMessage({
-    clientTime: Date.now(),
-    recordUid: [normal64Bytes(recordUid)],
-    recordDetailsInclude: Records.RecordDetailsInclude.SHARE_ONLY,
-  });
+export async function getRecordShareInfo(auth: Auth, recordUid: string): Promise<RecordShareInfo | null> {
+    const msg = getRecordsDetailsMessage({
+        clientTime: Date.now(),
+        recordUid: [normal64Bytes(recordUid)],
+        recordDetailsInclude: Records.RecordDetailsInclude.SHARE_ONLY,
+    })
 
-  let response: Records.IGetRecordDataWithAccessInfoResponse;
-  try {
-    response = await auth.executeRest(msg);
-  } catch (err) {
-    throw new KeeperSdkError(
-      `Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`,
-    );
-  }
+    let response: Records.IGetRecordDataWithAccessInfoResponse
+    try {
+        response = await auth.executeRest(msg)
+    } catch (err) {
+        throw new KeeperSdkError(
+            `Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`
+        )
+    }
 
-  const detail = response.recordDataWithAccessInfo?.[0];
-  if (!detail) return null;
+    const detail = response.recordDataWithAccessInfo?.[0]
+    if (!detail) return null
 
-  const userPermissions: RecordUserPermission[] = (
-    detail.userPermission ?? []
-  ).map((u) => ({
-    username: u.username || "",
-    accountUid: bytesToUid(u.accountUid),
-    owner: !!u.owner,
-    shareAdmin: !!u.shareAdmin,
-    shareable: !!u.sharable,
-    editable: !!u.editable,
-    awaitingApproval: !!u.awaitingApproval,
-    expiration: longToNumber(u.expiration as number | null | undefined),
-  }));
+    const userPermissions: RecordUserPermission[] = (detail.userPermission ?? []).map((u) => ({
+        username: u.username || '',
+        accountUid: bytesToUid(u.accountUid),
+        owner: !!u.owner,
+        shareAdmin: !!u.shareAdmin,
+        shareable: !!u.sharable,
+        editable: !!u.editable,
+        awaitingApproval: !!u.awaitingApproval,
+        expiration: longToNumber(u.expiration as number | null | undefined),
+    }))
 
-  const sharedFolderPermissions: RecordSharedFolderPermission[] = (
-    detail.sharedFolderPermission ?? []
-  ).map((s) => ({
-    sharedFolderUid: bytesToUid(s.sharedFolderUid) ?? "",
-    resharable: !!s.resharable,
-    editable: !!s.editable,
-    revision: longToNumber(s.revision as number | null | undefined),
-    expiration: longToNumber(s.expiration as number | null | undefined),
-  }));
+    const sharedFolderPermissions: RecordSharedFolderPermission[] = (detail.sharedFolderPermission ?? []).map((s) => ({
+        sharedFolderUid: bytesToUid(s.sharedFolderUid) ?? '',
+        resharable: !!s.resharable,
+        editable: !!s.editable,
+        revision: longToNumber(s.revision as number | null | undefined),
+        expiration: longToNumber(s.expiration as number | null | undefined),
+    }))
 
-  return { recordUid, userPermissions, sharedFolderPermissions };
+    return { recordUid, userPermissions, sharedFolderPermissions }
 }
