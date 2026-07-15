@@ -3,21 +3,17 @@ import {
     extractErrorMessage,
     login,
     logger,
-    prompt,
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
+import { promptRequired } from '../utils/promptCommands'
 
 async function linkNsf() {
     const vault = await login()
 
     try {
-        const recordIdentifier = (await prompt('Record UID or title: ')).trim()
-        const folderIdentifier = (await prompt('Destination folder UID or name: ')).trim()
-        if (!recordIdentifier || !folderIdentifier) {
-            logger.info('Both record and folder are required.')
-            return
-        }
+        const recordIdentifier = await promptRequired('Record UID or title: ')
+        const folderIdentifier = await promptRequired('Destination folder UID or name: ')
 
         const restore = suppressLogs()
         let result
