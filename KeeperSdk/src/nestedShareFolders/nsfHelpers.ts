@@ -1017,7 +1017,6 @@ function toFolderAccessEntry(folderUid: string, accessor: Folder.IFolderAccessDa
     }
 }
 
-/** Live folder accessors — sync-down often only includes the current user's own access. */
 export async function fetchLiveFolderAccessEntries(
     auth: Auth,
     folderUid: string
@@ -1061,7 +1060,6 @@ export async function findFolderAccessEntryOrLive(
             (entry) => entry.accessTypeUid === accessTypeUid && entry.accessType === accessType
         )
     } catch {
-        // If live lookup fails, fall through to add-path (previous behavior).
         return undefined
     }
 }
