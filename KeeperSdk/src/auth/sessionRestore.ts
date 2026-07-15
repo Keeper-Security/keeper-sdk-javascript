@@ -179,9 +179,24 @@ function assertBodyIsJsonNotHtml(body: string, source: string): void {
   }
 }
 
+function unwrapShellQuotedJson(text: string): string | null {
+  if (text.length < 2) return null;
+  const q = text[0];
+  if ((q !== '"' && q !== "'") || text[text.length - 1] !== q) return null;
+  const inner = text.slice(1, -1).trim();
+  if (!inner.startsWith("{") && !inner.startsWith("[")) return null;
+  return inner;
+}
+
 function looksLikeInlineJson(text: string): boolean {
   const t = text.trimStart();
-  return t.startsWith("{") || t.startsWith("[") || t.startsWith('"');
+  // Object / array / JSON-encoded string, or shell-quoted paste: '{"a":1}'
+  return (
+    t.startsWith("{") ||
+    t.startsWith("[") ||
+    t.startsWith('"') ||
+    unwrapShellQuotedJson(t) !== null
+  );
 }
 
 /** File path / URL — not inline JSON (avoid JSON.parse on `/path/to/conf.json`). */
@@ -195,15 +210,6 @@ function looksLikeFilePath(text: string): boolean {
   return false;
 }
 
-function unwrapShellQuotedJson(text: string): string | null {
-  if (text.length < 2) return null;
-  const q = text[0];
-  if ((q !== '"' && q !== "'") || text[text.length - 1] !== q) return null;
-  const inner = text.slice(1, -1).trim();
-  if (!inner.startsWith("{") && !inner.startsWith("[")) return null;
-  return inner;
-}
-
 function parseJsonPayload(text: string): unknown {
   try {
     return JSON.parse(text);
@@ -212,8 +218,12 @@ function parseJsonPayload(text: string): unknown {
     if (unwrapped !== null) {
       try {
         return JSON.parse(unwrapped);
-      } catch {
-        /* fall through to original error */
+      } catch (second) {
+        const msg = second instanceof Error ? second.message : String(second);
+        throw new KeeperSdkError(
+          `restore-session: invalid JSON: ${msg}`,
+          ResultCodes.INVALID_CREDENTIALS,
+        );
       }
     }
     const msg = first instanceof Error ? first.message : String(first);
