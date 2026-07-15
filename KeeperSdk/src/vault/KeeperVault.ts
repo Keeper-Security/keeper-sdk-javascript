@@ -955,7 +955,7 @@ export class KeeperVault {
         input: TransferNestedShareRecordInput
     ): Promise<TransferNestedShareRecordResult> {
         const result = await this.nestedShareFolderManager.transferNestedShareRecords(input)
-        if (result.success) await this.syncIfNeeded()
+        if (result.results.some((item) => item.success)) await this.syncIfNeeded()
         return result
     }
 

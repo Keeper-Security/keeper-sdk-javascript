@@ -66,8 +66,13 @@ export {
     NsfRemoveFolderOperation,
     GetNsfRecordDetailsFormat,
     NsfFolderShareAction,
+    NsfFolderShareActionTaken,
     NsfRecordShareAction,
+    NsfRecordShareActionTaken,
     NsfRecordPermissionAction,
+    NsfResultStatus,
+    NsfTransferApiStatus,
+    NsfPermissionFailureCode,
     NSF_ACCESS_ROLE_LABELS,
     resolveRecordPermissionRole,
     toNsfAccessRoleLabel,
@@ -170,7 +175,10 @@ export {
     NSF_FOLDER_COLORS,
     NSF_MAX_RECORD_BATCH,
     MIN_SHARE_EXPIRATION_MS,
+    NSF_SHARE_EXPIRATION_NEVER,
     TeamGetKeysResponseKeyType,
+    NSFShareRoleName,
+    NsfShareCommandName,
 } from './nsfConstants'
 export type { NsfFolderColor } from './nsfConstants'
 

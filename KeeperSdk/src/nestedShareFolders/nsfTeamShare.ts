@@ -6,7 +6,6 @@ import {
     platform,
     teamGetKeysCommand,
     webSafe64FromBytes,
-    type TeamGetKeyEntry,
     type TeamGetKeysResponse,
     type Records,
 } from '@keeper-security/keeperapi'
@@ -18,6 +17,10 @@ import type { NsfResolvedShareRecipient, NsfTeamPublicKeys } from './nsfTypes'
 
 const SHARE_ERROR = ResultCodes.NSF_SHARE_FAILED
 
+type TeamGetKeyEntry = NonNullable<TeamGetKeysResponse['keys']>[number]
+
+// TODO(browser): Replace Node crypto with platform-safe PKCS#1 public-key derivation
+// so team vault-storage fallback works in browser builds.
 function deriveRsaPublicKeyFromPkcs1PrivateKey(privateKeyDer: Uint8Array): Uint8Array {
     const privateKey = crypto.createPrivateKey({
         key: Buffer.from(privateKeyDer),

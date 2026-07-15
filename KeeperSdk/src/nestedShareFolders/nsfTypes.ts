@@ -399,6 +399,47 @@ export enum NsfFolderShareAction {
     Remove = 'remove',
 }
 
+export enum NsfFolderShareActionTaken {
+    AlreadyHadAccess = 'already_had_access',
+    Updated = 'updated',
+    Granted = 'granted',
+    Removed = 'removed',
+}
+
+export enum NsfRecordShareAction {
+    Grant = 'grant',
+    Revoke = 'revoke',
+    Owner = 'owner',
+}
+
+export enum NsfRecordShareActionTaken {
+    Grant = 'grant',
+    Update = 'update',
+    Revoke = 'revoke',
+    Owner = 'owner',
+    NoAccess = 'no_access',
+    Skipped = 'skipped',
+}
+
+export enum NsfRecordPermissionAction {
+    Grant = 'grant',
+    Revoke = 'revoke',
+}
+
+export enum NsfResultStatus {
+    Success = 'success',
+    Failed = 'failed',
+}
+
+/** API transferRecordStatus success value for records_transfer_v3. */
+export enum NsfTransferApiStatus {
+    Success = 'success',
+}
+
+export enum NsfPermissionFailureCode {
+    Skipped = 'skipped',
+}
+
 export type NsfTeamPublicKeys = {
     rsaPublicKey?: Uint8Array
     eccPublicKey?: Uint8Array
@@ -449,18 +490,12 @@ export type NsfFolderShareResultItem = {
     recipient: string
     isTeam: boolean
     success: boolean
-    actionTaken: string
+    actionTaken: NsfFolderShareActionTaken
     message?: string
 }
 
 export type ShareNestedShareFolderResult = {
     results: NsfFolderShareResultItem[]
-}
-
-export enum NsfRecordShareAction {
-    Grant = 'grant',
-    Revoke = 'revoke',
-    Owner = 'owner',
 }
 
 export type NsfRecordShareActionInput = NsfRecordShareAction | `${NsfRecordShareAction}`
@@ -484,7 +519,7 @@ export type NsfRecordSharePlanItem = {
     recordUid: string
     title: string
     email: string
-    action: string
+    action: NsfRecordShareAction
     role?: string
     expirationTimestamp?: number
 }
@@ -493,7 +528,7 @@ export type NsfRecordShareResultItem = {
     recordUid: string
     email: string
     success: boolean
-    actionTaken: string
+    actionTaken: NsfRecordShareActionTaken
     message?: string
 }
 
@@ -501,11 +536,6 @@ export type ShareNestedShareRecordResult = {
     dryRun: boolean
     plan: NsfRecordSharePlanItem[]
     results: NsfRecordShareResultItem[]
-}
-
-export enum NsfRecordPermissionAction {
-    Grant = 'grant',
-    Revoke = 'revoke',
 }
 
 export type NsfRecordPermissionActionInput = NsfRecordPermissionAction | `${NsfRecordPermissionAction}`

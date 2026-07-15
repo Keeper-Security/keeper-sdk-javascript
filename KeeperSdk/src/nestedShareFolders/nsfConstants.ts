@@ -1,4 +1,5 @@
 import { Folder } from '@keeper-security/keeperapi'
+import { KeeperSdkError, ResultCodes } from '../utils'
 
 export const NSF_LEGACY_RECORD_MSG =
     "Record '{0}' is a legacy vault record. Nested Share Folder commands operate only on Nested Share Records."
@@ -86,39 +87,56 @@ export const NSF_STRUCTURED_SUBKEYS: Record<string, ReadonlySet<string>> = {
     phone: new Set(['number', 'region', 'type', 'ext']),
 }
 
+export enum NSFShareRoleName {
+    Contributor = 'contributor',
+    Viewer = 'viewer',
+    ShareManager = 'share-manager',
+    ContentManager = 'content-manager',
+    ContentShareManager = 'content-share-manager',
+    FullManager = 'full-manager',
+    Unresolved = 'unresolved',
+}
+
 export const NSF_RECORD_PERMISSION_ROLES = [
-    'viewer',
-    'share-manager',
-    'content-manager',
-    'content-share-manager',
-    'full-manager',
+    NSFShareRoleName.Viewer,
+    NSFShareRoleName.ShareManager,
+    NSFShareRoleName.ContentManager,
+    NSFShareRoleName.ContentShareManager,
+    NSFShareRoleName.FullManager,
 ] as const
 export type NsfRecordPermissionRole = (typeof NSF_RECORD_PERMISSION_ROLES)[number]
 
 export const NSF_RECORD_PERMISSION_ROLE_LABELS: Record<number, string> = {
-    [Folder.AccessRoleType.NAVIGATOR]: 'contributor',
-    [Folder.AccessRoleType.REQUESTOR]: 'contributor',
-    [Folder.AccessRoleType.VIEWER]: 'viewer',
-    [Folder.AccessRoleType.SHARED_MANAGER]: 'share-manager',
-    [Folder.AccessRoleType.CONTENT_MANAGER]: 'content-manager',
-    [Folder.AccessRoleType.CONTENT_SHARE_MANAGER]: 'content-share-manager',
-    [Folder.AccessRoleType.MANAGER]: 'full-manager',
-    [Folder.AccessRoleType.UNRESOLVED]: 'unresolved',
+    [Folder.AccessRoleType.NAVIGATOR]: NSFShareRoleName.Contributor,
+    [Folder.AccessRoleType.REQUESTOR]: NSFShareRoleName.Contributor,
+    [Folder.AccessRoleType.VIEWER]: NSFShareRoleName.Viewer,
+    [Folder.AccessRoleType.SHARED_MANAGER]: NSFShareRoleName.ShareManager,
+    [Folder.AccessRoleType.CONTENT_MANAGER]: NSFShareRoleName.ContentManager,
+    [Folder.AccessRoleType.CONTENT_SHARE_MANAGER]: NSFShareRoleName.ContentShareManager,
+    [Folder.AccessRoleType.MANAGER]: NSFShareRoleName.FullManager,
+    [Folder.AccessRoleType.UNRESOLVED]: NSFShareRoleName.Unresolved,
 }
 
 export const NSF_RECORD_PERMISSION_ROLE_MAP: Record<string, Folder.AccessRoleType> = {
-    contributor: Folder.AccessRoleType.REQUESTOR,
+    [NSFShareRoleName.Contributor]: Folder.AccessRoleType.REQUESTOR,
     requestor: Folder.AccessRoleType.REQUESTOR,
-    viewer: Folder.AccessRoleType.VIEWER,
-    'share-manager': Folder.AccessRoleType.SHARED_MANAGER,
+    [NSFShareRoleName.Viewer]: Folder.AccessRoleType.VIEWER,
+    [NSFShareRoleName.ShareManager]: Folder.AccessRoleType.SHARED_MANAGER,
     share_manager: Folder.AccessRoleType.SHARED_MANAGER,
     shared_manager: Folder.AccessRoleType.SHARED_MANAGER,
-    'content-manager': Folder.AccessRoleType.CONTENT_MANAGER,
+    [NSFShareRoleName.ContentManager]: Folder.AccessRoleType.CONTENT_MANAGER,
     content_manager: Folder.AccessRoleType.CONTENT_MANAGER,
-    'content-share-manager': Folder.AccessRoleType.CONTENT_SHARE_MANAGER,
+    [NSFShareRoleName.ContentShareManager]: Folder.AccessRoleType.CONTENT_SHARE_MANAGER,
     content_share_manager: Folder.AccessRoleType.CONTENT_SHARE_MANAGER,
-    'full-manager': Folder.AccessRoleType.MANAGER,
+    [NSFShareRoleName.FullManager]: Folder.AccessRoleType.MANAGER,
     full_manager: Folder.AccessRoleType.MANAGER,
+}
+
+export const NSF_SHARE_EXPIRATION_NEVER = 'never'
+
+export enum NsfShareCommandName {
+    FolderShare = 'nsf-share-folder',
+    RecordShare = 'nsf-share-record',
 }
 
 export const NSF_SHARE_BATCH_SIZE = 200
@@ -236,7 +254,10 @@ const NSF_FOLDER_ROLE_PERMISSIONS: Record<number, FolderRolePermissionFlags> = {
 export function getFolderPermissionsForRole(roleType: Folder.AccessRoleType): Folder.IFolderPermissions {
     const flags = NSF_FOLDER_ROLE_PERMISSIONS[roleType]
     if (!flags) {
-        throw new Error(`Unknown folder access role type: ${roleType}`)
+        throw new KeeperSdkError(
+            `Unknown folder access role type: ${roleType}`,
+            ResultCodes.NSF_SHARE_FAILED
+        )
     }
     return Folder.FolderPermissions.create(flags)
 }
