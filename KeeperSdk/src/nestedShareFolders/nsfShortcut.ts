@@ -226,16 +226,16 @@ function parseFolderRecordUpdateResult(
     folderUid: string,
     recordUid: string
 ): KeepNsfShortcutResultItem {
-    const result = response.folderRecordUpdateResult?.find((entry) => {
-        if (!entry.recordUid?.length) return true
-        return webSafe64FromBytes(entry.recordUid) === recordUid
-    }) ?? response.folderRecordUpdateResult?.[0]
+    const result = response.folderRecordUpdateResult?.find(
+        (entry) =>
+            !!entry.recordUid?.length && webSafe64FromBytes(entry.recordUid) === recordUid
+    )
 
     if (!result) {
         return {
             folderUid,
-            success: true,
-            message: 'Record unlinked from folder',
+            success: false,
+            message: `No unlink status returned for record ${recordUid}`,
         }
     }
 

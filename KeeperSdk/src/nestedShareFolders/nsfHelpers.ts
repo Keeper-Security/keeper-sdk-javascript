@@ -36,6 +36,8 @@ import {
     NSF_TLA_EXPIRATION_TOLERANCE_MS,
     NSF_SHARE_EXPIRATION_RE,
     NSF_SHARE_EXPIRATION_UNIT_MS,
+    NSF_SHARE_EXPIRATION_NEVER,
+    NsfShareCommandName,
 } from './nsfConstants'
 import { NsfAccessRoleLabel, NSF_ACCESS_ROLE_LABELS, type ParseShareExpirationInput } from './nsfTypes'
 
@@ -485,6 +487,7 @@ type FolderPermissionFlag =
     | 'canDelete'
     | 'canUpdateAccess'
     | 'canEditRecords'
+    | 'canUpdateSetting'
     | 'canChangeOwnership'
 
 function hasFolderPermission(
@@ -807,7 +810,6 @@ export function resolveAccessUsername(
     return accessTypeUid
 }
 
-
 export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Promise<Map<string, string>> {
     const map = new Map<string, string>()
 
@@ -836,7 +838,6 @@ export async function loadShareUserMap(auth: Auth, storage: InMemoryStorage): Pr
 
     return map
 }
-
 
 export function isFolderOwnerAccessor(
     folder: DKdFolder,
@@ -944,7 +945,7 @@ export function checkFolderEditPermission(
     username: string,
     accountUid: Uint8Array
 ): void {
-    if (hasFolderPermission(storage, folderUid, username, accountUid, 'canEditRecords')) return
+    if (hasFolderPermission(storage, folderUid, username, accountUid, 'canUpdateSetting')) return
     throw new KeeperSdkError(
         'You do not have permission to edit this folder.',
         ResultCodes.NSF_PERMISSION_DENIED
@@ -1043,7 +1044,7 @@ export type NsfRecordAccessFlags = {
 }
 
 export function getNsfAccessRoleLabel(access: NsfRecordAccessFlags): string {
-    if (access.owner) return 'owner'
+    if (access.owner) return NsfAccessRoleLabel.Owner
     return getNsfRecordPermissionRoleLabel(access.accessRoleType)
 }
 
@@ -1211,7 +1212,7 @@ export function validateShareExpirationTimestamp(
 }
 
 export function parseShareExpiration(input: ParseShareExpirationInput): number | undefined {
-    const { expireAt, expireIn, expirationTimestamp, cmdName = 'nsf-share' } = input
+    const { expireAt, expireIn, expirationTimestamp, cmdName = NsfShareCommandName.FolderShare } = input
     const expireAtValue = expireAt?.trim()
     const expireInValue = expireIn?.trim()
 
@@ -1237,7 +1238,7 @@ export function parseShareExpiration(input: ParseShareExpirationInput): number |
     const raw = expireAtValue || expireInValue
     if (!raw) return undefined
 
-    if (raw.toLowerCase() === 'never') return -1
+    if (raw.toLowerCase() === NSF_SHARE_EXPIRATION_NEVER) return -1
 
     if (expireAtValue) {
         const normalized = raw.replace('Z', '+00:00')
@@ -1277,7 +1278,7 @@ export function parseShareExpiration(input: ParseShareExpirationInput): number |
 
 export function parseShareExpirationValue(
     value: string,
-    cmdName: string = 'nsf-share'
+    cmdName: string = NsfShareCommandName.FolderShare
 ): number | undefined {
     const raw = value.trim()
     if (!raw) return undefined

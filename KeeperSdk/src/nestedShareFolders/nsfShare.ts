@@ -20,9 +20,10 @@ import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { collectNsfRecordUidsInFolder } from './nsfRecordPermission'
 import { resolveRecordKeyBytes } from './nsfRecordCrypto'
 import { transferNestedShareRecordOwnership } from './nsfTransferRecord'
-import { getFolderPermissionsForRole } from './nsfConstants'
+import { getFolderPermissionsForRole, NSFShareRoleName, NsfShareCommandName } from './nsfConstants'
 import {
     checkFolderSharePermission,
+    checkRecordChangeOwnershipPermission,
     checkRecordSharePermission,
     collectExistingFolderShareTargets,
     ensureNestedShareFolder,
@@ -60,7 +61,13 @@ import type {
     ShareNestedShareRecordInput,
     ShareNestedShareRecordResult,
 } from './nsfTypes'
-import { NsfFolderShareAction, NsfRecordShareAction } from './nsfTypes'
+import {
+    NsfFolderShareAction,
+    NsfFolderShareActionTaken,
+    NsfRecordShareAction,
+    NsfRecordShareActionTaken,
+    NsfResultStatus,
+} from './nsfTypes'
 
 const SHARE_ERROR = ResultCodes.NSF_SHARE_FAILED
 
@@ -278,7 +285,7 @@ async function grantFolderAccess(
             recipient: target.recipient,
             isTeam: target.isTeam,
             success: true,
-            actionTaken: 'already_had_access',
+            actionTaken: NsfFolderShareActionTaken.AlreadyHadAccess,
             message: `Already has ${getNsfRecordPermissionRoleLabel(accessRoleType)} access`,
         }
     }
@@ -311,7 +318,7 @@ async function grantFolderAccess(
         recipient: target.recipient,
         isTeam: target.isTeam,
         success: parsed.success,
-        actionTaken: existing != null ? 'updated' : 'granted',
+        actionTaken: existing != null ? NsfFolderShareActionTaken.Updated : NsfFolderShareActionTaken.Granted,
         message: parsed.message,
     }
 }
@@ -344,7 +351,7 @@ async function removeFolderAccess(
         recipient: target.recipient,
         isTeam: target.isTeam,
         success: parsed.success,
-        actionTaken: 'removed',
+        actionTaken: NsfFolderShareActionTaken.Removed,
         message: parsed.message,
     }
 }
@@ -368,7 +375,7 @@ export async function shareNestedShareFolder(
         )
     }
 
-    const role = input.role?.trim() || 'viewer'
+    const role = input.role?.trim() || NSFShareRoleName.Viewer
     const accessRoleType =
         action === NsfFolderShareAction.Grant ? resolveNsfRoleName(role) : undefined
 
@@ -378,7 +385,7 @@ export async function shareNestedShareFolder(
                   expireAt: input.expireAt,
                   expireIn: input.expireIn,
                   expirationTimestamp: input.expirationTimestamp,
-                  cmdName: 'nsf-share-folder',
+                  cmdName: NsfShareCommandName.FolderShare,
               })
             : undefined
 
@@ -505,7 +512,7 @@ async function transferRecordOwnership(
         recordUid,
         email,
         success: result.success,
-        actionTaken: 'owner',
+        actionTaken: NsfRecordShareActionTaken.Owner,
         message: result.message,
     }
 }
@@ -559,7 +566,7 @@ async function revokeRecordShare(
             recordUid,
             email,
             success: true,
-            actionTaken: 'no_access',
+            actionTaken: NsfRecordShareActionTaken.NoAccess,
             message: 'User does not have access to this record',
         }
     }
@@ -568,7 +575,7 @@ async function revokeRecordShare(
             recordUid,
             email,
             success: true,
-            actionTaken: 'skipped',
+            actionTaken: NsfRecordShareActionTaken.Skipped,
             message: 'Access is inherited from a shared folder — revoke at the parent folder',
         }
     }
@@ -582,7 +589,7 @@ async function revokeRecordShare(
         recordUid,
         email,
         success: parsed.success,
-        actionTaken: 'revoke',
+        actionTaken: NsfRecordShareActionTaken.Revoke,
         message: parsed.message,
     }
 }
@@ -601,7 +608,7 @@ async function grantRecordShare(
             recordUid,
             email,
             success: true,
-            actionTaken: 'update',
+            actionTaken: NsfRecordShareActionTaken.Update,
             message: 'Already has requested access',
         }
     }
@@ -609,7 +616,7 @@ async function grantRecordShare(
     if (existing && expirationTimestamp != null && expirationTimestamp > 0) {
         const revokeResult = await revokeRecordShare(storage, auth, recordUid, email)
         if (!revokeResult.success) {
-            return { ...revokeResult, actionTaken: 'update' }
+            return { ...revokeResult, actionTaken: NsfRecordShareActionTaken.Update }
         }
         const recordKey = await requireRecordKey(storage, auth, recordUid)
         const permission = await buildNsfRecordSharePermission(
@@ -629,7 +636,7 @@ async function grantRecordShare(
             recordUid,
             email,
             success: parsed.success,
-            actionTaken: 'grant',
+            actionTaken: NsfRecordShareActionTaken.Grant,
             message: parsed.message,
         }
     }
@@ -654,7 +661,7 @@ async function grantRecordShare(
         recordUid,
         email,
         success: parsed.success,
-        actionTaken: existing ? 'update' : 'grant',
+        actionTaken: existing ? NsfRecordShareActionTaken.Update : NsfRecordShareActionTaken.Grant,
         message: parsed.message,
     }
 }
@@ -683,7 +690,7 @@ export function formatNsfRecordShareResults(results: NsfRecordShareResultItem[])
     const lines: string[] = []
     for (const item of results) {
         lines.push(
-            `${item.recordUid}  ${item.email}  ${item.actionTaken}  ${item.success ? 'success' : 'failed'}  ${item.message || ''}`
+            `${item.recordUid}  ${item.email}  ${item.actionTaken}  ${item.success ? NsfResultStatus.Success : NsfResultStatus.Failed}  ${item.message || ''}`
         )
     }
     return lines.join('\n')
@@ -694,7 +701,7 @@ export function formatNsfFolderShareResults(results: NsfFolderShareResultItem[])
     const lines: string[] = []
     for (const item of results) {
         lines.push(
-            `${item.folderUid}  ${item.recipient}  ${item.actionTaken}  ${item.success ? 'success' : 'failed'}  ${item.message || ''}`
+            `${item.folderUid}  ${item.recipient}  ${item.actionTaken}  ${item.success ? NsfResultStatus.Success : NsfResultStatus.Failed}  ${item.message || ''}`
         )
     }
     return lines.join('\n')
@@ -725,7 +732,7 @@ export async function shareNestedShareRecord(
         throw new KeeperSdkError('Role is required for grant action.', SHARE_ERROR)
     }
 
-    const role = input.role?.trim() || 'viewer'
+    const role = input.role?.trim() || NSFShareRoleName.Viewer
     const accessRoleType =
         action === NsfRecordShareAction.Grant ? resolveNsfRoleName(role) : undefined
 
@@ -735,7 +742,7 @@ export async function shareNestedShareRecord(
                   expireAt: input.expireAt,
                   expireIn: input.expireIn,
                   expirationTimestamp: input.expirationTimestamp,
-                  cmdName: 'nsf-share-record',
+                  cmdName: NsfShareCommandName.RecordShare,
               })
             : undefined
 
@@ -744,6 +751,9 @@ export async function shareNestedShareRecord(
 
     for (const recordUid of recordUids) {
         checkRecordSharePermission(storage, recordUid, auth.username, accountUid)
+        if (action === NsfRecordShareAction.Owner) {
+            checkRecordChangeOwnershipPermission(storage, recordUid, auth.username, accountUid)
+        }
     }
 
     const plan: NsfRecordSharePlanItem[] = []

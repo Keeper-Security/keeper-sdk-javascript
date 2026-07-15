@@ -15,6 +15,7 @@ import type {
     TransferNestedShareRecordResult,
     TransferNestedShareRecordResultItem,
 } from './nsfTypes'
+import { NsfResultStatus, NsfTransferApiStatus } from './nsfTypes'
 
 const TRANSFER_ERROR = ResultCodes.NSF_TRANSFER_FAILED
 
@@ -62,7 +63,8 @@ export async function transferNestedShareRecordOwnership(
     )
 
     const status = response.transferRecordStatus?.[0]
-    const success = status?.status?.toLowerCase().includes('success') ?? false
+    const normalized = (status?.status ?? '').trim().toLowerCase()
+    const success = normalized === NsfTransferApiStatus.Success
     return {
         recordUid,
         success,
@@ -121,7 +123,7 @@ export function formatTransferNestedShareRecordResults(
     const lines: string[] = []
     for (const item of results) {
         lines.push(
-            `${item.recordUid}  ${item.success ? 'success' : 'failed'}  ${item.message}`
+            `${item.recordUid}  ${item.success ? NsfResultStatus.Success : NsfResultStatus.Failed}  ${item.message}`
         )
     }
     return lines.join('\n')

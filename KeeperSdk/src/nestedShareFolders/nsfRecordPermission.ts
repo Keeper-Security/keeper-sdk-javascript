@@ -39,7 +39,7 @@ import type {
     UpdateNsfRecordPermissionInput,
     UpdateNsfRecordPermissionResult,
 } from './nsfTypes'
-import { NsfRecordPermissionAction } from './nsfTypes'
+import { NsfPermissionFailureCode, NsfRecordPermissionAction } from './nsfTypes'
 
 type NsfRecordAccessEntry = NsfLiveRecordAccessEntry
 
@@ -371,9 +371,10 @@ function computePermissionChanges(
 
     const forbidden = new Set(forbiddenRecords)
     const ownerFlags = new Map<string, boolean>()
+    const currentUserLower = currentUser.toLowerCase()
 
     for (const access of accesses) {
-        if (access.accessorName === currentUser) {
+        if (access.accessorName.toLowerCase() === currentUserLower) {
             ownerFlags.set(access.recordUid, access.owner || access.canUpdateAccess)
         }
     }
@@ -394,7 +395,7 @@ function computePermissionChanges(
         if (!recordUids.has(recordUid) || access.owner) continue
 
         const email = access.accessorName
-        if (!email || email === currentUser) continue
+        if (!email || email.toLowerCase() === currentUserLower) continue
 
         const curRole = getNsfAccessRoleLabel(access)
         const isInherited = access.inherited
@@ -550,7 +551,7 @@ export function formatNsfRecordPermissionPlan(plan: NsfRecordPermissionPlan): st
                 ])
             )
         )
-        lines.push('ALERT!!!')
+        lines.push('WARNING: Review the planned changes carefully before confirming.')
         lines.push('')
     }
 
@@ -568,7 +569,7 @@ export function formatNsfRecordPermissionPlan(plan: NsfRecordPermissionPlan): st
                 ])
             )
         )
-        lines.push('ALERT!!!')
+        lines.push('WARNING: Review the planned changes carefully before confirming.')
         lines.push('')
     }
 
@@ -584,7 +585,7 @@ function mapFailures(
         .map((outcome) => ({
             recordUid: outcome.recordUid,
             email: outcome.email,
-            code: outcome.skipped ? 'skipped' : defaultCode,
+            code: outcome.skipped ? NsfPermissionFailureCode.Skipped : defaultCode,
             message: outcome.message || 'Unknown error',
         }))
 }
