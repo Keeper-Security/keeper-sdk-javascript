@@ -393,3 +393,258 @@ export function resolveRecordPermissionRole(entry: NsfRecordPermission): NsfAcce
     if (entry.role) return entry.role
     return NsfAccessRoleLabel.ContentManager
 }
+
+export enum NsfFolderShareAction {
+    Grant = 'grant',
+    Remove = 'remove',
+}
+
+export enum NsfFolderShareActionTaken {
+    AlreadyHadAccess = 'already_had_access',
+    Updated = 'updated',
+    Granted = 'granted',
+    Removed = 'removed',
+}
+
+export enum NsfRecordShareAction {
+    Grant = 'grant',
+    Revoke = 'revoke',
+    Owner = 'owner',
+}
+
+export enum NsfRecordShareActionTaken {
+    Grant = 'grant',
+    Update = 'update',
+    Revoke = 'revoke',
+    Owner = 'owner',
+    NoAccess = 'no_access',
+    Skipped = 'skipped',
+}
+
+export enum NsfRecordPermissionAction {
+    Grant = 'grant',
+    Revoke = 'revoke',
+}
+
+export enum NsfResultStatus {
+    Success = 'success',
+    Failed = 'failed',
+}
+
+/** API transferRecordStatus success value for records_transfer_v3. */
+export enum NsfTransferApiStatus {
+    Success = 'success',
+}
+
+export enum NsfPermissionFailureCode {
+    Skipped = 'skipped',
+}
+
+export type NsfTeamPublicKeys = {
+    rsaPublicKey?: Uint8Array
+    eccPublicKey?: Uint8Array
+    aesTeamKey?: Uint8Array
+}
+
+export type NsfResolvedShareRecipient = {
+    recipient: string
+    isTeam: boolean
+    accountUid?: Uint8Array
+}
+
+export type NsfFolderAccessOperationResult = {
+    folderUid: string
+    recipient: string
+    success: boolean
+    message: string
+}
+
+export type NsfDirectUserRecordShare = {
+    recordUid: string
+    email: string
+    accessRoleType: number
+    expiration?: number
+}
+
+export type NsfFolderShareActionInput = NsfFolderShareAction | `${NsfFolderShareAction}`
+
+export type ParseShareExpirationInput = {
+    expireAt?: string
+    expireIn?: string
+    expirationTimestamp?: number
+    cmdName?: string
+}
+
+export type ShareNestedShareFolderInput = {
+    folders: string[]
+    recipients: string[]
+    action?: NsfFolderShareActionInput
+    role?: string
+    expireAt?: string
+    expireIn?: string
+    expirationTimestamp?: number
+}
+
+export type NsfFolderShareResultItem = {
+    folderUid: string
+    recipient: string
+    isTeam: boolean
+    success: boolean
+    actionTaken: NsfFolderShareActionTaken
+    message?: string
+}
+
+export type ShareNestedShareFolderResult = {
+    results: NsfFolderShareResultItem[]
+}
+
+export type NsfRecordShareActionInput = NsfRecordShareAction | `${NsfRecordShareAction}`
+
+export type ShareNestedShareRecordInput = {
+    record: string
+    emails: string[]
+    action?: NsfRecordShareActionInput
+    role?: string
+    recursive?: boolean
+    dryRun?: boolean
+    /** Absolute expiration (ISO datetime or `never`). Mutually exclusive with expireIn. */
+    expireAt?: string
+    /** Relative expiration (e.g. `30d`, `6mo`, `1y`, `24h`, `30mi`, or `never`). Mutually exclusive with expireAt. */
+    expireIn?: string
+    /** Pre-parsed expiration in milliseconds; `-1` = never. Mutually exclusive with expireAt/expireIn. */
+    expirationTimestamp?: number
+}
+
+export type NsfRecordSharePlanItem = {
+    recordUid: string
+    title: string
+    email: string
+    action: NsfRecordShareAction
+    role?: string
+    expirationTimestamp?: number
+}
+
+export type NsfRecordShareResultItem = {
+    recordUid: string
+    email: string
+    success: boolean
+    actionTaken: NsfRecordShareActionTaken
+    message?: string
+}
+
+export type ShareNestedShareRecordResult = {
+    dryRun: boolean
+    plan: NsfRecordSharePlanItem[]
+    results: NsfRecordShareResultItem[]
+}
+
+export type NsfRecordPermissionActionInput = NsfRecordPermissionAction | `${NsfRecordPermissionAction}`
+
+export type UpdateNsfRecordPermissionInput = {
+    folder?: string
+    action: NsfRecordPermissionActionInput
+    role?: string
+    recursive?: boolean
+    dryRun?: boolean
+    force?: boolean
+}
+
+export type NsfRecordPermissionPlanItem = {
+    recordUid: string
+    title: string
+    email: string
+    curRole: string
+    newRole?: string
+    reason?: string
+}
+
+export type NsfRecordPermissionPlan = {
+    grants: NsfRecordPermissionPlanItem[]
+    revokes: NsfRecordPermissionPlanItem[]
+    skipped: NsfRecordPermissionPlanItem[]
+}
+
+export type NsfRecordPermissionFailure = {
+    recordUid: string
+    email: string
+    code: string
+    message: string
+}
+
+export type UpdateNsfRecordPermissionResult = {
+    confirmed: boolean
+    dryRun: boolean
+    folderDisplayName: string
+    plan: NsfRecordPermissionPlan
+    grantFailures: NsfRecordPermissionFailure[]
+    revokeFailures: NsfRecordPermissionFailure[]
+    message?: string
+}
+
+export type NsfShortcutRow = {
+    recordUid: string
+    title: string
+    folders: string[]
+}
+
+export type ListNsfShortcutsOptions = {
+    target?: string
+    format?: ListNsfFormatInput
+}
+
+export type KeepNsfShortcutInput = {
+    record: string
+    folder?: string
+    dryRun?: boolean
+}
+
+export type KeepNsfShortcutPlanItem = {
+    recordUid: string
+    title: string
+    keepFolderUid: string
+    keepFolderLabel: string
+    removeFolderUids: string[]
+    removeFolderLabels: string[]
+}
+
+export type KeepNsfShortcutResultItem = {
+    folderUid: string
+    success: boolean
+    message: string
+}
+
+export type KeepNsfShortcutResult = {
+    dryRun: boolean
+    plan: KeepNsfShortcutPlanItem
+    results: KeepNsfShortcutResultItem[]
+    nothingToDo: boolean
+}
+
+export type TransferNestedShareRecordInput = {
+    records: string[]
+    newOwnerEmail: string
+}
+
+export type TransferNestedShareRecordResultItem = {
+    recordUid: string
+    success: boolean
+    message: string
+}
+
+export type TransferNestedShareRecordResult = {
+    results: TransferNestedShareRecordResultItem[]
+    success: boolean
+}
+
+export type UpdateNsfFolderInput = {
+    folder: string
+    name?: string
+    color?: NsfFolderColorInput
+    quiet?: boolean
+}
+
+export type UpdateNsfFolderResult = {
+    folderUid: string
+    updated: boolean
+    message?: string
+}

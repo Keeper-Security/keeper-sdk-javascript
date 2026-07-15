@@ -10,6 +10,11 @@ import { removeNestedShareFolders } from './removeNsfFolder'
 import { getNestedShareRecordDetails } from './getNsfRecordDetails'
 import { updateNestedShareRecords, updateNestedShareRecord } from './updateNsfRecord'
 import { addNestedShareRecord, addNestedShareRecords } from './addNsfRecord'
+import { shareNestedShareFolder, shareNestedShareRecord } from './nsfShare'
+import { listNsfShortcuts, keepNsfShortcut } from './nsfShortcut'
+import { transferNestedShareRecords } from './nsfTransferRecord'
+import { updateNestedShareRecordPermissions } from './nsfRecordPermission'
+import { updateNestedShareFolder } from './updateNsfFolder'
 import type {
     AddNsfRecordInput,
     AddNsfRecordResult,
@@ -19,18 +24,32 @@ import type {
     GetNsfResult,
     GetNsfRecordDetailsInput,
     GetNsfRecordDetailsResult,
+    KeepNsfShortcutInput,
+    KeepNsfShortcutResult,
     LinkNsfRecordResult,
     ListNsfOptions,
     ListNsfRow,
+    ListNsfShortcutsOptions,
     MkdirNsfInput,
     MkdirNsfResult,
+    NsfShortcutRow,
     RemoveNsfFolderInput,
     RemoveNsfFolderResult,
     RemoveNsfRecordInput,
     RemoveNsfRecordResult,
+    ShareNestedShareFolderInput,
+    ShareNestedShareFolderResult,
+    ShareNestedShareRecordInput,
+    ShareNestedShareRecordResult,
+    TransferNestedShareRecordInput,
+    TransferNestedShareRecordResult,
+    UpdateNsfFolderInput,
+    UpdateNsfFolderResult,
     UpdateNsfRecordInput,
     UpdateNsfRecordItemInput,
     UpdateNsfRecordsInput,
+    UpdateNsfRecordPermissionInput,
+    UpdateNsfRecordPermissionResult,
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
 } from './nsfTypes'
@@ -103,5 +122,44 @@ export class NestedShareFolderManager {
 
     public async addNestedShareRecord(input: AddNsfRecordInput): Promise<AddNsfRecordResult> {
         return addNestedShareRecord(this.storage, this.requireAuth(), input)
+    }
+
+    public async updateNestedShareFolder(input: UpdateNsfFolderInput): Promise<UpdateNsfFolderResult> {
+        return updateNestedShareFolder(this.storage, this.requireAuth(), input)
+    }
+
+    public async shareNestedShareFolder(
+        input: ShareNestedShareFolderInput
+    ): Promise<ShareNestedShareFolderResult> {
+        return shareNestedShareFolder(this.storage, this.requireAuth(), input)
+    }
+
+    public async shareNestedShareRecord(
+        input: ShareNestedShareRecordInput
+    ): Promise<ShareNestedShareRecordResult> {
+        return shareNestedShareRecord(this.storage, this.requireAuth(), input)
+    }
+
+    public listNsfShortcuts(options: ListNsfShortcutsOptions = {}): NsfShortcutRow[] {
+        return listNsfShortcuts(this.storage, options)
+    }
+
+    public async keepNsfShortcut(
+        input: KeepNsfShortcutInput,
+        defaultFolderUid?: string
+    ): Promise<KeepNsfShortcutResult> {
+        return keepNsfShortcut(this.storage, this.requireAuth(), input, defaultFolderUid)
+    }
+
+    public async transferNestedShareRecords(
+        input: TransferNestedShareRecordInput
+    ): Promise<TransferNestedShareRecordResult> {
+        return transferNestedShareRecords(this.storage, this.requireAuth(), input)
+    }
+
+    public async updateNestedShareRecordPermissions(
+        input: UpdateNsfRecordPermissionInput
+    ): Promise<UpdateNsfRecordPermissionResult> {
+        return updateNestedShareRecordPermissions(this.storage, this.requireAuth(), input)
     }
 }
