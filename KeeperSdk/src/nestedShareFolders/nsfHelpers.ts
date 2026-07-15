@@ -10,6 +10,7 @@ import type {
 import {
     Folder,
     Records,
+    getFolderAccessMessage,
     getRecordAccessMessage,
     getShareObjectsMessage,
     normal64Bytes,
@@ -1000,6 +1001,69 @@ export function findFolderAccessEntry(
     return getFolderAccessEntries(storage, folderUid).find(
         (entry) => entry.accessTypeUid === accessTypeUid && entry.accessType === accessType
     )
+}
+
+function toFolderAccessEntry(folderUid: string, accessor: Folder.IFolderAccessData): DKdFolderAccess {
+    return {
+        kind: 'keeper_drive_folder_access',
+        accessUid: `${folderUid}:${webSafe64FromBytes(accessor.accessTypeUid!)}`,
+        folderUid,
+        accessTypeUid: webSafe64FromBytes(accessor.accessTypeUid!),
+        accessType: accessor.accessType!,
+        accessRoleType: accessor.accessRoleType!,
+        permission: accessor.permissions ?? {},
+        inherited: accessor.inherited ?? undefined,
+        hidden: accessor.hidden ?? undefined,
+    }
+}
+
+/** Live folder accessors — sync-down often only includes the current user's own access. */
+export async function fetchLiveFolderAccessEntries(
+    auth: Auth,
+    folderUid: string
+): Promise<DKdFolderAccess[]> {
+    try {
+        const response = await auth.executeRest(
+            getFolderAccessMessage({ folderUid: [normal64Bytes(folderUid)] })
+        )
+        const result = response.folderAccessResults?.find(
+            (entry) => entry.folderUid?.length && webSafe64FromBytes(entry.folderUid) === folderUid
+        )
+        return (result?.accessors ?? [])
+            .filter(
+                (accessor) =>
+                    accessor.accessTypeUid?.length &&
+                    accessor.accessType != null &&
+                    accessor.accessRoleType != null
+            )
+            .map((accessor) => toFolderAccessEntry(folderUid, accessor))
+    } catch (err) {
+        throw new KeeperSdkError(
+            `Failed to fetch folder permissions for ${folderUid}: ${extractErrorMessage(err)}`,
+            ResultCodes.NSF_DETAILS_FAILED
+        )
+    }
+}
+
+export async function findFolderAccessEntryOrLive(
+    storage: InMemoryStorage,
+    auth: Auth,
+    folderUid: string,
+    accessTypeUid: string,
+    accessType: Folder.AccessType
+): Promise<DKdFolderAccess | undefined> {
+    const fromStorage = findFolderAccessEntry(storage, folderUid, accessTypeUid, accessType)
+    if (fromStorage) return fromStorage
+
+    try {
+        const liveEntries = await fetchLiveFolderAccessEntries(auth, folderUid)
+        return liveEntries.find(
+            (entry) => entry.accessTypeUid === accessTypeUid && entry.accessType === accessType
+        )
+    } catch {
+        // If live lookup fails, fall through to add-path (previous behavior).
+        return undefined
+    }
 }
 
 export function collectExistingFolderShareTargets(

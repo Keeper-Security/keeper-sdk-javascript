@@ -31,7 +31,7 @@ import {
     fetchLiveRecordAccessesV3,
     findDirectUserRecordShare,
     findUserRecordShareEntry,
-    findFolderAccessEntry,
+    findFolderAccessEntryOrLive,
     loadShareUserMap,
     getKeeperDriveRecord,
     getNsfRecordPermissionRoleLabel,
@@ -278,7 +278,13 @@ async function grantFolderAccess(
     const accessType = target.isTeam ? Folder.AccessType.AT_TEAM : Folder.AccessType.AT_USER
     const accessTypeUid = target.accountUid ? webSafe64FromBytes(target.accountUid) : target.recipient
 
-    const existing = findFolderAccessEntry(storage, folderUid, accessTypeUid, accessType)
+    const existing = await findFolderAccessEntryOrLive(
+        storage,
+        auth,
+        folderUid,
+        accessTypeUid,
+        accessType
+    )
     if (existing && existing.accessRoleType === accessRoleType && expirationTimestamp == null) {
         return {
             folderUid,
