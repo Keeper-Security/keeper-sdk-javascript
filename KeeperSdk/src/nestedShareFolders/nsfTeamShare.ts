@@ -9,14 +9,27 @@ import {
     type TeamGetKeysResponse,
     type Records,
 } from '@keeper-security/keeperapi'
+import * as crypto from 'crypto'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
-import { KeeperSdkError, ResultCodes, extractErrorMessage, isValidEmail } from '../utils'
+import { KeeperSdkError, ResultCodes, extractErrorMessage, isValidEmail, logger } from '../utils'
 import { TeamGetKeysResponseKeyType } from './nsfConstants'
 import type { NsfResolvedShareRecipient, NsfTeamPublicKeys } from './nsfTypes'
 
 const SHARE_ERROR = ResultCodes.NSF_SHARE_FAILED
 
 type TeamGetKeyEntry = NonNullable<TeamGetKeysResponse['keys']>[number]
+
+// TODO(browser): Replace Node crypto with platform-safe PKCS#1 public-key derivation
+// so team vault-storage fallback works in browser builds.
+function deriveRsaPublicKeyFromPkcs1PrivateKey(privateKeyDer: Uint8Array): Uint8Array {
+    const privateKey = crypto.createPrivateKey({
+        key: Buffer.from(privateKeyDer),
+        format: 'der',
+        type: 'pkcs1',
+    })
+    const publicKey = crypto.createPublicKey(privateKey)
+    return new Uint8Array(publicKey.export({ format: 'der', type: 'pkcs1' }))
+}
 
 function hasAsymmetricTeamPublicKeys(keys: NsfTeamPublicKeys): boolean {
     return Boolean(keys.rsaPublicKey?.length || keys.eccPublicKey?.length)
@@ -78,6 +91,23 @@ async function parseTeamGetKeysApiResponse(
     return keys
 }
 
+async function fetchNsfTeamPublicKeysFromVaultStorage(
+    storage: InMemoryStorage,
+    teamUid: string
+): Promise<NsfTeamPublicKeys> {
+    const teamPrivateKey = await storage.getKeyBytes(`${teamUid}_priv`)
+    if (!teamPrivateKey?.length) return {}
+
+    try {
+        return { rsaPublicKey: deriveRsaPublicKeyFromPkcs1PrivateKey(teamPrivateKey) }
+    } catch (err) {
+        logger.debug(
+            `Could not derive team RSA public key from vault storage for ${teamUid}: ${extractErrorMessage(err)}`
+        )
+        return {}
+    }
+}
+
 function findMatchingShareTeams(
     teams: Records.IShareTeam[],
     query: string
@@ -93,7 +123,7 @@ function findMatchingShareTeams(
 export async function fetchNsfTeamPublicKeys(
     auth: Auth,
     teamUid: string,
-    _storage?: InMemoryStorage
+    storage?: InMemoryStorage
 ): Promise<NsfTeamPublicKeys> {
     const trimmed = teamUid.trim()
     if (!trimmed) {
@@ -102,7 +132,16 @@ export async function fetchNsfTeamPublicKeys(
 
     try {
         const response = await auth.executeRestCommand(teamGetKeysCommand({ teams: [trimmed] }))
-        const keys = await parseTeamGetKeysApiResponse(auth, trimmed, response)
+        let keys = await parseTeamGetKeysApiResponse(auth, trimmed, response)
+
+        if (!hasAsymmetricTeamPublicKeys(keys) && storage) {
+            const storageKeys = await fetchNsfTeamPublicKeysFromVaultStorage(storage, trimmed)
+            keys = {
+                rsaPublicKey: keys.rsaPublicKey ?? storageKeys.rsaPublicKey,
+                eccPublicKey: keys.eccPublicKey ?? storageKeys.eccPublicKey,
+                aesTeamKey: keys.aesTeamKey ?? storageKeys.aesTeamKey,
+            }
+        }
 
         if (!hasAsymmetricTeamPublicKeys(keys)) {
             throw new KeeperSdkError(

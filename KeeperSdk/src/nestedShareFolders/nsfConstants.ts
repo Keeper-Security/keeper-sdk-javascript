@@ -192,7 +192,6 @@ type FolderRolePermissionFlags = {
     canListFolders?: boolean
 }
 
-/** Role → FolderPermissions flags sent with folderAccessAdds / folderAccessUpdates. */
 const NSF_FOLDER_ROLE_PERMISSIONS: Record<number, FolderRolePermissionFlags> = {
     [Folder.AccessRoleType.NAVIGATOR]: {
         canListFolders: true,
