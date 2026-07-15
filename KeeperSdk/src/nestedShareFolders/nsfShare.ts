@@ -3,7 +3,7 @@ import {
     Folder,
     getShareObjectsMessage,
     normal64Bytes,
-    recordAccessDetailsMessage,
+    getRecordAccessMessage,
     recordsShareV3Message,
     folderAccessUpdateMessage,
     webSafe64FromBytes,
@@ -554,7 +554,7 @@ async function findDirectUserShare(
     email: string
 ): Promise<DirectUserShare | undefined> {
     const response = await auth.executeRest(
-        recordAccessDetailsMessage({
+        getRecordAccessMessage({
             recordUids: [normal64Bytes(recordUid)],
         })
     )

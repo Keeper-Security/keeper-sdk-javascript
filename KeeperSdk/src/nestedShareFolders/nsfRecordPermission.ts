@@ -4,7 +4,7 @@ import {
     normal64Bytes,
     platform,
     record,
-    recordAccessDetailsMessage,
+    getRecordAccessMessage,
     recordsShareV3Message,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
@@ -243,7 +243,7 @@ async function getRecordAccessesV3(
     }
 
     const response = await auth.executeRest(
-        recordAccessDetailsMessage({
+        getRecordAccessMessage({
             recordUids: recordUids.map((uid) => normal64Bytes(uid)),
         })
     )

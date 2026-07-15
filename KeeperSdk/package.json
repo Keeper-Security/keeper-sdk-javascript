@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist node_modules",
-    "rebuild": "npm run clean && npm install && npm run build",
+    "rebuild": "npm run clean && npm install && npm run link-local && npm run build",
     "link-local": "npm link ../keeperapi",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
