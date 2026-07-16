@@ -13,17 +13,21 @@ npm install @keeper-security/keeper-sdk-javascript
 ## Quickstart
 
 ```typescript
-import { KeeperVault, ConsoleAuthUI, FileConfigLoader } from '@keeper-security/keeper-sdk-javascript'
+import {
+  KeeperVault,
+  ConsoleAuthUI,
+  FileConfigLoader,
+} from "@keeper-security/keeper-sdk-javascript";
 
 const vault = new KeeperVault({
-    authUI: new ConsoleAuthUI(),
-    configLoader: new FileConfigLoader('./keeper-config.json'),
-})
+  authUI: new ConsoleAuthUI(),
+  configLoader: new FileConfigLoader("./keeper-config.json"),
+});
 
-await vault.login()
-await vault.syncDown()
+await vault.login();
+await vault.syncDown();
 
-console.log(`Loaded ${vault.records.size} records`)
+console.log(`Loaded ${vault.records.size} records`);
 ```
 
 ## Supported functionality
