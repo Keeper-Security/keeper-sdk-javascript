@@ -384,9 +384,10 @@ export type TeamGetKeysRequest = {
 }
 
 export type TeamGetKeyEntry = {
-    team_uid?: string
+    team_uid: string
     key?: string
     type?: number
+    result_code?: string
 }
 
 export type TeamGetKeysResponse = KeeperResponse & {
