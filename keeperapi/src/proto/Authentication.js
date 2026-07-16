@@ -6999,6 +6999,7 @@ export const Authentication = $root.Authentication = (() => {
          * @property {Authentication.TwoFactorExpiration|null} [maxExpiration] TwoFactorChannelInfo maxExpiration
          * @property {number|null} [createdOn] TwoFactorChannelInfo createdOn
          * @property {Authentication.TwoFactorExpiration|null} [lastFrequency] TwoFactorChannelInfo lastFrequency
+         * @property {Uint8Array|null} [challengeToken] TwoFactorChannelInfo challengeToken
          */
 
         /**
@@ -7090,6 +7091,14 @@ export const Authentication = $root.Authentication = (() => {
         TwoFactorChannelInfo.prototype.lastFrequency = 0;
 
         /**
+         * TwoFactorChannelInfo challengeToken.
+         * @member {Uint8Array} challengeToken
+         * @memberof Authentication.TwoFactorChannelInfo
+         * @instance
+         */
+        TwoFactorChannelInfo.prototype.challengeToken = $util.newBuffer([]);
+
+        /**
          * Creates a new TwoFactorChannelInfo instance using the specified properties.
          * @function create
          * @memberof Authentication.TwoFactorChannelInfo
@@ -7136,6 +7145,8 @@ export const Authentication = $root.Authentication = (() => {
                 writer.uint32(/* id 8, wireType 0 =*/64).int64(message.createdOn);
             if (message.lastFrequency != null && Object.hasOwnProperty.call(message, "lastFrequency"))
                 writer.uint32(/* id 9, wireType 0 =*/72).int32(message.lastFrequency);
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                writer.uint32(/* id 10, wireType 2 =*/82).bytes(message.challengeToken);
             return writer;
         };
 
@@ -7199,6 +7210,10 @@ export const Authentication = $root.Authentication = (() => {
                     }
                 case 9: {
                         message.lastFrequency = reader.int32();
+                        break;
+                    }
+                case 10: {
+                        message.challengeToken = reader.bytes();
                         break;
                     }
                 default:
@@ -7366,6 +7381,11 @@ export const Authentication = $root.Authentication = (() => {
                 message.lastFrequency = 5;
                 break;
             }
+            if (object.challengeToken != null)
+                if (typeof object.challengeToken === "string")
+                    $util.base64.decode(object.challengeToken, message.challengeToken = $util.newBuffer($util.base64.length(object.challengeToken)), 0);
+                else if (object.challengeToken.length >= 0)
+                    message.challengeToken = object.challengeToken;
             return message;
         };
 
@@ -7407,6 +7427,13 @@ export const Authentication = $root.Authentication = (() => {
                 } else
                     object.createdOn = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
                 object.lastFrequency = options.enums === String ? "TWO_FA_EXP_IMMEDIATELY" : 0;
+                if (options.bytes === String)
+                    object.challengeToken = "";
+                else {
+                    object.challengeToken = [];
+                    if (options.bytes !== Array)
+                        object.challengeToken = $util.newBuffer(object.challengeToken);
+                }
             }
             if (message.channelType != null && Object.hasOwnProperty.call(message, "channelType"))
                 object.channelType = options.enums === String ? $root.Authentication.TwoFactorChannelType[message.channelType] === undefined ? message.channelType : $root.Authentication.TwoFactorChannelType[message.channelType] : message.channelType;
@@ -7434,6 +7461,8 @@ export const Authentication = $root.Authentication = (() => {
                     object.createdOn = options.longs === String ? $util.Long.prototype.toString.call(message.createdOn) : options.longs === Number ? new $util.LongBits(message.createdOn.low >>> 0, message.createdOn.high >>> 0).toNumber() : message.createdOn;
             if (message.lastFrequency != null && Object.hasOwnProperty.call(message, "lastFrequency"))
                 object.lastFrequency = options.enums === String ? $root.Authentication.TwoFactorExpiration[message.lastFrequency] === undefined ? message.lastFrequency : $root.Authentication.TwoFactorExpiration[message.lastFrequency] : message.lastFrequency;
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                object.challengeToken = options.bytes === String ? $util.base64.encode(message.challengeToken, 0, message.challengeToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.challengeToken) : message.challengeToken;
             return object;
         };
 
@@ -9136,6 +9165,7 @@ export const Authentication = $root.Authentication = (() => {
          * @property {string|null} [value] TwoFactorValidateRequest value
          * @property {Uint8Array|null} [channelUid] TwoFactorValidateRequest channelUid
          * @property {Authentication.TwoFactorExpiration|null} [expireIn] TwoFactorValidateRequest expireIn
+         * @property {Uint8Array|null} [challengeToken] TwoFactorValidateRequest challengeToken
          */
 
         /**
@@ -9194,6 +9224,14 @@ export const Authentication = $root.Authentication = (() => {
         TwoFactorValidateRequest.prototype.expireIn = 0;
 
         /**
+         * TwoFactorValidateRequest challengeToken.
+         * @member {Uint8Array} challengeToken
+         * @memberof Authentication.TwoFactorValidateRequest
+         * @instance
+         */
+        TwoFactorValidateRequest.prototype.challengeToken = $util.newBuffer([]);
+
+        /**
          * Creates a new TwoFactorValidateRequest instance using the specified properties.
          * @function create
          * @memberof Authentication.TwoFactorValidateRequest
@@ -9231,6 +9269,8 @@ export const Authentication = $root.Authentication = (() => {
                 writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.channelUid);
             if (message.expireIn != null && Object.hasOwnProperty.call(message, "expireIn"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.expireIn);
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.challengeToken);
             return writer;
         };
 
@@ -9276,6 +9316,10 @@ export const Authentication = $root.Authentication = (() => {
                     }
                 case 5: {
                         message.expireIn = reader.int32();
+                        break;
+                    }
+                case 6: {
+                        message.challengeToken = reader.bytes();
                         break;
                     }
                 default:
@@ -9388,6 +9432,11 @@ export const Authentication = $root.Authentication = (() => {
                 message.expireIn = 5;
                 break;
             }
+            if (object.challengeToken != null)
+                if (typeof object.challengeToken === "string")
+                    $util.base64.decode(object.challengeToken, message.challengeToken = $util.newBuffer($util.base64.length(object.challengeToken)), 0);
+                else if (object.challengeToken.length >= 0)
+                    message.challengeToken = object.challengeToken;
             return message;
         };
 
@@ -9426,6 +9475,13 @@ export const Authentication = $root.Authentication = (() => {
                         object.channelUid = $util.newBuffer(object.channelUid);
                 }
                 object.expireIn = options.enums === String ? "TWO_FA_EXP_IMMEDIATELY" : 0;
+                if (options.bytes === String)
+                    object.challengeToken = "";
+                else {
+                    object.challengeToken = [];
+                    if (options.bytes !== Array)
+                        object.challengeToken = $util.newBuffer(object.challengeToken);
+                }
             }
             if (message.encryptedLoginToken != null && Object.hasOwnProperty.call(message, "encryptedLoginToken"))
                 object.encryptedLoginToken = options.bytes === String ? $util.base64.encode(message.encryptedLoginToken, 0, message.encryptedLoginToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedLoginToken) : message.encryptedLoginToken;
@@ -9437,6 +9493,8 @@ export const Authentication = $root.Authentication = (() => {
                 object.channelUid = options.bytes === String ? $util.base64.encode(message.channelUid, 0, message.channelUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.channelUid) : message.channelUid;
             if (message.expireIn != null && Object.hasOwnProperty.call(message, "expireIn"))
                 object.expireIn = options.enums === String ? $root.Authentication.TwoFactorExpiration[message.expireIn] === undefined ? message.expireIn : $root.Authentication.TwoFactorExpiration[message.expireIn] : message.expireIn;
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                object.challengeToken = options.bytes === String ? $util.base64.encode(message.challengeToken, 0, message.challengeToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.challengeToken) : message.challengeToken;
             return object;
         };
 

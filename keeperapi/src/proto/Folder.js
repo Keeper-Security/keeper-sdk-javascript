@@ -12340,6 +12340,8 @@ export const Folder = $root.Folder = (() => {
          * @property {Uint8Array|null} [encryptedRecordKey] The record key encrypted with the folder key or the user’s data key if the record is located in the Vault root.
          * @property {Folder.EncryptedKeyType|null} [encryptedRecordKeyType] Indicates the encryption scheme used to encrypt the record key.
          * @property {common.tla.ITLAProperties|null} [tlaProperties] time limited access settings define expiration, notification and rotation policies.
+         * @property {Uint8Array|null} [recordKeyEncryptedByOwnerKey] Record key encrypted with the owner's data key: an owner-decryptable copy independent of folder
+         * placement, so owner-trashed records can be decrypted and restored (KA-8946 / KA-8939).
          */
 
         /**
@@ -12390,6 +12392,15 @@ export const Folder = $root.Folder = (() => {
         RecordMetadata.prototype.tlaProperties = null;
 
         /**
+         * Record key encrypted with the owner's data key: an owner-decryptable copy independent of folder
+         * placement, so owner-trashed records can be decrypted and restored (KA-8946 / KA-8939).
+         * @member {Uint8Array} recordKeyEncryptedByOwnerKey
+         * @memberof Folder.RecordMetadata
+         * @instance
+         */
+        RecordMetadata.prototype.recordKeyEncryptedByOwnerKey = $util.newBuffer([]);
+
+        /**
          * Creates a new RecordMetadata instance using the specified properties.
          * @function create
          * @memberof Folder.RecordMetadata
@@ -12425,6 +12436,8 @@ export const Folder = $root.Folder = (() => {
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.encryptedRecordKeyType);
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
                 $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+            if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.recordKeyEncryptedByOwnerKey);
             return writer;
         };
 
@@ -12466,6 +12479,10 @@ export const Folder = $root.Folder = (() => {
                     }
                 case 5: {
                         message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 6: {
+                        message.recordKeyEncryptedByOwnerKey = reader.bytes();
                         break;
                     }
                 default:
@@ -12537,6 +12554,11 @@ export const Folder = $root.Folder = (() => {
                     throw TypeError(".Folder.RecordMetadata.tlaProperties: object expected");
                 message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
             }
+            if (object.recordKeyEncryptedByOwnerKey != null)
+                if (typeof object.recordKeyEncryptedByOwnerKey === "string")
+                    $util.base64.decode(object.recordKeyEncryptedByOwnerKey, message.recordKeyEncryptedByOwnerKey = $util.newBuffer($util.base64.length(object.recordKeyEncryptedByOwnerKey)), 0);
+                else if (object.recordKeyEncryptedByOwnerKey.length >= 0)
+                    message.recordKeyEncryptedByOwnerKey = object.recordKeyEncryptedByOwnerKey;
             return message;
         };
 
@@ -12574,6 +12596,13 @@ export const Folder = $root.Folder = (() => {
                 }
                 object.encryptedRecordKeyType = options.enums === String ? "no_key" : 0;
                 object.tlaProperties = null;
+                if (options.bytes === String)
+                    object.recordKeyEncryptedByOwnerKey = "";
+                else {
+                    object.recordKeyEncryptedByOwnerKey = [];
+                    if (options.bytes !== Array)
+                        object.recordKeyEncryptedByOwnerKey = $util.newBuffer(object.recordKeyEncryptedByOwnerKey);
+                }
             }
             if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
                 object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
@@ -12583,6 +12612,8 @@ export const Folder = $root.Folder = (() => {
                 object.encryptedRecordKeyType = options.enums === String ? $root.Folder.EncryptedKeyType[message.encryptedRecordKeyType] === undefined ? message.encryptedRecordKeyType : $root.Folder.EncryptedKeyType[message.encryptedRecordKeyType] : message.encryptedRecordKeyType;
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
                 object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+            if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
+                object.recordKeyEncryptedByOwnerKey = options.bytes === String ? $util.base64.encode(message.recordKeyEncryptedByOwnerKey, 0, message.recordKeyEncryptedByOwnerKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKeyEncryptedByOwnerKey) : message.recordKeyEncryptedByOwnerKey;
             return object;
         };
 
