@@ -5,6 +5,10 @@ export {
   formatAccessRoleType,
   formatAccessType,
   normalizeParentUid,
+  displayNsfParentUid,
+  findRecordFolderParentUid,
+  nsfFolderHasPamUserWithRotation,
+  nsfRecordIsRoeEligible,
   isRootFolderUid,
   resolveKeeperDriveRootParentUid,
   getKeeperDriveFolders,
@@ -56,8 +60,11 @@ export {
   formatNsfRecordDetail,
   formatNsfDetail,
   formatNsfRecordJson,
+  formatNsfFolderJson,
   formatNsfJson,
   toNsfRecordJsonView,
+  toNsfFolderJsonView,
+  NSF_UNMASK_WARNING,
 } from "./getNsf";
 
 export {
@@ -86,6 +93,7 @@ export type {
   NsfRecordFieldView,
   NsfRecordFolderView,
   NsfRecordJsonView,
+  NsfFolderJsonView,
   NsfRecordJsonUserPermission,
   NsfFolderPermission,
   NsfFolderAccessRow,
@@ -171,6 +179,7 @@ export {
 } from "./nsfShortcut";
 export type {
   NsfShortcutRow,
+  NsfShortcutFolderRef,
   ListNsfShortcutsOptions,
   KeepNsfShortcutInput,
   KeepNsfShortcutPlanItem,

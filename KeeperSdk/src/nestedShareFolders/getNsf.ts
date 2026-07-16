@@ -25,6 +25,7 @@ import { KeeperSdkError, ResultCodes } from "../utils";
 import {
   buildFolderPath,
   collectRecordsInFolder,
+  displayNsfParentUid,
   fetchLiveRecordAccessEntries,
   getFolderAccessEntries,
   findNestedShareFoldersForRecord,
@@ -63,6 +64,7 @@ import {
   type GetNsfOptions,
   type GetNsfResult,
   type NsfFolderAccessRow,
+  type NsfFolderJsonView,
   type NsfFolderPermission,
   type NsfFolderView,
   type NsfRecordFieldView,
@@ -72,6 +74,24 @@ import {
   type NsfRecordPermission,
   type NsfRecordView,
 } from "./nsfTypes";
+
+export const NSF_UNMASK_WARNING =
+  "WARNING: Sensitive field values are displayed in plain text.";
+
+function formatAsciiTable(headers: string[], rows: string[][]): string[] {
+  if (rows.length === 0) return [];
+  const widths = headers.map((header, index) =>
+    Math.max(header.length, ...rows.map((row) => (row[index] || "").length)),
+  );
+  const pad = (cell: string, index: number) =>
+    cell + " ".repeat(Math.max(0, widths[index] - cell.length));
+  const formatRow = (cells: string[]) =>
+    cells.map((cell, index) => pad(cell, index)).join("  ");
+  const rule = widths
+    .map((width, index) => pad("-".repeat(width), index))
+    .join("  ");
+  return [formatRow(headers), rule, ...rows.map(formatRow)];
+}
 
 function formatNsfFieldParts(values: unknown[]): string[] {
   return values
@@ -292,8 +312,14 @@ function formatRecordFieldDetailLines(field: NsfRecordFieldView): string[] {
   ];
 }
 
-function jsonFieldValues(type: string, value: string[]): unknown[] {
+function jsonFieldValues(
+  type: string,
+  value: string[],
+  unmask = false,
+): unknown[] {
+  const masked = !unmask && isSensitiveFieldType(type);
   return value.map((part) => {
+    if (masked && part.length > 0) return NSF_MASKED_VALUE;
     if ((type === "host" || type === "address") && part.startsWith("{")) {
       try {
         return JSON.parse(part) as Record<string, unknown>;
@@ -305,18 +331,31 @@ function jsonFieldValues(type: string, value: string[]): unknown[] {
   });
 }
 
-export function toNsfRecordJsonView(view: NsfRecordView): NsfRecordJsonView {
+export function toNsfRecordJsonView(
+  view: NsfRecordView,
+  options: { includeDag?: boolean; unmask?: boolean } = {},
+): NsfRecordJsonView {
+  const includeDag = options.includeDag ?? false;
+  const unmask = options.unmask ?? false;
+  const fields = view.fields
+    .filter((field) => !NSF_TOP_LEVEL_FIELD_TYPES.has(field.type))
+    .map(({ type, value }) => ({
+      type,
+      value: jsonFieldValues(type, value, unmask),
+    }));
+
   return {
     record_uid: view.recordUid,
     title: view.title,
     type: view.type,
-    version: view.version,
-    revision: view.revision,
-    ...(view.folder ? { folder: view.folder } : {}),
-    fields: view.fields.map(({ type, value }) => ({
-      type,
-      value: jsonFieldValues(type, value),
-    })),
+    ...(includeDag
+      ? {
+          version: view.version,
+          revision: view.revision,
+          ...(view.folder ? { folder: view.folder } : {}),
+        }
+      : {}),
+    fields,
     ...(view.notes ? { notes: view.notes } : {}),
     user_permissions: view.userPermissions.map((entry) => ({
       username: entry.username,
@@ -329,11 +368,47 @@ export function toNsfRecordJsonView(view: NsfRecordView): NsfRecordJsonView {
   };
 }
 
-export function formatNsfRecordJson(view: NsfRecordView): string {
-  return JSON.stringify(toNsfRecordJsonView(view), null, 2);
+export function toNsfFolderJsonView(
+  view: NsfFolderView,
+  options: { includeDag?: boolean } = {},
+): NsfFolderJsonView {
+  const includeDag = options.includeDag ?? false;
+  return {
+    folder_uid: view.folderUid,
+    type: "nested_share_folder",
+    name: view.name,
+    parent_uid: view.parentUid,
+    ...(includeDag
+      ? {
+          path: view.path,
+          records: view.records,
+          user_permissions: view.userPermissions,
+          share_admins: view.shareAdmins,
+          team_permissions: view.teamPermissions,
+        }
+      : {}),
+  };
 }
 
-function formatRecordUserPermissionBlock(entry: NsfRecordPermission): string[] {
+export function formatNsfRecordJson(
+  view: NsfRecordView,
+  options: { includeDag?: boolean; unmask?: boolean } = {},
+): string {
+  return JSON.stringify(toNsfRecordJsonView(view, options), null, 2);
+}
+
+export function formatNsfFolderJson(
+  view: NsfFolderView,
+  options: { includeDag?: boolean } = {},
+): string {
+  return JSON.stringify(toNsfFolderJsonView(view, options), null, 2);
+}
+
+function formatRecordUserPermissionBlock(
+  entry: NsfRecordPermission,
+  verbose: boolean,
+): string[] {
+  if (verbose) return [];
   const lines: string[] = [];
   if (entry.username) lines.push(`  User: ${entry.username}`);
   else if (entry.accountUid) lines.push(`  User UID: ${entry.accountUid}`);
@@ -342,6 +417,38 @@ function formatRecordUserPermissionBlock(entry: NsfRecordPermission): string[] {
   lines.push(`  Shareable: ${entry.shareable ? "Yes" : "No"}`);
   lines.push(`  Read-Only: ${entry.editable ? "No" : "Yes"}`);
   return lines;
+}
+
+function formatRecordUserPermissionTable(
+  entries: NsfRecordPermission[],
+): string[] {
+  if (entries.length === 0) return [];
+  const rows = entries.map((entry) => [
+    entry.username || entry.accountUid || "",
+    entry.owner ? "Owner" : entry.role || "",
+    entry.shareable ? "Yes" : "No",
+    entry.editable ? "No" : "Yes",
+  ]);
+  return [
+    "",
+    NSF_USER_PERMISSIONS_HEADING,
+    ...formatAsciiTable(["User", "Role", "Shareable", "Read-Only"], rows).map(
+      (line) => `  ${line}`,
+    ),
+  ];
+}
+
+function formatFolderAccessTable(
+  heading: string,
+  entries: NsfFolderAccessRow[],
+): string[] {
+  if (entries.length === 0) return [];
+  const rows = entries.map((entry) => [entry.username, entry.role]);
+  return [
+    "",
+    heading,
+    ...formatAsciiTable(["User", "Role"], rows).map((line) => `  ${line}`),
+  ];
 }
 
 async function fetchRecordPermissions(
@@ -423,7 +530,7 @@ async function buildFolderView(
     objectType: NsfObjectKind.Folder,
     folderUid,
     name: folder.data.name || "Unnamed",
-    parentUid: normalizeParentUid(storage, folder.parentUid),
+    parentUid: displayNsfParentUid(storage, folder.parentUid),
     path: buildFolderPath(storage, folderUid),
     userPermissions,
     shareAdmins,
@@ -550,33 +657,45 @@ export function formatNsfFolderDetail(
   const lines = [
     folderDetailRow("Nested Share Folder UID", view.folderUid),
     folderDetailRow("Name", view.name),
+  ];
+
+  if (verbose) {
+    lines.push(
+      ...formatFolderAccessTable(
+        NSF_USER_PERMISSIONS_HEADING,
+        view.userPermissions,
+      ),
+      ...formatFolderAccessTable(
+        NSF_FOLDER_SHARE_ADMINS_HEADING,
+        view.shareAdmins,
+      ),
+      "",
+      folderDetailRow("Parent UID", view.parentUid),
+      folderDetailRow("Path", view.path),
+    );
+    if (view.records.length > 0) {
+      lines.push("", "Records:");
+      for (const record of view.records) {
+        lines.push(`  ${record.uid}  ${record.title}  (${record.type})`);
+      }
+    }
+    if (view.teamPermissions.length > 0) {
+      lines.push("", "Team Permissions:");
+      for (const entry of view.teamPermissions) {
+        lines.push(`  ${entry.accessTypeUid}  role=${entry.accessRoleType}`);
+      }
+    }
+    return lines.join("\n");
+  }
+
+  lines.push(
     "",
     NSF_USER_PERMISSIONS_HEADING,
     ...view.userPermissions.map((entry) => `${entry.username}: ${entry.role}`),
     "",
     NSF_FOLDER_SHARE_ADMINS_HEADING,
     ...view.shareAdmins.map((entry) => `${entry.username}: ${entry.role}`),
-  ];
-
-  if (!verbose) return lines.join("\n");
-
-  lines.push(
-    "",
-    folderDetailRow("Parent UID", view.parentUid),
-    folderDetailRow("Path", view.path),
   );
-  if (view.records.length > 0) {
-    lines.push("", "Records:");
-    for (const record of view.records) {
-      lines.push(`  ${record.uid}  ${record.title}  (${record.type})`);
-    }
-  }
-  if (view.teamPermissions.length > 0) {
-    lines.push("", "Team Permissions:");
-    for (const entry of view.teamPermissions) {
-      lines.push(`  ${entry.accessTypeUid}  role=${entry.accessRoleType}`);
-    }
-  }
   return lines.join("\n");
 }
 
@@ -600,9 +719,13 @@ export function formatNsfRecordDetail(
   }
 
   if (view.userPermissions.length > 0) {
-    lines.push("", NSF_USER_PERMISSIONS_HEADING);
-    for (const entry of view.userPermissions) {
-      lines.push("", ...formatRecordUserPermissionBlock(entry));
+    if (verbose) {
+      lines.push(...formatRecordUserPermissionTable(view.userPermissions));
+    } else {
+      lines.push("", NSF_USER_PERMISSIONS_HEADING);
+      for (const entry of view.userPermissions) {
+        lines.push("", ...formatRecordUserPermissionBlock(entry, verbose));
+      }
     }
   }
 
@@ -643,9 +766,12 @@ export function formatNsfDetail(result: GetNsfResult, verbose = false): string {
     : formatNsfRecordDetail(result.view, verbose);
 }
 
-export function formatNsfJson(result: GetNsfResult): string {
+export function formatNsfJson(
+  result: GetNsfResult,
+  options: { includeDag?: boolean; unmask?: boolean } = {},
+): string {
   if (result.kind === NsfObjectKind.Record) {
-    return formatNsfRecordJson(result.view);
+    return formatNsfRecordJson(result.view, options);
   }
-  return JSON.stringify(result.view, null, 2);
+  return formatNsfFolderJson(result.view, options);
 }

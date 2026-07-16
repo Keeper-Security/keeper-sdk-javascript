@@ -22,10 +22,15 @@ import type { DKdFolderRecord } from '@keeper-security/keeperapi'
 const SHORTCUT_ERROR = ResultCodes.NSF_SHORTCUT_FAILED
 const ROOT_FOLDER_LABEL = 'root'
 
+export type NsfShortcutFolderRef = {
+    folderUid: string
+    name: string
+}
+
 export type NsfShortcutRow = {
     recordUid: string
     title: string
-    folders: string[]
+    folders: NsfShortcutFolderRef[]
 }
 
 export type ListNsfShortcutsOptions = {
@@ -82,6 +87,7 @@ export function getNsfRecordShortcuts(storage: InMemoryStorage): Map<string, Set
         const folderUid = normalizeParentUid(storage, entry.folderUid)
         if (!isShortcutFolder(storage, folderUid)) continue
         if (!entry.recordUid) continue
+        if (!getKeeperDriveRecord(storage, entry.recordUid)) continue
 
         const folderSet = records.get(entry.recordUid) ?? new Set<string>()
         folderSet.add(folderUid)
@@ -145,6 +151,20 @@ function resolveShortcutRecordUids(
     throw new KeeperSdkError(`Target '${trimmed}' not found`, ResultCodes.NSF_NOT_FOUND)
 }
 
+function shortcutFolderRef(
+    storage: InMemoryStorage,
+    folderUid: string
+): NsfShortcutFolderRef {
+    const normalized = normalizeParentUid(storage, folderUid)
+    if (isRootFolderUid(storage, normalized)) {
+        return { folderUid: normalized, name: ROOT_FOLDER_LABEL }
+    }
+    return {
+        folderUid: normalized,
+        name: getFolderDisplayName(storage, normalized),
+    }
+}
+
 function collectShortcutRows(
     storage: InMemoryStorage,
     shortcuts: Map<string, Set<string>>,
@@ -155,6 +175,7 @@ function collectShortcutRows(
         : new Set(shortcuts.keys())
 
     return [...recordUids]
+        .filter((recordUid) => !!getKeeperDriveRecord(storage, recordUid))
         .sort((a, b) => recordTitle(storage, a).localeCompare(recordTitle(storage, b)))
         .map((recordUid) => ({
             recordUid,
@@ -163,7 +184,7 @@ function collectShortcutRows(
                 .sort((a, b) =>
                     formatFolderLabel(storage, a).localeCompare(formatFolderLabel(storage, b))
                 )
-                .map((folderUid) => formatFolderLabel(storage, folderUid)),
+                .map((folderUid) => shortcutFolderRef(storage, folderUid)),
         }))
 }
 
@@ -175,7 +196,11 @@ function escapeCsvCell(value: string): string {
 export function formatNsfShortcutTable(rows: NsfShortcutRow[]): string {
     if (rows.length === 0) return 'No multi-folder records found.'
     const headers = ['Record UID', 'Title', 'Folders']
-    const tableRows = rows.map((row) => [row.recordUid, row.title, row.folders.join('; ')])
+    const tableRows = rows.map((row) => [
+        row.recordUid,
+        row.title,
+        row.folders.map((folder) => `${folder.name} (${folder.folderUid})`).join('; '),
+    ])
     const columnWidths = headers.map((header, index) =>
         Math.max(header.length, ...tableRows.map((cells) => (cells[index] || '').length))
     )
@@ -189,7 +214,11 @@ export function formatNsfShortcutCsv(rows: NsfShortcutRow[]): string {
     const lines = ['record_uid,title,folders']
     for (const row of rows) {
         lines.push(
-            [row.recordUid, row.title, row.folders.join('; ')]
+            [
+                row.recordUid,
+                row.title,
+                row.folders.map((folder) => `${folder.name} (${folder.folderUid})`).join('; '),
+            ]
                 .map(escapeCsvCell)
                 .join(',')
         )
@@ -202,7 +231,10 @@ export function formatNsfShortcutJson(rows: NsfShortcutRow[]): string {
         rows.map((row) => ({
             record_uid: row.recordUid,
             title: row.title,
-            folders: row.folders,
+            folders: row.folders.map((folder) => ({
+                folder_uid: folder.folderUid,
+                name: folder.name,
+            })),
         })),
         null,
         2

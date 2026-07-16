@@ -239,10 +239,7 @@ export async function mkdirNestedShareFolder(
     return {
       folderUid: createdUid,
       created: true,
-      message:
-        segments.length > 1
-          ? `Created folder path "${folderPath}".`
-          : `Created folder "${segments[lastIdx]}".`,
+      message: createdUid,
     };
   } catch (err) {
     if (err instanceof KeeperSdkError) throw err;

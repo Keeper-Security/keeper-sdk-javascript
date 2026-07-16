@@ -49,6 +49,7 @@ export type GetNsfOptions = {
   format?: GetNsfFormatInput;
   verbose?: boolean;
   unmask?: boolean;
+  includeDag?: boolean;
 };
 
 export type NsfFolderAccessRow = {
@@ -117,13 +118,25 @@ export type NsfRecordJsonView = {
   record_uid: string;
   title: string;
   type: string;
-  version: number;
-  revision: number;
+  version?: number;
+  revision?: number;
   folder?: NsfRecordFolderView;
   fields: { type: string; value: unknown[] }[];
   notes?: string;
   user_permissions: NsfRecordJsonUserPermission[];
   share_admins: string[];
+};
+
+export type NsfFolderJsonView = {
+  folder_uid: string;
+  type: "nested_share_folder";
+  name: string;
+  parent_uid: string;
+  path?: string;
+  records?: NsfFolderSummary[];
+  user_permissions?: { username: string; role: NsfAccessRoleLabel }[];
+  share_admins?: { username: string; role: NsfAccessRoleLabel }[];
+  team_permissions?: NsfFolderPermission[];
 };
 
 export type NsfRecordView = {
@@ -260,6 +273,7 @@ export type ListNsfOptions = {
   folders?: boolean;
   records?: boolean;
   format?: ListNsfFormatInput;
+  roeEligible?: boolean;
 };
 
 export type ListNsfRow = {
