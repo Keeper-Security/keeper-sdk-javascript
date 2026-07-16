@@ -431,9 +431,8 @@ export enum NsfResultStatus {
     Failed = 'failed',
 }
 
-/** API transferRecordStatus success value for records_transfer_v3. */
 export enum NsfTransferApiStatus {
-    Success = 'success',
+    Success = 'transfer_record_success',
 }
 
 export enum NsfPermissionFailureCode {

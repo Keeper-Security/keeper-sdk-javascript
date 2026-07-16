@@ -278,9 +278,13 @@ async function runShareBatch<T extends NsfSharePermissionItem>(
 
         try {
             const statusList = await executeShareBatch(auth, request, statusField)
-            for (let itemIndex = 0; itemIndex < built.length; itemIndex++) {
-                const item = built[itemIndex]
-                const status = statusList[itemIndex]
+            const statusByRecordUid = new Map(
+                statusList
+                    .filter((status) => status.recordUid.length > 0)
+                    .map((status) => [status.recordUid, status] as const)
+            )
+            for (const item of built) {
+                const status = statusByRecordUid.get(item.recordUid)
                 outcomes.push({
                     recordUid: item.recordUid,
                     email: item.email,
