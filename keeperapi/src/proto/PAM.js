@@ -4964,6 +4964,8 @@ export const PAM = $root.PAM = (() => {
          * @property {Uint8Array|null} [applicationUid] PAMController applicationUid
          * @property {Enterprise.AppClientType|null} [appClientType] PAMController appClientType
          * @property {boolean|null} [isInitialized] PAMController isInitialized
+         * @property {number|null} [maxInstanceCount] PAMController maxInstanceCount
+         * @property {number|null} [lastSeen] PAMController lastSeen
          */
 
         /**
@@ -5062,6 +5064,22 @@ export const PAM = $root.PAM = (() => {
         PAMController.prototype.isInitialized = false;
 
         /**
+         * PAMController maxInstanceCount.
+         * @member {number} maxInstanceCount
+         * @memberof PAM.PAMController
+         * @instance
+         */
+        PAMController.prototype.maxInstanceCount = 0;
+
+        /**
+         * PAMController lastSeen.
+         * @member {number} lastSeen
+         * @memberof PAM.PAMController
+         * @instance
+         */
+        PAMController.prototype.lastSeen = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new PAMController instance using the specified properties.
          * @function create
          * @memberof PAM.PAMController
@@ -5109,6 +5127,10 @@ export const PAM = $root.PAM = (() => {
                 writer.uint32(/* id 9, wireType 0 =*/72).int32(message.appClientType);
             if (message.isInitialized != null && Object.hasOwnProperty.call(message, "isInitialized"))
                 writer.uint32(/* id 10, wireType 0 =*/80).bool(message.isInitialized);
+            if (message.maxInstanceCount != null && Object.hasOwnProperty.call(message, "maxInstanceCount"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.maxInstanceCount);
+            if (message.lastSeen != null && Object.hasOwnProperty.call(message, "lastSeen"))
+                writer.uint32(/* id 12, wireType 0 =*/96).int64(message.lastSeen);
             return writer;
         };
 
@@ -5174,6 +5196,14 @@ export const PAM = $root.PAM = (() => {
                     }
                 case 10: {
                         message.isInitialized = reader.bool();
+                        break;
+                    }
+                case 11: {
+                        message.maxInstanceCount = reader.int32();
+                        break;
+                    }
+                case 12: {
+                        message.lastSeen = reader.int64();
                         break;
                     }
                 default:
@@ -5275,6 +5305,17 @@ export const PAM = $root.PAM = (() => {
             }
             if (object.isInitialized != null)
                 message.isInitialized = Boolean(object.isInitialized);
+            if (object.maxInstanceCount != null)
+                message.maxInstanceCount = object.maxInstanceCount | 0;
+            if (object.lastSeen != null)
+                if ($util.Long)
+                    message.lastSeen = $util.Long.fromValue(object.lastSeen, false);
+                else if (typeof object.lastSeen === "string")
+                    message.lastSeen = parseInt(object.lastSeen, 10);
+                else if (typeof object.lastSeen === "number")
+                    message.lastSeen = object.lastSeen;
+                else if (typeof object.lastSeen === "object")
+                    message.lastSeen = new $util.LongBits(object.lastSeen.low >>> 0, object.lastSeen.high >>> 0).toNumber();
             return message;
         };
 
@@ -5330,6 +5371,12 @@ export const PAM = $root.PAM = (() => {
                 }
                 object.appClientType = options.enums === String ? "NOT_USED" : 0;
                 object.isInitialized = false;
+                object.maxInstanceCount = 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.lastSeen = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.lastSeen = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
             }
             if (message.controllerUid != null && Object.hasOwnProperty.call(message, "controllerUid"))
                 object.controllerUid = options.bytes === String ? $util.base64.encode(message.controllerUid, 0, message.controllerUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.controllerUid) : message.controllerUid;
@@ -5366,6 +5413,15 @@ export const PAM = $root.PAM = (() => {
                 object.appClientType = options.enums === String ? $root.Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : $root.Enterprise.AppClientType[message.appClientType] : message.appClientType;
             if (message.isInitialized != null && Object.hasOwnProperty.call(message, "isInitialized"))
                 object.isInitialized = message.isInitialized;
+            if (message.maxInstanceCount != null && Object.hasOwnProperty.call(message, "maxInstanceCount"))
+                object.maxInstanceCount = message.maxInstanceCount;
+            if (message.lastSeen != null && Object.hasOwnProperty.call(message, "lastSeen"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.lastSeen = typeof message.lastSeen === "number" ? BigInt(message.lastSeen) : $util.Long.fromBits(message.lastSeen.low >>> 0, message.lastSeen.high >>> 0, false).toBigInt();
+                else if (typeof message.lastSeen === "number")
+                    object.lastSeen = options.longs === String ? String(message.lastSeen) : message.lastSeen;
+                else
+                    object.lastSeen = options.longs === String ? $util.Long.prototype.toString.call(message.lastSeen) : options.longs === Number ? new $util.LongBits(message.lastSeen.low >>> 0, message.lastSeen.high >>> 0).toNumber() : message.lastSeen;
             return object;
         };
 

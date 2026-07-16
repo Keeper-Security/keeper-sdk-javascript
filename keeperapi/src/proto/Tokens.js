@@ -19169,6 +19169,183 @@ export const Tokens = $root.Tokens = (() => {
         return IPWhiteList;
     })();
 
+    Tokens.MemcachedString = (function() {
+
+        /**
+         * Properties of a MemcachedString.
+         * @memberof Tokens
+         * @interface IMemcachedString
+         * @property {string|null} [value] MemcachedString value
+         */
+
+        /**
+         * Constructs a new MemcachedString.
+         * @memberof Tokens
+         * @classdesc Represents a MemcachedString.
+         * @implements IMemcachedString
+         * @constructor
+         * @param {Tokens.IMemcachedString=} [properties] Properties to set
+         */
+        function MemcachedString(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MemcachedString value.
+         * @member {string} value
+         * @memberof Tokens.MemcachedString
+         * @instance
+         */
+        MemcachedString.prototype.value = "";
+
+        /**
+         * Creates a new MemcachedString instance using the specified properties.
+         * @function create
+         * @memberof Tokens.MemcachedString
+         * @static
+         * @param {Tokens.IMemcachedString=} [properties] Properties to set
+         * @returns {Tokens.MemcachedString} MemcachedString instance
+         */
+        MemcachedString.create = function create(properties) {
+            return new MemcachedString(properties);
+        };
+
+        /**
+         * Encodes the specified MemcachedString message. Does not implicitly {@link Tokens.MemcachedString.verify|verify} messages.
+         * @function encode
+         * @memberof Tokens.MemcachedString
+         * @static
+         * @param {Tokens.IMemcachedString} message MemcachedString message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MemcachedString.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.value != null && Object.hasOwnProperty.call(message, "value"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.value);
+            return writer;
+        };
+
+        /**
+         * Decodes a MemcachedString message from the specified reader or buffer.
+         * @function decode
+         * @memberof Tokens.MemcachedString
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Tokens.MemcachedString} MemcachedString
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MemcachedString.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Tokens.MemcachedString();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.value = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a MemcachedString message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Tokens.MemcachedString
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Tokens.MemcachedString} MemcachedString
+         */
+        MemcachedString.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Tokens.MemcachedString)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Tokens.MemcachedString: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Tokens.MemcachedString();
+            if (object.value != null)
+                message.value = String(object.value);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MemcachedString message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Tokens.MemcachedString
+         * @static
+         * @param {Tokens.MemcachedString} message MemcachedString
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MemcachedString.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults)
+                object.value = "";
+            if (message.value != null && Object.hasOwnProperty.call(message, "value"))
+                object.value = message.value;
+            return object;
+        };
+
+        /**
+         * Converts this MemcachedString to JSON.
+         * @function toJSON
+         * @memberof Tokens.MemcachedString
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MemcachedString.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for MemcachedString
+         * @function getTypeUrl
+         * @memberof Tokens.MemcachedString
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        MemcachedString.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Tokens.MemcachedString";
+        };
+
+        return MemcachedString;
+    })();
+
     Tokens.IncrementalSecurityDataContToken = (function() {
 
         /**

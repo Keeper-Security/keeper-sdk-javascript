@@ -2031,6 +2031,7 @@ export const record = $root.record = (() => {
              * @property {Records.IRecordAudit|null} [audit] RecordAdd audit
              * @property {Records.ISecurityData|null} [securityData] RecordAdd securityData
              * @property {Records.ISecurityScoreData|null} [securityScoreData] RecordAdd securityScoreData
+             * @property {Uint8Array|null} [recordKeyEncryptedByOwnerKey] RecordAdd recordKeyEncryptedByOwnerKey
              */
 
             /**
@@ -2147,6 +2148,14 @@ export const record = $root.record = (() => {
             RecordAdd.prototype.securityScoreData = null;
 
             /**
+             * RecordAdd recordKeyEncryptedByOwnerKey.
+             * @member {Uint8Array} recordKeyEncryptedByOwnerKey
+             * @memberof record.v3.RecordAdd
+             * @instance
+             */
+            RecordAdd.prototype.recordKeyEncryptedByOwnerKey = $util.newBuffer([]);
+
+            /**
              * Creates a new RecordAdd instance using the specified properties.
              * @function create
              * @memberof record.v3.RecordAdd
@@ -2199,6 +2208,8 @@ export const record = $root.record = (() => {
                     $root.Records.SecurityData.encode(message.securityData, writer.uint32(/* id 11, wireType 2 =*/90).fork(), q + 1).ldelim();
                 if (message.securityScoreData != null && Object.hasOwnProperty.call(message, "securityScoreData"))
                     $root.Records.SecurityScoreData.encode(message.securityScoreData, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
+                if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
+                    writer.uint32(/* id 13, wireType 2 =*/106).bytes(message.recordKeyEncryptedByOwnerKey);
                 return writer;
             };
 
@@ -2274,6 +2285,10 @@ export const record = $root.record = (() => {
                         }
                     case 12: {
                             message.securityScoreData = $root.Records.SecurityScoreData.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 13: {
+                            message.recordKeyEncryptedByOwnerKey = reader.bytes();
                             break;
                         }
                     default:
@@ -2409,6 +2424,11 @@ export const record = $root.record = (() => {
                         throw TypeError(".record.v3.RecordAdd.securityScoreData: object expected");
                     message.securityScoreData = $root.Records.SecurityScoreData.fromObject(object.securityScoreData, long + 1);
                 }
+                if (object.recordKeyEncryptedByOwnerKey != null)
+                    if (typeof object.recordKeyEncryptedByOwnerKey === "string")
+                        $util.base64.decode(object.recordKeyEncryptedByOwnerKey, message.recordKeyEncryptedByOwnerKey = $util.newBuffer($util.base64.length(object.recordKeyEncryptedByOwnerKey)), 0);
+                    else if (object.recordKeyEncryptedByOwnerKey.length >= 0)
+                        message.recordKeyEncryptedByOwnerKey = object.recordKeyEncryptedByOwnerKey;
                 return message;
             };
 
@@ -2477,6 +2497,13 @@ export const record = $root.record = (() => {
                     object.audit = null;
                     object.securityData = null;
                     object.securityScoreData = null;
+                    if (options.bytes === String)
+                        object.recordKeyEncryptedByOwnerKey = "";
+                    else {
+                        object.recordKeyEncryptedByOwnerKey = [];
+                        if (options.bytes !== Array)
+                            object.recordKeyEncryptedByOwnerKey = $util.newBuffer(object.recordKeyEncryptedByOwnerKey);
+                    }
                 }
                 if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
                     object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
@@ -2510,6 +2537,8 @@ export const record = $root.record = (() => {
                     object.securityData = $root.Records.SecurityData.toObject(message.securityData, options, q + 1);
                 if (message.securityScoreData != null && Object.hasOwnProperty.call(message, "securityScoreData"))
                     object.securityScoreData = $root.Records.SecurityScoreData.toObject(message.securityScoreData, options, q + 1);
+                if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
+                    object.recordKeyEncryptedByOwnerKey = options.bytes === String ? $util.base64.encode(message.recordKeyEncryptedByOwnerKey, 0, message.recordKeyEncryptedByOwnerKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKeyEncryptedByOwnerKey) : message.recordKeyEncryptedByOwnerKey;
                 return object;
             };
 

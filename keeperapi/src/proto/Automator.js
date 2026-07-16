@@ -4329,6 +4329,7 @@ export const Automator = $root.Automator = (() => {
      * @property {number} DEVICE_APPROVAL=1 DEVICE_APPROVAL value
      * @property {number} TEAM_APPROVAL=2 TEAM_APPROVAL value
      * @property {number} TEAM_FOR_USER_APPROVAL=3 TEAM_FOR_USER_APPROVAL value
+     * @property {number} REPORTING=4 REPORTING value
      */
     Automator.SkillType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
@@ -4336,6 +4337,7 @@ export const Automator = $root.Automator = (() => {
         values[valuesById[1] = "DEVICE_APPROVAL"] = 1;
         values[valuesById[2] = "TEAM_APPROVAL"] = 2;
         values[valuesById[3] = "TEAM_FOR_USER_APPROVAL"] = 3;
+        values[valuesById[4] = "REPORTING"] = 4;
         return values;
     })();
 
@@ -6835,6 +6837,10 @@ export const Automator = $root.Automator = (() => {
                     case 3:
                         message.skillTypes[i] = 3;
                         break;
+                    case "REPORTING":
+                    case 4:
+                        message.skillTypes[i] = 4;
+                        break;
                     }
             }
             if (object.automatorSettingValues) {
@@ -7223,6 +7229,10 @@ export const Automator = $root.Automator = (() => {
                     case "TEAM_FOR_USER_APPROVAL":
                     case 3:
                         message.skillTypes[i] = 3;
+                        break;
+                    case "REPORTING":
+                    case 4:
+                        message.skillTypes[i] = 4;
                         break;
                     }
             }
@@ -8015,6 +8025,10 @@ export const Automator = $root.Automator = (() => {
             case "TEAM_FOR_USER_APPROVAL":
             case 3:
                 message.skillType = 3;
+                break;
+            case "REPORTING":
+            case 4:
+                message.skillType = 4;
                 break;
             }
             if (object.name != null)

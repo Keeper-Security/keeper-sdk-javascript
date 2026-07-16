@@ -4209,6 +4209,7 @@ export const Enterprise = $root.Enterprise = (() => {
      * @property {number} MUST_HAVE_ONE_USER_ADMIN=7 MUST_HAVE_ONE_USER_ADMIN value
      * @property {number} INVALID_ROLE_ID=8 INVALID_ROLE_ID value
      * @property {number} PAM_LICENSE_SEAT_EXCEEDED=9 PAM_LICENSE_SEAT_EXCEEDED value
+     * @property {number} WOULD_LOCK_SELF=10 WOULD_LOCK_SELF value
      */
     Enterprise.RoleUserModifyStatus = (function() {
         const valuesById = {}, values = Object.create(valuesById);
@@ -4222,6 +4223,7 @@ export const Enterprise = $root.Enterprise = (() => {
         values[valuesById[7] = "MUST_HAVE_ONE_USER_ADMIN"] = 7;
         values[valuesById[8] = "INVALID_ROLE_ID"] = 8;
         values[valuesById[9] = "PAM_LICENSE_SEAT_EXCEEDED"] = 9;
+        values[valuesById[10] = "WOULD_LOCK_SELF"] = 10;
         return values;
     })();
 
@@ -4453,6 +4455,10 @@ export const Enterprise = $root.Enterprise = (() => {
             case "PAM_LICENSE_SEAT_EXCEEDED":
             case 9:
                 message.status = 9;
+                break;
+            case "WOULD_LOCK_SELF":
+            case 10:
+                message.status = 10;
                 break;
             }
             if (object.message != null)
@@ -5399,6 +5405,10 @@ export const Enterprise = $root.Enterprise = (() => {
             case "PAM_LICENSE_SEAT_EXCEEDED":
             case 9:
                 message.status = 9;
+                break;
+            case "WOULD_LOCK_SELF":
+            case 10:
+                message.status = 10;
                 break;
             }
             if (object.message != null)
@@ -26117,6 +26127,8 @@ export const Enterprise = $root.Enterprise = (() => {
          * @property {string|null} [fullName] UserUpdate fullName
          * @property {string|null} [jobTitle] UserUpdate jobTitle
          * @property {string|null} [email] UserUpdate email
+         * @property {string|null} [inviteeLocale] UserUpdate inviteeLocale
+         * @property {string|null} [encryptedDataString] UserUpdate encryptedDataString
          */
 
         /**
@@ -26191,6 +26203,22 @@ export const Enterprise = $root.Enterprise = (() => {
         UserUpdate.prototype.email = "";
 
         /**
+         * UserUpdate inviteeLocale.
+         * @member {string} inviteeLocale
+         * @memberof Enterprise.UserUpdate
+         * @instance
+         */
+        UserUpdate.prototype.inviteeLocale = "";
+
+        /**
+         * UserUpdate encryptedDataString.
+         * @member {string} encryptedDataString
+         * @memberof Enterprise.UserUpdate
+         * @instance
+         */
+        UserUpdate.prototype.encryptedDataString = "";
+
+        /**
          * Creates a new UserUpdate instance using the specified properties.
          * @function create
          * @memberof Enterprise.UserUpdate
@@ -26232,6 +26260,10 @@ export const Enterprise = $root.Enterprise = (() => {
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.jobTitle);
             if (message.email != null && Object.hasOwnProperty.call(message, "email"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.email);
+            if (message.inviteeLocale != null && Object.hasOwnProperty.call(message, "inviteeLocale"))
+                writer.uint32(/* id 8, wireType 2 =*/66).string(message.inviteeLocale);
+            if (message.encryptedDataString != null && Object.hasOwnProperty.call(message, "encryptedDataString"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.encryptedDataString);
             return writer;
         };
 
@@ -26285,6 +26317,14 @@ export const Enterprise = $root.Enterprise = (() => {
                     }
                 case 7: {
                         message.email = reader.string();
+                        break;
+                    }
+                case 8: {
+                        message.inviteeLocale = reader.string();
+                        break;
+                    }
+                case 9: {
+                        message.encryptedDataString = reader.string();
                         break;
                     }
                 default:
@@ -26370,6 +26410,10 @@ export const Enterprise = $root.Enterprise = (() => {
                 message.jobTitle = String(object.jobTitle);
             if (object.email != null)
                 message.email = String(object.email);
+            if (object.inviteeLocale != null)
+                message.inviteeLocale = String(object.inviteeLocale);
+            if (object.encryptedDataString != null)
+                message.encryptedDataString = String(object.encryptedDataString);
             return message;
         };
 
@@ -26412,6 +26456,8 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.fullName = "";
                 object.jobTitle = "";
                 object.email = "";
+                object.inviteeLocale = "";
+                object.encryptedDataString = "";
             }
             if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
@@ -26437,6 +26483,10 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.jobTitle = message.jobTitle;
             if (message.email != null && Object.hasOwnProperty.call(message, "email"))
                 object.email = message.email;
+            if (message.inviteeLocale != null && Object.hasOwnProperty.call(message, "inviteeLocale"))
+                object.inviteeLocale = message.inviteeLocale;
+            if (message.encryptedDataString != null && Object.hasOwnProperty.call(message, "encryptedDataString"))
+                object.encryptedDataString = message.encryptedDataString;
             return object;
         };
 
@@ -26669,6 +26719,8 @@ export const Enterprise = $root.Enterprise = (() => {
          * @interface IUserUpdateResult
          * @property {number|null} [enterpriseUserId] UserUpdateResult enterpriseUserId
          * @property {Enterprise.UserUpdateStatus|null} [status] UserUpdateResult status
+         * @property {string|null} [errorMessage] UserUpdateResult errorMessage
+         * @property {string|null} [additionalInfo] UserUpdateResult additionalInfo
          */
 
         /**
@@ -26703,6 +26755,22 @@ export const Enterprise = $root.Enterprise = (() => {
         UserUpdateResult.prototype.status = 0;
 
         /**
+         * UserUpdateResult errorMessage.
+         * @member {string} errorMessage
+         * @memberof Enterprise.UserUpdateResult
+         * @instance
+         */
+        UserUpdateResult.prototype.errorMessage = "";
+
+        /**
+         * UserUpdateResult additionalInfo.
+         * @member {string} additionalInfo
+         * @memberof Enterprise.UserUpdateResult
+         * @instance
+         */
+        UserUpdateResult.prototype.additionalInfo = "";
+
+        /**
          * Creates a new UserUpdateResult instance using the specified properties.
          * @function create
          * @memberof Enterprise.UserUpdateResult
@@ -26734,6 +26802,10 @@ export const Enterprise = $root.Enterprise = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int64(message.enterpriseUserId);
             if (message.status != null && Object.hasOwnProperty.call(message, "status"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
+            if (message.errorMessage != null && Object.hasOwnProperty.call(message, "errorMessage"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.errorMessage);
+            if (message.additionalInfo != null && Object.hasOwnProperty.call(message, "additionalInfo"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.additionalInfo);
             return writer;
         };
 
@@ -26767,6 +26839,14 @@ export const Enterprise = $root.Enterprise = (() => {
                     }
                 case 2: {
                         message.status = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.errorMessage = reader.string();
+                        break;
+                    }
+                case 4: {
+                        message.additionalInfo = reader.string();
                         break;
                     }
                 default:
@@ -26819,7 +26899,35 @@ export const Enterprise = $root.Enterprise = (() => {
             case 1:
                 message.status = 1;
                 break;
+            case "USER_UPDATE_EXCEEDED_LICENSE_SEATS":
+            case 2:
+                message.status = 2;
+                break;
+            case "USER_UPDATE_BAD_REQUEST":
+            case 3:
+                message.status = 3;
+                break;
+            case "USER_UPDATE_DUPLICATE":
+            case 4:
+                message.status = 4;
+                break;
+            case "USER_UPDATE_INVALID_STATE":
+            case 5:
+                message.status = 5;
+                break;
+            case "USER_UPDATE_FAILED":
+            case 6:
+                message.status = 6;
+                break;
+            case "USER_UPDATE_ERROR":
+            case 7:
+                message.status = 7;
+                break;
             }
+            if (object.errorMessage != null)
+                message.errorMessage = String(object.errorMessage);
+            if (object.additionalInfo != null)
+                message.additionalInfo = String(object.additionalInfo);
             return message;
         };
 
@@ -26847,6 +26955,8 @@ export const Enterprise = $root.Enterprise = (() => {
                 } else
                     object.enterpriseUserId = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
                 object.status = options.enums === String ? "USER_UPDATE_OK" : 0;
+                object.errorMessage = "";
+                object.additionalInfo = "";
             }
             if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
@@ -26857,6 +26967,10 @@ export const Enterprise = $root.Enterprise = (() => {
                     object.enterpriseUserId = options.longs === String ? $util.Long.prototype.toString.call(message.enterpriseUserId) : options.longs === Number ? new $util.LongBits(message.enterpriseUserId.low >>> 0, message.enterpriseUserId.high >>> 0).toNumber() : message.enterpriseUserId;
             if (message.status != null && Object.hasOwnProperty.call(message, "status"))
                 object.status = options.enums === String ? $root.Enterprise.UserUpdateStatus[message.status] === undefined ? message.status : $root.Enterprise.UserUpdateStatus[message.status] : message.status;
+            if (message.errorMessage != null && Object.hasOwnProperty.call(message, "errorMessage"))
+                object.errorMessage = message.errorMessage;
+            if (message.additionalInfo != null && Object.hasOwnProperty.call(message, "additionalInfo"))
+                object.additionalInfo = message.additionalInfo;
             return object;
         };
 
@@ -26895,11 +27009,23 @@ export const Enterprise = $root.Enterprise = (() => {
      * @enum {number}
      * @property {number} USER_UPDATE_OK=0 USER_UPDATE_OK value
      * @property {number} USER_UPDATE_ACCESS_DENIED=1 USER_UPDATE_ACCESS_DENIED value
+     * @property {number} USER_UPDATE_EXCEEDED_LICENSE_SEATS=2 USER_UPDATE_EXCEEDED_LICENSE_SEATS value
+     * @property {number} USER_UPDATE_BAD_REQUEST=3 USER_UPDATE_BAD_REQUEST value
+     * @property {number} USER_UPDATE_DUPLICATE=4 USER_UPDATE_DUPLICATE value
+     * @property {number} USER_UPDATE_INVALID_STATE=5 USER_UPDATE_INVALID_STATE value
+     * @property {number} USER_UPDATE_FAILED=6 USER_UPDATE_FAILED value
+     * @property {number} USER_UPDATE_ERROR=7 USER_UPDATE_ERROR value
      */
     Enterprise.UserUpdateStatus = (function() {
         const valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "USER_UPDATE_OK"] = 0;
         values[valuesById[1] = "USER_UPDATE_ACCESS_DENIED"] = 1;
+        values[valuesById[2] = "USER_UPDATE_EXCEEDED_LICENSE_SEATS"] = 2;
+        values[valuesById[3] = "USER_UPDATE_BAD_REQUEST"] = 3;
+        values[valuesById[4] = "USER_UPDATE_DUPLICATE"] = 4;
+        values[valuesById[5] = "USER_UPDATE_INVALID_STATE"] = 5;
+        values[valuesById[6] = "USER_UPDATE_FAILED"] = 6;
+        values[valuesById[7] = "USER_UPDATE_ERROR"] = 7;
         return values;
     })();
 
