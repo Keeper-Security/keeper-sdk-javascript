@@ -1,139 +1,111 @@
-import type { Auth, Records } from "@keeper-security/keeperapi";
+import type { Auth, Records } from '@keeper-security/keeperapi'
+import { normal64Bytes, recordDetailsDataMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import type { InMemoryStorage } from '../storage/InMemoryStorage'
+import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
+import { decryptRecordTitleAndType } from './nsfRecordCrypto'
+import { ensureNestedShareRecord, nsfToNumber, resolveNsfRecordIdentifier } from './nsfHelpers'
 import {
-  normal64Bytes,
-  recordDetailsDataMessage,
-  webSafe64FromBytes,
-} from "@keeper-security/keeperapi";
-import type { InMemoryStorage } from "../storage/InMemoryStorage";
-import { KeeperSdkError, ResultCodes, extractErrorMessage } from "../utils";
-import { decryptRecordTitleAndType } from "./nsfRecordCrypto";
-import {
-  ensureNestedShareRecord,
-  nsfToNumber,
-  resolveNsfRecordIdentifier,
-} from "./nsfHelpers";
-import {
-  GetNsfRecordDetailsFormat,
-  type GetNsfRecordDetailsFormatInput,
-  type GetNsfRecordDetailsInput,
-  type GetNsfRecordDetailsResult,
-  type NsfRecordDetailsItem,
-} from "./nsfTypes";
+    GetNsfRecordDetailsFormat,
+    type GetNsfRecordDetailsFormatInput,
+    type GetNsfRecordDetailsInput,
+    type GetNsfRecordDetailsResult,
+    type NsfRecordDetailsItem,
+} from './nsfTypes'
 
-function resolveRecordUids(
-  storage: InMemoryStorage,
-  identifiers: string[],
-): string[] {
-  if (identifiers.length === 0) {
-    throw new KeeperSdkError(
-      "At least one record UID or title is required.",
-      ResultCodes.NSF_DETAILS_FAILED,
-    );
-  }
-
-  return identifiers.map((identifier) => {
-    const recordUid = resolveNsfRecordIdentifier(storage, identifier);
-    if (!recordUid) {
-      throw new KeeperSdkError(
-        `Record '${identifier}' not found`,
-        ResultCodes.NSF_NOT_FOUND,
-      );
+function resolveRecordUids(storage: InMemoryStorage, identifiers: string[]): string[] {
+    if (identifiers.length === 0) {
+        throw new KeeperSdkError('At least one record UID or title is required.', ResultCodes.NSF_DETAILS_FAILED)
     }
-    ensureNestedShareRecord(storage, recordUid, identifier);
-    return recordUid;
-  });
+
+    return identifiers.map((identifier) => {
+        const recordUid = resolveNsfRecordIdentifier(storage, identifier)
+        if (!recordUid) {
+            throw new KeeperSdkError(`Record '${identifier}' not found`, ResultCodes.NSF_NOT_FOUND)
+        }
+        ensureNestedShareRecord(storage, recordUid, identifier)
+        return recordUid
+    })
 }
 
 async function mapRecordDetailsItem(
-  storage: InMemoryStorage,
-  auth: Auth,
-  item: Records.IRecordData,
+    storage: InMemoryStorage,
+    auth: Auth,
+    item: Records.IRecordData
 ): Promise<NsfRecordDetailsItem | undefined> {
-  const recordUid = item.recordUid?.length
-    ? webSafe64FromBytes(item.recordUid)
-    : "";
-  if (!recordUid) return undefined;
+    const recordUid = item.recordUid?.length ? webSafe64FromBytes(item.recordUid) : ''
+    if (!recordUid) return undefined
 
-  const { title, type } = await decryptRecordTitleAndType(
-    storage,
-    auth,
-    recordUid,
-    item,
-  );
-  return {
-    recordUid,
-    title,
-    type,
-    revision: nsfToNumber(item.revision, 0) ?? 0,
-    version: item.version ?? 0,
-  };
+    const { title, type } = await decryptRecordTitleAndType(storage, auth, recordUid, item)
+    return {
+        recordUid,
+        title,
+        type,
+        revision: nsfToNumber(item.revision, 0) ?? 0,
+        version: item.version ?? 0,
+    }
 }
 
-export function formatNsfRecordDetailsTable(
-  result: GetNsfRecordDetailsResult,
-): string {
-  const lines: string[] = [];
-  for (const record of result.data) {
-    lines.push(`Record UID: ${record.recordUid}`);
-    lines.push(`  Title: ${record.title}`);
-    lines.push(`  Type: ${record.type}`);
-    lines.push(`  Version: ${record.version}`);
-    lines.push(`  Revision: ${record.revision}`);
-    lines.push("");
-  }
-  if (result.forbiddenRecords.length > 0) {
-    lines.push(`Forbidden records: ${result.forbiddenRecords.length}`);
-    for (const uid of result.forbiddenRecords) {
-      lines.push(`  ${uid}`);
+export function formatNsfRecordDetailsTable(result: GetNsfRecordDetailsResult): string {
+    const lines: string[] = []
+    for (const record of result.data) {
+        lines.push(`Record UID: ${record.recordUid}`)
+        lines.push(`  Title: ${record.title}`)
+        lines.push(`  Type: ${record.type}`)
+        lines.push(`  Version: ${record.version}`)
+        lines.push(`  Revision: ${record.revision}`)
+        lines.push('')
     }
-    lines.push("");
-  }
-  lines.push(`Total records retrieved: ${result.data.length}`);
-  return lines.join("\n").trimEnd();
+    if (result.forbiddenRecords.length > 0) {
+        lines.push(`Forbidden records: ${result.forbiddenRecords.length}`)
+        for (const uid of result.forbiddenRecords) {
+            lines.push(`  ${uid}`)
+        }
+        lines.push('')
+    }
+    lines.push(`Total records retrieved: ${result.data.length}`)
+    return lines.join('\n').trimEnd()
 }
 
 export function formatNsfRecordDetailsOutput(
-  result: GetNsfRecordDetailsResult,
-  format: GetNsfRecordDetailsFormatInput = GetNsfRecordDetailsFormat.Table,
+    result: GetNsfRecordDetailsResult,
+    format: GetNsfRecordDetailsFormatInput = GetNsfRecordDetailsFormat.Table
 ): string {
-  if (String(format).toLowerCase() === GetNsfRecordDetailsFormat.JSON) {
-    return JSON.stringify(result, null, 2);
-  }
-  return formatNsfRecordDetailsTable(result);
+    if (String(format).toLowerCase() === GetNsfRecordDetailsFormat.JSON) {
+        return JSON.stringify(result, null, 2)
+    }
+    return formatNsfRecordDetailsTable(result)
 }
 
 export async function getNestedShareRecordDetails(
-  storage: InMemoryStorage,
-  auth: Auth,
-  input: GetNsfRecordDetailsInput,
+    storage: InMemoryStorage,
+    auth: Auth,
+    input: GetNsfRecordDetailsInput
 ): Promise<GetNsfRecordDetailsResult> {
-  const recordUids = resolveRecordUids(storage, input.records);
+    const recordUids = resolveRecordUids(storage, input.records)
 
-  try {
-    const response = await auth.executeRest(
-      recordDetailsDataMessage({
-        recordUids: recordUids.map((uid) => normal64Bytes(uid)),
-        clientTime: Date.now(),
-      }),
-    );
+    try {
+        const response = await auth.executeRest(
+            recordDetailsDataMessage({
+                recordUids: recordUids.map((uid) => normal64Bytes(uid)),
+                clientTime: Date.now(),
+            })
+        )
 
-    const data: NsfRecordDetailsItem[] = [];
-    for (const item of response.data ?? []) {
-      const mapped = await mapRecordDetailsItem(storage, auth, item);
-      if (mapped) data.push(mapped);
+        const data: NsfRecordDetailsItem[] = []
+        for (const item of response.data ?? []) {
+            const mapped = await mapRecordDetailsItem(storage, auth, item)
+            if (mapped) data.push(mapped)
+        }
+
+        return {
+            data,
+            forbiddenRecords: (response.forbiddenRecords ?? []).map((uid) => webSafe64FromBytes(uid)),
+        }
+    } catch (err) {
+        if (err instanceof KeeperSdkError) throw err
+        throw new KeeperSdkError(
+            `Failed to get nested share record details: ${extractErrorMessage(err)}`,
+            ResultCodes.NSF_DETAILS_FAILED
+        )
     }
-
-    return {
-      data,
-      forbiddenRecords: (response.forbiddenRecords ?? []).map((uid) =>
-        webSafe64FromBytes(uid),
-      ),
-    };
-  } catch (err) {
-    if (err instanceof KeeperSdkError) throw err;
-    throw new KeeperSdkError(
-      `Failed to get nested share record details: ${extractErrorMessage(err)}`,
-      ResultCodes.NSF_DETAILS_FAILED,
-    );
-  }
 }
