@@ -165,6 +165,7 @@ export type {
 
 export {
   shareFolder,
+  updateSharedFolderMembership,
   ShareFolderAction,
   ShareFolderUserResultStatus,
 } from "./sharedFolders/shareFolder";
@@ -173,7 +174,34 @@ export type {
   ShareFolderInput,
   ShareFolderResult,
   ShareFolderUserStatus,
+  SharedFolderMembershipUserGrant,
+  SharedFolderMembershipTeamGrant,
+  UpdateSharedFolderMembershipInput,
+  SharedFolderMembershipUpdateResult,
 } from "./sharedFolders/shareFolder";
+
+export {
+  downloadMembership,
+  buildAccountUidEmailMap,
+  resolveUserEmail,
+} from "./sharedFolders/downloadMembership";
+export type {
+  MembershipPermission,
+  MembershipSharedFolder,
+  MembershipTeam,
+  MembershipData,
+  DownloadMembershipOptions,
+} from "./sharedFolders/downloadMembership";
+
+export { applyMembership } from "./sharedFolders/applyMembership";
+export type {
+  ApplyMembershipInput,
+  ApplyMembershipOptions,
+  ApplyMembershipCounts,
+  ApplyMembershipFolderResult,
+  ApplyMembershipTeamMembershipResult,
+  ApplyMembershipResult,
+} from "./sharedFolders/applyMembership";
 
 export {
   changeDirectory,
@@ -354,6 +382,27 @@ export {
   formatDeleteRoleResult,
   renderDeleteRoleAsciiTable,
   DeleteRoleStatus,
+  setRoleEnforcements,
+  formatSetRoleEnforcementsResult,
+  renderRoleEnforcementAsciiTable,
+  RoleEnforcementStatus,
+  copyRoles,
+  formatCopyRoleResult,
+  renderCopyRoleAsciiTable,
+  addUsersToRoles,
+  removeUsersFromRoles,
+  formatRoleUserResult,
+  renderRoleUserAsciiTable,
+  RoleUserStatus,
+  RoleUserSkipReason,
+  manageRoleNodes,
+  formatManageRoleNodesResult,
+  renderManageRoleNodesAsciiTable,
+  RoleManagedNodeStatus,
+  changeRolePrivileges,
+  formatChangeRolePrivilegesResult,
+  renderChangeRolePrivilegesAsciiTable,
+  RolePrivilegeStatus,
 } from "./roles";
 export type {
   ListRolesOptions,
@@ -387,6 +436,27 @@ export type {
   RoleToggleInput,
   RoleToggle,
   EnforcementPair,
+  SetRoleEnforcementsInput,
+  RoleEnforcementItemResult,
+  SetRoleEnforcementsResult,
+  FormattedRoleEnforcementTable,
+  CopyRoleInput,
+  CopyRoleResult,
+  FormattedCopyRoleTable,
+  AddUsersToRolesInput,
+  RemoveUsersFromRolesInput,
+  RoleUserItemResult,
+  RoleUserResult,
+  FormattedRoleUserTable,
+  ManageRoleNodesAction,
+  ManageRoleNodesInput,
+  RoleManagedNodeItemResult,
+  ManageRoleNodesResult,
+  FormattedManageRoleNodesTable,
+  ChangeRolePrivilegesInput,
+  RolePrivilegeItemResult,
+  ChangeRolePrivilegesResult,
+  FormattedRolePrivilegeTable,
 } from "./roles";
 
 export { viewTeam, formatTeamView, teamViewTable } from "./teams/viewTeam";
@@ -550,6 +620,20 @@ export {
   TeamUserStatus,
   TeamUserSkipReason,
 } from "./users/teamUser";
+
+export {
+  updateUsersOnTeams,
+  formatUpdateTeamUserResult,
+  renderUpdateTeamUserAsciiTable,
+  UpdateTeamUserStatus,
+  UpdateTeamUserSkipReason,
+} from "./users/updateTeamUser";
+export type {
+  UpdateUsersOnTeamsInput,
+  UpdateTeamUserItemResult,
+  UpdateUsersOnTeamsResult,
+  FormattedUpdateTeamUserTable,
+} from "./users/updateTeamUser";
 
 export { UserManager } from "./users/UserManager";
 

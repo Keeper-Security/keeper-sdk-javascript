@@ -28,6 +28,11 @@ import {
   renderTeamUserAsciiTable,
 } from "./teamUser";
 import {
+  updateUsersOnTeams,
+  formatUpdateTeamUserResult,
+  renderUpdateTeamUserAsciiTable,
+} from "./updateTeamUser";
+import {
   listUsers,
   formatUsersTable,
   renderUsersAsciiTable,
@@ -62,6 +67,11 @@ import type {
   TeamUserResult,
   FormattedTeamUserTable,
 } from "./userTypes";
+import type {
+  UpdateUsersOnTeamsInput,
+  UpdateUsersOnTeamsResult,
+  FormattedUpdateTeamUserTable,
+} from "./updateTeamUser";
 
 export type AuthProvider = () => Auth;
 
@@ -186,6 +196,24 @@ export class UserManager {
 
   public renderTeamUserAsciiTable(table: FormattedTeamUserTable): string {
     return renderTeamUserAsciiTable(table);
+  }
+
+  public async updateUsersOnTeams(
+    input: UpdateUsersOnTeamsInput,
+  ): Promise<UpdateUsersOnTeamsResult> {
+    return updateUsersOnTeams(this.requireAuth(), input);
+  }
+
+  public formatUpdateTeamUserResult(
+    result: UpdateUsersOnTeamsResult,
+  ): FormattedUpdateTeamUserTable {
+    return formatUpdateTeamUserResult(result);
+  }
+
+  public renderUpdateTeamUserAsciiTable(
+    table: FormattedUpdateTeamUserTable,
+  ): string {
+    return renderUpdateTeamUserAsciiTable(table);
   }
 
   private requireAuth(): Auth {

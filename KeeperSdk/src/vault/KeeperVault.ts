@@ -101,6 +101,15 @@ import type {
   ShareFolderInput,
   ShareFolderResult,
 } from "../sharedFolders/shareFolder";
+import type {
+  DownloadMembershipOptions,
+  MembershipData,
+} from "../sharedFolders/downloadMembership";
+import type {
+  ApplyMembershipInput,
+  ApplyMembershipOptions,
+  ApplyMembershipResult,
+} from "../sharedFolders/applyMembership";
 import { FolderManager } from "../folders/FolderManager";
 import type { SharedFolderPermissionsInput } from "../folders/FolderManager";
 import { SharedFolderManager } from "../sharedFolders/SharedFolderManager";
@@ -122,6 +131,22 @@ import {
   type RoleView,
   type UpdateRoleInput,
   type UpdateRoleResult,
+  type SetRoleEnforcementsInput,
+  type SetRoleEnforcementsResult,
+  type FormattedRoleEnforcementTable,
+  type CopyRoleInput,
+  type CopyRoleResult,
+  type FormattedCopyRoleTable,
+  type AddUsersToRolesInput,
+  type RemoveUsersFromRolesInput,
+  type RoleUserResult,
+  type FormattedRoleUserTable,
+  type ManageRoleNodesInput,
+  type ManageRoleNodesResult,
+  type FormattedManageRoleNodesTable,
+  type ChangeRolePrivilegesInput,
+  type ChangeRolePrivilegesResult,
+  type FormattedRolePrivilegeTable,
 } from "../roles";
 import { UserManager } from "../users/UserManager";
 import { NestedShareFolderManager } from "../nestedShareFolders/NestedShareFolderManager";
@@ -202,6 +227,11 @@ import type {
   TeamUserResult,
   FormattedTeamUserTable,
 } from "../users/userTypes";
+import type {
+  UpdateUsersOnTeamsInput,
+  UpdateUsersOnTeamsResult,
+  FormattedUpdateTeamUserTable,
+} from "../users/updateTeamUser";
 import { buildWhoamiInfo, type WhoamiInfo } from "../account/whoamiInfo";
 import {
   ConsoleLogger,
@@ -790,6 +820,24 @@ export class KeeperVault {
     return this.userManager.removeUsersFromTeams(input);
   }
 
+  public async updateUsersOnTeams(
+    input: UpdateUsersOnTeamsInput,
+  ): Promise<UpdateUsersOnTeamsResult> {
+    return this.userManager.updateUsersOnTeams(input);
+  }
+
+  public formatUpdateTeamUserResult(
+    result: UpdateUsersOnTeamsResult,
+  ): FormattedUpdateTeamUserTable {
+    return this.userManager.formatUpdateTeamUserResult(result);
+  }
+
+  public renderUpdateTeamUserAsciiTable(
+    table: FormattedUpdateTeamUserTable,
+  ): string {
+    return this.userManager.renderUpdateTeamUserAsciiTable(table);
+  }
+
   public async changeTeamRoles(
     input: ChangeTeamRolesInput,
   ): Promise<TeamRoleResult> {
@@ -848,6 +896,94 @@ export class KeeperVault {
     const result = await this.roleManager.deleteRoles(input);
     if (result.deleted > 0) await this.syncIfNeeded();
     return result;
+  }
+
+  public async setRoleEnforcements(
+    input: SetRoleEnforcementsInput,
+  ): Promise<SetRoleEnforcementsResult> {
+    return this.roleManager.setRoleEnforcements(input);
+  }
+
+  public formatSetRoleEnforcementsResult(
+    result: SetRoleEnforcementsResult,
+  ): FormattedRoleEnforcementTable {
+    return this.roleManager.formatSetRoleEnforcementsResult(result);
+  }
+
+  public renderRoleEnforcementAsciiTable(
+    table: FormattedRoleEnforcementTable,
+  ): string {
+    return this.roleManager.renderRoleEnforcementAsciiTable(table);
+  }
+
+  public async copyRoles(input: CopyRoleInput): Promise<CopyRoleResult> {
+    const result = await this.roleManager.copyRoles(input);
+    if (result.success) await this.syncIfNeeded();
+    return result;
+  }
+
+  public formatCopyRoleResult(result: CopyRoleResult): FormattedCopyRoleTable {
+    return this.roleManager.formatCopyRoleResult(result);
+  }
+
+  public renderCopyRoleAsciiTable(table: FormattedCopyRoleTable): string {
+    return this.roleManager.renderCopyRoleAsciiTable(table);
+  }
+
+  public async addUsersToRoles(
+    input: AddUsersToRolesInput,
+  ): Promise<RoleUserResult> {
+    return this.roleManager.addUsersToRoles(input);
+  }
+
+  public async removeUsersFromRoles(
+    input: RemoveUsersFromRolesInput,
+  ): Promise<RoleUserResult> {
+    return this.roleManager.removeUsersFromRoles(input);
+  }
+
+  public formatRoleUserResult(result: RoleUserResult): FormattedRoleUserTable {
+    return this.roleManager.formatRoleUserResult(result);
+  }
+
+  public renderRoleUserAsciiTable(table: FormattedRoleUserTable): string {
+    return this.roleManager.renderRoleUserAsciiTable(table);
+  }
+
+  public async manageRoleNodes(
+    input: ManageRoleNodesInput,
+  ): Promise<ManageRoleNodesResult> {
+    return this.roleManager.manageRoleNodes(input);
+  }
+
+  public formatManageRoleNodesResult(
+    result: ManageRoleNodesResult,
+  ): FormattedManageRoleNodesTable {
+    return this.roleManager.formatManageRoleNodesResult(result);
+  }
+
+  public renderManageRoleNodesAsciiTable(
+    table: FormattedManageRoleNodesTable,
+  ): string {
+    return this.roleManager.renderManageRoleNodesAsciiTable(table);
+  }
+
+  public async changeRolePrivileges(
+    input: ChangeRolePrivilegesInput,
+  ): Promise<ChangeRolePrivilegesResult> {
+    return this.roleManager.changeRolePrivileges(input);
+  }
+
+  public formatChangeRolePrivilegesResult(
+    result: ChangeRolePrivilegesResult,
+  ): FormattedRolePrivilegeTable {
+    return this.roleManager.formatChangeRolePrivilegesResult(result);
+  }
+
+  public renderChangeRolePrivilegesAsciiTable(
+    table: FormattedRolePrivilegeTable,
+  ): string {
+    return this.roleManager.renderChangeRolePrivilegesAsciiTable(table);
   }
 
   public async runAuditReport(
@@ -1404,6 +1540,24 @@ export class KeeperVault {
   ): Promise<ShareFolderResult> {
     const result = await this.sharedFolderManager.shareFolder(input);
     if (result.success) await this.syncIfNeeded();
+    return result;
+  }
+
+  public async downloadMembership(
+    options: DownloadMembershipOptions = {},
+  ): Promise<MembershipData> {
+    return this.sharedFolderManager.downloadMembership(options);
+  }
+
+  public async applyMembership(
+    data: ApplyMembershipInput,
+    options: ApplyMembershipOptions = {},
+  ): Promise<ApplyMembershipResult> {
+    const result = await this.sharedFolderManager.applyMembership(
+      data,
+      options,
+    );
+    await this.syncIfNeeded();
     return result;
   }
 

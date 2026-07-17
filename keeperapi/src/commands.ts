@@ -179,24 +179,6 @@ export const syncDownCommand = (request: SyncDownRequest): RestCommand<SyncDownR
         'sync_down'
     )
 
-export type TeamGetKeysRequest = {
-    teams: string[]
-}
-
-export type TeamKeyResponse = {
-    team_uid: string
-    key: string
-    type: number
-}
-
-export type TeamGetKeysResponse = KeeperResponse & {
-    keys?: TeamKeyResponse[]
-}
-
-export const teamGetKeysCommand = (
-    request: TeamGetKeysRequest
-): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> => createCommand(request, 'team_get_keys')
-
 export type RoleEnforcementAddRequest = {
     role_id: number
     enforcement: string
@@ -249,6 +231,86 @@ export type RoleDeleteRequest = {
 
 export const roleDeleteCommand = (request: RoleDeleteRequest): RestCommand<RoleDeleteRequest, KeeperResponse> =>
     createCommand(request, 'role_delete')
+
+export type RoleUserAddRequest = {
+    role_id: number
+    enterprise_user_id: number
+}
+
+export const roleUserAddCommand = (
+    request: RoleUserAddRequest
+): RestCommand<RoleUserAddRequest, KeeperResponse> => createCommand(request, 'role_user_add')
+
+export type RoleUserRemoveRequest = {
+    role_id: number
+    enterprise_user_id: number
+}
+
+export const roleUserRemoveCommand = (
+    request: RoleUserRemoveRequest
+): RestCommand<RoleUserRemoveRequest, KeeperResponse> => createCommand(request, 'role_user_remove')
+
+export type RoleManagedNodeTreeKey = {
+    enterprise_user_id: number
+    tree_key: string
+    tree_key_type?: number
+}
+
+export type RoleManagedNodeAddRequest = {
+    role_id: number
+    managed_node_id: number
+    cascade_node_management?: boolean
+    tree_keys?: RoleManagedNodeTreeKey[]
+}
+
+export const roleManagedNodeAddCommand = (
+    request: RoleManagedNodeAddRequest
+): RestCommand<RoleManagedNodeAddRequest, KeeperResponse> => createCommand(request, 'role_managed_node_add')
+
+export type RoleManagedNodeUpdateRequest = {
+    role_id: number
+    managed_node_id: number
+    cascade_node_management?: boolean
+    tree_keys?: RoleManagedNodeTreeKey[]
+}
+
+export const roleManagedNodeUpdateCommand = (
+    request: RoleManagedNodeUpdateRequest
+): RestCommand<RoleManagedNodeUpdateRequest, KeeperResponse> => createCommand(request, 'role_managed_node_update')
+
+export type RoleManagedNodeRemoveRequest = {
+    role_id: number
+    managed_node_id: number
+}
+
+export const roleManagedNodeRemoveCommand = (
+    request: RoleManagedNodeRemoveRequest
+): RestCommand<RoleManagedNodeRemoveRequest, KeeperResponse> => createCommand(request, 'role_managed_node_remove')
+
+export type ManagedNodePrivilegeAddRequest = {
+    role_id: number
+    managed_node_id: number
+    privilege: string
+    role_key_enc_with_tree_key?: string
+    role_public_key?: string
+    role_private_key?: string
+    role_keys?: unknown[]
+}
+
+export const managedNodePrivilegeAddCommand = (
+    request: ManagedNodePrivilegeAddRequest
+): RestCommand<ManagedNodePrivilegeAddRequest, KeeperResponse> => createCommand(request, 'managed_node_privilege_add')
+
+export type ManagedNodePrivilegeRemoveRequest = {
+    role_id: number
+    managed_node_id: number
+    privilege: string
+}
+
+export const managedNodePrivilegeRemoveCommand = (
+    request: ManagedNodePrivilegeRemoveRequest
+): RestCommand<ManagedNodePrivilegeRemoveRequest, KeeperResponse> =>
+    createCommand(request, 'managed_node_privilege_remove')
 
 export type MoveRequest = {
     to_type: 'user_folder' | 'shared_folder' | 'shared_folder_folder'
@@ -396,6 +458,34 @@ export const teamQueueUserCommand = (
 export const teamEnterpriseUserRemoveCommand = (
     request: TeamUserCommandRequest
 ): RestCommand<TeamUserCommandRequest, KeeperResponse> => createCommand(request, 'team_enterprise_user_remove')
+
+export type TeamEnterpriseUserUpdateRequest = {
+    team_uid: string
+    enterprise_user_id: number
+    user_type: number
+}
+
+export const teamEnterpriseUserUpdateCommand = (
+    request: TeamEnterpriseUserUpdateRequest
+): RestCommand<TeamEnterpriseUserUpdateRequest, KeeperResponse> => createCommand(request, 'team_enterprise_user_update')
+
+export type TeamGetKeysRequest = {
+    teams: string[]
+}
+
+export type TeamGetKeyEntry = {
+    team_uid: string
+    key?: string
+    type?: number
+    result_code?: string
+}
+
+export type TeamGetKeysResponse = KeeperResponse & {
+    keys?: TeamGetKeyEntry[]
+}
+
+export const teamGetKeysCommand = (request: TeamGetKeysRequest): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> =>
+    createCommand(request, 'team_get_keys')
 
 export type GetRecordHistoryRequest = {
     record_uid: string

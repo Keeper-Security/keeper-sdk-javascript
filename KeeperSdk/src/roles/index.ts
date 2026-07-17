@@ -75,4 +75,71 @@ export type {
   FormattedDeleteRoleTable,
 } from "./deleteRole";
 
+export {
+  setRoleEnforcements,
+  formatSetRoleEnforcementsResult,
+  renderRoleEnforcementAsciiTable,
+  RoleEnforcementStatus,
+} from "./roleEnforcement";
+export type {
+  SetRoleEnforcementsInput,
+  RoleEnforcementItemResult,
+  SetRoleEnforcementsResult,
+  FormattedRoleEnforcementTable,
+} from "./roleEnforcement";
+
+export {
+  copyRoles,
+  formatCopyRoleResult,
+  renderCopyRoleAsciiTable,
+} from "./copyRole";
+export type {
+  CopyRoleInput,
+  CopyRoleResult,
+  FormattedCopyRoleTable,
+} from "./copyRole";
+
+export {
+  addUsersToRoles,
+  removeUsersFromRoles,
+  formatRoleUserResult,
+  renderRoleUserAsciiTable,
+  RoleUserStatus,
+  RoleUserSkipReason,
+} from "./roleUser";
+export type {
+  AddUsersToRolesInput,
+  RemoveUsersFromRolesInput,
+  RoleUserItemResult,
+  RoleUserResult,
+  FormattedRoleUserTable,
+} from "./roleUser";
+
+export {
+  manageRoleNodes,
+  formatManageRoleNodesResult,
+  renderManageRoleNodesAsciiTable,
+  RoleManagedNodeStatus,
+} from "./manageNode";
+export type {
+  ManageRoleNodesAction,
+  ManageRoleNodesInput,
+  RoleManagedNodeItemResult,
+  ManageRoleNodesResult,
+  FormattedManageRoleNodesTable,
+} from "./manageNode";
+
+export {
+  changeRolePrivileges,
+  formatChangeRolePrivilegesResult,
+  renderChangeRolePrivilegesAsciiTable,
+  RolePrivilegeStatus,
+} from "./rolePrivilege";
+export type {
+  ChangeRolePrivilegesInput,
+  RolePrivilegeItemResult,
+  ChangeRolePrivilegesResult,
+  FormattedRolePrivilegeTable,
+} from "./rolePrivilege";
+
 export type { RoleToggleInput, RoleToggle, EnforcementPair } from "./roleUtils";
