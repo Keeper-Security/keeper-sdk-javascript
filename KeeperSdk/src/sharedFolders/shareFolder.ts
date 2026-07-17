@@ -304,9 +304,7 @@ async function shareWithSharedFolder(
     const newUserManageRecords = isBoolean(input.manageRecords)
         ? input.manageRecords
         : sharedFolder.defaultManageRecords
-    const newUserManageUsers = isBoolean(input.manageUsers)
-        ? input.manageUsers
-        : sharedFolder.defaultManageUsers
+    const newUserManageUsers = isBoolean(input.manageUsers) ? input.manageUsers : sharedFolder.defaultManageUsers
 
     for (const email of emails) {
         if (existingMembers.has(email)) {

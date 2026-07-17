@@ -289,13 +289,21 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
             if (!userFolder) continue
             const name = userFolderName(userFolder)
             if (!matches(name, userFolder.uid)) continue
-            folderRows.push({ uid: userFolder.uid, name, folderKind: FolderKind.UserFolder })
+            folderRows.push({
+                uid: userFolder.uid,
+                name,
+                folderKind: FolderKind.UserFolder,
+            })
         } else if (dependency.kind === FolderKind.SharedFolder && showFolders && parentKey !== null) {
             const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, dependency.uid)
             if (!sharedFolder) continue
             const name = sharedFolderName(sharedFolder)
             if (!matches(name, sharedFolder.uid)) continue
-            folderRows.push({ uid: sharedFolder.uid, name, folderKind: FolderKind.SharedFolder })
+            folderRows.push({
+                uid: sharedFolder.uid,
+                name,
+                folderKind: FolderKind.SharedFolder,
+            })
         } else if (dependency.kind === FolderKind.SharedFolderFolder && showFolders && parentKey !== null) {
             const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(
                 FolderKind.SharedFolderFolder,

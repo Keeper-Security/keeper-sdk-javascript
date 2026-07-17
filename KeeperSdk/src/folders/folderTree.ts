@@ -264,7 +264,10 @@ function gatherItems(node: FolderTreeNode): TreeItem[] {
     const items: TreeItem[] = []
     if (node.permissions) {
         for (const permission of node.permissions) {
-            items.push({ kind: TreeItemKind.Permission, display: permission.display })
+            items.push({
+                kind: TreeItemKind.Permission,
+                display: permission.display,
+            })
         }
     }
     for (const child of node.children) {

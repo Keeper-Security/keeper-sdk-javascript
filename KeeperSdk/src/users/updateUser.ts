@@ -90,16 +90,11 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     const resolvedUsers = resolveExistingUsers(response.users || [], rawEmails)
 
     const overrideNodeId: number | null =
-        parentIdentifier !== null && parentIdentifier !== ''
-            ? resolveParentNode(nodes, parentIdentifier).node_id
-            : null
+        parentIdentifier !== null && parentIdentifier !== '' ? resolveParentNode(nodes, parentIdentifier).node_id : null
 
     const treeKey = hasProfileChange ? await enterpriseData.getTreeKey() : null
     if (hasProfileChange && !treeKey) {
-        throw new KeeperSdkError(
-            'Enterprise tree key is unavailable.',
-            ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
-        )
+        throw new KeeperSdkError('Enterprise tree key is unavailable.', ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE)
     }
 
     const removeTeamUids = resolveTeamUids(input.removeTeam || [], response.teams || [], response.queued_teams || [])
@@ -112,7 +107,7 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     const items: UpdateUserItemResult[] = []
 
     for (const user of resolvedUsers) {
-        const targetNodeId = overrideNodeId ?? (user.node_id ?? 0)
+        const targetNodeId = overrideNodeId ?? user.node_id ?? 0
         const item: UpdateUserItemResult = {
             username: user.username,
             enterpriseUserId: user.enterprise_user_id,
@@ -122,9 +117,10 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
 
         try {
             if (hasProfileChange && treeKey !== null) {
-                const encryptedData = fullName !== undefined
-                    ? await encryptObjectForStorage({ displayname: fullName }, treeKey)
-                    : undefined
+                const encryptedData =
+                    fullName !== undefined
+                        ? await encryptObjectForStorage({ displayname: fullName }, treeKey)
+                        : undefined
                 await sendUserUpdate(auth, {
                     enterprise_user_id: user.enterprise_user_id,
                     enterprise_user_username: user.username,
@@ -286,7 +282,8 @@ function resolveRoleIds(
 }
 
 function finalizeResult(items: UpdateUserItemResult[]): UpdateUserResult {
-    let updated = 0, failed = 0
+    let updated = 0,
+        failed = 0
     for (const item of items) {
         if (item.status === UpdateUserStatus.Updated) updated++
         else failed++
@@ -315,8 +312,7 @@ export function renderUpdateUserAsciiTable(table: FormattedUpdateUserTable): str
     const widths = headers.map((header, index) =>
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
-    const padCell = (cell: string, columnIndex: number): string =>
-        cell.padEnd(widths[columnIndex])
+    const padCell = (cell: string, columnIndex: number): string => cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 

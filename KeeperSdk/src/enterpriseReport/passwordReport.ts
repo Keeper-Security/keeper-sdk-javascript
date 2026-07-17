@@ -2,11 +2,7 @@ import type { DBWRecord, DRecord } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { resolveSingleFolder, type VaultFolderSession } from '../folders/changeDirectory'
 import { listFolder } from '../folders/listFolder'
-import {
-    getRecordPassword,
-    getRecordSummary,
-    getRecordTitle,
-} from '../records/RecordUtils'
+import { getRecordPassword, getRecordSummary, getRecordTitle } from '../records/RecordUtils'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import {
     DEFAULT_TRUNCATION_LENGTH,
@@ -23,7 +19,10 @@ import {
 const POLICY_FIELD_COUNT = 5
 const SPECIAL_CHAR_SET = new Set(PW_SPECIAL_CHARACTERS.split(''))
 
-const POLICY_SUMMARY_LABELS: ReadonlyArray<{ key: keyof PasswordPolicy; label: string }> = [
+const POLICY_SUMMARY_LABELS: ReadonlyArray<{
+    key: keyof PasswordPolicy
+    label: string
+}> = [
     { key: 'length', label: 'length' },
     { key: 'lower', label: 'lowercase' },
     { key: 'upper', label: 'uppercase' },
@@ -250,9 +249,7 @@ export async function runPasswordReport(
         breachWatchPasswordCounts,
     }
 
-    const rows = targetRecords.flatMap((record) =>
-        buildNonCompliantRow(record, policy, verbose, verboseContext)
-    )
+    const rows = targetRecords.flatMap((record) => buildNonCompliantRow(record, policy, verbose, verboseContext))
 
     return {
         policy,

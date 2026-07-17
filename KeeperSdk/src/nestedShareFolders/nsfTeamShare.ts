@@ -35,10 +35,7 @@ function hasAsymmetricTeamPublicKeys(keys: NsfTeamPublicKeys): boolean {
     return Boolean(keys.rsaPublicKey?.length || keys.eccPublicKey?.length)
 }
 
-async function decryptTeamGetKeysEntry(
-    auth: Auth,
-    entry: TeamGetKeyEntry
-): Promise<Partial<NsfTeamPublicKeys>> {
+async function decryptTeamGetKeysEntry(auth: Auth, entry: TeamGetKeyEntry): Promise<Partial<NsfTeamPublicKeys>> {
     if (!entry.key) return {}
 
     const keyBytes = normal64Bytes(entry.key)
@@ -99,7 +96,9 @@ async function fetchNsfTeamPublicKeysFromVaultStorage(
     if (!teamPrivateKey?.length) return {}
 
     try {
-        return { rsaPublicKey: deriveRsaPublicKeyFromPkcs1PrivateKey(teamPrivateKey) }
+        return {
+            rsaPublicKey: deriveRsaPublicKeyFromPkcs1PrivateKey(teamPrivateKey),
+        }
     } catch (err) {
         logger.debug(
             `Could not derive team RSA public key from vault storage for ${teamUid}: ${extractErrorMessage(err)}`
@@ -108,10 +107,7 @@ async function fetchNsfTeamPublicKeysFromVaultStorage(
     }
 }
 
-function findMatchingShareTeams(
-    teams: Records.IShareTeam[],
-    query: string
-): Records.IShareTeam[] {
+function findMatchingShareTeams(teams: Records.IShareTeam[], query: string): Records.IShareTeam[] {
     const lower = query.toLowerCase()
     return teams.filter((team) => {
         const uid = team.teamUid?.length ? webSafe64FromBytes(team.teamUid) : ''
@@ -144,19 +140,13 @@ export async function fetchNsfTeamPublicKeys(
         }
 
         if (!hasAsymmetricTeamPublicKeys(keys)) {
-            throw new KeeperSdkError(
-                `No public key found for team ${trimmed}.`,
-                ResultCodes.TEAM_NOT_FOUND
-            )
+            throw new KeeperSdkError(`No public key found for team ${trimmed}.`, ResultCodes.TEAM_NOT_FOUND)
         }
 
         return keys
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
-        throw new KeeperSdkError(
-            `Failed to load team keys for ${trimmed}: ${extractErrorMessage(err)}`,
-            SHARE_ERROR
-        )
+        throw new KeeperSdkError(`Failed to load team keys for ${trimmed}: ${extractErrorMessage(err)}`, SHARE_ERROR)
     }
 }
 
@@ -166,10 +156,7 @@ export async function encryptNsfFolderKeyForTeam(
 ): Promise<Folder.IEncryptedDataKey> {
     if (teamPublicKeys.rsaPublicKey?.length) {
         return Folder.EncryptedDataKey.create({
-            encryptedKey: platform.publicEncrypt(
-                folderKey,
-                platform.bytesToBase64(teamPublicKeys.rsaPublicKey)
-            ),
+            encryptedKey: platform.publicEncrypt(folderKey, platform.bytesToBase64(teamPublicKeys.rsaPublicKey)),
             encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_public_key,
         })
     }
@@ -199,7 +186,11 @@ export async function resolveNsfShareRecipient(
 
     if (matches.length === 1) {
         const teamUid = webSafe64FromBytes(matches[0].teamUid!)
-        return { recipient: teamUid, isTeam: true, accountUid: matches[0].teamUid as Uint8Array }
+        return {
+            recipient: teamUid,
+            isTeam: true,
+            accountUid: matches[0].teamUid as Uint8Array,
+        }
     }
     if (matches.length > 1) {
         throw new KeeperSdkError(
@@ -208,8 +199,5 @@ export async function resolveNsfShareRecipient(
         )
     }
 
-    throw new KeeperSdkError(
-        `Recipient '${trimmed}' could not be resolved as an email or team.`,
-        SHARE_ERROR
-    )
+    throw new KeeperSdkError(`Recipient '${trimmed}' could not be resolved as an email or team.`, SHARE_ERROR)
 }

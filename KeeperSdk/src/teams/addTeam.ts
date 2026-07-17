@@ -242,10 +242,7 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
     }
     const dataKey = auth.dataKey
     if (!dataKey) {
-        throw new KeeperSdkError(
-            'Data key not available. Ensure you are logged in.',
-            ResultCodes.DATA_KEY_MISSING
-        )
+        throw new KeeperSdkError('Data key not available. Ensure you are logged in.', ResultCodes.DATA_KEY_MISSING)
     }
 
     for (const request of planned) {
@@ -319,9 +316,7 @@ function buildQueuedByUid(queued: EnterpriseQueuedTeamRecord[]): Map<string, Ent
     return map
 }
 
-function buildQueuedByLowerName(
-    queued: EnterpriseQueuedTeamRecord[]
-): Map<string, EnterpriseQueuedTeamRecord> {
+function buildQueuedByLowerName(queued: EnterpriseQueuedTeamRecord[]): Map<string, EnterpriseQueuedTeamRecord> {
     const map = new Map<string, EnterpriseQueuedTeamRecord>()
     for (const team of queued) {
         const key = (team.name || '').trim().toLowerCase()
@@ -360,13 +355,14 @@ async function sendTeamAdd(
     parentNodeId: number,
     dataKey: Uint8Array,
     treeKey: Uint8Array,
-    restrictions: { restrictEdit: boolean; restrictShare: boolean; restrictView: boolean }
+    restrictions: {
+        restrictEdit: boolean
+        restrictShare: boolean
+        restrictView: boolean
+    }
 ): Promise<void> {
     const teamKeyBytes = generateEncryptionKey()
-    const [rsaKeyPair, eccKeyPair] = await Promise.all([
-        platform.generateRSAKeyPair(),
-        platform.generateECKeyPair(),
-    ])
+    const [rsaKeyPair, eccKeyPair] = await Promise.all([platform.generateRSAKeyPair(), platform.generateECKeyPair()])
     const encryptedPrivateKey = await encryptForStorage(rsaKeyPair.privateKey, teamKeyBytes)
     const encryptedEccPrivateKey = await encryptKey(eccKeyPair.privateKey, teamKeyBytes)
     const encryptedTeamKeyByDataKey = await encryptForStorage(teamKeyBytes, dataKey)
@@ -406,11 +402,7 @@ async function sendTeamAdd(
     }
 }
 
-function finalizeResult(
-    items: AddTeamItemResult[],
-    parentNodeId: number,
-    parentNodeName: string
-): AddTeamResult {
+function finalizeResult(items: AddTeamItemResult[], parentNodeId: number, parentNodeName: string): AddTeamResult {
     const created = items.filter((item) => item.status === AddTeamStatus.Created).length
     const skipped = items.filter((item) => item.status === AddTeamStatus.Skipped).length
     const failed = items.filter((item) => item.status === AddTeamStatus.Failed).length
@@ -449,9 +441,7 @@ export function formatAddTeamResult(
     options: FormatAddTeamResultOptions = {}
 ): FormattedAddTeamTable {
     const showSkipped = options.showSkipped !== false
-    const visible = result.items.filter(
-        (item) => showSkipped || item.status !== AddTeamStatus.Skipped
-    )
+    const visible = result.items.filter((item) => showSkipped || item.status !== AddTeamStatus.Skipped)
 
     const rows = visible.map((item, index) => [
         String(index + 1),

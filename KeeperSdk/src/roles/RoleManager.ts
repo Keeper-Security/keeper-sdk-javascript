@@ -2,12 +2,7 @@ import type { Auth } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataManager } from '../teams/enterpriseData'
 import { formatRolesTable, listRoles, renderRolesAsciiTable } from './listRoles'
-import type {
-    FormatRolesTableOptions,
-    FormattedRolesTable,
-    ListRoleRow,
-    ListRolesOptions,
-} from './roleTypes'
+import type { FormatRolesTableOptions, FormattedRolesTable, ListRoleRow, ListRolesOptions } from './roleTypes'
 import {
     formatRoleView,
     roleViewTable,
@@ -62,10 +57,7 @@ export class RoleManager {
         return formatRolesTable(rows, options)
     }
 
-    public renderRolesAsciiTable(
-        table: FormattedRolesTable,
-        options: { minColWidth?: number } = {}
-    ): string {
+    public renderRolesAsciiTable(table: FormattedRolesTable, options: { minColWidth?: number } = {}): string {
         return renderRolesAsciiTable(table, options)
     }
 

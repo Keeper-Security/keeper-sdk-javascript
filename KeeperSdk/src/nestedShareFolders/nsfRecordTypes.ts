@@ -52,17 +52,11 @@ async function loadRecordTypes(auth: Auth): Promise<Records.IRecordType[]> {
         cachedAt = now
         return cachedRecordTypes
     } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to load record types: ${extractErrorMessage(err)}`,
-            ResultCodes.NSF_ADD_FAILED
-        )
+        throw new KeeperSdkError(`Failed to load record types: ${extractErrorMessage(err)}`, ResultCodes.NSF_ADD_FAILED)
     }
 }
 
-export async function getNsfRecordTypeFields(
-    auth: Auth,
-    recordType: string
-): Promise<unknown[] | undefined> {
+export async function getNsfRecordTypeFields(auth: Auth, recordType: string): Promise<unknown[] | undefined> {
     const normalized = recordType.trim()
     if (!normalized || NSF_LEGACY_RECORD_TYPES.has(normalized)) return undefined
 

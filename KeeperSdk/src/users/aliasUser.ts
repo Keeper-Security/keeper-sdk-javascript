@@ -11,20 +11,12 @@ import {
     type EnterpriseUser,
     type EnterpriseUserAliasLink,
 } from '../teams/enterpriseData'
-import {
-    resolveExistingUsers,
-    AliasOperation,
-    type AliasUserInput,
-    type AliasUserResult,
-} from './userTypes'
+import { resolveExistingUsers, AliasOperation, type AliasUserInput, type AliasUserResult } from './userTypes'
 
 export { AliasOperation }
 export type { AliasUserInput, AliasUserResult }
 
-const ALIAS_USER_INCLUDES: EnterpriseDataInclude[] = [
-    EnterpriseDataInclude.Users,
-    EnterpriseDataInclude.UserAliases,
-]
+const ALIAS_USER_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Users, EnterpriseDataInclude.UserAliases]
 
 export async function aliasUser(auth: Auth, input: AliasUserInput): Promise<AliasUserResult> {
     const alias = input.alias.trim().toLowerCase()
@@ -58,11 +50,20 @@ async function addAlias(
     existingAliases: EnterpriseUserAliasLink[],
     alias: string
 ): Promise<AliasUserResult> {
-    const base = { username: user.username, enterpriseUserId: user.enterprise_user_id, alias, operation: AliasOperation.Add }
+    const base = {
+        username: user.username,
+        enterpriseUserId: user.enterprise_user_id,
+        alias,
+        operation: AliasOperation.Add,
+    }
 
     if (user.username === alias) {
         logger.info(`Alias "${alias}" is already the primary email for this user.`)
-        return { ...base, success: true, detail: 'Alias is already the primary email.' }
+        return {
+            ...base,
+            success: true,
+            detail: 'Alias is already the primary email.',
+        }
     }
 
     const alreadyExists = existingAliases.some((a) => a.username === alias)
@@ -86,7 +87,12 @@ async function removeAlias(
     existingAliases: EnterpriseUserAliasLink[],
     alias: string
 ): Promise<AliasUserResult> {
-    const base = { username: user.username, enterpriseUserId: user.enterprise_user_id, alias, operation: AliasOperation.Remove }
+    const base = {
+        username: user.username,
+        enterpriseUserId: user.enterprise_user_id,
+        alias,
+        operation: AliasOperation.Remove,
+    }
 
     const exists = alias === user.username || existingAliases.some((a) => a.username === alias)
 
@@ -103,9 +109,7 @@ async function removeAlias(
 }
 
 async function sendAddAlias(auth: Auth, enterpriseUserId: number, alias: string): Promise<void> {
-    const response = await auth.executeRest(
-        enterpriseUserAddAliasMessage({ enterpriseUserId, alias, primary: true })
-    )
+    const response = await auth.executeRest(enterpriseUserAddAliasMessage({ enterpriseUserId, alias, primary: true }))
     for (const status of response.status || []) {
         if (status.status && status.status !== 'success') {
             throw new KeeperSdkError(`Add alias failed: ${status.status}`, ResultCodes.USER_ALIAS_FAILED)

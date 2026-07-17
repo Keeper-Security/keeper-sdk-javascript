@@ -56,9 +56,11 @@ export async function listRoles(auth: Auth, options: ListRolesOptions = {}): Pro
         columns.includes(RoleColumn.Teams) ||
         columns.includes(RoleColumn.TeamCount)
 
-    const enterpriseData: EnterpriseDataManagerApi =
-        options.enterpriseData ?? new EnterpriseDataManager(auth)
-    const emptyDisplayNames: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
+    const enterpriseData: EnterpriseDataManagerApi = options.enterpriseData ?? new EnterpriseDataManager(auth)
+    const emptyDisplayNames: EnterpriseDisplayNames = {
+        nodes: new Map(),
+        roles: new Map(),
+    }
     const [response, displayNames] = await Promise.all([
         enterpriseData.getData(includes),
         wantsDisplayNames ? enterpriseData.getDisplayNames() : Promise.resolve(emptyDisplayNames),
@@ -94,10 +96,7 @@ export async function listRoles(auth: Auth, options: ListRolesOptions = {}): Pro
     return rows
 }
 
-export function formatRolesTable(
-    rows: ListRoleRow[],
-    options: FormatRolesTableOptions = {}
-): FormattedRolesTable {
+export function formatRolesTable(rows: ListRoleRow[], options: FormatRolesTableOptions = {}): FormattedRolesTable {
     const columns = resolveColumns(options.columns)
     const headers: string[] = ['#', 'Role ID', 'Name', ...columns.map((col) => HEADER_BY_COLUMN[col])]
 
@@ -110,10 +109,7 @@ export function formatRolesTable(
     return { headers, rows: outRows }
 }
 
-export function renderRolesAsciiTable(
-    table: FormattedRolesTable,
-    options: { minColWidth?: number } = {}
-): string {
+export function renderRolesAsciiTable(table: FormattedRolesTable, options: { minColWidth?: number } = {}): string {
     const { minColWidth = MIN_ASCII_COL_WIDTH } = options
     const { headers, rows } = table
     const columnCount = headers.length
@@ -134,10 +130,8 @@ export function renderRolesAsciiTable(
         }
     }
 
-    const padCell = (cell: string, ci: number): string =>
-        cell + ' '.repeat(columnWidths[ci] - cell.length)
-    const formatPhysicalRow = (cells: string[]): string =>
-        cells.map((cell, ci) => padCell(cell, ci)).join('  ')
+    const padCell = (cell: string, ci: number): string => cell + ' '.repeat(columnWidths[ci] - cell.length)
+    const formatPhysicalRow = (cells: string[]): string => cells.map((cell, ci) => padCell(cell, ci)).join('  ')
 
     const ruleRow = formatPhysicalRow(columnWidths.map((w) => '-'.repeat(w)))
     const lines: string[] = [formatPhysicalRow(headers), ruleRow]
@@ -215,7 +209,9 @@ function buildNodePathLookup(nodes: EnterpriseNode[]): Map<number, string> {
     return new Map(
         nodes.map((node) => [
             node.node_id,
-            EnterpriseDataManager.getNodePath(nodes, node.node_id, { separator: NODE_PATH_SEPARATOR }),
+            EnterpriseDataManager.getNodePath(nodes, node.node_id, {
+                separator: NODE_PATH_SEPARATOR,
+            }),
         ])
     )
 }
@@ -273,12 +269,11 @@ function resolveSortedNames<K>(ids: Set<K>, nameById: Map<K, string>): string[] 
     return result.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
 }
 
-function decorateRow(
-    role: EnterpriseRole,
-    columns: readonly RoleColumn[],
-    context: DecorateContext
-): ListRoleRow {
-    const row: ListRoleRow = { role_id: role.role_id, name: roleDisplayName(role) }
+function decorateRow(role: EnterpriseRole, columns: readonly RoleColumn[], context: DecorateContext): ListRoleRow {
+    const row: ListRoleRow = {
+        role_id: role.role_id,
+        name: roleDisplayName(role),
+    }
 
     for (const col of columns) {
         switch (col) {

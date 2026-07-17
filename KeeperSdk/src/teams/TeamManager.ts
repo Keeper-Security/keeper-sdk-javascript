@@ -80,10 +80,7 @@ export class TeamManager {
         return addTeams(this.requireAuth(), input)
     }
 
-    public formatAddTeamResult(
-        result: AddTeamResult,
-        options: FormatAddTeamResultOptions = {}
-    ): FormattedAddTeamTable {
+    public formatAddTeamResult(result: AddTeamResult, options: FormatAddTeamResultOptions = {}): FormattedAddTeamTable {
         return formatAddTeamResult(result, options)
     }
 

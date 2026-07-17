@@ -1,9 +1,4 @@
-import {
-    encryptObjectForStorage,
-    roleUpdateCommand,
-    type Auth,
-    type RoleEditRequest,
-} from '@keeper-security/keeperapi'
+import { encryptObjectForStorage, roleUpdateCommand, type Auth, type RoleEditRequest } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseRole } from '../teams/enterpriseData'
 import {
@@ -26,10 +21,7 @@ import {
     type RoleToggleInput,
 } from './roleUtils'
 
-const UPDATE_ROLE_BASE_INCLUDES: EnterpriseDataInclude[] = [
-    EnterpriseDataInclude.Nodes,
-    EnterpriseDataInclude.Roles,
-]
+const UPDATE_ROLE_BASE_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Roles]
 
 export enum UpdateRoleStatus {
     Updated = 'updated',
@@ -124,9 +116,20 @@ export async function updateRoles(auth: Auth, input: UpdateRoleInput): Promise<U
             }
             await sendRoleUpdate(auth, payload)
             await applyRoleEnforcements(auth, role.role_id, enforcements, response.role_enforcements || [])
-            items.push({ roleId: role.role_id, roleName: newName || currentName, nodeId: targetNodeId, status: UpdateRoleStatus.Updated })
+            items.push({
+                roleId: role.role_id,
+                roleName: newName || currentName,
+                nodeId: targetNodeId,
+                status: UpdateRoleStatus.Updated,
+            })
         } catch (err) {
-            items.push({ roleId: role.role_id, roleName: currentName, nodeId: role.node_id ?? 0, status: UpdateRoleStatus.Failed, message: extractErrorMessage(err) })
+            items.push({
+                roleId: role.role_id,
+                roleName: currentName,
+                nodeId: role.node_id ?? 0,
+                status: UpdateRoleStatus.Failed,
+                message: extractErrorMessage(err),
+            })
         }
     }
 
@@ -163,7 +166,11 @@ async function resolveEncryptedData(
 
 async function sendRoleUpdate(auth: Auth, payload: RoleEditRequest): Promise<void> {
     const response = await auth.executeRestCommand(roleUpdateCommand(payload))
-    assertCommandSucceeded(response, `role_update failed for role_id=${payload.role_id}`, ResultCodes.ROLE_UPDATE_FAILED)
+    assertCommandSucceeded(
+        response,
+        `role_update failed for role_id=${payload.role_id}`,
+        ResultCodes.ROLE_UPDATE_FAILED
+    )
 }
 
 function finalizeResult(items: UpdateRoleItemResult[]): UpdateRoleResult {

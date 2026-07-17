@@ -101,10 +101,7 @@ function resolveShortcutRecordUids(
     }
 
     if (recordUid) {
-        throw new KeeperSdkError(
-            `Record '${trimmed}' is not linked to multiple folders.`,
-            SHORTCUT_ERROR
-        )
+        throw new KeeperSdkError(`Record '${trimmed}' is not linked to multiple folders.`, SHORTCUT_ERROR)
     }
 
     throw new KeeperSdkError(`Target '${trimmed}' not found`, ResultCodes.NSF_NOT_FOUND)
@@ -125,9 +122,7 @@ function collectShortcutRows(
             recordUid,
             title: recordTitle(storage, recordUid),
             folders: [...(shortcuts.get(recordUid) ?? [])]
-                .sort((a, b) =>
-                    formatFolderLabel(storage, a).localeCompare(formatFolderLabel(storage, b))
-                )
+                .sort((a, b) => formatFolderLabel(storage, a).localeCompare(formatFolderLabel(storage, b)))
                 .map((folderUid) => formatFolderLabel(storage, folderUid)),
         }))
 }
@@ -153,11 +148,7 @@ export function formatNsfShortcutTable(rows: NsfShortcutRow[]): string {
 export function formatNsfShortcutCsv(rows: NsfShortcutRow[]): string {
     const lines = ['record_uid,title,folders']
     for (const row of rows) {
-        lines.push(
-            [row.recordUid, row.title, row.folders.join('; ')]
-                .map(escapeCsvCell)
-                .join(',')
-        )
+        lines.push([row.recordUid, row.title, row.folders.join('; ')].map(escapeCsvCell).join(','))
     }
     return lines.join('\n')
 }
@@ -184,10 +175,7 @@ export function formatNsfShortcutOutput(
     return formatNsfShortcutTable(rows)
 }
 
-export function listNsfShortcuts(
-    storage: InMemoryStorage,
-    options: ListNsfShortcutsOptions = {}
-): NsfShortcutRow[] {
+export function listNsfShortcuts(storage: InMemoryStorage, options: ListNsfShortcutsOptions = {}): NsfShortcutRow[] {
     const shortcuts = getNsfRecordShortcuts(storage)
     return collectShortcutRows(storage, shortcuts, options.target)
 }
@@ -227,8 +215,7 @@ function parseFolderRecordUpdateResult(
     recordUid: string
 ): KeepNsfShortcutResultItem {
     const result = response.folderRecordUpdateResult?.find(
-        (entry) =>
-            !!entry.recordUid?.length && webSafe64FromBytes(entry.recordUid) === recordUid
+        (entry) => !!entry.recordUid?.length && webSafe64FromBytes(entry.recordUid) === recordUid
     )
 
     if (!result) {
@@ -305,10 +292,7 @@ export async function keepNsfShortcut(
     const keepFolderUid = resolveKeepFolderUid(storage, input.folder, defaultFolderUid)
     const folderSet = shortcuts.get(recordUid)
     if (!folderSet || folderSet.size < 2) {
-        throw new KeeperSdkError(
-            `Record '${recordArg}' is not linked to multiple folders.`,
-            SHORTCUT_ERROR
-        )
+        throw new KeeperSdkError(`Record '${recordArg}' is not linked to multiple folders.`, SHORTCUT_ERROR)
     }
     if (!folderSet.has(keepFolderUid)) {
         throw new KeeperSdkError(
@@ -328,7 +312,12 @@ export async function keepNsfShortcut(
     }
 
     if (removeFolderUids.length === 0) {
-        return { dryRun: input.dryRun ?? false, plan, results: [], nothingToDo: true }
+        return {
+            dryRun: input.dryRun ?? false,
+            plan,
+            results: [],
+            nothingToDo: true,
+        }
     }
 
     if (input.dryRun) {

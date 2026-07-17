@@ -70,10 +70,7 @@ export async function loadUserShareKeysOrInvite(
         try {
             await auth.executeRestAction(sendShareInviteMessage({ email }))
         } catch (err) {
-            throw new KeeperSdkError(
-                `Failed to invite ${email}: ${extractErrorMessage(err)}`,
-                errorCode
-            )
+            throw new KeeperSdkError(`Failed to invite ${email}: ${extractErrorMessage(err)}`, errorCode)
         }
         keys = await fetchUserShareKeys(auth, email)
     }
@@ -86,10 +83,7 @@ export async function loadUserShareKeysOrInvite(
     return keys
 }
 
-export async function loadNsfUserShareKeysMap(
-    auth: Auth,
-    emails: string[]
-): Promise<Map<string, UserShareKeys>> {
+export async function loadNsfUserShareKeysMap(auth: Auth, emails: string[]): Promise<Map<string, UserShareKeys>> {
     const deduped = dedupeNsfShareEmails(emails)
     const keysByEmail = new Map<string, UserShareKeys>()
     if (deduped.length === 0) return keysByEmail
@@ -141,15 +135,14 @@ export async function encryptKeyForRecipient(
             useEccKey: false,
         }
     }
-    throw new KeeperSdkError(
-        `No usable public key available for ${userKeys.username}`,
-        MISSING_PUBLIC_KEY
-    )
+    throw new KeeperSdkError(`No usable public key available for ${userKeys.username}`, MISSING_PUBLIC_KEY)
 }
 
-export function parseRecordSharingStatus(
-    status: record.v3.sharing.IStatus | null | undefined
-): { recordUid: string; success: boolean; message: string } {
+export function parseRecordSharingStatus(status: record.v3.sharing.IStatus | null | undefined): {
+    recordUid: string
+    success: boolean
+    message: string
+} {
     if (!status?.recordUid?.length) {
         return { recordUid: '', success: false, message: 'No status returned' }
     }
@@ -219,13 +212,7 @@ export async function buildNsfRecordSharePermission(
     errorCode: string = MISSING_PUBLIC_KEY
 ): Promise<record.v3.sharing.IPermissions> {
     const userKeys = await loadUserShareKeysOrInvite(auth, email, errorCode)
-    return buildNsfSharePermissionFromKeys(
-        recordUid,
-        recordKey,
-        accessRoleType,
-        userKeys,
-        expirationTimestamp
-    )
+    return buildNsfSharePermissionFromKeys(recordUid, recordKey, accessRoleType, userKeys, expirationTimestamp)
 }
 
 export async function buildNsfRecordRevokePermission(

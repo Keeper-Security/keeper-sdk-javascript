@@ -178,10 +178,7 @@ async function fetchUserPublicKeys(auth: Auth, emails: string[]): Promise<Map<st
     return result
 }
 
-async function encryptTeamKeyForUser(
-    teamKey: Uint8Array,
-    publicKeys: UserPublicKeys
-): Promise<EncryptedTeamKey> {
+async function encryptTeamKeyForUser(teamKey: Uint8Array, publicKeys: UserPublicKeys): Promise<EncryptedTeamKey> {
     if (publicKeys.rsaPublicKey) {
         return {
             key: platform.publicEncrypt(teamKey, platform.bytesToBase64(publicKeys.rsaPublicKey)),
@@ -215,11 +212,7 @@ async function getDecryptedTeamKey(
     }
 }
 
-async function loadTeamUserContext(
-    auth: Auth,
-    rawUsers: string[],
-    rawTeams: string[]
-): Promise<TeamUserContext> {
+async function loadTeamUserContext(auth: Auth, rawUsers: string[], rawTeams: string[]): Promise<TeamUserContext> {
     const emails = normalizeEmailInputs(rawUsers)
     if (emails.length === 0) {
         throw new KeeperSdkError('No users provided.', ResultCodes.NO_USERS_TO_UPDATE)
@@ -323,7 +316,11 @@ async function prepareAddBatches(
             const base = buildItemBase(user, team)
 
             if (membership.has(membershipKey(user.enterprise_user_id, team.team_uid))) {
-                items.push({ ...base, status: TeamUserStatus.Skipped, skipReason: TeamUserSkipReason.AlreadyMember })
+                items.push({
+                    ...base,
+                    status: TeamUserStatus.Skipped,
+                    skipReason: TeamUserSkipReason.AlreadyMember,
+                })
                 continue
             }
 
@@ -353,9 +350,16 @@ async function prepareAddBatches(
             }
 
             try {
-                prepared.push({ user, encryptedKey: await encryptTeamKeyForUser(teamKey, publicKeys) })
+                prepared.push({
+                    user,
+                    encryptedKey: await encryptTeamKeyForUser(teamKey, publicKeys),
+                })
             } catch (err) {
-                items.push({ ...base, status: TeamUserStatus.Failed, message: extractErrorMessage(err) })
+                items.push({
+                    ...base,
+                    status: TeamUserStatus.Failed,
+                    message: extractErrorMessage(err),
+                })
             }
         }
 
@@ -384,7 +388,11 @@ function buildAddTeamRequests(
 
 function markAllBatchUsersFailed(batchTeams: PreparedBatchTeam[], message: string): TeamUserItemResult[] {
     return batchTeams.flatMap(({ team, prepared }) =>
-        prepared.map(({ user }) => ({ ...buildItemBase(user, team), status: TeamUserStatus.Failed, message }))
+        prepared.map(({ user }) => ({
+            ...buildItemBase(user, team),
+            status: TeamUserStatus.Failed,
+            message,
+        }))
     )
 }
 
@@ -410,12 +418,7 @@ function mergeTeamResponse(
             status: success ? TeamUserStatus.Added : TeamUserStatus.Failed,
             message: success
                 ? undefined
-                : pickResponseError(
-                      userResp.message,
-                      userResp.resultCode,
-                      userResp.additionalInfo,
-                      teamFailureMessage
-                  ),
+                : pickResponseError(userResp.message, userResp.resultCode, userResp.additionalInfo, teamFailureMessage),
         })
         userMap.delete(enterpriseUserId)
     }
@@ -445,7 +448,9 @@ async function sendTeamsEnterpriseUsersAdd(
     let response: Enterprise.ITeamsEnterpriseUsersAddResponse
     try {
         response = await auth.executeRest(
-            teamsEnterpriseUsersAdd({ teams: buildAddTeamRequests(batchTeams, userType) })
+            teamsEnterpriseUsersAdd({
+                teams: buildAddTeamRequests(batchTeams, userType),
+            })
         )
     } catch (err) {
         return markAllBatchUsersFailed(batchTeams, extractErrorMessage(err))
@@ -509,7 +514,11 @@ function prepareRemoveEntries(
         for (const user of users) {
             const base = buildItemBase(user, team)
             if (!membership.has(membershipKey(user.enterprise_user_id, team.team_uid))) {
-                items.push({ ...base, status: TeamUserStatus.Skipped, skipReason: TeamUserSkipReason.NotMember })
+                items.push({
+                    ...base,
+                    status: TeamUserStatus.Skipped,
+                    skipReason: TeamUserSkipReason.NotMember,
+                })
                 continue
             }
             toRemove.push({ user, team })
@@ -574,7 +583,12 @@ async function sendTeamsEnterpriseUsersRemove(
             status: success ? TeamUserStatus.Removed : TeamUserStatus.Failed,
             message: success
                 ? undefined
-                : pickResponseError(userResp.message, userResp.resultCode, userResp.additionalInfo, 'Team remove failed'),
+                : pickResponseError(
+                      userResp.message,
+                      userResp.resultCode,
+                      userResp.additionalInfo,
+                      'Team remove failed'
+                  ),
         })
         entryMap.delete(membershipKey(enterpriseUserId, teamUid))
     }
@@ -597,12 +611,19 @@ async function processInvitedQueue(auth: Auth, invitedQueue: InvitedQueueEntry[]
         try {
             await executeTeamUserCommand(
                 auth,
-                teamQueueUserCommand({ enterprise_user_id: user.enterprise_user_id, team_uid: team.team_uid }),
+                teamQueueUserCommand({
+                    enterprise_user_id: user.enterprise_user_id,
+                    team_uid: team.team_uid,
+                }),
                 ResultCodes.TEAM_USER_ADD_FAILED
             )
             items.push({ ...base, status: TeamUserStatus.Added })
         } catch (err) {
-            items.push({ ...base, status: TeamUserStatus.Failed, message: extractErrorMessage(err) })
+            items.push({
+                ...base,
+                status: TeamUserStatus.Failed,
+                message: extractErrorMessage(err),
+            })
         }
     }
     return items
@@ -637,10 +658,7 @@ export async function addUsersToTeams(auth: Auth, input: AddUsersToTeamsInput): 
     return finalizeResult(items)
 }
 
-export async function removeUsersFromTeams(
-    auth: Auth,
-    input: RemoveUsersFromTeamsInput
-): Promise<TeamUserResult> {
+export async function removeUsersFromTeams(auth: Auth, input: RemoveUsersFromTeamsInput): Promise<TeamUserResult> {
     const ctx = await loadTeamUserContext(auth, input.users, input.teams || [])
     const { items, toRemove } = prepareRemoveEntries(ctx.teams, ctx.users, ctx.membership)
 
@@ -660,7 +678,13 @@ function finalizeResult(items: TeamUserItemResult[]): TeamUserResult {
         else if (item.status === TeamUserStatus.Skipped) skipped++
         else failed++
     }
-    return { success: failed === 0 && succeeded > 0, items, succeeded, skipped, failed }
+    return {
+        success: failed === 0 && succeeded > 0,
+        items,
+        succeeded,
+        skipped,
+        failed,
+    }
 }
 
 export function formatTeamUserResult(result: TeamUserResult): FormattedTeamUserTable {

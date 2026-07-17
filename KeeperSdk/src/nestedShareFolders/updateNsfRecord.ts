@@ -34,9 +34,7 @@ function loadStoredRecordData(storage: InMemoryStorage, recordUid: string): Reco
     return { fields: [] }
 }
 
-function isPerRecordUpdateInput(
-    input: UpdateNsfRecordInput | UpdateNsfRecordsInput
-): input is UpdateNsfRecordsInput {
+function isPerRecordUpdateInput(input: UpdateNsfRecordInput | UpdateNsfRecordsInput): input is UpdateNsfRecordsInput {
     const first = input.records[0]
     return first != null && typeof first === 'object' && 'record' in first
 }
@@ -188,7 +186,9 @@ export async function updateNestedShareRecord(
     auth: Auth,
     input: UpdateNsfRecordItemInput
 ): Promise<UpdateNsfRecordResultItem> {
-    const { updated } = await updateNestedShareRecords(storage, auth, { records: [input] })
+    const { updated } = await updateNestedShareRecords(storage, auth, {
+        records: [input],
+    })
     if (!updated[0]) {
         throw new KeeperSdkError('Failed to update nested share record.', ResultCodes.NSF_UPDATE_FAILED)
     }

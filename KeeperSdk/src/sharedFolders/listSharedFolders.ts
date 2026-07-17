@@ -157,12 +157,9 @@ export function renderSharedFoldersAsciiTable(
             columnWidths[columnIndex] = Math.max(columnWidths[columnIndex], cell.length, minColWidth)
         }
     }
-    const padCell = (cell: string, columnIndex: number) =>
-        cell + ' '.repeat(columnWidths[columnIndex] - cell.length)
+    const padCell = (cell: string, columnIndex: number) => cell + ' '.repeat(columnWidths[columnIndex] - cell.length)
     const formatRow = (cells: string[]) => cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
-    const ruleRow = Array.from({ length: columnCount }, (_unused, columnIndex) =>
-        '-'.repeat(columnWidths[columnIndex])
-    )
+    const ruleRow = Array.from({ length: columnCount }, (_unused, columnIndex) => '-'.repeat(columnWidths[columnIndex]))
         .map((dashes, columnIndex) => padCell(dashes, columnIndex))
         .join('  ')
     const lines: string[] = [formatRow(headers), ruleRow]

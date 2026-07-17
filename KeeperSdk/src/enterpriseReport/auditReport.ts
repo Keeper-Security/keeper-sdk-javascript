@@ -103,18 +103,15 @@ async function runDimensionReport(auth: Auth, options: AuditReportOptions): Prom
     }
 }
 
-async function runRawReport(
-    auth: Auth,
-    options: AuditReportOptions,
-    hasAram: boolean
-): Promise<AuditReportResult> {
+async function runRawReport(auth: Auth, options: AuditReportOptions, hasAram: boolean): Promise<AuditReportResult> {
     let filter = await resolveFilter(auth, options.filter ?? {})
     let limit = options.limit
     let order = options.order
 
     if (!hasAram) {
         const requested = options.limit
-        limit = requested != null && requested > 0 ? Math.min(requested, AUDIT_NO_ARAM_RAW_LIMIT) : AUDIT_NO_ARAM_RAW_LIMIT
+        limit =
+            requested != null && requested > 0 ? Math.min(requested, AUDIT_NO_ARAM_RAW_LIMIT) : AUDIT_NO_ARAM_RAW_LIMIT
         order = order ?? AuditReportOrder.Desc
         if (!filter.created) {
             filter.created = 'last_30_days'
@@ -147,7 +144,9 @@ async function runRawReport(
         }
         rows.push(
             fields.map((field) =>
-                field === 'message' ? eventMessage(event, templates) : formatFieldValue(field, getAuditEventField(event, field), 'raw')
+                field === 'message'
+                    ? eventMessage(event, templates)
+                    : formatFieldValue(field, getAuditEventField(event, field), 'raw')
             )
         )
     }
@@ -178,8 +177,7 @@ async function runSummaryReport(
         throw new KeeperSdkError('"columns" parameter cannot be empty.', ResultCodes.AUDIT_COLUMNS_REQUIRED)
     }
 
-    const aggregates =
-        options.aggregates?.length ? options.aggregates : [AuditAggregate.Occurrences]
+    const aggregates = options.aggregates?.length ? options.aggregates : [AuditAggregate.Occurrences]
     const events = await fetchSummaryEvents(auth, {
         reportType,
         filter: await resolveFilter(auth, options.filter),
@@ -320,7 +318,9 @@ async function resolveFilter(auth: Auth, filter: AuditReportFilter = {}): Promis
             const city = (parts.pop() || '').trim().toLowerCase()
             for (const geo of await loadDimension(auth, 'geo_location')) {
                 if (!geo || typeof geo !== 'object') continue
-                const row = geo as AuditDimensionIpAddress & { ip_addresses?: string[] }
+                const row = geo as AuditDimensionIpAddress & {
+                    ip_addresses?: string[]
+                }
                 if ((row.country_code || '').toLowerCase() !== country) continue
                 if (region && (row.region || '').toLowerCase() !== region) continue
                 if (city && (row.city || '').toLowerCase() !== city) continue
@@ -353,7 +353,9 @@ async function resolveFilter(auth: Auth, filter: AuditReportFilter = {}): Promis
         }
         for (const row of await loadDimension(auth, 'device_type')) {
             if (!row || typeof row !== 'object') continue
-            const ver = row as AuditDimensionKeeperVersion & { version_ids?: number[] }
+            const ver = row as AuditDimensionKeeperVersion & {
+                version_ids?: number[]
+            }
             if (deviceType) {
                 const typeName = (ver.type_name || '').toLowerCase()
                 const typeCategory = (ver.type_category || '').toLowerCase()
@@ -415,7 +417,10 @@ async function fetchDimensionRows(auth: Auth, dimension: string): Promise<AuditD
         const region = ipRow.region || ''
         const country = ipRow.country_code || ''
         if (!city && !region && !country) return row
-        return { ...ipRow, geo_location: [city, region, country].filter(Boolean).join(', ') }
+        return {
+            ...ipRow,
+            geo_location: [city, region, country].filter(Boolean).join(', '),
+        }
     })
 }
 
@@ -424,7 +429,9 @@ function buildVirtualDimension(dimension: string, sourceRows: AuditDimensionRow[
         const geoMap = new Map<string, Record<string, unknown>>()
         for (const row of sourceRows) {
             if (!row || typeof row !== 'object') continue
-            const ipRow = row as AuditDimensionIpAddress & { ip_addresses?: string[] }
+            const ipRow = row as AuditDimensionIpAddress & {
+                ip_addresses?: string[]
+            }
             if (!ipRow.geo_location || !ipRow.ip_address) continue
             const existing = geoMap.get(ipRow.geo_location)
             if (existing) (existing.ip_addresses as string[]).push(ipRow.ip_address)
@@ -445,7 +452,9 @@ function buildVirtualDimension(dimension: string, sourceRows: AuditDimensionRow[
         const deviceMap = new Map<number, Record<string, unknown>>()
         for (const row of sourceRows) {
             if (!row || typeof row !== 'object') continue
-            const versionRow = row as AuditDimensionKeeperVersion & { version_ids?: number[] }
+            const versionRow = row as AuditDimensionKeeperVersion & {
+                version_ids?: number[]
+            }
             if (!versionRow.type_id || !versionRow.version_id) continue
             const existing = deviceMap.get(versionRow.type_id)
             if (existing) (existing.version_ids as number[]).push(versionRow.version_id)
@@ -544,9 +553,7 @@ function advanceCreatedFilter(
 ): AuditReportFilter {
     const next: AuditReportFilter = { ...(filter || {}) }
     const criteria: CreatedFilterCriteria =
-        next.created && typeof next.created === 'object' && !Array.isArray(next.created)
-            ? { ...next.created }
-            : {}
+        next.created && typeof next.created === 'object' && !Array.isArray(next.created) ? { ...next.created } : {}
     if (order === AuditReportOrder.Asc) {
         criteria.fromDate = timestamp
         criteria.excludeFrom = false

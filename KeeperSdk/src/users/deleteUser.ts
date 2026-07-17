@@ -1,13 +1,6 @@
-import {
-    type Auth,
-    type KeeperResponse,
-    type RestCommand,
-} from '@keeper-security/keeperapi'
+import { type Auth, type KeeperResponse, type RestCommand } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
-import {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-} from '../teams/enterpriseData'
+import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
 import {
     normalizeEmailInputs,
     resolveExistingUsers,
@@ -72,16 +65,15 @@ async function sendUserDelete(auth: Auth, enterpriseUserId: number): Promise<voi
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message ||
-                response.result_code ||
-                `${USER_DELETE_COMMAND} failed for user_id=${enterpriseUserId}`,
+            response.message || response.result_code || `${USER_DELETE_COMMAND} failed for user_id=${enterpriseUserId}`,
             response.result_code || ResultCodes.USER_DELETE_FAILED
         )
     }
 }
 
 function finalizeResult(items: DeleteUserItemResult[]): DeleteUserResult {
-    let deleted = 0, failed = 0
+    let deleted = 0,
+        failed = 0
     for (const item of items) {
         if (item.status === DeleteUserStatus.Deleted) deleted++
         else failed++
@@ -112,8 +104,7 @@ export function renderDeleteUserAsciiTable(table: FormattedDeleteUserTable): str
     const widths = headers.map((header, index) =>
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
-    const padCell = (cell: string, columnIndex: number): string =>
-        cell.padEnd(widths[columnIndex])
+    const padCell = (cell: string, columnIndex: number): string => cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 

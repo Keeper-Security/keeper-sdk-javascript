@@ -51,10 +51,7 @@ function collectRecordRows(storage: InMemoryStorage): ListNsfRow[] {
         title: getRecordTitle(record),
         type: getRecordType(record),
         description: getRecordDescription(record),
-        parentOrFolder: resolveListParentOrFolder(
-            storage,
-            findRecordFolderLocation(storage, record.uid) || 'root'
-        ),
+        parentOrFolder: resolveListParentOrFolder(storage, findRecordFolderLocation(storage, record.uid) || 'root'),
     }))
 }
 
@@ -73,10 +70,7 @@ function truncateText(text: string, maxLength: number): string {
     return `${text.slice(0, maxLength - NSF_LIST_MIN_TRUNCATE_PREFIX)}...`
 }
 
-export function formatListNsfTable(
-    rows: ListNsfRow[],
-    options: { columnWidth?: number } = {}
-): FormattedListNsfTable {
+export function formatListNsfTable(rows: ListNsfRow[], options: { columnWidth?: number } = {}): FormattedListNsfTable {
     const columnWidth = options.columnWidth ?? NSF_LIST_DEFAULT_COLUMN_WIDTH
     const outRows = rows.map((row, index) => [
         String(index + 1),
@@ -89,10 +83,7 @@ export function formatListNsfTable(
     return { headers: [...NSF_LIST_TABLE_HEADERS], rows: outRows }
 }
 
-export function renderListNsfAsciiTable(
-    table: FormattedListNsfTable,
-    options: { minColWidth?: number } = {}
-): string {
+export function renderListNsfAsciiTable(table: FormattedListNsfTable, options: { minColWidth?: number } = {}): string {
     const { minColWidth = 2 } = options
     const { headers, rows } = table
     const columnCount = headers.length
@@ -103,8 +94,7 @@ export function renderListNsfAsciiTable(
         }
         return width
     })
-    const padCell = (cell: string, columnIndex: number) =>
-        cell + ' '.repeat(columnWidths[columnIndex] - cell.length)
+    const padCell = (cell: string, columnIndex: number) => cell + ' '.repeat(columnWidths[columnIndex] - cell.length)
     const formatRow = (cells: string[]) => cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
     const ruleRow = columnWidths.map((width, columnIndex) => padCell('-'.repeat(width), columnIndex)).join('  ')
     return [formatRow(headers), ruleRow, ...rows.map(formatRow)].join('\n')
@@ -119,14 +109,7 @@ export function formatListNsfCsv(rows: ListNsfRow[]): string {
     const lines = [NSF_LIST_FULL_HEADERS.join(',')]
     for (const row of rows) {
         lines.push(
-            [
-                row.itemType,
-                row.uid,
-                row.title,
-                row.type,
-                row.description,
-                row.parentOrFolder,
-            ]
+            [row.itemType, row.uid, row.title, row.type, row.description, row.parentOrFolder]
                 .map(escapeCsvCell)
                 .join(',')
         )

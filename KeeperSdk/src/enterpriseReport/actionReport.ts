@@ -3,12 +3,7 @@ import { getAuditEventReportsCommand } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { actionUsers, UserAction } from '../users/actionUser'
 import { deleteUsers } from '../users/deleteUser'
-import {
-    DeleteUserStatus,
-    EnterpriseUserStatus,
-    formatTransferStatus,
-    formatUserStatus,
-} from '../users/userTypes'
+import { DeleteUserStatus, EnterpriseUserStatus, formatTransferStatus, formatUserStatus } from '../users/userTypes'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
@@ -70,9 +65,7 @@ const ALLOWED_ACTIONS: Readonly<Record<TargetUserStatus, ReadonlySet<AdminAction
     [TargetUserStatus.NoRecovery]: new Set([AdminAction.None]),
 }
 
-function usernameTargetConfig(
-    pickCandidates: (users: EnterpriseUser[]) => EnterpriseUser[]
-): TargetAuditConfig {
+function usernameTargetConfig(pickCandidates: (users: EnterpriseUser[]) => EnterpriseUser[]): TargetAuditConfig {
     return {
         auditColumn: 'username',
         auditFilterField: 'username',
@@ -102,10 +95,7 @@ const TARGET_AUDIT_CONFIG: Record<TargetUserStatus, TargetAuditConfig> = {
     ),
 }
 
-export async function runActionReport(
-    auth: Auth,
-    options: ActionReportOptions = {}
-): Promise<ActionReportResult> {
+export async function runActionReport(auth: Auth, options: ActionReportOptions = {}): Promise<ActionReportResult> {
     const target = options.target ?? TargetUserStatus.NoLogon
     const daysSince = options.daysSince ?? ACTION_DEFAULT_DAYS_BY_TARGET[target] ?? ACTION_DEFAULT_DAYS
     const applyAction = options.applyAction ?? AdminAction.None
@@ -165,9 +155,7 @@ async function generateActionReportEntries(
     let candidates = config.pickCandidates(data.users || [])
 
     if (options.nodeIds) {
-        candidates = candidates.filter(
-            (user) => user.node_id != null && options.nodeIds!.has(user.node_id)
-        )
+        candidates = candidates.filter((user) => user.node_id != null && options.nodeIds!.has(user.node_id))
     }
     if (candidates.length === 0) return []
 
@@ -245,11 +233,15 @@ function buildActionEntryContext(data: GetEnterpriseDataResponse): ActionEntryCo
     const nodePaths = new Map(
         nodes.map((node) => [
             node.node_id,
-            EnterpriseDataManager.getNodePath(nodes, node.node_id, { omitRoot: false }),
+            EnterpriseDataManager.getNodePath(nodes, node.node_id, {
+                omitRoot: false,
+            }),
         ])
     )
     const teamNames = new Map((data.teams || []).map((team) => [team.team_uid, team.name]))
-    const roleNames = new Map((data.roles || []).map((role) => [role.role_id, role.displayName || String(role.role_id)]))
+    const roleNames = new Map(
+        (data.roles || []).map((role) => [role.role_id, role.displayName || String(role.role_id)])
+    )
 
     return {
         nodePaths,
@@ -274,10 +266,7 @@ function buildActionEntry(user: EnterpriseUser, context: ActionEntryContext): Ac
     }
 }
 
-function buildUserTeamNames(
-    links: EnterpriseTeamUserLink[],
-    teamNames: Map<string, string>
-): Map<number, string[]> {
+function buildUserTeamNames(links: EnterpriseTeamUserLink[], teamNames: Map<string, string>): Map<number, string[]> {
     const map = new Map<number, Set<string>>()
     for (const link of links) {
         if (!link.team_uid) continue
@@ -347,13 +336,28 @@ async function applyAdminAction(
     const { applyAction, targetUser, dryRun } = options
 
     if (applyAction === AdminAction.None) {
-        return { action: AdminAction.None, status: 'none', affectedCount: 0, serverMessage: 'n/a' }
+        return {
+            action: AdminAction.None,
+            status: 'none',
+            affectedCount: 0,
+            serverMessage: 'n/a',
+        }
     }
     if (entries.length === 0) {
-        return { action: applyAction, status: 'no users matched', affectedCount: 0, serverMessage: 'n/a' }
+        return {
+            action: applyAction,
+            status: 'no users matched',
+            affectedCount: 0,
+            serverMessage: 'n/a',
+        }
     }
     if (dryRun) {
-        return { action: applyAction, status: 'dry run', affectedCount: entries.length, serverMessage: 'n/a' }
+        return {
+            action: applyAction,
+            status: 'dry run',
+            affectedCount: entries.length,
+            serverMessage: 'n/a',
+        }
     }
 
     const emails = entries.map((entry) => entry.email)
@@ -361,7 +365,10 @@ async function applyAdminAction(
     try {
         switch (applyAction) {
             case AdminAction.Lock: {
-                const result = await actionUsers(auth, { action: UserAction.Lock, emails })
+                const result = await actionUsers(auth, {
+                    action: UserAction.Lock,
+                    emails,
+                })
                 return {
                     action: AdminAction.Lock,
                     status: result.success ? 'success' : 'partial',
@@ -392,7 +399,12 @@ async function applyAdminAction(
                 )
             }
             default:
-                return { action: applyAction, status: 'unsupported', affectedCount: 0, serverMessage: 'n/a' }
+                return {
+                    action: applyAction,
+                    status: 'unsupported',
+                    affectedCount: 0,
+                    serverMessage: 'n/a',
+                }
         }
     } catch (err) {
         return {

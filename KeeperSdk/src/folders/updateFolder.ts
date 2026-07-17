@@ -1,10 +1,5 @@
 import type { Auth, FolderUpdateRequest } from '@keeper-security/keeperapi'
-import {
-    encryptForStorage,
-    encryptObjectForStorage,
-    folderUpdateCommand,
-    platform,
-} from '@keeper-security/keeperapi'
+import { encryptForStorage, encryptObjectForStorage, folderUpdateCommand, platform } from '@keeper-security/keeperapi'
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { anyIsBoolean, isBoolean, isObject, KeeperSdkError, extractErrorMessage } from '../utils'
@@ -81,12 +76,7 @@ export async function updateFolder(
     const trimmedName = input.folderName?.trim() || ''
     if (trimmedName) validateFolderName(trimmedName)
 
-    const hasPermissionUpdate = anyIsBoolean(
-        input.manageUsers,
-        input.manageRecords,
-        input.canShare,
-        input.canEdit
-    )
+    const hasPermissionUpdate = anyIsBoolean(input.manageUsers, input.manageRecords, input.canShare, input.canEdit)
 
     if (resolved.kind === FolderKind.UserFolder || resolved.kind === FolderKind.SharedFolderFolder) {
         if (!trimmedName) {

@@ -154,21 +154,13 @@ export type {
     NsfResolvedShareRecipient,
 } from './nsfTypes'
 
-export {
-    fetchNsfTeamPublicKeys,
-    encryptNsfFolderKeyForTeam,
-    resolveNsfShareRecipient,
-} from './nsfTeamShare'
+export { fetchNsfTeamPublicKeys, encryptNsfFolderKeyForTeam, resolveNsfShareRecipient } from './nsfTeamShare'
 
 export type { UserShareKeys } from './nsfShareKeys'
 
 export { linkNestedShareRecord } from './linkNsfRecord'
 
-export {
-    removeNestedShareRecords,
-    formatRemoveNsfPreview,
-    collectRemoveNsfWarnings,
-} from './removeNsfRecord'
+export { removeNestedShareRecords, formatRemoveNsfPreview, collectRemoveNsfWarnings } from './removeNsfRecord'
 
 export { mkdirNestedShareFolder } from './mkdirNsf'
 export {
@@ -182,10 +174,7 @@ export {
 } from './nsfConstants'
 export type { NsfFolderColor } from './nsfConstants'
 
-export {
-    removeNestedShareFolders,
-    formatRemoveNsfFolderPreview,
-} from './removeNsfFolder'
+export { removeNestedShareFolders, formatRemoveNsfFolderPreview } from './removeNsfFolder'
 
 export {
     getNestedShareRecordDetails,
@@ -235,15 +224,9 @@ export {
     formatKeepNsfShortcutPlan,
 } from './nsfShortcut'
 
-export {
-    transferNestedShareRecords,
-    formatTransferNestedShareRecordResults,
-} from './nsfTransferRecord'
+export { transferNestedShareRecords, formatTransferNestedShareRecordResults } from './nsfTransferRecord'
 
 export { updateNestedShareFolder } from './updateNsfFolder'
 
-export {
-    NSF_RECORD_PERMISSION_ROLES,
-    getFolderPermissionsForRole,
-} from './nsfConstants'
+export { NSF_RECORD_PERMISSION_ROLES, getFolderPermissionsForRole } from './nsfConstants'
 export type { NsfRecordPermissionRole } from './nsfConstants'

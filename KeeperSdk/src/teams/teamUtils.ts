@@ -95,10 +95,7 @@ function buildNodeNotFoundMessage(nodes: EnterpriseNode[], requested: string): s
     return lines.join('\n')
 }
 
-export function resolveParentNode(
-    nodes: EnterpriseNode[],
-    identifier: string | number | null
-): EnterpriseNode {
+export function resolveParentNode(nodes: EnterpriseNode[], identifier: string | number | null): EnterpriseNode {
     if (identifier === null || identifier === undefined || identifier === '') {
         const root = nodes.find((node) => !node.parent_id || node.parent_id === 0)
         if (!root) {
@@ -163,10 +160,7 @@ export function resolveParentNode(
         )
     }
 
-    throw new KeeperSdkError(
-        buildNodeNotFoundMessage(nodes, trimmed),
-        ResultCodes.PARENT_NODE_NOT_FOUND
-    )
+    throw new KeeperSdkError(buildNodeNotFoundMessage(nodes, trimmed), ResultCodes.PARENT_NODE_NOT_FOUND)
 }
 
 export function applyDecryptedNodeNames(nodes: EnterpriseNode[], decrypted: Map<number, string>): void {
@@ -177,10 +171,7 @@ export function applyDecryptedNodeNames(nodes: EnterpriseNode[], decrypted: Map<
     }
 }
 
-export function applyEnterpriseNameToRoot(
-    nodes: EnterpriseNode[],
-    enterpriseName: string | undefined
-): void {
+export function applyEnterpriseNameToRoot(nodes: EnterpriseNode[], enterpriseName: string | undefined): void {
     const fallback = (enterpriseName || '').trim()
     if (!fallback) return
     for (const node of nodes) {

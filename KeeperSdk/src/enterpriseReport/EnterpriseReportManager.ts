@@ -2,12 +2,7 @@ import type { Auth } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
 import { runAuditReport } from './auditReport'
 import { runActionReport } from './actionReport'
-import type {
-    ActionReportOptions,
-    ActionReportResult,
-    AuditReportOptions,
-    AuditReportResult,
-} from './reportTypes'
+import type { ActionReportOptions, ActionReportResult, AuditReportOptions, AuditReportResult } from './reportTypes'
 import type { AuthProvider } from './reportUtils'
 
 export class EnterpriseReportManager {

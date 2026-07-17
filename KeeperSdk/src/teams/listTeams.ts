@@ -93,7 +93,10 @@ export async function listTeams(auth: Auth, options: ListTeamsOptions = {}): Pro
     const wantsDisplayNames = columns.includes(TeamColumn.Node) || columns.includes(TeamColumn.Roles)
 
     const enterpriseData = new EnterpriseDataManager(auth)
-    const emptyDisplayNames: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
+    const emptyDisplayNames: EnterpriseDisplayNames = {
+        nodes: new Map(),
+        roles: new Map(),
+    }
     const [response, displayNames] = await Promise.all([
         enterpriseData.getData(includes),
         wantsDisplayNames ? enterpriseData.getDisplayNames() : Promise.resolve(emptyDisplayNames),
@@ -127,10 +130,7 @@ export async function listTeams(auth: Auth, options: ListTeamsOptions = {}): Pro
     return rows
 }
 
-export function formatTeamsTable(
-    rows: ListTeamRow[],
-    options: FormatTeamsTableOptions = {}
-): FormattedTeamsTable {
+export function formatTeamsTable(rows: ListTeamRow[], options: FormatTeamsTableOptions = {}): FormattedTeamsTable {
     const columns = resolveColumns(options.columns)
     const headers: string[] = ['#', 'Team UID', 'Name', ...columns.map((column) => HEADER_BY_COLUMN[column])]
 
@@ -143,10 +143,7 @@ export function formatTeamsTable(
     return { headers, rows: outRows }
 }
 
-export function renderTeamsAsciiTable(
-    table: FormattedTeamsTable,
-    options: { minColWidth?: number } = {}
-): string {
+export function renderTeamsAsciiTable(table: FormattedTeamsTable, options: { minColWidth?: number } = {}): string {
     const { minColWidth = MIN_ASCII_COL_WIDTH } = options
     const { headers, rows } = table
     const columnCount = headers.length
@@ -257,7 +254,9 @@ function buildNodePathLookup(nodes: EnterpriseNode[]): Map<number, string> {
     return new Map(
         nodes.map((node) => [
             node.node_id,
-            EnterpriseDataManager.getNodePath(nodes, node.node_id, { separator: NODE_PATH_SEPARATOR }),
+            EnterpriseDataManager.getNodePath(nodes, node.node_id, {
+                separator: NODE_PATH_SEPARATOR,
+            }),
         ])
     )
 }
@@ -287,7 +286,7 @@ function buildRoleTeamMap(response: GetEnterpriseDataResponse): Map<string, Set<
 function buildUserUsernameMap(users: EnterpriseUser[]): Map<number, string> {
     const map = new Map<number, string>()
     for (const user of users) {
-        if (isNumber(user.enterprise_user_id ) && user.username) {
+        if (isNumber(user.enterprise_user_id) && user.username) {
             map.set(user.enterprise_user_id, user.username)
         }
     }

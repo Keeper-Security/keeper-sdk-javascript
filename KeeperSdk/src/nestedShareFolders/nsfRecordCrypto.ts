@@ -75,13 +75,7 @@ export async function decryptRecordTitleAndType(
     recordData: Records.IRecordData
 ): Promise<{ title: string; type: string }> {
     const uid = recordData.recordUid?.length ? webSafe64FromBytes(recordData.recordUid) : recordUid
-    const recordKey = await resolveRecordKeyBytes(
-        storage,
-        auth,
-        uid,
-        recordData.recordKey,
-        recordData.recordKeyType
-    )
+    const recordKey = await resolveRecordKeyBytes(storage, auth, uid, recordData.recordKey, recordData.recordKeyType)
     if (!recordKey) {
         logger.debug(`NSF record key unavailable for ${uid}`)
         return { title: UNKNOWN_RECORD_LABEL, type: UNKNOWN_RECORD_LABEL }

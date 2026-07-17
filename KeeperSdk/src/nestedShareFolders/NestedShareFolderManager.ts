@@ -100,9 +100,7 @@ export class NestedShareFolderManager {
         return removeNestedShareFolders(this.storage, this.requireAuth(), input)
     }
 
-    public async getNestedShareRecordDetails(
-        input: GetNsfRecordDetailsInput
-    ): Promise<GetNsfRecordDetailsResult> {
+    public async getNestedShareRecordDetails(input: GetNsfRecordDetailsInput): Promise<GetNsfRecordDetailsResult> {
         return getNestedShareRecordDetails(this.storage, this.requireAuth(), input)
     }
 
@@ -128,15 +126,11 @@ export class NestedShareFolderManager {
         return updateNestedShareFolder(this.storage, this.requireAuth(), input)
     }
 
-    public async shareNestedShareFolder(
-        input: ShareNestedShareFolderInput
-    ): Promise<ShareNestedShareFolderResult> {
+    public async shareNestedShareFolder(input: ShareNestedShareFolderInput): Promise<ShareNestedShareFolderResult> {
         return shareNestedShareFolder(this.storage, this.requireAuth(), input)
     }
 
-    public async shareNestedShareRecord(
-        input: ShareNestedShareRecordInput
-    ): Promise<ShareNestedShareRecordResult> {
+    public async shareNestedShareRecord(input: ShareNestedShareRecordInput): Promise<ShareNestedShareRecordResult> {
         return shareNestedShareRecord(this.storage, this.requireAuth(), input)
     }
 

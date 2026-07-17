@@ -19,11 +19,7 @@ import { NsfResultStatus, NsfTransferApiStatus } from './nsfTypes'
 
 const TRANSFER_ERROR = ResultCodes.NSF_TRANSFER_FAILED
 
-async function requireRecordKey(
-    storage: InMemoryStorage,
-    auth: Auth,
-    recordUid: string
-): Promise<Uint8Array> {
+async function requireRecordKey(storage: InMemoryStorage, auth: Auth, recordUid: string): Promise<Uint8Array> {
     const recordKey = await resolveRecordKeyBytes(storage, auth, recordUid)
     if (!recordKey) {
         throw new KeeperSdkError(
@@ -98,9 +94,7 @@ export async function transferNestedShareRecords(
             }
             ensureNestedShareRecord(storage, recordUid, identifier)
             checkRecordChangeOwnershipPermission(storage, recordUid, auth.username, accountUid)
-            results.push(
-                await transferNestedShareRecordOwnership(storage, auth, recordUid, newOwnerEmail)
-            )
+            results.push(await transferNestedShareRecordOwnership(storage, auth, recordUid, newOwnerEmail))
         }
 
         return {
@@ -116,9 +110,7 @@ export async function transferNestedShareRecords(
     }
 }
 
-export function formatTransferNestedShareRecordResults(
-    results: TransferNestedShareRecordResultItem[]
-): string {
+export function formatTransferNestedShareRecordResults(results: TransferNestedShareRecordResultItem[]): string {
     if (results.length === 0) return ''
     const lines: string[] = []
     for (const item of results) {

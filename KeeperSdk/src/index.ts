@@ -163,12 +163,7 @@ export type { AddFolderInput, AddFolderResult, MkdirOptions } from './folders/ad
 export { updateFolder, renameFolder, updateSharedFolderPermissions } from './folders/updateFolder'
 export type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from './folders/updateFolder'
 
-export {
-    deleteFolder,
-    rmdir,
-    resolveRmdirPatternsToFolderUids,
-    buildFolderDeleteObject,
-} from './folders/deleteFolder'
+export { deleteFolder, rmdir, resolveRmdirPatternsToFolderUids, buildFolderDeleteObject } from './folders/deleteFolder'
 export type { DeleteFolderResult, RmdirOptions } from './folders/deleteFolder'
 
 export {
@@ -202,10 +197,7 @@ export type {
     FormatTeamsTableOptions,
 } from './teams/listTeams'
 
-export {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-} from './teams/enterpriseData'
+export { EnterpriseDataInclude, EnterpriseDataManager } from './teams/enterpriseData'
 export type {
     EnterpriseDataManagerApi,
     GetEnterpriseDataResponse,
@@ -368,12 +360,7 @@ export type {
     FormattedAddTeamRow,
 } from './teams/addTeam'
 
-export {
-    updateTeams,
-    formatUpdateTeamResult,
-    renderUpdateTeamAsciiTable,
-    UpdateTeamStatus,
-} from './teams/updateTeam'
+export { updateTeams, formatUpdateTeamResult, renderUpdateTeamAsciiTable, UpdateTeamStatus } from './teams/updateTeam'
 export type {
     UpdateTeamInput,
     UpdateTeamResult,
@@ -382,12 +369,7 @@ export type {
     FormattedUpdateTeamRow,
 } from './teams/updateTeam'
 
-export {
-    deleteTeams,
-    formatDeleteTeamResult,
-    renderDeleteTeamAsciiTable,
-    DeleteTeamStatus,
-} from './teams/deleteTeam'
+export { deleteTeams, formatDeleteTeamResult, renderDeleteTeamAsciiTable, DeleteTeamStatus } from './teams/deleteTeam'
 export type {
     DeleteTeamInput,
     DeleteTeamResult,
@@ -417,19 +399,9 @@ export {
     AddUserSkipReason,
 } from './users/addUser'
 
-export {
-    updateUsers,
-    formatUpdateUserResult,
-    renderUpdateUserAsciiTable,
-    UpdateUserStatus,
-} from './users/updateUser'
+export { updateUsers, formatUpdateUserResult, renderUpdateUserAsciiTable, UpdateUserStatus } from './users/updateUser'
 
-export {
-    deleteUsers,
-    formatDeleteUserResult,
-    renderDeleteUserAsciiTable,
-    DeleteUserStatus,
-} from './users/deleteUser'
+export { deleteUsers, formatDeleteUserResult, renderDeleteUserAsciiTable, DeleteUserStatus } from './users/deleteUser'
 
 export {
     actionUsers,
@@ -481,10 +453,7 @@ export type {
 
 export { EnterpriseUserStatus } from './users/userTypes'
 
-export {
-    aliasUser,
-    AliasOperation,
-} from './users/aliasUser'
+export { aliasUser, AliasOperation } from './users/aliasUser'
 
 export {
     addUsersToTeams,

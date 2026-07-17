@@ -244,9 +244,7 @@ export class SessionManager implements SessionStorage {
         const keeperConfig = await this.loadKeeperConfig()
 
         if (keeperConfig.users && keeperConfig.devices) {
-            const user = keeperConfig.users.find(
-                (configUser) => configUser.user?.toLowerCase() === normalizedUsername
-            )
+            const user = keeperConfig.users.find((configUser) => configUser.user?.toLowerCase() === normalizedUsername)
             if (user?.last_device?.device_token) {
                 const deviceTokenStr = user.last_device.device_token
                 const device = keeperConfig.devices.find((configDevice) => configDevice.device_token === deviceTokenStr)

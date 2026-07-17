@@ -125,10 +125,7 @@ export async function viewRole(auth: Auth, identifier: string): Promise<RoleView
     return view
 }
 
-export function formatRoleView(
-    view: RoleView,
-    options: FormatRoleViewOptions = {}
-): FormattedRoleViewTable {
+export function formatRoleView(view: RoleView, options: FormatRoleViewOptions = {}): FormattedRoleViewTable {
     const verbose = options.verbose === true
 
     const mainRows: RoleViewTableRow[] = [
@@ -182,11 +179,7 @@ export function roleViewTable(table: FormattedRoleViewTable): string {
     return sections.join('\n\n')
 }
 
-function resolveRole(
-    roles: EnterpriseRole[],
-    decryptedNames: Map<number, string>,
-    identifier: string
-): EnterpriseRole {
+function resolveRole(roles: EnterpriseRole[], decryptedNames: Map<number, string>, identifier: string): EnterpriseRole {
     const trimmed = (identifier ?? '').trim()
     if (!trimmed) {
         throw new KeeperSdkError('Role name or ID is required.', ResultCodes.ROLE_REQUIRED)
@@ -204,9 +197,7 @@ function resolveRole(
     }
 
     const lowered = trimmed.toLowerCase()
-    const nameMatches = roles.filter(
-        (r) => (r.displayName || '').trim().toLowerCase() === lowered
-    )
+    const nameMatches = roles.filter((r) => (r.displayName || '').trim().toLowerCase() === lowered)
     if (nameMatches.length === 1) return nameMatches[0]
     if (nameMatches.length > 1) {
         throw new KeeperSdkError(
@@ -217,11 +208,7 @@ function resolveRole(
     throw new KeeperSdkError(`Role "${trimmed}" does not exist.`, ResultCodes.ROLE_NOT_FOUND)
 }
 
-function resolveNodePath(
-    nodes: EnterpriseNode[],
-    displayNames: EnterpriseDisplayNames,
-    nodeId: number
-): string {
+function resolveNodePath(nodes: EnterpriseNode[], displayNames: EnterpriseDisplayNames, nodeId: number): string {
     for (const node of nodes) {
         const display = displayNames.nodes.get(node.node_id)
         if (display) node.displayName = display
@@ -244,7 +231,11 @@ function buildRoleTeams(
     for (const link of roleTeamLinks) {
         if (link.role_id !== roleId) continue
         const team = teamByUid.get(link.team_uid)
-        if (team) result.push({ team_uid: team.team_uid, team_name: (team.name || team.team_uid).trim() })
+        if (team)
+            result.push({
+                team_uid: team.team_uid,
+                team_name: (team.name || team.team_uid).trim(),
+            })
     }
     result.sort((a, b) => a.team_name.localeCompare(b.team_name, undefined, { sensitivity: 'base' }))
     return result
@@ -263,7 +254,10 @@ function buildRoleUsers(
         if (link.role_id !== roleId) continue
         const user = userById.get(link.enterprise_user_id)
         if (user?.username) {
-            result.push({ enterprise_user_id: link.enterprise_user_id, username: user.username })
+            result.push({
+                enterprise_user_id: link.enterprise_user_id,
+                username: user.username,
+            })
         }
     }
     result.sort((a, b) => a.username.localeCompare(b.username, undefined, { sensitivity: 'base' }))
@@ -312,10 +306,7 @@ function buildManagedNodes(
     return result
 }
 
-function buildEnforcements(
-    links: EnterpriseRoleEnforcementLink[],
-    roleId: number
-): RoleEnforcementInfo[] {
+function buildEnforcements(links: EnterpriseRoleEnforcementLink[], roleId: number): RoleEnforcementInfo[] {
     const result: RoleEnforcementInfo[] = []
     for (const link of links) {
         if (link.role_id !== roleId || !link.value) continue
@@ -358,10 +349,7 @@ function renderMainSection(table: FormattedRoleViewTable): string {
         idLines: hasIdColumn ? asIdLines(row.id) : [],
     }))
 
-    const valueWidth = expandedRows.reduce(
-        (max, row) => Math.max(max, ...row.valueLines.map((l) => l.length)),
-        0
-    )
+    const valueWidth = expandedRows.reduce((max, row) => Math.max(max, ...row.valueLines.map((l) => l.length)), 0)
     const idWidth = hasIdColumn
         ? expandedRows.reduce((max, row) => Math.max(max, ...row.idLines.map((l) => l.length)), 0)
         : 0
@@ -419,9 +407,7 @@ function renderManagedNodesSection(table: FormattedManagedNodePrivilegeTable): s
         title,
         formatRow(colHeaders),
         rule,
-        ...table.privilegeRows.map((row) =>
-            formatRow([row.privilege, ...row.granted.map((g) => (g ? 'X' : ''))])
-        ),
+        ...table.privilegeRows.map((row) => formatRow([row.privilege, ...row.granted.map((g) => (g ? 'X' : ''))])),
         rule,
         formatRow(['Cascade Node Permissions', ...table.cascadeRow.map((c) => (c ? 'X' : ''))]),
     ]

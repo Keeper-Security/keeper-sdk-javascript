@@ -1,11 +1,5 @@
-export {
-    runAuditReport,
-} from './auditReport'
-export {
-    runActionReport,
-    getAllowedActions,
-    getDefaultDaysSince,
-} from './actionReport'
+export { runAuditReport } from './auditReport'
+export { runActionReport, getAllowedActions, getDefaultDaysSince } from './actionReport'
 export {
     runPasswordReport,
     getPasswordStrength,
@@ -15,7 +9,10 @@ export {
     buildPasswordPolicySummary,
 } from './passwordReport'
 export { EnterpriseReportManager } from './EnterpriseReportManager'
-export { EnterpriseReportManager as AuditReportManager, EnterpriseReportManager as ActionReportManager } from './EnterpriseReportManager'
+export {
+    EnterpriseReportManager as AuditReportManager,
+    EnterpriseReportManager as ActionReportManager,
+} from './EnterpriseReportManager'
 export type { AuthProvider } from './reportUtils'
 export {
     AuditReportOrder,

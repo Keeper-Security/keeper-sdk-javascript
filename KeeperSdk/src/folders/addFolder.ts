@@ -56,7 +56,10 @@ function resolveParentContext(storage: InMemoryStorage, parentUid: string | null
     }
     const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, parentUid)
     if (sharedFolder) {
-        return { kind: ParentFolderKind.SharedFolder, sharedScopeUid: sharedFolder.uid }
+        return {
+            kind: ParentFolderKind.SharedFolder,
+            sharedScopeUid: sharedFolder.uid,
+        }
     }
     const sharedFolderFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, parentUid)
     if (sharedFolderFolder) {

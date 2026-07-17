@@ -13,7 +13,6 @@ import { extractErrorMessage, isNumber, logger } from '../utils'
 const DEFAULT_NODE_PATH_SEPARATOR = '\\'
 const MAX_CONTINUATIONS = 50
 
-
 export enum EnterpriseDataInclude {
     Nodes = 'nodes',
     Users = 'users',
@@ -207,9 +206,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     public async decryptNodeNames(nodes: EnterpriseNode[]): Promise<number> {
         if (!nodes || nodes.length === 0) return 0
 
-        const needsDecrypt = nodes.some(
-            (node) => !!node.encrypted_data && !(node.displayName || '').trim()
-        )
+        const needsDecrypt = nodes.some((node) => !!node.encrypted_data && !(node.displayName || '').trim())
         if (!needsDecrypt) return 0
 
         const displayNames = await this.getDisplayNames()
@@ -252,11 +249,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         this.treeKeyPromise = null
     }
 
-    public static getNodePath(
-        nodes: EnterpriseNode[],
-        nodeId: number,
-        options: NodePathOptions = {}
-    ): string {
+    public static getNodePath(nodes: EnterpriseNode[], nodeId: number, options: NodePathOptions = {}): string {
         const { omitRoot = true, separator = DEFAULT_NODE_PATH_SEPARATOR } = options
         const byId = new Map<number, EnterpriseNode>()
         for (const node of nodes) byId.set(node.node_id, node)
@@ -284,12 +277,8 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         return [...includes].sort().join(',')
     }
 
-    private async fetchEnterpriseData(
-        includes: EnterpriseDataInclude[]
-    ): Promise<GetEnterpriseDataResponse> {
-        const interesting = new Set<Enterprise.EnterpriseDataEntity>(
-            includes.map((key) => INCLUDE_TO_ENTITY[key])
-        )
+    private async fetchEnterpriseData(includes: EnterpriseDataInclude[]): Promise<GetEnterpriseDataResponse> {
+        const interesting = new Set<Enterprise.EnterpriseDataEntity>(includes.map((key) => INCLUDE_TO_ENTITY[key]))
         const aggregate: GetEnterpriseDataResponse = {}
         let continuationToken: Uint8Array | undefined
 
@@ -318,7 +307,10 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     }
 
     private async fetchDisplayNames(): Promise<EnterpriseDisplayNames> {
-        const empty: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
+        const empty: EnterpriseDisplayNames = {
+            nodes: new Map(),
+            roles: new Map(),
+        }
 
         const treeKey = await this.getTreeKey()
         if (!treeKey) return empty
@@ -399,16 +391,16 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
                     return null
             }
         } catch (err) {
-            logger.debug(
-                `Tree-key decryption failed (keyTypeId=${keyType}): ${extractErrorMessage(err)}`
-            )
+            logger.debug(`Tree-key decryption failed (keyTypeId=${keyType}): ${extractErrorMessage(err)}`)
             return null
         }
     }
 
     private static async decryptDisplayName(encrypted: string, treeKey: Uint8Array): Promise<string> {
         try {
-            const decrypted = await decryptObjectFromStorage<{ displayname?: string }>(encrypted, treeKey)
+            const decrypted = await decryptObjectFromStorage<{
+                displayname?: string
+            }>(encrypted, treeKey)
             return (decrypted?.displayname || '').trim()
         } catch {
             return ''
@@ -427,24 +419,22 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         return bytes && bytes.length > 0 ? webSafe64FromBytes(bytes) : ''
     }
 
-    private static decodeChunk<T>(
-        chunkData: Uint8Array[] | null | undefined,
-        decoder: (bytes: Uint8Array) => T
-    ): T[] {
+    private static decodeChunk<T>(chunkData: Uint8Array[] | null | undefined, decoder: (bytes: Uint8Array) => T): T[] {
         if (!chunkData || chunkData.length === 0) return []
         const results: T[] = []
         for (const bytes of chunkData) {
             try {
                 results.push(decoder(bytes))
-            } catch {
-            }
+            } catch {}
         }
         return results
     }
 
     private static decodeNodeChunk(bytes: Uint8Array): EnterpriseNode {
         const message = Enterprise.Node.decode(bytes)
-        const node: EnterpriseNode = { node_id: EnterpriseDataManager.toNumber(message.nodeId) }
+        const node: EnterpriseNode = {
+            node_id: EnterpriseDataManager.toNumber(message.nodeId),
+        }
         if (message.parentId != null) node.parent_id = EnterpriseDataManager.toNumber(message.parentId)
         if (message.encryptedData) node.encrypted_data = message.encryptedData
         return node
@@ -471,7 +461,9 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
 
     private static decodeRoleChunk(bytes: Uint8Array): EnterpriseRole {
         const message = Enterprise.Role.decode(bytes)
-        const out: EnterpriseRole = { role_id: EnterpriseDataManager.toNumber(message.roleId) }
+        const out: EnterpriseRole = {
+            role_id: EnterpriseDataManager.toNumber(message.roleId),
+        }
         if (message.nodeId != null) out.node_id = EnterpriseDataManager.toNumber(message.nodeId)
         if (message.encryptedData) out.encrypted_data = message.encryptedData
         if (message.visibleBelow != null) out.visible_below = message.visibleBelow
@@ -568,10 +560,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         }
     }
 
-    private static applyChunk(
-        chunk: Enterprise.IEnterpriseData,
-        target: GetEnterpriseDataResponse
-    ): void {
+    private static applyChunk(chunk: Enterprise.IEnterpriseData, target: GetEnterpriseDataResponse): void {
         const entity = chunk.entity ?? Enterprise.EnterpriseDataEntity.UNKNOWN
         const data = chunk.data || []
 

@@ -1,9 +1,6 @@
 import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
-import {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-} from './enterpriseData'
+import { EnterpriseDataInclude, EnterpriseDataManager } from './enterpriseData'
 import { TeamRestriction, type TeamRestrictionInput } from './addTeam'
 import {
     applyDecryptedNodeNames,
@@ -16,10 +13,7 @@ import {
 } from './teamUtils'
 
 const TEAM_UPDATE_COMMAND = 'team_update'
-const UPDATE_TEAM_INCLUDES: EnterpriseDataInclude[] = [
-    EnterpriseDataInclude.Nodes,
-    EnterpriseDataInclude.Teams,
-]
+const UPDATE_TEAM_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Teams]
 
 export enum UpdateTeamStatus {
     Updated = 'updated',
@@ -103,10 +97,7 @@ export async function updateTeams(auth: Auth, input: UpdateTeamInput): Promise<U
         try {
             overrideNodeId = resolveParentNode(nodes, parentIdentifier).node_id
         } catch (err) {
-            throw new KeeperSdkError(
-                extractErrorMessage(err),
-                ResultCodes.PARENT_NODE_NOT_FOUND
-            )
+            throw new KeeperSdkError(extractErrorMessage(err), ResultCodes.PARENT_NODE_NOT_FOUND)
         }
     }
 
@@ -162,9 +153,7 @@ async function sendTeamUpdate(auth: Auth, payload: TeamUpdateRequestPayload): Pr
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message ||
-                response.result_code ||
-                `team_update failed for team_uid=${payload.team_uid}`,
+            response.message || response.result_code || `team_update failed for team_uid=${payload.team_uid}`,
             response.result_code || ResultCodes.TEAM_UPDATE_FAILED
         )
     }

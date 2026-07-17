@@ -6,11 +6,7 @@ import {
     type RestCommand,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, KeeperSdkError, logger, ResultCodes } from '../utils'
-import {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-    type EnterpriseUser,
-} from '../teams/enterpriseData'
+import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseUser } from '../teams/enterpriseData'
 import {
     EnterpriseUserStatus,
     normalizeEmailInputs,
@@ -40,9 +36,7 @@ type ExpirePasswordPayload = {
     email: string
 }
 
-type ActionUserTarget =
-    | { kind: 'user'; user: EnterpriseUser }
-    | { kind: 'not_found'; identifier: string }
+type ActionUserTarget = { kind: 'user'; user: EnterpriseUser } | { kind: 'not_found'; identifier: string }
 
 export async function actionUsers(auth: Auth, input: UserActionInput): Promise<UserActionResult> {
     const identifiers = normalizeEmailInputs(input.emails)
@@ -102,7 +96,9 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
 
         if (input.action === UserAction.Lock || input.action === UserAction.Unlock) {
             if (callerEnterpriseUserId !== null && user.enterprise_user_id === callerEnterpriseUserId) {
-                logger.warn(`User "${maskEmail(user.username)}" is the logged-in user and will be skipped for lock/unlock.`)
+                logger.warn(
+                    `User "${maskEmail(user.username)}" is the logged-in user and will be skipped for lock/unlock.`
+                )
                 item.status = UserActionStatus.Failed
                 item.message = SELF_ACTION_MESSAGE
                 continue
@@ -231,9 +227,7 @@ async function sendExpirePassword(auth: Auth, email: string): Promise<void> {
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message ||
-                response.result_code ||
-                `${EXPIRE_PASSWORD_COMMAND} failed for "${maskEmail(email)}"`,
+            response.message || response.result_code || `${EXPIRE_PASSWORD_COMMAND} failed for "${maskEmail(email)}"`,
             response.result_code || ResultCodes.USER_ACTION_FAILED
         )
     }
@@ -252,9 +246,7 @@ function toEnterpriseUserId(value: unknown): number | null {
         return null
     }
     const numericId =
-        typeof value === 'object' && 'toNumber' in value
-            ? (value as { toNumber(): number }).toNumber()
-            : Number(value)
+        typeof value === 'object' && 'toNumber' in value ? (value as { toNumber(): number }).toNumber() : Number(value)
     return isNumber(numericId) && numericId > 0 ? numericId : null
 }
 
@@ -307,13 +299,21 @@ function resolveCallerEnterpriseUserId(auth: Auth, allUsers: EnterpriseUser[]): 
 }
 
 function finalizeResult(items: UserActionItemResult[]): UserActionResult {
-    let succeeded = 0, skipped = 0, failed = 0
+    let succeeded = 0,
+        skipped = 0,
+        failed = 0
     for (const item of items) {
         if (item.status === UserActionStatus.Success) succeeded++
         else if (item.status === UserActionStatus.Skipped) skipped++
         else failed++
     }
-    return { success: failed === 0 && succeeded > 0, items, succeeded, skipped, failed }
+    return {
+        success: failed === 0 && succeeded > 0,
+        items,
+        succeeded,
+        skipped,
+        failed,
+    }
 }
 
 export function formatUserActionResult(result: UserActionResult): FormattedUserActionTable {
@@ -336,8 +336,7 @@ export function renderUserActionAsciiTable(table: FormattedUserActionTable): str
     const widths = headers.map((header, index) =>
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
-    const padCell = (cell: string, columnIndex: number): string =>
-        cell.padEnd(widths[columnIndex])
+    const padCell = (cell: string, columnIndex: number): string => cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 

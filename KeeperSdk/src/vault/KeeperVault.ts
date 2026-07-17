@@ -87,11 +87,7 @@ import {
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
-import {
-    formatListNsfTable,
-    renderListNsfAsciiTable,
-    formatListNsfOutput,
-} from '../nestedShareFolders/listNsf'
+import { formatListNsfTable, renderListNsfAsciiTable, formatListNsfOutput } from '../nestedShareFolders/listNsf'
 import { formatNsfDetail } from '../nestedShareFolders/getNsf'
 import { formatRemoveNsfPreview } from '../nestedShareFolders/removeNsfRecord'
 import {
@@ -847,8 +843,7 @@ export class KeeperVault {
 
     public async mkdirNestedShareFolder(input: Omit<MkdirNsfInput, 'baseFolderUid'>): Promise<MkdirNsfResult> {
         const current = this.folderSession.currentFolderUid
-        const baseFolderUid =
-            current && isNestedShareFolder(this.storage, current) ? current : null
+        const baseFolderUid = current && isNestedShareFolder(this.storage, current) ? current : null
         const result = await this.nestedShareFolderManager.mkdirNestedShareFolder({
             ...input,
             baseFolderUid,
@@ -863,9 +858,7 @@ export class KeeperVault {
         return result
     }
 
-    public async getNestedShareRecordDetails(
-        input: GetNsfRecordDetailsInput
-    ): Promise<GetNsfRecordDetailsResult> {
+    public async getNestedShareRecordDetails(input: GetNsfRecordDetailsInput): Promise<GetNsfRecordDetailsResult> {
         return this.nestedShareFolderManager.getNestedShareRecordDetails(input)
     }
 
@@ -901,17 +894,13 @@ export class KeeperVault {
         return result
     }
 
-    public async shareNestedShareFolder(
-        input: ShareNestedShareFolderInput
-    ): Promise<ShareNestedShareFolderResult> {
+    public async shareNestedShareFolder(input: ShareNestedShareFolderInput): Promise<ShareNestedShareFolderResult> {
         const result = await this.nestedShareFolderManager.shareNestedShareFolder(input)
         if (result.results.some((item) => item.success)) await this.syncIfNeeded()
         return result
     }
 
-    public async shareNestedShareRecord(
-        input: ShareNestedShareRecordInput
-    ): Promise<ShareNestedShareRecordResult> {
+    public async shareNestedShareRecord(input: ShareNestedShareRecordInput): Promise<ShareNestedShareRecordResult> {
         const result = await this.nestedShareFolderManager.shareNestedShareRecord(input)
         if (!result.dryRun && result.results.some((item) => item.success)) await this.syncIfNeeded()
         return result
@@ -940,8 +929,7 @@ export class KeeperVault {
 
     public async keepNsfShortcut(input: KeepNsfShortcutInput): Promise<KeepNsfShortcutResult> {
         const current = this.folderSession.currentFolderUid
-        const defaultFolderUid =
-            current && isNestedShareFolder(this.storage, current) ? current : undefined
+        const defaultFolderUid = current && isNestedShareFolder(this.storage, current) ? current : undefined
         const result = await this.nestedShareFolderManager.keepNsfShortcut(input, defaultFolderUid)
         if (!result.dryRun && result.results.some((item) => item.success)) await this.syncIfNeeded()
         return result
@@ -959,9 +947,7 @@ export class KeeperVault {
         return result
     }
 
-    public formatTransferNestedShareRecordResults(
-        results: TransferNestedShareRecordResult['results']
-    ): string {
+    public formatTransferNestedShareRecordResults(results: TransferNestedShareRecordResult['results']): string {
         return formatTransferNestedShareRecordResults(results)
     }
 

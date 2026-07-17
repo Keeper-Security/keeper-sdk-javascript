@@ -1,10 +1,5 @@
 import type { Auth, DKdFolderRecord } from '@keeper-security/keeperapi'
-import {
-    Folder,
-    platform,
-    record,
-    recordsShareV3Message,
-} from '@keeper-security/keeperapi'
+import { Folder, platform, record, recordsShareV3Message } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { getRecordTitle } from '../records/RecordUtils'
 import {
@@ -156,23 +151,21 @@ function recordTitle(storage: InMemoryStorage, recordUid: string): string {
     return getRecordTitle(recordEntry).slice(0, 32)
 }
 
-
 async function getRecordAccessesV3(
     auth: Auth,
     storage: InMemoryStorage,
     recordUids: string[]
-): Promise<{ recordAccesses: NsfRecordAccessEntry[]; forbiddenRecords: string[] }> {
+): Promise<{
+    recordAccesses: NsfRecordAccessEntry[]
+    forbiddenRecords: string[]
+}> {
     if (recordUids.length === 0) {
         throw new KeeperSdkError('At least one record UID required.', ResultCodes.NSF_RECORD_PERMISSION_FAILED)
     }
     return fetchLiveRecordAccessesV3(auth, storage, recordUids)
 }
 
-async function requireRecordKey(
-    storage: InMemoryStorage,
-    auth: Auth,
-    recordUid: string
-): Promise<Uint8Array> {
+async function requireRecordKey(storage: InMemoryStorage, auth: Auth, recordUid: string): Promise<Uint8Array> {
     const recordKey = await resolveRecordKeyBytes(storage, auth, recordUid)
     if (!recordKey) {
         throw new KeeperSdkError(
@@ -211,10 +204,7 @@ async function buildRevokePermission(
     const emailKey = item.email.trim().toLowerCase()
     const userKeys = userKeysByEmail.get(emailKey)
     if (!userKeys) {
-        throw new KeeperSdkError(
-            `User ${item.email} not found`,
-            ResultCodes.NSF_RECORD_PERMISSION_FAILED
-        )
+        throw new KeeperSdkError(`User ${item.email} not found`, ResultCodes.NSF_RECORD_PERMISSION_FAILED)
     }
     return buildNsfRevokePermissionFromKeys(item.recordUid, userKeys)
 }
@@ -483,11 +473,7 @@ export function buildNsfRecordPermissionPlan(
     }
 }
 
-function formatPermissionPlanTable(
-    title: string,
-    headers: string[],
-    rows: string[][]
-): string[] {
+function formatPermissionPlanTable(title: string, headers: string[], rows: string[][]): string[] {
     if (rows.length === 0) return []
 
     const columnCount = headers.length
@@ -498,8 +484,7 @@ function formatPermissionPlanTable(
         }
         return width
     })
-    const pad = (cell: string, columnIndex: number) =>
-        cell + ' '.repeat(Math.max(0, widths[columnIndex] - cell.length))
+    const pad = (cell: string, columnIndex: number) => cell + ' '.repeat(Math.max(0, widths[columnIndex] - cell.length))
     const formatRow = (cells: string[]) => cells.map((cell, columnIndex) => pad(cell, columnIndex)).join('  ')
     const rule = widths.map((width, columnIndex) => pad('-'.repeat(width), columnIndex)).join('  ')
 
@@ -580,10 +565,7 @@ export function formatNsfRecordPermissionPlan(plan: NsfRecordPermissionPlan): st
     return lines.join('\n').trimEnd()
 }
 
-function mapFailures(
-    outcomes: NsfShareOperationOutcome[],
-    defaultCode: string
-): NsfRecordPermissionFailure[] {
+function mapFailures(outcomes: NsfShareOperationOutcome[], defaultCode: string): NsfRecordPermissionFailure[] {
     return outcomes
         .filter((outcome) => !outcome.success)
         .map((outcome) => ({
@@ -619,9 +601,7 @@ export async function updateNestedShareRecordPermissions(
     }
 
     const accessRoleType =
-        action === NsfRecordPermissionAction.Grant && normalizedRole
-            ? resolveNsfRoleName(normalizedRole)
-            : undefined
+        action === NsfRecordPermissionAction.Grant && normalizedRole ? resolveNsfRoleName(normalizedRole) : undefined
 
     const { folderUid, displayName } = resolveFolderForPermission(storage, input.folder)
     const recordUids = collectNsfRecordUidsInFolder(storage, folderUid, recursive)
@@ -665,9 +645,7 @@ export async function updateNestedShareRecordPermissions(
                 plan,
                 grantFailures: [],
                 revokeFailures: [],
-                message: dryRun
-                    ? undefined
-                    : 'Confirmation required. Set force=true to proceed.',
+                message: dryRun ? undefined : 'Confirmation required. Set force=true to proceed.',
             }
         }
 
@@ -679,8 +657,7 @@ export async function updateNestedShareRecordPermissions(
             grantOutcomes.push(...(await batchCreateRecordSharesV3(storage, auth, buckets.creates)))
         }
 
-        const revokeOutcomes =
-            buckets.revokes.length > 0 ? await batchUnshareRecordsV3(auth, buckets.revokes) : []
+        const revokeOutcomes = buckets.revokes.length > 0 ? await batchUnshareRecordsV3(auth, buckets.revokes) : []
 
         return {
             confirmed: true,

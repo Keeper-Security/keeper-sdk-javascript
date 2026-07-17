@@ -65,9 +65,20 @@ export async function deleteRoles(auth: Auth, input: DeleteRoleInput): Promise<D
         const nodeId = role.node_id ?? 0
         try {
             await sendRoleDelete(auth, role.role_id)
-            items.push({ roleId: role.role_id, roleName, nodeId, status: DeleteRoleStatus.Deleted })
+            items.push({
+                roleId: role.role_id,
+                roleName,
+                nodeId,
+                status: DeleteRoleStatus.Deleted,
+            })
         } catch (err) {
-            items.push({ roleId: role.role_id, roleName, nodeId, status: DeleteRoleStatus.Failed, message: extractErrorMessage(err) })
+            items.push({
+                roleId: role.role_id,
+                roleName,
+                nodeId,
+                status: DeleteRoleStatus.Failed,
+                message: extractErrorMessage(err),
+            })
         }
     }
 

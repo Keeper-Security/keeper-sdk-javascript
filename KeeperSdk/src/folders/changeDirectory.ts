@@ -25,7 +25,11 @@ export function createVaultFolderSession(): VaultFolderSession {
 function getFolderEntryByUid(storage: InMemoryStorage, uid: string): ListFolderFolderSimple | undefined {
     const userFolder = storage.getByUid<DUserFolder>(FolderKind.UserFolder, uid)
     if (userFolder) {
-        return { uid: userFolder.uid, name: userFolderName(userFolder), folderKind: FolderKind.UserFolder }
+        return {
+            uid: userFolder.uid,
+            name: userFolderName(userFolder),
+            folderKind: FolderKind.UserFolder,
+        }
     }
     const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, uid)
     if (sharedFolder) {
@@ -88,10 +92,7 @@ async function listFolderChildrenForCd(
     return result.folders
 }
 
-function findChildFolder(
-    children: ListFolderFolderSimple[],
-    component: string
-): ListFolderFolderSimple | undefined {
+function findChildFolder(children: ListFolderFolderSimple[], component: string): ListFolderFolderSimple | undefined {
     const trimmedComponent = component.trim()
     if (!trimmedComponent) return undefined
     const matchByUid = children.find((child) => child.uid === trimmedComponent)

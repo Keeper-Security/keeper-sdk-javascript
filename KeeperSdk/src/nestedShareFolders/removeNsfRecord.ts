@@ -82,13 +82,13 @@ function buildRemovals(
         throw new KeeperSdkError('At least one record UID or title is required.', ResultCodes.NSF_NOT_FOUND)
     }
     if (recordIdentifiers.length > NSF_MAX_RECORD_BATCH) {
-        throw new KeeperSdkError(`Maximum ${NSF_MAX_RECORD_BATCH} records per request.`, ResultCodes.NSF_TOO_MANY_RECORDS)
+        throw new KeeperSdkError(
+            `Maximum ${NSF_MAX_RECORD_BATCH} records per request.`,
+            ResultCodes.NSF_TOO_MANY_RECORDS
+        )
     }
     if (operation === NsfRemoveOperation.Unlink && !folderIdentifier?.trim()) {
-        throw new KeeperSdkError(
-            '--folder is required when operation is "unlink".',
-            ResultCodes.NSF_FOLDER_REQUIRED
-        )
+        throw new KeeperSdkError('--folder is required when operation is "unlink".', ResultCodes.NSF_FOLDER_REQUIRED)
     }
 
     const folderUid = folderIdentifier ? resolveNsfFolderIdentifier(storage, folderIdentifier) : undefined
@@ -206,7 +206,10 @@ export async function removeNestedShareRecords(
         const preview = (previewResponse.results ?? []).map(mapPreviewItem)
 
         if (hasPreviewErrors(preview)) {
-            throw new KeeperSdkError(formatRemoveNsfPreview(preview) || 'Removal preview failed.', ResultCodes.NSF_REMOVE_FAILED)
+            throw new KeeperSdkError(
+                formatRemoveNsfPreview(preview) || 'Removal preview failed.',
+                ResultCodes.NSF_REMOVE_FAILED
+            )
         }
 
         if (dryRun || !previewResponse.confirmationToken?.length) {
@@ -214,7 +217,12 @@ export async function removeNestedShareRecords(
         }
 
         if (!input.force) {
-            return { confirmed: false, dryRun: false, preview, message: 'Confirmation required. Set force=true to proceed.' }
+            return {
+                confirmed: false,
+                dryRun: false,
+                preview,
+                message: 'Confirmation required. Set force=true to proceed.',
+            }
         }
 
         await executeRemove(auth, removals, RemoveAction.REMOVE_ACTION_CONFIRM, previewResponse.confirmationToken)

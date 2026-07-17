@@ -111,10 +111,7 @@ export type DeleteRecordResult = {
     message?: string
 }
 
-export async function addRecord(
-    auth: Auth,
-    input: NewRecordInput
-): Promise<AddRecordResult> {
+export async function addRecord(auth: Auth, input: NewRecordInput): Promise<AddRecordResult> {
     if (!input.data.title || !input.data.title.trim()) {
         throw new KeeperSdkError('Record title is required.', 'missing_record_title')
     }
@@ -127,11 +124,7 @@ export async function addRecord(
     return addTypedRecord(auth, input.data, input.folderUid)
 }
 
-async function addPasswordRecord(
-    auth: Auth,
-    data: PasswordRecordData,
-    folderUid?: string
-): Promise<AddRecordResult> {
+async function addPasswordRecord(auth: Auth, data: PasswordRecordData, folderUid?: string): Promise<AddRecordResult> {
     const recordUidBytes = generateUidBytes()
     const recordKey = generateEncryptionKey()
     const recordUid = webSafe64FromBytes(recordUidBytes)
@@ -181,11 +174,7 @@ async function addPasswordRecord(
     }
 }
 
-async function addTypedRecord(
-    auth: Auth,
-    data: TypedRecordData,
-    folderUid?: string
-): Promise<AddRecordResult> {
+async function addTypedRecord(auth: Auth, data: TypedRecordData, folderUid?: string): Promise<AddRecordResult> {
     const recordUidBytes = generateUidBytes()
     const recordKey = generateEncryptionKey()
     const recordUid = webSafe64FromBytes(recordUidBytes)
@@ -223,16 +212,12 @@ async function addTypedRecord(
     const response = await auth.executeRest(msg)
 
     const recordStatus = response.records?.[0]
-    const success =
-        recordStatus?.status === Records.RecordModifyResult.RS_SUCCESS ||
-        !recordStatus?.status
+    const success = recordStatus?.status === Records.RecordModifyResult.RS_SUCCESS || !recordStatus?.status
 
     return {
         recordUid,
         success,
-        status: recordStatus?.status != null
-            ? Records.RecordModifyResult[recordStatus.status]
-            : ResultCode.OK,
+        status: recordStatus?.status != null ? Records.RecordModifyResult[recordStatus.status] : ResultCode.OK,
     }
 }
 
@@ -278,23 +263,16 @@ export async function updateRecord(
     const response = await auth.executeRest(msg)
 
     const recordStatus = response.records?.[0]
-    const success =
-        recordStatus?.status === Records.RecordModifyResult.RS_SUCCESS ||
-        !recordStatus?.status
+    const success = recordStatus?.status === Records.RecordModifyResult.RS_SUCCESS || !recordStatus?.status
 
     return {
         recordUid,
         success,
-        status: recordStatus?.status != null
-            ? Records.RecordModifyResult[recordStatus.status]
-            : ResultCode.OK,
+        status: recordStatus?.status != null ? Records.RecordModifyResult[recordStatus.status] : ResultCode.OK,
     }
 }
 
-export async function deleteRecord(
-    auth: Auth,
-    recordUid: string
-): Promise<DeleteRecordResult> {
+export async function deleteRecord(auth: Auth, recordUid: string): Promise<DeleteRecordResult> {
     const preDeleteRequest = {
         objects: [
             {
@@ -437,18 +415,18 @@ function resolveFolder(uid: string, storage: InMemoryStorage): FolderInfo {
 
     const sfFolder = storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, uid)
     if (sfFolder) {
-        return { uid, folderType: FolderKind.SharedFolderFolder, scopeUid: sfFolder.sharedFolderUid }
+        return {
+            uid,
+            folderType: FolderKind.SharedFolderFolder,
+            scopeUid: sfFolder.sharedFolderUid,
+        }
     }
 
     return { uid, folderType: FolderKind.UserFolder, scopeUid: '' }
 }
 
 async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorage): Promise<string> {
-    const folderKinds = [
-        FolderKind.UserFolder,
-        FolderKind.SharedFolder,
-        FolderKind.SharedFolderFolder,
-    ] as const
+    const folderKinds = [FolderKind.UserFolder, FolderKind.SharedFolder, FolderKind.SharedFolderFolder] as const
 
     for (const kind of folderKinds) {
         for (const folder of storage.getAll<DUserFolder | DSharedFolder | DSharedFolderFolder>(kind)) {
@@ -474,13 +452,7 @@ export async function moveRecord(
     storage: InMemoryStorage,
     input: MoveRecordInput
 ): Promise<MoveRecordResult> {
-    const {
-        recordUid,
-        dstFolderUid,
-        link = false,
-        canEdit,
-        canShare,
-    } = input
+    const { recordUid, dstFolderUid, link = false, canEdit, canShare } = input
 
     const dst = resolveFolder(dstFolderUid, storage)
 
@@ -514,7 +486,11 @@ export async function moveRecord(
         }
 
         if (!dstKey) {
-            return { recordUid, success: false, message: 'Destination folder key not found' }
+            return {
+                recordUid,
+                success: false,
+                message: 'Destination folder key not found',
+            }
         }
 
         const record = storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid)
@@ -527,7 +503,10 @@ export async function moveRecord(
             encryptedKey = await platform.aesCbcEncrypt(recordKey, dstKey, true)
         }
 
-        transitionKeys.push({ uid: recordUid, key: webSafe64FromBytes(encryptedKey) })
+        transitionKeys.push({
+            uid: recordUid,
+            key: webSafe64FromBytes(encryptedKey),
+        })
     }
 
     const request: MoveRequest = {

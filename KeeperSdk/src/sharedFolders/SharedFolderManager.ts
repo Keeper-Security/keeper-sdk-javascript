@@ -1,16 +1,8 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes } from '../utils'
-import {
-    formatSharedFoldersTable,
-    listSharedFolders,
-    renderSharedFoldersAsciiTable,
-} from './listSharedFolders'
-import type {
-    FormattedSharedFoldersTable,
-    ListSharedFolderRow,
-    ListSharedFoldersOptions,
-} from './listSharedFolders'
+import { formatSharedFoldersTable, listSharedFolders, renderSharedFoldersAsciiTable } from './listSharedFolders'
+import type { FormattedSharedFoldersTable, ListSharedFolderRow, ListSharedFoldersOptions } from './listSharedFolders'
 import { shareFolder } from './shareFolder'
 import type { ShareFolderInput, ShareFolderResult } from './shareFolder'
 

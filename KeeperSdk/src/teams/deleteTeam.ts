@@ -1,9 +1,6 @@
 import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
-import {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-} from './enterpriseData'
+import { EnterpriseDataInclude, EnterpriseDataManager } from './enterpriseData'
 import { resolveExistingTeams, TEAM_TABLE_HEADERS } from './teamUtils'
 
 const TEAM_DELETE_COMMAND = 'team_delete'
@@ -85,9 +82,7 @@ async function sendTeamDelete(auth: Auth, teamUid: string): Promise<void> {
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message ||
-                response.result_code ||
-                `team_delete failed for team_uid=${teamUid}`,
+            response.message || response.result_code || `team_delete failed for team_uid=${teamUid}`,
             response.result_code || ResultCodes.TEAM_DELETE_FAILED
         )
     }

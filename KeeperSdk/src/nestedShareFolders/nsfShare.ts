@@ -42,11 +42,7 @@ import {
     resolveNsfRecordIdentifier,
     resolveNsfRoleName,
 } from './nsfHelpers'
-import {
-    encryptNsfFolderKeyForTeam,
-    fetchNsfTeamPublicKeys,
-    resolveNsfShareRecipient,
-} from './nsfTeamShare'
+import { encryptNsfFolderKeyForTeam, fetchNsfTeamPublicKeys, resolveNsfShareRecipient } from './nsfTeamShare'
 import type {
     NsfDirectUserRecordShare,
     NsfFolderAccessOperationResult,
@@ -95,7 +91,12 @@ function parseFolderAccessResult(
     recipient: string
 ): NsfFolderAccessOperationResult {
     if (!result) {
-        return { folderUid, recipient, success: false, message: 'No folder access result returned' }
+        return {
+            folderUid,
+            recipient,
+            success: false,
+            message: 'No folder access result returned',
+        }
     }
     const status = result.status ?? Folder.FolderModifyStatus.SUCCESS
     const statusName = Folder.FolderModifyStatus[status] ?? String(status)
@@ -198,9 +199,7 @@ function buildFolderAccessUpdateData(
 ): Folder.IFolderAccessData {
     if (!target.accountUid?.length) {
         throw new KeeperSdkError(
-            target.isTeam
-                ? `Team ${target.recipient} not found`
-                : `User ${target.recipient} not found`,
+            target.isTeam ? `Team ${target.recipient} not found` : `User ${target.recipient} not found`,
             target.isTeam ? ResultCodes.TEAM_NOT_FOUND : SHARE_ERROR
         )
     }
@@ -278,13 +277,7 @@ async function grantFolderAccess(
     const accessType = target.isTeam ? Folder.AccessType.AT_TEAM : Folder.AccessType.AT_USER
     const accessTypeUid = target.accountUid ? webSafe64FromBytes(target.accountUid) : target.recipient
 
-    const existing = await findFolderAccessEntryOrLive(
-        storage,
-        auth,
-        folderUid,
-        accessTypeUid,
-        accessType
-    )
+    const existing = await findFolderAccessEntryOrLive(storage, auth, folderUid, accessTypeUid, accessType)
     if (existing && existing.accessRoleType === accessRoleType && expirationTimestamp == null) {
         return {
             folderUid,
@@ -299,14 +292,7 @@ async function grantFolderAccess(
     const request =
         existing != null
             ? buildFolderAccessUpdateData(folderUid, target, accessRoleType, expirationTimestamp)
-            : await buildFolderAccessGrantData(
-                  auth,
-                  storage,
-                  folderUid,
-                  target,
-                  accessRoleType,
-                  expirationTimestamp
-              )
+            : await buildFolderAccessGrantData(auth, storage, folderUid, target, accessRoleType, expirationTimestamp)
 
     const response = await auth.executeRest(
         folderAccessUpdateMessage({
@@ -314,11 +300,7 @@ async function grantFolderAccess(
         })
     )
 
-    const parsed = parseFolderAccessResult(
-        response.folderAccessResults?.[0],
-        folderUid,
-        target.recipient
-    )
+    const parsed = parseFolderAccessResult(response.folderAccessResults?.[0], folderUid, target.recipient)
     return {
         folderUid,
         recipient: target.recipient,
@@ -347,11 +329,7 @@ async function removeFolderAccess(
         })
     )
 
-    const parsed = parseFolderAccessResult(
-        response.folderAccessResults?.[0],
-        folderUid,
-        target.recipient
-    )
+    const parsed = parseFolderAccessResult(response.folderAccessResults?.[0], folderUid, target.recipient)
     return {
         folderUid,
         recipient: target.recipient,
@@ -375,15 +353,11 @@ export async function shareNestedShareFolder(
         throw new KeeperSdkError('Folder path or UID is required.', SHARE_ERROR)
     }
     if (recipients.length === 0) {
-        throw new KeeperSdkError(
-            'Recipient is required (email, team name/UID, or @existing).',
-            SHARE_ERROR
-        )
+        throw new KeeperSdkError('Recipient is required (email, team name/UID, or @existing).', SHARE_ERROR)
     }
 
     const role = input.role?.trim() || NSFShareRoleName.Viewer
-    const accessRoleType =
-        action === NsfFolderShareAction.Grant ? resolveNsfRoleName(role) : undefined
+    const accessRoleType = action === NsfFolderShareAction.Grant ? resolveNsfRoleName(role) : undefined
 
     const expirationTimestamp =
         action === NsfFolderShareAction.Grant
@@ -407,18 +381,9 @@ export async function shareNestedShareFolder(
             ensureNestedShareFolder(storage, folderUid, folderArg)
             checkFolderSharePermission(storage, folderUid, auth.username, accountUid)
 
-            const targets = await resolveFolderShareTargets(
-                auth,
-                storage,
-                folderUid,
-                recipients,
-                auth.username
-            )
+            const targets = await resolveFolderShareTargets(auth, storage, folderUid, recipients, auth.username)
             if (targets.length === 0) {
-                throw new KeeperSdkError(
-                    `No share targets resolved for folder '${folderArg}'.`,
-                    SHARE_ERROR
-                )
+                throw new KeeperSdkError(`No share targets resolved for folder '${folderArg}'.`, SHARE_ERROR)
             }
 
             for (const target of targets) {
@@ -426,14 +391,7 @@ export async function shareNestedShareFolder(
                     results.push(await removeFolderAccess(auth, folderUid, target))
                 } else {
                     results.push(
-                        await grantFolderAccess(
-                            storage,
-                            auth,
-                            folderUid,
-                            target,
-                            accessRoleType!,
-                            expirationTimestamp
-                        )
+                        await grantFolderAccess(storage, auth, folderUid, target, accessRoleType!, expirationTimestamp)
                     )
                 }
             }
@@ -442,18 +400,11 @@ export async function shareNestedShareFolder(
         return { results }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
-        throw new KeeperSdkError(
-            `Failed to share nested share folder: ${extractErrorMessage(err)}`,
-            SHARE_ERROR
-        )
+        throw new KeeperSdkError(`Failed to share nested share folder: ${extractErrorMessage(err)}`, SHARE_ERROR)
     }
 }
 
-function resolveRecordUids(
-    storage: InMemoryStorage,
-    recordArg: string,
-    recursive: boolean
-): string[] {
+function resolveRecordUids(storage: InMemoryStorage, recordArg: string, recursive: boolean): string[] {
     const trimmed = recordArg.trim()
     if (!trimmed) {
         throw new KeeperSdkError('Record path or UID is required.', SHARE_ERROR)
@@ -492,11 +443,7 @@ function isShareUpdateNoop(
     return isShareExpirationNoop(existing.expiration, expirationTimestamp)
 }
 
-async function requireRecordKey(
-    storage: InMemoryStorage,
-    auth: Auth,
-    recordUid: string
-): Promise<Uint8Array> {
+async function requireRecordKey(storage: InMemoryStorage, auth: Auth, recordUid: string): Promise<Uint8Array> {
     const recordKey = await resolveRecordKeyBytes(storage, auth, recordUid)
     if (!recordKey) {
         throw new KeeperSdkError(
@@ -528,7 +475,11 @@ async function resolveUserRecordShareForRevoke(
     storage: InMemoryStorage,
     recordUid: string,
     email: string
-): Promise<{ hasDirectShare: boolean; inherited: boolean; userKeys: Awaited<ReturnType<typeof loadUserShareKeys>> }> {
+): Promise<{
+    hasDirectShare: boolean
+    inherited: boolean
+    userKeys: Awaited<ReturnType<typeof loadUserShareKeys>>
+}> {
     const userKeys = await loadUserShareKeys(auth, email)
     const accountUidStr = webSafe64FromBytes(userKeys.accountUid)
     const shareUsers = await loadShareUserMap(auth, storage)
@@ -547,8 +498,7 @@ async function resolveUserRecordShareForRevoke(
         (access) =>
             access.recordUid === recordUid &&
             !access.owner &&
-            (access.accessTypeUid === accountUidStr ||
-                access.accessorName.toLowerCase() === email.toLowerCase())
+            (access.accessTypeUid === accountUidStr || access.accessorName.toLowerCase() === email.toLowerCase())
     )
     if (!liveEntry) {
         return { hasDirectShare: false, inherited: false, userKeys }
@@ -587,9 +537,7 @@ async function revokeRecordShare(
     }
 
     const permission = buildNsfRevokePermissionFromKeys(recordUid, shareState.userKeys)
-    const response = await auth.executeRest(
-        recordsShareV3Message({ revokeSharingPermissions: [permission] })
-    )
+    const response = await auth.executeRest(recordsShareV3Message({ revokeSharingPermissions: [permission] }))
     const parsed = parseRecordSharingStatus(response.revokedSharingStatus?.[0])
     return {
         recordUid,
@@ -634,9 +582,7 @@ async function grantRecordShare(
             expirationTimestamp,
             SHARE_ERROR
         )
-        const response = await auth.executeRest(
-            recordsShareV3Message({ createSharingPermissions: [permission] })
-        )
+        const response = await auth.executeRest(recordsShareV3Message({ createSharingPermissions: [permission] }))
         const parsed = parseRecordSharingStatus(response.createdSharingStatus?.[0])
         return {
             recordUid,
@@ -729,18 +675,14 @@ export async function shareNestedShareRecord(
         throw new KeeperSdkError('Recipient email is required.', SHARE_ERROR)
     }
     if (action === NsfRecordShareAction.Owner && emails.length > 1) {
-        throw new KeeperSdkError(
-            'Ownership can only be transferred to a single account.',
-            SHARE_ERROR
-        )
+        throw new KeeperSdkError('Ownership can only be transferred to a single account.', SHARE_ERROR)
     }
     if (action === NsfRecordShareAction.Grant && !input.role?.trim()) {
         throw new KeeperSdkError('Role is required for grant action.', SHARE_ERROR)
     }
 
     const role = input.role?.trim() || NSFShareRoleName.Viewer
-    const accessRoleType =
-        action === NsfRecordShareAction.Grant ? resolveNsfRoleName(role) : undefined
+    const accessRoleType = action === NsfRecordShareAction.Grant ? resolveNsfRoleName(role) : undefined
 
     const expirationTimestamp =
         action === NsfRecordShareAction.Grant
@@ -791,14 +733,7 @@ export async function shareNestedShareRecord(
                     results.push(await revokeRecordShare(storage, auth, recordUid, email))
                 } else {
                     results.push(
-                        await grantRecordShare(
-                            storage,
-                            auth,
-                            recordUid,
-                            email,
-                            accessRoleType!,
-                            expirationTimestamp
-                        )
+                        await grantRecordShare(storage, auth, recordUid, email, accessRoleType!, expirationTimestamp)
                     )
                 }
             }
@@ -807,9 +742,6 @@ export async function shareNestedShareRecord(
         return { dryRun: false, plan, results }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
-        throw new KeeperSdkError(
-            `Failed to share nested share record: ${extractErrorMessage(err)}`,
-            SHARE_ERROR
-        )
+        throw new KeeperSdkError(`Failed to share nested share record: ${extractErrorMessage(err)}`, SHARE_ERROR)
     }
 }

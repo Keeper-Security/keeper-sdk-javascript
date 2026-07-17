@@ -138,16 +138,34 @@ export async function addRoles(auth: Auth, input: AddRoleInput): Promise<AddRole
         const conflicts = rolesByLowerName.get(lower) || []
         const sameParent = conflicts.find((role) => role.node_id === parentNodeId)
         if (sameParent) {
-            items.push(skippedItem(sameParent.role_id, name, sameParent.node_id, AddRoleSkipReason.AlreadyExistsInParent,
-                `Role "${name}" already exists in parent node ${parentNodeId}.`))
+            items.push(
+                skippedItem(
+                    sameParent.role_id,
+                    name,
+                    sameParent.node_id,
+                    AddRoleSkipReason.AlreadyExistsInParent,
+                    `Role "${name}" already exists in parent node ${parentNodeId}.`
+                )
+            )
             continue
         }
 
         if (conflicts.length > 0 && !force) {
-            const confirmed = await confirmCrossNode(input.confirm, conflicts[0], { roleName: name, parentNodeId, parentNodeName })
+            const confirmed = await confirmCrossNode(input.confirm, conflicts[0], {
+                roleName: name,
+                parentNodeId,
+                parentNodeName,
+            })
             if (!confirmed) {
-                items.push(skippedItem(conflicts[0].role_id, name, conflicts[0].node_id, AddRoleSkipReason.ExistsElsewhereDeclined,
-                    `Role "${name}" exists in node ${conflicts[0].node_id}; creation declined.`))
+                items.push(
+                    skippedItem(
+                        conflicts[0].role_id,
+                        name,
+                        conflicts[0].node_id,
+                        AddRoleSkipReason.ExistsElsewhereDeclined,
+                        `Role "${name}" exists in node ${conflicts[0].node_id}; creation declined.`
+                    )
+                )
                 continue
             }
         }
@@ -163,9 +181,20 @@ export async function addRoles(auth: Auth, input: AddRoleInput): Promise<AddRole
                 new_user_inherit: newUserInherit,
             })
             await applyRoleEnforcements(auth, roleId, enforcements)
-            items.push({ roleId, roleName: name, nodeId: parentNodeId, status: AddRoleStatus.Created })
+            items.push({
+                roleId,
+                roleName: name,
+                nodeId: parentNodeId,
+                status: AddRoleStatus.Created,
+            })
         } catch (err) {
-            items.push({ roleId: 0, roleName: name, nodeId: parentNodeId, status: AddRoleStatus.Failed, message: extractErrorMessage(err) })
+            items.push({
+                roleId: 0,
+                roleName: name,
+                nodeId: parentNodeId,
+                status: AddRoleStatus.Failed,
+                message: extractErrorMessage(err),
+            })
         }
     }
 
@@ -188,7 +217,10 @@ export function renderAddRoleAsciiTable(table: FormattedAddRoleTable): string {
 async function allocateRoleId(auth: Auth): Promise<number> {
     const response = await auth.executeRestCommand(enterpriseAllocateIdsCommand({ number_requested: 1 }))
     if (!response.base_id) {
-        throw new KeeperSdkError('Failed to allocate enterprise ID for new role.', ResultCodes.ROLE_ID_ALLOCATION_FAILED)
+        throw new KeeperSdkError(
+            'Failed to allocate enterprise ID for new role.',
+            ResultCodes.ROLE_ID_ALLOCATION_FAILED
+        )
     }
     return response.base_id
 }
@@ -204,12 +236,14 @@ async function confirmCrossNode(
     context: { roleName: string; parentNodeId: number; parentNodeName: string }
 ): Promise<boolean> {
     if (!confirm) return false
-    return (await confirm({
-        ...context,
-        existingRoleId: existing.role_id,
-        existingRoleName: (existing.displayName || '').trim() || String(existing.role_id),
-        existingNodeId: existing.node_id ?? 0,
-    })) === true
+    return (
+        (await confirm({
+            ...context,
+            existingRoleId: existing.role_id,
+            existingRoleName: (existing.displayName || '').trim() || String(existing.role_id),
+            existingNodeId: existing.node_id ?? 0,
+        })) === true
+    )
 }
 
 function skippedItem(
@@ -219,12 +253,27 @@ function skippedItem(
     skipReason: AddRoleSkipReason,
     message: string
 ): AddRoleItemResult {
-    return { roleId, roleName, nodeId, status: AddRoleStatus.Skipped, skipReason, message }
+    return {
+        roleId,
+        roleName,
+        nodeId,
+        status: AddRoleStatus.Skipped,
+        skipReason,
+        message,
+    }
 }
 
 function finalizeResult(items: AddRoleItemResult[], parentNodeId: number, parentNodeName: string): AddRoleResult {
     const created = items.filter((item) => item.status === AddRoleStatus.Created).length
     const skipped = items.filter((item) => item.status === AddRoleStatus.Skipped).length
     const failed = items.filter((item) => item.status === AddRoleStatus.Failed).length
-    return { success: failed === 0 && created > 0, parentNodeId, parentNodeName, items, created, skipped, failed }
+    return {
+        success: failed === 0 && created > 0,
+        parentNodeId,
+        parentNodeName,
+        items,
+        created,
+        skipped,
+        failed,
+    }
 }

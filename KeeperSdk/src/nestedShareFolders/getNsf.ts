@@ -161,7 +161,10 @@ function ensureFolderOwnerListed(
     folder: DKdFolder,
     userPermissions: NsfFolderAccessRow[],
     shareAdmins: NsfFolderAccessRow[]
-): { userPermissions: NsfFolderAccessRow[]; shareAdmins: NsfFolderAccessRow[] } {
+): {
+    userPermissions: NsfFolderAccessRow[]
+    shareAdmins: NsfFolderAccessRow[]
+} {
     const ownerUsername = folder.ownerInfo?.username?.trim()
     if (!ownerUsername) return { userPermissions, shareAdmins }
     return {
@@ -188,10 +191,7 @@ function fieldValueToStrings(values: unknown[], fieldType?: string): string[] {
     })
 }
 
-function resolveRecordFolder(
-    storage: InMemoryStorage,
-    recordUid: string
-): NsfRecordFolderView | undefined {
+function resolveRecordFolder(storage: InMemoryStorage, recordUid: string): NsfRecordFolderView | undefined {
     const folderUids = findNestedShareFoldersForRecord(storage, recordUid)
     if (folderUids.length === 0) return undefined
 
@@ -276,7 +276,10 @@ export function toNsfRecordJsonView(view: NsfRecordView): NsfRecordJsonView {
         version: view.version,
         revision: view.revision,
         ...(view.folder ? { folder: view.folder } : {}),
-        fields: view.fields.map(({ type, value }) => ({ type, value: jsonFieldValues(type, value) })),
+        fields: view.fields.map(({ type, value }) => ({
+            type,
+            value: jsonFieldValues(type, value),
+        })),
         ...(view.notes ? { notes: view.notes } : {}),
         user_permissions: view.userPermissions.map((entry) => ({
             username: entry.username,
@@ -327,9 +330,7 @@ async function fetchRecordPermissions(
 
 async function fetchRecordShareAdmins(auth: Auth, recordUid: string): Promise<string[]> {
     try {
-        const response = await auth.executeRest(
-            getSharingAdminsMessage({ recordUid: normal64Bytes(recordUid) })
-        )
+        const response = await auth.executeRest(getSharingAdminsMessage({ recordUid: normal64Bytes(recordUid) }))
         return (response.userProfileExts ?? [])
             .flatMap((ext) => (ext?.email ? [ext.email] : []))
             .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
@@ -340,20 +341,14 @@ async function fetchRecordShareAdmins(auth: Auth, recordUid: string): Promise<st
 
 async function fetchRecordDataFallback(auth: Auth, recordUid: string): Promise<DRecord['data'] | undefined> {
     try {
-        const response = await auth.executeRest(
-            recordDetailsMessage(recordUid, Records.RecordDetailsInclude.DATA_ONLY)
-        )
+        const response = await auth.executeRest(recordDetailsMessage(recordUid, Records.RecordDetailsInclude.DATA_ONLY))
         return response.recordDataWithAccessInfo?.[0]?.recordData as DRecord['data'] | undefined
     } catch {
         return undefined
     }
 }
 
-async function buildFolderView(
-    auth: Auth,
-    storage: InMemoryStorage,
-    folderUid: string
-): Promise<NsfFolderView> {
+async function buildFolderView(auth: Auth, storage: InMemoryStorage, folderUid: string): Promise<NsfFolderView> {
     const folder = getKeeperDriveFolder(storage, folderUid)
     if (!folder) {
         throw new KeeperSdkError(`Nested share folder not found: ${folderUid}`, ResultCodes.NSF_NOT_FOUND)
@@ -362,11 +357,7 @@ async function buildFolderView(
     const entries = getFolderAccessEntries(storage, folderUid)
     const shareUsers = await loadShareUserMap(auth, storage)
     const split = splitFolderPermissions(storage, folder, entries, shareUsers)
-    const { userPermissions, shareAdmins } = ensureFolderOwnerListed(
-        folder,
-        split.userPermissions,
-        split.shareAdmins
-    )
+    const { userPermissions, shareAdmins } = ensureFolderOwnerListed(folder, split.userPermissions, split.shareAdmins)
 
     return {
         objectType: NsfObjectKind.Folder,
@@ -455,7 +446,10 @@ export async function getNestedShareFolder(
 
     const folderUid = resolveNsfFolder(storage, trimmed)
     if (folderUid) {
-        return { kind: NsfObjectKind.Folder, view: await buildFolderView(auth, storage, folderUid) }
+        return {
+            kind: NsfObjectKind.Folder,
+            view: await buildFolderView(auth, storage, folderUid),
+        }
     }
 
     const recordUid = resolveNsfRecord(storage, trimmed)
@@ -527,9 +521,7 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
         const total = view.shareAdmins.length
         const preview = view.shareAdmins.slice(0, NSF_SHARE_ADMINS_PREVIEW_LIMIT)
         const headingSuffix =
-            total > NSF_SHARE_ADMINS_PREVIEW_LIMIT
-                ? `, showing first ${NSF_SHARE_ADMINS_PREVIEW_LIMIT}`
-                : ''
+            total > NSF_SHARE_ADMINS_PREVIEW_LIMIT ? `, showing first ${NSF_SHARE_ADMINS_PREVIEW_LIMIT}` : ''
         lines.push('', `Share Admins (${total}${headingSuffix}):`)
         for (const admin of preview) {
             lines.push(`  ${admin}`)

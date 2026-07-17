@@ -20,7 +20,12 @@ export type RoleToggle = 'on' | 'off'
 export type RoleToggleInput = RoleToggle | `${RoleToggle}` | null | undefined
 export type EnforcementPair = { key: string; value: string }
 
-type RoleResultRow = { status: string; roleName: string; roleId: number; nodeId: number }
+type RoleResultRow = {
+    status: string
+    roleName: string
+    roleId: number
+    nodeId: number
+}
 
 export function normalizeIdentifiers(values: ReadonlyArray<unknown> | null | undefined): string[] {
     return (values || [])
@@ -75,10 +80,7 @@ export function resolveExistingRoles(roles: EnterpriseRole[], identifiers: strin
     }
 
     if (missing.length > 0) {
-        throw new KeeperSdkError(
-            `Role(s) "${missing.join(', ')}" could not be resolved.`,
-            ResultCodes.ROLE_NOT_FOUND
-        )
+        throw new KeeperSdkError(`Role(s) "${missing.join(', ')}" could not be resolved.`, ResultCodes.ROLE_NOT_FOUND)
     }
     return Array.from(found.values())
 }
@@ -139,8 +141,7 @@ function roleHasEnforcement(
     links: readonly EnterpriseRoleEnforcementLink[]
 ): boolean {
     return links.some(
-        (link) =>
-            link.role_id === roleId && normalizeEnforcementKey(link.enforcement_type) === enforcement
+        (link) => link.role_id === roleId && normalizeEnforcementKey(link.enforcement_type) === enforcement
     )
 }
 

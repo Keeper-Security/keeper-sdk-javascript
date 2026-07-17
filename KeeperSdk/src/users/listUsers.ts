@@ -75,7 +75,10 @@ export async function listUsers(auth: Auth, options: ListUsersOptions = {}): Pro
     const wantsDisplayNames = columns.includes(UserColumn.Node)
 
     const enterpriseData = new EnterpriseDataManager(auth)
-    const emptyDisplayNames: EnterpriseDisplayNames = { nodes: new Map(), roles: new Map() }
+    const emptyDisplayNames: EnterpriseDisplayNames = {
+        nodes: new Map(),
+        roles: new Map(),
+    }
     const [response, displayNames] = await Promise.all([
         enterpriseData.getData(includes),
         wantsDisplayNames ? enterpriseData.getDisplayNames() : Promise.resolve(emptyDisplayNames),
@@ -88,11 +91,7 @@ export async function listUsers(auth: Auth, options: ListUsersOptions = {}): Pro
         nodePaths: buildNodePathLookup(nodes),
         userTeams: buildUserTeamMap(response.team_users || []),
         userQueuedTeams: buildUserQueuedTeamMap(response.queued_team_users || []),
-        userRoles: buildUserRolesMap(
-            response.role_users || [],
-            response.role_teams || [],
-            response.team_users || []
-        ),
+        userRoles: buildUserRolesMap(response.role_users || [], response.role_teams || [], response.team_users || []),
         teamNameByUid: buildTeamNameMap(response.teams || []),
         queuedTeamNameByUid: buildTeamNameMap(response.queued_teams || []),
         roleNameById: buildRoleNameMap(response.roles || [], displayNames.roles),
@@ -115,10 +114,7 @@ export async function listUsers(auth: Auth, options: ListUsersOptions = {}): Pro
     return rows
 }
 
-export function formatUsersTable(
-    rows: ListUserRow[],
-    options: FormatUsersTableOptions = {}
-): FormattedUsersTable {
+export function formatUsersTable(rows: ListUserRow[], options: FormatUsersTableOptions = {}): FormattedUsersTable {
     const columns = resolveColumns(options.columns)
     const headers: string[] = ['#', 'User ID', 'Email', ...columns.map((col) => HEADER_BY_COLUMN[col])]
 
@@ -131,10 +127,7 @@ export function formatUsersTable(
     return { headers, rows: outRows }
 }
 
-export function renderUsersAsciiTable(
-    table: FormattedUsersTable,
-    options: { minColWidth?: number } = {}
-): string {
+export function renderUsersAsciiTable(table: FormattedUsersTable, options: { minColWidth?: number } = {}): string {
     const { minColWidth = MIN_ASCII_COL_WIDTH } = options
     const { headers, rows } = table
     const columnCount = headers.length
@@ -156,8 +149,7 @@ export function renderUsersAsciiTable(
     }
 
     const padCell = (cell: string, ci: number): string => cell.padEnd(columnWidths[ci])
-    const formatPhysicalRow = (cells: string[]): string =>
-        cells.map((cell, ci) => padCell(cell, ci)).join('  ')
+    const formatPhysicalRow = (cells: string[]): string => cells.map((cell, ci) => padCell(cell, ci)).join('  ')
 
     const ruleRow = formatPhysicalRow(columnWidths.map((w) => '-'.repeat(w)))
     const lines: string[] = [formatPhysicalRow(headers), ruleRow]
@@ -348,7 +340,10 @@ function buildUserAliasMap(links: EnterpriseUserAliasLink[]): Map<number, string
     }
     const result = new Map<number, string[]>()
     for (const [userId, aliases] of map) {
-        result.set(userId, [...aliases].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })))
+        result.set(
+            userId,
+            [...aliases].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+        )
     }
     return result
 }
@@ -425,9 +420,7 @@ function decorateRow(
             }
             case UserColumn.Alias: {
                 const aliases = ctx.userAliases.get(user.enterprise_user_id)
-                row.alias = aliases
-                    ? aliases.filter((a) => a.toLowerCase() !== user.username.toLowerCase())
-                    : []
+                row.alias = aliases ? aliases.filter((a) => a.toLowerCase() !== user.username.toLowerCase()) : []
                 break
             }
             case UserColumn.TwoFaEnabled:
@@ -443,17 +436,29 @@ function formatListCell(values: string[] | undefined): string {
 
 function formatCell(row: ListUserRow, col: UserColumn): string {
     switch (col) {
-        case UserColumn.Name:            return row.name ?? ''
-        case UserColumn.Status:          return row.status ?? ''
-        case UserColumn.TransferStatus:  return row.transfer_status ?? ''
-        case UserColumn.Node:            return row.node ?? ''
-        case UserColumn.TeamCount:       return row.team_count == null ? '' : String(row.team_count)
-        case UserColumn.Teams:           return formatListCell(row.teams)
-        case UserColumn.QueuedTeamCount: return row.queued_team_count == null ? '' : String(row.queued_team_count)
-        case UserColumn.QueuedTeams:     return formatListCell(row.queued_teams)
-        case UserColumn.RoleCount:       return row.role_count == null ? '' : String(row.role_count)
-        case UserColumn.Roles:           return formatListCell(row.roles)
-        case UserColumn.Alias:           return formatListCell(row.alias)
-        case UserColumn.TwoFaEnabled:    return row.tfa_enabled == null ? '' : String(row.tfa_enabled)
+        case UserColumn.Name:
+            return row.name ?? ''
+        case UserColumn.Status:
+            return row.status ?? ''
+        case UserColumn.TransferStatus:
+            return row.transfer_status ?? ''
+        case UserColumn.Node:
+            return row.node ?? ''
+        case UserColumn.TeamCount:
+            return row.team_count == null ? '' : String(row.team_count)
+        case UserColumn.Teams:
+            return formatListCell(row.teams)
+        case UserColumn.QueuedTeamCount:
+            return row.queued_team_count == null ? '' : String(row.queued_team_count)
+        case UserColumn.QueuedTeams:
+            return formatListCell(row.queued_teams)
+        case UserColumn.RoleCount:
+            return row.role_count == null ? '' : String(row.role_count)
+        case UserColumn.Roles:
+            return formatListCell(row.roles)
+        case UserColumn.Alias:
+            return formatListCell(row.alias)
+        case UserColumn.TwoFaEnabled:
+            return row.tfa_enabled == null ? '' : String(row.tfa_enabled)
     }
 }

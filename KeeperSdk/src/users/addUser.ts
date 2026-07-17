@@ -1,15 +1,6 @@
-import {
-    encryptObjectForStorage,
-    type Auth,
-    type KeeperResponse,
-    type RestCommand,
-} from '@keeper-security/keeperapi'
+import { encryptObjectForStorage, type Auth, type KeeperResponse, type RestCommand } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, isValidEmail, KeeperSdkError, ResultCodes } from '../utils'
-import {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-    type EnterpriseUser,
-} from '../teams/enterpriseData'
+import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseUser } from '../teams/enterpriseData'
 import {
     applyDecryptedNodeNames,
     applyEnterpriseNameToRoot,
@@ -36,10 +27,7 @@ const USER_ADD_COMMAND = 'enterprise_user_add'
 const ALLOCATE_IDS_COMMAND = 'enterprise_allocate_ids'
 const REINVITE_COMMAND = 'resend_enterprise_invite'
 
-const ADD_USER_INCLUDES: EnterpriseDataInclude[] = [
-    EnterpriseDataInclude.Nodes,
-    EnterpriseDataInclude.Users,
-]
+const ADD_USER_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Users]
 
 const USER_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Node ID', 'Detail']
 
@@ -66,10 +54,7 @@ type AllocateIdsResponse = KeeperResponse & {
 
 export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUserResult> {
     const rawEmails = [
-        ...new Map(
-            normalizeEmailInputs(input.emails)
-                .map((e) => [e.toLowerCase(), e] as const)
-        ).values(),
+        ...new Map(normalizeEmailInputs(input.emails).map((e) => [e.toLowerCase(), e] as const)).values(),
     ]
 
     if (rawEmails.length === 0) {
@@ -95,16 +80,15 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
     const parentNode = resolveParentNode(nodes, parentIdentifier)
     const parentNodeId = parentNode.node_id
     const parentNodeName =
-        EnterpriseDataManager.getNodePath(nodes, parentNode.node_id, { omitRoot: false }) ||
+        EnterpriseDataManager.getNodePath(nodes, parentNode.node_id, {
+            omitRoot: false,
+        }) ||
         (parentNode.displayName || '').trim() ||
         String(parentNode.node_id)
 
     const treeKey = await enterpriseData.getTreeKey()
     if (!treeKey) {
-        throw new KeeperSdkError(
-            'Enterprise tree key is unavailable.',
-            ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
-        )
+        throw new KeeperSdkError('Enterprise tree key is unavailable.', ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE)
     }
 
     const existingByEmail = buildExistingByEmail(existingUsers)
@@ -227,19 +211,27 @@ function buildExistingByEmail(users: EnterpriseUser[]): Map<string, EnterpriseUs
     return map
 }
 
-function finalizeResult(
-    items: AddUserItemResult[],
-    parentNodeId: number,
-    parentNodeName: string
-): AddUserResult {
-    let added = 0, reinvited = 0, skipped = 0, failed = 0
+function finalizeResult(items: AddUserItemResult[], parentNodeId: number, parentNodeName: string): AddUserResult {
+    let added = 0,
+        reinvited = 0,
+        skipped = 0,
+        failed = 0
     for (const item of items) {
         if (item.status === AddUserStatus.Added) added++
         else if (item.status === AddUserStatus.Reinvited) reinvited++
         else if (item.status === AddUserStatus.Skipped) skipped++
         else failed++
     }
-    return { success: failed === 0 && (added > 0 || reinvited > 0), parentNodeId, parentNodeName, items, added, reinvited, skipped, failed }
+    return {
+        success: failed === 0 && (added > 0 || reinvited > 0),
+        parentNodeId,
+        parentNodeName,
+        items,
+        added,
+        reinvited,
+        skipped,
+        failed,
+    }
 }
 
 export function formatAddUserResult(
@@ -271,8 +263,7 @@ export function renderAddUserAsciiTable(table: FormattedAddUserTable): string {
     const widths = headers.map((header, index) =>
         Math.max(header.length, ...rows.map((row) => (row[index] || '').length))
     )
-    const padCell = (cell: string, columnIndex: number): string =>
-        cell.padEnd(widths[columnIndex])
+    const padCell = (cell: string, columnIndex: number): string => cell.padEnd(widths[columnIndex])
     const formatRow = (cells: string[]): string =>
         cells.map((cell, columnIndex) => padCell(cell, columnIndex)).join('  ')
 

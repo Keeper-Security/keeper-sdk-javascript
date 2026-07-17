@@ -236,7 +236,8 @@ function unsuppressLogs(): () => void {
 
 function unsuppressedAuthUI(): AuthUI3 {
     const ui = new ConsoleAuthUI()
-    const wrap = <A extends unknown[], R>(fn: (...args: A) => Promise<R>) =>
+    const wrap =
+        <A extends unknown[], R>(fn: (...args: A) => Promise<R>) =>
         async (...args: A): Promise<R> => {
             const restore = unsuppressLogs()
             try {

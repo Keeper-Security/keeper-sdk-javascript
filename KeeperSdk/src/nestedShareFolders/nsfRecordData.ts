@@ -42,10 +42,7 @@ type ParsedFieldKey = {
 
 function stripSurroundingQuotes(value: string): string {
     const trimmed = value.trim()
-    if (
-        (trimmed.startsWith("'") && trimmed.endsWith("'")) ||
-        (trimmed.startsWith('"') && trimmed.endsWith('"'))
-    ) {
+    if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) {
         return trimmed.slice(1, -1)
     }
     return trimmed
@@ -59,10 +56,7 @@ export function resolveNsfFieldValue(raw: string): NsfFieldValue {
         try {
             return JSON.parse(jsonStr) as Record<string, unknown>
         } catch (err) {
-            throw new KeeperSdkError(
-                `Invalid $JSON value: ${extractErrorMessage(err)}`,
-                ResultCodes.NSF_ADD_FAILED
-            )
+            throw new KeeperSdkError(`Invalid $JSON value: ${extractErrorMessage(err)}`, ResultCodes.NSF_ADD_FAILED)
         }
     }
     return trimmed
@@ -275,7 +269,10 @@ function buildRecordFieldEntries(assignments: FieldAssignment[]): {
     const fields: RecordFieldEntry[] = []
     for (const [fieldType, value] of simpleByType) {
         if (typeof value === 'string' && NSF_STRUCTURED_SUBKEYS[fieldType]) {
-            fields.push({ type: fieldType, value: [wrapPlainStructuredValue(fieldType, value)] })
+            fields.push({
+                type: fieldType,
+                value: [wrapPlainStructuredValue(fieldType, value)],
+            })
             continue
         }
         fields.push({ type: fieldType, value: toFieldValueArray(value) })
@@ -288,10 +285,7 @@ function buildRecordFieldEntries(assignments: FieldAssignment[]): {
     return { fields, custom }
 }
 
-function mergeFieldEntries(
-    existing: RecordFieldEntry[],
-    incoming: RecordFieldEntry[]
-): RecordFieldEntry[] {
+function mergeFieldEntries(existing: RecordFieldEntry[], incoming: RecordFieldEntry[]): RecordFieldEntry[] {
     const merged = new Map<string, RecordFieldEntry>()
     for (const field of existing) {
         merged.set(fieldEntryKey(field), {

@@ -45,7 +45,7 @@ export type TeamView = {
 
 export type FormatTeamViewOptions = {
     verbose?: boolean
-}   
+}
 
 export type TeamViewTableRow = {
     label: string
@@ -126,18 +126,13 @@ export function teamViewTable(table: FormattedTeamViewTable): string {
         idLines: table.hasIdColumn ? asIdLines(row.id) : [],
     }))
 
-    const valueWidth = expandedRows.reduce(
-        (max, row) => Math.max(max, ...row.valueLines.map((line) => line.length)),
-        0
-    )
+    const valueWidth = expandedRows.reduce((max, row) => Math.max(max, ...row.valueLines.map((line) => line.length)), 0)
     const idWidth = table.hasIdColumn
         ? expandedRows.reduce((max, row) => Math.max(max, ...row.idLines.map((line) => line.length)), 0)
         : 0
 
-    const padRight = (text: string, width: number): string =>
-        text + ' '.repeat(Math.max(0, width - text.length))
-    const padLeft = (text: string, width: number): string =>
-        ' '.repeat(Math.max(0, width - text.length)) + text
+    const padRight = (text: string, width: number): string => text + ' '.repeat(Math.max(0, width - text.length))
+    const padLeft = (text: string, width: number): string => ' '.repeat(Math.max(0, width - text.length)) + text
 
     const lines: string[] = []
     for (const row of expandedRows) {
@@ -178,18 +173,17 @@ function resolveTeam(teams: EnterpriseTeamRecord[], identifier: string): Enterpr
     throw new KeeperSdkError(`Team "${trimmed}" does not exist.`, ResultCodes.TEAM_NOT_FOUND)
 }
 
-function resolveNodePath(
-    nodes: EnterpriseNode[],
-    displayNames: EnterpriseDisplayNames,
-    nodeId: number
-): string {
+function resolveNodePath(nodes: EnterpriseNode[], displayNames: EnterpriseDisplayNames, nodeId: number): string {
     if (displayNames.nodes.size > 0) {
         for (const node of nodes) {
             const display = displayNames.nodes.get(node.node_id)
             if (display) node.displayName = display
         }
     }
-    return EnterpriseDataManager.getNodePath(nodes, nodeId, { omitRoot: false, separator: NODE_PATH_SEPARATOR })
+    return EnterpriseDataManager.getNodePath(nodes, nodeId, {
+        omitRoot: false,
+        separator: NODE_PATH_SEPARATOR,
+    })
 }
 
 function buildTeamUsers(
@@ -226,7 +220,10 @@ function buildTeamRoles(
 
     const result: TeamRoleInfo[] = []
     for (const id of roleIds) {
-        result.push({ role_id: id, role_name: decryptedRoleNames.get(id) || String(id) })
+        result.push({
+            role_id: id,
+            role_name: decryptedRoleNames.get(id) || String(id),
+        })
     }
     result.sort((a, b) => a.role_name.localeCompare(b.role_name, undefined, { sensitivity: 'base' }))
     return result

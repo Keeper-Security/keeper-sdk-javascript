@@ -10,10 +10,7 @@ import {
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { NSF_MAX_RECORD_BATCH } from './nsfConstants'
-import {
-    buildNsfRecordData,
-    getPaddedJsonBytes,
-} from './nsfRecordData'
+import { buildNsfRecordData, getPaddedJsonBytes } from './nsfRecordData'
 import {
     ensureNestedShareFolder,
     nsfToNumber,
@@ -45,10 +42,7 @@ function resolveFolderUid(storage: InMemoryStorage, folderInput?: string): strin
 async function requireFolderKey(storage: InMemoryStorage, folderUid: string): Promise<Uint8Array> {
     const folderKey = await storage.getKeyBytes(folderUid)
     if (folderKey) return folderKey
-    throw new KeeperSdkError(
-        `Folder key not found for ${folderUid}. Run sync() first.`,
-        ResultCodes.NSF_MISSING_KEY
-    )
+    throw new KeeperSdkError(`Folder key not found for ${folderUid}. Run sync() first.`, ResultCodes.NSF_MISSING_KEY)
 }
 
 async function buildRecordAddPayload(
@@ -185,7 +179,9 @@ export async function addNestedShareRecord(
     auth: Auth,
     input: AddNsfRecordInput
 ): Promise<AddNsfRecordResult> {
-    const { added } = await addNestedShareRecords(storage, auth, { records: [input] })
+    const { added } = await addNestedShareRecords(storage, auth, {
+        records: [input],
+    })
     if (!added[0]) {
         throw new KeeperSdkError('Failed to add nested share record.', ResultCodes.NSF_ADD_FAILED)
     }

@@ -71,10 +71,7 @@ async function buildUpdateFolderData(
         )
     }
 
-    const encryptedData = await platform.aesGcmEncrypt(
-        platform.stringToBytes(JSON.stringify(metadata)),
-        folderKey
-    )
+    const encryptedData = await platform.aesGcmEncrypt(platform.stringToBytes(JSON.stringify(metadata)), folderKey)
 
     return Folder.FolderData.create({
         folderUid: normal64Bytes(folderUid),
@@ -118,10 +115,7 @@ export async function updateNestedShareFolder(
 
     const color = input.color !== undefined ? normalizeColor(input.color) : undefined
     if (newName === undefined && color === undefined) {
-        throw new KeeperSdkError(
-            'New folder name and/or color parameters are required.',
-            ResultCodes.NSF_UPDATE_FAILED
-        )
+        throw new KeeperSdkError('New folder name and/or color parameters are required.', ResultCodes.NSF_UPDATE_FAILED)
     }
 
     const folderUid = resolveNsfFolderIdentifier(storage, folderArg)

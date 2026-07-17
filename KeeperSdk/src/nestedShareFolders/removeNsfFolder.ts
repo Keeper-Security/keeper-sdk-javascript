@@ -149,9 +149,7 @@ export function formatRemoveNsfFolderPreview(
     quiet = false
 ): string {
     const action =
-        operation === NsfRemoveFolderOperation.DeletePermanent
-            ? PERMANENT_DELETE_ACTION_LABEL
-            : TRASH_ACTION_LABEL
+        operation === NsfRemoveFolderOperation.DeletePermanent ? PERMANENT_DELETE_ACTION_LABEL : TRASH_ACTION_LABEL
     const lines: string[] = []
 
     for (const item of preview) {

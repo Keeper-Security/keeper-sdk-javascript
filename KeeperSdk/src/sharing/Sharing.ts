@@ -251,9 +251,7 @@ export async function getRecordShareInfo(auth: Auth, recordUid: string): Promise
     try {
         response = await auth.executeRest(msg)
     } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`
-        )
+        throw new KeeperSdkError(`Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`)
     }
 
     const detail = response.recordDataWithAccessInfo?.[0]

@@ -32,14 +32,7 @@ export const NSF_FOLDER_SHARE_ADMINS_HEADING = 'Share Administrators:'
 export const NSF_SHARE_ADMINS_PREVIEW_LIMIT = 10
 
 export const NSF_LIST_TABLE_HEADERS = ['#', 'Item Type', 'UID', 'Title', 'Type', 'Description'] as const
-export const NSF_LIST_FULL_HEADERS = [
-    'Item Type',
-    'UID',
-    'Title',
-    'Type',
-    'Description',
-    'Parent/Folder',
-] as const
+export const NSF_LIST_FULL_HEADERS = ['Item Type', 'UID', 'Title', 'Type', 'Description', 'Parent/Folder'] as const
 export const NSF_LIST_DEFAULT_COLUMN_WIDTH = 40
 export const NSF_LIST_MIN_TRUNCATE_PREFIX = 3
 
@@ -50,7 +43,6 @@ export const NSF_PATH_SENTINEL = '\x00'
 
 export const NSF_FOLDER_COLORS = ['none', 'red', 'orange', 'yellow', 'green', 'blue', 'gray'] as const
 export type NsfFolderColor = (typeof NSF_FOLDER_COLORS)[number]
-
 
 export const NSF_KNOWN_FIELD_TYPES = new Set([
     'login',
@@ -75,7 +67,6 @@ export const NSF_KNOWN_FIELD_TYPES = new Set([
     'passkey',
     'pincode',
 ])
-
 
 export const NSF_STRUCTURED_SUBKEYS: Record<string, ReadonlySet<string>> = {
     name: new Set(['first', 'middle', 'last']),
@@ -254,10 +245,7 @@ const NSF_FOLDER_ROLE_PERMISSIONS: Record<number, FolderRolePermissionFlags> = {
 export function getFolderPermissionsForRole(roleType: Folder.AccessRoleType): Folder.IFolderPermissions {
     const flags = NSF_FOLDER_ROLE_PERMISSIONS[roleType]
     if (!flags) {
-        throw new KeeperSdkError(
-            `Unknown folder access role type: ${roleType}`,
-            ResultCodes.NSF_SHARE_FAILED
-        )
+        throw new KeeperSdkError(`Unknown folder access role type: ${roleType}`, ResultCodes.NSF_SHARE_FAILED)
     }
     return Folder.FolderPermissions.create(flags)
 }

@@ -116,10 +116,7 @@ export async function buildFolderDeleteObject(
     return null
 }
 
-async function buildDeleteObjectForFolderRef(
-    storage: InMemoryStorage,
-    ref: string
-): Promise<DeleteObject | null> {
+async function buildDeleteObjectForFolderRef(storage: InMemoryStorage, ref: string): Promise<DeleteObject | null> {
     const trimmed = ref.trim()
     if (!trimmed) return null
 
@@ -143,10 +140,7 @@ export async function deleteFolder(
         if (deleteObject) objects.push(deleteObject)
     }
     if (objects.length === 0) {
-        throw new KeeperSdkError(
-            'No folders found to delete (not a folder UID or name).',
-            'delete_nothing'
-        )
+        throw new KeeperSdkError('No folders found to delete (not a folder UID or name).', 'delete_nothing')
     }
 
     const targetUids = objects.map((deleteObject) => deleteObject.object_uid).join(', ')

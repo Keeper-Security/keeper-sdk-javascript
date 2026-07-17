@@ -96,7 +96,11 @@ export function formatUserView(view: UserView, options: FormatUserViewOptions = 
         { label: 'User ID', value: String(view.enterprise_user_id) },
         { label: 'Email', value: view.username },
         { label: 'Full Name', value: view.full_name },
-        { label: 'Node Name', value: view.node_name, id: verbose ? String(view.node_id) : undefined },
+        {
+            label: 'Node Name',
+            value: view.node_name,
+            id: verbose ? String(view.node_id) : undefined,
+        },
         { label: 'Status', value: view.status },
         { label: 'Transfer Status', value: view.transfer_status },
         { label: '2FA Enabled', value: String(view.tfa_enabled) },
@@ -142,18 +146,13 @@ export function userViewTable(table: FormattedUserViewTable): string {
         idLines: table.hasIdColumn ? asLines(row.id ?? []) : [],
     }))
 
-    const valueWidth = expandedRows.reduce(
-        (max, row) => Math.max(max, ...row.valueLines.map((l) => l.length)),
-        0
-    )
+    const valueWidth = expandedRows.reduce((max, row) => Math.max(max, ...row.valueLines.map((l) => l.length)), 0)
     const idWidth = table.hasIdColumn
         ? expandedRows.reduce((max, row) => Math.max(max, ...row.idLines.map((l) => l.length)), 0)
         : 0
 
-    const padLeft = (text: string, width: number): string =>
-        ' '.repeat(Math.max(0, width - text.length)) + text
-    const padRight = (text: string, width: number): string =>
-        text + ' '.repeat(Math.max(0, width - text.length))
+    const padLeft = (text: string, width: number): string => ' '.repeat(Math.max(0, width - text.length)) + text
+    const padRight = (text: string, width: number): string => text + ' '.repeat(Math.max(0, width - text.length))
 
     const lines: string[] = []
     for (const row of expandedRows) {
@@ -252,7 +251,11 @@ function buildUserRoles(
             role_id: link.role_id,
             role_name: decryptedRoleNames.get(link.role_id) || String(link.role_id),
         }))
-        .sort((a, b) => a.role_name.localeCompare(b.role_name, undefined, { sensitivity: 'base' }))
+        .sort((a, b) =>
+            a.role_name.localeCompare(b.role_name, undefined, {
+                sensitivity: 'base',
+            })
+        )
 }
 
 async function fetchShareAdmins(auth: Auth, username: string): Promise<string[]> {

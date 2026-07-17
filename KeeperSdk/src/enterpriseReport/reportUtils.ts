@@ -10,11 +10,7 @@ export function resolveTimezone(timezone: string | undefined): string {
     return `Etc/GMT${hours >= 0 ? '+' : ''}${hours}`
 }
 
-export function assertSucceeded(
-    response: KeeperResponse,
-    fallbackMessage: string,
-    fallbackCode: string
-): void {
+export function assertSucceeded(response: KeeperResponse, fallbackMessage: string, fallbackCode: string): void {
     if ((response.result || '').toLowerCase() === 'fail') {
         throw new KeeperSdkError(
             response.message || response.result_code || fallbackMessage,

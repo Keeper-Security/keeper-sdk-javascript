@@ -96,13 +96,7 @@ export enum AuditAggregate {
     LastCreated = 'last_created',
 }
 
-export const SUMMARY_REPORT_TYPES: readonly AuditSummaryReportType[] = [
-    'hour',
-    'day',
-    'week',
-    'month',
-    'span',
-]
+export const SUMMARY_REPORT_TYPES: readonly AuditSummaryReportType[] = ['hour', 'day', 'week', 'month', 'span']
 
 export const CREATED_PRESETS = [
     'today',

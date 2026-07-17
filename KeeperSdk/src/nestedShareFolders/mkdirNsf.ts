@@ -44,10 +44,7 @@ function normalizeColor(color?: NsfFolderColorInput): NsfFolderColor | undefined
     return color
 }
 
-function resolveBaseFolderUid(
-    storage: InMemoryStorage,
-    baseFolderUid: string | null | undefined
-): string | null {
+function resolveBaseFolderUid(storage: InMemoryStorage, baseFolderUid: string | null | undefined): string | null {
     if (!baseFolderUid) return null
     return isNestedShareFolder(storage, baseFolderUid) ? baseFolderUid : null
 }
@@ -80,10 +77,7 @@ async function buildFolderCreatePayload(
     if (color && color !== 'none') metadata.color = color
 
     const resolvedParentUid = resolveKeeperDriveParentUid(storage, parentUid)
-    const encryptedData = await platform.aesGcmEncrypt(
-        platform.stringToBytes(JSON.stringify(metadata)),
-        folderKey
-    )
+    const encryptedData = await platform.aesGcmEncrypt(platform.stringToBytes(JSON.stringify(metadata)), folderKey)
     const encryptionKey = await resolveFolderKeyEncryptionKey(storage, auth, resolvedParentUid)
     const encryptedFolderKey = await platform.aesGcmEncrypt(folderKey, encryptionKey)
 
@@ -128,9 +122,7 @@ async function createFolderSegmentsBatch(
         currentParentUid = payload.folderUid
     }
 
-    const response = await auth.executeRest(
-        folderAddMessage({ folderData: payloads.map((entry) => entry.folderData) })
-    )
+    const response = await auth.executeRest(folderAddMessage({ folderData: payloads.map((entry) => entry.folderData) }))
 
     for (let index = 0; index < payloads.length; index++) {
         const payload = payloads[index]
@@ -210,9 +202,7 @@ export async function mkdirNestedShareFolder(
             folderUid: createdUid,
             created: true,
             message:
-                segments.length > 1
-                    ? `Created folder path "${folderPath}".`
-                    : `Created folder "${segments[lastIdx]}".`,
+                segments.length > 1 ? `Created folder path "${folderPath}".` : `Created folder "${segments[lastIdx]}".`,
         }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
