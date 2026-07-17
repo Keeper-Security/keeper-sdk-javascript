@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { Reader, Writer } from 'protobufjs'
+import { Writer } from 'protobufjs'
 import {
     AccountSummary,
     Authentication,
@@ -21,7 +21,6 @@ import {
     folder,
     Workflow,
 } from './proto'
-import { decodeRepeatedWithForbidden, recordUidsRequestCodec, type RecordUidsRequest } from './restMessageCodecs'
 
 // generated protobuf has all properties optional and nullable, while this is not an issue for KeeperApp, this type fixes it
 export type NN<T> = Required<{ [prop in keyof T]: NonNullable<T[prop]> }>
@@ -484,44 +483,15 @@ export const removeFolderMessage = (
         folder.v3.remove.RemoveResponse
     )
 
-export interface IRecordDetailsDataRequest extends RecordUidsRequest {
-    clientTime?: number
-}
-
-export interface IRecordDetailsDataResponse {
-    data: Records.IRecordData[]
-    forbiddenRecords: Uint8Array[]
-}
-
-const RecordDetailsDataRequest = {
-    create(properties?: IRecordDetailsDataRequest): IRecordDetailsDataRequest {
-        return {
-            recordUids: properties?.recordUids ?? [],
-            clientTime: properties?.clientTime,
-        }
-    },
-    encode(message: IRecordDetailsDataRequest, writer?: Writer): Writer {
-        if (!writer) writer = Writer.create()
-        if (message.clientTime != null) {
-            writer.uint32(8).int64(message.clientTime)
-        }
-        return recordUidsRequestCodec.encode(message, writer)
-    },
-}
-
-const RecordDetailsDataResponse = {
-    decode(data: Uint8Array): IRecordDetailsDataResponse {
-        const { items, forbiddenRecords } = decodeRepeatedWithForbidden(data, (reader, length) =>
-            Records.RecordData.decode(reader, length)
-        )
-        return { data: items, forbiddenRecords }
-    },
-}
-
 export const recordDetailsDataMessage = (
-    data: IRecordDetailsDataRequest
-): RestMessage<IRecordDetailsDataRequest, IRecordDetailsDataResponse> =>
-    createMessage(data, 'vault/records/v3/details/data', RecordDetailsDataRequest, RecordDetailsDataResponse)
+    data: record.v3.details.IRecordDataRequest
+): RestMessage<record.v3.details.IRecordDataRequest, record.v3.details.IRecordDataResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/details/data',
+        record.v3.details.RecordDataRequest,
+        record.v3.details.RecordDataResponse
+    )
 
 export const folderAddMessage = (
     data: Folder.IFolderAddRequest
@@ -1149,62 +1119,6 @@ export const getRecordAccessMessage = (
         'vault/records/v3/details/access',
         record.v3.details.RecordAccessRequest,
         record.v3.details.RecordAccessResponse
-    )
-
-export type IRecordAccessDetailsRequest = RecordUidsRequest
-
-export type IRecordAccessEntry = {
-    data?: Folder.IRecordAccessData
-    accessorInfo?: { name?: string }
-}
-
-export type IRecordAccessDetailsResponse = {
-    recordAccesses: IRecordAccessEntry[]
-    forbiddenRecords: Uint8Array[]
-}
-
-function decodeRecordAccessEntry(reader: Reader, length: number): IRecordAccessEntry {
-    const end = reader.pos + length
-    const entry: IRecordAccessEntry = {}
-    while (reader.pos < end) {
-        const tag = reader.uint32()
-        switch (tag >>> 3) {
-            case 1:
-                entry.data = Folder.RecordAccessData.decode(reader, reader.uint32())
-                break
-            case 2: {
-                const infoEnd = reader.pos + reader.uint32()
-                const accessorInfo: { name?: string } = {}
-                while (reader.pos < infoEnd) {
-                    const infoTag = reader.uint32()
-                    if ((infoTag >>> 3) === 1) accessorInfo.name = reader.string()
-                    else reader.skipType(infoTag & 7)
-                }
-                entry.accessorInfo = accessorInfo
-                break
-            }
-            default:
-                reader.skipType(tag & 7)
-        }
-    }
-    return entry
-}
-
-const RecordAccessDetailsResponse = {
-    decode(data: Uint8Array): IRecordAccessDetailsResponse {
-        const { items, forbiddenRecords } = decodeRepeatedWithForbidden(data, decodeRecordAccessEntry)
-        return { recordAccesses: items, forbiddenRecords }
-    },
-}
-
-export const recordAccessDetailsMessage = (
-    data: IRecordAccessDetailsRequest
-): RestMessage<IRecordAccessDetailsRequest, IRecordAccessDetailsResponse> =>
-    createMessage(
-        data,
-        'vault/records/v3/details/access',
-        recordUidsRequestCodec,
-        RecordAccessDetailsResponse
     )
 
 export const recordsShareV3Message = (
