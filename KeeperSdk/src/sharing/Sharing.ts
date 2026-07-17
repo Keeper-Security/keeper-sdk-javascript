@@ -106,16 +106,11 @@ export async function encryptKeyForRecipient(
             useEccKey: false,
         }
     }
-    throw new KeeperSdkError(
-        `No usable public key available for ${userKeys.username}`,
-        ShareStatus.MissingPublicKey
-    )
+    throw new KeeperSdkError(`No usable public key available for ${userKeys.username}`, ShareStatus.MissingPublicKey)
 }
 
 export async function sendShareInviteIfNeeded(auth: Auth, email: string): Promise<void> {
-    await auth.executeRestAction(
-        sendShareInviteMessage(Authentication.SendShareInviteRequest.create({ email }))
-    )
+    await auth.executeRestAction(sendShareInviteMessage(Authentication.SendShareInviteRequest.create({ email })))
 }
 
 export async function loadUserShareKeysOrInvite(
@@ -126,10 +121,7 @@ export async function loadUserShareKeysOrInvite(
     const userKeys = await loadUserShareKeys(auth, email)
     if (!userKeys.rsaPublicKey && !userKeys.eccPublicKey) {
         await sendShareInviteIfNeeded(auth, email)
-        throw new KeeperSdkError(
-            `User '${email}' has no public key. Share invitation sent.`,
-            errorCode
-        )
+        throw new KeeperSdkError(`User '${email}' has no public key. Share invitation sent.`, errorCode)
     }
     if (!userKeys.accountUid?.length) {
         throw new KeeperSdkError(`User ${email} not found`, errorCode)
@@ -137,9 +129,11 @@ export async function loadUserShareKeysOrInvite(
     return { ...userKeys, accountUid: userKeys.accountUid }
 }
 
-export function parseRecordSharingStatus(
-    status: record.v3.sharing.IStatus | null | undefined
-): { recordUid: string; success: boolean; message: string } {
+export function parseRecordSharingStatus(status: record.v3.sharing.IStatus | null | undefined): {
+    recordUid: string
+    success: boolean
+    message: string
+} {
     if (!status?.recordUid?.length) {
         return { recordUid: '', success: false, message: 'No status returned' }
     }
@@ -371,9 +365,7 @@ export async function getRecordShareInfo(auth: Auth, recordUid: string): Promise
     try {
         response = await auth.executeRest(msg)
     } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`
-        )
+        throw new KeeperSdkError(`Failed to fetch share info for ${recordUid}: ${extractErrorMessage(err)}`)
     }
 
     const detail = response.recordDataWithAccessInfo?.[0]

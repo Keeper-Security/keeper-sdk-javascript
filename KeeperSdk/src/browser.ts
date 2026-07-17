@@ -1,8 +1,8 @@
-import { connectSdkPlatform } from "./platform";
-import { browserSdkPlatform } from "./platform/browser/platform";
+import { connectSdkPlatform } from './platform'
+import { browserSdkPlatform } from './platform/browser/platform'
 
-connectSdkPlatform(browserSdkPlatform);
+connectSdkPlatform(browserSdkPlatform)
 
-export * from "./api";
+export * from './api'
 /** Nested Share Folder / Keeper Drive APIs (also on Node `index.ts`). */
-export * from "./nestedShareFolders";
+export * from './nestedShareFolders'
