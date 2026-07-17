@@ -42,6 +42,16 @@ jobs:
         run: npm run test
         working-directory: ./keeperapi
 
+      - name: SDK - Install
+        run: npm ci
+        working-directory: ./KeeperSdk
+        env:
+          NPM_TOKEN: ""
+
+      - name: SDK - Check Formatting
+        run: npm run format:check
+        working-directory: ./KeeperSdk
+
       - name: Examples (node) - Installation
         run: npm run link-local
         working-directory: ./examples/print-vault-node
