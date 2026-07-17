@@ -161,19 +161,31 @@ import type {
   GetNsfResult,
   GetNsfRecordDetailsInput,
   GetNsfRecordDetailsResult,
+  KeepNsfShortcutInput,
+  KeepNsfShortcutResult,
   LinkNsfRecordResult,
   ListNsfFormatInput,
   ListNsfOptions,
   ListNsfRow,
+  ListNsfShortcutsOptions,
   MkdirNsfInput,
   MkdirNsfResult,
+  NsfShortcutRow,
   RemoveNsfFolderInput,
   RemoveNsfFolderResult,
   RemoveNsfRecordInput,
   RemoveNsfRecordResult,
+  ShareNestedShareFolderInput,
+  ShareNestedShareFolderResult,
+  ShareNestedShareRecordInput,
+  ShareNestedShareRecordResult,
+  TransferNestedShareRecordInput,
+  TransferNestedShareRecordResult,
   UpdateNsfRecordInput,
   UpdateNsfRecordItemInput,
   UpdateNsfRecordsInput,
+  UpdateNsfRecordPermissionInput,
+  UpdateNsfRecordPermissionResult,
   UpdateNsfRecordResult,
   UpdateNsfRecordResultItem,
 } from "../nestedShareFolders/nsfTypes";
@@ -183,26 +195,6 @@ import type {
   UpdateNsfFolderResult,
   UpdateNsfFoldersResult,
 } from "../nestedShareFolders/updateNsfFolder";
-import type {
-  ShareNestedShareFolderInput,
-  ShareNestedShareFolderResult,
-  ShareNestedShareRecordInput,
-  ShareNestedShareRecordResult,
-} from "../nestedShareFolders/nsfShare";
-import type {
-  ListNsfShortcutsOptions,
-  NsfShortcutRow,
-  KeepNsfShortcutInput,
-  KeepNsfShortcutResult,
-} from "../nestedShareFolders/nsfShortcut";
-import type {
-  TransferNestedShareRecordInput,
-  TransferNestedShareRecordResult,
-} from "../nestedShareFolders/nsfTransferRecord";
-import type {
-  UpdateNsfRecordPermissionInput,
-  UpdateNsfRecordPermissionResult,
-} from "../nestedShareFolders/nsfRecordPermission";
 import type {
   ListUserRow,
   ListUsersOptions,

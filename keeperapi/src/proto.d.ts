@@ -2356,6 +2356,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo lastFrequency */
         lastFrequency?: (Authentication.TwoFactorExpiration|null);
+
+        /** TwoFactorChannelInfo challengeToken */
+        challengeToken?: (Uint8Array|null);
     }
 
     /** Represents a TwoFactorChannelInfo. */
@@ -2393,6 +2396,9 @@ export namespace Authentication {
 
         /** TwoFactorChannelInfo lastFrequency. */
         public lastFrequency: Authentication.TwoFactorExpiration;
+
+        /** TwoFactorChannelInfo challengeToken. */
+        public challengeToken: Uint8Array;
 
         /**
          * Creates a new TwoFactorChannelInfo instance using the specified properties.
@@ -3046,6 +3052,9 @@ export namespace Authentication {
 
         /** TwoFactorValidateRequest expireIn */
         expireIn?: (Authentication.TwoFactorExpiration|null);
+
+        /** TwoFactorValidateRequest challengeToken */
+        challengeToken?: (Uint8Array|null);
     }
 
     /** Represents a TwoFactorValidateRequest. */
@@ -3071,6 +3080,9 @@ export namespace Authentication {
 
         /** TwoFactorValidateRequest expireIn. */
         public expireIn: Authentication.TwoFactorExpiration;
+
+        /** TwoFactorValidateRequest challengeToken. */
+        public challengeToken: Uint8Array;
 
         /**
          * Creates a new TwoFactorValidateRequest instance using the specified properties.
@@ -16935,7 +16947,8 @@ export namespace Enterprise {
         MAY_NOT_REMOVE_SELF_FROM_ROLE = 6,
         MUST_HAVE_ONE_USER_ADMIN = 7,
         INVALID_ROLE_ID = 8,
-        PAM_LICENSE_SEAT_EXCEEDED = 9
+        PAM_LICENSE_SEAT_EXCEEDED = 9,
+        WOULD_LOCK_SELF = 10
     }
 
     /** Properties of a RoleUserAddResult. */
@@ -24318,6 +24331,12 @@ export namespace Enterprise {
 
         /** UserUpdate email */
         email?: (string|null);
+
+        /** UserUpdate inviteeLocale */
+        inviteeLocale?: (string|null);
+
+        /** UserUpdate encryptedDataString */
+        encryptedDataString?: (string|null);
     }
 
     /** Represents a UserUpdate. */
@@ -24349,6 +24368,12 @@ export namespace Enterprise {
 
         /** UserUpdate email. */
         public email: string;
+
+        /** UserUpdate inviteeLocale. */
+        public inviteeLocale: string;
+
+        /** UserUpdate encryptedDataString. */
+        public encryptedDataString: string;
 
         /**
          * Creates a new UserUpdate instance using the specified properties.
@@ -24485,6 +24510,12 @@ export namespace Enterprise {
 
         /** UserUpdateResult status */
         status?: (Enterprise.UserUpdateStatus|null);
+
+        /** UserUpdateResult errorMessage */
+        errorMessage?: (string|null);
+
+        /** UserUpdateResult additionalInfo */
+        additionalInfo?: (string|null);
     }
 
     /** Represents a UserUpdateResult. */
@@ -24501,6 +24532,12 @@ export namespace Enterprise {
 
         /** UserUpdateResult status. */
         public status: Enterprise.UserUpdateStatus;
+
+        /** UserUpdateResult errorMessage. */
+        public errorMessage: string;
+
+        /** UserUpdateResult additionalInfo. */
+        public additionalInfo: string;
 
         /**
          * Creates a new UserUpdateResult instance using the specified properties.
@@ -24559,7 +24596,13 @@ export namespace Enterprise {
     /** UserUpdateStatus enum. */
     enum UserUpdateStatus {
         USER_UPDATE_OK = 0,
-        USER_UPDATE_ACCESS_DENIED = 1
+        USER_UPDATE_ACCESS_DENIED = 1,
+        USER_UPDATE_EXCEEDED_LICENSE_SEATS = 2,
+        USER_UPDATE_BAD_REQUEST = 3,
+        USER_UPDATE_DUPLICATE = 4,
+        USER_UPDATE_INVALID_STATE = 5,
+        USER_UPDATE_FAILED = 6,
+        USER_UPDATE_ERROR = 7
     }
 
     /** Properties of a ComplianceRecordOwnersRequest. */
@@ -34630,6 +34673,12 @@ export namespace Folder {
 
         /** time limited access settings define expiration, notification and rotation policies. */
         tlaProperties?: (common.tla.ITLAProperties|null);
+
+        /**
+         * Record key encrypted with the owner's data key: an owner-decryptable copy independent of folder
+         * placement, so owner-trashed records can be decrypted and restored (KA-8946 / KA-8939).
+         */
+        recordKeyEncryptedByOwnerKey?: (Uint8Array|null);
     }
 
     /** Represents a RecordMetadata. */
@@ -34652,6 +34701,12 @@ export namespace Folder {
 
         /** time limited access settings define expiration, notification and rotation policies. */
         public tlaProperties?: (common.tla.ITLAProperties|null);
+
+        /**
+         * Record key encrypted with the owner's data key: an owner-decryptable copy independent of folder
+         * placement, so owner-trashed records can be decrypted and restored (KA-8946 / KA-8939).
+         */
+        public recordKeyEncryptedByOwnerKey: Uint8Array;
 
         /**
          * Creates a new RecordMetadata instance using the specified properties.
@@ -36673,6 +36728,9 @@ export namespace Records {
 
         /** FolderRecordKey recordKey */
         recordKey?: (Uint8Array|null);
+
+        /** FolderRecordKey recordKeyType */
+        recordKeyType?: (Records.RecordKeyType|null);
     }
 
     /** Represents a FolderRecordKey. */
@@ -36692,6 +36750,9 @@ export namespace Records {
 
         /** FolderRecordKey recordKey. */
         public recordKey: Uint8Array;
+
+        /** FolderRecordKey recordKeyType. */
+        public recordKeyType: Records.RecordKeyType;
 
         /**
          * Creates a new FolderRecordKey instance using the specified properties.
@@ -46438,7 +46499,8 @@ export namespace Automator {
         UNKNOWN_SKILL_TYPE = 0,
         DEVICE_APPROVAL = 1,
         TEAM_APPROVAL = 2,
-        TEAM_FOR_USER_APPROVAL = 3
+        TEAM_FOR_USER_APPROVAL = 3,
+        REPORTING = 4
     }
 
     /** Properties of a LogEntry. */
@@ -59612,6 +59674,79 @@ export namespace Tokens {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a MemcachedString. */
+    interface IMemcachedString {
+
+        /** MemcachedString value */
+        value?: (string|null);
+    }
+
+    /** Represents a MemcachedString. */
+    class MemcachedString implements IMemcachedString {
+
+        /**
+         * Constructs a new MemcachedString.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Tokens.IMemcachedString);
+
+        /** MemcachedString value. */
+        public value: string;
+
+        /**
+         * Creates a new MemcachedString instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MemcachedString instance
+         */
+        public static create(properties?: Tokens.IMemcachedString): Tokens.MemcachedString;
+
+        /**
+         * Encodes the specified MemcachedString message. Does not implicitly {@link Tokens.MemcachedString.verify|verify} messages.
+         * @param message MemcachedString message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Tokens.IMemcachedString, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MemcachedString message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MemcachedString
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Tokens.MemcachedString;
+
+        /**
+         * Creates a MemcachedString message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MemcachedString
+         */
+        public static fromObject(object: { [k: string]: any }): Tokens.MemcachedString;
+
+        /**
+         * Creates a plain object from a MemcachedString message. Also converts values to other types if specified.
+         * @param message MemcachedString
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Tokens.MemcachedString, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MemcachedString to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MemcachedString
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of an IncrementalSecurityDataContToken. */
     interface IIncrementalSecurityDataContToken {
 
@@ -69615,6 +69750,9 @@ export namespace record {
 
             /** RecordAdd securityScoreData */
             securityScoreData?: (Records.ISecurityScoreData|null);
+
+            /** RecordAdd recordKeyEncryptedByOwnerKey */
+            recordKeyEncryptedByOwnerKey?: (Uint8Array|null);
         }
 
         /** Represents a RecordAdd. */
@@ -69664,6 +69802,9 @@ export namespace record {
 
             /** RecordAdd securityScoreData. */
             public securityScoreData?: (Records.ISecurityScoreData|null);
+
+            /** RecordAdd recordKeyEncryptedByOwnerKey. */
+            public recordKeyEncryptedByOwnerKey: Uint8Array;
 
             /**
              * Creates a new RecordAdd instance using the specified properties.
@@ -71142,6 +71283,9 @@ export namespace BI {
 
         /** SubscriptionStatusResponse ksm */
         ksm?: (BI.IKsmBilling|null);
+
+        /** SubscriptionStatusResponse epm */
+        epm?: (BI.IEpmBilling|null);
     }
 
     /** Represents a SubscriptionStatusResponse. */
@@ -71197,6 +71341,9 @@ export namespace BI {
 
         /** SubscriptionStatusResponse ksm. */
         public ksm?: (BI.IKsmBilling|null);
+
+        /** SubscriptionStatusResponse epm. */
+        public epm?: (BI.IEpmBilling|null);
 
         /**
          * Creates a new SubscriptionStatusResponse instance using the specified properties.
@@ -71343,6 +71490,103 @@ export namespace BI {
 
         /**
          * Gets the default type url for KsmBilling
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an EpmBilling. */
+    interface IEpmBilling {
+
+        /** EpmBilling billingStartTimestamp */
+        billingStartTimestamp?: (number|null);
+
+        /** EpmBilling billingEndTimestamp */
+        billingEndTimestamp?: (number|null);
+
+        /** EpmBilling currentTierId */
+        currentTierId?: (number|null);
+
+        /** EpmBilling enterpriseBlocks */
+        enterpriseBlocks?: (number|null);
+
+        /** EpmBilling currentTierCeiling */
+        currentTierCeiling?: (number|null);
+    }
+
+    /** Represents an EpmBilling. */
+    class EpmBilling implements IEpmBilling {
+
+        /**
+         * Constructs a new EpmBilling.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: BI.IEpmBilling);
+
+        /** EpmBilling billingStartTimestamp. */
+        public billingStartTimestamp: number;
+
+        /** EpmBilling billingEndTimestamp. */
+        public billingEndTimestamp: number;
+
+        /** EpmBilling currentTierId. */
+        public currentTierId: number;
+
+        /** EpmBilling enterpriseBlocks. */
+        public enterpriseBlocks: number;
+
+        /** EpmBilling currentTierCeiling. */
+        public currentTierCeiling: number;
+
+        /**
+         * Creates a new EpmBilling instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EpmBilling instance
+         */
+        public static create(properties?: BI.IEpmBilling): BI.EpmBilling;
+
+        /**
+         * Encodes the specified EpmBilling message. Does not implicitly {@link BI.EpmBilling.verify|verify} messages.
+         * @param message EpmBilling message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: BI.IEpmBilling, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EpmBilling message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EpmBilling
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BI.EpmBilling;
+
+        /**
+         * Creates an EpmBilling message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EpmBilling
+         */
+        public static fromObject(object: { [k: string]: any }): BI.EpmBilling;
+
+        /**
+         * Creates a plain object from an EpmBilling message. Also converts values to other types if specified.
+         * @param message EpmBilling
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: BI.EpmBilling, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EpmBilling to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EpmBilling
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -75957,6 +76201,15 @@ export namespace BI {
 
         /** CustomerCaptureRequest notes */
         notes?: (string|null);
+
+        /** CustomerCaptureRequest extensionVersion */
+        extensionVersion?: (string|null);
+
+        /** CustomerCaptureRequest aiAutofillStatus */
+        aiAutofillStatus?: (string|null);
+
+        /** CustomerCaptureRequest mlLabels */
+        mlLabels?: (string|null);
     }
 
     /** Represents a CustomerCaptureRequest. */
@@ -75994,6 +76247,15 @@ export namespace BI {
 
         /** CustomerCaptureRequest notes. */
         public notes: string;
+
+        /** CustomerCaptureRequest extensionVersion. */
+        public extensionVersion?: (string|null);
+
+        /** CustomerCaptureRequest aiAutofillStatus. */
+        public aiAutofillStatus?: (string|null);
+
+        /** CustomerCaptureRequest mlLabels. */
+        public mlLabels?: (string|null);
 
         /**
          * Creates a new CustomerCaptureRequest instance using the specified properties.
@@ -85562,6 +85824,9 @@ export namespace Router {
 
         /** Router2FAValidateRequest value */
         value?: (string|null);
+
+        /** Router2FAValidateRequest challengeToken */
+        challengeToken?: (Uint8Array|null);
     }
 
     /** Represents a Router2FAValidateRequest. */
@@ -85581,6 +85846,9 @@ export namespace Router {
 
         /** Router2FAValidateRequest value. */
         public value: string;
+
+        /** Router2FAValidateRequest challengeToken. */
+        public challengeToken: Uint8Array;
 
         /**
          * Creates a new Router2FAValidateRequest instance using the specified properties.
@@ -85808,6 +86076,9 @@ export namespace Router {
 
         /** Router2FAGetWebAuthnChallengeResponse capabilities */
         capabilities?: (string[]|null);
+
+        /** Router2FAGetWebAuthnChallengeResponse challengeToken */
+        challengeToken?: (Uint8Array|null);
     }
 
     /** Represents a Router2FAGetWebAuthnChallengeResponse. */
@@ -85824,6 +86095,9 @@ export namespace Router {
 
         /** Router2FAGetWebAuthnChallengeResponse capabilities. */
         public capabilities: string[];
+
+        /** Router2FAGetWebAuthnChallengeResponse challengeToken. */
+        public challengeToken: Uint8Array;
 
         /**
          * Creates a new Router2FAGetWebAuthnChallengeResponse instance using the specified properties.
@@ -87880,6 +88154,12 @@ export namespace PAM {
 
         /** PAMController isInitialized */
         isInitialized?: (boolean|null);
+
+        /** PAMController maxInstanceCount */
+        maxInstanceCount?: (number|null);
+
+        /** PAMController lastSeen */
+        lastSeen?: (number|null);
     }
 
     /** Represents a PAMController. */
@@ -87920,6 +88200,12 @@ export namespace PAM {
 
         /** PAMController isInitialized. */
         public isInitialized: boolean;
+
+        /** PAMController maxInstanceCount. */
+        public maxInstanceCount: number;
+
+        /** PAMController lastSeen. */
+        public lastSeen: number;
 
         /**
          * Creates a new PAMController instance using the specified properties.

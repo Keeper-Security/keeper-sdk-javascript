@@ -846,6 +846,7 @@ export const BI = $root.BI = (() => {
          * @property {BI.INhiBilling|null} [nhi] SubscriptionStatusResponse nhi
          * @property {number|null} [freeKsmApiCallsCount] SubscriptionStatusResponse freeKsmApiCallsCount
          * @property {BI.IKsmBilling|null} [ksm] SubscriptionStatusResponse ksm
+         * @property {BI.IEpmBilling|null} [epm] SubscriptionStatusResponse epm
          */
 
         /**
@@ -985,6 +986,14 @@ export const BI = $root.BI = (() => {
         SubscriptionStatusResponse.prototype.ksm = null;
 
         /**
+         * SubscriptionStatusResponse epm.
+         * @member {BI.IEpmBilling|null|undefined} epm
+         * @memberof BI.SubscriptionStatusResponse
+         * @instance
+         */
+        SubscriptionStatusResponse.prototype.epm = null;
+
+        /**
          * Creates a new SubscriptionStatusResponse instance using the specified properties.
          * @function create
          * @memberof BI.SubscriptionStatusResponse
@@ -1043,6 +1052,8 @@ export const BI = $root.BI = (() => {
                 writer.uint32(/* id 15, wireType 0 =*/120).int32(message.freeKsmApiCallsCount);
             if (message.ksm != null && Object.hasOwnProperty.call(message, "ksm"))
                 $root.BI.KsmBilling.encode(message.ksm, writer.uint32(/* id 16, wireType 2 =*/130).fork(), q + 1).ldelim();
+            if (message.epm != null && Object.hasOwnProperty.call(message, "epm"))
+                $root.BI.EpmBilling.encode(message.epm, writer.uint32(/* id 17, wireType 2 =*/138).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -1130,6 +1141,10 @@ export const BI = $root.BI = (() => {
                     }
                 case 16: {
                         message.ksm = $root.BI.KsmBilling.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 17: {
+                        message.epm = $root.BI.EpmBilling.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -1237,6 +1252,11 @@ export const BI = $root.BI = (() => {
                     throw TypeError(".BI.SubscriptionStatusResponse.ksm: object expected");
                 message.ksm = $root.BI.KsmBilling.fromObject(object.ksm, long + 1);
             }
+            if (object.epm != null) {
+                if (!$util.isObject(object.epm))
+                    throw TypeError(".BI.SubscriptionStatusResponse.epm: object expected");
+                message.epm = $root.BI.EpmBilling.fromObject(object.epm, long + 1);
+            }
             return message;
         };
 
@@ -1278,6 +1298,7 @@ export const BI = $root.BI = (() => {
                 object.nhi = null;
                 object.freeKsmApiCallsCount = 0;
                 object.ksm = null;
+                object.epm = null;
             }
             if (message.autoRenewal != null && Object.hasOwnProperty.call(message, "autoRenewal"))
                 object.autoRenewal = $root.BI.AutoRenewal.toObject(message.autoRenewal, options, q + 1);
@@ -1317,6 +1338,8 @@ export const BI = $root.BI = (() => {
                 object.freeKsmApiCallsCount = message.freeKsmApiCallsCount;
             if (message.ksm != null && Object.hasOwnProperty.call(message, "ksm"))
                 object.ksm = $root.BI.KsmBilling.toObject(message.ksm, options, q + 1);
+            if (message.epm != null && Object.hasOwnProperty.call(message, "epm"))
+                object.epm = $root.BI.EpmBilling.toObject(message.epm, options, q + 1);
             return object;
         };
 
@@ -1637,6 +1660,312 @@ export const BI = $root.BI = (() => {
         };
 
         return KsmBilling;
+    })();
+
+    BI.EpmBilling = (function() {
+
+        /**
+         * Properties of an EpmBilling.
+         * @memberof BI
+         * @interface IEpmBilling
+         * @property {number|null} [billingStartTimestamp] EpmBilling billingStartTimestamp
+         * @property {number|null} [billingEndTimestamp] EpmBilling billingEndTimestamp
+         * @property {number|null} [currentTierId] EpmBilling currentTierId
+         * @property {number|null} [enterpriseBlocks] EpmBilling enterpriseBlocks
+         * @property {number|null} [currentTierCeiling] EpmBilling currentTierCeiling
+         */
+
+        /**
+         * Constructs a new EpmBilling.
+         * @memberof BI
+         * @classdesc Represents an EpmBilling.
+         * @implements IEpmBilling
+         * @constructor
+         * @param {BI.IEpmBilling=} [properties] Properties to set
+         */
+        function EpmBilling(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * EpmBilling billingStartTimestamp.
+         * @member {number} billingStartTimestamp
+         * @memberof BI.EpmBilling
+         * @instance
+         */
+        EpmBilling.prototype.billingStartTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * EpmBilling billingEndTimestamp.
+         * @member {number} billingEndTimestamp
+         * @memberof BI.EpmBilling
+         * @instance
+         */
+        EpmBilling.prototype.billingEndTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * EpmBilling currentTierId.
+         * @member {number} currentTierId
+         * @memberof BI.EpmBilling
+         * @instance
+         */
+        EpmBilling.prototype.currentTierId = 0;
+
+        /**
+         * EpmBilling enterpriseBlocks.
+         * @member {number} enterpriseBlocks
+         * @memberof BI.EpmBilling
+         * @instance
+         */
+        EpmBilling.prototype.enterpriseBlocks = 0;
+
+        /**
+         * EpmBilling currentTierCeiling.
+         * @member {number} currentTierCeiling
+         * @memberof BI.EpmBilling
+         * @instance
+         */
+        EpmBilling.prototype.currentTierCeiling = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new EpmBilling instance using the specified properties.
+         * @function create
+         * @memberof BI.EpmBilling
+         * @static
+         * @param {BI.IEpmBilling=} [properties] Properties to set
+         * @returns {BI.EpmBilling} EpmBilling instance
+         */
+        EpmBilling.create = function create(properties) {
+            return new EpmBilling(properties);
+        };
+
+        /**
+         * Encodes the specified EpmBilling message. Does not implicitly {@link BI.EpmBilling.verify|verify} messages.
+         * @function encode
+         * @memberof BI.EpmBilling
+         * @static
+         * @param {BI.IEpmBilling} message EpmBilling message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        EpmBilling.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.billingStartTimestamp != null && Object.hasOwnProperty.call(message, "billingStartTimestamp"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.billingStartTimestamp);
+            if (message.billingEndTimestamp != null && Object.hasOwnProperty.call(message, "billingEndTimestamp"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.billingEndTimestamp);
+            if (message.currentTierId != null && Object.hasOwnProperty.call(message, "currentTierId"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.currentTierId);
+            if (message.enterpriseBlocks != null && Object.hasOwnProperty.call(message, "enterpriseBlocks"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.enterpriseBlocks);
+            if (message.currentTierCeiling != null && Object.hasOwnProperty.call(message, "currentTierCeiling"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.currentTierCeiling);
+            return writer;
+        };
+
+        /**
+         * Decodes an EpmBilling message from the specified reader or buffer.
+         * @function decode
+         * @memberof BI.EpmBilling
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {BI.EpmBilling} EpmBilling
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        EpmBilling.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.BI.EpmBilling();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.billingStartTimestamp = reader.int64();
+                        break;
+                    }
+                case 2: {
+                        message.billingEndTimestamp = reader.int64();
+                        break;
+                    }
+                case 3: {
+                        message.currentTierId = reader.int32();
+                        break;
+                    }
+                case 4: {
+                        message.enterpriseBlocks = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.currentTierCeiling = reader.int64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an EpmBilling message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof BI.EpmBilling
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {BI.EpmBilling} EpmBilling
+         */
+        EpmBilling.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.BI.EpmBilling)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".BI.EpmBilling: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.BI.EpmBilling();
+            if (object.billingStartTimestamp != null)
+                if ($util.Long)
+                    message.billingStartTimestamp = $util.Long.fromValue(object.billingStartTimestamp, false);
+                else if (typeof object.billingStartTimestamp === "string")
+                    message.billingStartTimestamp = parseInt(object.billingStartTimestamp, 10);
+                else if (typeof object.billingStartTimestamp === "number")
+                    message.billingStartTimestamp = object.billingStartTimestamp;
+                else if (typeof object.billingStartTimestamp === "object")
+                    message.billingStartTimestamp = new $util.LongBits(object.billingStartTimestamp.low >>> 0, object.billingStartTimestamp.high >>> 0).toNumber();
+            if (object.billingEndTimestamp != null)
+                if ($util.Long)
+                    message.billingEndTimestamp = $util.Long.fromValue(object.billingEndTimestamp, false);
+                else if (typeof object.billingEndTimestamp === "string")
+                    message.billingEndTimestamp = parseInt(object.billingEndTimestamp, 10);
+                else if (typeof object.billingEndTimestamp === "number")
+                    message.billingEndTimestamp = object.billingEndTimestamp;
+                else if (typeof object.billingEndTimestamp === "object")
+                    message.billingEndTimestamp = new $util.LongBits(object.billingEndTimestamp.low >>> 0, object.billingEndTimestamp.high >>> 0).toNumber();
+            if (object.currentTierId != null)
+                message.currentTierId = object.currentTierId | 0;
+            if (object.enterpriseBlocks != null)
+                message.enterpriseBlocks = object.enterpriseBlocks | 0;
+            if (object.currentTierCeiling != null)
+                if ($util.Long)
+                    message.currentTierCeiling = $util.Long.fromValue(object.currentTierCeiling, false);
+                else if (typeof object.currentTierCeiling === "string")
+                    message.currentTierCeiling = parseInt(object.currentTierCeiling, 10);
+                else if (typeof object.currentTierCeiling === "number")
+                    message.currentTierCeiling = object.currentTierCeiling;
+                else if (typeof object.currentTierCeiling === "object")
+                    message.currentTierCeiling = new $util.LongBits(object.currentTierCeiling.low >>> 0, object.currentTierCeiling.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an EpmBilling message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof BI.EpmBilling
+         * @static
+         * @param {BI.EpmBilling} message EpmBilling
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        EpmBilling.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.billingStartTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.billingStartTimestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.billingEndTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.billingEndTimestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                object.currentTierId = 0;
+                object.enterpriseBlocks = 0;
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.currentTierCeiling = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.currentTierCeiling = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            }
+            if (message.billingStartTimestamp != null && Object.hasOwnProperty.call(message, "billingStartTimestamp"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.billingStartTimestamp = typeof message.billingStartTimestamp === "number" ? BigInt(message.billingStartTimestamp) : $util.Long.fromBits(message.billingStartTimestamp.low >>> 0, message.billingStartTimestamp.high >>> 0, false).toBigInt();
+                else if (typeof message.billingStartTimestamp === "number")
+                    object.billingStartTimestamp = options.longs === String ? String(message.billingStartTimestamp) : message.billingStartTimestamp;
+                else
+                    object.billingStartTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.billingStartTimestamp) : options.longs === Number ? new $util.LongBits(message.billingStartTimestamp.low >>> 0, message.billingStartTimestamp.high >>> 0).toNumber() : message.billingStartTimestamp;
+            if (message.billingEndTimestamp != null && Object.hasOwnProperty.call(message, "billingEndTimestamp"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.billingEndTimestamp = typeof message.billingEndTimestamp === "number" ? BigInt(message.billingEndTimestamp) : $util.Long.fromBits(message.billingEndTimestamp.low >>> 0, message.billingEndTimestamp.high >>> 0, false).toBigInt();
+                else if (typeof message.billingEndTimestamp === "number")
+                    object.billingEndTimestamp = options.longs === String ? String(message.billingEndTimestamp) : message.billingEndTimestamp;
+                else
+                    object.billingEndTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.billingEndTimestamp) : options.longs === Number ? new $util.LongBits(message.billingEndTimestamp.low >>> 0, message.billingEndTimestamp.high >>> 0).toNumber() : message.billingEndTimestamp;
+            if (message.currentTierId != null && Object.hasOwnProperty.call(message, "currentTierId"))
+                object.currentTierId = message.currentTierId;
+            if (message.enterpriseBlocks != null && Object.hasOwnProperty.call(message, "enterpriseBlocks"))
+                object.enterpriseBlocks = message.enterpriseBlocks;
+            if (message.currentTierCeiling != null && Object.hasOwnProperty.call(message, "currentTierCeiling"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.currentTierCeiling = typeof message.currentTierCeiling === "number" ? BigInt(message.currentTierCeiling) : $util.Long.fromBits(message.currentTierCeiling.low >>> 0, message.currentTierCeiling.high >>> 0, false).toBigInt();
+                else if (typeof message.currentTierCeiling === "number")
+                    object.currentTierCeiling = options.longs === String ? String(message.currentTierCeiling) : message.currentTierCeiling;
+                else
+                    object.currentTierCeiling = options.longs === String ? $util.Long.prototype.toString.call(message.currentTierCeiling) : options.longs === Number ? new $util.LongBits(message.currentTierCeiling.low >>> 0, message.currentTierCeiling.high >>> 0).toNumber() : message.currentTierCeiling;
+            return object;
+        };
+
+        /**
+         * Converts this EpmBilling to JSON.
+         * @function toJSON
+         * @memberof BI.EpmBilling
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        EpmBilling.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for EpmBilling
+         * @function getTypeUrl
+         * @memberof BI.EpmBilling
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        EpmBilling.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/BI.EpmBilling";
+        };
+
+        return EpmBilling;
     })();
 
     BI.NhiBilling = (function() {
@@ -13740,6 +14069,9 @@ export const BI = $root.BI = (() => {
          * @property {boolean|null} [test] CustomerCaptureRequest test
          * @property {string|null} [issueType] CustomerCaptureRequest issueType
          * @property {string|null} [notes] CustomerCaptureRequest notes
+         * @property {string|null} [extensionVersion] CustomerCaptureRequest extensionVersion
+         * @property {string|null} [aiAutofillStatus] CustomerCaptureRequest aiAutofillStatus
+         * @property {string|null} [mlLabels] CustomerCaptureRequest mlLabels
          */
 
         /**
@@ -13830,6 +14162,51 @@ export const BI = $root.BI = (() => {
         CustomerCaptureRequest.prototype.notes = "";
 
         /**
+         * CustomerCaptureRequest extensionVersion.
+         * @member {string|null|undefined} extensionVersion
+         * @memberof BI.CustomerCaptureRequest
+         * @instance
+         */
+        CustomerCaptureRequest.prototype.extensionVersion = null;
+
+        /**
+         * CustomerCaptureRequest aiAutofillStatus.
+         * @member {string|null|undefined} aiAutofillStatus
+         * @memberof BI.CustomerCaptureRequest
+         * @instance
+         */
+        CustomerCaptureRequest.prototype.aiAutofillStatus = null;
+
+        /**
+         * CustomerCaptureRequest mlLabels.
+         * @member {string|null|undefined} mlLabels
+         * @memberof BI.CustomerCaptureRequest
+         * @instance
+         */
+        CustomerCaptureRequest.prototype.mlLabels = null;
+
+        // OneOf field names bound to virtual getters and setters
+        let $oneOfFields;
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(CustomerCaptureRequest.prototype, "_extensionVersion", {
+            get: $util.oneOfGetter($oneOfFields = ["extensionVersion"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(CustomerCaptureRequest.prototype, "_aiAutofillStatus", {
+            get: $util.oneOfGetter($oneOfFields = ["aiAutofillStatus"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(CustomerCaptureRequest.prototype, "_mlLabels", {
+            get: $util.oneOfGetter($oneOfFields = ["mlLabels"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
          * Creates a new CustomerCaptureRequest instance using the specified properties.
          * @function create
          * @memberof BI.CustomerCaptureRequest
@@ -13875,6 +14252,12 @@ export const BI = $root.BI = (() => {
                 writer.uint32(/* id 8, wireType 2 =*/66).string(message.issueType);
             if (message.notes != null && Object.hasOwnProperty.call(message, "notes"))
                 writer.uint32(/* id 9, wireType 2 =*/74).string(message.notes);
+            if (message.extensionVersion != null && Object.hasOwnProperty.call(message, "extensionVersion"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.extensionVersion);
+            if (message.aiAutofillStatus != null && Object.hasOwnProperty.call(message, "aiAutofillStatus"))
+                writer.uint32(/* id 11, wireType 2 =*/90).string(message.aiAutofillStatus);
+            if (message.mlLabels != null && Object.hasOwnProperty.call(message, "mlLabels"))
+                writer.uint32(/* id 12, wireType 2 =*/98).string(message.mlLabels);
             return writer;
         };
 
@@ -13938,6 +14321,18 @@ export const BI = $root.BI = (() => {
                         message.notes = reader.string();
                         break;
                     }
+                case 10: {
+                        message.extensionVersion = reader.string();
+                        break;
+                    }
+                case 11: {
+                        message.aiAutofillStatus = reader.string();
+                        break;
+                    }
+                case 12: {
+                        message.mlLabels = reader.string();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7, long);
                     break;
@@ -13982,6 +14377,12 @@ export const BI = $root.BI = (() => {
                 message.issueType = String(object.issueType);
             if (object.notes != null)
                 message.notes = String(object.notes);
+            if (object.extensionVersion != null)
+                message.extensionVersion = String(object.extensionVersion);
+            if (object.aiAutofillStatus != null)
+                message.aiAutofillStatus = String(object.aiAutofillStatus);
+            if (object.mlLabels != null)
+                message.mlLabels = String(object.mlLabels);
             return message;
         };
 
@@ -14031,6 +14432,21 @@ export const BI = $root.BI = (() => {
                 object.issueType = message.issueType;
             if (message.notes != null && Object.hasOwnProperty.call(message, "notes"))
                 object.notes = message.notes;
+            if (message.extensionVersion != null && Object.hasOwnProperty.call(message, "extensionVersion")) {
+                object.extensionVersion = message.extensionVersion;
+                if (options.oneofs)
+                    object._extensionVersion = "extensionVersion";
+            }
+            if (message.aiAutofillStatus != null && Object.hasOwnProperty.call(message, "aiAutofillStatus")) {
+                object.aiAutofillStatus = message.aiAutofillStatus;
+                if (options.oneofs)
+                    object._aiAutofillStatus = "aiAutofillStatus";
+            }
+            if (message.mlLabels != null && Object.hasOwnProperty.call(message, "mlLabels")) {
+                object.mlLabels = message.mlLabels;
+                if (options.oneofs)
+                    object._mlLabels = "mlLabels";
+            }
             return object;
         };
 

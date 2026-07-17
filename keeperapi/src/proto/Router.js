@@ -9315,6 +9315,7 @@ export const Router = $root.Router = (() => {
          * @property {Uint8Array|null} [transmissionKey] Router2FAValidateRequest transmissionKey
          * @property {Uint8Array|null} [sessionToken] Router2FAValidateRequest sessionToken
          * @property {string|null} [value] Router2FAValidateRequest value
+         * @property {Uint8Array|null} [challengeToken] Router2FAValidateRequest challengeToken
          */
 
         /**
@@ -9357,6 +9358,14 @@ export const Router = $root.Router = (() => {
         Router2FAValidateRequest.prototype.value = "";
 
         /**
+         * Router2FAValidateRequest challengeToken.
+         * @member {Uint8Array} challengeToken
+         * @memberof Router.Router2FAValidateRequest
+         * @instance
+         */
+        Router2FAValidateRequest.prototype.challengeToken = $util.newBuffer([]);
+
+        /**
          * Creates a new Router2FAValidateRequest instance using the specified properties.
          * @function create
          * @memberof Router.Router2FAValidateRequest
@@ -9390,6 +9399,8 @@ export const Router = $root.Router = (() => {
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.sessionToken);
             if (message.value != null && Object.hasOwnProperty.call(message, "value"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.value);
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.challengeToken);
             return writer;
         };
 
@@ -9427,6 +9438,10 @@ export const Router = $root.Router = (() => {
                     }
                 case 3: {
                         message.value = reader.string();
+                        break;
+                    }
+                case 4: {
+                        message.challengeToken = reader.bytes();
                         break;
                     }
                 default:
@@ -9467,6 +9482,11 @@ export const Router = $root.Router = (() => {
                     message.sessionToken = object.sessionToken;
             if (object.value != null)
                 message.value = String(object.value);
+            if (object.challengeToken != null)
+                if (typeof object.challengeToken === "string")
+                    $util.base64.decode(object.challengeToken, message.challengeToken = $util.newBuffer($util.base64.length(object.challengeToken)), 0);
+                else if (object.challengeToken.length >= 0)
+                    message.challengeToken = object.challengeToken;
             return message;
         };
 
@@ -9503,6 +9523,13 @@ export const Router = $root.Router = (() => {
                         object.sessionToken = $util.newBuffer(object.sessionToken);
                 }
                 object.value = "";
+                if (options.bytes === String)
+                    object.challengeToken = "";
+                else {
+                    object.challengeToken = [];
+                    if (options.bytes !== Array)
+                        object.challengeToken = $util.newBuffer(object.challengeToken);
+                }
             }
             if (message.transmissionKey != null && Object.hasOwnProperty.call(message, "transmissionKey"))
                 object.transmissionKey = options.bytes === String ? $util.base64.encode(message.transmissionKey, 0, message.transmissionKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.transmissionKey) : message.transmissionKey;
@@ -9510,6 +9537,8 @@ export const Router = $root.Router = (() => {
                 object.sessionToken = options.bytes === String ? $util.base64.encode(message.sessionToken, 0, message.sessionToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.sessionToken) : message.sessionToken;
             if (message.value != null && Object.hasOwnProperty.call(message, "value"))
                 object.value = message.value;
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                object.challengeToken = options.bytes === String ? $util.base64.encode(message.challengeToken, 0, message.challengeToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.challengeToken) : message.challengeToken;
             return object;
         };
 
@@ -10036,6 +10065,7 @@ export const Router = $root.Router = (() => {
          * @interface IRouter2FAGetWebAuthnChallengeResponse
          * @property {string|null} [challenge] Router2FAGetWebAuthnChallengeResponse challenge
          * @property {Array.<string>|null} [capabilities] Router2FAGetWebAuthnChallengeResponse capabilities
+         * @property {Uint8Array|null} [challengeToken] Router2FAGetWebAuthnChallengeResponse challengeToken
          */
 
         /**
@@ -10071,6 +10101,14 @@ export const Router = $root.Router = (() => {
         Router2FAGetWebAuthnChallengeResponse.prototype.capabilities = $util.emptyArray;
 
         /**
+         * Router2FAGetWebAuthnChallengeResponse challengeToken.
+         * @member {Uint8Array} challengeToken
+         * @memberof Router.Router2FAGetWebAuthnChallengeResponse
+         * @instance
+         */
+        Router2FAGetWebAuthnChallengeResponse.prototype.challengeToken = $util.newBuffer([]);
+
+        /**
          * Creates a new Router2FAGetWebAuthnChallengeResponse instance using the specified properties.
          * @function create
          * @memberof Router.Router2FAGetWebAuthnChallengeResponse
@@ -10103,6 +10141,8 @@ export const Router = $root.Router = (() => {
             if (message.capabilities != null && message.capabilities.length)
                 for (let i = 0; i < message.capabilities.length; ++i)
                     writer.uint32(/* id 2, wireType 2 =*/18).string(message.capabilities[i]);
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.challengeToken);
             return writer;
         };
 
@@ -10140,6 +10180,10 @@ export const Router = $root.Router = (() => {
                         message.capabilities.push(reader.string());
                         break;
                     }
+                case 3: {
+                        message.challengeToken = reader.bytes();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7, long);
                     break;
@@ -10175,6 +10219,11 @@ export const Router = $root.Router = (() => {
                 for (let i = 0; i < object.capabilities.length; ++i)
                     message.capabilities[i] = String(object.capabilities[i]);
             }
+            if (object.challengeToken != null)
+                if (typeof object.challengeToken === "string")
+                    $util.base64.decode(object.challengeToken, message.challengeToken = $util.newBuffer($util.base64.length(object.challengeToken)), 0);
+                else if (object.challengeToken.length >= 0)
+                    message.challengeToken = object.challengeToken;
             return message;
         };
 
@@ -10197,8 +10246,16 @@ export const Router = $root.Router = (() => {
             let object = {};
             if (options.arrays || options.defaults)
                 object.capabilities = [];
-            if (options.defaults)
+            if (options.defaults) {
                 object.challenge = "";
+                if (options.bytes === String)
+                    object.challengeToken = "";
+                else {
+                    object.challengeToken = [];
+                    if (options.bytes !== Array)
+                        object.challengeToken = $util.newBuffer(object.challengeToken);
+                }
+            }
             if (message.challenge != null && Object.hasOwnProperty.call(message, "challenge"))
                 object.challenge = message.challenge;
             if (message.capabilities && message.capabilities.length) {
@@ -10206,6 +10263,8 @@ export const Router = $root.Router = (() => {
                 for (let j = 0; j < message.capabilities.length; ++j)
                     object.capabilities[j] = message.capabilities[j];
             }
+            if (message.challengeToken != null && Object.hasOwnProperty.call(message, "challengeToken"))
+                object.challengeToken = options.bytes === String ? $util.base64.encode(message.challengeToken, 0, message.challengeToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.challengeToken) : message.challengeToken;
             return object;
         };
 

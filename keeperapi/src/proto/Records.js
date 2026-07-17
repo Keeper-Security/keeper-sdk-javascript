@@ -1702,6 +1702,7 @@ export const Records = $root.Records = (() => {
          * @property {Uint8Array|null} [folderUid] FolderRecordKey folderUid
          * @property {Uint8Array|null} [recordUid] FolderRecordKey recordUid
          * @property {Uint8Array|null} [recordKey] FolderRecordKey recordKey
+         * @property {Records.RecordKeyType|null} [recordKeyType] FolderRecordKey recordKeyType
          */
 
         /**
@@ -1744,6 +1745,14 @@ export const Records = $root.Records = (() => {
         FolderRecordKey.prototype.recordKey = $util.newBuffer([]);
 
         /**
+         * FolderRecordKey recordKeyType.
+         * @member {Records.RecordKeyType} recordKeyType
+         * @memberof Records.FolderRecordKey
+         * @instance
+         */
+        FolderRecordKey.prototype.recordKeyType = 0;
+
+        /**
          * Creates a new FolderRecordKey instance using the specified properties.
          * @function create
          * @memberof Records.FolderRecordKey
@@ -1777,6 +1786,8 @@ export const Records = $root.Records = (() => {
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.recordUid);
             if (message.recordKey != null && Object.hasOwnProperty.call(message, "recordKey"))
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordKey);
+            if (message.recordKeyType != null && Object.hasOwnProperty.call(message, "recordKeyType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.recordKeyType);
             return writer;
         };
 
@@ -1814,6 +1825,10 @@ export const Records = $root.Records = (() => {
                     }
                 case 3: {
                         message.recordKey = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.recordKeyType = reader.int32();
                         break;
                     }
                 default:
@@ -1857,6 +1872,42 @@ export const Records = $root.Records = (() => {
                     $util.base64.decode(object.recordKey, message.recordKey = $util.newBuffer($util.base64.length(object.recordKey)), 0);
                 else if (object.recordKey.length >= 0)
                     message.recordKey = object.recordKey;
+            switch (object.recordKeyType) {
+            default:
+                if (typeof object.recordKeyType === "number") {
+                    message.recordKeyType = object.recordKeyType;
+                    break;
+                }
+                break;
+            case "NO_KEY":
+            case 0:
+                message.recordKeyType = 0;
+                break;
+            case "ENCRYPTED_BY_DATA_KEY":
+            case 1:
+                message.recordKeyType = 1;
+                break;
+            case "ENCRYPTED_BY_PUBLIC_KEY":
+            case 2:
+                message.recordKeyType = 2;
+                break;
+            case "ENCRYPTED_BY_DATA_KEY_GCM":
+            case 3:
+                message.recordKeyType = 3;
+                break;
+            case "ENCRYPTED_BY_PUBLIC_KEY_ECC":
+            case 4:
+                message.recordKeyType = 4;
+                break;
+            case "ENCRYPTED_BY_ROOT_KEY_CBC":
+            case 5:
+                message.recordKeyType = 5;
+                break;
+            case "ENCRYPTED_BY_ROOT_KEY_GCM":
+            case 6:
+                message.recordKeyType = 6;
+                break;
+            }
             return message;
         };
 
@@ -1899,6 +1950,7 @@ export const Records = $root.Records = (() => {
                     if (options.bytes !== Array)
                         object.recordKey = $util.newBuffer(object.recordKey);
                 }
+                object.recordKeyType = options.enums === String ? "NO_KEY" : 0;
             }
             if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
                 object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
@@ -1906,6 +1958,8 @@ export const Records = $root.Records = (() => {
                 object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
             if (message.recordKey != null && Object.hasOwnProperty.call(message, "recordKey"))
                 object.recordKey = options.bytes === String ? $util.base64.encode(message.recordKey, 0, message.recordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKey) : message.recordKey;
+            if (message.recordKeyType != null && Object.hasOwnProperty.call(message, "recordKeyType"))
+                object.recordKeyType = options.enums === String ? $root.Records.RecordKeyType[message.recordKeyType] === undefined ? message.recordKeyType : $root.Records.RecordKeyType[message.recordKeyType] : message.recordKeyType;
             return object;
         };
 

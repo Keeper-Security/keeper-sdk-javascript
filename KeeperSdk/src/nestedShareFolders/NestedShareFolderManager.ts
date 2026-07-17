@@ -67,21 +67,33 @@ import type {
   GetNsfResult,
   GetNsfRecordDetailsInput,
   GetNsfRecordDetailsResult,
+  KeepNsfShortcutInput,
+  KeepNsfShortcutResult,
   LinkNsfRecordResult,
   ListNsfFormatInput,
   ListNsfOptions,
   ListNsfRow,
+  ListNsfShortcutsOptions,
   MkdirNsfInput,
   MkdirNsfResult,
   NsfFolderView,
   NsfRecordView,
+  NsfShortcutRow,
   RemoveNsfFolderInput,
   RemoveNsfFolderResult,
   RemoveNsfRecordInput,
   RemoveNsfRecordResult,
+  ShareNestedShareFolderInput,
+  ShareNestedShareFolderResult,
+  ShareNestedShareRecordInput,
+  ShareNestedShareRecordResult,
+  TransferNestedShareRecordInput,
+  TransferNestedShareRecordResult,
   UpdateNsfRecordInput,
   UpdateNsfRecordItemInput,
   UpdateNsfRecordsInput,
+  UpdateNsfRecordPermissionInput,
+  UpdateNsfRecordPermissionResult,
   UpdateNsfRecordResult,
   UpdateNsfRecordResultItem,
 } from "./nsfTypes";
@@ -91,26 +103,6 @@ import type {
   UpdateNsfFolderResult,
   UpdateNsfFoldersResult,
 } from "./updateNsfFolder";
-import type {
-  ShareNestedShareFolderInput,
-  ShareNestedShareFolderResult,
-  ShareNestedShareRecordInput,
-  ShareNestedShareRecordResult,
-} from "./nsfShare";
-import type {
-  ListNsfShortcutsOptions,
-  NsfShortcutRow,
-  KeepNsfShortcutInput,
-  KeepNsfShortcutResult,
-} from "./nsfShortcut";
-import type {
-  TransferNestedShareRecordInput,
-  TransferNestedShareRecordResult,
-} from "./nsfTransferRecord";
-import type {
-  UpdateNsfRecordPermissionInput,
-  UpdateNsfRecordPermissionResult,
-} from "./nsfRecordPermission";
 
 export type AuthProvider = () => Auth;
 
