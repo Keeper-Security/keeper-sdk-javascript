@@ -50,6 +50,8 @@ export enum AddTeamStatus {
 export enum AddTeamSkipReason {
     AlreadyExistsInParent = 'already_exists_in_parent',
     ExistsElsewhereDeclined = 'exists_elsewhere_declined',
+    NotQueued = 'not_queued',
+    AlreadyActive = 'already_active',
 }
 
 export enum AddTeamSourceKind {
@@ -77,6 +79,8 @@ export type AddTeamInput = {
     restrictView?: TeamRestrictionInput
     force?: boolean
     confirm?: AddTeamConfirm
+    /** When true, only promote queued teams (SCIM/Bridge); do not create new teams. */
+    approveQueued?: boolean
 }
 
 export type AddTeamItemResult = {
@@ -138,6 +142,7 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
     }
 
     const force = input.force === true
+    const approveQueued = input.approveQueued === true
     const restrictEdit = resolveRestriction(input.restrictEdit)
     const restrictShare = resolveRestriction(input.restrictShare)
     const restrictView = resolveRestriction(input.restrictView)
@@ -182,6 +187,32 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
                 teamName: queued.name || raw,
                 queued,
             })
+            continue
+        }
+
+        if (approveQueued) {
+            const conflicts = teamsByLowerName.get(lower) || []
+            if (conflicts.length > 0) {
+                items.push({
+                    teamUid: conflicts[0]!.team_uid,
+                    teamName: conflicts[0]!.name || raw,
+                    nodeId: conflicts[0]!.node_id,
+                    source: AddTeamSourceKind.NewName,
+                    status: AddTeamStatus.Skipped,
+                    skipReason: AddTeamSkipReason.AlreadyActive,
+                    message: `Team "${conflicts[0]!.name || raw}" already exists (not queued).`,
+                })
+            } else {
+                items.push({
+                    teamUid: '',
+                    teamName: raw,
+                    nodeId: parentNodeId,
+                    source: AddTeamSourceKind.NewName,
+                    status: AddTeamStatus.Failed,
+                    skipReason: AddTeamSkipReason.NotQueued,
+                    message: `Team "${raw}" is not in the approval queue.`,
+                })
+            }
             continue
         }
 
@@ -246,8 +277,9 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
     }
 
     for (const request of planned) {
+        const nodeIdForAdd = request.kind === AddTeamSourceKind.QueuedTeam ? request.queued.node_id : parentNodeId
         try {
-            await sendTeamAdd(auth, request, parentNodeId, dataKey, treeKey, {
+            await sendTeamAdd(auth, request, nodeIdForAdd, dataKey, treeKey, {
                 restrictEdit,
                 restrictShare,
                 restrictView,
@@ -255,7 +287,7 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
             items.push({
                 teamUid: request.teamUid,
                 teamName: request.teamName,
-                nodeId: parentNodeId,
+                nodeId: nodeIdForAdd,
                 source: request.kind,
                 status: AddTeamStatus.Created,
             })
@@ -263,7 +295,7 @@ export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeam
             items.push({
                 teamUid: request.teamUid,
                 teamName: request.teamName,
-                nodeId: parentNodeId,
+                nodeId: nodeIdForAdd,
                 source: request.kind,
                 status: AddTeamStatus.Failed,
                 message: extractErrorMessage(err),

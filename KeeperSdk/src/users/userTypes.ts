@@ -50,6 +50,8 @@ export enum UserAction {
     Lock = 'lock',
     Unlock = 'unlock',
     ExpirePassword = 'expire_password',
+    Extend = 'extend',
+    Disable2fa = 'disable_2fa',
 }
 
 export enum UserActionStatus {

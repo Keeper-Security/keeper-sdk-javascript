@@ -1,4 +1,5 @@
 import {
+    createInMessage,
     Enterprise,
     enterpriseUsersLockMessage,
     type Auth,
@@ -23,8 +24,13 @@ export { UserAction, UserActionStatus, UserActionSkipReason }
 export type { UserActionInput, UserActionItemResult, UserActionResult, FormattedUserActionTable }
 
 const EXPIRE_PASSWORD_COMMAND = 'set_master_password_expire'
+const EXTEND_TRANSFER_COMMAND = 'extend_account_share_expiration'
 const ALL_USERS_SENTINEL = '@all'
-const ACTIONS_NOT_SUPPORTING_ALL = new Set<UserAction>([UserAction.Lock, UserAction.ExpirePassword])
+const ACTIONS_NOT_SUPPORTING_ALL = new Set<UserAction>([
+    UserAction.Lock,
+    UserAction.ExpirePassword,
+    UserAction.Disable2fa,
+])
 const LOCK_UNLOCK_BATCH_SIZE = 1000
 const SELF_ACTION_MESSAGE = 'This operation cannot be done on yourself.'
 
@@ -34,6 +40,10 @@ const USER_ACTION_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Detail']
 
 type ExpirePasswordPayload = {
     email: string
+}
+
+type ExtendTransferPayload = {
+    enterprise_user_id: number
 }
 
 type ActionUserTarget = { kind: 'user'; user: EnterpriseUser } | { kind: 'not_found'; identifier: string }
@@ -65,6 +75,7 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
 
     const items: UserActionItemResult[] = []
     const batchTargets = new Map<number, UserActionItemResult>()
+    const disable2faTargets = new Map<number, UserActionItemResult>()
 
     for (const target of targets) {
         if (target.kind === 'not_found') {
@@ -107,8 +118,17 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
             continue
         }
 
+        if (input.action === UserAction.Disable2fa) {
+            disable2faTargets.set(user.enterprise_user_id, item)
+            continue
+        }
+
         try {
-            await sendExpirePassword(auth, user.username)
+            if (input.action === UserAction.Extend) {
+                await sendExtendTransferConsent(auth, user.enterprise_user_id)
+            } else {
+                await sendExpirePassword(auth, user.username)
+            }
             item.status = UserActionStatus.Success
         } catch (err) {
             item.message = extractErrorMessage(err)
@@ -117,6 +137,10 @@ export async function actionUsers(auth: Auth, input: UserActionInput): Promise<U
 
     if (input.action === UserAction.Lock || input.action === UserAction.Unlock) {
         await sendBatchLockUnlock(auth, input.action, batchTargets)
+    }
+
+    if (input.action === UserAction.Disable2fa) {
+        await sendDisableTwoFa(auth, disable2faTargets)
     }
 
     return finalizeResult(items)
@@ -230,6 +254,50 @@ async function sendExpirePassword(auth: Auth, email: string): Promise<void> {
             response.message || response.result_code || `${EXPIRE_PASSWORD_COMMAND} failed for "${maskEmail(email)}"`,
             response.result_code || ResultCodes.USER_ACTION_FAILED
         )
+    }
+}
+
+async function sendExtendTransferConsent(auth: Auth, enterpriseUserId: number): Promise<void> {
+    const command: RestCommand<ExtendTransferPayload, KeeperResponse> = {
+        baseRequest: { command: EXTEND_TRANSFER_COMMAND },
+        request: { enterprise_user_id: enterpriseUserId },
+        authorization: {},
+    }
+    const response = await auth.executeRestCommand(command)
+    const result = (response.result || '').toLowerCase()
+    if (result && result !== 'success') {
+        throw new KeeperSdkError(
+            response.message ||
+                response.result_code ||
+                `${EXTEND_TRANSFER_COMMAND} failed for user id ${enterpriseUserId}`,
+            response.result_code || ResultCodes.USER_ACTION_FAILED
+        )
+    }
+}
+
+async function sendDisableTwoFa(auth: Auth, targets: Map<number, UserActionItemResult>): Promise<void> {
+    if (targets.size === 0) {
+        return
+    }
+
+    const enterpriseUserIds = [...targets.keys()]
+    try {
+        await auth.executeRestAction(
+            createInMessage(
+                { enterpriseUserId: enterpriseUserIds },
+                'enterprise/disable_two_fa',
+                Enterprise.EnterpriseUserIds
+            )
+        )
+        for (const item of targets.values()) {
+            item.status = UserActionStatus.Success
+        }
+    } catch (err) {
+        const message = extractErrorMessage(err)
+        for (const item of targets.values()) {
+            item.status = UserActionStatus.Failed
+            item.message = message
+        }
     }
 }
 
