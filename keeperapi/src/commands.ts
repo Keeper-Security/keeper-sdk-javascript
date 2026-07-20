@@ -235,11 +235,14 @@ export const roleDeleteCommand = (request: RoleDeleteRequest): RestCommand<RoleD
 export type RoleUserAddRequest = {
     role_id: number
     enterprise_user_id: number
+    tree_key?: string
+    tree_key_type?: string | number
+    role_admin_key?: string
+    role_admin_key_type?: string | number
 }
 
-export const roleUserAddCommand = (
-    request: RoleUserAddRequest
-): RestCommand<RoleUserAddRequest, KeeperResponse> => createCommand(request, 'role_user_add')
+export const roleUserAddCommand = (request: RoleUserAddRequest): RestCommand<RoleUserAddRequest, KeeperResponse> =>
+    createCommand(request, 'role_user_add')
 
 export type RoleUserRemoveRequest = {
     role_id: number
@@ -253,7 +256,12 @@ export const roleUserRemoveCommand = (
 export type RoleManagedNodeTreeKey = {
     enterprise_user_id: number
     tree_key: string
-    tree_key_type?: number
+    tree_key_type?: string | number
+}
+
+export type RoleManagedNodeAddResponse = KeeperResponse & {
+    missing_tree_keys?: Record<string, string>
+    missing_ecc_tree_keys?: Record<string, string>
 }
 
 export type RoleManagedNodeAddRequest = {
@@ -265,7 +273,7 @@ export type RoleManagedNodeAddRequest = {
 
 export const roleManagedNodeAddCommand = (
     request: RoleManagedNodeAddRequest
-): RestCommand<RoleManagedNodeAddRequest, KeeperResponse> => createCommand(request, 'role_managed_node_add')
+): RestCommand<RoleManagedNodeAddRequest, RoleManagedNodeAddResponse> => createCommand(request, 'role_managed_node_add')
 
 export type RoleManagedNodeUpdateRequest = {
     role_id: number
@@ -287,6 +295,19 @@ export const roleManagedNodeRemoveCommand = (
     request: RoleManagedNodeRemoveRequest
 ): RestCommand<RoleManagedNodeRemoveRequest, KeeperResponse> => createCommand(request, 'role_managed_node_remove')
 
+/** Role AES key encrypted for an admin user (TRANSFER_ACCOUNT backward compat). */
+export type ManagedNodeRoleKey = {
+    enterprise_user_id: number
+    role_key: string
+    tree_key_type?: string | number
+}
+
+/** MSP tree key for MANAGE_COMPANIES privilege. */
+export type ManagedNodeMspKey = {
+    mc_enterprise_id: number
+    tree_key: string
+}
+
 export type ManagedNodePrivilegeAddRequest = {
     role_id: number
     managed_node_id: number
@@ -294,12 +315,22 @@ export type ManagedNodePrivilegeAddRequest = {
     role_key_enc_with_tree_key?: string
     role_public_key?: string
     role_private_key?: string
-    role_keys?: unknown[]
+    role_keys?: ManagedNodeRoleKey[]
+    msp_keys?: ManagedNodeMspKey[]
+}
+
+export type ManagedNodePrivilegeAddResponse = KeeperResponse & {
+    status?: {
+        missing_keys?: Record<string, string>
+        invalid_users?: number[]
+        cant_be_pending?: number[]
+    }
 }
 
 export const managedNodePrivilegeAddCommand = (
     request: ManagedNodePrivilegeAddRequest
-): RestCommand<ManagedNodePrivilegeAddRequest, KeeperResponse> => createCommand(request, 'managed_node_privilege_add')
+): RestCommand<ManagedNodePrivilegeAddRequest, ManagedNodePrivilegeAddResponse> =>
+    createCommand(request, 'managed_node_privilege_add')
 
 export type ManagedNodePrivilegeRemoveRequest = {
     role_id: number
