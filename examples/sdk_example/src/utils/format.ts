@@ -2,6 +2,9 @@ import {
     EMAIL_LIST_SEPARATOR_PATTERN,
     EMAIL_PATTERN,
     isValidEmail,
+    logger,
+    parseShareExpirationValue,
+    prompt,
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 
@@ -55,6 +58,26 @@ export function splitCommaSeparated(input: string): string[] {
         .split(',')
         .map((item) => item.trim())
         .filter((item) => item.length > 0)
+}
+
+const SHARE_EXPIRE_IN_RE =
+    /^(\d+)\s*(mi(?:nutes?)?|h(?:ours?)?|d(?:ays?)?|mo(?:nths?)?|y(?:ears?)?)$/i
+
+export async function promptShareExpiration(
+    cmdName: 'nsf-share-folder' | 'nsf-share-record'
+): Promise<{ expireAt?: string; expireIn?: string }> {
+    logger.info(
+        'Expiration: Enter to skip, never, ISO datetime (2027-01-01T00:00:00Z), or period (30d, 6mo, 1y, 24h, 30mi)'
+    )
+    const value = (await prompt('Share expiration: ')).trim()
+    if (!value) return {}
+
+    if (SHARE_EXPIRE_IN_RE.test(value)) {
+        return { expireIn: value }
+    }
+
+    parseShareExpirationValue(value, cmdName)
+    return { expireAt: value }
 }
 
 export function parseEmails(raw: string): { emails: string[]; invalid: string[] } {

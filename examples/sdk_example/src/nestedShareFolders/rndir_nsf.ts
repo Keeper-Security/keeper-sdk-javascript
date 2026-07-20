@@ -8,7 +8,7 @@ import {
     type NsfFolderColorInput,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../utils/runner'
-import { withSuppressedLogs } from '../utils/format'
+import { isYes, withSuppressedLogs } from '../utils/format'
 
 async function rndirNsf() {
     const vault = await login()
@@ -22,7 +22,7 @@ async function rndirNsf() {
 
         const name = (await prompt('New name (optional): ')).trim()
         const colorInput = (await prompt(`New color (${NSF_FOLDER_COLORS.join(', ')}, optional): `)).trim()
-        const quietInput = (await prompt('Quiet mode? (y/N): ')).trim().toLowerCase()
+        const quiet = isYes(await prompt('Quiet mode? (y/N): '))
 
         if (!name && !colorInput) {
             logger.info('New folder name and/or color parameters are required.')
@@ -34,7 +34,7 @@ async function rndirNsf() {
                 folder,
                 name: name || undefined,
                 color: colorInput ? (colorInput as NsfFolderColorInput) : undefined,
-                quiet: quietInput === 'y' || quietInput === 'yes',
+                quiet,
             })
         )
 
