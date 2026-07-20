@@ -1,13 +1,8 @@
 import {
-    Enterprise,
-    getPublicKeysMessage,
-    platform,
     roleManagedNodeAddCommand,
     roleManagedNodeRemoveCommand,
     roleManagedNodeUpdateCommand,
-    webSafe64FromBytes,
     type Auth,
-    type Authentication,
     type RoleManagedNodeTreeKey,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, logger, ResultCodes } from '../utils'
@@ -30,6 +25,12 @@ import {
     resolveToggle,
     type RoleToggleInput,
 } from './roleUtils'
+import {
+    encryptForUserPublicKey,
+    fetchUserPublicKeys,
+    getMissingTreeKeyMaps,
+    buildTreeKeysFromProvidedPublicKeys,
+} from './roleCrypto'
 
 const MANAGE_NODE_BASE_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
@@ -79,11 +80,6 @@ export type FormattedManageRoleNodesTable = {
     summary: string
 }
 
-type UserPublicKeys = {
-    rsaPublicKey: Uint8Array | null
-    eccPublicKey: Uint8Array | null
-}
-
 function findLink(
     links: EnterpriseRoleManagedNodeLink[],
     roleId: number,
@@ -94,53 +90,6 @@ function findLink(
 
 function roleDisplayName(role: EnterpriseRole): string {
     return (role.displayName || '').trim() || String(role.role_id)
-}
-
-async function fetchUserPublicKeys(auth: Auth, emails: string[]): Promise<Map<string, UserPublicKeys>> {
-    const result = new Map<string, UserPublicKeys>()
-    if (emails.length === 0) return result
-
-    let response: Authentication.IGetPublicKeysResponse
-    try {
-        response = await auth.executeRest(getPublicKeysMessage({ usernames: emails }))
-    } catch (err) {
-        logger.warn(`Failed to fetch public keys: ${extractErrorMessage(err)}`)
-        return result
-    }
-
-    for (const entry of response.keyResponses || []) {
-        const username = (entry.username || '').toLowerCase()
-        if (!username || entry.errorCode) continue
-        result.set(username, {
-            rsaPublicKey: entry.publicKey && entry.publicKey.length > 0 ? entry.publicKey : null,
-            eccPublicKey: entry.publicEccKey && entry.publicEccKey.length > 0 ? entry.publicEccKey : null,
-        })
-    }
-    return result
-}
-
-async function encryptTreeKeyForUser(
-    treeKey: Uint8Array,
-    publicKeys: UserPublicKeys,
-    enterpriseUserId: number
-): Promise<RoleManagedNodeTreeKey | null> {
-    if (publicKeys.rsaPublicKey) {
-        const encrypted = platform.publicEncrypt(treeKey, platform.bytesToBase64(publicKeys.rsaPublicKey))
-        return {
-            enterprise_user_id: enterpriseUserId,
-            tree_key: webSafe64FromBytes(encrypted),
-            tree_key_type: Enterprise.EncryptedKeyType.KT_ENCRYPTED_BY_PUBLIC_KEY,
-        }
-    }
-    if (publicKeys.eccPublicKey) {
-        const encrypted = await platform.publicEncryptEC(treeKey, publicKeys.eccPublicKey)
-        return {
-            enterprise_user_id: enterpriseUserId,
-            tree_key: webSafe64FromBytes(encrypted),
-            tree_key_type: Enterprise.EncryptedKeyType.KT_ENCRYPTED_BY_PUBLIC_KEY_ECC,
-        }
-    }
-    return null
 }
 
 async function buildTreeKeysForRole(
@@ -167,8 +116,13 @@ async function buildTreeKeysForRole(
             )
             continue
         }
-        const entry = await encryptTreeKeyForUser(treeKey, publicKeys, userId)
-        if (entry) treeKeys.push(entry)
+        const encrypted = await encryptForUserPublicKey(treeKey, publicKeys)
+        if (!encrypted) continue
+        treeKeys.push({
+            enterprise_user_id: userId,
+            tree_key: encrypted.ciphertext,
+            tree_key_type: encrypted.keyType,
+        })
     }
     return treeKeys
 }
@@ -250,19 +204,37 @@ export async function manageRoleNodes(auth: Auth, input: ManageRoleNodesInput): 
                         usersById,
                         treeKey as Uint8Array
                     )
-                    const addResponse = await auth.executeRestCommand(
-                        roleManagedNodeAddCommand({
-                            role_id: role.role_id,
-                            managed_node_id: node.node_id,
-                            cascade_node_management: cascade ?? false,
-                            tree_keys: treeKeys.length > 0 ? treeKeys : undefined,
-                        })
-                    )
-                    assertCommandSucceeded(
-                        addResponse,
-                        `role_managed_node_add failed for role_id=${role.role_id}, node_id=${node.node_id}`,
-                        ResultCodes.ROLE_MANAGED_NODE_ADD_FAILED
-                    )
+                    const addPayload = {
+                        role_id: role.role_id,
+                        managed_node_id: node.node_id,
+                        cascade_node_management: cascade ?? false,
+                        tree_keys: treeKeys.length > 0 ? treeKeys : undefined,
+                    }
+                    try {
+                        const addResponse = await auth.executeRestCommand(roleManagedNodeAddCommand(addPayload))
+                        assertCommandSucceeded(
+                            addResponse,
+                            `role_managed_node_add failed for role_id=${role.role_id}, node_id=${node.node_id}`,
+                            ResultCodes.ROLE_MANAGED_NODE_ADD_FAILED
+                        )
+                    } catch (err) {
+                        const missing = getMissingTreeKeyMaps(err)
+                        if (!missing || !treeKey) throw err
+                        // API: encrypt tree key with returned public keys and resend.
+                        const retryKeys = await buildTreeKeysFromProvidedPublicKeys(treeKey, missing.rsa, missing.ecc)
+                        const merged = [...(addPayload.tree_keys || []), ...retryKeys]
+                        const retryResponse = await auth.executeRestCommand(
+                            roleManagedNodeAddCommand({
+                                ...addPayload,
+                                tree_keys: merged.length > 0 ? merged : undefined,
+                            })
+                        )
+                        assertCommandSucceeded(
+                            retryResponse,
+                            `role_managed_node_add retry failed for role_id=${role.role_id}, node_id=${node.node_id}`,
+                            ResultCodes.ROLE_MANAGED_NODE_ADD_FAILED
+                        )
+                    }
                     items.push({
                         roleId: role.role_id,
                         roleName,

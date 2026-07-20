@@ -1,15 +1,21 @@
 import {
-    encryptForStorage,
     encryptKey,
     generateEncryptionKey,
     managedNodePrivilegeAddCommand,
     managedNodePrivilegeRemoveCommand,
     platform,
     type Auth,
+    type ManagedNodeMspKey,
     type ManagedNodePrivilegeAddRequest,
+    type ManagedNodeRoleKey,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
-import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
+import {
+    EnterpriseDataInclude,
+    EnterpriseDataManager,
+    type EnterpriseRoleUserLink,
+    type EnterpriseUser,
+} from '../teams/enterpriseData'
 import { applyDecryptedNodeNames, applyEnterpriseNameToRoot, resolveParentNode } from '../teams/teamUtils'
 import {
     applyDecryptedRoleNames,
@@ -18,21 +24,26 @@ import {
     normalizeIdentifiers,
     resolveExistingRoles,
 } from './roleUtils'
+import {
+    buildRoleKeysFromProvidedPublicKeys,
+    encryptForUserPublicKey,
+    fetchUserPublicKeys,
+    getMissingRoleKeyMap,
+} from './roleCrypto'
 
 /**
- * Privileges that grant the underlying managed node the ability to act on the enterprise's
- * behalf (transfer another user's vault, or administer managed companies). Commander protects
- * these operations with a per-role AES key (encrypted with the enterprise tree key) plus an
- * RSA keypair for the role. The exact wire contract for `role_key_enc_with_tree_key` /
- * `role_public_key` / `role_private_key` has not been verified against a live server in this
- * SDK; treat this path as best-effort/experimental. Regular privileges do not need any of this.
+ * API: transfer_account requires role key material (RSA fields deprecated for EC migration but
+ * still required for Commander/bridge). manage_companies uses msp_keys, not role keys.
  */
-const SPECIAL_PRIVILEGES = new Set(['transfer_account', 'manage_companies'])
+const TRANSFER_ACCOUNT = 'transfer_account'
+const MANAGE_COMPANIES = 'manage_companies'
 
 const ROLE_PRIVILEGE_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
     EnterpriseDataInclude.Roles,
     EnterpriseDataInclude.ManagedNodes,
+    EnterpriseDataInclude.Users,
+    EnterpriseDataInclude.RoleUsers,
 ]
 
 const ROLE_PRIVILEGE_TABLE_HEADERS = ['#', 'Status', 'Action', 'Privilege', 'Detail']
@@ -49,6 +60,8 @@ export type ChangeRolePrivilegesInput = {
     node: string | number
     add?: string[]
     remove?: string[]
+    /** Required by API when adding manage_companies. */
+    mspKeys?: ManagedNodeMspKey[]
 }
 
 export type RolePrivilegeItemResult = {
@@ -78,19 +91,84 @@ export type FormattedRolePrivilegeTable = {
 }
 
 type RoleKeyMaterial = {
+    roleKey: Uint8Array
     role_key_enc_with_tree_key: string
     role_public_key: string
     role_private_key: string
+    role_keys?: ManagedNodeRoleKey[]
 }
 
-async function buildRoleKeyMaterial(treeKey: Uint8Array): Promise<RoleKeyMaterial> {
-    const roleKey = generateEncryptionKey()
+async function buildRoleKeyMaterial(
+    auth: Auth,
+    treeKey: Uint8Array,
+    roleKey: Uint8Array,
+    roleUserLinks: EnterpriseRoleUserLink[],
+    usersById: Map<number, EnterpriseUser>,
+    roleId: number
+): Promise<RoleKeyMaterial> {
     const roleKeyEncWithTreeKey = await encryptKey(roleKey, treeKey)
     const { privateKey, publicKey } = await platform.generateRSAKeyPair()
+    const rolePrivateKey = await encryptKey(privateKey, roleKey)
+
+    const memberIds = roleUserLinks.filter((link) => link.role_id === roleId).map((link) => link.enterprise_user_id)
+    const emails = memberIds.map((id) => usersById.get(id)?.username).filter((email): email is string => !!email)
+    const publicKeyMap = await fetchUserPublicKeys(auth, emails)
+
+    const roleKeys: ManagedNodeRoleKey[] = []
+    for (const userId of memberIds) {
+        const user = usersById.get(userId)
+        if (!user?.username) continue
+        const publicKeys = publicKeyMap.get(user.username.toLowerCase())
+        if (!publicKeys) continue
+        const encrypted = await encryptForUserPublicKey(roleKey, publicKeys)
+        if (!encrypted) continue
+        roleKeys.push({
+            enterprise_user_id: userId,
+            role_key: encrypted.ciphertext,
+            tree_key_type: encrypted.keyType,
+        })
+    }
+
     return {
+        roleKey,
         role_key_enc_with_tree_key: roleKeyEncWithTreeKey,
         role_public_key: platform.bytesToBase64(publicKey),
-        role_private_key: await encryptForStorage(privateKey, roleKey),
+        role_private_key: rolePrivateKey,
+        role_keys: roleKeys.length > 0 ? roleKeys : undefined,
+    }
+}
+
+async function addTransferAccountPrivilege(
+    auth: Auth,
+    payload: ManagedNodePrivilegeAddRequest,
+    roleKeyMaterial: RoleKeyMaterial
+): Promise<void> {
+    Object.assign(payload, {
+        role_key_enc_with_tree_key: roleKeyMaterial.role_key_enc_with_tree_key,
+        role_public_key: roleKeyMaterial.role_public_key,
+        role_private_key: roleKeyMaterial.role_private_key,
+        role_keys: roleKeyMaterial.role_keys,
+    })
+
+    try {
+        const addResponse = await auth.executeRestCommand(managedNodePrivilegeAddCommand(payload))
+        assertCommandSucceeded(
+            addResponse,
+            `managed_node_privilege_add failed for privilege=${TRANSFER_ACCOUNT}`,
+            ResultCodes.ROLE_PRIVILEGE_ADD_FAILED
+        )
+    } catch (err) {
+        const missing = getMissingRoleKeyMap(err)
+        if (!missing) throw err
+        // API: encrypt role_key for missing admins and resend.
+        const extraKeys = buildRoleKeysFromProvidedPublicKeys(roleKeyMaterial.roleKey, missing)
+        payload.role_keys = [...(payload.role_keys || []), ...extraKeys]
+        const retryResponse = await auth.executeRestCommand(managedNodePrivilegeAddCommand(payload))
+        assertCommandSucceeded(
+            retryResponse,
+            `managed_node_privilege_add retry failed for privilege=${TRANSFER_ACCOUNT}`,
+            ResultCodes.ROLE_PRIVILEGE_ADD_FAILED
+        )
     }
 }
 
@@ -110,6 +188,13 @@ export async function changeRolePrivileges(
     const removePrivileges = normalizeIdentifiers(input.remove ?? []).map((p) => p.toLowerCase())
     if (addPrivileges.length === 0 && removePrivileges.length === 0) {
         throw new KeeperSdkError('No privileges specified. Use add and/or remove.', ResultCodes.NO_PRIVILEGES_SPECIFIED)
+    }
+
+    if (addPrivileges.includes(MANAGE_COMPANIES) && (!input.mspKeys || input.mspKeys.length === 0)) {
+        throw new KeeperSdkError(
+            'manage_companies requires mspKeys (mc_enterprise_id + tree_key per managed company).',
+            ResultCodes.NO_PRIVILEGES_SPECIFIED
+        )
     }
 
     const enterpriseData = new EnterpriseDataManager(auth)
@@ -142,21 +227,34 @@ export async function changeRolePrivileges(
         )
     }
 
-    const needsRoleKeyMaterial = addPrivileges.some((p) => SPECIAL_PRIVILEGES.has(p))
-    const treeKey = needsRoleKeyMaterial ? await enterpriseData.getTreeKey() : null
-    if (needsRoleKeyMaterial && !treeKey) {
-        throw new KeeperSdkError(
-            'Enterprise tree key is unavailable; cannot grant transfer_account/manage_companies.',
-            ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
+    const needsTransferKeys = addPrivileges.includes(TRANSFER_ACCOUNT)
+    let roleKeyMaterial: RoleKeyMaterial | null = null
+    if (needsTransferKeys) {
+        const treeKey = await enterpriseData.getTreeKey()
+        if (!treeKey) {
+            throw new KeeperSdkError(
+                'Enterprise tree key is unavailable; cannot grant transfer_account.',
+                ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
+            )
+        }
+        const roleKey = (await enterpriseData.getRoleKey(role.role_id)) ?? generateEncryptionKey()
+        const usersById = new Map<number, EnterpriseUser>()
+        for (const user of response.users || []) usersById.set(user.enterprise_user_id, user)
+        roleKeyMaterial = await buildRoleKeyMaterial(
+            auth,
+            treeKey,
+            roleKey,
+            response.role_users || [],
+            usersById,
+            role.role_id
         )
     }
-    const roleKeyMaterial = treeKey ? await buildRoleKeyMaterial(treeKey) : null
 
     const items: RolePrivilegeItemResult[] = []
 
     for (const privilege of removePrivileges) {
         try {
-            const response = await auth.executeRestCommand(
+            const removeResponse = await auth.executeRestCommand(
                 managedNodePrivilegeRemoveCommand({
                     role_id: role.role_id,
                     managed_node_id: node.node_id,
@@ -164,7 +262,7 @@ export async function changeRolePrivileges(
                 })
             )
             assertCommandSucceeded(
-                response,
+                removeResponse,
                 `managed_node_privilege_remove failed for privilege=${privilege}`,
                 ResultCodes.ROLE_PRIVILEGE_REMOVE_FAILED
             )
@@ -190,15 +288,19 @@ export async function changeRolePrivileges(
                 managed_node_id: node.node_id,
                 privilege,
             }
-            if (SPECIAL_PRIVILEGES.has(privilege) && roleKeyMaterial) {
-                Object.assign(payload, roleKeyMaterial)
+            if (privilege === MANAGE_COMPANIES && input.mspKeys) {
+                payload.msp_keys = input.mspKeys
             }
-            const response = await auth.executeRestCommand(managedNodePrivilegeAddCommand(payload))
-            assertCommandSucceeded(
-                response,
-                `managed_node_privilege_add failed for privilege=${privilege}`,
-                ResultCodes.ROLE_PRIVILEGE_ADD_FAILED
-            )
+            if (privilege === TRANSFER_ACCOUNT && roleKeyMaterial) {
+                await addTransferAccountPrivilege(auth, payload, roleKeyMaterial)
+            } else {
+                const addResponse = await auth.executeRestCommand(managedNodePrivilegeAddCommand(payload))
+                assertCommandSucceeded(
+                    addResponse,
+                    `managed_node_privilege_add failed for privilege=${privilege}`,
+                    ResultCodes.ROLE_PRIVILEGE_ADD_FAILED
+                )
+            }
             items.push({
                 privilege,
                 action: 'add',

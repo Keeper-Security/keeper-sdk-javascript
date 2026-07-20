@@ -1,9 +1,15 @@
-import { roleUserAddCommand, roleUserRemoveCommand, type Auth } from '@keeper-security/keeperapi'
+import {
+    roleUserAddCommand,
+    roleUserRemoveCommand,
+    type Auth,
+    type RoleUserAddRequest,
+} from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
     type EnterpriseRole,
+    type EnterpriseRoleManagedNodeLink,
     type EnterpriseRoleUserLink,
     type EnterpriseUser,
 } from '../teams/enterpriseData'
@@ -14,11 +20,13 @@ import {
     normalizeIdentifiers,
     resolveExistingRoles,
 } from './roleUtils'
+import { encryptForUserPublicKey, fetchUserPublicKeys, type UserPublicKeys } from './roleCrypto'
 
 const ROLE_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Roles,
     EnterpriseDataInclude.Users,
     EnterpriseDataInclude.RoleUsers,
+    EnterpriseDataInclude.ManagedNodes,
 ]
 
 const ROLE_USER_TABLE_HEADERS = ['#', 'Status', 'User Email', 'User ID', 'Role Name', 'Role ID', 'Detail']
@@ -38,6 +46,11 @@ export enum RoleUserSkipReason {
 export type AddUsersToRolesInput = {
     roles: string[]
     users: string[]
+    /**
+     * When true, always send tree_key (admin role with managed nodes).
+     * When false, never. When omitted, send tree_key iff the role manages nodes (API contract).
+     */
+    admin?: boolean
 }
 
 export type RemoveUsersFromRolesInput = {
@@ -70,14 +83,29 @@ export type FormattedRoleUserTable = {
 }
 
 type RoleUserContext = {
+    enterpriseData: EnterpriseDataManager
     roles: EnterpriseRole[]
     users: EnterpriseUser[]
     membership: Set<string>
+    /** Roles that manage at least one node — API requires tree_key on role_user_add. */
+    managedNodeRoleIds: Set<number>
+    forceAdmin: boolean | undefined
 }
 
 const membershipKey = (roleId: number, userId: number): string => `${roleId}:${userId}`
 
-async function loadRoleUserContext(auth: Auth, rawRoles: string[], rawUsers: string[]): Promise<RoleUserContext> {
+function buildManagedNodeRoleIds(managedNodes: EnterpriseRoleManagedNodeLink[] | undefined): Set<number> {
+    const set = new Set<number>()
+    for (const m of managedNodes || []) set.add(m.role_id)
+    return set
+}
+
+async function loadRoleUserContext(
+    auth: Auth,
+    rawRoles: string[],
+    rawUsers: string[],
+    admin?: boolean
+): Promise<RoleUserContext> {
     const roleIdentifiers = normalizeIdentifiers(rawRoles)
     if (roleIdentifiers.length === 0) {
         throw new KeeperSdkError('No roles specified.', ResultCodes.ROLE_REQUIRED)
@@ -97,9 +125,12 @@ async function loadRoleUserContext(auth: Auth, rawRoles: string[], rawUsers: str
     applyDecryptedRoleNames(roles, displayNames.roles)
 
     return {
+        enterpriseData,
         roles: resolveExistingRoles(roles, roleIdentifiers),
         users: resolveExistingUsers(response.users || [], userIdentifiers),
         membership: buildMembershipSet(response.role_users),
+        managedNodeRoleIds: buildManagedNodeRoleIds(response.managed_nodes),
+        forceAdmin: admin,
     }
 }
 
@@ -124,11 +155,102 @@ function buildItemBase(user: EnterpriseUser, role: EnterpriseRole): Omit<RoleUse
     }
 }
 
+function needsTreeKey(ctx: RoleUserContext, roleId: number): boolean {
+    if (ctx.forceAdmin === true) return true
+    if (ctx.forceAdmin === false) return false
+    return ctx.managedNodeRoleIds.has(roleId)
+}
+
+async function buildRoleUserAddRequest(
+    role: EnterpriseRole,
+    user: EnterpriseUser,
+    publicKeys: UserPublicKeys | undefined,
+    treeKey: Uint8Array | null,
+    roleKey: Uint8Array | null,
+    includeTreeKey: boolean
+): Promise<RoleUserAddRequest> {
+    const request: RoleUserAddRequest = {
+        role_id: role.role_id,
+        enterprise_user_id: user.enterprise_user_id,
+    }
+
+    if (includeTreeKey) {
+        if (!treeKey) {
+            throw new KeeperSdkError(
+                'Enterprise tree key is unavailable (missing_tree_key).',
+                ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
+            )
+        }
+        if (!publicKeys) {
+            throw new KeeperSdkError(
+                `User "${user.username}": public key is not available`,
+                ResultCodes.ROLE_USER_ADD_FAILED
+            )
+        }
+        const treeEncrypted = await encryptForUserPublicKey(treeKey, publicKeys)
+        if (!treeEncrypted) {
+            throw new KeeperSdkError(
+                `User "${user.username}": public key is not available`,
+                ResultCodes.ROLE_USER_ADD_FAILED
+            )
+        }
+        request.tree_key = treeEncrypted.ciphertext
+        request.tree_key_type = treeEncrypted.keyType
+    }
+
+    if (roleKey) {
+        if (!publicKeys) {
+            throw new KeeperSdkError(
+                `User "${user.username}": public key is not available (missing_role_key)`,
+                ResultCodes.ROLE_USER_ADD_FAILED
+            )
+        }
+        const roleEncrypted = await encryptForUserPublicKey(roleKey, publicKeys)
+        if (roleEncrypted) {
+            request.role_admin_key = roleEncrypted.ciphertext
+            request.role_admin_key_type = roleEncrypted.keyType
+        }
+    }
+
+    return request
+}
+
 export async function addUsersToRoles(auth: Auth, input: AddUsersToRolesInput): Promise<RoleUserResult> {
-    const ctx = await loadRoleUserContext(auth, input.roles, input.users)
+    const ctx = await loadRoleUserContext(auth, input.roles, input.users, input.admin)
     const items: RoleUserItemResult[] = []
 
+    const rolesNeedingTreeKey = ctx.roles.filter((role) => needsTreeKey(ctx, role.role_id))
+    let treeKey: Uint8Array | null = null
+    const roleKeyById = new Map<number, Uint8Array | null>()
+    let publicKeyMap = new Map<string, UserPublicKeys>()
+
+    // Prefetch role keys for all target roles (role_admin_key when the role already has a key).
     for (const role of ctx.roles) {
+        roleKeyById.set(role.role_id, await ctx.enterpriseData.getRoleKey(role.role_id))
+    }
+
+    const needsPublicKeys = rolesNeedingTreeKey.length > 0 || [...roleKeyById.values()].some((key) => key != null)
+
+    if (rolesNeedingTreeKey.length > 0) {
+        treeKey = await ctx.enterpriseData.getTreeKey()
+        if (!treeKey) {
+            throw new KeeperSdkError(
+                'Enterprise tree key is unavailable. The current user may not have permission to administer roles.',
+                ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
+            )
+        }
+    }
+
+    if (needsPublicKeys) {
+        publicKeyMap = await fetchUserPublicKeys(
+            auth,
+            ctx.users.map((u) => u.username)
+        )
+    }
+
+    for (const role of ctx.roles) {
+        const includeTreeKey = needsTreeKey(ctx, role.role_id)
+        const roleKey = roleKeyById.get(role.role_id) ?? null
         for (const user of ctx.users) {
             const base = buildItemBase(user, role)
             if (ctx.membership.has(membershipKey(role.role_id, user.enterprise_user_id))) {
@@ -141,12 +263,15 @@ export async function addUsersToRoles(auth: Auth, input: AddUsersToRolesInput): 
             }
 
             try {
-                const response = await auth.executeRestCommand(
-                    roleUserAddCommand({
-                        role_id: role.role_id,
-                        enterprise_user_id: user.enterprise_user_id,
-                    })
+                const request = await buildRoleUserAddRequest(
+                    role,
+                    user,
+                    publicKeyMap.get(user.username.toLowerCase()),
+                    treeKey,
+                    roleKey,
+                    includeTreeKey
                 )
+                const response = await auth.executeRestCommand(roleUserAddCommand(request))
                 assertCommandSucceeded(
                     response,
                     `role_user_add failed for role_id=${role.role_id}, user=${user.username}`,
