@@ -1597,15 +1597,14 @@ export const syncDown = async (options: SyncDownOptions): Promise<SyncResult> =>
         const dToken = await storage.get('continuationToken')
         let continuationToken = dToken ? platform.base64ToBytes(dToken.token) : undefined
 
-        await platform.importKey('data', auth.dataKey!, undefined, true)
+        await platform.importKey('data', auth.dataKey!, storage, true)
         await platform.importKeyEC(
             'pk_ecc',
             new Uint8Array(auth.eccPrivateKey!),
             new Uint8Array(auth.eccPublicKey!),
-            undefined,
-            true
+            storage
         )
-        await platform.importKeyRSA('pk_rsa', auth.privateKey!, undefined, true)
+        await platform.importKeyRSA('pk_rsa', auth.privateKey!, storage)
 
         while (true) {
             const msg = syncDownMessage({
