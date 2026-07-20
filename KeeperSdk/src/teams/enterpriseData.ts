@@ -50,6 +50,7 @@ export type EnterpriseNode = {
     parent_id?: number
     encrypted_data?: string
     displayName?: string
+    restrict_visibility?: boolean
 }
 
 export type EnterpriseUser = {
@@ -354,10 +355,6 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         }
     }
 
-    /**
-     * Decrypt the AES role key used for TRANSFER_ACCOUNT / admin-role operations.
-     * Mirrors .NET RoleData.GetRoleKey: prefers re-encrypted (tree-key) form, then legacy role_key.
-     */
     public async getRoleKey(roleId: number): Promise<Uint8Array | null> {
         if (this.roleKeyCache.has(roleId)) {
             return this.roleKeyCache.get(roleId) ?? null
@@ -377,7 +374,6 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             if (rKey.roleId !== roleId || !rKey.encryptedRoleKey || rKey.encryptedRoleKey.length === 0) continue
             if (!treeKey) continue
             try {
-                // AES-GCM with enterprise tree key (.NET DecryptAesV2).
                 const roleKey = await platform.aesGcmDecrypt(rKey.encryptedRoleKey, treeKey)
                 this.roleKeyCache.set(roleId, roleKey)
                 return roleKey
@@ -483,6 +479,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         }
         if (message.parentId != null) node.parent_id = EnterpriseDataManager.toNumber(message.parentId)
         if (message.encryptedData) node.encrypted_data = message.encryptedData
+        if (message.restrictVisibility != null) node.restrict_visibility = message.restrictVisibility
         return node
     }
 

@@ -8,6 +8,7 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    NodeErrorCode,
     AuditReportErrorCode,
     ActionReportErrorCode,
     PasswordReportErrorCode,

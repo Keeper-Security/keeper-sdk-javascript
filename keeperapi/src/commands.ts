@@ -211,6 +211,25 @@ export const enterpriseAllocateIdsCommand = (
 ): RestCommand<EnterpriseAllocateIdsRequest, KeeperResponse & { base_id: number; number_allocated: number }> =>
     createCommand(request, 'enterprise_allocate_ids')
 
+export type NodeEditRequest = {
+    node_id: number
+    parent_id?: number
+    encrypted_data: string
+}
+
+export const nodeAddCommand = (request: NodeEditRequest): RestCommand<NodeEditRequest, KeeperResponse> =>
+    createCommand(request, 'node_add')
+
+export const nodeUpdateCommand = (request: NodeEditRequest): RestCommand<NodeEditRequest, KeeperResponse> =>
+    createCommand(request, 'node_update')
+
+export type NodeDeleteRequest = {
+    node_id: number
+}
+
+export const nodeDeleteCommand = (request: NodeDeleteRequest): RestCommand<NodeDeleteRequest, KeeperResponse> =>
+    createCommand(request, 'node_delete')
+
 export type RoleEditRequest = {
     role_id: number
     node_id: number

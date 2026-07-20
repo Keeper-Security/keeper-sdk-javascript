@@ -149,7 +149,6 @@ function unwrapShellQuotedJson(text: string): string | null {
 
 function looksLikeInlineJson(text: string): boolean {
     const t = text.trimStart()
-    // Object / array / JSON-encoded string, or shell-quoted paste: '{"a":1}'
     return t.startsWith('{') || t.startsWith('[') || t.startsWith('"') || unwrapShellQuotedJson(t) !== null
 }
 

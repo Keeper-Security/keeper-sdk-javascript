@@ -110,6 +110,18 @@ import {
     type ChangeRolePrivilegesResult,
     type FormattedRolePrivilegeTable,
 } from '../roles'
+import {
+    NodeManager,
+    type AddNodeInput,
+    type AddNodeResult,
+    type DeleteNodeInput,
+    type DeleteNodeResult,
+    type ListNodeRow,
+    type ListNodesOptions,
+    type NodeView,
+    type UpdateNodeInput,
+    type UpdateNodeResult,
+} from '../nodes'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
@@ -238,6 +250,7 @@ export class KeeperVault {
     private readonly sharedFolderManager: SharedFolderManager
     private readonly teamManager: TeamManager
     private readonly roleManager: RoleManager
+    private readonly nodeManager: NodeManager
     private readonly enterpriseReportManager: EnterpriseReportManager
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
@@ -263,6 +276,7 @@ export class KeeperVault {
         this.sharedFolderManager = new SharedFolderManager(this.storage, authProvider)
         this.teamManager = new TeamManager(authProvider)
         this.roleManager = new RoleManager(authProvider)
+        this.nodeManager = new NodeManager(authProvider)
         this.enterpriseReportManager = new EnterpriseReportManager(authProvider)
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
@@ -833,6 +847,26 @@ export class KeeperVault {
 
     public renderChangeRolePrivilegesAsciiTable(table: FormattedRolePrivilegeTable): string {
         return this.roleManager.renderChangeRolePrivilegesAsciiTable(table)
+    }
+
+    public async listNodes(options?: ListNodesOptions): Promise<ListNodeRow[]> {
+        return this.nodeManager.listNodes(options ?? {})
+    }
+
+    public async viewNode(identifier: string): Promise<NodeView> {
+        return this.nodeManager.viewNode(identifier)
+    }
+
+    public async addNodes(input: AddNodeInput): Promise<AddNodeResult> {
+        return this.nodeManager.addNodes(input)
+    }
+
+    public async updateNodes(input: UpdateNodeInput): Promise<UpdateNodeResult> {
+        return this.nodeManager.updateNodes(input)
+    }
+
+    public async deleteNodes(input: DeleteNodeInput): Promise<DeleteNodeResult> {
+        return this.nodeManager.deleteNodes(input)
     }
 
     public async runAuditReport(options?: AuditReportOptions): Promise<AuditReportResult> {

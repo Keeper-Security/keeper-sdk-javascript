@@ -111,6 +111,22 @@ export enum TeamErrorCode {
     TeamNameTooLong = 'team_name_too_long',
 }
 
+export enum NodeErrorCode {
+    NoNodesToAdd = 'no_nodes_to_add',
+    NoNodesToUpdate = 'no_nodes_to_update',
+    NoNodesToDelete = 'no_nodes_to_delete',
+    NodeNotFound = 'node_not_found',
+    MultipleNodeMatches = 'multiple_node_matches',
+    NodeNameEmpty = 'node_name_empty',
+    NodeNameTooLong = 'node_name_too_long',
+    NodeAddFailed = 'node_add_failed',
+    NodeUpdateFailed = 'node_update_failed',
+    NodeDeleteFailed = 'node_delete_failed',
+    CannotMoveNodeIntoSelf = 'cannot_move_node_into_self',
+    CannotDeleteRootNode = 'cannot_delete_root_node',
+    MultipleNodeRenameNotAllowed = 'multiple_node_rename_not_allowed',
+}
+
 export enum AuditReportErrorCode {
     InvalidReportType = 'audit_invalid_report_type',
     InvalidCreatedFilter = 'audit_invalid_created_filter',
@@ -240,6 +256,19 @@ export const ResultCodes = {
     MULTIPLE_TEAM_RENAME_NOT_ALLOWED: TeamErrorCode.MultipleTeamRenameNotAllowed,
     QUEUED_TEAM_NOT_FOUND: TeamErrorCode.QueuedTeamNotFound,
     TEAM_NAME_TOO_LONG: TeamErrorCode.TeamNameTooLong,
+    NO_NODES_TO_ADD: NodeErrorCode.NoNodesToAdd,
+    NO_NODES_TO_UPDATE: NodeErrorCode.NoNodesToUpdate,
+    NO_NODES_TO_DELETE: NodeErrorCode.NoNodesToDelete,
+    NODE_NOT_FOUND: NodeErrorCode.NodeNotFound,
+    MULTIPLE_NODE_MATCHES: NodeErrorCode.MultipleNodeMatches,
+    NODE_NAME_EMPTY: NodeErrorCode.NodeNameEmpty,
+    NODE_NAME_TOO_LONG: NodeErrorCode.NodeNameTooLong,
+    NODE_ADD_FAILED: NodeErrorCode.NodeAddFailed,
+    NODE_UPDATE_FAILED: NodeErrorCode.NodeUpdateFailed,
+    NODE_DELETE_FAILED: NodeErrorCode.NodeDeleteFailed,
+    CANNOT_MOVE_NODE_INTO_SELF: NodeErrorCode.CannotMoveNodeIntoSelf,
+    CANNOT_DELETE_ROOT_NODE: NodeErrorCode.CannotDeleteRootNode,
+    MULTIPLE_NODE_RENAME_NOT_ALLOWED: NodeErrorCode.MultipleNodeRenameNotAllowed,
     NO_USERS_TO_UPDATE: UserErrorCode.NoUsersToUpdate,
     NO_USERS_TO_ADD: UserErrorCode.NoUsersToAdd,
     NO_USERS_TO_DELETE: UserErrorCode.NoUsersToDelete,

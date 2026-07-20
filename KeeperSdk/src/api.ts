@@ -261,6 +261,31 @@ export type {
 } from './users/userTypes'
 
 export {
+    formatAddUserResult,
+    renderAddUserAsciiTable,
+    AddUserStatus,
+} from './users/addUser'
+export { formatUpdateUserResult, renderUpdateUserAsciiTable, UpdateUserStatus } from './users/updateUser'
+export { formatDeleteUserResult, renderDeleteUserAsciiTable, DeleteUserStatus } from './users/deleteUser'
+export {
+    formatUserActionResult,
+    renderUserActionAsciiTable,
+    UserAction,
+    UserActionStatus,
+    UserActionSkipReason,
+} from './users/actionUser'
+
+export {
+    formatAddTeamResult,
+    renderAddTeamAsciiTable,
+    AddTeamStatus,
+    AddTeamSkipReason,
+    AddTeamSourceKind,
+} from './teams/addTeam'
+export { formatUpdateTeamResult, renderUpdateTeamAsciiTable, UpdateTeamStatus } from './teams/updateTeam'
+export { formatDeleteTeamResult, renderDeleteTeamAsciiTable, DeleteTeamStatus } from './teams/deleteTeam'
+
+export {
     listUsers,
     formatUsersTable,
     renderUsersAsciiTable,
@@ -290,6 +315,20 @@ export {
     viewRole,
     formatRoleView,
     roleViewTable,
+    formatAddRoleResult,
+    renderAddRoleAsciiTable,
+    formatUpdateRoleResult,
+    renderUpdateRoleAsciiTable,
+    formatDeleteRoleResult,
+    renderDeleteRoleAsciiTable,
+    formatCopyRoleResult,
+    renderCopyRoleAsciiTable,
+    formatRoleUserResult,
+    renderRoleUserAsciiTable,
+    formatManageRoleNodesResult,
+    renderManageRoleNodesAsciiTable,
+    formatChangeRolePrivilegesResult,
+    renderChangeRolePrivilegesAsciiTable,
 } from './roles'
 export type {
     ListRolesOptions,
@@ -306,6 +345,44 @@ export type {
     FormattedRoleViewTable,
     RoleViewTableRow,
 } from './roles'
+
+export {
+    listNodes,
+    formatNodesTable,
+    renderNodesAsciiTable,
+    NodeColumn,
+    SUPPORTED_NODE_COLUMNS,
+    DEFAULT_NODE_COLUMNS,
+    viewNode,
+    formatNodeView,
+    nodeViewTable,
+    formatAddNodeResult,
+    renderAddNodeAsciiTable,
+    formatUpdateNodeResult,
+    renderUpdateNodeAsciiTable,
+    formatDeleteNodeResult,
+    renderDeleteNodeAsciiTable,
+} from './nodes'
+export type {
+    ListNodesOptions,
+    ListNodeRow,
+    NodeColumnInput,
+    FormattedNodesTable,
+    FormatNodesTableOptions,
+    NodeView,
+    FormatNodeViewOptions,
+    FormattedNodeViewTable,
+    NodeViewTableRow,
+    AddNodeInput,
+    AddNodeResult,
+    FormattedAddNodeTable,
+    UpdateNodeInput,
+    UpdateNodeResult,
+    FormattedUpdateNodeTable,
+    DeleteNodeInput,
+    DeleteNodeResult,
+    FormattedDeleteNodeTable,
+} from './nodes'
 
 export { Auth, KeeperEnvironment, syncDown, Authentication } from '@keeper-security/keeperapi'
 
