@@ -1,10 +1,6 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
-import {
-    EnterpriseDataInclude,
-    EnterpriseDataManager,
-    type EnterpriseNode,
-} from '../teams/enterpriseData'
+import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseNode } from '../teams/enterpriseData'
 import { applyDecryptedNodeNames, applyEnterpriseNameToRoot, NODE_PATH_SEPARATOR } from '../teams/teamUtils'
 import { nodeDisplayName, resolveExistingNodes } from './nodeUtils'
 

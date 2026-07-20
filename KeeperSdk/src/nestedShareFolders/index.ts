@@ -154,6 +154,7 @@ export type {
     NsfRecordPermissionPlanItem,
     NsfRecordPermissionFailure,
     NsfShortcutRow,
+    NsfShortcutFolder,
     ListNsfShortcutsOptions,
     KeepNsfShortcutInput,
     KeepNsfShortcutPlanItem,

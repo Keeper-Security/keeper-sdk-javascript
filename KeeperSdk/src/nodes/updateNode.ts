@@ -1,11 +1,7 @@
 import { encryptObjectForStorage, type Auth, type KeeperResponse, type RestCommand } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseNode } from '../teams/enterpriseData'
-import {
-    applyDecryptedNodeNames,
-    applyEnterpriseNameToRoot,
-    resolveParentNode,
-} from '../teams/teamUtils'
+import { applyDecryptedNodeNames, applyEnterpriseNameToRoot, resolveParentNode } from '../teams/teamUtils'
 import {
     assertCommandSucceeded,
     isAncestorOf,
@@ -73,13 +69,9 @@ export async function updateNodes(auth: Auth, input: UpdateNodeInput): Promise<U
             ResultCodes.MULTIPLE_NODE_RENAME_NOT_ALLOWED
         )
     }
-    const hasParent =
-        input.parent !== undefined && input.parent !== null && String(input.parent).trim() !== ''
+    const hasParent = input.parent !== undefined && input.parent !== null && String(input.parent).trim() !== ''
     if (!newName && !hasParent) {
-        throw new KeeperSdkError(
-            'Specify --name and/or --parent to update a node.',
-            ResultCodes.NO_NODES_TO_UPDATE
-        )
+        throw new KeeperSdkError('Specify --name and/or --parent to update a node.', ResultCodes.NO_NODES_TO_UPDATE)
     }
 
     const enterpriseData = new EnterpriseDataManager(auth)

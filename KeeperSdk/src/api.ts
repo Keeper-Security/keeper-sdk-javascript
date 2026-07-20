@@ -260,11 +260,7 @@ export type {
     FormattedTeamUserTable,
 } from './users/userTypes'
 
-export {
-    formatAddUserResult,
-    renderAddUserAsciiTable,
-    AddUserStatus,
-} from './users/addUser'
+export { formatAddUserResult, renderAddUserAsciiTable, AddUserStatus } from './users/addUser'
 export { formatUpdateUserResult, renderUpdateUserAsciiTable, UpdateUserStatus } from './users/updateUser'
 export { formatDeleteUserResult, renderDeleteUserAsciiTable, DeleteUserStatus } from './users/deleteUser'
 export {

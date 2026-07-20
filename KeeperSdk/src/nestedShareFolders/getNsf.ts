@@ -20,7 +20,6 @@ import { KeeperSdkError, ResultCodes } from '../utils'
 import {
     buildFolderPath,
     collectRecordsInFolder,
-    displayNsfParentUid,
     fetchLiveRecordAccessEntries,
     getFolderAccessEntries,
     findNestedShareFoldersForRecord,
@@ -32,9 +31,9 @@ import {
     isFolderOwnerAccessor,
     isFolderShareAdministrator,
     isFolderUserPermission,
+    isRootFolderUid,
     isSensitiveFieldType,
     loadShareUserMap,
-    normalizeParentUid,
     recordAccessDisplayRole,
     resolveAccessUsername,
     resolveNsfFolderIdentifier,
@@ -42,13 +41,16 @@ import {
 } from './nsfHelpers'
 import {
     NSF_FOLDER_LABEL_WIDTH,
+    NSF_FOLDER_PERMISSION_DISPLAY_ROWS,
     NSF_FOLDER_SHARE_ADMINS_HEADING,
     NSF_USER_PERMISSIONS_HEADING,
     NSF_MASKED_VALUE,
     NSF_RECORD_LABEL_WIDTH,
+    NSF_RECORD_PERMISSION_DISPLAY_ROWS,
     NSF_SHARE_ADMINS_PREVIEW_LIMIT,
     NSF_TOP_LEVEL_FIELD_TYPES,
     NSF_UNKNOWN_RECORD_TITLES,
+    getFolderPermissionFlagsForRoleLabel,
 } from './nsfConstants'
 import {
     GetNsfFormat,
@@ -285,11 +287,49 @@ function jsonFieldValues(type: string, value: string[], unmask = false): unknown
     })
 }
 
+function yn(value: boolean | undefined): string {
+    return value ? 'Y' : 'N'
+}
+
+function formatPermissionValueTable(rows: readonly { label: string; value: boolean | undefined }[]): string[] {
+    if (rows.length === 0) return []
+    const tableRows = rows.map((row) => [row.label, yn(row.value)])
+    return ['', ...formatAsciiTable(['Permission', 'Value'], tableRows)]
+}
+
+function formatFolderRolePermissionTable(role: string): string[] {
+    const flags = getFolderPermissionFlagsForRoleLabel(role)
+    return formatPermissionValueTable(
+        NSF_FOLDER_PERMISSION_DISPLAY_ROWS.map(({ key, label }) => ({ label, value: !!flags[key] }))
+    )
+}
+
+function formatRecordCapabilityPermissionTable(entry: NsfRecordPermission): string[] {
+    const ownerDefaults = entry.owner
+    return formatPermissionValueTable(
+        NSF_RECORD_PERMISSION_DISPLAY_ROWS.map(({ key, label }) => {
+            const fromEntry = entry[key]
+            if (fromEntry !== undefined) return { label, value: fromEntry }
+            // Owner with no live flags: treat as full access except Request Access.
+            if (ownerDefaults) return { label, value: key !== 'canRequestAccess' }
+            return { label, value: false }
+        })
+    )
+}
+
+function pickPrimaryFolderRole(view: NsfFolderView): string {
+    const owner = view.userPermissions.find((entry) => entry.role === NsfAccessRoleLabel.Owner)
+    return (owner ?? view.userPermissions[0])?.role ?? NsfAccessRoleLabel.Viewer
+}
+
+function pickPrimaryRecordPermission(view: NsfRecordView): NsfRecordPermission | undefined {
+    return view.userPermissions.find((entry) => entry.owner) ?? view.userPermissions[0]
+}
+
 export function toNsfRecordJsonView(
     view: NsfRecordView,
     options: { includeDag?: boolean; unmask?: boolean } = {}
 ): NsfRecordJsonView {
-    const includeDag = options.includeDag ?? false
     const unmask = options.unmask ?? false
     const fields = view.fields
         .filter((field) => !NSF_TOP_LEVEL_FIELD_TYPES.has(field.type))
@@ -302,13 +342,9 @@ export function toNsfRecordJsonView(
         record_uid: view.recordUid,
         title: view.title,
         type: view.type,
-        ...(includeDag
-            ? {
-                  version: view.version,
-                  revision: view.revision,
-                  ...(view.folder ? { folder: view.folder } : {}),
-              }
-            : {}),
+        version: view.version,
+        revision: view.revision,
+        folder: view.folder ?? { uid: '', path: view.folderLocation || '/' },
         fields,
         ...(view.notes ? { notes: view.notes } : {}),
         user_permissions: view.userPermissions.map((entry) => ({
@@ -316,7 +352,7 @@ export function toNsfRecordJsonView(
             owner: entry.owner,
             shareable: entry.shareable,
             editable: entry.editable,
-            role: resolveRecordPermissionRole(entry),
+            role: entry.owner ? NsfAccessRoleLabel.FullManager : resolveRecordPermissionRole(entry),
         })),
         share_admins: view.shareAdmins,
     }
@@ -324,20 +360,33 @@ export function toNsfRecordJsonView(
 
 export function toNsfFolderJsonView(view: NsfFolderView, options: { includeDag?: boolean } = {}): NsfFolderJsonView {
     const includeDag = options.includeDag ?? false
+    const parentUid = view.parentUid?.trim() || ''
+    const treatedAsRootParent = !parentUid || parentUid === 'root'
+
+    const owner =
+        view.userPermissions.find((entry) => entry.role === NsfAccessRoleLabel.Owner)?.username ||
+        view.shareAdmins.find((entry) => entry.role === NsfAccessRoleLabel.Owner)?.username
+
     return {
         folder_uid: view.folderUid,
         type: 'nested_share_folder',
         name: view.name,
-        parent_uid: view.parentUid,
-        ...(includeDag
-            ? {
-                  path: view.path,
-                  records: view.records,
-                  user_permissions: view.userPermissions,
-                  share_admins: view.shareAdmins,
-                  team_permissions: view.teamPermissions,
-              }
-            : {}),
+        parent_uid: treatedAsRootParent ? null : parentUid,
+        folder: {
+            uid: treatedAsRootParent ? null : parentUid,
+            path: treatedAsRootParent ? '/' : view.path,
+        },
+        ...(owner ? { owner } : {}),
+        path: view.path,
+        records: view.records,
+        user_permissions: view.userPermissions.map((entry) => ({
+            accessor: entry.username,
+            access_type: 'AT_USER',
+            role: entry.role,
+            inherited: false,
+        })),
+        share_admins: view.shareAdmins.map((entry) => entry.username),
+        ...(includeDag || view.teamPermissions.length > 0 ? { team_permissions: view.teamPermissions } : {}),
     }
 }
 
@@ -364,27 +413,6 @@ function formatRecordUserPermissionBlock(entry: NsfRecordPermission, verbose: bo
     return lines
 }
 
-function formatRecordUserPermissionTable(entries: NsfRecordPermission[]): string[] {
-    if (entries.length === 0) return []
-    const rows = entries.map((entry) => [
-        entry.username || entry.accountUid || '',
-        entry.owner ? 'Owner' : entry.role || '',
-        entry.shareable ? 'Yes' : 'No',
-        entry.editable ? 'No' : 'Yes',
-    ])
-    return [
-        '',
-        NSF_USER_PERMISSIONS_HEADING,
-        ...formatAsciiTable(['User', 'Role', 'Shareable', 'Read-Only'], rows).map((line) => `  ${line}`),
-    ]
-}
-
-function formatFolderAccessTable(heading: string, entries: NsfFolderAccessRow[]): string[] {
-    if (entries.length === 0) return []
-    const rows = entries.map((entry) => [entry.username, entry.role])
-    return ['', heading, ...formatAsciiTable(['User', 'Role'], rows).map((line) => `  ${line}`)]
-}
-
 async function fetchRecordPermissions(
     auth: Auth,
     storage: InMemoryStorage,
@@ -402,6 +430,15 @@ async function fetchRecordPermissions(
             editable: !!data.canEdit,
             awaitingApproval: false,
             role: owner ? undefined : recordAccessDisplayRole(data),
+            canViewTitle: data.canViewTitle ?? true,
+            canView: !!data.canView,
+            canEdit: !!data.canEdit,
+            canListAccess: !!data.canListAccess,
+            canUpdateAccess: !!data.canUpdateAccess,
+            canDelete: !!data.canDelete,
+            canChangeOwnership: !!data.canChangeOwnership,
+            canRequestAccess: !!data.canRequestAccess,
+            canApproveAccess: !!data.canApproveAccess,
         }
     })
 }
@@ -441,7 +478,7 @@ async function buildFolderView(auth: Auth, storage: InMemoryStorage, folderUid: 
         objectType: NsfObjectKind.Folder,
         folderUid,
         name: folder.data.name || 'Unnamed',
-        parentUid: displayNsfParentUid(storage, folder.parentUid),
+        parentUid: isRootFolderUid(storage, folder.parentUid) ? 'root' : (folder.parentUid ?? '').trim(),
         path: buildFolderPath(storage, folderUid),
         userPermissions,
         shareAdmins,
@@ -547,8 +584,13 @@ export function formatNsfFolderDetail(view: NsfFolderView, verbose = false): str
 
     if (verbose) {
         lines.push(
-            ...formatFolderAccessTable(NSF_USER_PERMISSIONS_HEADING, view.userPermissions),
-            ...formatFolderAccessTable(NSF_FOLDER_SHARE_ADMINS_HEADING, view.shareAdmins),
+            '',
+            NSF_USER_PERMISSIONS_HEADING,
+            ...view.userPermissions.map((entry) => `${entry.username}: ${entry.role}`),
+            ...formatFolderRolePermissionTable(pickPrimaryFolderRole(view)),
+            '',
+            NSF_FOLDER_SHARE_ADMINS_HEADING,
+            ...view.shareAdmins.map((entry) => `${entry.username}: ${entry.role}`),
             '',
             folderDetailRow('Parent UID', view.parentUid),
             folderDetailRow('Path', view.path)
@@ -596,13 +638,13 @@ export function formatNsfRecordDetail(view: NsfRecordView, verbose = false): str
     }
 
     if (view.userPermissions.length > 0) {
+        lines.push('', NSF_USER_PERMISSIONS_HEADING)
+        for (const entry of view.userPermissions) {
+            lines.push('', ...formatRecordUserPermissionBlock(entry, false))
+        }
         if (verbose) {
-            lines.push(...formatRecordUserPermissionTable(view.userPermissions))
-        } else {
-            lines.push('', NSF_USER_PERMISSIONS_HEADING)
-            for (const entry of view.userPermissions) {
-                lines.push('', ...formatRecordUserPermissionBlock(entry, verbose))
-            }
+            const primary = pickPrimaryRecordPermission(view)
+            if (primary) lines.push(...formatRecordCapabilityPermissionTable(primary))
         }
     }
 

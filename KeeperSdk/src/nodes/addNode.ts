@@ -183,11 +183,7 @@ async function sendNodeAdd(auth: Auth, payload: NodeEditRequest): Promise<void> 
         authorization: {},
     }
     const response = await auth.executeRestCommand(command)
-    assertCommandSucceeded(
-        response,
-        `node_add failed for node_id=${payload.node_id}`,
-        ResultCodes.NODE_ADD_FAILED
-    )
+    assertCommandSucceeded(response, `node_add failed for node_id=${payload.node_id}`, ResultCodes.NODE_ADD_FAILED)
 }
 
 export function formatAddNodeResult(result: AddNodeResult): FormattedAddNodeTable {

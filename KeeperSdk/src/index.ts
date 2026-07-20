@@ -769,6 +769,7 @@ export type {
     NsfRecordSharePlanItem,
     NsfRecordShareResultItem,
     NsfShortcutRow,
+    NsfShortcutFolder,
     ListNsfShortcutsOptions,
     KeepNsfShortcutInput,
     KeepNsfShortcutPlanItem,

@@ -86,11 +86,7 @@ export function resolveExistingNodes(nodes: EnterpriseNode[], identifiers: strin
     return Array.from(found.values())
 }
 
-export function isAncestorOf(
-    nodes: EnterpriseNode[],
-    ancestorId: number,
-    descendantId: number
-): boolean {
+export function isAncestorOf(nodes: EnterpriseNode[], ancestorId: number, descendantId: number): boolean {
     if (ancestorId === descendantId) return true
     const byId = new Map(nodes.map((n) => [n.node_id, n] as const))
     let current = byId.get(descendantId)
@@ -119,10 +115,7 @@ export function renderNodeResultTable(headers: readonly string[], rows: string[]
     )
     const pad = (cell: string, i: number) => cell.padEnd(widths[i]!)
     const formatRow = (cells: string[]) => cells.map((cell, i) => pad(cell, i)).join('  ')
-    return [
-        formatRow([...headers]),
-        formatRow(widths.map((w) => '-'.repeat(w))),
-        ...rows.map(formatRow),
-        summary,
-    ].join('\n')
+    return [formatRow([...headers]), formatRow(widths.map((w) => '-'.repeat(w))), ...rows.map(formatRow), summary].join(
+        '\n'
+    )
 }

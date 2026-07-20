@@ -70,6 +70,15 @@ export type NsfRecordPermission = {
     awaitingApproval: boolean
     expiration?: number
     role?: NsfAccessRoleLabel
+    canViewTitle?: boolean
+    canView?: boolean
+    canEdit?: boolean
+    canListAccess?: boolean
+    canUpdateAccess?: boolean
+    canDelete?: boolean
+    canChangeOwnership?: boolean
+    canRequestAccess?: boolean
+    canApproveAccess?: boolean
 }
 
 export type NsfFolderSummary = {
@@ -126,11 +135,18 @@ export type NsfFolderJsonView = {
     folder_uid: string
     type: 'nested_share_folder'
     name: string
-    parent_uid: string
-    path?: string
-    records?: NsfFolderSummary[]
-    user_permissions?: { username: string; role: NsfAccessRoleLabel }[]
-    share_admins?: { username: string; role: NsfAccessRoleLabel }[]
+    parent_uid: string | null
+    folder: { uid: string | null; path: string }
+    owner?: string
+    path: string
+    records: NsfFolderSummary[]
+    user_permissions: {
+        accessor: string
+        access_type: string
+        role: NsfAccessRoleLabel
+        inherited: boolean
+    }[]
+    share_admins: string[]
     team_permissions?: NsfFolderPermission[]
 }
 
@@ -594,10 +610,15 @@ export type UpdateNsfRecordPermissionResult = {
     message?: string
 }
 
+export type NsfShortcutFolder = {
+    folderUid: string
+    name: string
+}
+
 export type NsfShortcutRow = {
     recordUid: string
     title: string
-    folders: string[]
+    folders: NsfShortcutFolder[]
 }
 
 export type ListNsfShortcutsOptions = {

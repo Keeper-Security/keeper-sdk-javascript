@@ -257,3 +257,61 @@ export function getFolderPermissionsForRole(roleType: Folder.AccessRoleType): Fo
     }
     return Folder.FolderPermissions.create(flags)
 }
+
+export const NSF_FOLDER_PERMISSION_DISPLAY_ROWS: readonly { key: keyof FolderRolePermissionFlags; label: string }[] = [
+    { key: 'canListFolders', label: 'List Folders' },
+    { key: 'canListRecords', label: 'List Records' },
+    { key: 'canViewRecords', label: 'View Records' },
+    { key: 'canEditRecords', label: 'Edit Records' },
+    { key: 'canAdd', label: 'Add (folders/records)' },
+    { key: 'canRemove', label: 'Remove (folders/records)' },
+    { key: 'canDelete', label: 'Delete' },
+    { key: 'canListAccess', label: 'List Access' },
+    { key: 'canUpdateAccess', label: 'Update Access' },
+    { key: 'canApproveAccess', label: 'Approve Access' },
+    { key: 'canRequestAccess', label: 'Request Access' },
+    { key: 'canUpdateSetting', label: 'Update Setting' },
+    { key: 'canChangeOwnership', label: 'Change Ownership' },
+]
+
+export const NSF_RECORD_PERMISSION_DISPLAY_ROWS: readonly { key: keyof NsfRecordPermissionFlags; label: string }[] = [
+    { key: 'canViewTitle', label: 'View Title' },
+    { key: 'canView', label: 'View Content' },
+    { key: 'canEdit', label: 'Edit' },
+    { key: 'canListAccess', label: 'List Access' },
+    { key: 'canUpdateAccess', label: 'Update Access' },
+    { key: 'canDelete', label: 'Delete' },
+    { key: 'canChangeOwnership', label: 'Change Ownership' },
+    { key: 'canRequestAccess', label: 'Request Access' },
+    { key: 'canApproveAccess', label: 'Approve Access' },
+]
+
+export type NsfRecordPermissionFlags = {
+    canViewTitle: boolean
+    canView: boolean
+    canEdit: boolean
+    canListAccess: boolean
+    canUpdateAccess: boolean
+    canDelete: boolean
+    canChangeOwnership: boolean
+    canRequestAccess: boolean
+    canApproveAccess: boolean
+}
+
+const NSF_FOLDER_ROLE_BY_LABEL: Record<string, Folder.AccessRoleType> = {
+    owner: Folder.AccessRoleType.MANAGER,
+    navigator: Folder.AccessRoleType.NAVIGATOR,
+    requestor: Folder.AccessRoleType.REQUESTOR,
+    viewer: Folder.AccessRoleType.VIEWER,
+    'shared-manager': Folder.AccessRoleType.SHARED_MANAGER,
+    'share-manager': Folder.AccessRoleType.SHARED_MANAGER,
+    'content-manager': Folder.AccessRoleType.CONTENT_MANAGER,
+    'content-share-manager': Folder.AccessRoleType.CONTENT_SHARE_MANAGER,
+    'full-manager': Folder.AccessRoleType.MANAGER,
+    manager: Folder.AccessRoleType.MANAGER,
+}
+
+export function getFolderPermissionFlagsForRoleLabel(role: string): FolderRolePermissionFlags {
+    const roleType = NSF_FOLDER_ROLE_BY_LABEL[role.trim().toLowerCase()] ?? Folder.AccessRoleType.VIEWER
+    return NSF_FOLDER_ROLE_PERMISSIONS[roleType] ?? NSF_FOLDER_ROLE_PERMISSIONS[Folder.AccessRoleType.VIEWER]!
+}
