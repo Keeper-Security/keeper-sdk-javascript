@@ -11,13 +11,12 @@ import { Ciphersuite, HPKE_ECDH_KYBER, MlKemVariant, OPTIONAL_DATA_LENGTH } from
 import { logger } from './log'
 
 export const formatTimeDiff = (timeDiff: Date): string => {
-    const totalMs = timeDiff.getTime()
-    const minutes = Math.floor(totalMs / 60000)
-    const seconds = Math.floor((totalMs % 60000) / 1000)
-    const milliseconds = totalMs % 1000
+    const minutes = timeDiff.getMinutes()
+    const seconds = timeDiff.getSeconds().toString().padStart(2, '0')
+    const milliseconds = timeDiff.getMilliseconds()
     return minutes > 0
-        ? `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds}`
-        : `${seconds.toString().padStart(2, '0')}.${milliseconds}`
+        ? `${minutes.toString().padStart(2, '0')}:${seconds}.${milliseconds}`
+        : `${seconds}.${milliseconds}`
 }
 
 export function getKeeperUrl(host: KeeperHost, forPath: string) {
