@@ -210,17 +210,6 @@ export const browserPlatform: Platform = class {
 
         const key = await this.loadCryptoKey(keyId, keyType, storage)
         cryptoKeysCache[keyType][keyId] = key
-        // AES folder/record keys are imported as a pair; hydrate the sibling cache entry too.
-        if (keyType === 'cbc' || keyType === 'gcm') {
-            const sibling: EncryptionType = keyType === 'cbc' ? 'gcm' : 'cbc'
-            if (!cryptoKeysCache[sibling][keyId]) {
-                try {
-                    cryptoKeysCache[sibling][keyId] = await this.loadCryptoKey(keyId, sibling, storage)
-                } catch {
-                    // sibling may be unavailable for legacy key material
-                }
-            }
-        }
         return key
     }
 
