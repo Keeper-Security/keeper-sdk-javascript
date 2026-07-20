@@ -86,7 +86,7 @@ export const browserPlatform: Platform = class {
     static async importKey(keyId: string, key: Uint8Array, storage?: KeyStorage, canExport?: boolean): Promise<void> {
         // An AES key for one of our Keeper objects can be used for either CBC or GCM operations.
         // Since CryptoKeys are bound to a particular algorithm, we need to keep a copy for each.
-        const extractable = !!canExport
+        const extractable = typeof storage?.saveKeyBytes === 'function' ? true : !!canExport
         const cbcKey = await this.aesCbcImportKey(key, extractable)
         const gcmKey = await this.aesGcmImportKey(key, extractable)
         cryptoKeysCache['cbc'][keyId] = cbcKey
@@ -96,7 +96,8 @@ export const browserPlatform: Platform = class {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'cbc'), cbcKey)
                 await storage.saveObject(this.getStorageKeyId(keyId, 'gcm'), gcmKey)
-            } else {
+            }
+            if (storage.saveKeyBytes) {
                 await storage.saveKeyBytes(keyId, key)
             }
         }
@@ -114,7 +115,8 @@ export const browserPlatform: Platform = class {
         if (storage) {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'ecc'), key)
-            } else {
+            }
+            if (storage.saveKeyBytes) {
                 const jwk = await crypto.subtle.exportKey('jwk', key)
                 const keyBytes = this.stringToBytes(JSON.stringify(jwk))
                 await storage.saveKeyBytes(keyId, keyBytes)
@@ -168,10 +170,9 @@ export const browserPlatform: Platform = class {
         if (storage?.getObject) {
             const storageKeyId = this.getStorageKeyId(keyId, keyType)
             const storedKey = await storage.getObject<CryptoKey>(storageKeyId)
-            if (!storedKey) {
-                throw new Error('Unable to load crypto key ' + keyId)
+            if (storedKey) {
+                return storedKey
             }
-            return storedKey
         }
 
         const keyBytes = await this.loadKeyBytes(keyId, storage)
@@ -210,6 +211,20 @@ export const browserPlatform: Platform = class {
         const key = await this.loadCryptoKey(keyId, keyType, storage)
         cryptoKeysCache[keyType][keyId] = key
         return key
+    }
+
+    static async ensureAesKeyLoaded(keyId: string, storage?: KeyStorage): Promise<boolean> {
+        if (cryptoKeysCache['cbc'][keyId] && cryptoKeysCache['gcm'][keyId]) {
+            return true
+        }
+        if (storage?.getKeyBytes) {
+            const keyBytes = await storage.getKeyBytes(keyId)
+            if (keyBytes) {
+                await this.importKey(keyId, keyBytes, storage, true)
+                return true
+            }
+        }
+        return false
     }
 
     static async unwrapKeys(keys: UnwrapKeyMap, storage?: KeyStorage): Promise<void> {
@@ -288,9 +303,7 @@ export const browserPlatform: Platform = class {
                 await this.unwrapRSAKey(key, keyId, unwrappingKeyId, encryptionType, storage)
                 break
             case 'aes':
-                if (cryptoKeysCache['gcm'][keyId]) {
-                    // Keeperapp sometimes provides redundant key data, for example, like if you own a record in a shared folder,
-                    // or if a record belongs to multiple shared folders. So, short circuit when possible for a performance improvement
+                if (await this.ensureAesKeyLoaded(keyId, storage)) {
                     return
                 }
 
@@ -298,7 +311,7 @@ export const browserPlatform: Platform = class {
                 break
             // TODO: add something like this, need to find pub/priv key pair
             case 'ecc':
-                if (cryptoKeysCache['gcm'][keyId]) {
+                if (cryptoKeysCache['ecc'][keyId]) {
                     return
                 }
 
@@ -365,7 +378,8 @@ export const browserPlatform: Platform = class {
                 break
         }
 
-        const canExtract: boolean = storage?.saveObject ? !!canExport : true
+        const mustPersistKeyBytes = typeof storage?.saveKeyBytes === 'function'
+        const canExtract: boolean = mustPersistKeyBytes ? true : storage?.saveObject ? !!canExport : true
         const keyUsages: KeyUsage[] = ['encrypt', 'decrypt', 'unwrapKey', 'wrapKey']
 
         const gcmKey = await crypto.subtle.unwrapKey(
@@ -394,7 +408,8 @@ export const browserPlatform: Platform = class {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'cbc'), cbcKey)
                 await storage.saveObject(this.getStorageKeyId(keyId, 'gcm'), gcmKey)
-            } else {
+            }
+            if (storage.saveKeyBytes) {
                 const keyBuffer = await crypto.subtle.exportKey('raw', gcmKey)
                 await storage.saveKeyBytes(keyId, new Uint8Array(keyBuffer))
             }
