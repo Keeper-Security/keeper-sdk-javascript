@@ -640,6 +640,11 @@ export const enterpriseUsersLockMessage = (
 ): RestMessage<Enterprise.ILockUsersRequest, Enterprise.ILockUsersResponse> =>
     createMessage(data, 'enterprise/enterprise_users_lock', Enterprise.LockUsersRequest, Enterprise.LockUsersResponse)
 
+export const disableTwoFaMessage = (
+    data: Enterprise.IEnterpriseUserIds
+): RestInMessage<Enterprise.IEnterpriseUserIds> =>
+    createInMessage(data, 'enterprise/disable_two_fa', Enterprise.EnterpriseUserIds)
+
 export const setV2AlternatePasswordMessage = (
     data: Authentication.IUserAuthRequest
 ): RestInMessage<Authentication.IUserAuthRequest> =>
