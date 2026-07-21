@@ -9,7 +9,6 @@ const UserTypeValues = {
     onsiteSso: 'onsite_sso' as UserType,
 }
 
-/** String form of {@link SessionParams} as exported from extension / vault storage. */
 export type SessionRestoreInput = {
     accountUid: string
     clientKey: string
@@ -152,7 +151,6 @@ function looksLikeInlineJson(text: string): boolean {
     return t.startsWith('{') || t.startsWith('[') || t.startsWith('"') || unwrapShellQuotedJson(t) !== null
 }
 
-/** File path / URL — not inline JSON (avoid JSON.parse on `/path/to/conf.json`). */
 function looksLikeFilePath(text: string): boolean {
     const t = text.trim()
     if (/^https?:\/\//i.test(t)) return true
@@ -197,7 +195,6 @@ export function sessionRestoreFromJson(json: string): SessionRestoreInput {
     return validateSessionRestoreInput(parsed as Partial<SessionRestoreInput>)
 }
 
-/** Parse `--from-json` payload, or read a file when the value is not JSON. */
 export async function resolveSessionRestorePayload(
     raw: string,
     readFile?: (path: string) => Promise<string>

@@ -592,7 +592,12 @@ export class KeeperVault {
             return
         }
         if (this.config.autoSync) {
-            await this.sync()
+            try {
+                await this.sync()
+            } catch (err) {
+                this.synced = false
+                this.log.warn(`Post-mutation sync failed: ${extractErrorMessage(err)}`)
+            }
         } else {
             this.synced = false
         }
