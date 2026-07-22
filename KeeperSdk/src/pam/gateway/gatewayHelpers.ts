@@ -10,11 +10,7 @@ import {
     ROUTER_CONNECTION_ERROR_CODES,
     type RouterConnectionErrorCode,
 } from './gatewayConstants'
-import type {
-    GatewayVersionParts,
-    KsmApplicationDisplayInfo,
-    ResolvedKsmApplication,
-} from './gatewayTypes'
+import type { GatewayVersionParts, KsmApplicationDisplayInfo, ResolvedKsmApplication } from './gatewayTypes'
 
 type NetworkErrorLike = {
     code?: string
@@ -101,11 +97,7 @@ export function getKsmApplicationDisplayInfo(
     }
 }
 
-async function requireRecordKey(
-    storage: InMemoryStorage,
-    record: DRecord,
-    label: string
-): Promise<Uint8Array> {
+async function requireRecordKey(storage: InMemoryStorage, record: DRecord, label: string): Promise<Uint8Array> {
     const recordKey = await storage.getKeyBytes(record.uid)
     if (!recordKey) {
         throw new KeeperSdkError(

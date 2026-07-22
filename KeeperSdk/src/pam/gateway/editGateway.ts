@@ -52,9 +52,7 @@ function buildEditResult(
     return {
         success: true,
         ...rest,
-        message: unchanged
-            ? `Gateway ${rest.gatewayUid} is unchanged.`
-            : `Gateway ${rest.gatewayUid} has been edited.`,
+        message: unchanged ? `Gateway ${rest.gatewayUid} is unchanged.` : `Gateway ${rest.gatewayUid} has been edited.`,
     }
 }
 
@@ -95,9 +93,7 @@ export async function editGateway(auth: Auth, input: EditGatewayInput): Promise<
     const previousName = gateway.controllerName || ''
     const previousNodeId = toFiniteNumber(gateway.nodeId)
     const gatewayName = hasName ? newNameRaw : previousName
-    const nodeId = hasNode
-        ? await resolveEnterpriseNodeId(auth, input.nodeIdOrName as string | number)
-        : previousNodeId
+    const nodeId = hasNode ? await resolveEnterpriseNodeId(auth, input.nodeIdOrName as string | number) : previousNodeId
 
     const nameChanged = gatewayName !== previousName
     const nodeChanged = nodeId !== previousNodeId
@@ -146,8 +142,6 @@ export function formatEditGatewayOutput(result: EditGatewayResult): string {
         result.nameChanged
             ? `Name: ${result.previousName || '(none)'} → ${result.gatewayName}`
             : `Name: ${result.gatewayName}`,
-        result.nodeChanged
-            ? `Node ID: ${result.previousNodeId} → ${result.nodeId}`
-            : `Node ID: ${result.nodeId}`,
+        result.nodeChanged ? `Node ID: ${result.previousNodeId} → ${result.nodeId}` : `Node ID: ${result.nodeId}`,
     ].join('\n')
 }

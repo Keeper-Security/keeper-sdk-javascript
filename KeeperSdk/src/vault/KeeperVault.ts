@@ -1031,10 +1031,7 @@ export class KeeperVault {
         return this.pamManager.formatGatewaysTable(result, options ?? {})
     }
 
-    public renderGatewaysAsciiTable(
-        table: FormattedGatewaysTable,
-        options?: RenderGatewaysAsciiTableOptions
-    ): string {
+    public renderGatewaysAsciiTable(table: FormattedGatewaysTable, options?: RenderGatewaysAsciiTableOptions): string {
         return this.pamManager.renderGatewaysAsciiTable(table, options ?? {})
     }
 

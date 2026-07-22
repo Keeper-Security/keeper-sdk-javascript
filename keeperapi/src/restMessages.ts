@@ -961,9 +961,7 @@ export const automatorAdminResetMessage = (
 export const getControllers = (): RestOutMessage<PAM.IPAMControllersResponse> =>
     createOutMessage('pam/get_controllers', PAM.PAMControllersResponse)
 
-export const modifyControllerMessage = (
-    data: PAM.IPAMController
-): RestInMessage<PAM.IPAMController> =>
+export const modifyControllerMessage = (data: PAM.IPAMController): RestInMessage<PAM.IPAMController> =>
     createInMessage(data, 'pam/modify_controller', PAM.PAMController)
 
 export const getConfigurationControllerMessage = (

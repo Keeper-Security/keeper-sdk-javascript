@@ -2,11 +2,7 @@ import type { Auth, PAM } from '@keeper-security/keeperapi'
 import { getControllers, pamGetOnlineControllersMessage } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
-import {
-    EMPTY_GATEWAYS_MESSAGE,
-    GATEWAY_LIST_DEFAULT_HEADERS,
-    GATEWAY_LIST_VERBOSE_HEADERS,
-} from './gatewayConstants'
+import { EMPTY_GATEWAYS_MESSAGE, GATEWAY_LIST_DEFAULT_HEADERS, GATEWAY_LIST_VERBOSE_HEADERS } from './gatewayConstants'
 import {
     formatTimestampMs,
     getKeeperRouterBaseUrl,
@@ -117,10 +113,7 @@ async function loadEnterpriseControllers(auth: Auth): Promise<PAM.IPAMController
     }
 }
 
-function resolveConnectivityStatus(
-    routerDown: boolean,
-    connectedCount: number
-): GatewayListRow['status'] {
+function resolveConnectivityStatus(routerDown: boolean, connectedCount: number): GatewayListRow['status'] {
     if (routerDown) return GatewayStatus.Unknown
     if (connectedCount === 0) return GatewayStatus.Offline
     if (connectedCount === 1) return GatewayStatus.Online
@@ -376,8 +369,7 @@ export function renderGatewaysAsciiTable(
         return width
     })
 
-    const formatRow = (cells: string[]): string =>
-        cells.map((cell, i) => (cell || '').padEnd(widths[i])).join('  ')
+    const formatRow = (cells: string[]): string => cells.map((cell, i) => (cell || '').padEnd(widths[i])).join('  ')
 
     return [
         formatRow([...table.headers]),

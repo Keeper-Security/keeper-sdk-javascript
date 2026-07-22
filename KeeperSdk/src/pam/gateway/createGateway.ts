@@ -257,9 +257,7 @@ export function formatCreateGatewayOutput(result: CreateGatewayResult): string {
     return [
         result.message,
         '',
-        result.isInitializedConfig
-            ? 'Use the following initialized config in the Gateway:'
-            : 'One-time token:',
+        result.isInitializedConfig ? 'Use the following initialized config in the Gateway:' : 'One-time token:',
         '-----------------------------------------------',
         result.tokenOrConfig,
         '-----------------------------------------------',
