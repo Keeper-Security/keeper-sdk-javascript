@@ -60,6 +60,9 @@
         "reports:audit-report": "ts-node src/enterpriseReport/audit_report.ts",
         "reports:action-report": "ts-node src/enterpriseReport/action_report.ts",
         "reports:password-report": "ts-node src/enterpriseReport/password_report.ts",
+        "pam:gateway:list": "ts-node src/pam/gateway/list_gateways.ts",
+        "pam:gateway:new": "ts-node src/pam/gateway/create_gateway.ts",
+        "pam:gateway:edit": "ts-node src/pam/gateway/edit_gateway.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

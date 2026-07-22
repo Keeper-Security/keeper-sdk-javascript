@@ -86,6 +86,7 @@ import {
 } from '../enterpriseReport'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
+import { PamManager } from '../pam/PamManager'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
 import { formatListNsfTable, renderListNsfAsciiTable, formatListNsfOutput } from '../nestedShareFolders/listNsf'
 import { formatNsfDetail } from '../nestedShareFolders/getNsf'
@@ -142,6 +143,17 @@ import type {
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
 } from '../nestedShareFolders/nsfTypes'
+import type {
+    ListGatewaysOptions,
+    ListGatewaysResult,
+    FormattedGatewaysTable,
+    FormatGatewaysTableOptions,
+    RenderGatewaysAsciiTableOptions,
+    CreateGatewayInput,
+    CreateGatewayResult,
+    EditGatewayInput,
+    EditGatewayResult,
+} from '../pam/gateway/gatewayTypes'
 import type {
     ListUserRow,
     ListUsersOptions,
@@ -211,6 +223,7 @@ export class KeeperVault {
     private readonly enterpriseReportManager: EnterpriseReportManager
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
+    private readonly pamManager: PamManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -236,10 +249,19 @@ export class KeeperVault {
         this.enterpriseReportManager = new EnterpriseReportManager(authProvider)
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
+        this.pamManager = new PamManager(this.storage, authProvider)
     }
 
     public getNestedShareFolderManager(): NestedShareFolderManager {
         return this.nestedShareFolderManager
+    }
+
+    public getPamManager(): PamManager {
+        return this.pamManager
+    }
+
+    public getGatewayManager() {
+        return this.pamManager.getGatewayManager()
     }
 
     public getFolderManager(): FolderManager {
@@ -977,6 +999,51 @@ export class KeeperVault {
         kind: 'GRANT' | 'REVOKE'
     ): string {
         return formatNsfRecordPermissionFailures(failures, kind)
+    }
+
+    public async listGateways(options?: ListGatewaysOptions): Promise<ListGatewaysResult> {
+        return this.pamManager.listGateways(options ?? {})
+    }
+
+    public async createGateway(input: CreateGatewayInput & { returnValue: true }): Promise<string>
+    public async createGateway(input: CreateGatewayInput & { returnValue?: false }): Promise<CreateGatewayResult>
+    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult | string>
+    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult | string> {
+        return this.pamManager.createGateway(input)
+    }
+
+    public formatCreateGatewayOutput(result: CreateGatewayResult): string {
+        return this.pamManager.formatCreateGatewayOutput(result)
+    }
+
+    public async editGateway(input: EditGatewayInput): Promise<EditGatewayResult> {
+        return this.pamManager.editGateway(input)
+    }
+
+    public formatEditGatewayOutput(result: EditGatewayResult): string {
+        return this.pamManager.formatEditGatewayOutput(result)
+    }
+
+    public formatGatewaysTable(
+        result: ListGatewaysResult,
+        options?: FormatGatewaysTableOptions
+    ): FormattedGatewaysTable {
+        return this.pamManager.formatGatewaysTable(result, options ?? {})
+    }
+
+    public renderGatewaysAsciiTable(
+        table: FormattedGatewaysTable,
+        options?: RenderGatewaysAsciiTableOptions
+    ): string {
+        return this.pamManager.renderGatewaysAsciiTable(table, options ?? {})
+    }
+
+    public formatGatewaysJson(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
+        return this.pamManager.formatGatewaysJson(result, options ?? {})
+    }
+
+    public formatGatewaysOutput(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
+        return this.pamManager.formatGatewaysOutput(result, options ?? {})
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
