@@ -596,7 +596,11 @@ export class KeeperVault {
                 await this.sync()
             } catch (err) {
                 this.synced = false
-                this.log.warn(`Post-mutation sync failed: ${extractErrorMessage(err)}`)
+                const msg = extractErrorMessage(err)
+                if (!/unable to load the key/i.test(msg)) {
+                    // TODO: handle this case based on commander fix
+                    this.log.warn(`Post-mutation sync failed: ${msg}`)
+                }
             }
         } else {
             this.synced = false

@@ -114,6 +114,7 @@ export type UserView = {
     node_id: number
     node_name: string
     full_name: string
+    job_title?: string
     status: string
     tfa_enabled: boolean
     transfer_status: string

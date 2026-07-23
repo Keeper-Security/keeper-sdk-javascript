@@ -14,6 +14,10 @@ export const mapTeamKeyType = (keyType: Folder.EncryptedKeyType, teamUid: string
             keyId = teamUid
             encryptionType = 'cbc'
             break
+        case Folder.EncryptedKeyType.encrypted_by_data_key_gcm:
+            keyId = teamUid
+            encryptionType = 'gcm'
+            break
         case Folder.EncryptedKeyType.encrypted_by_public_key:
             keyId = `${teamUid}_priv`
             encryptionType = 'rsa'
