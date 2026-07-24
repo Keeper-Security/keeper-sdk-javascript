@@ -18,7 +18,7 @@ const UPDATE_NODE_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nod
 
 type NodeEditRequest = {
     node_id: number
-    parent_id?: number
+    parent_id: number
     encrypted_data: string
 }
 
@@ -124,7 +124,7 @@ export async function updateNodes(auth: Auth, input: UpdateNodeInput): Promise<U
 
             await sendNodeUpdate(auth, {
                 node_id: node.node_id,
-                parent_id: parentId || undefined,
+                parent_id: parentId,
                 encrypted_data: encryptedData,
             })
             items.push({

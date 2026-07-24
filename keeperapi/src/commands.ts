@@ -213,7 +213,7 @@ export const enterpriseAllocateIdsCommand = (
 
 export type NodeEditRequest = {
     node_id: number
-    parent_id?: number
+    parent_id: number
     encrypted_data: string
 }
 
@@ -286,7 +286,7 @@ export type RoleManagedNodeAddResponse = KeeperResponse & {
 export type RoleManagedNodeAddRequest = {
     role_id: number
     managed_node_id: number
-    cascade_node_management?: boolean
+    cascade_node_management: boolean
     tree_keys?: RoleManagedNodeTreeKey[]
 }
 
@@ -298,7 +298,6 @@ export type RoleManagedNodeUpdateRequest = {
     role_id: number
     managed_node_id: number
     cascade_node_management?: boolean
-    tree_keys?: RoleManagedNodeTreeKey[]
 }
 
 export const roleManagedNodeUpdateCommand = (

@@ -28,7 +28,7 @@ const NODE_ADD_COMMAND = 'node_add'
 
 type NodeEditRequest = {
     node_id: number
-    parent_id?: number
+    parent_id: number
     encrypted_data: string
 }
 
