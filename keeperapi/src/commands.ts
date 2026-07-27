@@ -215,6 +215,8 @@ export type NodeEditRequest = {
     node_id: number
     parent_id: number
     encrypted_data: string
+    license_id?: number
+    restrict_visibility?: number
 }
 
 export const nodeAddCommand = (request: NodeEditRequest): RestCommand<NodeEditRequest, KeeperResponse> =>
@@ -313,14 +315,12 @@ export const roleManagedNodeRemoveCommand = (
     request: RoleManagedNodeRemoveRequest
 ): RestCommand<RoleManagedNodeRemoveRequest, KeeperResponse> => createCommand(request, 'role_managed_node_remove')
 
-/** Role AES key encrypted for an admin user (TRANSFER_ACCOUNT backward compat). */
 export type ManagedNodeRoleKey = {
     enterprise_user_id: number
     role_key: string
     tree_key_type?: string | number
 }
 
-/** MSP tree key for MANAGE_COMPANIES privilege. */
 export type ManagedNodeMspKey = {
     mc_enterprise_id: number
     tree_key: string
