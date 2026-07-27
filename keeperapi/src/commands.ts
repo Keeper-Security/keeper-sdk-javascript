@@ -213,8 +213,10 @@ export const enterpriseAllocateIdsCommand = (
 
 export type NodeEditRequest = {
     node_id: number
-    parent_id?: number
+    parent_id: number
     encrypted_data: string
+    license_id?: number
+    restrict_visibility?: number
 }
 
 export const nodeAddCommand = (request: NodeEditRequest): RestCommand<NodeEditRequest, KeeperResponse> =>
