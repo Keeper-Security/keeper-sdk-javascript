@@ -65,7 +65,8 @@ export const nodePlatform: Platform = class {
         keyId: string,
         privateKey: Uint8Array,
         _publicKey: Uint8Array,
-        storage?: KeyStorage
+        storage?: KeyStorage,
+        _canExport?: boolean
     ): Promise<void> {
         this.importKey(keyId, privateKey, storage)
     }
