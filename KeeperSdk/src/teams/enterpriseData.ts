@@ -9,6 +9,7 @@ import {
     type Auth,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, logger } from '../utils'
+import { decryptByKeyType, type SessionUnwrapKeys } from '../roles/roleCrypto'
 
 const DEFAULT_NODE_PATH_SEPARATOR = '\\'
 const MAX_CONTINUATIONS = 50
@@ -50,6 +51,7 @@ export type EnterpriseNode = {
     parent_id?: number
     encrypted_data?: string
     displayName?: string
+    restrict_visibility?: boolean
 }
 
 export type EnterpriseUser = {
@@ -172,6 +174,7 @@ export interface EnterpriseDataManagerApi {
     getData(includes: EnterpriseDataInclude[]): Promise<GetEnterpriseDataResponse>
     getDisplayNames(): Promise<EnterpriseDisplayNames>
     getTreeKey(): Promise<Uint8Array | null>
+    getRoleKey(roleId: number): Promise<Uint8Array | null>
     decryptNodeNames(nodes: EnterpriseNode[]): Promise<number>
     clearCache(): void
 }
@@ -181,6 +184,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     private displayNamesPromise: Promise<EnterpriseDisplayNames> | null = null
     private treeKeyPromise: Promise<Uint8Array | null> | null = null
     private readonly dataCache = new Map<string, Promise<GetEnterpriseDataResponse>>()
+    private readonly roleKeyCache = new Map<number, Uint8Array | null>()
 
     constructor(auth: Auth) {
         this.auth = auth
@@ -247,6 +251,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         this.dataCache.clear()
         this.displayNamesPromise = null
         this.treeKeyPromise = null
+        this.roleKeyCache.clear()
     }
 
     public static getNodePath(nodes: EnterpriseNode[], nodeId: number, options: NodePathOptions = {}): string {
@@ -343,6 +348,59 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         return this.treeKeyPromise
     }
 
+    private sessionUnwrapKeys(): SessionUnwrapKeys {
+        return {
+            dataKey: this.auth.dataKey,
+            privateKey: this.auth.privateKey,
+            eccPrivateKey: this.auth.eccPrivateKey,
+        }
+    }
+
+    public async getRoleKey(roleId: number): Promise<Uint8Array | null> {
+        if (this.roleKeyCache.has(roleId)) {
+            return this.roleKeyCache.get(roleId) ?? null
+        }
+
+        let response: Enterprise.IGetEnterpriseDataKeysResponse
+        try {
+            response = await this.auth.executeRest(getEnterpriseDataKeysMessage({ roleId: [roleId] }))
+        } catch (err) {
+            logger.debug(`enterprise/get_enterprise_data_keys (role ${roleId}) failed: ${extractErrorMessage(err)}`)
+            this.roleKeyCache.set(roleId, null)
+            return null
+        }
+
+        const treeKey = await this.getTreeKey()
+        for (const rKey of response.reEncryptedRoleKey || []) {
+            if (rKey.roleId !== roleId || !rKey.encryptedRoleKey || rKey.encryptedRoleKey.length === 0) continue
+            if (!treeKey) continue
+            try {
+                const roleKey = await platform.aesGcmDecrypt(rKey.encryptedRoleKey, treeKey)
+                this.roleKeyCache.set(roleId, roleKey)
+                return roleKey
+            } catch (err) {
+                logger.debug(`Failed to decrypt re-encrypted role key for role ${roleId}: ${extractErrorMessage(err)}`)
+            }
+        }
+
+        const unwrapKeys = this.sessionUnwrapKeys()
+        for (const rKey of response.roleKey || []) {
+            if (rKey.roleId !== roleId || !rKey.encryptedKey) continue
+            try {
+                const roleKey = await decryptByKeyType(rKey.encryptedKey, rKey.keyType ?? undefined, unwrapKeys)
+                if (roleKey) {
+                    this.roleKeyCache.set(roleId, roleKey)
+                    return roleKey
+                }
+            } catch (err) {
+                logger.debug(`Failed to decrypt role key for role ${roleId}: ${extractErrorMessage(err)}`)
+            }
+        }
+
+        this.roleKeyCache.set(roleId, null)
+        return null
+    }
+
     private async fetchAndDecryptTreeKey(): Promise<Uint8Array | null> {
         let response: Enterprise.IGetEnterpriseDataKeysResponse
         try {
@@ -437,6 +495,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         }
         if (message.parentId != null) node.parent_id = EnterpriseDataManager.toNumber(message.parentId)
         if (message.encryptedData) node.encrypted_data = message.encryptedData
+        if (message.restrictVisibility != null) node.restrict_visibility = message.restrictVisibility
         return node
     }
 
