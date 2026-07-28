@@ -613,13 +613,9 @@ export const browserPlatform: Platform = class {
     }
 
     static async importECCJsonWebKey(jwk: JsonWebKey, extractable = true): Promise<CryptoKey> {
-        return await crypto.subtle.importKey(
-            'jwk',
-            jwk,
-            { name: 'ECDH', namedCurve: 'P-256' },
-            extractable,
-            ['deriveBits']
-        )
+        return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, extractable, [
+            'deriveBits',
+        ])
     }
 
     static async ecdhComputeSharedSecret(
