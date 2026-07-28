@@ -96,7 +96,8 @@ export const browserPlatform: Platform = class {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'cbc'), cbcKey)
                 await storage.saveObject(this.getStorageKeyId(keyId, 'gcm'), gcmKey)
-            } else {
+            }
+            if (extractable && storage.saveKeyBytes) {
                 await storage.saveKeyBytes(keyId, key)
             }
         }
@@ -106,15 +107,18 @@ export const browserPlatform: Platform = class {
         keyId: string,
         privateKey: Uint8Array,
         publicKey: Uint8Array,
-        storage?: KeyStorage
+        storage?: KeyStorage,
+        canExport?: boolean
     ): Promise<void> {
-        const key = await this.importPrivateKeyEC(privateKey, publicKey)
+        const extractable = !!canExport
+        const key = await this.importPrivateKeyEC(privateKey, publicKey, extractable)
         cryptoKeysCache['ecc'][keyId] = key
 
         if (storage) {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'ecc'), key)
-            } else {
+            }
+            if (extractable && storage.saveKeyBytes) {
                 const jwk = await crypto.subtle.exportKey('jwk', key)
                 const keyBytes = this.stringToBytes(JSON.stringify(jwk))
                 await storage.saveKeyBytes(keyId, keyBytes)
@@ -168,10 +172,9 @@ export const browserPlatform: Platform = class {
         if (storage?.getObject) {
             const storageKeyId = this.getStorageKeyId(keyId, keyType)
             const storedKey = await storage.getObject<CryptoKey>(storageKeyId)
-            if (!storedKey) {
-                throw new Error('Unable to load crypto key ' + keyId)
+            if (storedKey) {
+                return storedKey
             }
-            return storedKey
         }
 
         const keyBytes = await this.loadKeyBytes(keyId, storage)
@@ -298,7 +301,7 @@ export const browserPlatform: Platform = class {
                 break
             // TODO: add something like this, need to find pub/priv key pair
             case 'ecc':
-                if (cryptoKeysCache['gcm'][keyId]) {
+                if (cryptoKeysCache['ecc'][keyId]) {
                     return
                 }
 
@@ -394,7 +397,8 @@ export const browserPlatform: Platform = class {
             if (storage.saveObject) {
                 await storage.saveObject(this.getStorageKeyId(keyId, 'cbc'), cbcKey)
                 await storage.saveObject(this.getStorageKeyId(keyId, 'gcm'), gcmKey)
-            } else {
+            }
+            if (canExtract && storage.saveKeyBytes) {
                 const keyBuffer = await crypto.subtle.exportKey('raw', gcmKey)
                 await storage.saveKeyBytes(keyId, new Uint8Array(keyBuffer))
             }
@@ -590,7 +594,7 @@ export const browserPlatform: Platform = class {
         return this.privateDecryptECWebCrypto(data, privateKeyImport, id, useHKDF)
     }
 
-    static async importPrivateKeyEC(privateKey: Uint8Array, publicKey: Uint8Array) {
+    static async importPrivateKeyEC(privateKey: Uint8Array, publicKey: Uint8Array, extractable = true) {
         const x = webSafe64FromBytes(publicKey.subarray(1, 33))
         const y = webSafe64FromBytes(publicKey.subarray(33, 65))
         const d = webSafe64FromBytes(privateKey)
@@ -598,18 +602,24 @@ export const browserPlatform: Platform = class {
         const jwk = {
             crv: 'P-256',
             d,
-            ext: true,
+            ext: extractable,
             key_ops: ['deriveBits'],
             kty: 'EC',
             x,
             y,
         }
 
-        return this.importECCJsonWebKey(jwk)
+        return this.importECCJsonWebKey(jwk, extractable)
     }
 
-    static async importECCJsonWebKey(jwk: JsonWebKey): Promise<CryptoKey> {
-        return await crypto.subtle.importKey('jwk', jwk, { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+    static async importECCJsonWebKey(jwk: JsonWebKey, extractable = true): Promise<CryptoKey> {
+        return await crypto.subtle.importKey(
+            'jwk',
+            jwk,
+            { name: 'ECDH', namedCurve: 'P-256' },
+            extractable,
+            ['deriveBits']
+        )
     }
 
     static async ecdhComputeSharedSecret(
