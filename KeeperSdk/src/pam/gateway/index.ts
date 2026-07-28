@@ -11,6 +11,8 @@ export {
 
 export { createGateway, formatCreateGatewayOutput } from './createGateway'
 export { editGateway, formatEditGatewayOutput } from './editGateway'
+export { removeGateway, formatRemoveGatewayOutput } from './removeGateway'
+export { setGatewayMaxInstances, formatSetGatewayMaxInstancesOutput } from './setGatewayMaxInstances'
 
 export { GatewayListFormat, GatewayStatus, GatewayConfigInitFormat } from './gatewayTypes'
 export type {
@@ -33,6 +35,10 @@ export type {
     CreateGatewayResult,
     EditGatewayInput,
     EditGatewayResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
     GatewayJsonPoolInstance,
     GatewayJsonEntry,
     GatewaysJsonPayload,
@@ -52,6 +58,7 @@ export {
 export {
     getKeeperRouterBaseUrl,
     webSafeUidFromBytes,
+    controllerUidsEqual,
     toFiniteNumber,
     formatTimestampMs,
     parseGatewayVersionString,
@@ -60,6 +67,8 @@ export {
     getKeeperRegionAbbreviation,
     formatGatewayOneTimeToken,
     findEnterpriseGatewayByUidOrName,
+    requireEnterpriseGatewayByUidOrName,
+    fetchEnterprisePamControllers,
     groupOnlineGatewaysByControllerUid,
     isKeeperRouterConnectionError,
 } from './gatewayHelpers'

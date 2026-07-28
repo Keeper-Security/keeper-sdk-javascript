@@ -1,9 +1,10 @@
 import type { Auth, PAM } from '@keeper-security/keeperapi'
-import { getControllers, pamGetOnlineControllersMessage } from '@keeper-security/keeperapi'
+import { pamGetOnlineControllersMessage } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { EMPTY_GATEWAYS_MESSAGE, GATEWAY_LIST_DEFAULT_HEADERS, GATEWAY_LIST_VERBOSE_HEADERS } from './gatewayConstants'
 import {
+    fetchEnterprisePamControllers,
     formatTimestampMs,
     getKeeperRouterBaseUrl,
     getKsmApplicationDisplayInfo,
@@ -98,18 +99,6 @@ async function loadOnlineControllers(
             }
         }
         return { controllers: [], routerDown: true }
-    }
-}
-
-async function loadEnterpriseControllers(auth: Auth): Promise<PAM.IPAMController[]> {
-    try {
-        const response = await auth.executeRest(getControllers())
-        return response.controllers ?? []
-    } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to list enterprise gateways: ${extractErrorMessage(err)}`,
-            ResultCodes.PAM_GATEWAY_LIST_FAILED
-        )
     }
 }
 
@@ -243,7 +232,7 @@ export async function listGateways(
     const online = await loadOnlineControllers(auth, force, routerHost)
     if (online.abort) return online.abort
 
-    const enterpriseControllers = await loadEnterpriseControllers(auth)
+    const enterpriseControllers = await fetchEnterprisePamControllers(auth, ResultCodes.PAM_GATEWAY_LIST_FAILED)
     if (!enterpriseControllers.length) {
         return emptyListResult({
             routerDown: online.routerDown,

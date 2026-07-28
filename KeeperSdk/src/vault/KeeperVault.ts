@@ -153,6 +153,10 @@ import type {
     CreateGatewayResult,
     EditGatewayInput,
     EditGatewayResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
 } from '../pam/gateway/gatewayTypes'
 import type {
     ListUserRow,
@@ -1022,6 +1026,22 @@ export class KeeperVault {
 
     public formatEditGatewayOutput(result: EditGatewayResult): string {
         return this.pamManager.formatEditGatewayOutput(result)
+    }
+
+    public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
+        return this.pamManager.removeGateway(input)
+    }
+
+    public formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
+        return this.pamManager.formatRemoveGatewayOutput(result)
+    }
+
+    public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
+        return this.pamManager.setGatewayMaxInstances(input)
+    }
+
+    public formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
+        return this.pamManager.formatSetGatewayMaxInstancesOutput(result)
     }
 
     public formatGatewaysTable(

@@ -159,6 +159,9 @@ export enum PamErrorCode {
     GatewayEditFailed = 'pam_gateway_edit_failed',
     GatewayNodeNotFound = 'pam_gateway_node_not_found',
     MultipleGatewayNodeMatches = 'pam_multiple_gateway_node_matches',
+    GatewayRemoveFailed = 'pam_gateway_remove_failed',
+    GatewayInvalidMaxInstances = 'pam_gateway_invalid_max_instances',
+    GatewaySetMaxInstancesFailed = 'pam_gateway_set_max_instances_failed',
 }
 
 export const ResultCodes = {
@@ -256,6 +259,9 @@ export const ResultCodes = {
     PAM_GATEWAY_EDIT_FAILED: PamErrorCode.GatewayEditFailed,
     PAM_GATEWAY_NODE_NOT_FOUND: PamErrorCode.GatewayNodeNotFound,
     PAM_MULTIPLE_GATEWAY_NODE_MATCHES: PamErrorCode.MultipleGatewayNodeMatches,
+    PAM_GATEWAY_REMOVE_FAILED: PamErrorCode.GatewayRemoveFailed,
+    PAM_GATEWAY_INVALID_MAX_INSTANCES: PamErrorCode.GatewayInvalidMaxInstances,
+    PAM_GATEWAY_SET_MAX_INSTANCES_FAILED: PamErrorCode.GatewaySetMaxInstancesFailed,
     AUDIT_INVALID_REPORT_TYPE: AuditReportErrorCode.InvalidReportType,
     AUDIT_INVALID_CREATED_FILTER: AuditReportErrorCode.InvalidCreatedFilter,
     AUDIT_INVALID_FILTER: AuditReportErrorCode.InvalidFilter,

@@ -10,7 +10,11 @@ import type {
     FormattedGatewaysTable,
     ListGatewaysOptions,
     ListGatewaysResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
     RenderGatewaysAsciiTableOptions,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
 } from './gateway/gatewayTypes'
 
 export type AuthProvider = () => Auth
@@ -47,6 +51,22 @@ export class PamManager {
 
     public formatEditGatewayOutput(result: EditGatewayResult): string {
         return this.gatewayManager.formatEditGatewayOutput(result)
+    }
+
+    public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
+        return this.gatewayManager.removeGateway(input)
+    }
+
+    public formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
+        return this.gatewayManager.formatRemoveGatewayOutput(result)
+    }
+
+    public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
+        return this.gatewayManager.setGatewayMaxInstances(input)
+    }
+
+    public formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
+        return this.gatewayManager.formatSetGatewayMaxInstancesOutput(result)
     }
 
     public formatGatewaysTable(

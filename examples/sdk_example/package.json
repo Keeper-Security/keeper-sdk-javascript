@@ -63,6 +63,8 @@
         "pam:gateway:list": "ts-node src/pam/gateway/list_gateways.ts",
         "pam:gateway:new": "ts-node src/pam/gateway/create_gateway.ts",
         "pam:gateway:edit": "ts-node src/pam/gateway/edit_gateway.ts",
+        "pam:gateway:remove": "ts-node src/pam/gateway/remove_gateway.ts",
+        "pam:gateway:set-max-instances": "ts-node src/pam/gateway/set_max_instances.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"
