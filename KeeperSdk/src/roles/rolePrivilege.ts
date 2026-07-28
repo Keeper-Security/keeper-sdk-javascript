@@ -9,7 +9,7 @@ import {
     type ManagedNodePrivilegeAddRequest,
     type ManagedNodeRoleKey,
 } from '@keeper-security/keeperapi'
-import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
+import { extractErrorMessage, KeeperSdkError, ResultCodes, logger } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
@@ -115,18 +115,31 @@ async function buildRoleKeyMaterial(
     const publicKeyMap = await fetchUserPublicKeys(auth, emails)
 
     const roleKeys: ManagedNodeRoleKey[] = []
+    const skippedNoPublicKey: string[] = []
     for (const userId of memberIds) {
         const user = usersById.get(userId)
         if (!user?.username) continue
         const publicKeys = publicKeyMap.get(user.username.toLowerCase())
-        if (!publicKeys) continue
+        if (!publicKeys) {
+            skippedNoPublicKey.push(user.username)
+            continue
+        }
         const encrypted = await encryptForUserPublicKey(roleKey, publicKeys)
-        if (!encrypted) continue
+        if (!encrypted) {
+            skippedNoPublicKey.push(user.username)
+            continue
+        }
         roleKeys.push({
             enterprise_user_id: userId,
             role_key: encrypted.ciphertext,
             tree_key_type: encrypted.keyType,
         })
+    }
+    if (skippedNoPublicKey.length > 0) {
+        logger.warn(
+            `No public key for role member(s) [${skippedNoPublicKey.join(', ')}]; ` +
+                'they will not receive an encrypted role key until they re-key / register a device key.'
+        )
     }
 
     return {
@@ -237,7 +250,13 @@ export async function changeRolePrivileges(
                 ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
             )
         }
-        const roleKey = (await enterpriseData.getRoleKey(role.role_id)) ?? generateEncryptionKey()
+        let roleKey = await enterpriseData.getRoleKey(role.role_id)
+        if (!roleKey) {
+            logger.debug(
+                `No decryptable role key for role_id=${role.role_id}; generating a new key for transfer_account.`
+            )
+            roleKey = generateEncryptionKey()
+        }
         const usersById = new Map<number, EnterpriseUser>()
         for (const user of response.users || []) usersById.set(user.enterprise_user_id, user)
         roleKeyMaterial = await buildRoleKeyMaterial(
