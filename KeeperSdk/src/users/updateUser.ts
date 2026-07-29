@@ -52,7 +52,7 @@ type UserUpdatePayload = {
     enterprise_user_id: number
     enterprise_user_username: string
     node_id: number
-    encrypted_data?: string
+    encrypted_data: string
     full_name?: string
     job_title?: string
 }
@@ -69,7 +69,13 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
         throw new KeeperSdkError('No users provided for update.', ResultCodes.NO_USERS_TO_UPDATE)
     }
 
-    const parentIdentifier = input.parent ?? null
+    const parentRaw = input.parent
+    const parentIdentifier =
+        parentRaw === undefined || parentRaw === null
+            ? null
+            : typeof parentRaw === 'string' && parentRaw.trim() === ''
+              ? null
+              : parentRaw
     const needsNameLookup = parentNeedsNameLookup(parentIdentifier)
     const hasProfileChange = parentIdentifier !== null || !!input.fullName || !!input.jobTitle
 
@@ -90,7 +96,7 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     const resolvedUsers = resolveExistingUsers(response.users || [], rawEmails)
 
     const overrideNodeId: number | null =
-        parentIdentifier !== null && parentIdentifier !== '' ? resolveParentNode(nodes, parentIdentifier).node_id : null
+        parentIdentifier !== null ? resolveParentNode(nodes, parentIdentifier).node_id : null
 
     const treeKey = hasProfileChange ? await enterpriseData.getTreeKey() : null
     if (hasProfileChange && !treeKey) {
@@ -117,18 +123,17 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
 
         try {
             if (hasProfileChange && treeKey !== null) {
-                const encryptedData =
-                    fullName !== undefined
-                        ? await encryptObjectForStorage({ displayname: fullName }, treeKey)
-                        : undefined
-                await sendUserUpdate(auth, {
+                const displayName = fullName ?? (user.full_name || '').trim()
+                const encryptedData = await encryptObjectForStorage({ displayname: displayName }, treeKey)
+                const payload: UserUpdatePayload = {
                     enterprise_user_id: user.enterprise_user_id,
                     enterprise_user_username: user.username,
                     node_id: targetNodeId,
                     encrypted_data: encryptedData,
-                    full_name: fullName,
-                    job_title: jobTitle,
-                })
+                }
+                if (fullName !== undefined) payload.full_name = fullName
+                if (jobTitle !== undefined) payload.job_title = jobTitle
+                await sendUserUpdate(auth, payload)
             }
 
             for (const teamUid of removeTeamUids) {
