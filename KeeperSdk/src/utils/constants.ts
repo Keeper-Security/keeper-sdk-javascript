@@ -66,6 +66,7 @@ export enum RoleErrorCode {
     NoPrivilegesSpecified = 'no_privileges_specified',
     RolePrivilegeAddFailed = 'role_privilege_add_failed',
     RolePrivilegeRemoveFailed = 'role_privilege_remove_failed',
+    RoleKeyUnavailable = 'role_key_unavailable',
 }
 
 export enum NsfErrorCode {
@@ -84,10 +85,10 @@ export enum NsfErrorCode {
     UpdateFailed = 'nsf_update_failed',
     DetailsFailed = 'nsf_details_failed',
     AddFailed = 'nsf_add_failed',
-    RecordPermissionFailed = 'nsf_record_permission_failed',
     ShareFailed = 'nsf_share_failed',
     ShortcutFailed = 'nsf_shortcut_failed',
     TransferFailed = 'nsf_transfer_failed',
+    RecordPermissionFailed = 'nsf_record_permission_failed',
 }
 
 export enum TeamErrorCode {
@@ -174,10 +175,6 @@ export enum UserErrorCode {
     HideSharedFoldersRequired = 'hide_shared_folders_required',
 }
 
-export enum SyncErrorCode {
-    SyncFailed = 'sync_failed',
-}
-
 export const ResultCodes = {
     INVALID_CREDENTIALS: AuthErrorCode.InvalidCredentials,
     MISSING_USERNAME: AuthErrorCode.MissingUsername,
@@ -219,6 +216,7 @@ export const ResultCodes = {
     NO_PRIVILEGES_SPECIFIED: RoleErrorCode.NoPrivilegesSpecified,
     ROLE_PRIVILEGE_ADD_FAILED: RoleErrorCode.RolePrivilegeAddFailed,
     ROLE_PRIVILEGE_REMOVE_FAILED: RoleErrorCode.RolePrivilegeRemoveFailed,
+    ROLE_KEY_UNAVAILABLE: RoleErrorCode.RoleKeyUnavailable,
     NSF_NOT_FOUND: NsfErrorCode.NotFound,
     MULTIPLE_NSF_MATCHES: NsfErrorCode.MultipleMatches,
     NSF_LEGACY_RECORD: NsfErrorCode.LegacyRecord,
@@ -234,10 +232,10 @@ export const ResultCodes = {
     NSF_UPDATE_FAILED: NsfErrorCode.UpdateFailed,
     NSF_DETAILS_FAILED: NsfErrorCode.DetailsFailed,
     NSF_ADD_FAILED: NsfErrorCode.AddFailed,
-    NSF_RECORD_PERMISSION_FAILED: NsfErrorCode.RecordPermissionFailed,
     NSF_SHARE_FAILED: NsfErrorCode.ShareFailed,
     NSF_SHORTCUT_FAILED: NsfErrorCode.ShortcutFailed,
     NSF_TRANSFER_FAILED: NsfErrorCode.TransferFailed,
+    NSF_RECORD_PERMISSION_FAILED: NsfErrorCode.RecordPermissionFailed,
     TEAM_REQUIRED: TeamErrorCode.TeamRequired,
     TEAM_NOT_FOUND: TeamErrorCode.TeamNotFound,
     MULTIPLE_TEAM_MATCHES: TeamErrorCode.MultipleTeamMatches,
@@ -286,7 +284,6 @@ export const ResultCodes = {
     TEAM_USER_REMOVE_FAILED: UserErrorCode.TeamUserRemoveFailed,
     TEAM_ENTERPRISE_USER_UPDATE_FAILED: UserErrorCode.TeamEnterpriseUserUpdateFailed,
     HIDE_SHARED_FOLDERS_REQUIRED: UserErrorCode.HideSharedFoldersRequired,
-    SYNC_FAILED: SyncErrorCode.SyncFailed,
     AUDIT_INVALID_REPORT_TYPE: AuditReportErrorCode.InvalidReportType,
     AUDIT_INVALID_CREATED_FILTER: AuditReportErrorCode.InvalidCreatedFilter,
     AUDIT_INVALID_FILTER: AuditReportErrorCode.InvalidFilter,

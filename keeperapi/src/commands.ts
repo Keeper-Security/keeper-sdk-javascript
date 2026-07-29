@@ -340,6 +340,7 @@ export type ManagedNodePrivilegeAddRequest = {
 export type ManagedNodePrivilegeAddResponse = KeeperResponse & {
     status?: {
         missing_keys?: Record<string, string>
+        missing_ecc_keys?: Record<string, string>
         invalid_users?: number[]
         cant_be_pending?: number[]
     }

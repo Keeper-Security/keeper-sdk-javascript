@@ -138,6 +138,12 @@ export async function manageRoleNodes(auth: Auth, input: ManageRoleNodesInput): 
     }
 
     const action = input.action
+    if (action !== 'add' && action !== 'update' && action !== 'remove') {
+        throw new KeeperSdkError(
+            `Unknown managed-node action "${String(action)}". Use add, update, or remove.`,
+            ResultCodes.NO_NODES_FOR_ROLE_OP
+        )
+    }
     const cascade = resolveToggle(input.cascade)
 
     const includes = [...MANAGE_NODE_BASE_INCLUDES]
@@ -273,7 +279,7 @@ export async function manageRoleNodes(auth: Auth, input: ManageRoleNodesInput): 
                         nodeName,
                         status: RoleManagedNodeStatus.Updated,
                     })
-                } else {
+                } else if (action === 'remove') {
                     if (!existingLink) {
                         items.push({
                             roleId: role.role_id,

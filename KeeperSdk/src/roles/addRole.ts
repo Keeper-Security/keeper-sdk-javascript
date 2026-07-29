@@ -180,12 +180,20 @@ export async function addRoles(auth: Auth, input: AddRoleInput): Promise<AddRole
                 visible_below: visibleBelow,
                 new_user_inherit: newUserInherit,
             })
-            await applyRoleEnforcements(auth, roleId, enforcements)
+            let enforcementMessage: string | undefined
+            if (enforcements.length > 0) {
+                try {
+                    await applyRoleEnforcements(auth, roleId, enforcements)
+                } catch (err) {
+                    enforcementMessage = `Role created, but enforcements failed: ${extractErrorMessage(err)}`
+                }
+            }
             items.push({
                 roleId,
                 roleName: name,
                 nodeId: parentNodeId,
                 status: AddRoleStatus.Created,
+                message: enforcementMessage,
             })
         } catch (err) {
             items.push({
@@ -267,8 +275,11 @@ function finalizeResult(items: AddRoleItemResult[], parentNodeId: number, parent
     const created = items.filter((item) => item.status === AddRoleStatus.Created).length
     const skipped = items.filter((item) => item.status === AddRoleStatus.Skipped).length
     const failed = items.filter((item) => item.status === AddRoleStatus.Failed).length
+    const partialEnforcementFailure = items.some(
+        (item) => item.status === AddRoleStatus.Created && !!item.message
+    )
     return {
-        success: failed === 0 && created > 0,
+        success: failed === 0 && created > 0 && !partialEnforcementFailure,
         parentNodeId,
         parentNodeName,
         items,

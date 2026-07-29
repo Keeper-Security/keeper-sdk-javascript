@@ -3,12 +3,13 @@ import {
     Enterprise,
     getEnterpriseDataForUserMessage,
     getEnterpriseDataKeysMessage,
+    normal64Bytes,
     platform,
     webSafe64FromBytes,
     type Auth,
 } from '@keeper-security/keeperapi'
-import { decryptByKeyType, type SessionUnwrapKeys } from '../roles/roleCrypto'
 import { extractErrorMessage, isNumber, logger } from '../utils'
+import { decryptByKeyType, type SessionUnwrapKeys } from '../roles/roleCrypto'
 
 const DEFAULT_NODE_PATH_SEPARATOR = '\\'
 const MAX_CONTINUATIONS = 50
@@ -167,6 +168,11 @@ export type EnterpriseDisplayNames = {
     roles: DecryptedRoleNames
 }
 
+export type RoleKeyResolveResult =
+    | { status: 'resolved'; key: Uint8Array }
+    | { status: 'absent' }
+    | { status: 'unavailable' }
+
 type LongLike = number | { toNumber: () => number; toString: () => string } | undefined | null
 
 export interface EnterpriseDataManagerApi {
@@ -174,6 +180,7 @@ export interface EnterpriseDataManagerApi {
     getDisplayNames(): Promise<EnterpriseDisplayNames>
     getTreeKey(): Promise<Uint8Array | null>
     getRoleKey(roleId: number): Promise<Uint8Array | null>
+    resolveRoleKey(roleId: number): Promise<RoleKeyResolveResult>
     decryptNodeNames(nodes: EnterpriseNode[]): Promise<number>
     clearCache(): void
 }
@@ -184,6 +191,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     private treeKeyPromise: Promise<Uint8Array | null> | null = null
     private readonly dataCache = new Map<string, Promise<GetEnterpriseDataResponse>>()
     private readonly roleKeyCache = new Map<number, Uint8Array | null>()
+    private readonly roleKeyResolveCache = new Map<number, RoleKeyResolveResult>()
 
     constructor(auth: Auth) {
         this.auth = auth
@@ -251,6 +259,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         this.displayNamesPromise = null
         this.treeKeyPromise = null
         this.roleKeyCache.clear()
+        this.roleKeyResolveCache.clear()
     }
 
     public static getNodePath(nodes: EnterpriseNode[], nodeId: number, options: NodePathOptions = {}): string {
@@ -356,8 +365,13 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     }
 
     public async getRoleKey(roleId: number): Promise<Uint8Array | null> {
-        if (this.roleKeyCache.has(roleId)) {
-            return this.roleKeyCache.get(roleId) ?? null
+        const resolved = await this.resolveRoleKey(roleId)
+        return resolved.status === 'resolved' ? resolved.key : null
+    }
+
+    public async resolveRoleKey(roleId: number): Promise<RoleKeyResolveResult> {
+        if (this.roleKeyResolveCache.has(roleId)) {
+            return this.roleKeyResolveCache.get(roleId)!
         }
 
         let response: Enterprise.IGetEnterpriseDataKeysResponse
@@ -365,9 +379,16 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             response = await this.auth.executeRest(getEnterpriseDataKeysMessage({ roleId: [roleId] }))
         } catch (err) {
             logger.debug(`enterprise/get_enterprise_data_keys (role ${roleId}) failed: ${extractErrorMessage(err)}`)
+            const unavailable: RoleKeyResolveResult = { status: 'unavailable' }
+            this.roleKeyResolveCache.set(roleId, unavailable)
             this.roleKeyCache.set(roleId, null)
-            return null
+            return unavailable
         }
+
+        const hasMaterial =
+            (response.reEncryptedRoleKey || []).some(
+                (rKey) => rKey.roleId === roleId && !!rKey.encryptedRoleKey && rKey.encryptedRoleKey.length > 0
+            ) || (response.roleKey || []).some((rKey) => rKey.roleId === roleId && !!rKey.encryptedKey)
 
         const treeKey = await this.getTreeKey()
         for (const rKey of response.reEncryptedRoleKey || []) {
@@ -375,8 +396,10 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             if (!treeKey) continue
             try {
                 const roleKey = await platform.aesGcmDecrypt(rKey.encryptedRoleKey, treeKey)
+                const resolved: RoleKeyResolveResult = { status: 'resolved', key: roleKey }
+                this.roleKeyResolveCache.set(roleId, resolved)
                 this.roleKeyCache.set(roleId, roleKey)
-                return roleKey
+                return resolved
             } catch (err) {
                 logger.debug(`Failed to decrypt re-encrypted role key for role ${roleId}: ${extractErrorMessage(err)}`)
             }
@@ -388,16 +411,20 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             try {
                 const roleKey = await decryptByKeyType(rKey.encryptedKey, rKey.keyType ?? undefined, unwrapKeys)
                 if (roleKey) {
+                    const resolved: RoleKeyResolveResult = { status: 'resolved', key: roleKey }
+                    this.roleKeyResolveCache.set(roleId, resolved)
                     this.roleKeyCache.set(roleId, roleKey)
-                    return roleKey
+                    return resolved
                 }
             } catch (err) {
                 logger.debug(`Failed to decrypt role key for role ${roleId}: ${extractErrorMessage(err)}`)
             }
         }
 
+        const result: RoleKeyResolveResult = hasMaterial ? { status: 'unavailable' } : { status: 'absent' }
+        this.roleKeyResolveCache.set(roleId, result)
         this.roleKeyCache.set(roleId, null)
-        return null
+        return result
     }
 
     private async fetchAndDecryptTreeKey(): Promise<Uint8Array | null> {
@@ -422,18 +449,33 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
 
     private async decryptTreeKey(treeKey: Enterprise.ITreeKey): Promise<Uint8Array | null> {
         if (!treeKey.treeKey) return null
+        const encrypted = normal64Bytes(treeKey.treeKey)
+        const keyType = (treeKey.keyTypeId ?? 0) as Enterprise.BackupKeyType
+
         try {
-            const decrypted = await decryptByKeyType(
-                treeKey.treeKey,
-                treeKey.keyTypeId ?? undefined,
-                this.sessionUnwrapKeys()
-            )
-            if (!decrypted) {
-                logger.debug(`Unsupported or unavailable tree-key keyTypeId=${treeKey.keyTypeId}`)
+            switch (keyType) {
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY: {
+                    if (!this.auth.dataKey) return null
+                    return await platform.aesCbcDecrypt(encrypted, this.auth.dataKey, true)
+                }
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY_GCM: {
+                    if (!this.auth.dataKey) return null
+                    return await platform.aesGcmDecrypt(encrypted, this.auth.dataKey)
+                }
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY: {
+                    if (!this.auth.privateKey) return null
+                    return platform.privateDecrypt(encrypted, this.auth.privateKey)
+                }
+                case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC: {
+                    if (!this.auth.eccPrivateKey) return null
+                    return await platform.privateDecryptEC(encrypted, this.auth.eccPrivateKey)
+                }
+                default:
+                    logger.debug(`Unsupported tree-key keyTypeId=${keyType}`)
+                    return null
             }
-            return decrypted
         } catch (err) {
-            logger.debug(`Tree-key decryption failed (keyTypeId=${treeKey.keyTypeId}): ${extractErrorMessage(err)}`)
+            logger.debug(`Tree-key decryption failed (keyTypeId=${keyType}): ${extractErrorMessage(err)}`)
             return null
         }
     }

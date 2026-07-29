@@ -69,7 +69,13 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
         throw new KeeperSdkError('No users provided for update.', ResultCodes.NO_USERS_TO_UPDATE)
     }
 
-    const parentIdentifier = input.parent ?? null
+    const parentRaw = input.parent
+    const parentIdentifier =
+        parentRaw === undefined || parentRaw === null
+            ? null
+            : typeof parentRaw === 'string' && parentRaw.trim() === ''
+              ? null
+              : parentRaw
     const needsNameLookup = parentNeedsNameLookup(parentIdentifier)
     const hasProfileChange = parentIdentifier !== null || !!input.fullName || !!input.jobTitle
 
@@ -90,7 +96,7 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     const resolvedUsers = resolveExistingUsers(response.users || [], rawEmails)
 
     const overrideNodeId: number | null =
-        parentIdentifier !== null && parentIdentifier !== '' ? resolveParentNode(nodes, parentIdentifier).node_id : null
+        parentIdentifier !== null ? resolveParentNode(nodes, parentIdentifier).node_id : null
 
     const treeKey = hasProfileChange ? await enterpriseData.getTreeKey() : null
     if (hasProfileChange && !treeKey) {

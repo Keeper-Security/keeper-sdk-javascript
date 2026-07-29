@@ -9,7 +9,7 @@ import {
     type ManagedNodePrivilegeAddRequest,
     type ManagedNodeRoleKey,
 } from '@keeper-security/keeperapi'
-import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
+import { extractErrorMessage, KeeperSdkError, ResultCodes, logger } from '../utils'
 import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
@@ -28,15 +28,30 @@ import {
     buildRoleKeysFromProvidedPublicKeys,
     encryptForUserPublicKey,
     fetchUserPublicKeys,
-    getMissingRoleKeyMap,
+    getMissingRoleKeyMaps,
+    getResultCode,
 } from './roleCrypto'
 
-/**
- * API: transfer_account requires role key material (RSA fields deprecated for EC migration but
- * still required for Commander/bridge). manage_companies uses msp_keys, not role keys.
- */
 const TRANSFER_ACCOUNT = 'transfer_account'
 const MANAGE_COMPANIES = 'manage_companies'
+
+export const MANAGED_NODE_PRIVILEGES = [
+    'manage_user',
+    'manage_nodes',
+    'manage_licences',
+    'manage_roles',
+    'manage_teams',
+    'transfer_account',
+    'run_reports',
+    'view_tree',
+    'manage_bridge',
+    'manage_companies',
+    'sharing_administrator',
+] as const
+
+export type ManagedNodePrivilege = (typeof MANAGED_NODE_PRIVILEGES)[number]
+
+const ALLOWED_PRIVILEGE_SET = new Set<string>(MANAGED_NODE_PRIVILEGES)
 
 const ROLE_PRIVILEGE_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
@@ -115,18 +130,31 @@ async function buildRoleKeyMaterial(
     const publicKeyMap = await fetchUserPublicKeys(auth, emails)
 
     const roleKeys: ManagedNodeRoleKey[] = []
+    const skippedNoPublicKey: string[] = []
     for (const userId of memberIds) {
         const user = usersById.get(userId)
         if (!user?.username) continue
         const publicKeys = publicKeyMap.get(user.username.toLowerCase())
-        if (!publicKeys) continue
+        if (!publicKeys) {
+            skippedNoPublicKey.push(user.username)
+            continue
+        }
         const encrypted = await encryptForUserPublicKey(roleKey, publicKeys)
-        if (!encrypted) continue
+        if (!encrypted) {
+            skippedNoPublicKey.push(user.username)
+            continue
+        }
         roleKeys.push({
             enterprise_user_id: userId,
             role_key: encrypted.ciphertext,
             tree_key_type: encrypted.keyType,
         })
+    }
+    if (skippedNoPublicKey.length > 0) {
+        logger.warn(
+            `No public key for role member(s) [${skippedNoPublicKey.join(', ')}]; ` +
+                'they will not receive an encrypted role key until they re-key / register a device key.'
+        )
     }
 
     return {
@@ -158,10 +186,13 @@ async function addTransferAccountPrivilege(
             ResultCodes.ROLE_PRIVILEGE_ADD_FAILED
         )
     } catch (err) {
-        const missing = getMissingRoleKeyMap(err)
+        const missing = getMissingRoleKeyMaps(err)
         if (!missing) throw err
-        // API: encrypt role_key for missing admins and resend.
-        const extraKeys = buildRoleKeysFromProvidedPublicKeys(roleKeyMaterial.roleKey, missing)
+        const extraKeys = await buildRoleKeysFromProvidedPublicKeys(
+            roleKeyMaterial.roleKey,
+            missing.rsa,
+            missing.ecc
+        )
         payload.role_keys = [...(payload.role_keys || []), ...extraKeys]
         const retryResponse = await auth.executeRestCommand(managedNodePrivilegeAddCommand(payload))
         assertCommandSucceeded(
@@ -188,6 +219,14 @@ export async function changeRolePrivileges(
     const removePrivileges = normalizeIdentifiers(input.remove ?? []).map((p) => p.toLowerCase())
     if (addPrivileges.length === 0 && removePrivileges.length === 0) {
         throw new KeeperSdkError('No privileges specified. Use add and/or remove.', ResultCodes.NO_PRIVILEGES_SPECIFIED)
+    }
+
+    const unknown = [...addPrivileges, ...removePrivileges].filter((p) => !ALLOWED_PRIVILEGE_SET.has(p))
+    if (unknown.length > 0) {
+        throw new KeeperSdkError(
+            `Unknown privilege(s): ${unknown.join(', ')}. Allowed: ${MANAGED_NODE_PRIVILEGES.join(', ')}.`,
+            ResultCodes.NO_PRIVILEGES_SPECIFIED
+        )
     }
 
     if (addPrivileges.includes(MANAGE_COMPANIES) && (!input.mspKeys || input.mspKeys.length === 0)) {
@@ -237,7 +276,19 @@ export async function changeRolePrivileges(
                 ResultCodes.ENTERPRISE_TREE_KEY_UNAVAILABLE
             )
         }
-        const roleKey = (await enterpriseData.getRoleKey(role.role_id)) ?? generateEncryptionKey()
+        const roleKeyResolved = await enterpriseData.resolveRoleKey(role.role_id)
+        if (roleKeyResolved.status === 'unavailable') {
+            throw new KeeperSdkError(
+                `Role key for role_id=${role.role_id} exists but cannot be decrypted by this session. ` +
+                    'Cannot grant transfer_account without orphaning existing key holders.',
+                ResultCodes.ROLE_KEY_UNAVAILABLE
+            )
+        }
+        const roleKey =
+            roleKeyResolved.status === 'resolved' ? roleKeyResolved.key : generateEncryptionKey()
+        if (roleKeyResolved.status === 'absent') {
+            logger.debug(`No role key for role_id=${role.role_id}; generating a new key for transfer_account.`)
+        }
         const usersById = new Map<number, EnterpriseUser>()
         for (const user of response.users || []) usersById.set(user.enterprise_user_id, user)
         roleKeyMaterial = await buildRoleKeyMaterial(
@@ -307,6 +358,15 @@ export async function changeRolePrivileges(
                 status: RolePrivilegeStatus.Added,
             })
         } catch (err) {
+            if (getResultCode(err) === 'exists') {
+                items.push({
+                    privilege,
+                    action: 'add',
+                    status: RolePrivilegeStatus.Skipped,
+                    message: 'Privilege already exists on this managed node.',
+                })
+                continue
+            }
             items.push({
                 privilege,
                 action: 'add',
@@ -327,9 +387,11 @@ function finalizeResult(
     items: RolePrivilegeItemResult[]
 ): ChangeRolePrivilegesResult {
     let succeeded = 0
+    let skipped = 0
     let failed = 0
     for (const item of items) {
         if (item.status === RolePrivilegeStatus.Added || item.status === RolePrivilegeStatus.Removed) succeeded++
+        else if (item.status === RolePrivilegeStatus.Skipped) skipped++
         else if (item.status === RolePrivilegeStatus.Failed) failed++
     }
     return {
@@ -340,7 +402,7 @@ function finalizeResult(
         nodeName,
         items,
         succeeded,
-        skipped: 0,
+        skipped,
         failed,
     }
 }
@@ -357,7 +419,7 @@ export function formatChangeRolePrivilegesResult(result: ChangeRolePrivilegesRes
         headers: [...ROLE_PRIVILEGE_TABLE_HEADERS],
         rows,
         parentLabel: `Role: ${result.roleName}  Node: ${result.nodeName}`,
-        summary: `Succeeded: ${result.succeeded}  Failed: ${result.failed}`,
+        summary: `Succeeded: ${result.succeeded}  Skipped: ${result.skipped}  Failed: ${result.failed}`,
     }
 }
 

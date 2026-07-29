@@ -57,7 +57,7 @@ async function addAlias(
         operation: AliasOperation.Add,
     }
 
-    if (user.username === alias) {
+    if (user.username.toLowerCase() === alias) {
         logger.info(`Alias "${alias}" is already the primary email for this user.`)
         return {
             ...base,
@@ -66,7 +66,7 @@ async function addAlias(
         }
     }
 
-    const alreadyExists = existingAliases.some((a) => a.username === alias)
+    const alreadyExists = existingAliases.some((a) => a.username.toLowerCase() === alias)
 
     try {
         if (alreadyExists) {
@@ -94,7 +94,9 @@ async function removeAlias(
         operation: AliasOperation.Remove,
     }
 
-    const exists = alias === user.username || existingAliases.some((a) => a.username === alias)
+    const exists =
+        alias === user.username.toLowerCase() ||
+        existingAliases.some((a) => a.username.toLowerCase() === alias)
 
     if (!exists) {
         logger.info(`Alias "${alias}" does not exist for user.`)

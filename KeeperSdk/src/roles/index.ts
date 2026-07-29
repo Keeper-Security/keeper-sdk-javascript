@@ -91,12 +91,14 @@ export {
     formatChangeRolePrivilegesResult,
     renderChangeRolePrivilegesAsciiTable,
     RolePrivilegeStatus,
+    MANAGED_NODE_PRIVILEGES,
 } from './rolePrivilege'
 export type {
     ChangeRolePrivilegesInput,
     RolePrivilegeItemResult,
     ChangeRolePrivilegesResult,
     FormattedRolePrivilegeTable,
+    ManagedNodePrivilege,
 } from './rolePrivilege'
 
 export type { RoleToggleInput, RoleToggle, EnforcementPair } from './roleUtils'
