@@ -11,7 +11,6 @@ import {
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, logger } from '../utils'
 
-/** Wire strings for JSON enterprise commands (.NET DataMember parity). */
 export const ENCRYPTED_BY_PUBLIC_KEY = 'encrypted_by_public_key'
 export const ENCRYPTED_BY_PUBLIC_KEY_ECC = 'encrypted_by_public_key_ecc'
 
@@ -25,18 +24,16 @@ export type EncryptedForUser = {
     keyType: typeof ENCRYPTED_BY_PUBLIC_KEY | typeof ENCRYPTED_BY_PUBLIC_KEY_ECC
 }
 
-/** Raw Auth session keys for unwrapping enterprise payloads (Node + browser via platform). */
 export type SessionUnwrapKeys = {
     dataKey?: Uint8Array | null
     privateKey?: Uint8Array | null
     eccPrivateKey?: Uint8Array | null
 }
 
-/** Server-returned map: enterprise_user_id string → public key (base64/url-safe). */
 export type MissingPublicKeysMap = Record<string, string>
 
 /**
- * Decrypt by Keeper key-type enum (EncryptedKeyType / BackupKeyType / Folder.EncryptedKeyType):
+ * Decrypt by Keeper key-type enum:
  * 1=data CBC, 2=RSA, 3=data GCM, 4=ECC. Uses connected keeperapi {@link platform}.
  */
 export async function decryptByKeyType(
@@ -46,16 +43,16 @@ export async function decryptByKeyType(
 ): Promise<Uint8Array | null> {
     const data = typeof encrypted === 'string' ? normal64Bytes(encrypted) : encrypted
     switch (keyType) {
-        case 1: // ENCRYPTED_BY_DATA_KEY
+        case 1: 
             if (!keys.dataKey) return null
             return platform.aesCbcDecrypt(data, keys.dataKey, true)
-        case 2: // ENCRYPTED_BY_PUBLIC_KEY
+        case 2: 
             if (!keys.privateKey) return null
             return platform.privateDecrypt(data, keys.privateKey)
-        case 3: // ENCRYPTED_BY_DATA_KEY_GCM
+        case 3: 
             if (!keys.dataKey) return null
             return platform.aesGcmDecrypt(data, keys.dataKey)
-        case 4: // ENCRYPTED_BY_PUBLIC_KEY_ECC
+        case 4: 
             if (!keys.eccPrivateKey) return null
             return platform.privateDecryptEC(data, keys.eccPrivateKey)
         default:
@@ -86,7 +83,6 @@ export async function fetchUserPublicKeys(auth: Auth, emails: string[]): Promise
     return result
 }
 
-/** Prefer RSA (parity with .NET), fall back to ECC. */
 export async function encryptForUserPublicKey(
     plaintext: Uint8Array,
     publicKeys: UserPublicKeys
@@ -115,7 +111,6 @@ export function getResultCode(err: unknown): string {
     return String(err.result_code || '').toLowerCase()
 }
 
-/** Parse missing_tree_keys / missing_ecc_tree_keys from role_managed_node_add failures. */
 export function getMissingTreeKeyMaps(err: unknown): {
     rsa?: MissingPublicKeysMap
     ecc?: MissingPublicKeysMap
@@ -182,10 +177,6 @@ function isLikelyEccPublicKey(publicKey: string): boolean {
     }
 }
 
-/**
- * Encrypt role key for users using public keys from privilege-add missing_keys status.
- * Supports RSA and ECC (ECC keys may arrive in a separate map or mixed into rsa via key size).
- */
 export async function buildRoleKeysFromProvidedPublicKeys(
     roleKey: Uint8Array,
     rsaKeys?: MissingPublicKeysMap,

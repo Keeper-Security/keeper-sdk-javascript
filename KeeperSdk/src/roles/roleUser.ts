@@ -87,7 +87,7 @@ type RoleUserContext = {
     roles: EnterpriseRole[]
     users: EnterpriseUser[]
     membership: Set<string>
-    /** Roles that manage at least one node — API requires tree_key on role_user_add. */
+    /** Roles that manage at least one node. API requires tree_key on role_user_add. */
     managedNodeRoleIds: Set<number>
     forceAdmin: boolean | undefined
 }
@@ -224,7 +224,7 @@ export async function addUsersToRoles(auth: Auth, input: AddUsersToRolesInput): 
     const roleKeyById = new Map<number, Uint8Array | null>()
     let publicKeyMap = new Map<string, UserPublicKeys>()
 
-    // Prefetch role keys for all target roles (role_admin_key when the role already has a key).
+    // Prefetch role keys for all target roles.
     for (const role of ctx.roles) {
         roleKeyById.set(role.role_id, await ctx.enterpriseData.getRoleKey(role.role_id))
     }
