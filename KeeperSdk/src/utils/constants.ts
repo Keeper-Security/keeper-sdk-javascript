@@ -66,6 +66,7 @@ export enum RoleErrorCode {
     NoPrivilegesSpecified = 'no_privileges_specified',
     RolePrivilegeAddFailed = 'role_privilege_add_failed',
     RolePrivilegeRemoveFailed = 'role_privilege_remove_failed',
+    RoleKeyUnavailable = 'role_key_unavailable',
 }
 
 export enum NsfErrorCode {
@@ -215,6 +216,7 @@ export const ResultCodes = {
     NO_PRIVILEGES_SPECIFIED: RoleErrorCode.NoPrivilegesSpecified,
     ROLE_PRIVILEGE_ADD_FAILED: RoleErrorCode.RolePrivilegeAddFailed,
     ROLE_PRIVILEGE_REMOVE_FAILED: RoleErrorCode.RolePrivilegeRemoveFailed,
+    ROLE_KEY_UNAVAILABLE: RoleErrorCode.RoleKeyUnavailable,
     NSF_NOT_FOUND: NsfErrorCode.NotFound,
     MULTIPLE_NSF_MATCHES: NsfErrorCode.MultipleMatches,
     NSF_LEGACY_RECORD: NsfErrorCode.LegacyRecord,

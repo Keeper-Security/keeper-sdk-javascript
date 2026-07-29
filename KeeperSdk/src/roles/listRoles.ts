@@ -4,7 +4,6 @@ import {
     EnterpriseDataInclude,
     EnterpriseDataManager,
     type EnterpriseDataManagerApi,
-    type EnterpriseDisplayNames,
     type EnterpriseNode,
     type EnterpriseRole,
     type EnterpriseRolePrivilegeLink,
@@ -51,19 +50,11 @@ type DecorateContext = {
 export async function listRoles(auth: Auth, options: ListRolesOptions = {}): Promise<ListRoleRow[]> {
     const columns = resolveColumns(options.columns)
     const includes = includesForColumns(columns)
-    const wantsDisplayNames =
-        columns.includes(RoleColumn.Node) ||
-        columns.includes(RoleColumn.Teams) ||
-        columns.includes(RoleColumn.TeamCount)
 
     const enterpriseData: EnterpriseDataManagerApi = options.enterpriseData ?? new EnterpriseDataManager(auth)
-    const emptyDisplayNames: EnterpriseDisplayNames = {
-        nodes: new Map(),
-        roles: new Map(),
-    }
     const [response, displayNames] = await Promise.all([
         enterpriseData.getData(includes),
-        wantsDisplayNames ? enterpriseData.getDisplayNames() : Promise.resolve(emptyDisplayNames),
+        enterpriseData.getDisplayNames(),
     ])
 
     const roles = response.roles || []

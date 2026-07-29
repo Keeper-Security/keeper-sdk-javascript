@@ -168,6 +168,11 @@ export type EnterpriseDisplayNames = {
     roles: DecryptedRoleNames
 }
 
+export type RoleKeyResolveResult =
+    | { status: 'resolved'; key: Uint8Array }
+    | { status: 'absent' }
+    | { status: 'unavailable' }
+
 type LongLike = number | { toNumber: () => number; toString: () => string } | undefined | null
 
 export interface EnterpriseDataManagerApi {
@@ -175,6 +180,7 @@ export interface EnterpriseDataManagerApi {
     getDisplayNames(): Promise<EnterpriseDisplayNames>
     getTreeKey(): Promise<Uint8Array | null>
     getRoleKey(roleId: number): Promise<Uint8Array | null>
+    resolveRoleKey(roleId: number): Promise<RoleKeyResolveResult>
     decryptNodeNames(nodes: EnterpriseNode[]): Promise<number>
     clearCache(): void
 }
@@ -185,6 +191,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     private treeKeyPromise: Promise<Uint8Array | null> | null = null
     private readonly dataCache = new Map<string, Promise<GetEnterpriseDataResponse>>()
     private readonly roleKeyCache = new Map<number, Uint8Array | null>()
+    private readonly roleKeyResolveCache = new Map<number, RoleKeyResolveResult>()
 
     constructor(auth: Auth) {
         this.auth = auth
@@ -252,6 +259,7 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
         this.displayNamesPromise = null
         this.treeKeyPromise = null
         this.roleKeyCache.clear()
+        this.roleKeyResolveCache.clear()
     }
 
     public static getNodePath(nodes: EnterpriseNode[], nodeId: number, options: NodePathOptions = {}): string {
@@ -357,8 +365,13 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     }
 
     public async getRoleKey(roleId: number): Promise<Uint8Array | null> {
-        if (this.roleKeyCache.has(roleId)) {
-            return this.roleKeyCache.get(roleId) ?? null
+        const resolved = await this.resolveRoleKey(roleId)
+        return resolved.status === 'resolved' ? resolved.key : null
+    }
+
+    public async resolveRoleKey(roleId: number): Promise<RoleKeyResolveResult> {
+        if (this.roleKeyResolveCache.has(roleId)) {
+            return this.roleKeyResolveCache.get(roleId)!
         }
 
         let response: Enterprise.IGetEnterpriseDataKeysResponse
@@ -366,9 +379,16 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             response = await this.auth.executeRest(getEnterpriseDataKeysMessage({ roleId: [roleId] }))
         } catch (err) {
             logger.debug(`enterprise/get_enterprise_data_keys (role ${roleId}) failed: ${extractErrorMessage(err)}`)
+            const unavailable: RoleKeyResolveResult = { status: 'unavailable' }
+            this.roleKeyResolveCache.set(roleId, unavailable)
             this.roleKeyCache.set(roleId, null)
-            return null
+            return unavailable
         }
+
+        const hasMaterial =
+            (response.reEncryptedRoleKey || []).some(
+                (rKey) => rKey.roleId === roleId && !!rKey.encryptedRoleKey && rKey.encryptedRoleKey.length > 0
+            ) || (response.roleKey || []).some((rKey) => rKey.roleId === roleId && !!rKey.encryptedKey)
 
         const treeKey = await this.getTreeKey()
         for (const rKey of response.reEncryptedRoleKey || []) {
@@ -376,8 +396,10 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             if (!treeKey) continue
             try {
                 const roleKey = await platform.aesGcmDecrypt(rKey.encryptedRoleKey, treeKey)
+                const resolved: RoleKeyResolveResult = { status: 'resolved', key: roleKey }
+                this.roleKeyResolveCache.set(roleId, resolved)
                 this.roleKeyCache.set(roleId, roleKey)
-                return roleKey
+                return resolved
             } catch (err) {
                 logger.debug(`Failed to decrypt re-encrypted role key for role ${roleId}: ${extractErrorMessage(err)}`)
             }
@@ -389,16 +411,20 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
             try {
                 const roleKey = await decryptByKeyType(rKey.encryptedKey, rKey.keyType ?? undefined, unwrapKeys)
                 if (roleKey) {
+                    const resolved: RoleKeyResolveResult = { status: 'resolved', key: roleKey }
+                    this.roleKeyResolveCache.set(roleId, resolved)
                     this.roleKeyCache.set(roleId, roleKey)
-                    return roleKey
+                    return resolved
                 }
             } catch (err) {
                 logger.debug(`Failed to decrypt role key for role ${roleId}: ${extractErrorMessage(err)}`)
             }
         }
 
+        const result: RoleKeyResolveResult = hasMaterial ? { status: 'unavailable' } : { status: 'absent' }
+        this.roleKeyResolveCache.set(roleId, result)
         this.roleKeyCache.set(roleId, null)
-        return null
+        return result
     }
 
     private async fetchAndDecryptTreeKey(): Promise<Uint8Array | null> {

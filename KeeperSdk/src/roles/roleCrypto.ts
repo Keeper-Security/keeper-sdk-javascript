@@ -129,17 +129,22 @@ export function getMissingTreeKeyMaps(err: unknown): {
     return { rsa, ecc }
 }
 
-/** Parse status.missing_keys from managed_node_privilege_add failures. */
-export function getMissingRoleKeyMap(err: unknown): MissingPublicKeysMap | null {
+export function getMissingRoleKeyMaps(err: unknown): {
+    rsa?: MissingPublicKeysMap
+    ecc?: MissingPublicKeysMap
+} | null {
     if (!isCommandFailure(err)) return null
-    if (getResultCode(err) !== 'missing_keys') return null
-    const status = err.status as { missing_keys?: MissingPublicKeysMap } | undefined
-    const map = status?.missing_keys
-    if (!map || typeof map !== 'object') return null
-    return map
+    const code = getResultCode(err)
+    if (code !== 'missing_keys' && code !== 'missing_ecc_keys') return null
+    const status = err.status as
+        | { missing_keys?: MissingPublicKeysMap; missing_ecc_keys?: MissingPublicKeysMap }
+        | undefined
+    const rsa = status?.missing_keys
+    const ecc = status?.missing_ecc_keys
+    if (!rsa && !ecc) return null
+    return { rsa, ecc }
 }
 
-/** Encrypt tree key for users using public keys returned by the server (missing_keys retry). */
 export async function buildTreeKeysFromProvidedPublicKeys(
     treeKey: Uint8Array,
     rsaKeys?: MissingPublicKeysMap,
@@ -168,20 +173,54 @@ export async function buildTreeKeysFromProvidedPublicKeys(
     return treeKeys
 }
 
-/** Encrypt role key for users using public keys from privilege-add missing_keys status. */
-export function buildRoleKeysFromProvidedPublicKeys(
+function isLikelyEccPublicKey(publicKey: string): boolean {
+    try {
+        const len = normal64Bytes(publicKey).length
+        return len === 33 || len === 65
+    } catch {
+        return false
+    }
+}
+
+/**
+ * Encrypt role key for users using public keys from privilege-add missing_keys status.
+ * Supports RSA and ECC (ECC keys may arrive in a separate map or mixed into rsa via key size).
+ */
+export async function buildRoleKeysFromProvidedPublicKeys(
     roleKey: Uint8Array,
-    publicKeys: MissingPublicKeysMap
-): ManagedNodeRoleKey[] {
+    rsaKeys?: MissingPublicKeysMap,
+    eccKeys?: MissingPublicKeysMap
+): Promise<ManagedNodeRoleKey[]> {
     const roleKeys: ManagedNodeRoleKey[] = []
-    for (const [userId, publicKey] of Object.entries(publicKeys)) {
+    const handled = new Set<number>()
+
+    for (const [userId, publicKey] of Object.entries(eccKeys || {})) {
         const id = Number(userId)
         if (!Number.isFinite(id) || !publicKey) continue
+        handled.add(id)
         roleKeys.push({
             enterprise_user_id: id,
-            role_key: shareKey(roleKey, publicKey),
-            tree_key_type: ENCRYPTED_BY_PUBLIC_KEY,
+            role_key: await shareKeyEC(roleKey, normal64Bytes(publicKey)),
+            tree_key_type: ENCRYPTED_BY_PUBLIC_KEY_ECC,
         })
+    }
+
+    for (const [userId, publicKey] of Object.entries(rsaKeys || {})) {
+        const id = Number(userId)
+        if (!Number.isFinite(id) || !publicKey || handled.has(id)) continue
+        if (isLikelyEccPublicKey(publicKey)) {
+            roleKeys.push({
+                enterprise_user_id: id,
+                role_key: await shareKeyEC(roleKey, normal64Bytes(publicKey)),
+                tree_key_type: ENCRYPTED_BY_PUBLIC_KEY_ECC,
+            })
+        } else {
+            roleKeys.push({
+                enterprise_user_id: id,
+                role_key: shareKey(roleKey, publicKey),
+                tree_key_type: ENCRYPTED_BY_PUBLIC_KEY,
+            })
+        }
     }
     return roleKeys
 }
