@@ -43,16 +43,16 @@ export async function decryptByKeyType(
 ): Promise<Uint8Array | null> {
     const data = typeof encrypted === 'string' ? normal64Bytes(encrypted) : encrypted
     switch (keyType) {
-        case 1: 
+        case 1:
             if (!keys.dataKey) return null
             return platform.aesCbcDecrypt(data, keys.dataKey, true)
-        case 2: 
+        case 2:
             if (!keys.privateKey) return null
             return platform.privateDecrypt(data, keys.privateKey)
-        case 3: 
+        case 3:
             if (!keys.dataKey) return null
             return platform.aesGcmDecrypt(data, keys.dataKey)
-        case 4: 
+        case 4:
             if (!keys.eccPrivateKey) return null
             return platform.privateDecryptEC(data, keys.eccPrivateKey)
         default:

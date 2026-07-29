@@ -275,9 +275,7 @@ function finalizeResult(items: AddRoleItemResult[], parentNodeId: number, parent
     const created = items.filter((item) => item.status === AddRoleStatus.Created).length
     const skipped = items.filter((item) => item.status === AddRoleStatus.Skipped).length
     const failed = items.filter((item) => item.status === AddRoleStatus.Failed).length
-    const partialEnforcementFailure = items.some(
-        (item) => item.status === AddRoleStatus.Created && !!item.message
-    )
+    const partialEnforcementFailure = items.some((item) => item.status === AddRoleStatus.Created && !!item.message)
     return {
         success: failed === 0 && created > 0 && !partialEnforcementFailure,
         parentNodeId,
