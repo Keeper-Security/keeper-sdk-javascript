@@ -1182,7 +1182,13 @@ const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IF
         if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
         const folderUid = webSafe64FromBytes(key.folderUid)
         const parentUid = webSafe64FromBytes(key.parentUid)
-        await platform.unwrapKey(key.folderKey, folderUid, parentUid, 'gcm', 'aes', storage)
+        try {
+            await platform.unwrapKey(key.folderKey, folderUid, parentUid, 'gcm', 'aes', storage)
+        } catch (e: any) {
+            console.error(
+                `[kd] The folder key for ${folderUid} can't be decrypted by the parent key ${parentUid} (${e.message})`
+            )
+        }
     }
 }
 
