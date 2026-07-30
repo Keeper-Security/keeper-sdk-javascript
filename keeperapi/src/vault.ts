@@ -1121,8 +1121,8 @@ const processKdRecordLinks = async (storage: VaultStorage, keeperDriveRecordLink
                 parentRecordUid,
             })
         } catch (e: any) {
-            console.error(
-                `[ks] The record link for ${childRecordUid} cannot be decrypted by ${parentRecordUid} (${e.message})`
+            logger.error(
+                `[kd] The record link for ${childRecordUid} cannot be decrypted by ${parentRecordUid} (${e.message})`
             )
         }
     }
@@ -1182,7 +1182,13 @@ const processKdFolderKeys = async (storage: VaultStorage, folderKeys?: Folder.IF
         if (!key.folderUid || !key.folderKey || !key.parentUid || isNil(key.encryptedBy)) continue
         const folderUid = webSafe64FromBytes(key.folderUid)
         const parentUid = webSafe64FromBytes(key.parentUid)
-        await platform.unwrapKey(key.folderKey, folderUid, parentUid, 'gcm', 'aes', storage)
+        try {
+            await platform.unwrapKey(key.folderKey, folderUid, parentUid, 'gcm', 'aes', storage)
+        } catch (e: any) {
+            logger.error(
+                `[kd] The folder key for ${folderUid} can't be decrypted by the parent key ${parentUid} (${e.message})`
+            )
+        }
     }
 }
 
@@ -1288,7 +1294,7 @@ const processKdFolders = async (storage: VaultStorage, keeperDriveFolders?: Fold
                 inheritUserPermissions: toOptional(folder.inheritUserPermissions),
             })
         } catch (err: any) {
-            console.error(`[ks] folder ${folderUid} cannot be decrypted (${err.message})`)
+            logger.error(`[kd] folder ${folderUid} cannot be decrypted (${err.message})`)
         }
     }
 }
@@ -1423,7 +1429,7 @@ const processKdRecords = async (
                 isKeeperDriveData: true,
             })
         } catch (err: any) {
-            console.error(`[kd] record ${recordUid} cannot be decrypted: ${err.message}`)
+            logger.error(`[kd] record ${recordUid} cannot be decrypted: ${err.message}`)
         }
     }
 }
