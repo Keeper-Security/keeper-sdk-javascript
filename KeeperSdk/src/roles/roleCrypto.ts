@@ -32,10 +32,6 @@ export type SessionUnwrapKeys = {
 
 export type MissingPublicKeysMap = Record<string, string>
 
-/**
- * Decrypt by Keeper key-type enum:
- * 1=data CBC, 2=RSA, 3=data GCM, 4=ECC. Uses connected keeperapi {@link platform}.
- */
 export async function decryptByKeyType(
     encrypted: Uint8Array | string,
     keyType: number | null | undefined,

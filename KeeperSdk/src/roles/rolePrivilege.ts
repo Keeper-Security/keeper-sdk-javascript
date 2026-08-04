@@ -75,7 +75,6 @@ export type ChangeRolePrivilegesInput = {
     node: string | number
     add?: string[]
     remove?: string[]
-    /** Required by API when adding manage_companies. */
     mspKeys?: ManagedNodeMspKey[]
 }
 

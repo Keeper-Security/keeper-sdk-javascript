@@ -46,10 +46,6 @@ export enum RoleUserSkipReason {
 export type AddUsersToRolesInput = {
     roles: string[]
     users: string[]
-    /**
-     * When true, always send tree_key (admin role with managed nodes).
-     * When false, never. When omitted, send tree_key iff the role manages nodes (API contract).
-     */
     admin?: boolean
 }
 
@@ -87,7 +83,6 @@ type RoleUserContext = {
     roles: EnterpriseRole[]
     users: EnterpriseUser[]
     membership: Set<string>
-    /** Roles that manage at least one node. API requires tree_key on role_user_add. */
     managedNodeRoleIds: Set<number>
     forceAdmin: boolean | undefined
 }
