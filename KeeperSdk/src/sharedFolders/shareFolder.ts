@@ -14,8 +14,8 @@ import {
     normal64Bytes,
     platform,
     sharedFolderUpdateV3Message,
+    teamGetKeysCommand,
     webSafe64FromBytes,
-    type RestCommand,
 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
@@ -83,22 +83,6 @@ type TeamPublicKeys = {
 }
 
 const TEAM_GET_KEYS_BATCH_SIZE = 90
-
-type TeamGetKeysResponse = {
-    keys?: Array<{
-        team_uid: string
-        key: string
-        type: number
-    }>
-}
-
-function teamGetKeysCommand(teams: string[]): RestCommand<{ teams: string[] }, TeamGetKeysResponse> {
-    return {
-        baseRequest: { command: 'team_get_keys' },
-        request: { teams },
-        authorization: {},
-    }
-}
 
 function toSetBoolean(value: boolean | undefined): Folder.SetBooleanValue {
     if (value === true) return Folder.SetBooleanValue.BOOLEAN_TRUE
@@ -288,7 +272,7 @@ async function loadTeamKeys(auth: Auth, teamUids: string[]): Promise<Map<string,
         const batch = pending.splice(0, TEAM_GET_KEYS_BATCH_SIZE)
         let response
         try {
-            response = await auth.executeRestCommand(teamGetKeysCommand(batch))
+            response = await auth.executeRestCommand(teamGetKeysCommand({ teams: batch }))
         } catch (err) {
             throw new KeeperSdkError(`Failed to fetch team keys: ${extractErrorMessage(err)}`)
         }

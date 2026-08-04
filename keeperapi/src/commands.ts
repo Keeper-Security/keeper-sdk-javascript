@@ -211,6 +211,79 @@ export const enterpriseAllocateIdsCommand = (
 ): RestCommand<EnterpriseAllocateIdsRequest, KeeperResponse & { base_id: number; number_allocated: number }> =>
     createCommand(request, 'enterprise_allocate_ids')
 
+export type EnterpriseUserKeyType = 'NO_KEY' | 'ENCRYPTED_BY_DATA_KEY' | 'ENCRYPTED_BY_PUBLIC_KEY'
+
+export type EnterpriseUserAddRequest = {
+    enterprise_user_id: number
+    enterprise_user_username: string
+    node_id: number
+    encrypted_data: string
+    key_type?: EnterpriseUserKeyType
+    full_name?: string
+    job_title?: string
+    invitee_locale?: string
+}
+
+export type EnterpriseUserAddResponse = KeeperResponse & {
+    verification_code?: string
+}
+
+export const enterpriseUserAddCommand = (
+    request: EnterpriseUserAddRequest
+): RestCommand<EnterpriseUserAddRequest, EnterpriseUserAddResponse> => createCommand(request, 'enterprise_user_add')
+
+export type EnterpriseUserUpdateRequest = {
+    enterprise_user_id: number
+    enterprise_user_username: string
+    node_id: number
+    encrypted_data: string
+    key_type?: EnterpriseUserKeyType
+    full_name?: string
+    job_title?: string
+    invitee_locale?: string
+}
+
+export const enterpriseUserUpdateCommand = (
+    request: EnterpriseUserUpdateRequest
+): RestCommand<EnterpriseUserUpdateRequest, KeeperResponse> => createCommand(request, 'enterprise_user_update')
+
+export type EnterpriseUserDeleteRequest = {
+    enterprise_user_id: number
+}
+
+export const enterpriseUserDeleteCommand = (
+    request: EnterpriseUserDeleteRequest
+): RestCommand<EnterpriseUserDeleteRequest, KeeperResponse> => createCommand(request, 'enterprise_user_delete')
+
+export type ResendEnterpriseInviteRequest = {
+    enterprise_user_id: number
+}
+
+export const resendEnterpriseInviteCommand = (
+    request: ResendEnterpriseInviteRequest
+): RestCommand<ResendEnterpriseInviteRequest, KeeperResponse> => createCommand(request, 'resend_enterprise_invite')
+
+export type SetMasterPasswordExpireRequest = {
+    email: string
+}
+
+export const setMasterPasswordExpireCommand = (
+    request: SetMasterPasswordExpireRequest
+): RestCommand<SetMasterPasswordExpireRequest, KeeperResponse> => createCommand(request, 'set_master_password_expire')
+
+export type ExtendAccountShareExpirationRequest = {
+    enterprise_user_id: number
+}
+
+export type ExtendAccountShareExpirationResponse = KeeperResponse & {
+    account_share_expiration?: number | string
+}
+
+export const extendAccountShareExpirationCommand = (
+    request: ExtendAccountShareExpirationRequest
+): RestCommand<ExtendAccountShareExpirationRequest, ExtendAccountShareExpirationResponse> =>
+    createCommand(request, 'extend_account_share_expiration')
+
 export type NodeEditRequest = {
     node_id: number
     parent_id: number
@@ -536,6 +609,44 @@ export type TeamGetKeysResponse = KeeperResponse & {
 
 export const teamGetKeysCommand = (request: TeamGetKeysRequest): RestCommand<TeamGetKeysRequest, TeamGetKeysResponse> =>
     createCommand(request, 'team_get_keys')
+
+export type TeamAddRequest = {
+    team_uid: string
+    team_name: string
+    node_id: number
+    public_key?: string
+    private_key?: string
+    team_key: string
+    encrypted_team_key: string
+    ecc_public_key?: string
+    ecc_private_key?: string
+    restrict_edit: boolean
+    restrict_share: boolean
+    restrict_view: boolean
+    manage_only?: boolean
+}
+
+export const teamAddCommand = (request: TeamAddRequest): RestCommand<TeamAddRequest, KeeperResponse> =>
+    createCommand(request, 'team_add')
+
+export type TeamUpdateRequest = {
+    team_uid: string
+    team_name: string
+    node_id: number
+    restrict_edit: boolean
+    restrict_share: boolean
+    restrict_view: boolean
+}
+
+export const teamUpdateCommand = (request: TeamUpdateRequest): RestCommand<TeamUpdateRequest, KeeperResponse> =>
+    createCommand(request, 'team_update')
+
+export type TeamDeleteRequest = {
+    team_uid: string
+}
+
+export const teamDeleteCommand = (request: TeamDeleteRequest): RestCommand<TeamDeleteRequest, KeeperResponse> =>
+    createCommand(request, 'team_delete')
 
 export type GetRecordHistoryRequest = {
     record_uid: string

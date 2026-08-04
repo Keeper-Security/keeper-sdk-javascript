@@ -4,10 +4,10 @@ import {
     generateEncryptionKey,
     generateUid,
     platform,
+    teamAddCommand,
     webSafe64FromBytes,
     type Auth,
-    type KeeperResponse,
-    type RestCommand,
+    type TeamAddRequest,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import {
@@ -27,7 +27,6 @@ import {
     validateTeamName,
 } from './teamUtils'
 
-const TEAM_ADD_COMMAND = 'team_add'
 const ADD_TEAM_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
     EnterpriseDataInclude.Teams,
@@ -111,22 +110,6 @@ type ResolvedRequest =
           teamName: string
           queued: EnterpriseQueuedTeamRecord
       }
-
-type TeamAddRequestPayload = {
-    team_uid: string
-    team_name: string
-    node_id: number
-    public_key: string
-    private_key: string
-    team_key: string
-    encrypted_team_key: string
-    ecc_public_key: string
-    ecc_private_key: string
-    restrict_edit: boolean
-    restrict_share: boolean
-    restrict_view: boolean
-    manage_only: boolean
-}
 
 export async function addTeams(auth: Auth, input: AddTeamInput): Promise<AddTeamResult> {
     const requestedNames = (input.teams || [])
@@ -400,7 +383,7 @@ async function sendTeamAdd(
     const encryptedTeamKeyByDataKey = await encryptForStorage(teamKeyBytes, dataKey)
     const encryptedTeamKeyByTreeKey = await encryptKey(teamKeyBytes, treeKey)
 
-    const payload: TeamAddRequestPayload = {
+    const payload: TeamAddRequest = {
         team_uid: request.teamUid,
         team_name: request.teamName,
         node_id: parentNodeId,
@@ -416,13 +399,7 @@ async function sendTeamAdd(
         manage_only: true,
     }
 
-    const command: RestCommand<TeamAddRequestPayload, KeeperResponse> = {
-        baseRequest: { command: TEAM_ADD_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(teamAddCommand(payload))
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(

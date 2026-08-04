@@ -1,9 +1,8 @@
-import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
+import { teamDeleteCommand, type Auth } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager } from './enterpriseData'
 import { resolveExistingTeams, TEAM_TABLE_HEADERS } from './teamUtils'
 
-const TEAM_DELETE_COMMAND = 'team_delete'
 const DELETE_TEAM_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Teams]
 
 export enum DeleteTeamStatus {
@@ -28,10 +27,6 @@ export type DeleteTeamResult = {
     items: DeleteTeamItemResult[]
     deleted: number
     failed: number
-}
-
-type TeamDeleteRequestPayload = {
-    team_uid: string
 }
 
 export async function deleteTeams(auth: Auth, input: DeleteTeamInput): Promise<DeleteTeamResult> {
@@ -73,12 +68,7 @@ export async function deleteTeams(auth: Auth, input: DeleteTeamInput): Promise<D
 }
 
 async function sendTeamDelete(auth: Auth, teamUid: string): Promise<void> {
-    const command: RestCommand<TeamDeleteRequestPayload, KeeperResponse> = {
-        baseRequest: { command: TEAM_DELETE_COMMAND },
-        request: { team_uid: teamUid },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(teamDeleteCommand({ team_uid: teamUid }))
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(

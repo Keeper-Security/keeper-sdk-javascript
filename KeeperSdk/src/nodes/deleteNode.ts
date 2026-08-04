@@ -1,4 +1,4 @@
-import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
+import { nodeDeleteCommand, type Auth } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
 import { applyDecryptedNodeNames, applyEnterpriseNameToRoot } from '../teams/teamUtils'
@@ -11,12 +11,7 @@ import {
     resolveExistingNodes,
 } from './nodeUtils'
 
-const NODE_DELETE_COMMAND = 'node_delete'
 const DELETE_NODE_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes]
-
-type NodeDeleteRequest = {
-    node_id: number
-}
 
 export enum DeleteNodeStatus {
     Deleted = 'deleted',
@@ -93,12 +88,7 @@ export async function deleteNodes(auth: Auth, input: DeleteNodeInput): Promise<D
             continue
         }
         try {
-            const command: RestCommand<NodeDeleteRequest, KeeperResponse> = {
-                baseRequest: { command: NODE_DELETE_COMMAND },
-                request: { node_id: node.node_id },
-                authorization: {},
-            }
-            const responseDelete = await auth.executeRestCommand(command)
+            const responseDelete = await auth.executeRestCommand(nodeDeleteCommand({ node_id: node.node_id }))
             assertCommandSucceeded(
                 responseDelete,
                 `node_delete failed for node_id=${node.node_id}`,
