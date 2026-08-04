@@ -95,8 +95,7 @@ async function removeAlias(
     }
 
     const exists =
-        alias === user.username.toLowerCase() ||
-        existingAliases.some((a) => a.username.toLowerCase() === alias)
+        alias === user.username.toLowerCase() || existingAliases.some((a) => a.username.toLowerCase() === alias)
 
     if (!exists) {
         logger.info(`Alias "${alias}" does not exist for user.`)

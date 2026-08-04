@@ -30,7 +30,7 @@ import type {
 import { extractErrorMessage, KeeperSdkError, logger } from '../utils'
 import { RecordVersion } from './RecordUtils'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
-import { DeleteResolution, FolderKind, VaultObjectKind } from '../folders/folderHelpers'
+import { DeleteResolution, FolderKind, type ClassicFolderKind, VaultObjectKind } from '../folders/folderHelpers'
 
 enum ResultCode {
     Success = 'success',
@@ -410,7 +410,7 @@ export type MoveRecordResult = {
 
 type FolderInfo = {
     uid: string
-    folderType: FolderKind
+    folderType: ClassicFolderKind
     scopeUid: string
 }
 

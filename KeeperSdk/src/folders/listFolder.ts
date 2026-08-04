@@ -11,6 +11,14 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
 import { getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
+    collectRecordsInFolder,
+    getFolderDisplayName,
+    getKeeperDriveFolder,
+    getKeeperDriveFolders,
+    isRootFolderUid,
+    normalizeParentUid,
+} from '../nestedShareFolders/nsfHelpers'
+import {
     FolderKind,
     VaultObjectKind,
     getUserFolderParentMap,
@@ -187,6 +195,17 @@ export async function listVaultRootFolders(storage: InMemoryStorage): Promise<{
         })
     }
 
+    for (const nestedFolder of getKeeperDriveFolders(storage)) {
+        if (seen.has(nestedFolder.uid)) continue
+        if (!isRootFolderUid(storage, nestedFolder.parentUid)) continue
+        seen.add(nestedFolder.uid)
+        rows.push({
+            uid: nestedFolder.uid,
+            name: getFolderDisplayName(storage, nestedFolder.uid),
+            folderKind: FolderKind.KeeperDriveFolder,
+        })
+    }
+
     rows.sort((rowA, rowB) => rowA.name.localeCompare(rowB.name, undefined, { sensitivity: 'base' }))
 
     return { rows, promotedRootSharedUids }
@@ -202,6 +221,9 @@ function resolveFolderContainer(storage: InMemoryStorage, folderUid: string): { 
     if (storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, folderUid)) {
         return { kind: FolderKind.SharedFolderFolder, uid: folderUid }
     }
+    if (getKeeperDriveFolder(storage, folderUid)) {
+        return { kind: FolderKind.KeeperDriveFolder, uid: folderUid }
+    }
     throw new KeeperSdkError(`Folder "${folderUid}" not found`, 'folder_not_found')
 }
 
@@ -216,7 +238,8 @@ export function findFolderUidByNameOrUid(storage: InMemoryStorage, nameOrUid: st
     if (
         storage.getByUid<DUserFolder>(FolderKind.UserFolder, trimmedNameOrUid) ||
         storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, trimmedNameOrUid) ||
-        storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmedNameOrUid)
+        storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, trimmedNameOrUid) ||
+        getKeeperDriveFolder(storage, trimmedNameOrUid)
     ) {
         return trimmedNameOrUid
     }
@@ -230,6 +253,9 @@ export function findFolderUidByNameOrUid(storage: InMemoryStorage, nameOrUid: st
     }
     for (const sharedFolderFolder of storage.getAll<DSharedFolderFolder>(FolderKind.SharedFolderFolder)) {
         if (sharedFolderFolderName(sharedFolderFolder).toLowerCase() === lowerNameOrUid) return sharedFolderFolder.uid
+    }
+    for (const nestedFolder of getKeeperDriveFolders(storage)) {
+        if (getFolderDisplayName(storage, nestedFolder.uid).toLowerCase() === lowerNameOrUid) return nestedFolder.uid
     }
     return undefined
 }
@@ -335,6 +361,36 @@ export async function listFolder(storage: InMemoryStorage, options: ListFolderOp
                 name: title,
                 type: getRecordType(record),
             })
+        }
+    }
+
+    if (parentKey !== null && getKeeperDriveFolder(storage, parentKey)) {
+        if (showFolders) {
+            const parentNorm = normalizeParentUid(storage, parentKey)
+            for (const nestedFolder of getKeeperDriveFolders(storage)) {
+                if (normalizeParentUid(storage, nestedFolder.parentUid) !== parentNorm) continue
+                if (folderRows.some((row) => row.uid === nestedFolder.uid)) continue
+                const name = getFolderDisplayName(storage, nestedFolder.uid)
+                if (!matches(name, nestedFolder.uid)) continue
+                folderRows.push({
+                    uid: nestedFolder.uid,
+                    name,
+                    folderKind: FolderKind.KeeperDriveFolder,
+                })
+            }
+        }
+        if (showRecords) {
+            for (const record of collectRecordsInFolder(storage, parentKey)) {
+                if (recordRows.some((row) => row.uid === record.uid)) continue
+                if (record.version !== 2 && record.version !== 3) continue
+                const title = getRecordTitle(record)
+                if (!matches(title, record.uid)) continue
+                recordRows.push({
+                    uid: record.uid,
+                    name: title,
+                    type: getRecordType(record),
+                })
+            }
         }
     }
 

@@ -188,11 +188,7 @@ async function addTransferAccountPrivilege(
     } catch (err) {
         const missing = getMissingRoleKeyMaps(err)
         if (!missing) throw err
-        const extraKeys = await buildRoleKeysFromProvidedPublicKeys(
-            roleKeyMaterial.roleKey,
-            missing.rsa,
-            missing.ecc
-        )
+        const extraKeys = await buildRoleKeysFromProvidedPublicKeys(roleKeyMaterial.roleKey, missing.rsa, missing.ecc)
         payload.role_keys = [...(payload.role_keys || []), ...extraKeys]
         const retryResponse = await auth.executeRestCommand(managedNodePrivilegeAddCommand(payload))
         assertCommandSucceeded(
@@ -284,8 +280,7 @@ export async function changeRolePrivileges(
                 ResultCodes.ROLE_KEY_UNAVAILABLE
             )
         }
-        const roleKey =
-            roleKeyResolved.status === 'resolved' ? roleKeyResolved.key : generateEncryptionKey()
+        const roleKey = roleKeyResolved.status === 'resolved' ? roleKeyResolved.key : generateEncryptionKey()
         if (roleKeyResolved.status === 'absent') {
             logger.debug(`No role key for role_id=${role.role_id}; generating a new key for transfer_account.`)
         }

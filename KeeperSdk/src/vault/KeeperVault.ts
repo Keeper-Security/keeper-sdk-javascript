@@ -124,7 +124,7 @@ import {
 } from '../nodes'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
-import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
+import { isNestedShareFolder, isRootFolderUid } from '../nestedShareFolders/nsfHelpers'
 import type {
     AddNsfRecordInput,
     AddNsfRecordResult,
@@ -1252,15 +1252,26 @@ export class KeeperVault {
     }
 
     public async addNestedShareRecords(input: AddNsfRecordsInput): Promise<AddNsfRecordsResult> {
-        const result = await this.nestedShareFolderManager.addNestedShareRecords(input)
+        const current = this.folderSession.currentFolderUid
+        const defaultFolder =
+            current && isNestedShareFolder(this.storage, current) && !isRootFolderUid(this.storage, current)
+                ? current
+                : undefined
+        const records = (input.records ?? []).map((record) => {
+            if (record.folder?.trim()) return record
+            return defaultFolder ? { ...record, folder: defaultFolder } : record
+        })
+        const result = await this.nestedShareFolderManager.addNestedShareRecords({ ...input, records })
         if (result.added.some((item) => item.success)) await this.syncIfNeeded()
         return result
     }
 
     public async addNestedShareRecord(input: AddNsfRecordInput): Promise<AddNsfRecordResult> {
-        const result = await this.nestedShareFolderManager.addNestedShareRecord(input)
-        if (result.success) await this.syncIfNeeded()
-        return result
+        const { added } = await this.addNestedShareRecords({ records: [input] })
+        if (!added[0]) {
+            throw new KeeperSdkError('Failed to add nested share record.', ResultCodes.NSF_ADD_FAILED)
+        }
+        return added[0]
     }
 
     public async updateNestedShareRecordPermissions(

@@ -14,7 +14,10 @@ export enum FolderKind {
     UserFolder = 'user_folder',
     SharedFolder = 'shared_folder',
     SharedFolderFolder = 'shared_folder_folder',
+    KeeperDriveFolder = 'keeper_drive_folder',
 }
+
+export type ClassicFolderKind = FolderKind.UserFolder | FolderKind.SharedFolder | FolderKind.SharedFolderFolder
 
 export enum ParentFolderKind {
     VirtualRoot = 'virtual_root',
@@ -67,6 +70,8 @@ export function folderKindFromString(value: string | undefined | null): FolderKi
             return FolderKind.SharedFolder
         case FolderKind.SharedFolderFolder:
             return FolderKind.SharedFolderFolder
+        case FolderKind.KeeperDriveFolder:
+            return FolderKind.KeeperDriveFolder
         default:
             return undefined
     }

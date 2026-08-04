@@ -1,6 +1,7 @@
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
+import { getFolderDisplayName, getKeeperDriveFolder, isRootFolderUid } from '../nestedShareFolders/nsfHelpers'
 import { listFolder, listRootUserFolders } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
 import { FolderKind, VaultObjectKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
@@ -49,12 +50,27 @@ function getFolderEntryByUid(storage: InMemoryStorage, uid: string): ListFolderF
             folderKind: FolderKind.SharedFolderFolder,
         }
     }
+    const nestedShareFolder = getKeeperDriveFolder(storage, uid)
+    if (nestedShareFolder) {
+        return {
+            uid: nestedShareFolder.uid,
+            name: getFolderDisplayName(storage, nestedShareFolder.uid),
+            folderKind: FolderKind.KeeperDriveFolder,
+        }
+    }
     return undefined
 }
 
 export async function findParentFolderUid(storage: InMemoryStorage, folderUid: string): Promise<string | null> {
     const rootFolderUids = new Set((await listRootUserFolders(storage)).map((folder) => folder.uid))
     if (rootFolderUids.has(folderUid)) return null
+
+    const nestedShareFolder = getKeeperDriveFolder(storage, folderUid)
+    if (nestedShareFolder) {
+        const parentUid = nestedShareFolder.parentUid?.trim()
+        if (!parentUid || isRootFolderUid(storage, parentUid)) return null
+        return parentUid
+    }
 
     const parentKinds = [
         FolderKind.UserFolder,

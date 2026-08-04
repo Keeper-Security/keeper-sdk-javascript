@@ -10,6 +10,7 @@ import { tryResolvePath, findParentFolderUid, type VaultFolderSession } from './
 import {
     DeleteResolution,
     FolderKind,
+    type ClassicFolderKind,
     globToRegex,
     sharedFolderFolderName,
     sharedFolderName,
@@ -60,7 +61,7 @@ function resolveRmdirConfirm(options: RmdirOptions): ((summary: string) => Promi
     }
 }
 
-function folderKindOfUid(storage: InMemoryStorage, uid: string): FolderKind {
+function folderKindOfUid(storage: InMemoryStorage, uid: string): ClassicFolderKind {
     if (storage.getByUid<DUserFolder>(FolderKind.UserFolder, uid)) return FolderKind.UserFolder
     if (storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, uid)) return FolderKind.SharedFolder
     if (storage.getByUid<DSharedFolderFolder>(FolderKind.SharedFolderFolder, uid)) return FolderKind.SharedFolderFolder

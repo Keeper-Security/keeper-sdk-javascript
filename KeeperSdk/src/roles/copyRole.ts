@@ -174,9 +174,7 @@ export async function copyRoles(auth: Auth, input: CopyRoleInput): Promise<CopyR
         usersFailed,
         teamsCopied,
         teamsFailed,
-        message: partialFailed
-            ? 'Role created, but some enforcements, users, and/or teams failed to copy.'
-            : undefined,
+        message: partialFailed ? 'Role created, but some enforcements, users, and/or teams failed to copy.' : undefined,
     }
 }
 

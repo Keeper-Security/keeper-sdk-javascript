@@ -12,9 +12,15 @@ import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { isBoolean, KeeperSdkError, extractErrorMessage } from '../utils'
 import { listFolder } from './listFolder'
 import { tryResolvePath, splitPathComponents, type VaultFolderSession } from './changeDirectory'
-import { FolderKind, FolderResultStatus, ParentFolderKind, validateFolderName } from './folderHelpers'
+import {
+    ClassicFolderKind,
+    FolderKind,
+    FolderResultStatus,
+    ParentFolderKind,
+    validateFolderName,
+} from './folderHelpers'
 
-type NewFolderKind = FolderKind
+type NewFolderKind = ClassicFolderKind
 
 export type AddFolderInput = {
     folderName: string

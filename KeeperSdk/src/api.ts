@@ -149,7 +149,7 @@ export {
     DeleteObjectType,
     folderKindFromString,
 } from './folders/folderHelpers'
-export type { FolderKindOrLiteral } from './folders/folderHelpers'
+export type { FolderKindOrLiteral, ClassicFolderKind } from './folders/folderHelpers'
 
 export { listFolder, findFolderUidByNameOrUid, listRootUserFolders } from './folders/listFolder'
 export type {
