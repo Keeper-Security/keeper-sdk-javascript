@@ -450,30 +450,14 @@ export class EnterpriseDataManager implements EnterpriseDataManagerApi {
     private async decryptTreeKey(treeKey: Enterprise.ITreeKey): Promise<Uint8Array | null> {
         if (!treeKey.treeKey) return null
         const encrypted = normal64Bytes(treeKey.treeKey)
-        const keyType = (treeKey.keyTypeId ?? 0) as Enterprise.BackupKeyType
+        const keyType = treeKey.keyTypeId ?? 0
 
         try {
-            switch (keyType) {
-                case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY: {
-                    if (!this.auth.dataKey) return null
-                    return await platform.aesCbcDecrypt(encrypted, this.auth.dataKey, true)
-                }
-                case Enterprise.BackupKeyType.ENCRYPTED_BY_DATA_KEY_GCM: {
-                    if (!this.auth.dataKey) return null
-                    return await platform.aesGcmDecrypt(encrypted, this.auth.dataKey)
-                }
-                case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY: {
-                    if (!this.auth.privateKey) return null
-                    return platform.privateDecrypt(encrypted, this.auth.privateKey)
-                }
-                case Enterprise.BackupKeyType.ENCRYPTED_BY_PUBLIC_KEY_ECC: {
-                    if (!this.auth.eccPrivateKey) return null
-                    return await platform.privateDecryptEC(encrypted, this.auth.eccPrivateKey)
-                }
-                default:
-                    logger.debug(`Unsupported tree-key keyTypeId=${keyType}`)
-                    return null
+            const decrypted = await decryptByKeyType(encrypted, keyType, this.sessionUnwrapKeys())
+            if (!decrypted) {
+                logger.debug(`Unsupported tree-key keyTypeId=${keyType}`)
             }
+            return decrypted
         } catch (err) {
             logger.debug(`Tree-key decryption failed (keyTypeId=${keyType}): ${extractErrorMessage(err)}`)
             return null

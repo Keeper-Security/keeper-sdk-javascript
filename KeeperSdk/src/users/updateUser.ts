@@ -1,8 +1,9 @@
 import {
     encryptObjectForStorage,
+    enterpriseUserUpdateCommand,
+    roleUserRemoveCommand,
     type Auth,
-    type KeeperResponse,
-    type RestCommand,
+    type EnterpriseUserUpdateRequest,
     teamEnterpriseUserRemoveCommand,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, KeeperSdkError, ResultCodes } from '../utils'
@@ -32,9 +33,6 @@ import {
 export { UpdateUserStatus }
 export type { UpdateUserInput, UpdateUserItemResult, UpdateUserResult, FormattedUpdateUserTable }
 
-const USER_UPDATE_COMMAND = 'enterprise_user_update'
-const ROLE_USER_REMOVE_COMMAND = 'role_user_remove'
-
 const UPDATE_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
     EnterpriseDataInclude.Users,
@@ -47,20 +45,6 @@ const UPDATE_USER_INCLUDES: EnterpriseDataInclude[] = [
 ]
 
 const USER_UPDATE_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Node ID', 'Detail']
-
-type UserUpdatePayload = {
-    enterprise_user_id: number
-    enterprise_user_username: string
-    node_id: number
-    encrypted_data: string
-    full_name?: string
-    job_title?: string
-}
-
-type RoleUserRemovePayload = {
-    role_id: number
-    enterprise_user_id: number
-}
 
 export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<UpdateUserResult> {
     const rawEmails = normalizeEmailInputs(input.emails)
@@ -125,7 +109,7 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
             if (hasProfileChange && treeKey !== null) {
                 const displayName = fullName ?? (user.full_name || '').trim()
                 const encryptedData = await encryptObjectForStorage({ displayname: displayName }, treeKey)
-                const payload: UserUpdatePayload = {
+                const payload: EnterpriseUserUpdateRequest = {
                     enterprise_user_id: user.enterprise_user_id,
                     enterprise_user_username: user.username,
                     node_id: targetNodeId,
@@ -155,19 +139,14 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     return finalizeResult(items)
 }
 
-async function sendUserUpdate(auth: Auth, payload: UserUpdatePayload): Promise<void> {
-    const command: RestCommand<UserUpdatePayload, KeeperResponse> = {
-        baseRequest: { command: USER_UPDATE_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+async function sendUserUpdate(auth: Auth, payload: EnterpriseUserUpdateRequest): Promise<void> {
+    const response = await auth.executeRestCommand(enterpriseUserUpdateCommand(payload))
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
             response.message ||
                 response.result_code ||
-                `${USER_UPDATE_COMMAND} failed for "${payload.enterprise_user_username}"`,
+                `enterprise_user_update failed for "${payload.enterprise_user_username}"`,
             response.result_code || ResultCodes.USER_UPDATE_FAILED
         )
     }
@@ -191,18 +170,15 @@ async function sendTeamUserRemove(auth: Auth, enterpriseUserId: number, teamUid:
 }
 
 async function sendRoleUserRemove(auth: Auth, roleId: number, enterpriseUserId: number): Promise<void> {
-    const command: RestCommand<RoleUserRemovePayload, KeeperResponse> = {
-        baseRequest: { command: ROLE_USER_REMOVE_COMMAND },
-        request: { role_id: roleId, enterprise_user_id: enterpriseUserId },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(
+        roleUserRemoveCommand({ role_id: roleId, enterprise_user_id: enterpriseUserId })
+    )
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
             response.message ||
                 response.result_code ||
-                `${ROLE_USER_REMOVE_COMMAND} failed for user=${enterpriseUserId}, role=${roleId}`,
+                `role_user_remove failed for user=${enterpriseUserId}, role=${roleId}`,
             response.result_code || ResultCodes.USER_UPDATE_FAILED
         )
     }

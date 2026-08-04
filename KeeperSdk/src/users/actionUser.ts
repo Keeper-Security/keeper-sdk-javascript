@@ -2,9 +2,9 @@ import {
     createInMessage,
     Enterprise,
     enterpriseUsersLockMessage,
+    extendAccountShareExpirationCommand,
+    setMasterPasswordExpireCommand,
     type Auth,
-    type KeeperResponse,
-    type RestCommand,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, KeeperSdkError, logger, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseUser } from '../teams/enterpriseData'
@@ -23,8 +23,6 @@ import {
 export { UserAction, UserActionStatus, UserActionSkipReason }
 export type { UserActionInput, UserActionItemResult, UserActionResult, FormattedUserActionTable }
 
-const EXPIRE_PASSWORD_COMMAND = 'set_master_password_expire'
-const EXTEND_TRANSFER_COMMAND = 'extend_account_share_expiration'
 const ALL_USERS_SENTINEL = '@all'
 const ACTIONS_NOT_SUPPORTING_ALL = new Set<UserAction>([
     UserAction.Lock,
@@ -37,14 +35,6 @@ const SELF_ACTION_MESSAGE = 'This operation cannot be done on yourself.'
 const ACTION_USER_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Users]
 
 const USER_ACTION_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Detail']
-
-type ExpirePasswordPayload = {
-    email: string
-}
-
-type ExtendTransferPayload = {
-    enterprise_user_id: number
-}
 
 type ActionUserTarget = { kind: 'user'; user: EnterpriseUser } | { kind: 'not_found'; identifier: string }
 
@@ -242,34 +232,26 @@ function applyLockUserResponse(
 }
 
 async function sendExpirePassword(auth: Auth, email: string): Promise<void> {
-    const command: RestCommand<ExpirePasswordPayload, KeeperResponse> = {
-        baseRequest: { command: EXPIRE_PASSWORD_COMMAND },
-        request: { email },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(setMasterPasswordExpireCommand({ email }))
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message || response.result_code || `${EXPIRE_PASSWORD_COMMAND} failed for "${maskEmail(email)}"`,
+            response.message || response.result_code || `set_master_password_expire failed for "${maskEmail(email)}"`,
             response.result_code || ResultCodes.USER_ACTION_FAILED
         )
     }
 }
 
 async function sendExtendTransferConsent(auth: Auth, enterpriseUserId: number): Promise<void> {
-    const command: RestCommand<ExtendTransferPayload, KeeperResponse> = {
-        baseRequest: { command: EXTEND_TRANSFER_COMMAND },
-        request: { enterprise_user_id: enterpriseUserId },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(
+        extendAccountShareExpirationCommand({ enterprise_user_id: enterpriseUserId })
+    )
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
             response.message ||
                 response.result_code ||
-                `${EXTEND_TRANSFER_COMMAND} failed for user id ${enterpriseUserId}`,
+                `extend_account_share_expiration failed for user id ${enterpriseUserId}`,
             response.result_code || ResultCodes.USER_ACTION_FAILED
         )
     }

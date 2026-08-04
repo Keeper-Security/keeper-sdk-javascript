@@ -1,4 +1,4 @@
-import type { Auth, KeeperResponse, RestCommand } from '@keeper-security/keeperapi'
+import { teamUpdateCommand, type Auth, type TeamUpdateRequest } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager } from './enterpriseData'
 import { TeamRestriction, type TeamRestrictionInput } from './addTeam'
@@ -12,7 +12,6 @@ import {
     validateTeamName,
 } from './teamUtils'
 
-const TEAM_UPDATE_COMMAND = 'team_update'
 const UPDATE_TEAM_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Teams]
 
 export enum UpdateTeamStatus {
@@ -42,15 +41,6 @@ export type UpdateTeamResult = {
     items: UpdateTeamItemResult[]
     updated: number
     failed: number
-}
-
-type TeamUpdateRequestPayload = {
-    team_uid: string
-    team_name: string
-    node_id: number
-    restrict_edit: boolean
-    restrict_share: boolean
-    restrict_view: boolean
 }
 
 export async function updateTeams(auth: Auth, input: UpdateTeamInput): Promise<UpdateTeamResult> {
@@ -104,7 +94,7 @@ export async function updateTeams(auth: Auth, input: UpdateTeamInput): Promise<U
     const items: UpdateTeamItemResult[] = []
     for (const team of resolvedTeams) {
         const targetNodeId = overrideNodeId ?? team.node_id
-        const payload: TeamUpdateRequestPayload = {
+        const payload: TeamUpdateRequest = {
             team_uid: team.team_uid,
             team_name: newName || team.name || '',
             node_id: targetNodeId,
@@ -143,13 +133,8 @@ function resolveOptionalRestriction(input: TeamRestrictionInput): boolean | unde
     return undefined
 }
 
-async function sendTeamUpdate(auth: Auth, payload: TeamUpdateRequestPayload): Promise<void> {
-    const command: RestCommand<TeamUpdateRequestPayload, KeeperResponse> = {
-        baseRequest: { command: TEAM_UPDATE_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+async function sendTeamUpdate(auth: Auth, payload: TeamUpdateRequest): Promise<void> {
+    const response = await auth.executeRestCommand(teamUpdateCommand(payload))
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(

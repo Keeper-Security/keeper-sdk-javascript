@@ -1,4 +1,4 @@
-import { encryptObjectForStorage, type Auth, type KeeperResponse, type RestCommand } from '@keeper-security/keeperapi'
+import { encryptObjectForStorage, nodeUpdateCommand, type Auth, type NodeEditRequest } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseNode } from '../teams/enterpriseData'
 import { applyDecryptedNodeNames, applyEnterpriseNameToRoot, resolveParentNode } from '../teams/teamUtils'
@@ -13,14 +13,7 @@ import {
     validateNodeName,
 } from './nodeUtils'
 
-const NODE_UPDATE_COMMAND = 'node_update'
 const UPDATE_NODE_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes]
-
-type NodeEditRequest = {
-    node_id: number
-    parent_id: number
-    encrypted_data: string
-}
 
 export enum UpdateNodeStatus {
     Updated = 'updated',
@@ -150,12 +143,7 @@ export async function updateNodes(auth: Auth, input: UpdateNodeInput): Promise<U
 }
 
 async function sendNodeUpdate(auth: Auth, payload: NodeEditRequest): Promise<void> {
-    const command: RestCommand<NodeEditRequest, KeeperResponse> = {
-        baseRequest: { command: NODE_UPDATE_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(nodeUpdateCommand(payload))
     assertCommandSucceeded(
         response,
         `node_update failed for node_id=${payload.node_id}`,

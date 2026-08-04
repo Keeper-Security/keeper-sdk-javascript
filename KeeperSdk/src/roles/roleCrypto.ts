@@ -87,16 +87,16 @@ export async function encryptForUserPublicKey(
     plaintext: Uint8Array,
     publicKeys: UserPublicKeys
 ): Promise<EncryptedForUser | null> {
-    if (publicKeys.rsaPublicKey && publicKeys.rsaPublicKey.length > 0) {
-        return {
-            ciphertext: shareKey(plaintext, platform.bytesToBase64(publicKeys.rsaPublicKey)),
-            keyType: ENCRYPTED_BY_PUBLIC_KEY,
-        }
-    }
     if (publicKeys.eccPublicKey && publicKeys.eccPublicKey.length > 0) {
         return {
             ciphertext: await shareKeyEC(plaintext, publicKeys.eccPublicKey),
             keyType: ENCRYPTED_BY_PUBLIC_KEY_ECC,
+        }
+    }
+    if (publicKeys.rsaPublicKey && publicKeys.rsaPublicKey.length > 0) {
+        return {
+            ciphertext: shareKey(plaintext, platform.bytesToBase64(publicKeys.rsaPublicKey)),
+            keyType: ENCRYPTED_BY_PUBLIC_KEY,
         }
     }
     return null

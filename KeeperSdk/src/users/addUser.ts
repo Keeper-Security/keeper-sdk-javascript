@@ -1,4 +1,12 @@
-import { encryptObjectForStorage, type Auth, type KeeperResponse, type RestCommand } from '@keeper-security/keeperapi'
+import {
+    encryptObjectForStorage,
+    enterpriseAllocateIdsCommand,
+    enterpriseUserAddCommand,
+    resendEnterpriseInviteCommand,
+    type Auth,
+    type EnterpriseUserAddRequest,
+    type KeeperResponse,
+} from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, isValidEmail, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager, type EnterpriseUser } from '../teams/enterpriseData'
 import {
@@ -23,34 +31,9 @@ import {
 export { AddUserStatus, AddUserSkipReason }
 export type { AddUserInput, AddUserItemResult, AddUserResult, FormatAddUserResultOptions, FormattedAddUserTable }
 
-const USER_ADD_COMMAND = 'enterprise_user_add'
-const ALLOCATE_IDS_COMMAND = 'enterprise_allocate_ids'
-const REINVITE_COMMAND = 'resend_enterprise_invite'
-
 const ADD_USER_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes, EnterpriseDataInclude.Users]
 
 const USER_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Node ID', 'Detail']
-
-type UserAddPayload = {
-    enterprise_user_id: number
-    enterprise_user_username: string
-    node_id: number
-    encrypted_data: string
-    full_name?: string
-    job_title?: string
-}
-
-type AllocateIdsPayload = {
-    number_requested: number
-}
-
-type ReinvitePayload = {
-    enterprise_user_id: number
-}
-
-type AllocateIdsResponse = KeeperResponse & {
-    base_id: number
-}
 
 export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUserResult> {
     const rawEmails = [
@@ -160,12 +143,7 @@ export async function addUsers(auth: Auth, input: AddUserInput): Promise<AddUser
 }
 
 async function allocateEnterpriseId(auth: Auth): Promise<number> {
-    const command: RestCommand<AllocateIdsPayload, AllocateIdsResponse> = {
-        baseRequest: { command: ALLOCATE_IDS_COMMAND },
-        request: { number_requested: 1 },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(enterpriseAllocateIdsCommand({ number_requested: 1 }))
     assertCommandSuccess(response, 'enterprise_allocate_ids failed')
     if (!isNumber(response.base_id) || response.base_id === 0) {
         throw new KeeperSdkError('Failed to allocate enterprise user ID.', ResultCodes.USER_ADD_FAILED)
@@ -173,24 +151,16 @@ async function allocateEnterpriseId(auth: Auth): Promise<number> {
     return response.base_id
 }
 
-async function sendUserAdd(auth: Auth, payload: UserAddPayload): Promise<void> {
-    const command: RestCommand<UserAddPayload, KeeperResponse> = {
-        baseRequest: { command: USER_ADD_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
-    assertCommandSuccess(response, `${USER_ADD_COMMAND} failed for "${payload.enterprise_user_username}"`)
+async function sendUserAdd(auth: Auth, payload: EnterpriseUserAddRequest): Promise<void> {
+    const response = await auth.executeRestCommand(enterpriseUserAddCommand(payload))
+    assertCommandSuccess(response, `enterprise_user_add failed for "${payload.enterprise_user_username}"`)
 }
 
 async function sendReinvite(auth: Auth, enterpriseUserId: number): Promise<void> {
-    const command: RestCommand<ReinvitePayload, KeeperResponse> = {
-        baseRequest: { command: REINVITE_COMMAND },
-        request: { enterprise_user_id: enterpriseUserId },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
-    assertCommandSuccess(response, `${REINVITE_COMMAND} failed for user_id=${enterpriseUserId}`)
+    const response = await auth.executeRestCommand(
+        resendEnterpriseInviteCommand({ enterprise_user_id: enterpriseUserId })
+    )
+    assertCommandSuccess(response, `resend_enterprise_invite failed for user_id=${enterpriseUserId}`)
 }
 
 function assertCommandSuccess(response: KeeperResponse, fallbackMessage: string): void {

@@ -1,9 +1,9 @@
 import {
     encryptObjectForStorage,
     enterpriseAllocateIdsCommand,
+    nodeAddCommand,
     type Auth,
-    type KeeperResponse,
-    type RestCommand,
+    type NodeEditRequest,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
@@ -23,14 +23,6 @@ import {
     renderNodeResultTable,
     validateNodeName,
 } from './nodeUtils'
-
-const NODE_ADD_COMMAND = 'node_add'
-
-type NodeEditRequest = {
-    node_id: number
-    parent_id: number
-    encrypted_data: string
-}
 
 const ADD_NODE_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Nodes]
 
@@ -177,12 +169,7 @@ async function allocateNodeId(auth: Auth): Promise<number> {
 }
 
 async function sendNodeAdd(auth: Auth, payload: NodeEditRequest): Promise<void> {
-    const command: RestCommand<NodeEditRequest, KeeperResponse> = {
-        baseRequest: { command: NODE_ADD_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(nodeAddCommand(payload))
     assertCommandSucceeded(response, `node_add failed for node_id=${payload.node_id}`, ResultCodes.NODE_ADD_FAILED)
 }
 
