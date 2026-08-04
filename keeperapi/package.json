@@ -1,7 +1,7 @@
 {
     "name": "@keeper-security/keeperapi",
     "description": "Keeper API Javascript SDK",
-    "version": "18.0.6",
+    "version": "18.0.7",
     "browser": "dist/browser/index.js",
     "main": "dist/index.cjs.js",
     "types": "dist/node/index.d.ts",
