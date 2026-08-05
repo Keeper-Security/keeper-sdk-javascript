@@ -138,13 +138,36 @@ export type {
     FormattedSharedFoldersTable,
 } from './sharedFolders/listSharedFolders'
 
-export { shareFolder, ShareFolderAction, ShareFolderUserResultStatus } from './sharedFolders/shareFolder'
+export { shareFolder, updateSharedFolderMembership, ShareFolderAction, ShareFolderUserResultStatus } from './sharedFolders/shareFolder'
 export type {
     ShareFolderActionInput,
     ShareFolderInput,
     ShareFolderResult,
     ShareFolderUserStatus,
+    SharedFolderMembershipUserGrant,
+    SharedFolderMembershipTeamGrant,
+    UpdateSharedFolderMembershipInput,
+    SharedFolderMembershipUpdateResult,
 } from './sharedFolders/shareFolder'
+
+export { downloadMembership, buildAccountUidEmailMap, resolveUserEmail } from './sharedFolders/downloadMembership'
+export type {
+    MembershipPermission,
+    MembershipSharedFolder,
+    MembershipTeam,
+    MembershipData,
+    DownloadMembershipOptions,
+} from './sharedFolders/downloadMembership'
+
+export { applyMembership } from './sharedFolders/applyMembership'
+export type {
+    ApplyMembershipInput,
+    ApplyMembershipOptions,
+    ApplyMembershipCounts,
+    ApplyMembershipFolderResult,
+    ApplyMembershipTeamMembershipResult,
+    ApplyMembershipResult,
+} from './sharedFolders/applyMembership'
 
 export {
     changeDirectory,
