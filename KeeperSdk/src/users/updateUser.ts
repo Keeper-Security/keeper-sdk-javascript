@@ -1,8 +1,9 @@
 import {
     encryptObjectForStorage,
+    enterpriseUserUpdateCommand,
+    roleUserRemoveCommand,
     type Auth,
-    type KeeperResponse,
-    type RestCommand,
+    type EnterpriseUserUpdateRequest,
     teamEnterpriseUserRemoveCommand,
 } from '@keeper-security/keeperapi'
 import { extractErrorMessage, isNumber, KeeperSdkError, ResultCodes } from '../utils'
@@ -32,9 +33,6 @@ import {
 export { UpdateUserStatus }
 export type { UpdateUserInput, UpdateUserItemResult, UpdateUserResult, FormattedUpdateUserTable }
 
-const USER_UPDATE_COMMAND = 'enterprise_user_update'
-const ROLE_USER_REMOVE_COMMAND = 'role_user_remove'
-
 const UPDATE_USER_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Nodes,
     EnterpriseDataInclude.Users,
@@ -48,20 +46,6 @@ const UPDATE_USER_INCLUDES: EnterpriseDataInclude[] = [
 
 const USER_UPDATE_TABLE_HEADERS = ['#', 'Status', 'Email', 'User ID', 'Node ID', 'Detail']
 
-type UserUpdatePayload = {
-    enterprise_user_id: number
-    enterprise_user_username: string
-    node_id: number
-    encrypted_data?: string
-    full_name?: string
-    job_title?: string
-}
-
-type RoleUserRemovePayload = {
-    role_id: number
-    enterprise_user_id: number
-}
-
 export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<UpdateUserResult> {
     const rawEmails = normalizeEmailInputs(input.emails)
 
@@ -69,7 +53,13 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
         throw new KeeperSdkError('No users provided for update.', ResultCodes.NO_USERS_TO_UPDATE)
     }
 
-    const parentIdentifier = input.parent ?? null
+    const parentRaw = input.parent
+    const parentIdentifier =
+        parentRaw === undefined || parentRaw === null
+            ? null
+            : typeof parentRaw === 'string' && parentRaw.trim() === ''
+              ? null
+              : parentRaw
     const needsNameLookup = parentNeedsNameLookup(parentIdentifier)
     const hasProfileChange = parentIdentifier !== null || !!input.fullName || !!input.jobTitle
 
@@ -90,7 +80,7 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     const resolvedUsers = resolveExistingUsers(response.users || [], rawEmails)
 
     const overrideNodeId: number | null =
-        parentIdentifier !== null && parentIdentifier !== '' ? resolveParentNode(nodes, parentIdentifier).node_id : null
+        parentIdentifier !== null ? resolveParentNode(nodes, parentIdentifier).node_id : null
 
     const treeKey = hasProfileChange ? await enterpriseData.getTreeKey() : null
     if (hasProfileChange && !treeKey) {
@@ -117,18 +107,17 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
 
         try {
             if (hasProfileChange && treeKey !== null) {
-                const encryptedData =
-                    fullName !== undefined
-                        ? await encryptObjectForStorage({ displayname: fullName }, treeKey)
-                        : undefined
-                await sendUserUpdate(auth, {
+                const displayName = fullName ?? (user.full_name || '').trim()
+                const encryptedData = await encryptObjectForStorage({ displayname: displayName }, treeKey)
+                const payload: EnterpriseUserUpdateRequest = {
                     enterprise_user_id: user.enterprise_user_id,
                     enterprise_user_username: user.username,
                     node_id: targetNodeId,
                     encrypted_data: encryptedData,
-                    full_name: fullName,
-                    job_title: jobTitle,
-                })
+                }
+                if (fullName !== undefined) payload.full_name = fullName
+                if (jobTitle !== undefined) payload.job_title = jobTitle
+                await sendUserUpdate(auth, payload)
             }
 
             for (const teamUid of removeTeamUids) {
@@ -150,19 +139,14 @@ export async function updateUsers(auth: Auth, input: UpdateUserInput): Promise<U
     return finalizeResult(items)
 }
 
-async function sendUserUpdate(auth: Auth, payload: UserUpdatePayload): Promise<void> {
-    const command: RestCommand<UserUpdatePayload, KeeperResponse> = {
-        baseRequest: { command: USER_UPDATE_COMMAND },
-        request: payload,
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+async function sendUserUpdate(auth: Auth, payload: EnterpriseUserUpdateRequest): Promise<void> {
+    const response = await auth.executeRestCommand(enterpriseUserUpdateCommand(payload))
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
             response.message ||
                 response.result_code ||
-                `${USER_UPDATE_COMMAND} failed for "${payload.enterprise_user_username}"`,
+                `enterprise_user_update failed for "${payload.enterprise_user_username}"`,
             response.result_code || ResultCodes.USER_UPDATE_FAILED
         )
     }
@@ -186,18 +170,15 @@ async function sendTeamUserRemove(auth: Auth, enterpriseUserId: number, teamUid:
 }
 
 async function sendRoleUserRemove(auth: Auth, roleId: number, enterpriseUserId: number): Promise<void> {
-    const command: RestCommand<RoleUserRemovePayload, KeeperResponse> = {
-        baseRequest: { command: ROLE_USER_REMOVE_COMMAND },
-        request: { role_id: roleId, enterprise_user_id: enterpriseUserId },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(
+        roleUserRemoveCommand({ role_id: roleId, enterprise_user_id: enterpriseUserId })
+    )
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
             response.message ||
                 response.result_code ||
-                `${ROLE_USER_REMOVE_COMMAND} failed for user=${enterpriseUserId}, role=${roleId}`,
+                `role_user_remove failed for user=${enterpriseUserId}, role=${roleId}`,
             response.result_code || ResultCodes.USER_UPDATE_FAILED
         )
     }

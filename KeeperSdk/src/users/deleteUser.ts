@@ -1,4 +1,4 @@
-import { type Auth, type KeeperResponse, type RestCommand } from '@keeper-security/keeperapi'
+import { enterpriseUserDeleteCommand, type Auth } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
 import {
@@ -14,13 +14,7 @@ import {
 export { DeleteUserStatus }
 export type { DeleteUserInput, DeleteUserItemResult, DeleteUserResult, FormattedDeleteUserTable }
 
-const USER_DELETE_COMMAND = 'enterprise_user_delete'
-
 const DELETE_USER_INCLUDES: EnterpriseDataInclude[] = [EnterpriseDataInclude.Users]
-
-type UserDeletePayload = {
-    enterprise_user_id: number
-}
 
 export async function deleteUsers(auth: Auth, input: DeleteUserInput): Promise<DeleteUserResult> {
     const rawEmails = normalizeEmailInputs(input.emails)
@@ -56,16 +50,13 @@ export async function deleteUsers(auth: Auth, input: DeleteUserInput): Promise<D
 }
 
 async function sendUserDelete(auth: Auth, enterpriseUserId: number): Promise<void> {
-    const command: RestCommand<UserDeletePayload, KeeperResponse> = {
-        baseRequest: { command: USER_DELETE_COMMAND },
-        request: { enterprise_user_id: enterpriseUserId },
-        authorization: {},
-    }
-    const response = await auth.executeRestCommand(command)
+    const response = await auth.executeRestCommand(
+        enterpriseUserDeleteCommand({ enterprise_user_id: enterpriseUserId })
+    )
     const result = (response.result || '').toLowerCase()
     if (result && result !== 'success') {
         throw new KeeperSdkError(
-            response.message || response.result_code || `${USER_DELETE_COMMAND} failed for user_id=${enterpriseUserId}`,
+            response.message || response.result_code || `enterprise_user_delete failed for user_id=${enterpriseUserId}`,
             response.result_code || ResultCodes.USER_DELETE_FAILED
         )
     }

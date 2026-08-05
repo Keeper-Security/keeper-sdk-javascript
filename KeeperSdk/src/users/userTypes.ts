@@ -50,6 +50,8 @@ export enum UserAction {
     Lock = 'lock',
     Unlock = 'unlock',
     ExpirePassword = 'expire_password',
+    Extend = 'extend',
+    Disable2fa = 'disable_2fa',
 }
 
 export enum UserActionStatus {
@@ -112,6 +114,7 @@ export type UserView = {
     node_id: number
     node_name: string
     full_name: string
+    job_title?: string
     status: string
     tfa_enabled: boolean
     transfer_status: string

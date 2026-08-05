@@ -65,6 +65,8 @@ export async function viewUser(auth: Auth, identifier: string): Promise<UserView
         tfa_enabled: user.tfa_enabled ?? false,
         transfer_status: formatTransferStatus(user),
     }
+    const jobTitle = (user.job_title || '').trim()
+    if (jobTitle) view.job_title = jobTitle
 
     const aliases = buildAliases(response.user_aliases || [], user)
     if (aliases.length > 0) view.aliases = aliases
@@ -96,6 +98,7 @@ export function formatUserView(view: UserView, options: FormatUserViewOptions = 
         { label: 'User ID', value: String(view.enterprise_user_id) },
         { label: 'Email', value: view.username },
         { label: 'Full Name', value: view.full_name },
+        { label: 'Job Title', value: view.job_title ?? '' },
         {
             label: 'Node Name',
             value: view.node_name,

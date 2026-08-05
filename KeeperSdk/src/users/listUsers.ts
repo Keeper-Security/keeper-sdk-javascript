@@ -72,7 +72,7 @@ type DecorateContext = {
 export async function listUsers(auth: Auth, options: ListUsersOptions = {}): Promise<ListUserRow[]> {
     const columns = resolveColumns(options.columns)
     const includes = includesForColumns(columns)
-    const wantsDisplayNames = columns.includes(UserColumn.Node)
+    const wantsDisplayNames = columns.includes(UserColumn.Node) || columns.includes(UserColumn.Roles)
 
     const enterpriseData = new EnterpriseDataManager(auth)
     const emptyDisplayNames: EnterpriseDisplayNames = {

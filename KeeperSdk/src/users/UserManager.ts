@@ -6,6 +6,7 @@ import { deleteUsers, formatDeleteUserResult, renderDeleteUserAsciiTable } from 
 import { actionUsers, formatUserActionResult, renderUserActionAsciiTable } from './actionUser'
 import { aliasUser } from './aliasUser'
 import { addUsersToTeams, removeUsersFromTeams, formatTeamUserResult, renderTeamUserAsciiTable } from './teamUser'
+import { updateUsersOnTeams, formatUpdateTeamUserResult, renderUpdateTeamUserAsciiTable } from './updateTeamUser'
 import { listUsers, formatUsersTable, renderUsersAsciiTable } from './listUsers'
 import { viewUser, formatUserView, userViewTable } from './viewUser'
 import type {
@@ -37,6 +38,7 @@ import type {
     TeamUserResult,
     FormattedTeamUserTable,
 } from './userTypes'
+import type { UpdateUsersOnTeamsInput, UpdateUsersOnTeamsResult, FormattedUpdateTeamUserTable } from './updateTeamUser'
 
 export type AuthProvider = () => Auth
 
@@ -137,6 +139,18 @@ export class UserManager {
 
     public renderTeamUserAsciiTable(table: FormattedTeamUserTable): string {
         return renderTeamUserAsciiTable(table)
+    }
+
+    public async updateUsersOnTeams(input: UpdateUsersOnTeamsInput): Promise<UpdateUsersOnTeamsResult> {
+        return updateUsersOnTeams(this.requireAuth(), input)
+    }
+
+    public formatUpdateTeamUserResult(result: UpdateUsersOnTeamsResult): FormattedUpdateTeamUserTable {
+        return formatUpdateTeamUserResult(result)
+    }
+
+    public renderUpdateTeamUserAsciiTable(table: FormattedUpdateTeamUserTable): string {
+        return renderUpdateTeamUserAsciiTable(table)
     }
 
     private requireAuth(): Auth {
