@@ -3415,6 +3415,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @property {Array.<string>|null} [personalUsernames] Settings personalUsernames
          * @property {number|null} [maxIpDistance] Settings maxIpDistance
          * @property {number|null} [maxIpDistanceEffective] Settings maxIpDistanceEffective
+         * @property {number|null} [offlineAccessExpireDays] Settings offlineAccessExpireDays
          */
 
         /**
@@ -3767,6 +3768,14 @@ export const AccountSummary = $root.AccountSummary = (() => {
         Settings.prototype.maxIpDistanceEffective = 0;
 
         /**
+         * Settings offlineAccessExpireDays.
+         * @member {number} offlineAccessExpireDays
+         * @memberof AccountSummary.Settings
+         * @instance
+         */
+        Settings.prototype.offlineAccessExpireDays = 0;
+
+        /**
          * Creates a new Settings instance using the specified properties.
          * @function create
          * @memberof AccountSummary.Settings
@@ -3885,6 +3894,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 writer.uint32(/* id 40, wireType 0 =*/320).int32(message.maxIpDistance);
             if (message.maxIpDistanceEffective != null && Object.hasOwnProperty.call(message, "maxIpDistanceEffective"))
                 writer.uint32(/* id 41, wireType 0 =*/328).int32(message.maxIpDistanceEffective);
+            if (message.offlineAccessExpireDays != null && Object.hasOwnProperty.call(message, "offlineAccessExpireDays"))
+                writer.uint32(/* id 42, wireType 0 =*/336).int32(message.offlineAccessExpireDays);
             return writer;
         };
 
@@ -4091,6 +4102,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                     }
                 case 41: {
                         message.maxIpDistanceEffective = reader.int32();
+                        break;
+                    }
+                case 42: {
+                        message.offlineAccessExpireDays = reader.int32();
                         break;
                     }
                 default:
@@ -4306,6 +4321,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 message.maxIpDistance = object.maxIpDistance | 0;
             if (object.maxIpDistanceEffective != null)
                 message.maxIpDistanceEffective = object.maxIpDistanceEffective | 0;
+            if (object.offlineAccessExpireDays != null)
+                message.offlineAccessExpireDays = object.offlineAccessExpireDays | 0;
             return message;
         };
 
@@ -4384,6 +4401,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.securityKeysNoUserVerify = false;
                 object.maxIpDistance = 0;
                 object.maxIpDistanceEffective = 0;
+                object.offlineAccessExpireDays = 0;
             }
             if (message.audit != null && Object.hasOwnProperty.call(message, "audit"))
                 object.audit = message.audit;
@@ -4495,6 +4513,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.maxIpDistance = message.maxIpDistance;
             if (message.maxIpDistanceEffective != null && Object.hasOwnProperty.call(message, "maxIpDistanceEffective"))
                 object.maxIpDistanceEffective = message.maxIpDistanceEffective;
+            if (message.offlineAccessExpireDays != null && Object.hasOwnProperty.call(message, "offlineAccessExpireDays"))
+                object.offlineAccessExpireDays = message.offlineAccessExpireDays;
             return object;
         };
 

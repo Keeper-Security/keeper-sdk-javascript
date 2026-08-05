@@ -6620,6 +6620,269 @@ export const PAM = $root.PAM = (() => {
         return RelayAccessCreds;
     })();
 
+    PAM.KturnAccessCreds = (function() {
+
+        /**
+         * Properties of a KturnAccessCreds.
+         * @memberof PAM
+         * @interface IKturnAccessCreds
+         * @property {string|null} [url] KturnAccessCreds url
+         * @property {Uint8Array|null} [token] KturnAccessCreds token
+         * @property {string|null} [certFingerprint] KturnAccessCreds certFingerprint
+         * @property {number|null} [expiresAt] KturnAccessCreds expiresAt
+         */
+
+        /**
+         * Constructs a new KturnAccessCreds.
+         * @memberof PAM
+         * @classdesc Represents a KturnAccessCreds.
+         * @implements IKturnAccessCreds
+         * @constructor
+         * @param {PAM.IKturnAccessCreds=} [properties] Properties to set
+         */
+        function KturnAccessCreds(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * KturnAccessCreds url.
+         * @member {string} url
+         * @memberof PAM.KturnAccessCreds
+         * @instance
+         */
+        KturnAccessCreds.prototype.url = "";
+
+        /**
+         * KturnAccessCreds token.
+         * @member {Uint8Array} token
+         * @memberof PAM.KturnAccessCreds
+         * @instance
+         */
+        KturnAccessCreds.prototype.token = $util.newBuffer([]);
+
+        /**
+         * KturnAccessCreds certFingerprint.
+         * @member {string} certFingerprint
+         * @memberof PAM.KturnAccessCreds
+         * @instance
+         */
+        KturnAccessCreds.prototype.certFingerprint = "";
+
+        /**
+         * KturnAccessCreds expiresAt.
+         * @member {number} expiresAt
+         * @memberof PAM.KturnAccessCreds
+         * @instance
+         */
+        KturnAccessCreds.prototype.expiresAt = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Creates a new KturnAccessCreds instance using the specified properties.
+         * @function create
+         * @memberof PAM.KturnAccessCreds
+         * @static
+         * @param {PAM.IKturnAccessCreds=} [properties] Properties to set
+         * @returns {PAM.KturnAccessCreds} KturnAccessCreds instance
+         */
+        KturnAccessCreds.create = function create(properties) {
+            return new KturnAccessCreds(properties);
+        };
+
+        /**
+         * Encodes the specified KturnAccessCreds message. Does not implicitly {@link PAM.KturnAccessCreds.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.KturnAccessCreds
+         * @static
+         * @param {PAM.IKturnAccessCreds} message KturnAccessCreds message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        KturnAccessCreds.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.url != null && Object.hasOwnProperty.call(message, "url"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.url);
+            if (message.token != null && Object.hasOwnProperty.call(message, "token"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.token);
+            if (message.certFingerprint != null && Object.hasOwnProperty.call(message, "certFingerprint"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.certFingerprint);
+            if (message.expiresAt != null && Object.hasOwnProperty.call(message, "expiresAt"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.expiresAt);
+            return writer;
+        };
+
+        /**
+         * Decodes a KturnAccessCreds message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.KturnAccessCreds
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.KturnAccessCreds} KturnAccessCreds
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        KturnAccessCreds.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.KturnAccessCreds();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.url = reader.string();
+                        break;
+                    }
+                case 2: {
+                        message.token = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.certFingerprint = reader.string();
+                        break;
+                    }
+                case 4: {
+                        message.expiresAt = reader.uint64();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a KturnAccessCreds message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.KturnAccessCreds
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.KturnAccessCreds} KturnAccessCreds
+         */
+        KturnAccessCreds.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.KturnAccessCreds)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.KturnAccessCreds: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.KturnAccessCreds();
+            if (object.url != null)
+                message.url = String(object.url);
+            if (object.token != null)
+                if (typeof object.token === "string")
+                    $util.base64.decode(object.token, message.token = $util.newBuffer($util.base64.length(object.token)), 0);
+                else if (object.token.length >= 0)
+                    message.token = object.token;
+            if (object.certFingerprint != null)
+                message.certFingerprint = String(object.certFingerprint);
+            if (object.expiresAt != null)
+                if ($util.Long)
+                    message.expiresAt = $util.Long.fromValue(object.expiresAt, true);
+                else if (typeof object.expiresAt === "string")
+                    message.expiresAt = parseInt(object.expiresAt, 10);
+                else if (typeof object.expiresAt === "number")
+                    message.expiresAt = object.expiresAt;
+                else if (typeof object.expiresAt === "object")
+                    message.expiresAt = new $util.LongBits(object.expiresAt.low >>> 0, object.expiresAt.high >>> 0).toNumber(true);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a KturnAccessCreds message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.KturnAccessCreds
+         * @static
+         * @param {PAM.KturnAccessCreds} message KturnAccessCreds
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        KturnAccessCreds.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                object.url = "";
+                if (options.bytes === String)
+                    object.token = "";
+                else {
+                    object.token = [];
+                    if (options.bytes !== Array)
+                        object.token = $util.newBuffer(object.token);
+                }
+                object.certFingerprint = "";
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, true);
+                    object.expiresAt = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                } else
+                    object.expiresAt = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+            }
+            if (message.url != null && Object.hasOwnProperty.call(message, "url"))
+                object.url = message.url;
+            if (message.token != null && Object.hasOwnProperty.call(message, "token"))
+                object.token = options.bytes === String ? $util.base64.encode(message.token, 0, message.token.length) : options.bytes === Array ? Array.prototype.slice.call(message.token) : message.token;
+            if (message.certFingerprint != null && Object.hasOwnProperty.call(message, "certFingerprint"))
+                object.certFingerprint = message.certFingerprint;
+            if (message.expiresAt != null && Object.hasOwnProperty.call(message, "expiresAt"))
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.expiresAt = typeof message.expiresAt === "number" ? BigInt(message.expiresAt) : $util.Long.fromBits(message.expiresAt.low >>> 0, message.expiresAt.high >>> 0, true).toBigInt();
+                else if (typeof message.expiresAt === "number")
+                    object.expiresAt = options.longs === String ? String(message.expiresAt) : message.expiresAt;
+                else
+                    object.expiresAt = options.longs === String ? $util.Long.prototype.toString.call(message.expiresAt) : options.longs === Number ? new $util.LongBits(message.expiresAt.low >>> 0, message.expiresAt.high >>> 0).toNumber(true) : message.expiresAt;
+            return object;
+        };
+
+        /**
+         * Converts this KturnAccessCreds to JSON.
+         * @function toJSON
+         * @memberof PAM.KturnAccessCreds
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        KturnAccessCreds.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for KturnAccessCreds
+         * @function getTypeUrl
+         * @memberof PAM.KturnAccessCreds
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        KturnAccessCreds.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.KturnAccessCreds";
+        };
+
+        return KturnAccessCreds;
+    })();
+
     /**
      * PAMRecordingType enum.
      * @name PAM.PAMRecordingType
@@ -7148,6 +7411,500 @@ export const PAM = $root.PAM = (() => {
         };
 
         return PAMRecordingsRequest;
+    })();
+
+    PAM.PAMRecordingsForUsersRequest = (function() {
+
+        /**
+         * Properties of a PAMRecordingsForUsersRequest.
+         * @memberof PAM
+         * @interface IPAMRecordingsForUsersRequest
+         * @property {Array.<string>|null} [usernames] PAMRecordingsForUsersRequest usernames
+         * @property {number|null} [maxCount] PAMRecordingsForUsersRequest maxCount
+         * @property {number|null} [rangeStart] PAMRecordingsForUsersRequest rangeStart
+         * @property {number|null} [rangeEnd] PAMRecordingsForUsersRequest rangeEnd
+         * @property {Array.<PAM.PAMRecordingType>|null} [types] PAMRecordingsForUsersRequest types
+         * @property {Array.<PAM.PAMRecordingRiskLevel>|null} [risks] PAMRecordingsForUsersRequest risks
+         * @property {Array.<string>|null} [protocols] PAMRecordingsForUsersRequest protocols
+         * @property {Array.<number>|null} [closeReasons] PAMRecordingsForUsersRequest closeReasons
+         */
+
+        /**
+         * Constructs a new PAMRecordingsForUsersRequest.
+         * @memberof PAM
+         * @classdesc Represents a PAMRecordingsForUsersRequest.
+         * @implements IPAMRecordingsForUsersRequest
+         * @constructor
+         * @param {PAM.IPAMRecordingsForUsersRequest=} [properties] Properties to set
+         */
+        function PAMRecordingsForUsersRequest(properties) {
+            this.usernames = [];
+            this.types = [];
+            this.risks = [];
+            this.protocols = [];
+            this.closeReasons = [];
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PAMRecordingsForUsersRequest usernames.
+         * @member {Array.<string>} usernames
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.usernames = $util.emptyArray;
+
+        /**
+         * PAMRecordingsForUsersRequest maxCount.
+         * @member {number} maxCount
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.maxCount = 0;
+
+        /**
+         * PAMRecordingsForUsersRequest rangeStart.
+         * @member {number|null|undefined} rangeStart
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.rangeStart = null;
+
+        /**
+         * PAMRecordingsForUsersRequest rangeEnd.
+         * @member {number|null|undefined} rangeEnd
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.rangeEnd = null;
+
+        /**
+         * PAMRecordingsForUsersRequest types.
+         * @member {Array.<PAM.PAMRecordingType>} types
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.types = $util.emptyArray;
+
+        /**
+         * PAMRecordingsForUsersRequest risks.
+         * @member {Array.<PAM.PAMRecordingRiskLevel>} risks
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.risks = $util.emptyArray;
+
+        /**
+         * PAMRecordingsForUsersRequest protocols.
+         * @member {Array.<string>} protocols
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.protocols = $util.emptyArray;
+
+        /**
+         * PAMRecordingsForUsersRequest closeReasons.
+         * @member {Array.<number>} closeReasons
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         */
+        PAMRecordingsForUsersRequest.prototype.closeReasons = $util.emptyArray;
+
+        // OneOf field names bound to virtual getters and setters
+        let $oneOfFields;
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(PAMRecordingsForUsersRequest.prototype, "_rangeStart", {
+            get: $util.oneOfGetter($oneOfFields = ["rangeStart"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(PAMRecordingsForUsersRequest.prototype, "_rangeEnd", {
+            get: $util.oneOfGetter($oneOfFields = ["rangeEnd"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
+         * Creates a new PAMRecordingsForUsersRequest instance using the specified properties.
+         * @function create
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @static
+         * @param {PAM.IPAMRecordingsForUsersRequest=} [properties] Properties to set
+         * @returns {PAM.PAMRecordingsForUsersRequest} PAMRecordingsForUsersRequest instance
+         */
+        PAMRecordingsForUsersRequest.create = function create(properties) {
+            return new PAMRecordingsForUsersRequest(properties);
+        };
+
+        /**
+         * Encodes the specified PAMRecordingsForUsersRequest message. Does not implicitly {@link PAM.PAMRecordingsForUsersRequest.verify|verify} messages.
+         * @function encode
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @static
+         * @param {PAM.IPAMRecordingsForUsersRequest} message PAMRecordingsForUsersRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PAMRecordingsForUsersRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.usernames != null && message.usernames.length)
+                for (let i = 0; i < message.usernames.length; ++i)
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.usernames[i]);
+            if (message.maxCount != null && Object.hasOwnProperty.call(message, "maxCount"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.maxCount);
+            if (message.rangeStart != null && Object.hasOwnProperty.call(message, "rangeStart"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.rangeStart);
+            if (message.rangeEnd != null && Object.hasOwnProperty.call(message, "rangeEnd"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.rangeEnd);
+            if (message.types != null && message.types.length) {
+                writer.uint32(/* id 5, wireType 2 =*/42).fork();
+                for (let i = 0; i < message.types.length; ++i)
+                    writer.int32(message.types[i]);
+                writer.ldelim();
+            }
+            if (message.risks != null && message.risks.length) {
+                writer.uint32(/* id 6, wireType 2 =*/50).fork();
+                for (let i = 0; i < message.risks.length; ++i)
+                    writer.int32(message.risks[i]);
+                writer.ldelim();
+            }
+            if (message.protocols != null && message.protocols.length)
+                for (let i = 0; i < message.protocols.length; ++i)
+                    writer.uint32(/* id 7, wireType 2 =*/58).string(message.protocols[i]);
+            if (message.closeReasons != null && message.closeReasons.length) {
+                writer.uint32(/* id 8, wireType 2 =*/66).fork();
+                for (let i = 0; i < message.closeReasons.length; ++i)
+                    writer.int32(message.closeReasons[i]);
+                writer.ldelim();
+            }
+            return writer;
+        };
+
+        /**
+         * Decodes a PAMRecordingsForUsersRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {PAM.PAMRecordingsForUsersRequest} PAMRecordingsForUsersRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PAMRecordingsForUsersRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.PAM.PAMRecordingsForUsersRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        if (!(message.usernames && message.usernames.length))
+                            message.usernames = [];
+                        message.usernames.push(reader.string());
+                        break;
+                    }
+                case 2: {
+                        message.maxCount = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.rangeStart = reader.int64();
+                        break;
+                    }
+                case 4: {
+                        message.rangeEnd = reader.int64();
+                        break;
+                    }
+                case 5: {
+                        if (!(message.types && message.types.length))
+                            message.types = [];
+                        if ((tag & 7) === 2) {
+                            let end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2)
+                                message.types.push(reader.int32());
+                        } else
+                            message.types.push(reader.int32());
+                        break;
+                    }
+                case 6: {
+                        if (!(message.risks && message.risks.length))
+                            message.risks = [];
+                        if ((tag & 7) === 2) {
+                            let end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2)
+                                message.risks.push(reader.int32());
+                        } else
+                            message.risks.push(reader.int32());
+                        break;
+                    }
+                case 7: {
+                        if (!(message.protocols && message.protocols.length))
+                            message.protocols = [];
+                        message.protocols.push(reader.string());
+                        break;
+                    }
+                case 8: {
+                        if (!(message.closeReasons && message.closeReasons.length))
+                            message.closeReasons = [];
+                        if ((tag & 7) === 2) {
+                            let end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2)
+                                message.closeReasons.push(reader.int32());
+                        } else
+                            message.closeReasons.push(reader.int32());
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a PAMRecordingsForUsersRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {PAM.PAMRecordingsForUsersRequest} PAMRecordingsForUsersRequest
+         */
+        PAMRecordingsForUsersRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.PAM.PAMRecordingsForUsersRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".PAM.PAMRecordingsForUsersRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.PAM.PAMRecordingsForUsersRequest();
+            if (object.usernames) {
+                if (!Array.isArray(object.usernames))
+                    throw TypeError(".PAM.PAMRecordingsForUsersRequest.usernames: array expected");
+                message.usernames = [];
+                for (let i = 0; i < object.usernames.length; ++i)
+                    message.usernames[i] = String(object.usernames[i]);
+            }
+            if (object.maxCount != null)
+                message.maxCount = object.maxCount | 0;
+            if (object.rangeStart != null)
+                if ($util.Long)
+                    message.rangeStart = $util.Long.fromValue(object.rangeStart, false);
+                else if (typeof object.rangeStart === "string")
+                    message.rangeStart = parseInt(object.rangeStart, 10);
+                else if (typeof object.rangeStart === "number")
+                    message.rangeStart = object.rangeStart;
+                else if (typeof object.rangeStart === "object")
+                    message.rangeStart = new $util.LongBits(object.rangeStart.low >>> 0, object.rangeStart.high >>> 0).toNumber();
+            if (object.rangeEnd != null)
+                if ($util.Long)
+                    message.rangeEnd = $util.Long.fromValue(object.rangeEnd, false);
+                else if (typeof object.rangeEnd === "string")
+                    message.rangeEnd = parseInt(object.rangeEnd, 10);
+                else if (typeof object.rangeEnd === "number")
+                    message.rangeEnd = object.rangeEnd;
+                else if (typeof object.rangeEnd === "object")
+                    message.rangeEnd = new $util.LongBits(object.rangeEnd.low >>> 0, object.rangeEnd.high >>> 0).toNumber();
+            if (object.types) {
+                if (!Array.isArray(object.types))
+                    throw TypeError(".PAM.PAMRecordingsForUsersRequest.types: array expected");
+                message.types = [];
+                for (let i = 0; i < object.types.length; ++i)
+                    switch (object.types[i]) {
+                    default:
+                        if (typeof object.types[i] === "number") {
+                            message.types[i] = object.types[i];
+                            break;
+                        }
+                    case "PRT_SESSION":
+                    case 0:
+                        message.types[i] = 0;
+                        break;
+                    case "PRT_TYPESCRIPT":
+                    case 1:
+                        message.types[i] = 1;
+                        break;
+                    case "PRT_TIME":
+                    case 2:
+                        message.types[i] = 2;
+                        break;
+                    case "PRT_SUMMARY":
+                    case 3:
+                        message.types[i] = 3;
+                        break;
+                    }
+            }
+            if (object.risks) {
+                if (!Array.isArray(object.risks))
+                    throw TypeError(".PAM.PAMRecordingsForUsersRequest.risks: array expected");
+                message.risks = [];
+                for (let i = 0; i < object.risks.length; ++i)
+                    switch (object.risks[i]) {
+                    default:
+                        if (typeof object.risks[i] === "number") {
+                            message.risks[i] = object.risks[i];
+                            break;
+                        }
+                    case "PRR_UNSPECIFIED":
+                    case 0:
+                        message.risks[i] = 0;
+                        break;
+                    case "PRR_LOW":
+                    case 1:
+                        message.risks[i] = 1;
+                        break;
+                    case "PRR_MEDIUM":
+                    case 2:
+                        message.risks[i] = 2;
+                        break;
+                    case "PRR_HIGH":
+                    case 3:
+                        message.risks[i] = 3;
+                        break;
+                    case "PRR_CRITICAL":
+                    case 4:
+                        message.risks[i] = 4;
+                        break;
+                    }
+            }
+            if (object.protocols) {
+                if (!Array.isArray(object.protocols))
+                    throw TypeError(".PAM.PAMRecordingsForUsersRequest.protocols: array expected");
+                message.protocols = [];
+                for (let i = 0; i < object.protocols.length; ++i)
+                    message.protocols[i] = String(object.protocols[i]);
+            }
+            if (object.closeReasons) {
+                if (!Array.isArray(object.closeReasons))
+                    throw TypeError(".PAM.PAMRecordingsForUsersRequest.closeReasons: array expected");
+                message.closeReasons = [];
+                for (let i = 0; i < object.closeReasons.length; ++i)
+                    message.closeReasons[i] = object.closeReasons[i] | 0;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PAMRecordingsForUsersRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @static
+         * @param {PAM.PAMRecordingsForUsersRequest} message PAMRecordingsForUsersRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PAMRecordingsForUsersRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.arrays || options.defaults) {
+                object.usernames = [];
+                object.types = [];
+                object.risks = [];
+                object.protocols = [];
+                object.closeReasons = [];
+            }
+            if (options.defaults)
+                object.maxCount = 0;
+            if (message.usernames && message.usernames.length) {
+                object.usernames = [];
+                for (let j = 0; j < message.usernames.length; ++j)
+                    object.usernames[j] = message.usernames[j];
+            }
+            if (message.maxCount != null && Object.hasOwnProperty.call(message, "maxCount"))
+                object.maxCount = message.maxCount;
+            if (message.rangeStart != null && Object.hasOwnProperty.call(message, "rangeStart")) {
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.rangeStart = typeof message.rangeStart === "number" ? BigInt(message.rangeStart) : $util.Long.fromBits(message.rangeStart.low >>> 0, message.rangeStart.high >>> 0, false).toBigInt();
+                else if (typeof message.rangeStart === "number")
+                    object.rangeStart = options.longs === String ? String(message.rangeStart) : message.rangeStart;
+                else
+                    object.rangeStart = options.longs === String ? $util.Long.prototype.toString.call(message.rangeStart) : options.longs === Number ? new $util.LongBits(message.rangeStart.low >>> 0, message.rangeStart.high >>> 0).toNumber() : message.rangeStart;
+                if (options.oneofs)
+                    object._rangeStart = "rangeStart";
+            }
+            if (message.rangeEnd != null && Object.hasOwnProperty.call(message, "rangeEnd")) {
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.rangeEnd = typeof message.rangeEnd === "number" ? BigInt(message.rangeEnd) : $util.Long.fromBits(message.rangeEnd.low >>> 0, message.rangeEnd.high >>> 0, false).toBigInt();
+                else if (typeof message.rangeEnd === "number")
+                    object.rangeEnd = options.longs === String ? String(message.rangeEnd) : message.rangeEnd;
+                else
+                    object.rangeEnd = options.longs === String ? $util.Long.prototype.toString.call(message.rangeEnd) : options.longs === Number ? new $util.LongBits(message.rangeEnd.low >>> 0, message.rangeEnd.high >>> 0).toNumber() : message.rangeEnd;
+                if (options.oneofs)
+                    object._rangeEnd = "rangeEnd";
+            }
+            if (message.types && message.types.length) {
+                object.types = [];
+                for (let j = 0; j < message.types.length; ++j)
+                    object.types[j] = options.enums === String ? $root.PAM.PAMRecordingType[message.types[j]] === undefined ? message.types[j] : $root.PAM.PAMRecordingType[message.types[j]] : message.types[j];
+            }
+            if (message.risks && message.risks.length) {
+                object.risks = [];
+                for (let j = 0; j < message.risks.length; ++j)
+                    object.risks[j] = options.enums === String ? $root.PAM.PAMRecordingRiskLevel[message.risks[j]] === undefined ? message.risks[j] : $root.PAM.PAMRecordingRiskLevel[message.risks[j]] : message.risks[j];
+            }
+            if (message.protocols && message.protocols.length) {
+                object.protocols = [];
+                for (let j = 0; j < message.protocols.length; ++j)
+                    object.protocols[j] = message.protocols[j];
+            }
+            if (message.closeReasons && message.closeReasons.length) {
+                object.closeReasons = [];
+                for (let j = 0; j < message.closeReasons.length; ++j)
+                    object.closeReasons[j] = message.closeReasons[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this PAMRecordingsForUsersRequest to JSON.
+         * @function toJSON
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PAMRecordingsForUsersRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for PAMRecordingsForUsersRequest
+         * @function getTypeUrl
+         * @memberof PAM.PAMRecordingsForUsersRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        PAMRecordingsForUsersRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/PAM.PAMRecordingsForUsersRequest";
+        };
+
+        return PAMRecordingsForUsersRequest;
     })();
 
     PAM.PAMRecording = (function() {

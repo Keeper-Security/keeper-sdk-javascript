@@ -46,10 +46,6 @@ export enum RoleUserSkipReason {
 export type AddUsersToRolesInput = {
     roles: string[]
     users: string[]
-    /**
-     * When true, always send tree_key (admin role with managed nodes).
-     * When false, never. When omitted, send tree_key iff the role manages nodes (API contract).
-     */
     admin?: boolean
 }
 
@@ -87,7 +83,6 @@ type RoleUserContext = {
     roles: EnterpriseRole[]
     users: EnterpriseUser[]
     membership: Set<string>
-    /** Roles that manage at least one node — API requires tree_key on role_user_add. */
     managedNodeRoleIds: Set<number>
     forceAdmin: boolean | undefined
 }
@@ -224,7 +219,7 @@ export async function addUsersToRoles(auth: Auth, input: AddUsersToRolesInput): 
     const roleKeyById = new Map<number, Uint8Array | null>()
     let publicKeyMap = new Map<string, UserPublicKeys>()
 
-    // Prefetch role keys for all target roles (role_admin_key when the role already has a key).
+    // Prefetch role keys for all target roles.
     for (const role of ctx.roles) {
         roleKeyById.set(role.role_id, await ctx.enterpriseData.getRoleKey(role.role_id))
     }
