@@ -43983,6 +43983,9 @@ export namespace AccountSummary {
 
         /** Settings maxIpDistanceEffective */
         maxIpDistanceEffective?: (number|null);
+
+        /** Settings offlineAccessExpireDays */
+        offlineAccessExpireDays?: (number|null);
     }
 
     /** Represents a Settings. */
@@ -44116,6 +44119,9 @@ export namespace AccountSummary {
 
         /** Settings maxIpDistanceEffective. */
         public maxIpDistanceEffective: number;
+
+        /** Settings offlineAccessExpireDays. */
+        public offlineAccessExpireDays: number;
 
         /**
          * Creates a new Settings instance using the specified properties.
@@ -88687,6 +88693,97 @@ export namespace PAM {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a KturnAccessCreds. */
+    interface IKturnAccessCreds {
+
+        /** KturnAccessCreds url */
+        url?: (string|null);
+
+        /** KturnAccessCreds token */
+        token?: (Uint8Array|null);
+
+        /** KturnAccessCreds certFingerprint */
+        certFingerprint?: (string|null);
+
+        /** KturnAccessCreds expiresAt */
+        expiresAt?: (number|null);
+    }
+
+    /** Represents a KturnAccessCreds. */
+    class KturnAccessCreds implements IKturnAccessCreds {
+
+        /**
+         * Constructs a new KturnAccessCreds.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IKturnAccessCreds);
+
+        /** KturnAccessCreds url. */
+        public url: string;
+
+        /** KturnAccessCreds token. */
+        public token: Uint8Array;
+
+        /** KturnAccessCreds certFingerprint. */
+        public certFingerprint: string;
+
+        /** KturnAccessCreds expiresAt. */
+        public expiresAt: number;
+
+        /**
+         * Creates a new KturnAccessCreds instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns KturnAccessCreds instance
+         */
+        public static create(properties?: PAM.IKturnAccessCreds): PAM.KturnAccessCreds;
+
+        /**
+         * Encodes the specified KturnAccessCreds message. Does not implicitly {@link PAM.KturnAccessCreds.verify|verify} messages.
+         * @param message KturnAccessCreds message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IKturnAccessCreds, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a KturnAccessCreds message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns KturnAccessCreds
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.KturnAccessCreds;
+
+        /**
+         * Creates a KturnAccessCreds message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns KturnAccessCreds
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.KturnAccessCreds;
+
+        /**
+         * Creates a plain object from a KturnAccessCreds message. Also converts values to other types if specified.
+         * @param message KturnAccessCreds
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.KturnAccessCreds, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this KturnAccessCreds to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for KturnAccessCreds
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** PAMRecordingType enum. */
     enum PAMRecordingType {
         PRT_SESSION = 0,
@@ -88813,6 +88910,121 @@ export namespace PAM {
 
         /**
          * Gets the default type url for PAMRecordingsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PAMRecordingsForUsersRequest. */
+    interface IPAMRecordingsForUsersRequest {
+
+        /** PAMRecordingsForUsersRequest usernames */
+        usernames?: (string[]|null);
+
+        /** PAMRecordingsForUsersRequest maxCount */
+        maxCount?: (number|null);
+
+        /** PAMRecordingsForUsersRequest rangeStart */
+        rangeStart?: (number|null);
+
+        /** PAMRecordingsForUsersRequest rangeEnd */
+        rangeEnd?: (number|null);
+
+        /** PAMRecordingsForUsersRequest types */
+        types?: (PAM.PAMRecordingType[]|null);
+
+        /** PAMRecordingsForUsersRequest risks */
+        risks?: (PAM.PAMRecordingRiskLevel[]|null);
+
+        /** PAMRecordingsForUsersRequest protocols */
+        protocols?: (string[]|null);
+
+        /** PAMRecordingsForUsersRequest closeReasons */
+        closeReasons?: (number[]|null);
+    }
+
+    /** Represents a PAMRecordingsForUsersRequest. */
+    class PAMRecordingsForUsersRequest implements IPAMRecordingsForUsersRequest {
+
+        /**
+         * Constructs a new PAMRecordingsForUsersRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IPAMRecordingsForUsersRequest);
+
+        /** PAMRecordingsForUsersRequest usernames. */
+        public usernames: string[];
+
+        /** PAMRecordingsForUsersRequest maxCount. */
+        public maxCount: number;
+
+        /** PAMRecordingsForUsersRequest rangeStart. */
+        public rangeStart?: (number|null);
+
+        /** PAMRecordingsForUsersRequest rangeEnd. */
+        public rangeEnd?: (number|null);
+
+        /** PAMRecordingsForUsersRequest types. */
+        public types: PAM.PAMRecordingType[];
+
+        /** PAMRecordingsForUsersRequest risks. */
+        public risks: PAM.PAMRecordingRiskLevel[];
+
+        /** PAMRecordingsForUsersRequest protocols. */
+        public protocols: string[];
+
+        /** PAMRecordingsForUsersRequest closeReasons. */
+        public closeReasons: number[];
+
+        /**
+         * Creates a new PAMRecordingsForUsersRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PAMRecordingsForUsersRequest instance
+         */
+        public static create(properties?: PAM.IPAMRecordingsForUsersRequest): PAM.PAMRecordingsForUsersRequest;
+
+        /**
+         * Encodes the specified PAMRecordingsForUsersRequest message. Does not implicitly {@link PAM.PAMRecordingsForUsersRequest.verify|verify} messages.
+         * @param message PAMRecordingsForUsersRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IPAMRecordingsForUsersRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PAMRecordingsForUsersRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PAMRecordingsForUsersRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.PAMRecordingsForUsersRequest;
+
+        /**
+         * Creates a PAMRecordingsForUsersRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PAMRecordingsForUsersRequest
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.PAMRecordingsForUsersRequest;
+
+        /**
+         * Creates a plain object from a PAMRecordingsForUsersRequest message. Also converts values to other types if specified.
+         * @param message PAMRecordingsForUsersRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.PAMRecordingsForUsersRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PAMRecordingsForUsersRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PAMRecordingsForUsersRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
