@@ -1,7 +1,18 @@
 import { Auth } from './auth'
 import { NN, syncDownMessage } from './restMessages'
 import { CryptoWorkerOptions, EncryptionType, KeyStorage, platform } from './platform'
-import { Folder, record, Records, Tokens, Vault } from './proto'
+import {
+    Folder,
+    record,
+    Records,
+    Tokens,
+    Vault,
+    NotificationCenter,
+    Dag,
+    Authentication,
+    BreachWatch,
+    Enterprise,
+} from './proto'
 import { formatTimeDiff, isNil, toOptional, webSafe64FromBytes } from './utils'
 import { logger } from './log'
 import CacheStatus = Vault.CacheStatus
@@ -38,6 +49,8 @@ import {
     DKdRecordLink,
     createKdFolderAccessCompositeKey,
 } from './syncDown'
+
+void [NotificationCenter, Dag, Authentication, BreachWatch, Enterprise]
 
 export type VaultStorageDeleteOption =
     | { kind: 'keeper_drive_record_access'; actorUid: string; recordUid: string }

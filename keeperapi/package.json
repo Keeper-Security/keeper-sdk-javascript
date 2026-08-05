@@ -8,7 +8,8 @@
     "sideEffects": [
         "**/configureProtobuf*",
         "**/browser/index.js",
-        "**/worker/browserWorker.js"
+        "**/worker/browserWorker.js",
+        "**/proto/**"
     ],
     "repository": "https://github.com/Keeper-Security/keeper-sdk-javascript",
     "license": "ISC",
