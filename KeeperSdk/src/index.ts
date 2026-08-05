@@ -138,7 +138,12 @@ export type {
     FormattedSharedFoldersTable,
 } from './sharedFolders/listSharedFolders'
 
-export { shareFolder, updateSharedFolderMembership, ShareFolderAction, ShareFolderUserResultStatus } from './sharedFolders/shareFolder'
+export {
+    shareFolder,
+    updateSharedFolderMembership,
+    ShareFolderAction,
+    ShareFolderUserResultStatus,
+} from './sharedFolders/shareFolder'
 export type {
     ShareFolderActionInput,
     ShareFolderInput,

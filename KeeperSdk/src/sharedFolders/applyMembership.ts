@@ -257,11 +257,7 @@ async function applyFolderMembership(
     const emailMap = buildAccountUidEmailMap(storage)
     const existingUsers = getExistingUsers(storage, sharedFolder.uid, emailMap)
     const existingTeams = getExistingTeams(storage, sharedFolder.uid)
-    const ownerEmail = resolveUserEmail(
-        sharedFolder.ownerAccountUid,
-        sharedFolder.ownerUsername,
-        emailMap
-    )
+    const ownerEmail = resolveUserEmail(sharedFolder.ownerAccountUid, sharedFolder.ownerUsername, emailMap)
         .trim()
         .toLowerCase()
 

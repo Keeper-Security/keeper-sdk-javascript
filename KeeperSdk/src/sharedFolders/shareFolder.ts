@@ -299,7 +299,6 @@ async function decryptTeamKeyEntry(auth: Auth, encryptedKey: Uint8Array, keyType
     }
 }
 
-
 async function encryptSharedFolderKeyForTeam(
     sharedFolderKey: Uint8Array,
     teamKeys: TeamPublicKeys,
