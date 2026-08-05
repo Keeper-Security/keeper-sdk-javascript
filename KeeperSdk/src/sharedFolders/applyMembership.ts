@@ -257,6 +257,13 @@ async function applyFolderMembership(
     const emailMap = buildAccountUidEmailMap(storage)
     const existingUsers = getExistingUsers(storage, sharedFolder.uid, emailMap)
     const existingTeams = getExistingTeams(storage, sharedFolder.uid)
+    const ownerEmail = resolveUserEmail(
+        sharedFolder.ownerAccountUid,
+        sharedFolder.ownerUsername,
+        emailMap
+    )
+        .trim()
+        .toLowerCase()
 
     const permissions = entry.permissions || []
     const userPermissions = permissions.filter((permission) => isValidEmail(permission.name))
@@ -296,6 +303,10 @@ async function applyFolderMembership(
         const email = permission.name.trim()
         const key = email.toLowerCase()
         if (!key || seenEmails.has(key)) continue
+        if (ownerEmail && key === ownerEmail) {
+            seenEmails.add(key)
+            continue
+        }
         seenEmails.add(key)
         const wantManageUsers = permission.manage_users === true
         const wantManageRecords = permission.manage_records === true
@@ -320,7 +331,6 @@ async function applyFolderMembership(
 
     const removeUsers: string[] = []
     if (fullSync) {
-        const ownerEmail = (sharedFolder.ownerUsername || '').trim().toLowerCase()
         for (const [email] of existingUsers) {
             if (seenEmails.has(email)) continue
             if (ownerEmail && ownerEmail === email) continue

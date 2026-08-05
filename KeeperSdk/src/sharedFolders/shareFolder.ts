@@ -241,7 +241,17 @@ async function loadTeamKeys(auth: Auth, teamUids: string[]): Promise<Map<string,
             if (!teamUid || !entry.key) continue
             try {
                 const encryptedKey = normal64Bytes(entry.key)
-                keysByTeam.set(teamUid, await decryptTeamKeyEntry(auth, encryptedKey, entry.type))
+                const partial = await decryptTeamKeyEntry(auth, encryptedKey, entry.type)
+                const existing = keysByTeam.get(teamUid) || {
+                    rsaPublicKey: null,
+                    eccPublicKey: null,
+                    aesKey: null,
+                }
+                keysByTeam.set(teamUid, {
+                    rsaPublicKey: partial.rsaPublicKey || existing.rsaPublicKey,
+                    eccPublicKey: partial.eccPublicKey || existing.eccPublicKey,
+                    aesKey: partial.aesKey || existing.aesKey,
+                })
             } catch (err) {
                 throw new KeeperSdkError(`Failed to decrypt team key for "${teamUid}": ${extractErrorMessage(err)}`)
             }
@@ -289,29 +299,22 @@ async function decryptTeamKeyEntry(auth: Auth, encryptedKey: Uint8Array, keyType
     }
 }
 
+
 async function encryptSharedFolderKeyForTeam(
     sharedFolderKey: Uint8Array,
-    teamKeys: TeamPublicKeys
-): Promise<Folder.IEncryptedDataKey | undefined> {
-    if (teamKeys.aesKey) {
-        return {
-            encryptedKey: await platform.aesCbcEncrypt(sharedFolderKey, teamKeys.aesKey, true),
-            encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_data_key,
-        }
+    teamKeys: TeamPublicKeys,
+    teamUid: string
+): Promise<Folder.IEncryptedDataKey> {
+    if (!teamKeys.aesKey) {
+        throw new KeeperSdkError(
+            `Team AES key unavailable for "${teamUid}". Join the team (or ensure team_get_keys returns key type 1/2/3/4) before sharing the folder with it.`,
+            'team_aes_key_missing'
+        )
     }
-    if (teamKeys.eccPublicKey) {
-        return {
-            encryptedKey: await platform.publicEncryptEC(sharedFolderKey, teamKeys.eccPublicKey),
-            encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_public_key_ecc,
-        }
+    return {
+        encryptedKey: await platform.aesCbcEncrypt(sharedFolderKey, teamKeys.aesKey, true),
+        encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_data_key,
     }
-    if (teamKeys.rsaPublicKey) {
-        return {
-            encryptedKey: platform.publicEncrypt(sharedFolderKey, platform.bytesToBase64(teamKeys.rsaPublicKey)),
-            encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_public_key,
-        }
-    }
-    return undefined
 }
 
 function teamUidFromStatus(teamUid: Uint8Array | null | undefined): string {
@@ -709,24 +712,35 @@ export async function updateSharedFolderMembership(
         )
         for (const grant of addTeams) {
             const teamKeys = teamKeysByUid.get(grant.teamUid)
-            const typedSharedFolderKey = teamKeys
-                ? await encryptSharedFolderKeyForTeam(sharedFolderKey!, teamKeys)
-                : undefined
-            if (!typedSharedFolderKey) {
+            if (!teamKeys) {
                 results.push({
                     email: grant.teamUid,
                     success: false,
                     status: ShareFolderUserResultStatus.MissingPublicKey,
-                    message: `No usable team key for "${grant.teamUid}"`,
+                    message: `No team keys returned for "${grant.teamUid}"`,
                 })
                 continue
             }
-            teamsToAdd.push({
-                teamUid: normal64Bytes(grant.teamUid),
-                manageRecords: grant.manageRecords === true,
-                manageUsers: grant.manageUsers === true,
-                typedSharedFolderKey,
-            })
+            try {
+                const typedSharedFolderKey = await encryptSharedFolderKeyForTeam(
+                    sharedFolderKey!,
+                    teamKeys,
+                    grant.teamUid
+                )
+                teamsToAdd.push({
+                    teamUid: normal64Bytes(grant.teamUid),
+                    manageRecords: grant.manageRecords === true,
+                    manageUsers: grant.manageUsers === true,
+                    typedSharedFolderKey,
+                })
+            } catch (err) {
+                results.push({
+                    email: grant.teamUid,
+                    success: false,
+                    status: ShareFolderUserResultStatus.MissingPublicKey,
+                    message: extractErrorMessage(err),
+                })
+            }
         }
     }
 
