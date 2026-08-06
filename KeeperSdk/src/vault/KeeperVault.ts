@@ -53,6 +53,12 @@ import type { FolderTreeBuildOptions } from '../folders/folderTree'
 import type { GetFolderOptions, GetFolderResult } from '../folders/getFolder'
 import type { ListSharedFolderRow, ListSharedFoldersOptions } from '../sharedFolders/listSharedFolders'
 import type { ShareFolderInput, ShareFolderResult } from '../sharedFolders/shareFolder'
+import type { DownloadMembershipOptions, MembershipData } from '../sharedFolders/downloadMembership'
+import type {
+    ApplyMembershipInput,
+    ApplyMembershipOptions,
+    ApplyMembershipResult,
+} from '../sharedFolders/applyMembership'
 import { FolderManager } from '../folders/FolderManager'
 import type { SharedFolderPermissionsInput } from '../folders/FolderManager'
 import { SharedFolderManager } from '../sharedFolders/SharedFolderManager'
@@ -982,6 +988,19 @@ export class KeeperVault {
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
         const result = await this.sharedFolderManager.shareFolder(input)
         if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public async downloadMembership(options: DownloadMembershipOptions = {}): Promise<MembershipData> {
+        return this.sharedFolderManager.downloadMembership(options)
+    }
+
+    public async applyMembership(
+        data: ApplyMembershipInput,
+        options: ApplyMembershipOptions = {}
+    ): Promise<ApplyMembershipResult> {
+        const result = await this.sharedFolderManager.applyMembership(data, options)
+        await this.syncIfNeeded()
         return result
     }
 

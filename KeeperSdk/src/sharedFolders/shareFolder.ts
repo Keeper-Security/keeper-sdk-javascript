@@ -12,6 +12,8 @@ import {
     normal64Bytes,
     platform,
     sharedFolderUpdateV3Message,
+    teamGetKeysCommand,
+    webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { extractErrorMessage, isBoolean, isObject, isValidEmail, KeeperSdkError } from '../utils'
@@ -77,6 +79,14 @@ type UserPublicKeys = {
     message?: string
     username: string
 }
+
+type TeamPublicKeys = {
+    rsaPublicKey: Uint8Array | null
+    eccPublicKey: Uint8Array | null
+    aesKey: Uint8Array | null
+}
+
+const TEAM_GET_KEYS_BATCH_SIZE = 90
 
 function toSetBoolean(value: boolean | undefined): Folder.SetBooleanValue {
     if (value === true) return Folder.SetBooleanValue.BOOLEAN_TRUE
@@ -196,6 +206,118 @@ function dedupeEmails(emails: string[]): string[] {
         dedupedEmails.push(normalized)
     }
     return dedupedEmails
+}
+
+function dedupeTargets(targets: string[]): string[] {
+    const seen = new Set<string>()
+    const deduped: string[] = []
+    for (const rawTarget of targets) {
+        const normalized = (rawTarget || '').trim()
+        if (!normalized) continue
+        const key = isValidEmail(normalized) ? normalized.toLowerCase() : normalized
+        if (seen.has(key)) continue
+        seen.add(key)
+        deduped.push(isValidEmail(normalized) ? key : normalized)
+    }
+    return deduped
+}
+
+async function loadTeamKeys(auth: Auth, teamUids: string[]): Promise<Map<string, TeamPublicKeys>> {
+    const keysByTeam = new Map<string, TeamPublicKeys>()
+    if (teamUids.length === 0) return keysByTeam
+
+    const pending = [...new Set(teamUids)]
+    while (pending.length > 0) {
+        const batch = pending.splice(0, TEAM_GET_KEYS_BATCH_SIZE)
+        let response
+        try {
+            response = await auth.executeRestCommand(teamGetKeysCommand({ teams: batch }))
+        } catch (err) {
+            throw new KeeperSdkError(`Failed to fetch team keys: ${extractErrorMessage(err)}`)
+        }
+
+        for (const entry of response.keys || []) {
+            const teamUid = (entry.team_uid || '').trim()
+            if (!teamUid || !entry.key) continue
+            try {
+                const encryptedKey = normal64Bytes(entry.key)
+                const partial = await decryptTeamKeyEntry(auth, encryptedKey, entry.type)
+                const existing = keysByTeam.get(teamUid) || {
+                    rsaPublicKey: null,
+                    eccPublicKey: null,
+                    aesKey: null,
+                }
+                keysByTeam.set(teamUid, {
+                    rsaPublicKey: partial.rsaPublicKey || existing.rsaPublicKey,
+                    eccPublicKey: partial.eccPublicKey || existing.eccPublicKey,
+                    aesKey: partial.aesKey || existing.aesKey,
+                })
+            } catch (err) {
+                throw new KeeperSdkError(`Failed to decrypt team key for "${teamUid}": ${extractErrorMessage(err)}`)
+            }
+        }
+    }
+
+    return keysByTeam
+}
+
+async function decryptTeamKeyEntry(auth: Auth, encryptedKey: Uint8Array, keyType: number): Promise<TeamPublicKeys> {
+    const empty: TeamPublicKeys = {
+        rsaPublicKey: null,
+        eccPublicKey: null,
+        aesKey: null,
+    }
+    switch (keyType) {
+        case 1:
+            return {
+                ...empty,
+                aesKey: await platform.aesCbcDecrypt(encryptedKey, auth.dataKey, true),
+            }
+        case 2:
+            if (!auth.privateKey) return empty
+            return {
+                ...empty,
+                aesKey: platform.privateDecrypt(encryptedKey, auth.privateKey),
+            }
+        case 3:
+            return {
+                ...empty,
+                aesKey: await platform.aesGcmDecrypt(encryptedKey, auth.dataKey),
+            }
+        case 4:
+            if (!auth.eccPrivateKey) return empty
+            return {
+                ...empty,
+                aesKey: await platform.privateDecryptEC(encryptedKey, auth.eccPrivateKey),
+            }
+        case -1:
+            return { ...empty, eccPublicKey: encryptedKey }
+        case -3:
+            return { ...empty, rsaPublicKey: encryptedKey }
+        default:
+            return empty
+    }
+}
+
+async function encryptSharedFolderKeyForTeam(
+    sharedFolderKey: Uint8Array,
+    teamKeys: TeamPublicKeys,
+    teamUid: string
+): Promise<Folder.IEncryptedDataKey> {
+    if (!teamKeys.aesKey) {
+        throw new KeeperSdkError(
+            `Team AES key unavailable for "${teamUid}". Join the team (or ensure team_get_keys returns key type 1/2/3/4) before sharing the folder with it.`,
+            'team_aes_key_missing'
+        )
+    }
+    return {
+        encryptedKey: await platform.aesCbcEncrypt(sharedFolderKey, teamKeys.aesKey, true),
+        encryptedKeyType: Folder.EncryptedKeyType.encrypted_by_data_key,
+    }
+}
+
+function teamUidFromStatus(teamUid: Uint8Array | null | undefined): string {
+    return teamUid && teamUid.length > 0 ? webSafe64FromBytes(teamUid) : ''
 }
 
 async function removeFromSharedFolder(
@@ -452,4 +574,331 @@ export async function shareFolder(
     }
 
     return shareWithSharedFolder(auth, storage, resolved, input)
+}
+export type SharedFolderMembershipUserGrant = {
+    email: string
+    manageUsers?: boolean
+    manageRecords?: boolean
+}
+
+export type SharedFolderMembershipTeamGrant = {
+    teamUid: string
+    manageUsers?: boolean
+    manageRecords?: boolean
+}
+
+export type UpdateSharedFolderMembershipInput = {
+    sharedFolderUid: string
+    addUsers?: SharedFolderMembershipUserGrant[]
+    updateUsers?: SharedFolderMembershipUserGrant[]
+    removeUsers?: string[]
+    addTeams?: SharedFolderMembershipTeamGrant[]
+    updateTeams?: SharedFolderMembershipTeamGrant[]
+    removeTeams?: string[]
+}
+
+export type SharedFolderMembershipUpdateResult = {
+    success: boolean
+    message?: string
+    sharedFolderUid: string
+    results: ShareFolderUserStatus[]
+}
+
+/**
+ * Low-level shared-folder membership primitive used by both `shareFolder` and `applyMembership`.
+ * A single `shared_folder_update_v3` request that updates membership in one round trip.
+ */
+export async function updateSharedFolderMembership(
+    auth: Auth,
+    storage: InMemoryStorage,
+    input: UpdateSharedFolderMembershipInput
+): Promise<SharedFolderMembershipUpdateResult> {
+    const sharedFolder = storage.getByUid<DSharedFolder>(FolderKind.SharedFolder, input.sharedFolderUid)
+    if (!sharedFolder) {
+        throw new KeeperSdkError(`Shared folder "${input.sharedFolderUid}" not found.`, 'shared_folder_not_found')
+    }
+
+    const addUsers = input.addUsers || []
+    const updateUsers = input.updateUsers || []
+    const removeUsers = dedupeTargets(input.removeUsers || [])
+    const addTeams = input.addTeams || []
+    const updateTeams = input.updateTeams || []
+    const removeTeams = [...new Set((input.removeTeams || []).map((uid) => uid.trim()).filter(Boolean))]
+
+    const results: ShareFolderUserStatus[] = []
+
+    let sharedFolderKey: Uint8Array | undefined
+    if (addUsers.length > 0 || addTeams.length > 0) {
+        sharedFolderKey = await storage.getKeyBytes(sharedFolder.uid)
+        if (!sharedFolderKey) {
+            throw new KeeperSdkError(
+                'Shared folder encryption key not available. Sync the vault and try again.',
+                'shared_folder_key_missing'
+            )
+        }
+    }
+
+    const usersToAdd: Folder.ISharedFolderUpdateUser[] = []
+    const usersToUpdate: Folder.ISharedFolderUpdateUser[] = []
+    const teamsToAdd: Folder.ISharedFolderUpdateTeam[] = []
+    const teamsToUpdate: Folder.ISharedFolderUpdateTeam[] = []
+
+    if (addUsers.length > 0) {
+        const usernameToKeys = await fetchUserPublicKeys(
+            auth,
+            addUsers.map((grant) => grant.email)
+        )
+        for (const grant of addUsers) {
+            const publicKeys = usernameToKeys.get(grant.email.toLowerCase())
+            if (!publicKeys) {
+                results.push({
+                    email: grant.email,
+                    success: false,
+                    status: ShareFolderUserResultStatus.MissingPublicKey,
+                    message: `No public key returned for user "${grant.email}"`,
+                })
+                continue
+            }
+            if (publicKeys.errorCode) {
+                results.push({
+                    email: grant.email,
+                    success: false,
+                    status: publicKeys.errorCode,
+                    message: publicKeys.message || publicKeys.errorCode,
+                })
+                continue
+            }
+
+            let encryptedKey: Uint8Array
+            let encryptedKeyType: Folder.EncryptedKeyType
+            if (publicKeys.rsaPublicKey) {
+                encryptedKey = platform.publicEncrypt(sharedFolderKey!, platform.bytesToBase64(publicKeys.rsaPublicKey))
+                encryptedKeyType = Folder.EncryptedKeyType.encrypted_by_public_key
+            } else if (publicKeys.eccPublicKey) {
+                encryptedKey = await platform.publicEncryptEC(sharedFolderKey!, publicKeys.eccPublicKey)
+                encryptedKeyType = Folder.EncryptedKeyType.encrypted_by_public_key_ecc
+            } else {
+                results.push({
+                    email: grant.email,
+                    success: false,
+                    status: ShareFolderUserResultStatus.MissingPublicKey,
+                    message: `No usable public key for user "${grant.email}"`,
+                })
+                continue
+            }
+
+            usersToAdd.push({
+                username: grant.email,
+                manageRecords: toSetBoolean(grant.manageRecords),
+                manageUsers: toSetBoolean(grant.manageUsers),
+                typedSharedFolderKey: { encryptedKey, encryptedKeyType },
+            })
+        }
+    }
+
+    for (const grant of updateUsers) {
+        usersToUpdate.push({
+            username: grant.email,
+            manageRecords: toSetBoolean(grant.manageRecords),
+            manageUsers: toSetBoolean(grant.manageUsers),
+        })
+    }
+
+    if (addTeams.length > 0) {
+        const teamKeysByUid = await loadTeamKeys(
+            auth,
+            addTeams.map((grant) => grant.teamUid)
+        )
+        for (const grant of addTeams) {
+            const teamKeys = teamKeysByUid.get(grant.teamUid)
+            if (!teamKeys) {
+                results.push({
+                    email: grant.teamUid,
+                    success: false,
+                    status: ShareFolderUserResultStatus.MissingPublicKey,
+                    message: `No team keys returned for "${grant.teamUid}"`,
+                })
+                continue
+            }
+            try {
+                const typedSharedFolderKey = await encryptSharedFolderKeyForTeam(
+                    sharedFolderKey!,
+                    teamKeys,
+                    grant.teamUid
+                )
+                teamsToAdd.push({
+                    teamUid: normal64Bytes(grant.teamUid),
+                    manageRecords: grant.manageRecords === true,
+                    manageUsers: grant.manageUsers === true,
+                    typedSharedFolderKey,
+                })
+            } catch (err) {
+                results.push({
+                    email: grant.teamUid,
+                    success: false,
+                    status: ShareFolderUserResultStatus.MissingPublicKey,
+                    message: extractErrorMessage(err),
+                })
+            }
+        }
+    }
+
+    for (const grant of updateTeams) {
+        teamsToUpdate.push({
+            teamUid: normal64Bytes(grant.teamUid),
+            manageRecords: grant.manageRecords === true,
+            manageUsers: grant.manageUsers === true,
+        })
+    }
+
+    const hasServerChange =
+        usersToAdd.length > 0 ||
+        usersToUpdate.length > 0 ||
+        removeUsers.length > 0 ||
+        teamsToAdd.length > 0 ||
+        teamsToUpdate.length > 0 ||
+        removeTeams.length > 0
+
+    if (!hasServerChange) {
+        const allOk = results.length === 0 || results.every((result) => result.success)
+        return { success: allOk, sharedFolderUid: sharedFolder.uid, results }
+    }
+
+    const updateRequest: Folder.ISharedFolderUpdateV3Request = {
+        sharedFolderUid: normal64Bytes(sharedFolder.uid),
+        revision: sharedFolder.revision,
+        forceUpdate: false,
+    }
+    if (usersToAdd.length > 0) updateRequest.sharedFolderAddUser = usersToAdd
+    if (usersToUpdate.length > 0) updateRequest.sharedFolderUpdateUser = usersToUpdate
+    if (removeUsers.length > 0) updateRequest.sharedFolderRemoveUser = removeUsers
+    if (teamsToAdd.length > 0) updateRequest.sharedFolderAddTeam = teamsToAdd
+    if (teamsToUpdate.length > 0) updateRequest.sharedFolderUpdateTeam = teamsToUpdate
+    if (removeTeams.length > 0) {
+        updateRequest.sharedFolderRemoveTeam = removeTeams.map((teamUid) => normal64Bytes(teamUid))
+    }
+
+    let response: Folder.ISharedFolderUpdateV3ResponseV2
+    try {
+        response = await auth.executeRest(sharedFolderUpdateV3Message({ sharedFoldersUpdateV3: [updateRequest] }))
+    } catch (err) {
+        return {
+            success: false,
+            sharedFolderUid: sharedFolder.uid,
+            message: `shared_folder_update_v3 failed for shared folder (uid=${sharedFolder.uid}): ${extractErrorMessage(err)}`,
+            results,
+        }
+    }
+
+    const innerResponse = (response.sharedFoldersUpdateV3Response || [])[0]
+    const requestOk = !innerResponse?.status || innerResponse.status === FolderResultStatus.Success
+
+    for (const status of innerResponse?.sharedFolderAddUserStatus || []) {
+        const value = status.status || ShareFolderUserResultStatus.Unknown
+        results.push({
+            email: status.username || '',
+            success: value === FolderResultStatus.Success || value === FolderResultStatus.Invited,
+            status: value,
+        })
+    }
+    for (const status of innerResponse?.sharedFolderUpdateUserStatus || []) {
+        const value = status.status || ShareFolderUserResultStatus.Unknown
+        results.push({
+            email: status.username || '',
+            success: value === FolderResultStatus.Success,
+            status: value,
+        })
+    }
+    for (const status of innerResponse?.sharedFolderRemoveUserStatus || []) {
+        const value = status.status || ShareFolderUserResultStatus.Unknown
+        results.push({
+            email: status.username || '',
+            success: value === FolderResultStatus.Success,
+            status: value,
+        })
+    }
+    for (const status of innerResponse?.sharedFolderAddTeamStatus || []) {
+        const value = status.status || ShareFolderUserResultStatus.Unknown
+        results.push({
+            email: teamUidFromStatus(status.teamUid as Uint8Array),
+            success: value === FolderResultStatus.Success,
+            status: value,
+        })
+    }
+    for (const status of innerResponse?.sharedFolderUpdateTeamStatus || []) {
+        const value = status.status || ShareFolderUserResultStatus.Unknown
+        results.push({
+            email: teamUidFromStatus(status.teamUid as Uint8Array),
+            success: value === FolderResultStatus.Success,
+            status: value,
+        })
+    }
+    for (const status of innerResponse?.sharedFolderRemoveTeamStatus || []) {
+        const value = status.status || ShareFolderUserResultStatus.Unknown
+        results.push({
+            email: teamUidFromStatus(status.teamUid as Uint8Array),
+            success: value === FolderResultStatus.Success,
+            status: value,
+        })
+    }
+
+    if (requestOk) {
+        const reported = new Set(results.map((result) => (result.email || '').toLowerCase()))
+        for (const user of [...usersToAdd, ...usersToUpdate]) {
+            const email = (user.username || '').trim()
+            const key = email.toLowerCase()
+            if (!key || reported.has(key)) continue
+            results.push({
+                email,
+                success: true,
+                status: FolderResultStatus.Success,
+            })
+            reported.add(key)
+        }
+        for (const team of [...teamsToAdd, ...teamsToUpdate]) {
+            const email = teamUidFromStatus(team.teamUid as Uint8Array)
+            const key = email.toLowerCase()
+            if (!key || reported.has(key)) continue
+            results.push({
+                email,
+                success: true,
+                status: FolderResultStatus.Success,
+            })
+            reported.add(key)
+        }
+        for (const email of removeUsers) {
+            const key = email.toLowerCase()
+            if (!key || reported.has(key)) continue
+            results.push({
+                email,
+                success: true,
+                status: FolderResultStatus.Success,
+            })
+            reported.add(key)
+        }
+        for (const teamUid of removeTeams) {
+            const key = teamUid.toLowerCase()
+            if (!key || reported.has(key)) continue
+            results.push({
+                email: teamUid,
+                success: true,
+                status: FolderResultStatus.Success,
+            })
+            reported.add(key)
+        }
+    }
+
+    const allOk = results.length === 0 ? requestOk : results.every((result) => result.success)
+
+    const failureReason = !requestOk
+        ? innerResponse?.status ||
+          `shared_folder_update_v3 failed for shared folder (uid=${sharedFolder.uid}): server returned no status`
+        : undefined
+
+    return {
+        success: requestOk && allOk,
+        sharedFolderUid: sharedFolder.uid,
+        message: failureReason,
+        results,
+    }
 }
