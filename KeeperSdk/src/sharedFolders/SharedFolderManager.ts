@@ -5,6 +5,10 @@ import { formatSharedFoldersTable, listSharedFolders, renderSharedFoldersAsciiTa
 import type { FormattedSharedFoldersTable, ListSharedFolderRow, ListSharedFoldersOptions } from './listSharedFolders'
 import { shareFolder } from './shareFolder'
 import type { ShareFolderInput, ShareFolderResult } from './shareFolder'
+import { downloadMembership } from './downloadMembership'
+import type { DownloadMembershipOptions, MembershipData } from './downloadMembership'
+import { applyMembership } from './applyMembership'
+import type { ApplyMembershipInput, ApplyMembershipOptions, ApplyMembershipResult } from './applyMembership'
 
 export type AuthProvider = () => Auth
 
@@ -45,5 +49,16 @@ export class SharedFolderManager {
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
         return shareFolder(this.requireAuth(), this.storage, input)
+    }
+
+    public async downloadMembership(options: DownloadMembershipOptions = {}): Promise<MembershipData> {
+        return downloadMembership(this.requireAuth(), this.storage, options)
+    }
+
+    public async applyMembership(
+        data: ApplyMembershipInput,
+        options: ApplyMembershipOptions = {}
+    ): Promise<ApplyMembershipResult> {
+        return applyMembership(this.requireAuth(), this.storage, data, options)
     }
 }
