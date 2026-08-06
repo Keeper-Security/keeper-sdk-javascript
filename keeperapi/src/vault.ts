@@ -1,18 +1,7 @@
 import { Auth } from './auth'
 import { NN, syncDownMessage } from './restMessages'
 import { CryptoWorkerOptions, EncryptionType, KeyStorage, platform } from './platform'
-import {
-    Folder,
-    record,
-    Records,
-    Tokens,
-    Vault,
-    NotificationCenter,
-    Dag,
-    Authentication,
-    BreachWatch,
-    Enterprise,
-} from './proto'
+import { Folder, record, Records, Tokens, Vault } from './proto'
 import { formatTimeDiff, isNil, toOptional, webSafe64FromBytes } from './utils'
 import { logger } from './log'
 import CacheStatus = Vault.CacheStatus
@@ -49,10 +38,6 @@ import {
     DKdRecordLink,
     createKdFolderAccessCompositeKey,
 } from './syncDown'
-
-// Vault.SyncDownResponse decode reaches across $root namespaces; keep these
-// bindings so rollup/tsc do not drop the modules that register them.
-void [NotificationCenter, Dag, Authentication, BreachWatch, Enterprise]
 
 export type VaultStorageDeleteOption =
     | { kind: 'keeper_drive_record_access'; actorUid: string; recordUid: string }
