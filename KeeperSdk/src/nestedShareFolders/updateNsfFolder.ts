@@ -236,7 +236,6 @@ async function prepareFolderUpdate(
 }
 
 async function persistFolderUpdate(storage: InMemoryStorage, prepared: PreparedFolderUpdate): Promise<void> {
-    // Always refresh local folder data to match the encrypted payload we sent.
     await patchNsfFolderMetadata(storage, prepared.folderUid, prepared.metadata)
     if (prepared.inheritPermissions !== undefined) {
         await patchNsfFolderInheritPermissions(storage, prepared.folderUid, prepared.inheritPermissions)
