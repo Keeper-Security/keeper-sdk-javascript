@@ -1,6 +1,7 @@
 import type {
     Auth,
     DRecord,
+    DRecordRotation,
     DUser,
     DKdFolder,
     DKdFolderAccess,
@@ -20,7 +21,7 @@ import {
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
-import { getRecordTitle } from '../records/RecordUtils'
+import { getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
     NSF_ACCESS_TYPE_LABELS,
     NSF_LEGACY_FOLDER_MSG,
@@ -145,6 +146,13 @@ export function isRootFolderUid(storage: InMemoryStorage, folderUid: string | un
     if (!value) return true
     const driveRoot = resolveKeeperDriveRootParentUid(storage)
     return !!driveRoot && value === driveRoot
+}
+
+export function displayNsfParentUid(storage: InMemoryStorage, parentUid: string | undefined | null): string {
+    if (isRootFolderUid(storage, parentUid)) {
+        return resolveKeeperDriveRootParentUid(storage) ?? ''
+    }
+    return (parentUid ?? '').trim()
 }
 
 export function normalizeParentUid(storage: InMemoryStorage, parentUid: string | undefined | null): string {
@@ -402,6 +410,45 @@ export function findNestedShareFoldersForRecord(storage: InMemoryStorage, record
         .getAll<DKdFolderRecord>(KeeperDriveKind.FolderRecord)
         .filter((entry) => entry.recordUid === recordUid)
         .map((entry) => entry.folderUid)
+}
+
+export function findRecordFolderParentUid(storage: InMemoryStorage, recordUid: string): string {
+    const folderUids = findNestedShareFoldersForRecord(storage, recordUid)
+    if (folderUids.length === 0) {
+        return resolveKeeperDriveRootParentUid(storage) ?? ''
+    }
+    return folderUids[0]
+}
+
+function recordHasRotationConfigured(storage: InMemoryStorage, recordUid: string): boolean {
+    const rotation = storage.getByUid<DRecordRotation>('record_rotation', recordUid)
+    return rotation != null && rotation.disabled !== true
+}
+
+export function nsfFolderHasPamUserWithRotation(storage: InMemoryStorage, folderUid: string): boolean {
+    const targetUid = isRootFolderUid(storage, folderUid) ? resolveKeeperDriveRootParentUid(storage) : folderUid
+    if (!targetUid) return false
+
+    for (const entry of storage.getAll<DKdFolderRecord>(KeeperDriveKind.FolderRecord)) {
+        const linkFolder = entry.folderUid?.trim()
+        if (!linkFolder) continue
+        const normalizedLink = isRootFolderUid(storage, linkFolder)
+            ? resolveKeeperDriveRootParentUid(storage)
+            : linkFolder
+        if (normalizedLink !== targetUid) continue
+        const record = getKeeperDriveRecord(storage, entry.recordUid)
+        if (!record) continue
+        if (getRecordType(record).toLowerCase() !== 'pamuser') continue
+        if (recordHasRotationConfigured(storage, entry.recordUid)) return true
+    }
+    return false
+}
+
+export function nsfRecordIsRoeEligible(storage: InMemoryStorage, recordUid: string): boolean {
+    const record = getKeeperDriveRecord(storage, recordUid)
+    if (!record) return false
+    if (getRecordType(record).toLowerCase() !== 'pamuser') return false
+    return recordHasRotationConfigured(storage, recordUid)
 }
 
 function toRequiredAccountUidStr(accountUid: Uint8Array): string {
@@ -896,6 +943,22 @@ export async function patchNsfFolderMetadata(
             name: metadata.name,
             ...(metadata.color ? { color: metadata.color } : {}),
         },
+    })
+}
+
+export async function patchNsfFolderInheritPermissions(
+    storage: InMemoryStorage,
+    folderUid: string,
+    inheritPermissions: boolean
+): Promise<void> {
+    const folder = getKeeperDriveFolder(storage, folderUid)
+    if (!folder) return
+
+    await storage.put({
+        ...folder,
+        inheritUserPermissions: inheritPermissions
+            ? Folder.SetBooleanValue.BOOLEAN_TRUE
+            : Folder.SetBooleanValue.BOOLEAN_FALSE,
     })
 }
 

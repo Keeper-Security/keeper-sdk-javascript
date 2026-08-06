@@ -1,12 +1,13 @@
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import {
     NsfItemType,
-    findRecordFolderLocation,
+    displayNsfParentUid,
+    findRecordFolderParentUid,
     getKeeperDriveFolders,
     getKeeperDriveRecords,
     getRecordDescription,
-    normalizeParentUid,
-    resolveKeeperDriveRootParentUid,
+    nsfFolderHasPamUserWithRotation,
+    nsfRecordIsRoeEligible,
 } from './nsfHelpers'
 import { getRecordTitle, getRecordType } from '../records/RecordUtils'
 import {
@@ -15,22 +16,24 @@ import {
     NSF_LIST_MIN_TRUNCATE_PREFIX,
     NSF_LIST_TABLE_HEADERS,
 } from './nsfConstants'
-import {
-    ListNsfFormat,
-    type FormattedListNsfTable,
-    type ListNsfFormatInput,
-    type ListNsfOptions,
-    type ListNsfRow,
-} from './nsfTypes'
+import type { ListNsfFormatInput, ListNsfOptions, ListNsfRow } from './nsfTypes'
+
+export enum ListNsfFormat {
+    Table = 'table',
+    CSV = 'csv',
+    JSON = 'json',
+}
+
+export type { ListNsfFormatInput, ListNsfOptions, ListNsfRow }
+
+export type FormattedListNsfTable = {
+    headers: string[]
+    rows: string[][]
+}
 
 function compareRows(a: ListNsfRow, b: ListNsfRow): number {
     const typeCompare = a.itemType.localeCompare(b.itemType)
     return typeCompare !== 0 ? typeCompare : a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })
-}
-
-function resolveListParentOrFolder(storage: InMemoryStorage, value: string): string {
-    if (value !== 'root') return value
-    return resolveKeeperDriveRootParentUid(storage) ?? value
 }
 
 function collectFolderRows(storage: InMemoryStorage): ListNsfRow[] {
@@ -40,7 +43,7 @@ function collectFolderRows(storage: InMemoryStorage): ListNsfRow[] {
         title: folder.data.name || 'Unnamed',
         type: '',
         description: '',
-        parentOrFolder: resolveListParentOrFolder(storage, normalizeParentUid(storage, folder.parentUid)),
+        parentOrFolder: displayNsfParentUid(storage, folder.parentUid),
     }))
 }
 
@@ -51,16 +54,27 @@ function collectRecordRows(storage: InMemoryStorage): ListNsfRow[] {
         title: getRecordTitle(record),
         type: getRecordType(record),
         description: getRecordDescription(record),
-        parentOrFolder: resolveListParentOrFolder(storage, findRecordFolderLocation(storage, record.uid) || 'root'),
+        parentOrFolder: findRecordFolderParentUid(storage, record.uid),
     }))
 }
 
 export function listNestedShareFolders(storage: InMemoryStorage, options: ListNsfOptions = {}): ListNsfRow[] {
     const showFolders = options.folders ?? options.records == null
     const showRecords = options.records ?? options.folders == null
+    const roeEligible = options.roeEligible ?? false
     const rows: ListNsfRow[] = []
-    if (showFolders) rows.push(...collectFolderRows(storage))
-    if (showRecords) rows.push(...collectRecordRows(storage))
+    if (showFolders) {
+        const folderRows = collectFolderRows(storage)
+        rows.push(
+            ...(roeEligible
+                ? folderRows.filter((row) => nsfFolderHasPamUserWithRotation(storage, row.uid))
+                : folderRows)
+        )
+    }
+    if (showRecords) {
+        const recordRows = collectRecordRows(storage)
+        rows.push(...(roeEligible ? recordRows.filter((row) => nsfRecordIsRoeEligible(storage, row.uid)) : recordRows))
+    }
     return rows.sort(compareRows)
 }
 
@@ -117,20 +131,19 @@ export function formatListNsfCsv(rows: ListNsfRow[]): string {
     return lines.join('\n')
 }
 
-function toListNsfJsonRow(row: ListNsfRow): Record<string, string> {
-    const out: Record<string, string> = {
-        item_type: row.itemType,
-        uid: row.uid,
-        title: row.title,
-        parent_or_folder: row.parentOrFolder,
-    }
-    if (row.type) out.type = row.type
-    if (row.description) out.description = row.description
-    return out
-}
-
 export function formatListNsfJson(rows: ListNsfRow[]): string {
-    return JSON.stringify(rows.map(toListNsfJsonRow), null, 2)
+    return JSON.stringify(
+        rows.map((row) => ({
+            'Item Type': row.itemType,
+            UID: row.uid,
+            Title: row.title,
+            Type: row.type,
+            Description: row.description,
+            'Parent/Folder': row.parentOrFolder,
+        })),
+        null,
+        2
+    )
 }
 
 export function formatListNsfOutput(rows: ListNsfRow[], format: ListNsfFormatInput = ListNsfFormat.Table): string {
