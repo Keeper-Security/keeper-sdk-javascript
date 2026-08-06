@@ -5,14 +5,14 @@ import { FolderKind, VaultObjectKind, sharedFolderName } from '../folders/folder
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../teams/enterpriseData'
 import { extractErrorMessage, logger } from '../utils'
 
-/** A single user or team permission entry on a shared folder (Commander JSON shape). */
+/** A single user or team permission entry on a shared folder. */
 export type MembershipPermission = {
     name: string
     manage_users: boolean
     manage_records: boolean
 }
 
-/** A shared folder's membership, matching Commander's `download-membership` JSON shape. */
+/** A shared folder's membership. */
 export type MembershipSharedFolder = {
     uid: string
     path: string
@@ -23,7 +23,7 @@ export type MembershipSharedFolder = {
     permissions: MembershipPermission[]
 }
 
-/** Enterprise team + its members, included alongside shared folder membership. */
+/** Enterprise team + its members. */
 export type MembershipTeam = {
     uid: string
     name: string
@@ -56,7 +56,7 @@ function resolveForcedFlag(value: boolean, force: boolean | undefined, restrict:
     return value
 }
 
-/** Maps `DUser.accountUid` (webSafe64) to the account's username/email. */
+/** Maps `DUser.accountUid` to the account's username/email. */
 export function buildAccountUidEmailMap(storage: InMemoryStorage): Map<string, string> {
     const accountUidToEmail = new Map<string, string>()
     for (const user of storage.getAll<DUser>(VaultObjectKind.User)) {
@@ -67,7 +67,7 @@ export function buildAccountUidEmailMap(storage: InMemoryStorage): Map<string, s
     return accountUidToEmail
 }
 
-/** Resolves the best-known email/username for a shared-folder user/owner entry. */
+/** Resolves the best-known email/username for a shared-folder user/owner. */
 export function resolveUserEmail(
     accountUid: string | undefined,
     accountUsername: string | undefined,
@@ -203,12 +203,10 @@ async function collectEnterpriseTeams(auth: Auth): Promise<MembershipTeam[]> {
 }
 
 /**
- * Exports shared folder (and optionally enterprise team) membership to a
- * Commander-compatible JSON structure, suitable for later re-applying with
- * `applyMembership`.
+ * Exports shared folder (and optionally enterprise team) membership.
+ * JSON structure, suitable for later re-applying with `applyMembership`.
  *
- * `auth` is only required (and only used) to fetch enterprise team data; pass
- * `null` (or set `options.foldersOnly`) to export shared folder membership only.
+ * `auth` is only required (and only used) to fetch enterprise team data; pass `null` (or set `options.foldersOnly`) to export shared folder membership only.
  */
 export async function downloadMembership(
     auth: Auth | null,

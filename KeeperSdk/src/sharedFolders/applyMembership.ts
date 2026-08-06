@@ -16,7 +16,7 @@ export type ApplyMembershipOptions = {
     /**
      * When `true`, also updates permission flags that differ from the JSON
      * and removes users/teams (and team members) that are not present in the
-     * JSON. When `false` (default, matches Commander), only missing grants
+     * JSON. When `false`, only missing grants
      * are added; existing membership is left untouched even if permissions differ.
      */
     fullSync?: boolean
@@ -185,7 +185,7 @@ async function resolveTeamIdentifierMap(
                 const teams = resolveExistingTeams(data.teams || [], [rawIdentifier.trim()], data.queued_teams || [])
                 if (teams.length > 0) resolved.set(rawIdentifier, teams[0].team_uid)
             } catch {
-                // Leave unresolved; caller reports the missing target per-permission.
+                // still unresolved, team not present here.
             }
         }
     }
@@ -257,6 +257,9 @@ async function applyFolderMembership(
     const emailMap = buildAccountUidEmailMap(storage)
     const existingUsers = getExistingUsers(storage, sharedFolder.uid, emailMap)
     const existingTeams = getExistingTeams(storage, sharedFolder.uid)
+    const ownerEmail = resolveUserEmail(sharedFolder.ownerAccountUid, sharedFolder.ownerUsername, emailMap)
+        .trim()
+        .toLowerCase()
 
     const permissions = entry.permissions || []
     const userPermissions = permissions.filter((permission) => isValidEmail(permission.name))
@@ -296,6 +299,10 @@ async function applyFolderMembership(
         const email = permission.name.trim()
         const key = email.toLowerCase()
         if (!key || seenEmails.has(key)) continue
+        if (ownerEmail && key === ownerEmail) {
+            seenEmails.add(key)
+            continue
+        }
         seenEmails.add(key)
         const wantManageUsers = permission.manage_users === true
         const wantManageRecords = permission.manage_records === true
@@ -320,7 +327,6 @@ async function applyFolderMembership(
 
     const removeUsers: string[] = []
     if (fullSync) {
-        const ownerEmail = (sharedFolder.ownerUsername || '').trim().toLowerCase()
         for (const [email] of existingUsers) {
             if (seenEmails.has(email)) continue
             if (ownerEmail && ownerEmail === email) continue
@@ -562,13 +568,11 @@ async function applyTeamMembership(
 }
 
 /**
- * Applies a previously downloaded (Commander-compatible) shared folder
- * membership JSON to the vault: missing users/teams are granted access
- * (and enterprise team membership from `teams[].members` is filled in).
+ * Applies a previously downloaded shared folder membership JSON to the vault.
+ * Missing users/teams are granted access.
  *
  * With `options.fullSync`, permission flags that differ are also updated and
- * users/teams (and team members) absent from the JSON are removed. Without
- * it (the default, matching Commander), only missing grants are added.
+ * users/teams absent from the JSON are removed. Without `options.fullSync`, only missing grants are added.
  */
 export async function applyMembership(
     auth: Auth,
