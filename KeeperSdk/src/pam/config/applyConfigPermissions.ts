@@ -92,9 +92,7 @@ export async function applyPamConfigurationPermissions(
     const { allowedSettings, defaultResets, invalid } = buildAllowedSettingsFromPermissions(permissions)
 
     for (const entry of invalid) {
-        warnings.push(
-            `Invalid permission value for "${entry.flag}": ${String(entry.value)}. Use on, off, or default.`
-        )
+        warnings.push(`Invalid permission value for "${entry.flag}": ${String(entry.value)}. Use on, off, or default.`)
     }
 
     if (warnOnDefaultReset && defaultResets.length > 0) {

@@ -1084,9 +1084,7 @@ export class KeeperVault {
         return this.pamManager.listPamConfigurations(options ?? {})
     }
 
-    public async createPamConfiguration(
-        input: CreatePamConfigurationInput & { returnValue: true }
-    ): Promise<string>
+    public async createPamConfiguration(input: CreatePamConfigurationInput & { returnValue: true }): Promise<string>
     public async createPamConfiguration(
         input: CreatePamConfigurationInput & { returnValue?: false }
     ): Promise<CreatePamConfigurationResult>
@@ -1111,9 +1109,7 @@ export class KeeperVault {
         return this.pamManager.formatEditPamConfigurationOutput(result)
     }
 
-    public async removePamConfiguration(
-        input: RemovePamConfigurationInput
-    ): Promise<RemovePamConfigurationResult> {
+    public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
         const result = await this.pamManager.removePamConfiguration(input)
         if (result.success) await this.syncIfNeeded()
         return result

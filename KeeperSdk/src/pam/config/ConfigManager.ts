@@ -48,9 +48,7 @@ export class ConfigManager {
         return listPamConfigurations(this.storage, options)
     }
 
-    public async createPamConfiguration(
-        input: CreatePamConfigurationInput & { returnValue: true }
-    ): Promise<string>
+    public async createPamConfiguration(input: CreatePamConfigurationInput & { returnValue: true }): Promise<string>
     public async createPamConfiguration(
         input: CreatePamConfigurationInput & { returnValue?: false }
     ): Promise<CreatePamConfigurationResult>
@@ -75,9 +73,7 @@ export class ConfigManager {
         return formatEditPamConfigurationOutput(result)
     }
 
-    public async removePamConfiguration(
-        input: RemovePamConfigurationInput
-    ): Promise<RemovePamConfigurationResult> {
+    public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
         return removePamConfiguration(this.requireAuth(), this.storage, input)
     }
 

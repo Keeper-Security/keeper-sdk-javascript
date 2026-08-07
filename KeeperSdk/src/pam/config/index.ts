@@ -68,11 +68,7 @@ export {
     PAM_CONFIG_PERMISSION_FLAGS,
     PAM_CONFIG_PERMISSION_VALUES,
 } from './configConstants'
-export type {
-    PamConfigurationRecordType,
-    PamConfigEnvironment,
-    PamConfigPermissionFlag,
-} from './configConstants'
+export type { PamConfigurationRecordType, PamConfigEnvironment, PamConfigPermissionFlag } from './configConstants'
 
 export {
     isPamConfigurationRecordType,

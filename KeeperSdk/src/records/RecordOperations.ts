@@ -445,7 +445,11 @@ function resolveFolder(uid: string, storage: InMemoryStorage): FolderInfo {
 async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorage): Promise<string> {
     // Root user-folder records are linked under the empty folder UID.
     const rootDependencies = (await storage.getDependencies('')) || []
-    if (rootDependencies.some((dependency) => dependency.kind === VaultObjectKind.Record && dependency.uid === recordUid)) {
+    if (
+        rootDependencies.some(
+            (dependency) => dependency.kind === VaultObjectKind.Record && dependency.uid === recordUid
+        )
+    ) {
         return ''
     }
 

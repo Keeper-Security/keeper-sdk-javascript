@@ -78,9 +78,7 @@ export const PAM_CONFIG_PERMISSION_DAG_KEYS = {
 
 export type PamConfigPermissionFlag = keyof typeof PAM_CONFIG_PERMISSION_DAG_KEYS
 
-export const PAM_CONFIG_PERMISSION_FLAGS = Object.keys(
-    PAM_CONFIG_PERMISSION_DAG_KEYS
-) as PamConfigPermissionFlag[]
+export const PAM_CONFIG_PERMISSION_FLAGS = Object.keys(PAM_CONFIG_PERMISSION_DAG_KEYS) as PamConfigPermissionFlag[]
 
 export const PAM_CONFIG_PERMISSION_VALUES = ['on', 'off', 'default'] as const
 

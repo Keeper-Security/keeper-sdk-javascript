@@ -68,7 +68,11 @@ function buildListRow(
         : undefined
 
     if (!folder) {
-        return { warning: warning || `Following configuration is not in the shared folder: UID: ${record.uid}, Title: ${getPamConfigurationDisplayName(record)}` }
+        return {
+            warning:
+                warning ||
+                `Following configuration is not in the shared folder: UID: ${record.uid}, Title: ${getPamConfigurationDisplayName(record)}`,
+        }
     }
 
     const row: PamConfigurationListRow = {
@@ -167,10 +171,7 @@ function formatFolderCell(name: string, uid: string): string {
     return formatPamConfigFolderDisplay(name, uid)
 }
 
-function formatPamConfigurationDetail(
-    detail: PamConfigurationDetail,
-    options: { verbose?: boolean } = {}
-): string {
+function formatPamConfigurationDetail(detail: PamConfigurationDetail, options: { verbose?: boolean } = {}): string {
     const rows: Array<[string, string]> = [
         [PAM_CONFIG_DETAIL_LABELS[0], detail.uid],
         [PAM_CONFIG_DETAIL_LABELS[1], detail.name],
@@ -258,12 +259,12 @@ export function renderPamConfigurationsAsciiTable(
     })
 
     const formatCells = (cells: string[]): string =>
-        cells.map((cell, i) => (cell || '').padEnd(widths[i])).join('  ').trimEnd()
+        cells
+            .map((cell, i) => (cell || '').padEnd(widths[i]))
+            .join('  ')
+            .trimEnd()
 
-    const lines: string[] = [
-        formatCells([...table.headers]),
-        widths.map((w) => '-'.repeat(w)).join('  '),
-    ]
+    const lines: string[] = [formatCells([...table.headers]), widths.map((w) => '-'.repeat(w)).join('  ')]
 
     for (const row of splitRows) {
         const lineCount = Math.max(1, ...row.map((cell) => cell.length))
@@ -344,8 +345,6 @@ export function formatPamConfigurationsOutput(
         parts.push(formatPamConfigurationDetail(result.detail, { verbose: options.verbose }))
         return parts.join('\n')
     }
-    parts.push(
-        renderPamConfigurationsAsciiTable(formatPamConfigurationsTable(result, { verbose: options.verbose }))
-    )
+    parts.push(renderPamConfigurationsAsciiTable(formatPamConfigurationsTable(result, { verbose: options.verbose })))
     return parts.join('\n')
 }

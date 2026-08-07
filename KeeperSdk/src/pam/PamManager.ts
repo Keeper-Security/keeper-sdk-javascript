@@ -115,9 +115,7 @@ export class PamManager {
         return this.configManager.listPamConfigurations(options)
     }
 
-    public async createPamConfiguration(
-        input: CreatePamConfigurationInput & { returnValue: true }
-    ): Promise<string>
+    public async createPamConfiguration(input: CreatePamConfigurationInput & { returnValue: true }): Promise<string>
     public async createPamConfiguration(
         input: CreatePamConfigurationInput & { returnValue?: false }
     ): Promise<CreatePamConfigurationResult>
@@ -142,9 +140,7 @@ export class PamManager {
         return this.configManager.formatEditPamConfigurationOutput(result)
     }
 
-    public async removePamConfiguration(
-        input: RemovePamConfigurationInput
-    ): Promise<RemovePamConfigurationResult> {
+    public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
         return this.configManager.removePamConfiguration(input)
     }
 

@@ -246,9 +246,7 @@ export function formatEditPamConfigurationOutput(result: EditPamConfigurationRes
     const lines = [
         result.message,
         `UID: ${result.configurationUid}`,
-        result.typeChanged
-            ? `Type: ${result.previousConfigType} → ${result.configType}`
-            : `Type: ${result.configType}`,
+        result.typeChanged ? `Type: ${result.previousConfigType} → ${result.configType}` : `Type: ${result.configType}`,
         result.titleChanged ? `Title changed: yes` : `Title: ${result.title}`,
         result.folderChanged
             ? `Shared Folder: ${result.previousSharedFolderUid || '(none)'} → ${result.sharedFolderUid}`

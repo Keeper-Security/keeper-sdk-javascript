@@ -1,8 +1,5 @@
 import type { Auth, DRecord } from '@keeper-security/keeperapi'
-import {
-    normal64Bytes,
-    setConfigurationControllerMessage,
-} from '@keeper-security/keeperapi'
+import { normal64Bytes, setConfigurationControllerMessage } from '@keeper-security/keeperapi'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { moveRecord } from '../../records/RecordOperations'
 import { getRecordTitle } from '../../records/RecordUtils'
@@ -13,11 +10,7 @@ import {
     findEnterpriseGatewayByUidOrName,
     webSafeUidFromBytes,
 } from '../gateway/gatewayHelpers'
-import {
-    DEFAULT_PAM_CONFIG_SCHEDULE_VALUE,
-    PAM_RESOURCES_FIELD_TYPE,
-    SCHEDULE_FIELD_TYPE,
-} from './configConstants'
+import { DEFAULT_PAM_CONFIG_SCHEDULE_VALUE, PAM_RESOURCES_FIELD_TYPE, SCHEDULE_FIELD_TYPE } from './configConstants'
 import {
     getPamConfigurationDisplayName,
     isPamConfigurationRecord,
@@ -40,9 +33,7 @@ export function normalizeFields(
     }))
 }
 
-export function ensureScheduleField(
-    fields: PamConfigurationRecordFieldInput[]
-): PamConfigurationRecordFieldInput[] {
+export function ensureScheduleField(fields: PamConfigurationRecordFieldInput[]): PamConfigurationRecordFieldInput[] {
     if (fields.some((field) => field.type === SCHEDULE_FIELD_TYPE)) return fields
     return [
         ...fields,
@@ -194,10 +185,7 @@ export function findPamConfigurationByUidOrTitle(storage: InMemoryStorage, uidOr
     const byUid = storage.getByUid<DRecord>(VaultObjectKind.Record, trimmed)
     if (byUid) {
         if (!isPamConfigurationRecord(byUid)) {
-            throw new KeeperSdkError(
-                `Record "${trimmed}" is not a PAM Configuration.`,
-                ResultCodes.PAM_CONFIG_INVALID
-            )
+            throw new KeeperSdkError(`Record "${trimmed}" is not a PAM Configuration.`, ResultCodes.PAM_CONFIG_INVALID)
         }
         return byUid
     }
@@ -250,9 +238,7 @@ export function resolveResourceRecordUidsToRemove(
             continue
         }
         if (titleMatches.length > 1) {
-            warnings.push(
-                `Multiple resource records match "${trimmed}"; use a resource UID. Skipped this removal.`
-            )
+            warnings.push(`Multiple resource records match "${trimmed}"; use a resource UID. Skipped this removal.`)
             continue
         }
         removed.push(titleMatches[0])
