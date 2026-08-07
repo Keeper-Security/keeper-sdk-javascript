@@ -1,6 +1,7 @@
-import readline from 'readline/promises'
 import type { AuthUI3 } from '@keeper-security/keeperapi'
 import { KeeperVault } from '../vault/KeeperVault'
+import { getSdkPlatform } from '../platform'
+import type { SdkReadline } from '../platform'
 import {
     logger,
     extractResultCode,
@@ -12,8 +13,7 @@ import {
     KEEPER_PUBLIC_HOSTS,
 } from '../utils'
 import { ConsoleAuthUI } from './ConsoleAuthUI'
-import { FileConfigLoader } from './SessionManager'
-import type { KeeperJsonConfig } from './SessionManager'
+import type { KeeperJsonConfig } from './config'
 
 const DEFAULT_REGION = 'US'
 const MASK_CHAR = '*'
@@ -34,8 +34,6 @@ type ConsoleHandlers = {
     stdoutWrite: typeof process.stdout.write
     stderrWrite: typeof process.stderr.write
 }
-
-const defaultConfigLoader = new FileConfigLoader()
 
 let rlManager: ReadlineManager | null = null
 let suppressionDepth = 0
@@ -69,14 +67,11 @@ function classifyInputChar(ch: string): CliCharAction {
 }
 
 class ReadlineManager {
-    private rl: readline.Interface | null = null
+    private rl: SdkReadline | null = null
 
-    private getOrCreate(): readline.Interface {
+    private getOrCreate(): SdkReadline {
         if (!this.rl) {
-            this.rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout,
-            })
+            this.rl = getSdkPlatform().createReadline(process.stdin, process.stdout)
         }
         return this.rl
     }
@@ -154,7 +149,7 @@ export function prompt(question: string, masked = false): Promise<string> {
 
 export async function loadKeeperConfig(preloaded?: KeeperJsonConfig): Promise<KeeperJsonConfig> {
     if (preloaded) return preloaded
-    return defaultConfigLoader.load()
+    return getSdkPlatform().createFileConfigLoader().load()
 }
 
 export async function resolveServer(username?: string, preloadedConfig?: KeeperJsonConfig): Promise<string> {
