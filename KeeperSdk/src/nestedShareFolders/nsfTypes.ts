@@ -44,6 +44,7 @@ export type GetNsfOptions = {
     format?: GetNsfFormatInput
     verbose?: boolean
     unmask?: boolean
+    includeDag?: boolean
 }
 
 export type NsfFolderAccessRow = {
@@ -69,6 +70,15 @@ export type NsfRecordPermission = {
     awaitingApproval: boolean
     expiration?: number
     role?: NsfAccessRoleLabel
+    canViewTitle?: boolean
+    canView?: boolean
+    canEdit?: boolean
+    canListAccess?: boolean
+    canUpdateAccess?: boolean
+    canDelete?: boolean
+    canChangeOwnership?: boolean
+    canRequestAccess?: boolean
+    canApproveAccess?: boolean
 }
 
 export type NsfFolderSummary = {
@@ -112,13 +122,32 @@ export type NsfRecordJsonView = {
     record_uid: string
     title: string
     type: string
-    version: number
-    revision: number
+    version?: number
+    revision?: number
     folder?: NsfRecordFolderView
     fields: { type: string; value: unknown[] }[]
     notes?: string
     user_permissions: NsfRecordJsonUserPermission[]
     share_admins: string[]
+}
+
+export type NsfFolderJsonView = {
+    folder_uid: string
+    type: 'nested_share_folder'
+    name: string
+    parent_uid: string | null
+    folder: { uid: string | null; path: string }
+    owner?: string
+    path: string
+    records: NsfFolderSummary[]
+    user_permissions: {
+        accessor: string
+        access_type: string
+        role: NsfAccessRoleLabel
+        inherited: boolean
+    }[]
+    share_admins: string[]
+    team_permissions?: NsfFolderPermission[]
 }
 
 export type NsfRecordView = {
@@ -255,6 +284,7 @@ export type ListNsfOptions = {
     folders?: boolean
     records?: boolean
     format?: ListNsfFormatInput
+    roeEligible?: boolean
 }
 
 export type ListNsfRow = {
@@ -580,10 +610,15 @@ export type UpdateNsfRecordPermissionResult = {
     message?: string
 }
 
+export type NsfShortcutFolder = {
+    folderUid: string
+    name: string
+}
+
 export type NsfShortcutRow = {
     recordUid: string
     title: string
-    folders: string[]
+    folders: NsfShortcutFolder[]
 }
 
 export type ListNsfShortcutsOptions = {
@@ -639,6 +674,7 @@ export type UpdateNsfFolderInput = {
     folder: string
     name?: string
     color?: NsfFolderColorInput
+    inheritPermissions?: boolean
     quiet?: boolean
 }
 

@@ -6,6 +6,7 @@ import {
     generateUid,
     normal64Bytes,
     platform,
+    webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
@@ -27,6 +28,8 @@ import type {
     MkdirNsfResult,
     NsfFolderColorInput,
 } from './nsfTypes'
+
+export type { NsfFolderColorInput } from './nsfTypes'
 
 type NsfFolderMetadata = {
     name: string
@@ -123,10 +126,14 @@ async function createFolderSegmentsBatch(
     }
 
     const response = await auth.executeRest(folderAddMessage({ folderData: payloads.map((entry) => entry.folderData) }))
+    const remoteByFolderUid = new Map<string, Folder.IFolderModifyResult>()
+    for (const remote of response.folderAddResults ?? []) {
+        if (!remote.folderUid?.length) continue
+        remoteByFolderUid.set(webSafe64FromBytes(remote.folderUid), remote)
+    }
 
-    for (let index = 0; index < payloads.length; index++) {
-        const payload = payloads[index]
-        parseFolderModifyStatus(response.folderAddResults?.[index], ResultCodes.NSF_MKDIR_FAILED)
+    for (const payload of payloads) {
+        parseFolderModifyStatus(remoteByFolderUid.get(payload.folderUid), ResultCodes.NSF_MKDIR_FAILED)
         await cacheNewNsfFolder(
             storage,
             auth,
@@ -201,8 +208,7 @@ export async function mkdirNestedShareFolder(
         return {
             folderUid: createdUid,
             created: true,
-            message:
-                segments.length > 1 ? `Created folder path "${folderPath}".` : `Created folder "${segments[lastIdx]}".`,
+            message: createdUid,
         }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err

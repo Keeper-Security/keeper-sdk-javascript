@@ -33,6 +33,11 @@ function isShortcutFolder(storage: InMemoryStorage, folderUid: string): boolean 
     return isRootFolderUid(storage, folderUid) || isNestedShareFolder(storage, folderUid)
 }
 
+function folderDisplayName(storage: InMemoryStorage, folderUid: string): string {
+    if (isRootFolderUid(storage, folderUid)) return ROOT_FOLDER_LABEL
+    return getFolderDisplayName(storage, folderUid)
+}
+
 function formatFolderLabel(storage: InMemoryStorage, folderUid: string): string {
     if (isRootFolderUid(storage, folderUid)) {
         return `root (${ROOT_FOLDER_LABEL})`
@@ -122,8 +127,11 @@ function collectShortcutRows(
             recordUid,
             title: recordTitle(storage, recordUid),
             folders: [...(shortcuts.get(recordUid) ?? [])]
-                .sort((a, b) => formatFolderLabel(storage, a).localeCompare(formatFolderLabel(storage, b)))
-                .map((folderUid) => formatFolderLabel(storage, folderUid)),
+                .sort((a, b) => folderDisplayName(storage, a).localeCompare(folderDisplayName(storage, b)))
+                .map((folderUid) => ({
+                    folderUid,
+                    name: folderDisplayName(storage, folderUid),
+                })),
         }))
 }
 
@@ -135,7 +143,11 @@ function escapeCsvCell(value: string): string {
 export function formatNsfShortcutTable(rows: NsfShortcutRow[]): string {
     if (rows.length === 0) return 'No multi-folder records found.'
     const headers = ['Record UID', 'Title', 'Folders']
-    const tableRows = rows.map((row) => [row.recordUid, row.title, row.folders.join('; ')])
+    const tableRows = rows.map((row) => [
+        row.recordUid,
+        row.title,
+        row.folders.map((folder) => `${folder.name} (${folder.folderUid})`).join('; '),
+    ])
     const columnWidths = headers.map((header, index) =>
         Math.max(header.length, ...tableRows.map((cells) => (cells[index] || '').length))
     )
@@ -146,9 +158,10 @@ export function formatNsfShortcutTable(rows: NsfShortcutRow[]): string {
 }
 
 export function formatNsfShortcutCsv(rows: NsfShortcutRow[]): string {
-    const lines = ['record_uid,title,folders']
+    const lines = ['Record UID,Record Title,Folders']
     for (const row of rows) {
-        lines.push([row.recordUid, row.title, row.folders.join('; ')].map(escapeCsvCell).join(','))
+        const folders = row.folders.map((folder) => `${folder.name} (${folder.folderUid})`).join('\n')
+        lines.push([row.recordUid, row.title, folders].map(escapeCsvCell).join(','))
     }
     return lines.join('\n')
 }
@@ -157,8 +170,11 @@ export function formatNsfShortcutJson(rows: NsfShortcutRow[]): string {
     return JSON.stringify(
         rows.map((row) => ({
             record_uid: row.recordUid,
-            title: row.title,
-            folders: row.folders,
+            record_title: row.title,
+            folders: row.folders.map((folder) => ({
+                folder_uid: folder.folderUid,
+                name: folder.name,
+            })),
         })),
         null,
         2
