@@ -1,5 +1,5 @@
 import type { Auth } from '@keeper-security/keeperapi'
-import { Folder, folderUpdateMessage, normal64Bytes, platform } from '@keeper-security/keeperapi'
+import { Folder, folderUpdateMessage, normal64Bytes, platform, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
 import { NSF_FOLDER_COLORS, NSF_MAX_FOLDER_UPDATES, type NsfFolderColor } from './nsfConstants'
@@ -306,23 +306,40 @@ export async function updateNestedShareFolders(
                 })
             )
             const remoteResults = response.folderUpdateResults ?? []
+            const remoteByFolderUid = new Map<string, Folder.IFolderModifyResult>()
+            for (const remote of remoteResults) {
+                if (!remote.folderUid?.length) continue
+                remoteByFolderUid.set(webSafe64FromBytes(remote.folderUid), remote)
+            }
 
-            for (let j = 0; j < batch.length; j++) {
-                const prepared = batch[j]
-                const modifyResult = remoteResults[j]
-                const status = modifyResult?.status ?? Folder.FolderModifyStatus.SUCCESS
+            for (const prepared of batch) {
+                const modifyResult = remoteByFolderUid.get(prepared.folderUid)
+                if (!modifyResult) {
+                    results.push({
+                        folder: prepared.identifier,
+                        folderUid: prepared.folderUid,
+                        updated: false,
+                        message: 'No result returned for folder update.',
+                    })
+                    continue
+                }
+
+                const status = modifyResult.status ?? Folder.FolderModifyStatus.SUCCESS
                 const success = status === Folder.FolderModifyStatus.SUCCESS
                 const statusName = Folder.FolderModifyStatus[status] ?? String(status)
-                const message =
-                    modifyResult?.message ||
-                    (success
-                        ? buildSuccessMessage(
-                              prepared.displayName,
-                              prepared.newName,
-                              prepared.color,
-                              prepared.inheritPermissions
-                          )
-                        : `Folder operation failed (${statusName}).`)
+                let message = modifyResult.message ?? undefined
+                if (!message) {
+                    if (success) {
+                        message = buildSuccessMessage(
+                            prepared.displayName,
+                            prepared.newName,
+                            prepared.color,
+                            prepared.inheritPermissions
+                        )
+                    } else {
+                        message = `Folder operation failed (${statusName}).`
+                    }
+                }
 
                 if (success) {
                     anyUpdated = true

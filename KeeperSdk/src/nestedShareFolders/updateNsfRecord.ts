@@ -1,5 +1,5 @@
-import type { Auth, DRecord } from '@keeper-security/keeperapi'
-import { keeperDriveRecordsUpdate, normal64Bytes, platform } from '@keeper-security/keeperapi'
+import type { Auth, DRecord, Records } from '@keeper-security/keeperapi'
+import { keeperDriveRecordsUpdate, normal64Bytes, platform, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { VaultObjectKind } from '../folders/folderHelpers'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
@@ -143,12 +143,16 @@ export async function updateNestedShareRecords(
             })
         )
         const revision = nsfToNumber(response.revision)
+        const statusByRecordUid = new Map<string, Records.IRecordModifyStatus>()
+        for (const status of response.records ?? []) {
+            if (!status.recordUid?.length) continue
+            statusByRecordUid.set(webSafe64FromBytes(status.recordUid), status)
+        }
 
         const updated: UpdateNsfRecordResultItem[] = []
-        for (let index = 0; index < payloads.length; index++) {
-            const payload = payloads[index]
+        for (const payload of payloads) {
             const { statusName, message } = parseRecordModifyStatus(
-                response.records?.[index],
+                statusByRecordUid.get(payload.recordUid),
                 ResultCodes.NSF_UPDATE_FAILED
             )
             const itemRevision = revision ?? payload.storedRecord?.revision

@@ -130,9 +130,15 @@ function mapPreview(
     removals: RemovalSpec[],
     response: FolderProto.v3.remove.IRemoveResponse
 ): NsfRemoveFolderPreviewItem[] {
-    return (response.results ?? []).map((item, index) => {
-        const spec = removals[index]
-        if (!spec) {
+    const resultByFolderUid = new Map<string, FolderProto.v3.remove.IRemoveResult>()
+    for (const item of response.results ?? []) {
+        if (!item.itemUid?.length) continue
+        resultByFolderUid.set(webSafe64FromBytes(item.itemUid), item)
+    }
+
+    return removals.map((spec) => {
+        const item = resultByFolderUid.get(spec.folderUid)
+        if (!item) {
             throw new KeeperSdkError('Folder removal preview mismatch.', ResultCodes.NSF_REMOVE_FAILED)
         }
         return mapPreviewItem(spec, item)
