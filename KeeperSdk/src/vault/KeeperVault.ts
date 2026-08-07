@@ -306,16 +306,6 @@ export class KeeperVault {
         return this.enterpriseReportManager
     }
 
-    /** @deprecated Use getEnterpriseReportManager() */
-    public getAuditReportManager(): EnterpriseReportManager {
-        return this.enterpriseReportManager
-    }
-
-    /** @deprecated Use getEnterpriseReportManager() */
-    public getActionReportManager(): EnterpriseReportManager {
-        return this.enterpriseReportManager
-    }
-
     private async createAuth(options?: { useSessionResumption?: boolean }): Promise<Auth> {
         const host = this.config.host
         const baseDeviceConfig = await this.sessionManager.getDeviceConfig(host)
