@@ -310,7 +310,6 @@ function formatRecordCapabilityPermissionTable(entry: NsfRecordPermission): stri
         NSF_RECORD_PERMISSION_DISPLAY_ROWS.map(({ key, label }) => {
             const fromEntry = entry[key]
             if (fromEntry !== undefined) return { label, value: fromEntry }
-            // Owner with no live flags: treat as full access except Request Access.
             if (ownerDefaults) return { label, value: key !== 'canRequestAccess' }
             return { label, value: false }
         })

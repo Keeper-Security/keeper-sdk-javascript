@@ -43,7 +43,6 @@ export const NSF_LIST_MIN_TRUNCATE_PREFIX = 3
 export const NSF_MAX_RECORD_BATCH = 500
 export const NSF_MAX_REMOVALS = 500
 export const NSF_MAX_FOLDER_REMOVALS = 100
-/** Max folder updates per `vault/folders/v3/update` request (FolderUpdateRequest.folderData). */
 export const NSF_MAX_FOLDER_UPDATES = 100
 
 export const NSF_PATH_SENTINEL = '\x00'

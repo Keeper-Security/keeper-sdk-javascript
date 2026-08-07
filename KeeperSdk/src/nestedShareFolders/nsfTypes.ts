@@ -674,7 +674,6 @@ export type UpdateNsfFolderInput = {
     folder: string
     name?: string
     color?: NsfFolderColorInput
-    /** When set, updates whether child folders inherit this folder's user permissions. */
     inheritPermissions?: boolean
     quiet?: boolean
 }

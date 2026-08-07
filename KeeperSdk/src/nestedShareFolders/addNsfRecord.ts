@@ -1,4 +1,4 @@
-import type { Auth, record as RecordProto } from '@keeper-security/keeperapi'
+import type { Auth, Records, record as RecordProto } from '@keeper-security/keeperapi'
 import {
     Folder,
     generateEncryptionKey,
@@ -6,6 +6,7 @@ import {
     keeperDriveRecordsAdd,
     normal64Bytes,
     platform,
+    webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../utils'
@@ -149,10 +150,15 @@ export async function addNestedShareRecords(
             })
         )
         const revision = nsfToNumber(response.revision)
+        const statusByRecordUid = new Map<string, Records.IRecordModifyStatus>()
+        for (const status of response.records ?? []) {
+            if (!status.recordUid?.length) continue
+            statusByRecordUid.set(webSafe64FromBytes(status.recordUid), status)
+        }
 
-        const added = payloads.map((payload, index) => {
+        const added = payloads.map((payload) => {
             const { statusName, message } = parseRecordModifyStatus(
-                response.records?.[index],
+                statusByRecordUid.get(payload.recordUid),
                 ResultCodes.NSF_ADD_FAILED
             )
             return {
