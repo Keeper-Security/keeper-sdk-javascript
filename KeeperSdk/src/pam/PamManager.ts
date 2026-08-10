@@ -2,6 +2,7 @@ import type { Auth } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../storage/InMemoryStorage'
 import { ConfigManager } from './config/ConfigManager'
 import { GatewayManager } from './gateway/GatewayManager'
+import { RotationManager } from './rotation/RotationManager'
 import type {
     FormatPamConfigurationsTableOptions,
     FormattedPamConfigurationsTable,
@@ -30,16 +31,27 @@ import type {
     SetGatewayMaxInstancesInput,
     SetGatewayMaxInstancesResult,
 } from './gateway/gatewayTypes'
+import type {
+    FormatRotationSchedulesTableOptions,
+    FormattedRotationSchedulesTable,
+    GetRotationInfoInput,
+    ListRotationSchedulesOptions,
+    ListRotationSchedulesResult,
+    RenderRotationSchedulesAsciiTableOptions,
+    RotationInfoResult,
+} from './rotation/rotationTypes'
 
 export type AuthProvider = () => Auth
 
 export class PamManager {
     private readonly gatewayManager: GatewayManager
     private readonly configManager: ConfigManager
+    private readonly rotationManager: RotationManager
 
     constructor(storage: InMemoryStorage, authProvider: AuthProvider) {
         this.gatewayManager = new GatewayManager(storage, authProvider)
         this.configManager = new ConfigManager(storage, authProvider)
+        this.rotationManager = new RotationManager(storage, authProvider)
     }
 
     public getGatewayManager(): GatewayManager {
@@ -48,6 +60,10 @@ export class PamManager {
 
     public getConfigManager(): ConfigManager {
         return this.configManager
+    }
+
+    public getRotationManager(): RotationManager {
+        return this.rotationManager
     }
 
     public async listGateways(options: ListGatewaysOptions = {}): Promise<ListGatewaysResult> {
@@ -174,5 +190,52 @@ export class PamManager {
         options: ListPamConfigurationsOptions = {}
     ): string {
         return this.configManager.formatPamConfigurationsOutput(result, options)
+    }
+
+    public async listRotationSchedules(options: ListRotationSchedulesOptions = {}): Promise<ListRotationSchedulesResult> {
+        return this.rotationManager.listRotationSchedules(options)
+    }
+
+    public formatRotationSchedulesTable(
+        result: ListRotationSchedulesResult,
+        options: FormatRotationSchedulesTableOptions = {}
+    ): FormattedRotationSchedulesTable {
+        return this.rotationManager.formatRotationSchedulesTable(result, options)
+    }
+
+    public renderRotationSchedulesAsciiTable(
+        table: FormattedRotationSchedulesTable,
+        options: RenderRotationSchedulesAsciiTableOptions = {}
+    ): string {
+        return this.rotationManager.renderRotationSchedulesAsciiTable(table, options)
+    }
+
+    public formatRotationSchedulesJson(
+        result: ListRotationSchedulesResult,
+        options: ListRotationSchedulesOptions = {}
+    ): string {
+        return this.rotationManager.formatRotationSchedulesJson(result, options)
+    }
+
+    public formatRotationSchedulesOutput(
+        result: ListRotationSchedulesResult,
+        options: ListRotationSchedulesOptions = {}
+    ): string {
+        return this.rotationManager.formatRotationSchedulesOutput(result, options)
+    }
+
+    public async getRotationInfo(input: GetRotationInfoInput): Promise<RotationInfoResult> {
+        return this.rotationManager.getRotationInfo(input)
+    }
+
+    public formatRotationInfoJson(result: RotationInfoResult): string {
+        return this.rotationManager.formatRotationInfoJson(result)
+    }
+
+    public formatRotationInfoOutput(
+        result: RotationInfoResult,
+        options: Pick<GetRotationInfoInput, 'format'> = {}
+    ): string {
+        return this.rotationManager.formatRotationInfoOutput(result, options)
     }
 }

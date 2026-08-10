@@ -176,6 +176,9 @@ export enum PamErrorCode {
     ConfigEditFailed = 'pam_config_edit_failed',
     MultipleConfigMatches = 'pam_multiple_config_matches',
     ConfigRemoveFailed = 'pam_config_remove_failed',
+    RotationListFailed = 'pam_rotation_list_failed',
+    RotationInfoFailed = 'pam_rotation_info_failed',
+    RotationRecordRequired = 'pam_rotation_record_required',
 }
 
 export const ResultCodes = {
@@ -290,6 +293,9 @@ export const ResultCodes = {
     PAM_CONFIG_EDIT_FAILED: PamErrorCode.ConfigEditFailed,
     PAM_MULTIPLE_CONFIG_MATCHES: PamErrorCode.MultipleConfigMatches,
     PAM_CONFIG_REMOVE_FAILED: PamErrorCode.ConfigRemoveFailed,
+    PAM_ROTATION_LIST_FAILED: PamErrorCode.RotationListFailed,
+    PAM_ROTATION_INFO_FAILED: PamErrorCode.RotationInfoFailed,
+    PAM_ROTATION_RECORD_REQUIRED: PamErrorCode.RotationRecordRequired,
     AUDIT_INVALID_REPORT_TYPE: AuditReportErrorCode.InvalidReportType,
     AUDIT_INVALID_CREATED_FILTER: AuditReportErrorCode.InvalidCreatedFilter,
     AUDIT_INVALID_FILTER: AuditReportErrorCode.InvalidFilter,

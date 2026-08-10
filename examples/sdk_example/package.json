@@ -69,6 +69,8 @@
         "pam:config:new": "ts-node src/pam/config/create_config.ts",
         "pam:config:edit": "ts-node src/pam/config/edit_config.ts",
         "pam:config:remove": "ts-node src/pam/config/remove_config.ts",
+        "pam:rotation:list": "ts-node src/pam/rotation/list_rotations.ts",
+        "pam:rotation:info": "ts-node src/pam/rotation/rotation_info.ts",
         "link-local": "cd ../../KeeperSdk && npm link ../keeperapi && cd ../examples/sdk_example && npm link ../../keeperapi",
         "types": "tsc --watch",
         "types:ci": "tsc"

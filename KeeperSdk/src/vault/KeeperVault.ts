@@ -172,6 +172,15 @@ import type {
     RemovePamConfigurationResult,
 } from '../pam/config/configTypes'
 import type {
+    FormatRotationSchedulesTableOptions,
+    FormattedRotationSchedulesTable,
+    GetRotationInfoInput,
+    ListRotationSchedulesOptions,
+    ListRotationSchedulesResult,
+    RenderRotationSchedulesAsciiTableOptions,
+    RotationInfoResult,
+} from '../pam/rotation/rotationTypes'
+import type {
     ListUserRow,
     ListUsersOptions,
     UserView,
@@ -1145,6 +1154,53 @@ export class KeeperVault {
         options?: ListPamConfigurationsOptions
     ): string {
         return this.pamManager.formatPamConfigurationsOutput(result, options ?? {})
+    }
+
+    public async listRotationSchedules(options?: ListRotationSchedulesOptions): Promise<ListRotationSchedulesResult> {
+        return this.pamManager.listRotationSchedules(options ?? {})
+    }
+
+    public formatRotationSchedulesTable(
+        result: ListRotationSchedulesResult,
+        options?: FormatRotationSchedulesTableOptions
+    ): FormattedRotationSchedulesTable {
+        return this.pamManager.formatRotationSchedulesTable(result, options ?? {})
+    }
+
+    public renderRotationSchedulesAsciiTable(
+        table: FormattedRotationSchedulesTable,
+        options?: RenderRotationSchedulesAsciiTableOptions
+    ): string {
+        return this.pamManager.renderRotationSchedulesAsciiTable(table, options ?? {})
+    }
+
+    public formatRotationSchedulesJson(
+        result: ListRotationSchedulesResult,
+        options?: ListRotationSchedulesOptions
+    ): string {
+        return this.pamManager.formatRotationSchedulesJson(result, options ?? {})
+    }
+
+    public formatRotationSchedulesOutput(
+        result: ListRotationSchedulesResult,
+        options?: ListRotationSchedulesOptions
+    ): string {
+        return this.pamManager.formatRotationSchedulesOutput(result, options ?? {})
+    }
+
+    public async getRotationInfo(input: GetRotationInfoInput): Promise<RotationInfoResult> {
+        return this.pamManager.getRotationInfo(input)
+    }
+
+    public formatRotationInfoJson(result: RotationInfoResult): string {
+        return this.pamManager.formatRotationInfoJson(result)
+    }
+
+    public formatRotationInfoOutput(
+        result: RotationInfoResult,
+        options?: Pick<GetRotationInfoInput, 'format'>
+    ): string {
+        return this.pamManager.formatRotationInfoOutput(result, options ?? {})
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {

@@ -990,6 +990,11 @@ export const setConfigurationControllerMessage = (
 ): RestInMessage<PAM.IPAMConfigurationController> =>
     createInMessage(data, 'pam/set_configuration_controller', PAM.PAMConfigurationController)
 
+export const getRotationInfoMessage = (
+    data: PAM.IPAMGenericUidRequest
+): RestMessage<PAM.IPAMGenericUidRequest, Router.IRouterRotationInfo> =>
+    createMessage(data, 'pam/get_rotation_info', PAM.PAMGenericUidRequest, Router.RouterRotationInfo)
+
 /* -- PAM Router (DAG GraphSync) -- */
 
 export const pamSyncMessage = (
@@ -1019,6 +1024,16 @@ export const pamGetLeafsMessage = (
 
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
+
+export const pamGetRotationSchedulesMessage = (
+    data: PAM.IPAMGenericUidsRequest = {}
+): RestMessage<PAM.IPAMGenericUidsRequest, PAM.IPAMRotationSchedulesResponse> =>
+    createMessage(
+        data,
+        'api/user/get_rotation_schedules',
+        PAM.PAMGenericUidsRequest,
+        PAM.PAMRotationSchedulesResponse
+    )
 
 /** Layer-B: set PAM configuration network-level `allowedSettings` (permissions). */
 export const pamConfigureNetworkGraphMessage = (
