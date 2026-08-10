@@ -90,11 +90,7 @@ export {
     RecordVersion,
 } from './records/RecordUtils'
 export type { RecordSummary } from './records/RecordUtils'
-export {
-    formatRecordsListTable,
-    renderRecordsListAsciiTable,
-    renderRecordsListTable,
-} from './records/listRecordsTable'
+export { formatRecordsListTable, renderRecordsListAsciiTable, renderRecordsListTable } from './records/listRecordsTable'
 export type { FormattedRecordsListTable } from './records/listRecordsTable'
 export { parseTotpUrl, getTotpCode } from './records/Totp'
 export type { TotpAlgorithm, TotpParams, TotpCode } from './records/Totp'
