@@ -392,8 +392,9 @@ export function formatRecordFields(record: DRecord, unmask: boolean): { name: st
     return fields
 }
 
+
 export function formatRecord(record: DRecord, showDetailsOrOptions?: boolean | FormatRecordOptions): string {
-    const { showDetails, unmask } = resolveFormatRecordOptions(showDetailsOrOptions)
+    const { showDetails } = resolveFormatRecordOptions(showDetailsOrOptions)
     const summary = getRecordSummary(record)
     const lines: string[] = [
         RECORD_SEPARATOR,
@@ -405,7 +406,7 @@ export function formatRecord(record: DRecord, showDetailsOrOptions?: boolean | F
     if (summary.login) lines.push(`Username: ${summary.login}`)
     if (summary.url) lines.push(`URL: ${summary.url}`)
     if (summary.password) {
-        lines.push(`Password: ${unmask ? summary.password : MASKED_VALUE}`)
+        lines.push(`Password: ${MASKED_VALUE}`)
     }
 
     if (showDetails) {
@@ -415,13 +416,13 @@ export function formatRecord(record: DRecord, showDetailsOrOptions?: boolean | F
             if (TOTP_FIELD_TYPES.has(field.type)) continue
             if (!fieldHasValue(field)) continue
             const label = field.label || field.type
-            const value = formatFieldValue(field, unmask)
+            const value = formatFieldValue(field, false)
             if (value) lines.push(`${label}: ${value}`)
         }
 
         const totpUrl = getRecordTotpUrl(record)
         if (totpUrl) {
-            lines.push(`TOTP URL: ${unmask ? totpUrl : MASKED_VALUE}`)
+            lines.push(`TOTP URL: ${MASKED_VALUE}`)
             const code = getTotpCode(totpUrl)
             if (code) {
                 lines.push(`Two Factor Code: ${code.code}    valid for ${code.secondsRemaining} sec`)
