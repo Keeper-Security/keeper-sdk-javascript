@@ -5,10 +5,27 @@ connectSdkPlatform(nodeSdkPlatform)
 
 export * from './api'
 
-/** Node.js Commander / CLI helpers (readline, ~/.keeper config). */
 export { ConsoleAuthUI } from './auth/ConsoleAuthUI'
+export { UnavailableAuthUI } from './auth/UnavailableAuthUI'
 export { FileConfigLoader } from './auth/node/FileConfigLoader'
+export { SessionManager } from './auth/SessionManager'
+export type {
+    KeeperJsonConfig,
+    ConfigLoader,
+    ConfigurationUser,
+    ConfigurationServerConfig,
+    ConfigurationDeviceConfig,
+} from './auth/SessionManager'
 export { login, cleanup, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
+export { connectSdkPlatform, getSdkPlatform, isSdkPlatformConnected } from './platform'
+export type { SdkPlatform, SdkReadline, SdkRuntime } from './platform'
+export type { SessionRestoreInput } from './auth/sessionRestore'
+export {
+    toSessionParams,
+    validateSessionRestoreInput,
+    sessionRestoreFromJson,
+    resolveSessionRestorePayload,
+} from './auth/sessionRestore'
 
 export { InMemoryStorage } from './storage/InMemoryStorage'
 
