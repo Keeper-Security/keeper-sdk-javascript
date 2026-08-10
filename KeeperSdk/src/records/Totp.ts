@@ -1,4 +1,5 @@
-import { createHmac } from 'crypto'
+import { getSdkPlatform } from '../platform'
+import { WHITESPACE_PATTERN } from '../utils/patterns'
 
 export type TotpAlgorithm = 'SHA1' | 'SHA256' | 'SHA512'
 
@@ -22,7 +23,7 @@ const DEFAULT_ALGORITHM: TotpAlgorithm = 'SHA1'
 const UINT32_MAX = 0x100000000
 
 function decodeBase32(input: string): Uint8Array {
-    const noWhitespace = input.replace(/\s+/g, '')
+    const noWhitespace = input.replace(WHITESPACE_PATTERN, '')
     let endIndex = noWhitespace.length
     while (endIndex > 0 && noWhitespace.charCodeAt(endIndex - 1) === 0x3d) endIndex--
     const cleaned = noWhitespace.slice(0, endIndex).toUpperCase()
@@ -76,10 +77,11 @@ export function parseTotpUrl(url: string): TotpParams | null {
     }
 }
 
-function counterToBuffer(counter: number): Buffer {
-    const buf = Buffer.alloc(8)
-    buf.writeUInt32BE(Math.floor(counter / UINT32_MAX), 0)
-    buf.writeUInt32BE(counter % UINT32_MAX, 4)
+function counterToBuffer(counter: number): Uint8Array {
+    const buf = new Uint8Array(8)
+    const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength)
+    view.setUint32(0, Math.floor(counter / UINT32_MAX), false)
+    view.setUint32(4, counter >>> 0, false)
     return buf
 }
 
@@ -101,9 +103,8 @@ export function getTotpCode(urlOrParams: string | TotpParams, now: number = Date
     const counter = Math.floor(seconds / params.period)
     const secondsRemaining = params.period - (seconds % params.period)
 
-    const digest = createHmac(params.algorithm.toLowerCase(), Buffer.from(key))
-        .update(counterToBuffer(counter))
-        .digest()
+    const algo = params.algorithm.toLowerCase() as 'sha1' | 'sha256' | 'sha512'
+    const digest = getSdkPlatform().hmac(algo, key, counterToBuffer(counter))
 
     if (digest.length === 0) return null
     const offset = digest[digest.length - 1] & 0x0f

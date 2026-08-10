@@ -14,7 +14,10 @@ export enum FolderKind {
     UserFolder = 'user_folder',
     SharedFolder = 'shared_folder',
     SharedFolderFolder = 'shared_folder_folder',
+    KeeperDriveFolder = 'keeper_drive_folder',
 }
+
+export type ClassicFolderKind = FolderKind.UserFolder | FolderKind.SharedFolder | FolderKind.SharedFolderFolder
 
 export enum ParentFolderKind {
     VirtualRoot = 'virtual_root',
@@ -67,14 +70,26 @@ export function folderKindFromString(value: string | undefined | null): FolderKi
             return FolderKind.SharedFolder
         case FolderKind.SharedFolderFolder:
             return FolderKind.SharedFolderFolder
+        case FolderKind.KeeperDriveFolder:
+            return FolderKind.KeeperDriveFolder
         default:
             return undefined
     }
 }
 
+type UserFolderData = { title?: string; name?: string; color?: string }
+
 export function userFolderName(folder: DUserFolder): string {
-    const data = folder.data as { title?: string; name?: string } | undefined
+    const data = folder.data as UserFolderData | undefined
     return (data?.title || data?.name || folder.uid).trim() || folder.uid
+}
+
+export function userFolderColor(folder: DUserFolder): string | undefined {
+    const color = (folder.data as UserFolderData | undefined)?.color
+    if (typeof color !== 'string') return undefined
+    const trimmed = color.trim().toLowerCase()
+    if (!trimmed || trimmed === 'none') return undefined
+    return trimmed
 }
 
 export function sharedFolderFolderName(folder: DSharedFolderFolder): string {

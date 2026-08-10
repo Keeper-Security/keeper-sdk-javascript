@@ -53,33 +53,48 @@ export function extractResultCode(err: unknown): string | undefined {
 }
 
 export function extractErrorMessage(err: unknown): string {
+    let message: string
     if (isKeeperError(err)) {
-        return err.message || err.result_code || err.error || 'Unknown Keeper error'
-    }
-    if (err instanceof Error) {
+        message = err.message || err.result_code || err.error || 'Unknown Keeper error'
+    } else if (err instanceof Error) {
         const parsed = parseJsonObjectIfPresent(err.message)
         if (parsed) {
-            if (typeof parsed.message === 'string') return parsed.message
-            if (typeof parsed.result_code === 'string') return parsed.result_code
-            if (typeof parsed.error === 'string') return parsed.error
+            if (typeof parsed.message === 'string') message = parsed.message
+            else if (typeof parsed.result_code === 'string') message = parsed.result_code
+            else if (typeof parsed.error === 'string') message = parsed.error
+            else message = err.message
+        } else {
+            message = err.message
         }
-        return err.message
-    }
-    if (typeof err === 'string') {
+    } else if (typeof err === 'string') {
         const parsed = parseJsonObjectIfPresent(err)
         if (parsed) {
-            if (typeof parsed.message === 'string') return parsed.message
-            if (typeof parsed.result_code === 'string') return parsed.result_code
-            if (typeof parsed.error === 'string') return parsed.error
+            if (typeof parsed.message === 'string') message = parsed.message
+            else if (typeof parsed.result_code === 'string') message = parsed.result_code
+            else if (typeof parsed.error === 'string') message = parsed.error
+            else message = err
+        } else {
+            message = err
         }
-        return err
-    }
-    if (typeof err === 'object' && err !== null) {
+    } else if (typeof err === 'object' && err !== null) {
         const obj = err as Record<string, unknown>
-        if (typeof obj.message === 'string') return obj.message
-        if (typeof obj.result_code === 'string') return obj.result_code
+        if (typeof obj.message === 'string') message = obj.message
+        else if (typeof obj.result_code === 'string') message = obj.result_code
+        else message = String(err)
+    } else {
+        message = String(err)
     }
-    return String(err)
+    return sanitizeErrorMessage(message)
+}
+
+function sanitizeErrorMessage(message: string): string {
+    const trimmed = message.trim()
+    if (/^missing:\s*\{/i.test(trimmed) && /session_token/i.test(trimmed)) {
+        return 'Request rejected: missing or invalid fields. Try again or re-login if the session expired.'
+    }
+    return trimmed
+        .replace(/"session_token"\s*:\s*"[^"]*"/gi, '"session_token":"[REDACTED]"')
+        .replace(/session_token[=:]\s*[^\s"',}]+/gi, 'session_token=[REDACTED]')
 }
 
 export class KeeperSdkError extends Error {

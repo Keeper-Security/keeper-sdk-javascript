@@ -45,7 +45,8 @@ import type {
 } from '../sharing/Sharing'
 import type { ListFolderOptions, ListFolderResult } from '../folders/listFolder'
 import { FolderKind, VaultObjectKind } from '../folders/folderHelpers'
-import type { ChangeDirectoryResult, VaultFolderSession } from '../folders/changeDirectory'
+import type { ChangeDirectoryResult, TryResolvePathResult, VaultFolderSession } from '../folders/changeDirectory'
+import { buildWhoamiInfo, type WhoamiInfo } from '../account/whoamiInfo'
 import type { AddFolderInput, AddFolderResult, MkdirOptions } from '../folders/addFolder'
 import type { UpdateFolderInput, UpdateFolderResult, RenameFolderResult } from '../folders/updateFolder'
 import type { DeleteFolderResult, RmdirOptions } from '../folders/deleteFolder'
@@ -498,6 +499,10 @@ export class KeeperVault {
         return this.folderManager.listFolder(options ?? {})
     }
 
+    public async tryResolvePath(path: string): Promise<TryResolvePathResult> {
+        return this.folderManager.tryResolvePath(path)
+    }
+
     public listSharedFolders(options?: ListSharedFoldersOptions): ListSharedFolderRow[] {
         return this.sharedFolderManager.listSharedFolders(options ?? {})
     }
@@ -703,6 +708,30 @@ export class KeeperVault {
         }
     }
 
+    public async getAccountUsername(): Promise<string | undefined> {
+        return this.sessionManager.getLastUsername() ?? this.auth?.username ?? undefined
+    }
+
+    public async getWhoamiInfo(options?: { includeVaultCounts?: boolean }): Promise<WhoamiInfo> {
+        const auth = this.getAuthOrThrow()
+        if (!auth.accountSummary) {
+            await auth.loadAccountSummary()
+        }
+        const summary = auth.accountSummary
+        if (!summary) {
+            throw new KeeperSdkError('Account summary is unavailable.', ResultCodes.SYNC_FAILED)
+        }
+
+        const username = auth.username || (await this.getAccountUsername()) || ''
+
+        return buildWhoamiInfo({
+            username,
+            host: this.host,
+            accountSummary: summary,
+            vaultSummary: options?.includeVaultCounts ? this.getSummary() : undefined,
+        })
+    }
+
     public printRecords(showDetails = false): void {
         const records = this.getRecords()
         if (records.length === 0) {
@@ -744,9 +773,17 @@ export class KeeperVault {
         return result
     }
 
-    public async deleteRecord(recordUid: string): Promise<DeleteRecordResult> {
+    public async deleteRecord(uidOrTitle: string): Promise<DeleteRecordResult> {
         const auth = this.getAuthOrThrow()
-        const result = await deleteRecordOp(auth, recordUid)
+        const record = this.getRecordByUid(uidOrTitle) || this.findRecord(uidOrTitle)
+        if (!record?.uid) {
+            return {
+                recordUid: uidOrTitle,
+                success: false,
+                message: `Record "${uidOrTitle}" not found`,
+            }
+        }
+        const result = await deleteRecordOp(auth, this.storage, record.uid)
         if (result.success) await this.syncIfNeeded()
         return result
     }

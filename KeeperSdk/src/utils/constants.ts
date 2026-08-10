@@ -32,6 +32,7 @@ export enum SessionErrorCode {
     NoCloneCode = 'no_clone_code',
     PersistentLoginFailed = 'persistent_login_failed',
     SessionTokenExpired = 'session_token_expired',
+    SyncFailed = 'sync_failed',
 }
 
 export enum ValidationErrorCode {
@@ -188,6 +189,7 @@ export const ResultCodes = {
     NO_CLONE_CODE: SessionErrorCode.NoCloneCode,
     PERSISTENT_LOGIN_FAILED: SessionErrorCode.PersistentLoginFailed,
     SESSION_TOKEN_EXPIRED: SessionErrorCode.SessionTokenExpired,
+    SYNC_FAILED: SessionErrorCode.SyncFailed,
     INVALID_PATTERN: ValidationErrorCode.InvalidPattern,
     ROLE_REQUIRED: RoleErrorCode.RoleRequired,
     ROLE_NOT_FOUND: RoleErrorCode.RoleNotFound,
