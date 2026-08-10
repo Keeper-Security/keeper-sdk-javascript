@@ -61,7 +61,7 @@ export class FolderManager {
     }
 
     public getWorkingFolderDisplayName(): string {
-        return getWorkingFolderDisplayName(this.storage, this.session.currentFolderUid)
+        return getWorkingFolderDisplayName(this.storage, this.session)
     }
 
     private requireAuth(): Auth {

@@ -1,16 +1,18 @@
 import type { DSharedFolder, DSharedFolderFolder, DUserFolder } from '@keeper-security/keeperapi'
 import { InMemoryStorage } from '../storage/InMemoryStorage'
 import { KeeperSdkError } from '../utils'
+import { getFolderDisplayName, getKeeperDriveFolder, isRootFolderUid } from '../nestedShareFolders/nsfHelpers'
 import { listFolder, listRootUserFolders } from './listFolder'
 import type { ListFolderFolderSimple } from './listFolder'
 import { FolderKind, VaultObjectKind, sharedFolderFolderName, sharedFolderName, userFolderName } from './folderHelpers'
 
-const VAULT_ROOT_DISPLAY_NAME = 'My Vault'
+export const VAULT_ROOT_DISPLAY_NAME = 'My Vault'
 
 const ESCAPED_SEPARATOR_PLACEHOLDER = '\x00'
 
 export type VaultFolderSession = {
     currentFolderUid: string | null
+    workingFolderDisplayPath?: string
 }
 
 export type ChangeDirectoryResult = {
@@ -47,12 +49,27 @@ function getFolderEntryByUid(storage: InMemoryStorage, uid: string): ListFolderF
             folderKind: FolderKind.SharedFolderFolder,
         }
     }
+    const nestedShareFolder = getKeeperDriveFolder(storage, uid)
+    if (nestedShareFolder) {
+        return {
+            uid: nestedShareFolder.uid,
+            name: getFolderDisplayName(storage, nestedShareFolder.uid),
+            folderKind: FolderKind.KeeperDriveFolder,
+        }
+    }
     return undefined
 }
 
 export async function findParentFolderUid(storage: InMemoryStorage, folderUid: string): Promise<string | null> {
     const rootFolderUids = new Set((await listRootUserFolders(storage)).map((folder) => folder.uid))
     if (rootFolderUids.has(folderUid)) return null
+
+    const nestedShareFolder = getKeeperDriveFolder(storage, folderUid)
+    if (nestedShareFolder) {
+        const parentUid = nestedShareFolder.parentUid?.trim()
+        if (!parentUid || isRootFolderUid(storage, parentUid)) return null
+        return parentUid
+    }
 
     const parentKinds = [
         FolderKind.UserFolder,
@@ -201,6 +218,25 @@ export async function resolveSingleFolder(
     return { folderUid: entry.uid, name: entry.name }
 }
 
+export async function buildWorkingFolderDisplayPath(
+    storage: InMemoryStorage,
+    folderUid: string | null
+): Promise<string> {
+    if (folderUid === null) return VAULT_ROOT_DISPLAY_NAME
+
+    const segments: string[] = []
+    let current: string | null = folderUid
+    while (current) {
+        const entry = getFolderEntryByUid(storage, current)
+        if (!entry) break
+        segments.unshift(entry.name)
+        current = await findParentFolderUid(storage, current)
+    }
+
+    if (segments.length === 0) return VAULT_ROOT_DISPLAY_NAME
+    return `${VAULT_ROOT_DISPLAY_NAME}/${segments.join('/')}`
+}
+
 export async function changeDirectory(
     storage: InMemoryStorage,
     session: VaultFolderSession,
@@ -208,11 +244,16 @@ export async function changeDirectory(
 ): Promise<ChangeDirectoryResult> {
     const resolved = await resolveSingleFolder(storage, session, path)
     session.currentFolderUid = resolved.folderUid
-    return resolved
+    session.workingFolderDisplayPath = await buildWorkingFolderDisplayPath(storage, resolved.folderUid)
+    return {
+        folderUid: resolved.folderUid,
+        name: session.workingFolderDisplayPath,
+    }
 }
 
-export function getWorkingFolderDisplayName(storage: InMemoryStorage, currentFolderUid: string | null): string {
-    if (currentFolderUid === null) return VAULT_ROOT_DISPLAY_NAME
-    const entry = getFolderEntryByUid(storage, currentFolderUid)
-    return entry?.name || VAULT_ROOT_DISPLAY_NAME
+export function getWorkingFolderDisplayName(storage: InMemoryStorage, session: VaultFolderSession): string {
+    if (session.workingFolderDisplayPath) return session.workingFolderDisplayPath
+    if (session.currentFolderUid === null) return VAULT_ROOT_DISPLAY_NAME
+    const entry = getFolderEntryByUid(storage, session.currentFolderUid)
+    return entry?.name ? `${VAULT_ROOT_DISPLAY_NAME}/${entry.name}` : VAULT_ROOT_DISPLAY_NAME
 }

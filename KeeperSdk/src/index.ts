@@ -50,6 +50,7 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    NodeErrorCode,
     AuditReportErrorCode,
     ActionReportErrorCode,
     PasswordReportErrorCode,
@@ -62,7 +63,12 @@ export {
     anyIsBoolean,
     EMAIL_PATTERN,
     EMAIL_LIST_SEPARATOR_PATTERN,
+    TOKEN_SEPARATOR_PATTERN,
+    REGEX_ESCAPE_PATTERN,
+    TRAILING_EQUALS_PATTERN,
+    WHITESPACE_PATTERN,
     isValidEmail,
+    escapeRegExp,
     resolveSearchPattern,
 } from './utils'
 export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './utils'
@@ -70,6 +76,7 @@ export type { ILogger, Nullable, Optional, DeepPartial, Immutable } from './util
 export {
     searchRecords,
     formatRecord,
+    formatRecordFields,
     getRecordTitle,
     getRecordType,
     getRecordFields,
@@ -78,11 +85,21 @@ export {
     getRecordLogin,
     getRecordUrl,
     getRecordTotpUrl,
+    getRecordDescription,
+    getRecordCategory,
     RecordVersion,
 } from './records/RecordUtils'
 export type { RecordSummary } from './records/RecordUtils'
+export {
+    formatRecordsListTable,
+    renderRecordsListAsciiTable,
+    renderRecordsListTable,
+} from './records/listRecordsTable'
+export type { FormattedRecordsListTable } from './records/listRecordsTable'
 export { parseTotpUrl, getTotpCode } from './records/Totp'
 export type { TotpAlgorithm, TotpParams, TotpCode } from './records/Totp'
+export { buildWhoamiInfo, normalizeServerHost, resolveDataCenter } from './account/whoamiInfo'
+export type { WhoamiInfo, BuildWhoamiInfoInput } from './account/whoamiInfo'
 export { addRecord, updateRecord, deleteRecord, getRecordHistory, moveRecord } from './records/RecordOperations'
 export type {
     PasswordRecordData,
@@ -131,7 +148,7 @@ export {
     DeleteObjectType,
     folderKindFromString,
 } from './folders/folderHelpers'
-export type { FolderKindOrLiteral } from './folders/folderHelpers'
+export type { FolderKindOrLiteral, ClassicFolderKind } from './folders/folderHelpers'
 
 export { listFolder, findFolderUidByNameOrUid, listRootUserFolders } from './folders/listFolder'
 export type {

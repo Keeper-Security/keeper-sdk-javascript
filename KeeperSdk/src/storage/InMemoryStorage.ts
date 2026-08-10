@@ -37,6 +37,9 @@ export class InMemoryStorage implements VaultStorage {
 
     public async put(item: VaultStorageData): Promise<void> {
         const kind = item.kind
+        if (!kind) {
+            throw new Error('VaultStorageData missing kind')
+        }
         if (!this.store.has(kind)) {
             this.store.set(kind, new Map())
         }
