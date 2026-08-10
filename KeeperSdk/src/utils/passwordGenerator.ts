@@ -37,7 +37,6 @@ const DEFAULT_PASSPHRASE_SEPARATOR = '-'
 const DEFAULT_PASSPHRASE_WORD_COUNT = 5
 const MIN_PASSPHRASE_WORD_COUNT = 5
 const MAX_PASSPHRASE_WORD_COUNT = 9
-const LETTER_COUNT = 'z'.charCodeAt(0) - 'a'.charCodeAt(0) + 1
 
 export type PassphraseGenOptions = {
     wordCount: number | null
@@ -46,38 +45,48 @@ export type PassphraseGenOptions = {
     appendNumber: boolean | null
 }
 
+const MAX_32BIT_INT = Math.pow(2, 32)
+
 function randomBytes(length: number): Uint8Array {
     const buf = new Uint8Array(length)
     crypto.getRandomValues(buf)
     return buf
 }
 
+export function randomNumber(minInclusive: number, maxInclusive: number): number {
+    if (maxInclusive < minInclusive) {
+        throw new Error('Max inclusive cannot be less than the min inclusive')
+    }
+
+    const setSize = maxInclusive - minInclusive + 1
+    if (setSize > MAX_32BIT_INT) {
+        throw new Error('Max setSize exceeded')
+    }
+    if (setSize === 1) return minInclusive
+
+    const floor = MAX_32BIT_INT % setSize
+    const values = new Uint32Array(1)
+    do {
+        crypto.getRandomValues(values)
+    } while (values[0] < floor)
+
+    return (values[0] % setSize) + minInclusive
+}
+
 function randomInt(max: number): number {
     if (max <= 0) return 0
-    const buf = new Uint32Array(1)
-    crypto.getRandomValues(buf)
-    return buf[0] % max
+    return randomNumber(0, max - 1)
+}
+
+function getRandomCharacterInCharset(charset: string): string {
+    if (!charset.length) return ''
+    return charset[randomNumber(0, charset.length - 1)]
 }
 
 function shuffleInPlace<T>(array: T[]): void {
     if (!array || array.length < 2) return
-    const bigArray = array.length > 255
-    const randoms = randomBytes(array.length * (bigArray ? 4 : 1))
-    for (let i = array.length - 1; i >= 0; i--) {
-        let random: number
-        if (bigArray) {
-            const offset = i * 4
-            random =
-                ((randoms[offset] |
-                    (randoms[offset + 1] << 8) |
-                    (randoms[offset + 2] << 16) |
-                    (randoms[offset + 3] << 24)) >>>
-                    0) &
-                0x7fffffff
-        } else {
-            random = randoms[i]
-        }
-        const j = random % array.length
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = randomNumber(0, i)
         if (i !== j) {
             const ch = array[i]
             array[i] = array[j]
@@ -163,7 +172,9 @@ export function generatePasswordFromOptions(options?: PasswordGenerationOptions 
     const buffer = new Array<string>(length)
     const indexes = Array.from({ length }, (_, i) => i)
     shuffleInPlace(indexes)
-    const randoms = randomBytes(length)
+    const digitsSet = '0123456789'
+    const upperSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const lowerSet = 'abcdefghijklmnopqrstuvwxyz'
     const specialCharacters =
         options?.specialCharacters && options.specialCharacters.length > 0
             ? options.specialCharacters
@@ -171,19 +182,19 @@ export function generatePasswordFromOptions(options?: PasswordGenerationOptions 
 
     for (const pos of indexes) {
         if (upper > 0) {
-            buffer[pos] = String.fromCharCode('A'.charCodeAt(0) + (randoms[pos] % LETTER_COUNT))
+            buffer[pos] = getRandomCharacterInCharset(upperSet)
             upper--
         } else if (lower > 0) {
-            buffer[pos] = String.fromCharCode('a'.charCodeAt(0) + (randoms[pos] % LETTER_COUNT))
+            buffer[pos] = getRandomCharacterInCharset(lowerSet)
             lower--
         } else if (digit > 0) {
-            buffer[pos] = String.fromCharCode('0'.charCodeAt(0) + (randoms[pos] % 10))
+            buffer[pos] = getRandomCharacterInCharset(digitsSet)
             digit--
         } else if (special > 0) {
-            buffer[pos] = specialCharacters[randoms[pos] % specialCharacters.length]
+            buffer[pos] = getRandomCharacterInCharset(specialCharacters)
             special--
         } else {
-            buffer[pos] = String.fromCharCode('a'.charCodeAt(0) + (randoms[pos] % LETTER_COUNT))
+            buffer[pos] = getRandomCharacterInCharset(lowerSet)
         }
     }
 
