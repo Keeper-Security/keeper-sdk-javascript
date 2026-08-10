@@ -392,7 +392,6 @@ export function formatRecordFields(record: DRecord, unmask: boolean): { name: st
     return fields
 }
 
-
 export function formatRecord(record: DRecord, showDetailsOrOptions?: boolean | FormatRecordOptions): string {
     const { showDetails } = resolveFormatRecordOptions(showDetailsOrOptions)
     const summary = getRecordSummary(record)
