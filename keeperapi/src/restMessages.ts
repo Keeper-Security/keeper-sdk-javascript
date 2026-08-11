@@ -12,6 +12,7 @@ import {
     GraphSync,
     PAM,
     Records,
+    Router,
     ServiceLogger,
     SsoCloud,
     Vault,
@@ -979,6 +980,16 @@ export const getConfigurationControllerMessage = (
 ): RestMessage<PAM.IPAMGenericUidRequest, PAM.IPAMController> =>
     createMessage(data, 'pam/get_configuration_controller', PAM.PAMGenericUidRequest, PAM.PAMController)
 
+export const addConfigurationRecordMessage = (
+    data: PAM.IConfigurationAddRequest
+): RestInMessage<PAM.IConfigurationAddRequest> =>
+    createInMessage(data, 'pam/add_configuration_record', PAM.ConfigurationAddRequest)
+
+export const setConfigurationControllerMessage = (
+    data: PAM.IPAMConfigurationController
+): RestInMessage<PAM.IPAMConfigurationController> =>
+    createInMessage(data, 'pam/set_configuration_controller', PAM.PAMConfigurationController)
+
 /* -- PAM Router (DAG GraphSync) -- */
 
 export const pamSyncMessage = (
@@ -1008,6 +1019,12 @@ export const pamGetLeafsMessage = (
 
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
+
+/** Layer-B: set PAM configuration network-level `allowedSettings` (permissions). */
+export const pamConfigureNetworkGraphMessage = (
+    data: Router.IPAMNetworkConfigurationRequest
+): RestInMessage<Router.IPAMNetworkConfigurationRequest> =>
+    createInMessage(data, 'api/user/configure_network_graph', Router.PAMNetworkConfigurationRequest)
 
 export const readWorkflowConfigMessage = (
     data: GraphSync.IGraphSyncRef
@@ -1072,6 +1089,17 @@ export const keeperDriveRecordsAdd = (
     data: record.v3.IRecordsAddRequest
 ): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
+
+/** NSF: create a PAM configuration record already linked into a nested share folder. */
+export const addPamConfigurationV3Message = (
+    data: record.v3.IRecordsAddRequest
+): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/add_pam_configuration',
+        record.v3.RecordsAddRequest,
+        Records.RecordsModifyResponse
+    )
 
 export const keeperDriveRecordsUpdate = (
     data: Records.IRecordsUpdateRequest

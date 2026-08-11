@@ -8,26 +8,30 @@ import {
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../../utils/runner'
 
-async function removeGatewayExample() {
+async function removePamConfigurationExample() {
     const vault = await login()
 
     try {
-        const gatewayUidOrName = (await prompt('Gateway UID or name: ')).trim()
-        if (!gatewayUidOrName) {
-            logger.info('Gateway UID or name is required.')
+        const configurationUidOrTitle = (await prompt('PAM Configuration UID or title: ')).trim()
+        if (!configurationUidOrTitle) {
+            logger.info('Configuration UID or title is required.')
             return
         }
 
         let result
         const restore = suppressLogs()
         try {
-            result = await vault.removeGateway({ gatewayUidOrName })
+            result = await vault.removePamConfiguration({ configurationUidOrTitle })
         } finally {
             restore()
         }
 
         logger.info('')
-        logger.info(vault.formatRemoveGatewayOutput(result))
+        if (!result.found) {
+            logger.warn(vault.formatRemovePamConfigurationOutput(result))
+        } else {
+            logger.info(vault.formatRemovePamConfigurationOutput(result))
+        }
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)
@@ -37,4 +41,4 @@ async function removeGatewayExample() {
     }
 }
 
-runExample(removeGatewayExample)
+runExample(removePamConfigurationExample)
