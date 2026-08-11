@@ -26,12 +26,7 @@ export type TeamColumnInput = TeamColumn | `${TeamColumn}`
 
 export const SUPPORTED_TEAM_COLUMNS: readonly TeamColumn[] = Object.values(TeamColumn)
 
-export const DEFAULT_TEAM_COLUMNS: readonly TeamColumn[] = [
-    TeamColumn.Restricts,
-    TeamColumn.Node,
-    TeamColumn.UserCount,
-    TeamColumn.RoleCount,
-]
+export const DEFAULT_TEAM_COLUMNS: readonly TeamColumn[] = []
 
 const NODE_PATH_SEPARATOR = '\\'
 const MIN_ASCII_COL_WIDTH = 2
@@ -54,6 +49,8 @@ export type ListTeamsOptions = {
 export type ListTeamRow = {
     team_uid: string
     name: string
+    /** Enterprise / company name (Commander list-team "Company" column). */
+    company?: string
     restricts?: string
     node?: string
     user_count?: number
@@ -69,6 +66,7 @@ export type FormattedTeamsTable = {
 
 export type FormatTeamsTableOptions = {
     columns?: ListTeamsOptions['columns']
+    usersColumnTitle?: string
 }
 
 type DecorateContext = {
@@ -115,11 +113,13 @@ export async function listTeams(auth: Auth, options: ListTeamsOptions = {}): Pro
     }
 
     const pattern = options.pattern?.trim() || null
+    const company = (response.enterprise_name || '').trim()
     const rows: ListTeamRow[] = []
     for (const team of teams) {
         const row: ListTeamRow = {
             team_uid: team.team_uid,
             name: teamDisplayName(team),
+            company,
         }
         decorateRow(row, team, columns, context)
         if (pattern && !rowMatchesPattern(row, pattern)) continue
@@ -132,10 +132,17 @@ export async function listTeams(auth: Auth, options: ListTeamsOptions = {}): Pro
 
 export function formatTeamsTable(rows: ListTeamRow[], options: FormatTeamsTableOptions = {}): FormattedTeamsTable {
     const columns = resolveColumns(options.columns)
-    const headers: string[] = ['#', 'Team UID', 'Name', ...columns.map((column) => HEADER_BY_COLUMN[column])]
+    const usersTitle = options.usersColumnTitle?.trim() || HEADER_BY_COLUMN[TeamColumn.Users]
+    const headers: string[] = [
+        '#',
+        'Company',
+        'Team UID',
+        'Name',
+        ...columns.map((column) => (column === TeamColumn.Users ? usersTitle : HEADER_BY_COLUMN[column])),
+    ]
 
     const outRows: string[][] = rows.map((row, rowIndex) => {
-        const cells: string[] = [String(rowIndex + 1), row.team_uid, row.name]
+        const cells: string[] = [String(rowIndex + 1), row.company ?? '', row.team_uid, row.name]
         for (const column of columns) cells.push(formatCell(row, column))
         return cells
     })
@@ -230,6 +237,7 @@ function rowMatchesPattern(row: ListTeamRow, pattern: string): boolean {
     const lowered = pattern.toLowerCase()
     const tokens: string[] = []
     tokens.push(row.team_uid.toLowerCase())
+    if (row.company) tokens.push(...tokenize(row.company.toLowerCase()))
     tokens.push(...tokenize(row.name.toLowerCase()))
     if (row.restricts) tokens.push(row.restricts.toLowerCase())
     if (row.node) tokens.push(...tokenize(row.node.toLowerCase()))

@@ -1,6 +1,8 @@
 import { Folder } from '@keeper-security/keeperapi'
 import { KeeperSdkError, ResultCodes } from '../utils'
 
+export const ROOT_FOLDER_UID = 'AAAAAAAAAAAAAAAAAPmtNA'
+
 export const NSF_LEGACY_RECORD_MSG =
     "Record '{0}' is a legacy vault record. Nested Share Folder commands operate only on Nested Share Records."
 

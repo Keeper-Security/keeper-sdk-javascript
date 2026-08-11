@@ -1,4 +1,5 @@
 export {
+    ROOT_FOLDER_UID,
     KeeperDriveKind,
     NsfItemType,
     formatAccessRoleType,

@@ -43,6 +43,8 @@ import {
 } from './nsfConstants'
 import { NsfAccessRoleLabel, NSF_ACCESS_ROLE_LABELS, type ParseShareExpirationInput } from './nsfTypes'
 
+export { ROOT_FOLDER_UID } from './nsfConstants'
+
 export enum KeeperDriveKind {
     Folder = 'keeper_drive_folder',
     FolderAccess = 'keeper_drive_folder_access',
