@@ -30,6 +30,7 @@ export {
 export { InMemoryStorage } from './storage/InMemoryStorage'
 
 export {
+    Logger,
     ConsoleLogger,
     LogLevel,
     logger,
@@ -51,6 +52,7 @@ export {
     RoleErrorCode,
     TeamErrorCode,
     UserErrorCode,
+    NodeErrorCode,
     AuditReportErrorCode,
     ActionReportErrorCode,
     PasswordReportErrorCode,
@@ -63,7 +65,12 @@ export {
     anyIsBoolean,
     EMAIL_PATTERN,
     EMAIL_LIST_SEPARATOR_PATTERN,
+    TOKEN_SEPARATOR_PATTERN,
+    REGEX_ESCAPE_PATTERN,
+    TRAILING_EQUALS_PATTERN,
+    WHITESPACE_PATTERN,
     isValidEmail,
+    escapeRegExp,
     resolveSearchPattern,
     DEFAULT_PASSWORD_LENGTH,
     PW_SPECIAL_CHARACTERS,
@@ -88,6 +95,29 @@ export type {
     PassphraseGenOptions,
 } from './utils'
 
+export {
+    searchRecords,
+    formatRecord,
+    formatRecordFields,
+    getRecordTitle,
+    getRecordType,
+    getRecordFields,
+    getRecordSummary,
+    getRecordPassword,
+    getRecordLogin,
+    getRecordUrl,
+    getRecordTotpUrl,
+    getRecordDescription,
+    getRecordCategory,
+    RecordVersion,
+} from './records/RecordUtils'
+export type { RecordSummary } from './records/RecordUtils'
+export { formatRecordsListTable, renderRecordsListAsciiTable, renderRecordsListTable } from './records/listRecordsTable'
+export type { FormattedRecordsListTable } from './records/listRecordsTable'
+export { parseTotpUrl, getTotpCode } from './records/Totp'
+export type { TotpAlgorithm, TotpParams, TotpCode } from './records/Totp'
+export { buildWhoamiInfo, normalizeServerHost, resolveDataCenter } from './account/whoamiInfo'
+export type { WhoamiInfo, BuildWhoamiInfoInput } from './account/whoamiInfo'
 export { addRecord, updateRecord, deleteRecord, getRecordHistory, moveRecord } from './records/RecordOperations'
 export type {
     PasswordRecordData,
@@ -700,6 +730,15 @@ export {
     formatNsfRecordSharePlan,
     formatNsfRecordShareResults,
     formatNsfFolderShareResults,
+    parseShareExpiration,
+    parseShareExpirationValue,
+    validateShareExpirationTimestamp,
+    isShareExpirationNoop,
+    fetchNsfTeamPublicKeys,
+    encryptNsfFolderKeyForTeam,
+    resolveNsfShareRecipient,
+    MIN_SHARE_EXPIRATION_MS,
+    TeamGetKeysResponseKeyType,
     listNsfShortcuts,
     getNsfRecordShortcuts,
     formatNsfShortcutOutput,
@@ -707,9 +746,17 @@ export {
     formatKeepNsfShortcutPlan,
     transferNestedShareRecords,
     formatTransferNestedShareRecordResults,
+    NSFShareRoleName,
+    NsfShareCommandName,
+    NSF_SHARE_EXPIRATION_NEVER,
     NsfRecordPermissionAction,
     NsfFolderShareAction,
+    NsfFolderShareActionTaken,
     NsfRecordShareAction,
+    NsfRecordShareActionTaken,
+    NsfResultStatus,
+    NsfTransferApiStatus,
+    NsfPermissionFailureCode,
     collectNsfRecordUidsInFolder,
     updateNestedShareRecordPermissions,
     buildNsfRecordPermissionPlan,
@@ -719,8 +766,6 @@ export {
     resolveNsfRoleName,
     getNsfAccessRoleLabel,
     normalizeNsfRecordPermissionRole,
-    parseShareExpiration,
-    parseShareExpirationValue,
     NestedShareFolderManager,
 } from './nestedShareFolders'
 export type {
@@ -803,6 +848,9 @@ export type {
     NsfRecordPermissionFailure,
     NsfRecordPermissionRole,
     NsfRecordPermissionRoleInput,
+    ParseShareExpirationInput,
+    NsfTeamPublicKeys,
+    NsfResolvedShareRecipient,
 } from './nestedShareFolders'
 
 export type {

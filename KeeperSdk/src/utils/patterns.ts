@@ -12,10 +12,8 @@ export const TOKEN_SEPARATOR_PATTERN = /[\s\-_.,;:!?@#$%^&*()[\]{}|\\/<>]+/
 /** Characters that must be escaped when embedding user input into a RegExp. */
 export const REGEX_ESCAPE_PATTERN = /[.+^${}()|[\]\\]/g
 
-/** Sequence of one or more `=` characters at end of string (Base32 padding). */
 export const TRAILING_EQUALS_PATTERN = /=+$/g
 
-/** Any whitespace run. */
 export const WHITESPACE_PATTERN = /\s+/g
 
 export function isValidEmail(value: string): boolean {

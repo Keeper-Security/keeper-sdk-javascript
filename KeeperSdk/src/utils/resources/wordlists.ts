@@ -1,4 +1,3 @@
-// Auto-generated from Commander keepercommander/resources word lists.
 export const DICEWARE_WORDS: readonly string[] = [
     'abacus',
     'abdomen',

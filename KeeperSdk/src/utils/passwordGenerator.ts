@@ -1,12 +1,5 @@
-/**
- * Password generation — random passwords match Keeper .NET
- * `CryptoUtils.GeneratePassword` (keeper-sdk-dotnet).
- * Passphrase/dice/crypto/$GEN helpers align with Commander `generator.py`.
- */
-
 import { BIP39_WORDS, DICEWARE_WORDS } from './resources/wordlists'
 
-/** Matches `CryptoUtils.SpecialCharacters` in keeper-sdk-dotnet. */
 export const PW_SPECIAL_CHARACTERS = '!@#$%()+;<>=?[]{}^.,'
 
 export const DEFAULT_PASSWORD_LENGTH = 20
@@ -14,10 +7,6 @@ export const GEN_PASSWORD_ALGORITHMS = ['rand', 'dice', 'crypto', 'passphrase'] 
 
 export type GenPasswordAlgorithm = (typeof GEN_PASSWORD_ALGORITHMS)[number]
 
-/**
- * Matches `PasswordGenerationOptions` in keeper-sdk-dotnet.
- * Use -1 for upper/lower/digit/special to exclude that character class.
- */
 export type PasswordGenerationOptions = {
     length?: number
     lower?: number
@@ -48,7 +37,6 @@ const DEFAULT_PASSPHRASE_SEPARATOR = '-'
 const DEFAULT_PASSPHRASE_WORD_COUNT = 5
 const MIN_PASSPHRASE_WORD_COUNT = 5
 const MAX_PASSPHRASE_WORD_COUNT = 9
-const LETTER_COUNT = 'z'.charCodeAt(0) - 'a'.charCodeAt(0) + 1
 
 export type PassphraseGenOptions = {
     wordCount: number | null
@@ -57,39 +45,48 @@ export type PassphraseGenOptions = {
     appendNumber: boolean | null
 }
 
+const MAX_32BIT_INT = Math.pow(2, 32)
+
 function randomBytes(length: number): Uint8Array {
     const buf = new Uint8Array(length)
     crypto.getRandomValues(buf)
     return buf
 }
 
-function randomInt(max: number): number {
-    if (max <= 0) return 0
-    const buf = new Uint32Array(1)
-    crypto.getRandomValues(buf)
-    return buf[0] % max
+export function randomNumber(minInclusive: number, maxInclusive: number): number {
+    if (maxInclusive < minInclusive) {
+        throw new Error('Max inclusive cannot be less than the min inclusive')
+    }
+
+    const setSize = maxInclusive - minInclusive + 1
+    if (setSize > MAX_32BIT_INT) {
+        throw new Error('Max setSize exceeded')
+    }
+    if (setSize === 1) return minInclusive
+
+    const floor = MAX_32BIT_INT % setSize
+    const values = new Uint32Array(1)
+    do {
+        crypto.getRandomValues(values)
+    } while (values[0] < floor)
+
+    return (values[0] % setSize) + minInclusive
 }
 
-/** Matches `CryptoUtils.Shuffle` (keeper-sdk-dotnet). */
+function randomInt(max: number): number {
+    if (max <= 0) return 0
+    return randomNumber(0, max - 1)
+}
+
+function getRandomCharacterInCharset(charset: string): string {
+    if (!charset.length) return ''
+    return charset[randomNumber(0, charset.length - 1)]
+}
+
 function shuffleInPlace<T>(array: T[]): void {
     if (!array || array.length < 2) return
-    const bigArray = array.length > 255
-    const randoms = randomBytes(array.length * (bigArray ? 4 : 1))
-    for (let i = array.length - 1; i >= 0; i--) {
-        let random: number
-        if (bigArray) {
-            const offset = i * 4
-            random =
-                ((randoms[offset] |
-                    (randoms[offset + 1] << 8) |
-                    (randoms[offset + 2] << 16) |
-                    (randoms[offset + 3] << 24)) >>>
-                    0) &
-                0x7fffffff
-        } else {
-            random = randoms[i]
-        }
-        const j = random % array.length
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = randomNumber(0, i)
         if (i !== j) {
             const ch = array[i]
             array[i] = array[j]
@@ -98,10 +95,6 @@ function shuffleInPlace<T>(array: T[]): void {
     }
 }
 
-/**
- * Generates a random password using Keeper vault rules.
- * Port of `CryptoUtils.GeneratePassword` (keeper-sdk-dotnet).
- */
 export function generatePasswordFromOptions(options?: PasswordGenerationOptions | null): string {
     let length = options?.length ?? 20
     let upper = options?.upper ?? 4
@@ -179,7 +172,9 @@ export function generatePasswordFromOptions(options?: PasswordGenerationOptions 
     const buffer = new Array<string>(length)
     const indexes = Array.from({ length }, (_, i) => i)
     shuffleInPlace(indexes)
-    const randoms = randomBytes(length)
+    const digitsSet = '0123456789'
+    const upperSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const lowerSet = 'abcdefghijklmnopqrstuvwxyz'
     const specialCharacters =
         options?.specialCharacters && options.specialCharacters.length > 0
             ? options.specialCharacters
@@ -187,19 +182,19 @@ export function generatePasswordFromOptions(options?: PasswordGenerationOptions 
 
     for (const pos of indexes) {
         if (upper > 0) {
-            buffer[pos] = String.fromCharCode('A'.charCodeAt(0) + (randoms[pos] % LETTER_COUNT))
+            buffer[pos] = getRandomCharacterInCharset(upperSet)
             upper--
         } else if (lower > 0) {
-            buffer[pos] = String.fromCharCode('a'.charCodeAt(0) + (randoms[pos] % LETTER_COUNT))
+            buffer[pos] = getRandomCharacterInCharset(lowerSet)
             lower--
         } else if (digit > 0) {
-            buffer[pos] = String.fromCharCode('0'.charCodeAt(0) + (randoms[pos] % 10))
+            buffer[pos] = getRandomCharacterInCharset(digitsSet)
             digit--
         } else if (special > 0) {
-            buffer[pos] = specialCharacters[randoms[pos] % specialCharacters.length]
+            buffer[pos] = getRandomCharacterInCharset(specialCharacters)
             special--
         } else {
-            buffer[pos] = String.fromCharCode('a'.charCodeAt(0) + (randoms[pos] % LETTER_COUNT))
+            buffer[pos] = getRandomCharacterInCharset(lowerSet)
         }
     }
 
@@ -226,7 +221,6 @@ function policyToGenerationOptions(
     return opts
 }
 
-/** Thin wrapper over {@link generatePasswordFromOptions} for CLI / legacy callers. */
 export class KeeperPasswordGenerator {
     private readonly options: PasswordGenerationOptions
 
@@ -534,7 +528,6 @@ export function generatePassword(
     }
 }
 
-/** Parse `$GEN:rand,16` or `$GEN` into generation parameters. */
 export function parseGenParametersFromValue(value: string): string[] {
     if (!value.startsWith('$GEN')) return []
     let rest = value.slice(4)
@@ -547,7 +540,6 @@ export function isGenerateFieldValue(value: string): boolean {
     return value.startsWith('$GEN')
 }
 
-/** Parse `--generate-password` or `--generate-password=rand,16` into $GEN parameters. */
 export function parseGeneratePasswordFlag(raw: string | true | undefined): string[] | null {
     if (raw === undefined) return null
     if (raw === true) return []

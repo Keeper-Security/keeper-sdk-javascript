@@ -1,4 +1,5 @@
 import { getSdkPlatform } from '../platform'
+import { WHITESPACE_PATTERN } from '../utils/patterns'
 
 export type TotpAlgorithm = 'SHA1' | 'SHA256' | 'SHA512'
 
@@ -22,7 +23,10 @@ const DEFAULT_ALGORITHM: TotpAlgorithm = 'SHA1'
 const UINT32_MAX = 0x100000000
 
 function decodeBase32(input: string): Uint8Array {
-    const cleaned = input.replace(/=+$/g, '').replace(/\s+/g, '').toUpperCase()
+    const noWhitespace = input.replace(WHITESPACE_PATTERN, '')
+    let endIndex = noWhitespace.length
+    while (endIndex > 0 && noWhitespace.charCodeAt(endIndex - 1) === 0x3d) endIndex--
+    const cleaned = noWhitespace.slice(0, endIndex).toUpperCase()
     const out: number[] = []
     let buffer = 0
     let bits = 0

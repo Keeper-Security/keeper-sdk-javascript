@@ -12,7 +12,6 @@ const ESCAPED_SEPARATOR_PLACEHOLDER = '\x00'
 
 export type VaultFolderSession = {
     currentFolderUid: string | null
-    /** Full display path e.g. `My Vault/Subfolder` (updated on cd). */
     workingFolderDisplayPath?: string
 }
 

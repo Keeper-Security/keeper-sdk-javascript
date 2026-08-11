@@ -84,7 +84,6 @@ export function userFolderName(folder: DUserFolder): string {
     return (data?.title || data?.name || folder.uid).trim() || folder.uid
 }
 
-/** Vault folder color from user-folder data (`none` and missing → undefined). */
 export function userFolderColor(folder: DUserFolder): string | undefined {
     const color = (folder.data as UserFolderData | undefined)?.color
     if (typeof color !== 'string') return undefined

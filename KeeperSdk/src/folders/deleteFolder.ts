@@ -22,7 +22,6 @@ export type DeleteFolderResult = {
     success: boolean
     message?: string
     cancelled?: boolean
-    /** Folder list shown before delete (for CLI output). */
     foldersPreview?: string
 }
 
@@ -30,7 +29,6 @@ export type RmdirOptions = {
     force?: boolean
     quiet?: boolean
     confirm?: (summary: string) => boolean | Promise<boolean>
-    /** Override prompt (e.g. browser shell UI). Defaults to SdkPlatform readline. */
     ask?: (prompt: string) => Promise<string>
 }
 
@@ -210,7 +208,6 @@ export async function deleteFolder(
             return { success: false, cancelled: true, message: 'Cancelled.' }
         }
 
-        // Interactive confirmation can outlive the pre_delete token; fetch a fresh one.
         try {
             preResp = await auth.executeRestCommand(preDeleteCommand({ objects }))
         } catch (err) {
