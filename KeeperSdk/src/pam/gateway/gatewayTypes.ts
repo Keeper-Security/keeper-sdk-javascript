@@ -120,8 +120,6 @@ export type CreateGatewayInput = {
     application: string
     tokenExpiresInMin?: number
     configInit?: GatewayConfigInitFormatInput
-    /** When true, return only the OTT/config string (automation / -r). */
-    returnValue?: boolean
 }
 
 export type CreateGatewayResult = {

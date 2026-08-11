@@ -1009,10 +1009,7 @@ export class KeeperVault {
         return this.pamManager.listGateways(options ?? {})
     }
 
-    public async createGateway(input: CreateGatewayInput & { returnValue: true }): Promise<string>
-    public async createGateway(input: CreateGatewayInput & { returnValue?: false }): Promise<CreateGatewayResult>
-    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult | string>
-    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult | string> {
+    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult> {
         return this.pamManager.createGateway(input)
     }
 

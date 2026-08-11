@@ -1,4 +1,13 @@
-export const KSM_APP_RECORD_VERSION = 5
+/**
+ * Keeper application (KSM) record versions recognized by this SDK.
+ * Add new versions here when Keeper introduces additional app-record formats.
+ */
+export const SUPPORTED_KSM_APP_RECORD_VERSIONS = [5] as const
+
+export type KsmAppRecordVersion = (typeof SUPPORTED_KSM_APP_RECORD_VERSIONS)[number]
+
+/** Current primary KSM application record version. Prefer SUPPORTED_KSM_APP_RECORD_VERSIONS for checks. */
+export const KSM_APP_RECORD_VERSION: KsmAppRecordVersion = SUPPORTED_KSM_APP_RECORD_VERSIONS[0]
 
 export const APP_NOT_ACCESSIBLE_LABEL = '[APP NOT ACCESSIBLE OR DELETED]' as const
 

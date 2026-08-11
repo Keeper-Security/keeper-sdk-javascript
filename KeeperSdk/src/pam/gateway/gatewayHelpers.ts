@@ -6,8 +6,8 @@ import { getRecordTitle } from '../../records/RecordUtils'
 import { KEEPER_PUBLIC_HOSTS, KeeperSdkError, ResultCodes, extractErrorMessage } from '../../utils'
 import {
     APP_NOT_ACCESSIBLE_LABEL,
-    KSM_APP_RECORD_VERSION,
     ROUTER_CONNECTION_ERROR_CODES,
+    SUPPORTED_KSM_APP_RECORD_VERSIONS,
     type RouterConnectionErrorCode,
 } from './gatewayConstants'
 import type {
@@ -66,8 +66,13 @@ export function parseGatewayVersionString(version: string | null | undefined): G
     }
 }
 
+function isSupportedKsmAppRecordVersion(version: number): boolean {
+    return (SUPPORTED_KSM_APP_RECORD_VERSIONS as readonly number[]).includes(version)
+}
+
 function isKsmApplicationRecord(record: DRecord): boolean {
-    if (record.version !== KSM_APP_RECORD_VERSION) return false
+    // Version gate keeps us aligned with known Keeper app-record formats; type==='app' is the semantic check.
+    if (!isSupportedKsmAppRecordVersion(record.version)) return false
     const data: unknown = record.data
     if (!data || typeof data !== 'object') return false
     return (data as { type?: unknown }).type === 'app'
