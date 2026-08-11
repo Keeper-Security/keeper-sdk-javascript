@@ -104,12 +104,14 @@ export async function applyPamConfigurationPermissions(
 
     if (Object.keys(allowedSettings).length === 0) return false
 
+    const allowedSettingsBytes = new TextEncoder().encode(JSON.stringify(allowedSettings))
+
     try {
         await auth.executeRouterRestAction(
             pamConfigureNetworkGraphMessage({
                 recordUid: normal64Bytes(configurationUid),
                 networkSettings: {
-                    allowedSettings: new TextEncoder().encode(JSON.stringify(allowedSettings)),
+                    allowedSettings: allowedSettingsBytes,
                 },
             })
         )
