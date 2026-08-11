@@ -4,7 +4,7 @@ import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import {
     controllerUidsEqual,
     fetchEnterprisePamControllers,
-    findEnterpriseGatewayByUidOrName,
+    requireEnterpriseGatewayByUidOrName,
     webSafeUidFromBytes,
 } from './gatewayHelpers'
 import type { RemoveGatewayInput, RemoveGatewayResult } from './gatewayTypes'
@@ -16,29 +16,23 @@ export async function removeGateway(auth: Auth, input: RemoveGatewayInput): Prom
     }
 
     const controllers = await fetchEnterprisePamControllers(auth, ResultCodes.PAM_GATEWAY_REMOVE_FAILED)
-    const gateway = findEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)
-    if (!gateway?.controllerUid?.length) {
-        return {
-            success: false,
-            found: false,
-            message: `Gateway ${gatewayUidOrName} not found`,
-        }
-    }
-
+    const gateway = requireEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)
     const gatewayUid = webSafeUidFromBytes(gateway.controllerUid)
     const gatewayName = gateway.controllerName || gatewayUid
     const controllerUidBytes = gateway.controllerUid
 
     try {
         const response = await auth.executeRest(removeControllerMessage({ uid: controllerUidBytes }))
-        const errorEntry = (response.controllers ?? []).find((entry) =>
-            controllerUidsEqual(entry.controllerUid, controllerUidBytes)
+        // PAMRemoveControllerResponse.controllers holds per-controller failure details.
+        // Empty list / matching entry without a message ⇒ success; non-empty message ⇒ failure.
+        const failureEntry = (response.controllers ?? []).find(
+            (entry) =>
+                controllerUidsEqual(entry.controllerUid, controllerUidBytes) &&
+                typeof entry.message === 'string' &&
+                entry.message.trim().length > 0
         )
-        if (errorEntry) {
-            throw new KeeperSdkError(
-                errorEntry.message || `Failed to remove gateway ${gatewayName}.`,
-                ResultCodes.PAM_GATEWAY_REMOVE_FAILED
-            )
+        if (failureEntry) {
+            throw new KeeperSdkError(failureEntry.message.trim(), ResultCodes.PAM_GATEWAY_REMOVE_FAILED)
         }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
@@ -50,7 +44,6 @@ export async function removeGateway(auth: Auth, input: RemoveGatewayInput): Prom
 
     return {
         success: true,
-        found: true,
         gatewayUid,
         gatewayName,
         message: `Gateway ${gatewayName} has been removed.`,

@@ -160,9 +160,8 @@ export type RemoveGatewayInput = {
 
 export type RemoveGatewayResult = {
     success: boolean
-    found: boolean
-    gatewayUid?: string
-    gatewayName?: string
+    gatewayUid: string
+    gatewayName: string
     message: string
 }
 
