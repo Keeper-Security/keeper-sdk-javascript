@@ -1,14 +1,15 @@
-import type { Auth, PAM } from '@keeper-security/keeperapi'
-import { createInMessage, getControllers, normal64Bytes, PAM as PamProto } from '@keeper-security/keeperapi'
+import type { Auth } from '@keeper-security/keeperapi'
+import { modifyControllerMessage, normal64Bytes } from '@keeper-security/keeperapi'
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../../teams/enterpriseData'
 import { applyDecryptedNodeNames, resolveParentNode } from '../../teams/teamUtils'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
-import { findEnterpriseGatewayByUidOrName, toFiniteNumber, webSafeUidFromBytes } from './gatewayHelpers'
+import {
+    fetchEnterprisePamControllers,
+    requireEnterpriseGatewayByUidOrName,
+    toFiniteNumber,
+    webSafeUidFromBytes,
+} from './gatewayHelpers'
 import type { EditGatewayInput, EditGatewayResult } from './gatewayTypes'
-
-function modifyControllerMessage(data: PAM.IPAMController) {
-    return createInMessage(data, 'pam/modify_controller', PamProto.PAMController)
-}
 
 function hasNodeArgument(nodeIdOrName: EditGatewayInput['nodeIdOrName']): boolean {
     return (
@@ -73,21 +74,8 @@ export async function editGateway(auth: Auth, input: EditGatewayInput): Promise<
         )
     }
 
-    let controllers: PAM.IPAMController[]
-    try {
-        const response = await auth.executeRest(getControllers())
-        controllers = response.controllers ?? []
-    } catch (err) {
-        throw new KeeperSdkError(
-            `Failed to list enterprise gateways: ${extractErrorMessage(err)}`,
-            ResultCodes.PAM_GATEWAY_EDIT_FAILED
-        )
-    }
-
-    const gateway = findEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)
-    if (!gateway?.controllerUid?.length) {
-        throw new KeeperSdkError(`Gateway "${gatewayUidOrName}" not found.`, ResultCodes.PAM_GATEWAY_NOT_FOUND)
-    }
+    const controllers = await fetchEnterprisePamControllers(auth, ResultCodes.PAM_GATEWAY_EDIT_FAILED)
+    const gateway = requireEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)
 
     const gatewayUid = webSafeUidFromBytes(gateway.controllerUid)
     const previousName = gateway.controllerName || ''

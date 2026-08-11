@@ -11,6 +11,8 @@ export {
 
 export { createGateway, formatCreateGatewayOutput } from './createGateway'
 export { editGateway, formatEditGatewayOutput } from './editGateway'
+export { removeGateway, formatRemoveGatewayOutput } from './removeGateway'
+export { setGatewayMaxInstances, formatSetGatewayMaxInstancesOutput } from './setGatewayMaxInstances'
 
 export { GatewayListFormat, GatewayStatus, GatewayConfigInitFormat } from './gatewayTypes'
 export type {
@@ -33,6 +35,10 @@ export type {
     CreateGatewayResult,
     EditGatewayInput,
     EditGatewayResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
     GatewayJsonPoolInstance,
     GatewayJsonEntry,
     GatewaysJsonPayload,
@@ -40,18 +46,23 @@ export type {
 
 export {
     KSM_APP_RECORD_VERSION,
+    SUPPORTED_KSM_APP_RECORD_VERSIONS,
     APP_NOT_ACCESSIBLE_LABEL,
     KSM_CLIENT_ID_MESSAGE,
     DEFAULT_GATEWAY_TOKEN_EXPIRES_IN_MIN,
     MAX_GATEWAY_TOKEN_EXPIRES_IN_MIN,
+    MIN_GATEWAY_MAX_INSTANCES,
+    MAX_GATEWAY_MAX_INSTANCES,
     EMPTY_GATEWAYS_MESSAGE,
     GATEWAY_LIST_DEFAULT_HEADERS,
     GATEWAY_LIST_VERBOSE_HEADERS,
 } from './gatewayConstants'
+export type { KsmAppRecordVersion } from './gatewayConstants'
 
 export {
     getKeeperRouterBaseUrl,
     webSafeUidFromBytes,
+    controllerUidsEqual,
     toFiniteNumber,
     formatTimestampMs,
     parseGatewayVersionString,
@@ -60,6 +71,8 @@ export {
     getKeeperRegionAbbreviation,
     formatGatewayOneTimeToken,
     findEnterpriseGatewayByUidOrName,
+    requireEnterpriseGatewayByUidOrName,
+    fetchEnterprisePamControllers,
     groupOnlineGatewaysByControllerUid,
     isKeeperRouterConnectionError,
 } from './gatewayHelpers'

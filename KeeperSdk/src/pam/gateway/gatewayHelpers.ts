@@ -1,23 +1,21 @@
-import type { DRecord, PAM } from '@keeper-security/keeperapi'
-import { getKeeperRouterUrl, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import type { Auth, DRecord, PAM } from '@keeper-security/keeperapi'
+import { getControllers, getKeeperRouterUrl, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { getRecordTitle } from '../../records/RecordUtils'
-import { KEEPER_PUBLIC_HOSTS, KeeperSdkError, ResultCodes } from '../../utils'
+import { KEEPER_PUBLIC_HOSTS, KeeperSdkError, ResultCodes, extractErrorMessage } from '../../utils'
 import {
     APP_NOT_ACCESSIBLE_LABEL,
-    KSM_APP_RECORD_VERSION,
     ROUTER_CONNECTION_ERROR_CODES,
+    SUPPORTED_KSM_APP_RECORD_VERSIONS,
     type RouterConnectionErrorCode,
 } from './gatewayConstants'
-import type { GatewayVersionParts, KsmApplicationDisplayInfo, ResolvedKsmApplication } from './gatewayTypes'
-
-type NetworkErrorLike = {
-    code?: string
-    errno?: string
-    message?: string
-    cause?: { code?: string }
-}
+import type {
+    GatewayVersionParts,
+    KsmApplicationDisplayInfo,
+    NetworkErrorLike,
+    ResolvedKsmApplication,
+} from './gatewayTypes'
 
 export function getKeeperRouterBaseUrl(host: string): string {
     return getKeeperRouterUrl(host, '').replace(/\/$/, '')
@@ -26,6 +24,14 @@ export function getKeeperRouterBaseUrl(host: string): string {
 export function webSafeUidFromBytes(bytes: Uint8Array | null | undefined): string {
     if (!bytes || bytes.length === 0) return ''
     return webSafe64FromBytes(bytes)
+}
+
+export function controllerUidsEqual(a: Uint8Array | null | undefined, b: Uint8Array | null | undefined): boolean {
+    if (!a || !b || a.length !== b.length) return false
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false
+    }
+    return true
 }
 
 export function toFiniteNumber(value: unknown): number {
@@ -60,8 +66,13 @@ export function parseGatewayVersionString(version: string | null | undefined): G
     }
 }
 
+function isSupportedKsmAppRecordVersion(version: number): boolean {
+    return (SUPPORTED_KSM_APP_RECORD_VERSIONS as readonly number[]).includes(version)
+}
+
 function isKsmApplicationRecord(record: DRecord): boolean {
-    if (record.version !== KSM_APP_RECORD_VERSION) return false
+    // Version gate keeps us aligned with known Keeper app-record formats; type==='app' is the semantic check.
+    if (!isSupportedKsmAppRecordVersion(record.version)) return false
     const data: unknown = record.data
     if (!data || typeof data !== 'object') return false
     return (data as { type?: unknown }).type === 'app'
@@ -192,6 +203,29 @@ export function findEnterpriseGatewayByUidOrName(
         if (uid === trimmed) return true
         return (controller.controllerName || '').toLowerCase() === lowered
     })
+}
+
+export function requireEnterpriseGatewayByUidOrName(
+    controllers: readonly PAM.IPAMController[],
+    gatewayUidOrName: string
+): PAM.IPAMController {
+    const gateway = findEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)
+    if (!gateway?.controllerUid?.length) {
+        throw new KeeperSdkError(`Gateway "${gatewayUidOrName}" not found.`, ResultCodes.PAM_GATEWAY_NOT_FOUND)
+    }
+    return gateway
+}
+
+export async function fetchEnterprisePamControllers(
+    auth: Auth,
+    failureResultCode: string
+): Promise<PAM.IPAMController[]> {
+    try {
+        const response = await auth.executeRest(getControllers())
+        return response.controllers ?? []
+    } catch (err) {
+        throw new KeeperSdkError(`Failed to list enterprise gateways: ${extractErrorMessage(err)}`, failureResultCode)
+    }
 }
 
 export function groupOnlineGatewaysByControllerUid(

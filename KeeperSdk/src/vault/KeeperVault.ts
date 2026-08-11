@@ -153,7 +153,24 @@ import type {
     CreateGatewayResult,
     EditGatewayInput,
     EditGatewayResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
 } from '../pam/gateway/gatewayTypes'
+import type {
+    FormatPamConfigurationsTableOptions,
+    FormattedPamConfigurationsTable,
+    ListPamConfigurationsOptions,
+    ListPamConfigurationsResult,
+    RenderPamConfigurationsAsciiTableOptions,
+    CreatePamConfigurationInput,
+    CreatePamConfigurationResult,
+    EditPamConfigurationInput,
+    EditPamConfigurationResult,
+    RemovePamConfigurationInput,
+    RemovePamConfigurationResult,
+} from '../pam/config/configTypes'
 import type {
     ListUserRow,
     ListUsersOptions,
@@ -262,6 +279,10 @@ export class KeeperVault {
 
     public getGatewayManager() {
         return this.pamManager.getGatewayManager()
+    }
+
+    public getConfigManager() {
+        return this.pamManager.getConfigManager()
     }
 
     public getFolderManager(): FolderManager {
@@ -762,7 +783,7 @@ export class KeeperVault {
 
     public async deleteRecord(recordUid: string): Promise<DeleteRecordResult> {
         const auth = this.getAuthOrThrow()
-        const result = await deleteRecordOp(auth, recordUid)
+        const result = await deleteRecordOp(auth, this.storage, recordUid)
         if (result.success) await this.syncIfNeeded()
         return result
     }
@@ -1005,10 +1026,7 @@ export class KeeperVault {
         return this.pamManager.listGateways(options ?? {})
     }
 
-    public async createGateway(input: CreateGatewayInput & { returnValue: true }): Promise<string>
-    public async createGateway(input: CreateGatewayInput & { returnValue?: false }): Promise<CreateGatewayResult>
-    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult | string>
-    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult | string> {
+    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult> {
         return this.pamManager.createGateway(input)
     }
 
@@ -1022,6 +1040,22 @@ export class KeeperVault {
 
     public formatEditGatewayOutput(result: EditGatewayResult): string {
         return this.pamManager.formatEditGatewayOutput(result)
+    }
+
+    public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
+        return this.pamManager.removeGateway(input)
+    }
+
+    public formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
+        return this.pamManager.formatRemoveGatewayOutput(result)
+    }
+
+    public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
+        return this.pamManager.setGatewayMaxInstances(input)
+    }
+
+    public formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
+        return this.pamManager.formatSetGatewayMaxInstancesOutput(result)
     }
 
     public formatGatewaysTable(
@@ -1041,6 +1075,73 @@ export class KeeperVault {
 
     public formatGatewaysOutput(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
         return this.pamManager.formatGatewaysOutput(result, options ?? {})
+    }
+
+    public listPamConfigurations(options?: ListPamConfigurationsOptions): ListPamConfigurationsResult {
+        return this.pamManager.listPamConfigurations(options ?? {})
+    }
+
+    public async createPamConfiguration(input: CreatePamConfigurationInput & { returnValue: true }): Promise<string>
+    public async createPamConfiguration(
+        input: CreatePamConfigurationInput & { returnValue?: false }
+    ): Promise<CreatePamConfigurationResult>
+    public async createPamConfiguration(
+        input: CreatePamConfigurationInput
+    ): Promise<CreatePamConfigurationResult | string>
+    public async createPamConfiguration(
+        input: CreatePamConfigurationInput
+    ): Promise<CreatePamConfigurationResult | string> {
+        return this.pamManager.createPamConfiguration(input)
+    }
+
+    public formatCreatePamConfigurationOutput(result: CreatePamConfigurationResult): string {
+        return this.pamManager.formatCreatePamConfigurationOutput(result)
+    }
+
+    public async editPamConfiguration(input: EditPamConfigurationInput): Promise<EditPamConfigurationResult> {
+        return this.pamManager.editPamConfiguration(input)
+    }
+
+    public formatEditPamConfigurationOutput(result: EditPamConfigurationResult): string {
+        return this.pamManager.formatEditPamConfigurationOutput(result)
+    }
+
+    public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
+        const result = await this.pamManager.removePamConfiguration(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatRemovePamConfigurationOutput(result: RemovePamConfigurationResult): string {
+        return this.pamManager.formatRemovePamConfigurationOutput(result)
+    }
+
+    public formatPamConfigurationsTable(
+        result: ListPamConfigurationsResult,
+        options?: FormatPamConfigurationsTableOptions
+    ): FormattedPamConfigurationsTable {
+        return this.pamManager.formatPamConfigurationsTable(result, options ?? {})
+    }
+
+    public renderPamConfigurationsAsciiTable(
+        table: FormattedPamConfigurationsTable,
+        options?: RenderPamConfigurationsAsciiTableOptions
+    ): string {
+        return this.pamManager.renderPamConfigurationsAsciiTable(table, options ?? {})
+    }
+
+    public formatPamConfigurationsJson(
+        result: ListPamConfigurationsResult,
+        options?: ListPamConfigurationsOptions
+    ): string {
+        return this.pamManager.formatPamConfigurationsJson(result, options ?? {})
+    }
+
+    public formatPamConfigurationsOutput(
+        result: ListPamConfigurationsResult,
+        options?: ListPamConfigurationsOptions
+    ): string {
+        return this.pamManager.formatPamConfigurationsOutput(result, options ?? {})
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {

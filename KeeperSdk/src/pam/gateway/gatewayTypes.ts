@@ -120,7 +120,6 @@ export type CreateGatewayInput = {
     application: string
     tokenExpiresInMin?: number
     configInit?: GatewayConfigInitFormatInput
-    returnValue?: boolean
 }
 
 export type CreateGatewayResult = {
@@ -152,6 +151,30 @@ export type EditGatewayResult = {
     nodeId: number
     nameChanged: boolean
     nodeChanged: boolean
+    message: string
+}
+
+export type RemoveGatewayInput = {
+    gatewayUidOrName: string
+}
+
+export type RemoveGatewayResult = {
+    success: boolean
+    gatewayUid: string
+    gatewayName: string
+    message: string
+}
+
+export type SetGatewayMaxInstancesInput = {
+    gatewayUidOrName: string
+    maxInstances: number
+}
+
+export type SetGatewayMaxInstancesResult = {
+    success: boolean
+    gatewayUid: string
+    gatewayName: string
+    maxInstances: number
     message: string
 }
 
@@ -192,4 +215,11 @@ export type GatewaysJsonPayload = {
     router_host?: string
     gateway_counts?: GatewayCounts
     message?: string
+}
+
+export type NetworkErrorLike = {
+    code?: string
+    errno?: string
+    message?: string
+    cause?: { code?: string }
 }
