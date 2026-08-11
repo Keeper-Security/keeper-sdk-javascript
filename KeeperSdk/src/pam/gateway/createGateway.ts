@@ -7,6 +7,7 @@ import {
     platform,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
+import { getSecrets, initializeStorage, type KeyValueStorage } from '@keeper-security/secrets-manager-core'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import {
@@ -22,17 +23,10 @@ import {
     type GatewayConfigInitFormatInput,
 } from './gatewayTypes'
 
-type SecretsManagerStorage = {
-    getString: (key: string) => Promise<string | undefined>
-    saveString: (key: string, value: string) => Promise<void>
+type SecretsManagerStorage = KeyValueStorage & {
     getStringSync?: (key: string) => string | undefined
     saveStringSync?: (key: string, value: string) => void
     snapshot: () => Record<string, string>
-}
-
-type SecretsManagerCoreModule = {
-    initializeStorage: (storage: SecretsManagerStorage, token: string, hostname?: string) => Promise<void>
-    getSecrets: (options: { storage: SecretsManagerStorage }) => Promise<unknown>
 }
 
 function createSecretsManagerStorage(): SecretsManagerStorage {
@@ -43,6 +37,16 @@ function createSecretsManagerStorage(): SecretsManagerStorage {
         },
         async saveString(key, value) {
             map.set(key, value)
+        },
+        async getBytes(key) {
+            const value = map.get(key)
+            return value == null ? undefined : Buffer.from(value, 'base64')
+        },
+        async saveBytes(key, value) {
+            map.set(key, Buffer.from(value).toString('base64'))
+        },
+        async delete(key) {
+            map.delete(String(key))
         },
         getStringSync(key) {
             return map.get(key)
@@ -87,28 +91,11 @@ async function initKsmConfigFromToken(
     host: string,
     format: GatewayConfigInitFormat
 ): Promise<string> {
-    let ksm: Partial<SecretsManagerCoreModule>
-    try {
-        ksm = require('@keeper-security/secrets-manager-core') as SecretsManagerCoreModule
-    } catch {
-        throw new KeeperSdkError(
-            'configInit requires optional package "@keeper-security/secrets-manager-core". Install it to initialize gateway config from the one-time token.',
-            ResultCodes.PAM_CONFIG_INIT_UNAVAILABLE
-        )
-    }
-
-    if (typeof ksm.initializeStorage !== 'function' || typeof ksm.getSecrets !== 'function') {
-        throw new KeeperSdkError(
-            'Installed @keeper-security/secrets-manager-core does not expose initializeStorage/getSecrets.',
-            ResultCodes.PAM_CONFIG_INIT_UNAVAILABLE
-        )
-    }
-
     const storage = createSecretsManagerStorage()
     try {
-        await ksm.initializeStorage(storage, oneTimeToken, host)
+        await initializeStorage(storage, oneTimeToken, host)
         try {
-            await ksm.getSecrets({ storage })
+            await getSecrets({ storage })
         } catch {
             // First access may fail looking up a dummy UID; config keys should still populate.
         }
@@ -159,23 +146,8 @@ function buildCreateGatewayMessage(
 export async function createGateway(
     auth: Auth,
     storage: InMemoryStorage,
-    input: CreateGatewayInput & { returnValue: true }
-): Promise<string>
-export async function createGateway(
-    auth: Auth,
-    storage: InMemoryStorage,
-    input: CreateGatewayInput & { returnValue?: false }
-): Promise<CreateGatewayResult>
-export async function createGateway(
-    auth: Auth,
-    storage: InMemoryStorage,
     input: CreateGatewayInput
-): Promise<CreateGatewayResult | string>
-export async function createGateway(
-    auth: Auth,
-    storage: InMemoryStorage,
-    input: CreateGatewayInput
-): Promise<CreateGatewayResult | string> {
+): Promise<CreateGatewayResult> {
     const gatewayName = input.name?.trim() || ''
     if (!gatewayName) {
         throw new KeeperSdkError('Gateway name is required.', ResultCodes.PAM_GATEWAY_NAME_REQUIRED)
@@ -188,7 +160,6 @@ export async function createGateway(
 
     const tokenExpiresInMin = resolveTokenExpiresInMin(input.tokenExpiresInMin)
     const configInit = normalizeConfigInit(input.configInit)
-    const returnValue = input.returnValue === true
     const app = await resolveKsmApplication(storage, application)
 
     const secretBytes = randomBytes(32)
@@ -220,11 +191,6 @@ export async function createGateway(
         const tokenOrConfig = isInitializedConfig
             ? await initKsmConfigFromToken(oneTimeToken, host, configInit)
             : oneTimeToken
-
-        // Automation: return only the OTT / initialized config string (Commander -r).
-        if (returnValue) {
-            return tokenOrConfig
-        }
 
         return {
             success: true,

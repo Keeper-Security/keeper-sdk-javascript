@@ -669,6 +669,7 @@ export {
     GatewayStatus,
     GatewayConfigInitFormat,
     KSM_APP_RECORD_VERSION,
+    SUPPORTED_KSM_APP_RECORD_VERSIONS,
     APP_NOT_ACCESSIBLE_LABEL,
     KSM_CLIENT_ID_MESSAGE,
     DEFAULT_GATEWAY_TOKEN_EXPIRES_IN_MIN,
@@ -712,6 +713,7 @@ export type {
     GatewayJsonPoolInstance,
     GatewayJsonEntry,
     GatewaysJsonPayload,
+    KsmAppRecordVersion,
 } from './pam'
 
 export type {

@@ -40,6 +40,7 @@ export type {
 
 export {
     KSM_APP_RECORD_VERSION,
+    SUPPORTED_KSM_APP_RECORD_VERSIONS,
     APP_NOT_ACCESSIBLE_LABEL,
     KSM_CLIENT_ID_MESSAGE,
     DEFAULT_GATEWAY_TOKEN_EXPIRES_IN_MIN,
@@ -48,6 +49,7 @@ export {
     GATEWAY_LIST_DEFAULT_HEADERS,
     GATEWAY_LIST_VERBOSE_HEADERS,
 } from './gatewayConstants'
+export type { KsmAppRecordVersion } from './gatewayConstants'
 
 export {
     getKeeperRouterBaseUrl,

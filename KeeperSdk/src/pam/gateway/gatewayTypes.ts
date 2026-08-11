@@ -120,7 +120,6 @@ export type CreateGatewayInput = {
     application: string
     tokenExpiresInMin?: number
     configInit?: GatewayConfigInitFormatInput
-    returnValue?: boolean
 }
 
 export type CreateGatewayResult = {
