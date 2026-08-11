@@ -154,6 +154,30 @@ export type EditGatewayResult = {
     message: string
 }
 
+export type RemoveGatewayInput = {
+    gatewayUidOrName: string
+}
+
+export type RemoveGatewayResult = {
+    success: boolean
+    gatewayUid: string
+    gatewayName: string
+    message: string
+}
+
+export type SetGatewayMaxInstancesInput = {
+    gatewayUidOrName: string
+    maxInstances: number
+}
+
+export type SetGatewayMaxInstancesResult = {
+    success: boolean
+    gatewayUid: string
+    gatewayName: string
+    maxInstances: number
+    message: string
+}
+
 export type GatewayJsonPoolInstance = {
     instance_number: number
     status: typeof GatewayStatus.Online
@@ -191,4 +215,11 @@ export type GatewaysJsonPayload = {
     router_host?: string
     gateway_counts?: GatewayCounts
     message?: string
+}
+
+export type NetworkErrorLike = {
+    code?: string
+    errno?: string
+    message?: string
+    cause?: { code?: string }
 }

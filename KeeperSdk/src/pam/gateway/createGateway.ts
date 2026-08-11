@@ -136,11 +136,10 @@ function buildCreateGatewayMessage(
     tokenExpiresInMin: number,
     isInitializedConfig: boolean
 ): string {
-    const base = `The one-time token was created in application [${appLabel}]. The new Gateway named ${gatewayName} will show up in the gateway list once it is initialized.`
     if (isInitializedConfig) {
         return `The one-time token was created in application [${appLabel}]. Use the initialized config in the Gateway. The new Gateway named ${gatewayName} will show up in the gateway list once it is initialized.`
     }
-    return `${base} Token expires in ${tokenExpiresInMin} minutes.`
+    return `The one-time token was created in application [${appLabel}]. The new Gateway named ${gatewayName} will show up in the gateway list once it is initialized. Token expires in ${tokenExpiresInMin} minutes.`
 }
 
 export async function createGateway(
