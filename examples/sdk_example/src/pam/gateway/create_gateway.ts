@@ -40,10 +40,10 @@ async function createGatewayExample() {
                     : GatewayConfigInitFormat.Json
         }
 
-        // Commander: --return_value / -r — return token/config string for automation (skip banner).
-        const returnValue = isYes(await prompt('Return value only (automation / -r)? [y/N]: '))
+        // Automation / Commander -r: print only tokenOrConfig (no banner).
+        const returnValueOnly = isYes(await prompt('Return value only (automation / -r)? [y/N]: '))
 
-        let result: CreateGatewayResult | string
+        let result: CreateGatewayResult
         const restore = suppressLogs()
         try {
             result = await vault.createGateway({
@@ -51,20 +51,18 @@ async function createGatewayExample() {
                 application,
                 tokenExpiresInMin,
                 configInit,
-                returnValue,
             })
         } finally {
             restore()
         }
 
-        if (returnValue) {
-            // Same as Commander: no banner — just the OTT or initialized config string.
-            logger.info(result as string)
+        if (returnValueOnly) {
+            logger.info(result.tokenOrConfig)
             return
         }
 
         logger.info('')
-        logger.info(vault.formatCreateGatewayOutput(result as CreateGatewayResult))
+        logger.info(vault.formatCreateGatewayOutput(result))
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)

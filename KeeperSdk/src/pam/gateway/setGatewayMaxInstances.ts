@@ -1,12 +1,29 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import { setControllerMaxInstanceCountMessage } from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
+import { MAX_GATEWAY_MAX_INSTANCES, MIN_GATEWAY_MAX_INSTANCES } from './gatewayConstants'
 import {
     fetchEnterprisePamControllers,
     requireEnterpriseGatewayByUidOrName,
     webSafeUidFromBytes,
 } from './gatewayHelpers'
 import type { SetGatewayMaxInstancesInput, SetGatewayMaxInstancesResult } from './gatewayTypes'
+
+function resolveMaxInstances(raw: number): number {
+    if (typeof raw !== 'number' || !Number.isFinite(raw) || !Number.isInteger(raw)) {
+        throw new KeeperSdkError(
+            `maxInstances must be an integer between ${MIN_GATEWAY_MAX_INSTANCES} and ${MAX_GATEWAY_MAX_INSTANCES}.`,
+            ResultCodes.PAM_GATEWAY_INVALID_MAX_INSTANCES
+        )
+    }
+    if (raw < MIN_GATEWAY_MAX_INSTANCES || raw > MAX_GATEWAY_MAX_INSTANCES) {
+        throw new KeeperSdkError(
+            `maxInstances must be an integer between ${MIN_GATEWAY_MAX_INSTANCES} and ${MAX_GATEWAY_MAX_INSTANCES}.`,
+            ResultCodes.PAM_GATEWAY_INVALID_MAX_INSTANCES
+        )
+    }
+    return raw
+}
 
 export async function setGatewayMaxInstances(
     auth: Auth,
@@ -17,11 +34,7 @@ export async function setGatewayMaxInstances(
         throw new KeeperSdkError('Gateway UID or name is required.', ResultCodes.PAM_GATEWAY_REQUIRED)
     }
 
-    const maxInstances = Number(input.maxInstances)
-    if (!Number.isFinite(maxInstances) || maxInstances < 1) {
-        throw new KeeperSdkError('--max-instances must be at least 1', ResultCodes.PAM_GATEWAY_INVALID_MAX_INSTANCES)
-    }
-    const maxInstanceCount = Math.floor(maxInstances)
+    const maxInstanceCount = resolveMaxInstances(input.maxInstances)
 
     const controllers = await fetchEnterprisePamControllers(auth, ResultCodes.PAM_GATEWAY_SET_MAX_INSTANCES_FAILED)
     const gateway = requireEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)

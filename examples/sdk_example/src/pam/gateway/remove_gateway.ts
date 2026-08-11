@@ -27,11 +27,7 @@ async function removeGatewayExample() {
         }
 
         logger.info('')
-        if (!result.found) {
-            logger.warn(vault.formatRemoveGatewayOutput(result))
-        } else {
-            logger.info(vault.formatRemoveGatewayOutput(result))
-        }
+        logger.info(vault.formatRemoveGatewayOutput(result))
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)
