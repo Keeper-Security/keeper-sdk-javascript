@@ -645,6 +645,12 @@ export const disableTwoFaMessage = (
 ): RestInMessage<Enterprise.IEnterpriseUserIds> =>
     createInMessage(data, 'enterprise/disable_two_fa', Enterprise.EnterpriseUserIds)
 
+export const roleTeamAddMessage = (data: Enterprise.IRoleTeams): RestInMessage<Enterprise.IRoleTeams> =>
+    createInMessage(data, 'enterprise/role_team_add', Enterprise.RoleTeams)
+
+export const roleTeamRemoveMessage = (data: Enterprise.IRoleTeams): RestInMessage<Enterprise.IRoleTeams> =>
+    createInMessage(data, 'enterprise/role_team_remove', Enterprise.RoleTeams)
+
 export const setV2AlternatePasswordMessage = (
     data: Authentication.IUserAuthRequest
 ): RestInMessage<Authentication.IUserAuthRequest> =>

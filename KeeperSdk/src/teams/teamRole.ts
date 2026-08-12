@@ -1,4 +1,10 @@
-import { type Auth, createInMessage, Enterprise, normal64Bytes } from '@keeper-security/keeperapi'
+import {
+    type Auth,
+    Enterprise,
+    normal64Bytes,
+    roleTeamAddMessage,
+    roleTeamRemoveMessage,
+} from '@keeper-security/keeperapi'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../utils'
 import {
     EnterpriseDataInclude,
@@ -8,6 +14,8 @@ import {
 } from './enterpriseData'
 import { applyDecryptedRoleNames, resolveExistingRoles } from '../roles/roleUtils'
 import { resolveExistingTeams } from './teamUtils'
+
+const ROLE_TEAM_BATCH_SIZE = 100
 
 const TEAM_ROLE_INCLUDES: EnterpriseDataInclude[] = [
     EnterpriseDataInclude.Teams,
@@ -47,6 +55,8 @@ export type TeamRoleResult = {
 
 type ResolvedTeam = { team_uid: string; name: string }
 
+type RoleTeamLink = { roleId: number; teamUid: string }
+
 async function loadTeamRoleContext(auth: Auth, teamIds: string[]) {
     const enterpriseData = new EnterpriseDataManager(auth)
     const [response, displayNames] = await Promise.all([
@@ -80,23 +90,54 @@ function expandRemoveRoles(
     return resolveExistingRoles(allRoles, removeRoles)
 }
 
-async function sendRoleTeamBatch(
+function linkKey(link: RoleTeamLink): string {
+    return `${link.roleId}:${link.teamUid}`
+}
+
+function markPendingFailed(
+    items: TeamRoleItemResult[],
+    pendingStatus: TeamRoleStatus.Added | TeamRoleStatus.Removed,
+    failedKeys: Set<string>,
+    message: string
+): void {
+    for (const item of items) {
+        if (item.status !== pendingStatus) continue
+        if (!failedKeys.has(linkKey({ roleId: item.roleId, teamUid: item.teamUid }))) continue
+        item.status = TeamRoleStatus.Failed
+        item.message = message
+    }
+}
+
+async function sendRoleTeamBatches(
     auth: Auth,
-    links: Array<{ roleId: number; teamUid: string }>,
+    items: TeamRoleItemResult[],
+    links: RoleTeamLink[],
+    pendingStatus: TeamRoleStatus.Added | TeamRoleStatus.Removed,
     add: boolean
 ): Promise<void> {
     if (links.length === 0) return
-    const payload = Enterprise.RoleTeams.create({
-        roleTeam: links.map((link) =>
-            Enterprise.RoleTeam.create({
-                roleId: link.roleId,
-                teamUid: normal64Bytes(link.teamUid),
+
+    const toMessage = add ? roleTeamAddMessage : roleTeamRemoveMessage
+
+    for (let index = 0; index < links.length; index += ROLE_TEAM_BATCH_SIZE) {
+        const chunk = links.slice(index, index + ROLE_TEAM_BATCH_SIZE)
+        try {
+            const payload = Enterprise.RoleTeams.create({
+                roleTeam: chunk.map((link) =>
+                    Enterprise.RoleTeam.create({
+                        roleId: link.roleId,
+                        teamUid: normal64Bytes(link.teamUid),
+                    })
+                ),
             })
-        ),
-    })
-    const path = add ? 'enterprise/role_team_add' : 'enterprise/role_team_remove'
-    const message = createInMessage(payload, path, Enterprise.RoleTeams)
-    await auth.executeRestAction(message)
+            await auth.executeRestAction(toMessage(payload))
+        } catch (err) {
+            const message = extractErrorMessage(err)
+            const failedKeys = new Set(links.slice(index).map(linkKey))
+            markPendingFailed(items, pendingStatus, failedKeys, message)
+            return
+        }
+    }
 }
 
 function roleDisplayName(role: { role_id: number; displayName?: string }): string {
@@ -117,8 +158,8 @@ export async function changeTeamRoles(auth: Auth, input: ChangeTeamRolesInput): 
 
     const ctx = await loadTeamRoleContext(auth, teamIds)
     const items: TeamRoleItemResult[] = []
-    const toAdd: Array<{ roleId: number; teamUid: string }> = []
-    const toRemove: Array<{ roleId: number; teamUid: string }> = []
+    const toAdd: RoleTeamLink[] = []
+    const toRemove: RoleTeamLink[] = []
 
     for (const team of ctx.teams as ResolvedTeam[]) {
         const teamName = team.name || team.team_uid
@@ -169,18 +210,8 @@ export async function changeTeamRoles(auth: Auth, input: ChangeTeamRolesInput): 
         }
     }
 
-    try {
-        await sendRoleTeamBatch(auth, toRemove, false)
-        await sendRoleTeamBatch(auth, toAdd, true)
-    } catch (err) {
-        const message = extractErrorMessage(err)
-        for (const item of items) {
-            if (item.status === TeamRoleStatus.Added || item.status === TeamRoleStatus.Removed) {
-                item.status = TeamRoleStatus.Failed
-                item.message = message
-            }
-        }
-    }
+    await sendRoleTeamBatches(auth, items, toRemove, TeamRoleStatus.Removed, false)
+    await sendRoleTeamBatches(auth, items, toAdd, TeamRoleStatus.Added, true)
 
     let succeeded = 0
     let skipped = 0
