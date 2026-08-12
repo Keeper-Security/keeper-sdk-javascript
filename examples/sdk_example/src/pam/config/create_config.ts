@@ -6,7 +6,6 @@ import {
     prompt,
     resolvePamConfigurationRecordType,
     suppressLogs,
-    type CreatePamConfigurationResult,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../../utils/runner'
 import { isYes } from '../../utils/format'
@@ -15,6 +14,7 @@ import {
     promptPamConfigurationFields,
     promptPamConfigurationPermissions,
 } from './configFieldPrompts'
+import { formatCreatePamConfigurationOutput } from '../formatOutput'
 
 async function createPamConfigurationExample() {
     const vault = await login()
@@ -46,12 +46,12 @@ async function createPamConfigurationExample() {
         const gateway = (await prompt('Gateway UID or name (optional): ')).trim() || undefined
         const { fields, adminCredentialUid } = await promptPamConfigurationFields(environment)
         const permissions = await promptPamConfigurationPermissions()
-        const returnValue = isYes(await prompt('Return value only (automation / -r)? [y/N]: '))
+        // Automation / Commander -r: print only configuration UID (no banner).
+        const returnValueOnly = isYes(await prompt('Return value only (automation / -r)? [y/N]: '))
 
-        let result: CreatePamConfigurationResult | string
         const restore = suppressLogs()
         try {
-            result = await vault.createPamConfiguration({
+            const result = await vault.createPamConfiguration({
                 title,
                 configType,
                 sharedFolder,
@@ -59,20 +59,19 @@ async function createPamConfigurationExample() {
                 fields,
                 adminCredentialUid,
                 permissions,
-                returnValue,
             })
+
+            if (returnValueOnly) {
+                logger.info(result.configurationUid)
+                return
+            }
+
+            logger.info('')
+            logger.info(formatCreatePamConfigurationOutput(result))
+            logger.info('')
         } finally {
             restore()
         }
-
-        if (returnValue) {
-            logger.info(result as string)
-            return
-        }
-
-        logger.info('')
-        logger.info(vault.formatCreatePamConfigurationOutput(result as CreatePamConfigurationResult))
-        logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)
         process.exitCode = 1

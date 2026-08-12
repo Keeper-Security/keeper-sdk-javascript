@@ -1,10 +1,10 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { KeeperSdkError, ResultCodes } from '../../utils'
-import { createGateway, formatCreateGatewayOutput } from './createGateway'
-import { editGateway, formatEditGatewayOutput } from './editGateway'
-import { removeGateway, formatRemoveGatewayOutput } from './removeGateway'
-import { formatSetGatewayMaxInstancesOutput, setGatewayMaxInstances } from './setGatewayMaxInstances'
+import { createGateway } from './createGateway'
+import { editGateway } from './editGateway'
+import { removeGateway } from './removeGateway'
+import { setGatewayMaxInstances } from './setGatewayMaxInstances'
 import {
     formatGatewaysJson,
     formatGatewaysOutput,
@@ -55,32 +55,16 @@ export class GatewayManager {
         return createGateway(this.requireAuth(), this.storage, input)
     }
 
-    public formatCreateGatewayOutput(result: CreateGatewayResult): string {
-        return formatCreateGatewayOutput(result)
-    }
-
     public async editGateway(input: EditGatewayInput): Promise<EditGatewayResult> {
         return editGateway(this.requireAuth(), input)
-    }
-
-    public formatEditGatewayOutput(result: EditGatewayResult): string {
-        return formatEditGatewayOutput(result)
     }
 
     public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
         return removeGateway(this.requireAuth(), input)
     }
 
-    public formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
-        return formatRemoveGatewayOutput(result)
-    }
-
     public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
         return setGatewayMaxInstances(this.requireAuth(), input)
-    }
-
-    public formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
-        return formatSetGatewayMaxInstancesOutput(result)
     }
 
     public formatGatewaysTable(

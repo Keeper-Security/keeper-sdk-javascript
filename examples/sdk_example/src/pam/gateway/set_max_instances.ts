@@ -9,6 +9,7 @@ import {
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../../utils/runner'
+import { formatSetGatewayMaxInstancesOutput } from '../formatOutput'
 
 async function setGatewayMaxInstancesExample() {
     const vault = await login()
@@ -43,7 +44,7 @@ async function setGatewayMaxInstancesExample() {
         }
 
         logger.info('')
-        logger.info(vault.formatSetGatewayMaxInstancesOutput(result))
+        logger.info(formatSetGatewayMaxInstancesOutput(result))
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)

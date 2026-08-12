@@ -7,6 +7,7 @@ import {
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../../utils/runner'
+import { formatRemoveGatewayOutput } from '../formatOutput'
 
 async function removeGatewayExample() {
     const vault = await login()
@@ -27,7 +28,7 @@ async function removeGatewayExample() {
         }
 
         logger.info('')
-        logger.info(vault.formatRemoveGatewayOutput(result))
+        logger.info(formatRemoveGatewayOutput(result))
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)

@@ -182,7 +182,6 @@ export type CreatePamConfigurationInput = {
     notes?: string
     adminCredentialUid?: string
     permissions?: PamConfigurationPermissionsInput
-    returnValue?: boolean
 }
 
 export type CreatePamConfigurationResult = {
@@ -195,7 +194,6 @@ export type CreatePamConfigurationResult = {
     gatewayLinked: boolean
     permissionsApplied: boolean
     warnings: string[]
-    message: string
 }
 
 export type EditPamConfigurationInput = {
@@ -229,7 +227,6 @@ export type EditPamConfigurationResult = {
     removedResourceRecordUids: string[]
     permissionsApplied: boolean
     warnings: string[]
-    message: string
 }
 
 export type RemovePamConfigurationInput = {
@@ -242,5 +239,4 @@ export type RemovePamConfigurationResult = {
     configurationUid?: string
     title?: string
     configType?: string
-    message: string
 }

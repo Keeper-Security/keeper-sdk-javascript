@@ -7,6 +7,7 @@ import {
     suppressLogs,
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../../utils/runner'
+import { formatRemovePamConfigurationOutput } from '../formatOutput'
 
 async function removePamConfigurationExample() {
     const vault = await login()
@@ -27,10 +28,11 @@ async function removePamConfigurationExample() {
         }
 
         logger.info('')
+        const output = formatRemovePamConfigurationOutput(result, configurationUidOrTitle)
         if (!result.found) {
-            logger.warn(vault.formatRemovePamConfigurationOutput(result))
+            logger.warn(output)
         } else {
-            logger.info(vault.formatRemovePamConfigurationOutput(result))
+            logger.info(output)
         }
         logger.info('')
     } catch (err) {

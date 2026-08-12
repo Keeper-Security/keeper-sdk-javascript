@@ -1,5 +1,5 @@
 import type { Auth } from '@keeper-security/keeperapi'
-import { modifyControllerMessage, normal64Bytes } from '@keeper-security/keeperapi'
+import { modifyControllerMessage } from '@keeper-security/keeperapi'
 import { EnterpriseDataInclude, EnterpriseDataManager } from '../../teams/enterpriseData'
 import { applyDecryptedNodeNames, resolveParentNode } from '../../teams/teamUtils'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
@@ -46,14 +46,10 @@ async function resolveEnterpriseNodeId(auth: Auth, nodeIdOrName: string | number
     }
 }
 
-function buildEditResult(
-    partial: Omit<EditGatewayResult, 'success' | 'message'> & { unchanged?: boolean }
-): EditGatewayResult {
-    const { unchanged, ...rest } = partial
+function buildEditResult(partial: Omit<EditGatewayResult, 'success'>): EditGatewayResult {
     return {
         success: true,
-        ...rest,
-        message: unchanged ? `Gateway ${rest.gatewayUid} is unchanged.` : `Gateway ${rest.gatewayUid} has been edited.`,
+        ...partial,
     }
 }
 
@@ -77,7 +73,8 @@ export async function editGateway(auth: Auth, input: EditGatewayInput): Promise<
     const controllers = await fetchEnterprisePamControllers(auth, ResultCodes.PAM_GATEWAY_EDIT_FAILED)
     const gateway = requireEnterpriseGatewayByUidOrName(controllers, gatewayUidOrName)
 
-    const gatewayUid = webSafeUidFromBytes(gateway.controllerUid)
+    const controllerUidBytes = gateway.controllerUid
+    const gatewayUid = webSafeUidFromBytes(controllerUidBytes)
     const previousName = gateway.controllerName || ''
     const previousNodeId = toFiniteNumber(gateway.nodeId)
     const gatewayName = hasName ? newNameRaw : previousName
@@ -94,14 +91,13 @@ export async function editGateway(auth: Auth, input: EditGatewayInput): Promise<
             nodeId,
             nameChanged: false,
             nodeChanged: false,
-            unchanged: true,
         })
     }
 
     try {
         await auth.executeRestAction(
             modifyControllerMessage({
-                controllerUid: normal64Bytes(gatewayUid),
+                controllerUid: controllerUidBytes,
                 controllerName: gatewayName,
                 nodeId,
             })
@@ -122,14 +118,4 @@ export async function editGateway(auth: Auth, input: EditGatewayInput): Promise<
         nameChanged,
         nodeChanged,
     })
-}
-
-export function formatEditGatewayOutput(result: EditGatewayResult): string {
-    return [
-        result.message,
-        result.nameChanged
-            ? `Name: ${result.previousName || '(none)'} → ${result.gatewayName}`
-            : `Name: ${result.gatewayName}`,
-        result.nodeChanged ? `Node ID: ${result.previousNodeId} → ${result.nodeId}` : `Node ID: ${result.nodeId}`,
-    ].join('\n')
 }

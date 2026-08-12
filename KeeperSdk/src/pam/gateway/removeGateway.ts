@@ -46,10 +46,5 @@ export async function removeGateway(auth: Auth, input: RemoveGatewayInput): Prom
         success: true,
         gatewayUid,
         gatewayName,
-        message: `Gateway ${gatewayName} has been removed.`,
     }
-}
-
-export function formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
-    return result.message
 }

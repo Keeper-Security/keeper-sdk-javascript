@@ -61,10 +61,5 @@ export async function setGatewayMaxInstances(
         gatewayUid,
         gatewayName,
         maxInstances: maxInstanceCount,
-        message: `${gatewayName}: max instance count set to ${maxInstanceCount}`,
     }
-}
-
-export function formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
-    return result.message
 }

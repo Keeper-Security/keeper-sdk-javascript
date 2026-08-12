@@ -9,10 +9,10 @@ export {
     formatGatewaysOutput,
 } from './listGateways'
 
-export { createGateway, formatCreateGatewayOutput } from './createGateway'
-export { editGateway, formatEditGatewayOutput } from './editGateway'
-export { removeGateway, formatRemoveGatewayOutput } from './removeGateway'
-export { setGatewayMaxInstances, formatSetGatewayMaxInstancesOutput } from './setGatewayMaxInstances'
+export { createGateway } from './createGateway'
+export { editGateway } from './editGateway'
+export { removeGateway } from './removeGateway'
+export { setGatewayMaxInstances } from './setGatewayMaxInstances'
 
 export { GatewayListFormat, GatewayStatus, GatewayConfigInitFormat } from './gatewayTypes'
 export type {

@@ -8,9 +8,9 @@ export {
     formatPamConfigurationsOutput,
 } from './listConfigs'
 
-export { createPamConfiguration, formatCreatePamConfigurationOutput } from './createConfig'
-export { editPamConfiguration, formatEditPamConfigurationOutput } from './editConfig'
-export { removePamConfiguration, formatRemovePamConfigurationOutput } from './removeConfig'
+export { createPamConfiguration } from './createConfig'
+export { editPamConfiguration } from './editConfig'
+export { removePamConfiguration } from './removeConfig'
 
 export { PamConfigListFormat } from './configTypes'
 export type {
@@ -52,6 +52,7 @@ export type {
 
 export {
     PAM_CONFIGURATION_RECORD_VERSION,
+    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS,
     PAM_CONFIGURATION_RECORD_TYPES,
     PAM_CONFIG_ENVIRONMENT_TO_RECORD_TYPE,
     PAM_CONFIG_ENVIRONMENTS,
@@ -68,13 +69,19 @@ export {
     PAM_CONFIG_PERMISSION_FLAGS,
     PAM_CONFIG_PERMISSION_VALUES,
 } from './configConstants'
-export type { PamConfigurationRecordType, PamConfigEnvironment, PamConfigPermissionFlag } from './configConstants'
+export type {
+    PamConfigurationRecordType,
+    PamConfigEnvironment,
+    PamConfigPermissionFlag,
+    PamConfigurationRecordVersion,
+} from './configConstants'
 
 export {
     isPamConfigurationRecordType,
     isPamConfigEnvironment,
     resolvePamConfigurationRecordType,
     isPamConfigurationRecord,
+    isSupportedPamConfigurationRecordVersion,
     getPamConfigurationFields,
     parsePamResources,
     resolveSharedFolderName,

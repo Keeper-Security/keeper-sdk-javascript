@@ -10,6 +10,7 @@ import {
 } from '@keeper-security/keeper-sdk-javascript'
 import { runExample } from '../../utils/runner'
 import { isYes } from '../../utils/format'
+import { formatCreateGatewayOutput } from '../formatOutput'
 
 async function createGatewayExample() {
     const vault = await login()
@@ -62,7 +63,7 @@ async function createGatewayExample() {
         }
 
         logger.info('')
-        logger.info(vault.formatCreateGatewayOutput(result))
+        logger.info(formatCreateGatewayOutput(result))
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)

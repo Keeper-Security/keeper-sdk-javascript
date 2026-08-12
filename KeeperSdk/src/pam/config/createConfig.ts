@@ -30,23 +30,8 @@ import type { CreatePamConfigurationInput, CreatePamConfigurationResult } from '
 export async function createPamConfiguration(
     auth: Auth,
     storage: InMemoryStorage,
-    input: CreatePamConfigurationInput & { returnValue: true }
-): Promise<string>
-export async function createPamConfiguration(
-    auth: Auth,
-    storage: InMemoryStorage,
-    input: CreatePamConfigurationInput & { returnValue?: false }
-): Promise<CreatePamConfigurationResult>
-export async function createPamConfiguration(
-    auth: Auth,
-    storage: InMemoryStorage,
     input: CreatePamConfigurationInput
-): Promise<CreatePamConfigurationResult | string>
-export async function createPamConfiguration(
-    auth: Auth,
-    storage: InMemoryStorage,
-    input: CreatePamConfigurationInput
-): Promise<CreatePamConfigurationResult | string> {
+): Promise<CreatePamConfigurationResult> {
     const title = input.title?.trim() || ''
     if (!title) {
         throw new KeeperSdkError('PAM Configuration title is required.', ResultCodes.PAM_CONFIG_TITLE_REQUIRED)
@@ -139,25 +124,25 @@ export async function createPamConfiguration(
             srcFolderUid: '',
         })
         if (!moveResult.success) {
-            throw new KeeperSdkError(
-                `Created configuration ${configurationUid} but failed to move into shared folder: ${moveResult.message || 'unknown error'}`,
-                ResultCodes.PAM_CONFIG_MOVE_FAILED
-            )
-        }
-
-        try {
-            await syncDown({ auth, storage })
-        } catch (err) {
             warnings.push(
-                `Moved configuration ${configurationUid} but post-move sync failed: ${extractErrorMessage(err)}`
+                `Created configuration ${configurationUid} but failed to move into shared folder: ${
+                    moveResult.message || 'unknown error'
+                }`
             )
+        } else {
+            try {
+                await syncDown({ auth, storage })
+            } catch (err) {
+                warnings.push(
+                    `Moved configuration ${configurationUid} but post-move sync failed: ${extractErrorMessage(err)}`
+                )
+            }
         }
     }
 
     if (!isPamConfigurationInFolder(storage, configurationUid, folderTarget)) {
-        throw new KeeperSdkError(
-            `Created configuration ${configurationUid} but it is still not linked to folder ${sharedFolderUid}.`,
-            ResultCodes.PAM_CONFIG_MOVE_FAILED
+        warnings.push(
+            `Created configuration ${configurationUid} but it is still not linked to folder ${sharedFolderUid}.`
         )
     }
 
@@ -184,10 +169,6 @@ export async function createPamConfiguration(
         )
     }
 
-    if (input.returnValue === true) {
-        return configurationUid
-    }
-
     return {
         success: true,
         configurationUid,
@@ -198,22 +179,5 @@ export async function createPamConfiguration(
         gatewayLinked,
         permissionsApplied,
         warnings,
-        message: `PAM Configuration "${title}" created (${configurationUid}).`,
     }
-}
-
-export function formatCreatePamConfigurationOutput(result: CreatePamConfigurationResult): string {
-    const lines = [
-        result.message,
-        `UID: ${result.configurationUid}`,
-        `Type: ${result.configType}`,
-        `Shared Folder: ${result.sharedFolderUid}`,
-        `Gateway UID: ${result.gatewayUid || '(none)'}`,
-        `Gateway Linked: ${result.gatewayLinked ? 'yes' : 'no'}`,
-        `Permissions Applied: ${result.permissionsApplied ? 'yes' : 'no'}`,
-    ]
-    for (const warning of result.warnings) {
-        lines.push(`Warning: ${warning}`)
-    }
-    return lines.join('\n')
 }

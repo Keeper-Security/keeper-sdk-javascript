@@ -8,13 +8,14 @@ import {
     PAM_CONFIG_DETAIL_LABELS,
     PAM_CONFIG_LIST_DEFAULT_HEADERS,
     PAM_CONFIG_LIST_VERBOSE_HEADERS,
-    PAM_CONFIGURATION_RECORD_VERSION,
+    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS,
 } from './configConstants'
 import {
     getPamConfigurationDisplayName,
     getPamConfigurationFields,
     isPamConfigurationRecord,
     isPamConfigurationRecordType,
+    isSupportedPamConfigurationRecordVersion,
     listPamConfigurationRecords,
     parsePamResources,
 } from './configHelpers'
@@ -113,9 +114,11 @@ function loadConfigurationDetail(storage: InMemoryStorage, configUid: string): P
     if (!record) {
         throw new KeeperSdkError(`PAM Configuration "${configUid}" not found.`, ResultCodes.PAM_CONFIG_NOT_FOUND)
     }
-    if (record.version !== PAM_CONFIGURATION_RECORD_VERSION || !isPamConfigurationRecord(record)) {
+    if (!isSupportedPamConfigurationRecordVersion(record.version) || !isPamConfigurationRecord(record)) {
         throw new KeeperSdkError(
-            `Record "${configUid}" is not a PAM Configuration (expected version ${PAM_CONFIGURATION_RECORD_VERSION}).`,
+            `Record "${configUid}" is not a PAM Configuration (expected version ${SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS.join(
+                ' or '
+            )}).`,
             ResultCodes.PAM_CONFIG_INVALID
         )
     }

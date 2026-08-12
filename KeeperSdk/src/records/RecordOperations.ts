@@ -277,21 +277,18 @@ function toPreDeleteFromType(folderType: FolderKind): RecordPreDeleteObject['fro
     return FolderKind.SharedFolderFolder
 }
 
-export async function deleteRecord(
+async function deleteRecordFromSource(
     auth: Auth,
-    storage: InMemoryStorage,
-    recordUid: string
+    recordUid: string,
+    fromUid: string,
+    fromType: RecordPreDeleteObject['from_type']
 ): Promise<DeleteRecordResult> {
-    const srcUid = await findRecordSourceFolder(recordUid, storage)
-    const src = resolveFolder(srcUid, storage)
-    const fromType = toPreDeleteFromType(src.folderType)
-
     const preDeleteRequest = {
         objects: [
             {
                 object_uid: recordUid,
                 object_type: VaultObjectKind.Record,
-                from_uid: src.uid || '',
+                from_uid: fromUid,
                 from_type: fromType,
                 delete_resolution: DeleteResolution.Unlink,
             } as RecordPreDeleteObject,
@@ -306,7 +303,7 @@ export async function deleteRecord(
         return {
             recordUid,
             success: false,
-            message: `${extractErrorMessage(err)} (source: ${fromType}${src.uid ? `:${src.uid}` : ''})`,
+            message: `${extractErrorMessage(err)} (source: ${fromType}${fromUid ? `:${fromUid}` : ''})`,
         }
     }
 
@@ -327,6 +324,30 @@ export async function deleteRecord(
     }
 
     return { recordUid, success: true, message: ResultCode.Success }
+}
+
+/** @deprecated Prefer deleteRecord(auth, storage, recordUid) so the source folder is resolved correctly. */
+export async function deleteRecord(auth: Auth, recordUid: string): Promise<DeleteRecordResult>
+export async function deleteRecord(
+    auth: Auth,
+    storage: InMemoryStorage,
+    recordUid: string
+): Promise<DeleteRecordResult>
+export async function deleteRecord(
+    auth: Auth,
+    storageOrRecordUid: InMemoryStorage | string,
+    recordUid?: string
+): Promise<DeleteRecordResult> {
+    if (typeof storageOrRecordUid === 'string') {
+        // Legacy 2-arg form: always delete from the user's root folder (pre-PAM behavior).
+        return deleteRecordFromSource(auth, storageOrRecordUid, '', FolderKind.UserFolder)
+    }
+
+    const uid = recordUid!
+    const srcUid = await findRecordSourceFolder(uid, storageOrRecordUid)
+    const src = resolveFolder(srcUid, storageOrRecordUid)
+    const fromType = toPreDeleteFromType(src.folderType)
+    return deleteRecordFromSource(auth, uid, src.uid || '', fromType)
 }
 
 export type HistoryEntry = {

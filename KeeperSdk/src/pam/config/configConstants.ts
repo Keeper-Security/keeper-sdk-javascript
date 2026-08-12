@@ -1,4 +1,9 @@
-export const PAM_CONFIGURATION_RECORD_VERSION = 6
+export const SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS = [6] as const
+
+export type PamConfigurationRecordVersion = (typeof SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS)[number]
+
+export const PAM_CONFIGURATION_RECORD_VERSION: PamConfigurationRecordVersion =
+    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS[0]
 
 export const PAM_CONFIGURATION_RECORD_TYPES = [
     'pamAwsConfiguration',

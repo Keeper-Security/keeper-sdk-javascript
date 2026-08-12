@@ -58,32 +58,16 @@ export class PamManager {
         return this.gatewayManager.createGateway(input)
     }
 
-    public formatCreateGatewayOutput(result: CreateGatewayResult): string {
-        return this.gatewayManager.formatCreateGatewayOutput(result)
-    }
-
     public async editGateway(input: EditGatewayInput): Promise<EditGatewayResult> {
         return this.gatewayManager.editGateway(input)
-    }
-
-    public formatEditGatewayOutput(result: EditGatewayResult): string {
-        return this.gatewayManager.formatEditGatewayOutput(result)
     }
 
     public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
         return this.gatewayManager.removeGateway(input)
     }
 
-    public formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
-        return this.gatewayManager.formatRemoveGatewayOutput(result)
-    }
-
     public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
         return this.gatewayManager.setGatewayMaxInstances(input)
-    }
-
-    public formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
-        return this.gatewayManager.formatSetGatewayMaxInstancesOutput(result)
     }
 
     public formatGatewaysTable(
@@ -112,37 +96,16 @@ export class PamManager {
         return this.configManager.listPamConfigurations(options)
     }
 
-    public async createPamConfiguration(input: CreatePamConfigurationInput & { returnValue: true }): Promise<string>
-    public async createPamConfiguration(
-        input: CreatePamConfigurationInput & { returnValue?: false }
-    ): Promise<CreatePamConfigurationResult>
-    public async createPamConfiguration(
-        input: CreatePamConfigurationInput
-    ): Promise<CreatePamConfigurationResult | string>
-    public async createPamConfiguration(
-        input: CreatePamConfigurationInput
-    ): Promise<CreatePamConfigurationResult | string> {
+    public async createPamConfiguration(input: CreatePamConfigurationInput): Promise<CreatePamConfigurationResult> {
         return this.configManager.createPamConfiguration(input)
-    }
-
-    public formatCreatePamConfigurationOutput(result: CreatePamConfigurationResult): string {
-        return this.configManager.formatCreatePamConfigurationOutput(result)
     }
 
     public async editPamConfiguration(input: EditPamConfigurationInput): Promise<EditPamConfigurationResult> {
         return this.configManager.editPamConfiguration(input)
     }
 
-    public formatEditPamConfigurationOutput(result: EditPamConfigurationResult): string {
-        return this.configManager.formatEditPamConfigurationOutput(result)
-    }
-
     public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
         return this.configManager.removePamConfiguration(input)
-    }
-
-    public formatRemovePamConfigurationOutput(result: RemovePamConfigurationResult): string {
-        return this.configManager.formatRemovePamConfigurationOutput(result)
     }
 
     public formatPamConfigurationsTable(

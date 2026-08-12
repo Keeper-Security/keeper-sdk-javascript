@@ -16,6 +16,7 @@ import {
     promptPamConfigurationFields,
     promptPamConfigurationPermissions,
 } from './configFieldPrompts'
+import { formatEditPamConfigurationOutput } from '../formatOutput'
 
 async function editPamConfigurationExample() {
     const vault = await login()
@@ -104,7 +105,7 @@ async function editPamConfigurationExample() {
         }
 
         logger.info('')
-        logger.info(vault.formatEditPamConfigurationOutput(result))
+        logger.info(formatEditPamConfigurationOutput(result))
         logger.info('')
     } catch (err) {
         logger.error(`Operation failed: ${extractErrorMessage(err)}`)

@@ -6,12 +6,16 @@ import {
     FILE_REF_FIELD_TYPE,
     PAM_CONFIG_ENVIRONMENT_TO_RECORD_TYPE,
     PAM_CONFIGURATION_RECORD_TYPES,
-    PAM_CONFIGURATION_RECORD_VERSION,
     PAM_RESOURCES_FIELD_TYPE,
+    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS,
     type PamConfigEnvironment,
     type PamConfigurationRecordType,
 } from './configConstants'
 import type { PamConfigurationField, PamResourcesInfo } from './configTypes'
+
+export function isSupportedPamConfigurationRecordVersion(version: number): boolean {
+    return (SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS as readonly number[]).includes(version)
+}
 
 export function isPamConfigurationRecordType(recordType: string): recordType is PamConfigurationRecordType {
     return (PAM_CONFIGURATION_RECORD_TYPES as readonly string[]).includes(recordType)
@@ -31,7 +35,7 @@ export function resolvePamConfigurationRecordType(environmentOrType: string): Pa
 }
 
 export function isPamConfigurationRecord(record: DRecord): boolean {
-    return record.version === PAM_CONFIGURATION_RECORD_VERSION && isPamConfigurationRecordType(getRecordType(record))
+    return isSupportedPamConfigurationRecordVersion(record.version) && isPamConfigurationRecordType(getRecordType(record))
 }
 
 function fieldValueToStrings(value: unknown): string[] {
@@ -108,7 +112,7 @@ export function findSharedFolderUidForRecord(storage: InMemoryStorage, recordUid
 export function listPamConfigurationRecords(storage: InMemoryStorage): DRecord[] {
     return storage
         .getRecords()
-        .filter((record) => record.version === PAM_CONFIGURATION_RECORD_VERSION)
+        .filter((record) => isSupportedPamConfigurationRecordVersion(record.version))
         .filter((record) => isPamConfigurationRecordType(getRecordType(record)))
 }
 

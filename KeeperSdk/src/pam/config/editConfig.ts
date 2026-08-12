@@ -238,29 +238,5 @@ export async function editPamConfiguration(
         removedResourceRecordUids,
         permissionsApplied,
         warnings,
-        message: `PAM Configuration "${title}" updated (${configurationUid}).`,
     }
-}
-
-export function formatEditPamConfigurationOutput(result: EditPamConfigurationResult): string {
-    const lines = [
-        result.message,
-        `UID: ${result.configurationUid}`,
-        result.typeChanged ? `Type: ${result.previousConfigType} → ${result.configType}` : `Type: ${result.configType}`,
-        result.titleChanged ? `Title changed: yes` : `Title: ${result.title}`,
-        result.folderChanged
-            ? `Shared Folder: ${result.previousSharedFolderUid || '(none)'} → ${result.sharedFolderUid}`
-            : `Shared Folder: ${result.sharedFolderUid || '(none)'}`,
-        result.gatewayChanged
-            ? `Gateway UID: ${result.previousGatewayUid || '(none)'} → ${result.gatewayUid || '(none)'}`
-            : `Gateway UID: ${result.gatewayUid || '(none)'}`,
-        `Permissions Applied: ${result.permissionsApplied ? 'yes' : 'no'}`,
-    ]
-    if (result.removedResourceRecordUids.length) {
-        lines.push(`Removed Resource UIDs: ${result.removedResourceRecordUids.join(', ')}`)
-    }
-    for (const warning of result.warnings) {
-        lines.push(`Warning: ${warning}`)
-    }
-    return lines.join('\n')
 }

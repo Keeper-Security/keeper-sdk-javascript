@@ -26,7 +26,6 @@ export async function removePamConfiguration(
             return {
                 success: false,
                 found: false,
-                message: `PAM Configuration ${configurationUidOrTitle} not found`,
             }
         }
         throw err
@@ -68,15 +67,5 @@ export async function removePamConfiguration(
         configurationUid,
         title,
         configType,
-        message: 'PAM Configuration was removed successfully.',
     }
-}
-
-export function formatRemovePamConfigurationOutput(result: RemovePamConfigurationResult): string {
-    if (!result.found) return result.message
-    const lines = [result.message]
-    if (result.configurationUid) lines.push(`UID: ${result.configurationUid}`)
-    if (result.title) lines.push(`Title: ${result.title}`)
-    if (result.configType) lines.push(`Type: ${result.configType}`)
-    return lines.join('\n')
 }

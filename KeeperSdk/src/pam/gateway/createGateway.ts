@@ -1,4 +1,3 @@
-import { createHmac, randomBytes } from 'crypto'
 import type { Auth } from '@keeper-security/keeperapi'
 import {
     Enterprise,
@@ -7,7 +6,7 @@ import {
     platform,
     webSafe64FromBytes,
 } from '@keeper-security/keeperapi'
-import { getSecrets, initializeStorage, type KeyValueStorage } from '@keeper-security/secrets-manager-core'
+import type { KeyValueStorage } from '@keeper-security/secrets-manager-core'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import {
@@ -15,7 +14,7 @@ import {
     KSM_CLIENT_ID_MESSAGE,
     MAX_GATEWAY_TOKEN_EXPIRES_IN_MIN,
 } from './gatewayConstants'
-import { formatGatewayOneTimeToken, formatTimestampMs, resolveKsmApplication } from './gatewayHelpers'
+import { formatGatewayOneTimeToken, resolveKsmApplication } from './gatewayHelpers'
 import {
     GatewayConfigInitFormat,
     type CreateGatewayInput,
@@ -29,6 +28,39 @@ type SecretsManagerStorage = KeyValueStorage & {
     snapshot: () => Record<string, string>
 }
 
+function toUint8Array(value: Uint8Array | ArrayBuffer | ArrayBufferView): Uint8Array {
+    if (value instanceof Uint8Array) return value
+    if (ArrayBuffer.isView(value)) {
+        return new Uint8Array(value.buffer, value.byteOffset, value.byteLength)
+    }
+    return new Uint8Array(value)
+}
+
+function toBufferSource(bytes: Uint8Array): ArrayBuffer {
+    const copy = new Uint8Array(bytes.byteLength)
+    copy.set(bytes)
+    return copy.buffer
+}
+
+async function hmacSha512(key: Uint8Array, message: string): Promise<Uint8Array> {
+    const subtle = globalThis.crypto?.subtle
+    if (!subtle) {
+        throw new KeeperSdkError(
+            'Web Crypto API is unavailable; cannot derive gateway client ID.',
+            ResultCodes.PAM_GATEWAY_CREATE_FAILED
+        )
+    }
+    const cryptoKey = await subtle.importKey(
+        'raw',
+        toBufferSource(key),
+        { name: 'HMAC', hash: 'SHA-512' },
+        false,
+        ['sign']
+    )
+    const signature = await subtle.sign('HMAC', cryptoKey, toBufferSource(platform.stringToBytes(message)))
+    return new Uint8Array(signature)
+}
+
 function createSecretsManagerStorage(): SecretsManagerStorage {
     const map = new Map<string, string>()
     return {
@@ -40,10 +72,10 @@ function createSecretsManagerStorage(): SecretsManagerStorage {
         },
         async getBytes(key) {
             const value = map.get(key)
-            return value == null ? undefined : Buffer.from(value, 'base64')
+            return value == null ? undefined : platform.base64ToBytes(value)
         },
         async saveBytes(key, value) {
-            map.set(key, Buffer.from(value).toString('base64'))
+            map.set(key, platform.bytesToBase64(toUint8Array(value)))
         },
         async delete(key) {
             map.delete(String(key))
@@ -91,6 +123,8 @@ async function initKsmConfigFromToken(
     host: string,
     format: GatewayConfigInitFormat
 ): Promise<string> {
+    // Load KSM only when config init is requested (keeps create-token path free of the runtime dep).
+    const { getSecrets, initializeStorage } = await import('@keeper-security/secrets-manager-core')
     const storage = createSecretsManagerStorage()
     try {
         await initializeStorage(storage, oneTimeToken, host)
@@ -127,19 +161,9 @@ async function initKsmConfigFromToken(
     }
 
     const json = JSON.stringify(configDict)
-    return format === GatewayConfigInitFormat.B64 ? Buffer.from(json, 'utf8').toString('base64') : json
-}
-
-function buildCreateGatewayMessage(
-    appLabel: string,
-    gatewayName: string,
-    tokenExpiresInMin: number,
-    isInitializedConfig: boolean
-): string {
-    if (isInitializedConfig) {
-        return `The one-time token was created in application [${appLabel}]. Use the initialized config in the Gateway. The new Gateway named ${gatewayName} will show up in the gateway list once it is initialized.`
-    }
-    return `The one-time token was created in application [${appLabel}]. The new Gateway named ${gatewayName} will show up in the gateway list once it is initialized. Token expires in ${tokenExpiresInMin} minutes.`
+    return format === GatewayConfigInitFormat.B64
+        ? platform.bytesToBase64(platform.stringToBytes(json))
+        : json
 }
 
 export async function createGateway(
@@ -161,8 +185,8 @@ export async function createGateway(
     const configInit = normalizeConfigInit(input.configInit)
     const app = await resolveKsmApplication(storage, application)
 
-    const secretBytes = randomBytes(32)
-    const clientId = createHmac('sha512', secretBytes).update(KSM_CLIENT_ID_MESSAGE).digest()
+    const secretBytes = platform.getRandomBytes(32)
+    const clientId = await hmacSha512(secretBytes, KSM_CLIENT_ID_MESSAGE)
     const encryptedAppKey = await platform.aesGcmEncrypt(app.recordKey, secretBytes)
     const firstAccessExpireOn = Date.now() + tokenExpiresInMin * 60 * 1000
 
@@ -186,10 +210,23 @@ export async function createGateway(
                 ? webSafe64FromBytes(device.encryptedDeviceToken)
                 : undefined
 
-        const isInitializedConfig = configInit != null
-        const tokenOrConfig = isInitializedConfig
-            ? await initKsmConfigFromToken(oneTimeToken, host, configInit)
-            : oneTimeToken
+        const warnings: string[] = []
+        let tokenOrConfig = oneTimeToken
+        let isInitializedConfig = false
+
+        if (configInit != null) {
+            try {
+                tokenOrConfig = await initKsmConfigFromToken(oneTimeToken, host, configInit)
+                isInitializedConfig = true
+            } catch (err) {
+                // Client already exists on the KSM app; fall back to OTT instead of orphaning a hard failure.
+                warnings.push(
+                    `Created gateway client but failed to initialize KSM config: ${extractErrorMessage(
+                        err
+                    )}. Returning one-time token instead.`
+                )
+            }
+        }
 
         return {
             success: true,
@@ -198,16 +235,11 @@ export async function createGateway(
             applicationTitle: app.title,
             tokenOrConfig,
             isInitializedConfig,
-            configInit,
+            configInit: isInitializedConfig ? configInit : undefined,
             tokenExpiresInMin,
-            tokenExpiresOn: formatTimestampMs(firstAccessExpireOn),
+            tokenExpiresOn: firstAccessExpireOn,
             deviceToken,
-            message: buildCreateGatewayMessage(
-                app.title || app.uid,
-                gatewayName,
-                tokenExpiresInMin,
-                isInitializedConfig
-            ),
+            warnings,
         }
     } catch (err) {
         if (err instanceof KeeperSdkError) throw err
@@ -216,16 +248,4 @@ export async function createGateway(
             ResultCodes.PAM_GATEWAY_CREATE_FAILED
         )
     }
-}
-
-export function formatCreateGatewayOutput(result: CreateGatewayResult): string {
-    return [
-        result.message,
-        '',
-        result.isInitializedConfig ? 'Use the following initialized config in the Gateway:' : 'One-time token:',
-        '-----------------------------------------------',
-        result.tokenOrConfig,
-        '-----------------------------------------------',
-        `Token expires on: ${result.tokenExpiresOn}`,
-    ].join('\n')
 }

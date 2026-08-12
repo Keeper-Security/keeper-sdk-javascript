@@ -131,9 +131,10 @@ export type CreateGatewayResult = {
     isInitializedConfig: boolean
     configInit?: GatewayConfigInitFormat
     tokenExpiresInMin: number
-    tokenExpiresOn: string
+    /** Epoch milliseconds when the one-time token expires. */
+    tokenExpiresOn: number
     deviceToken?: string
-    message: string
+    warnings: string[]
 }
 
 export type EditGatewayInput = {
@@ -151,7 +152,6 @@ export type EditGatewayResult = {
     nodeId: number
     nameChanged: boolean
     nodeChanged: boolean
-    message: string
 }
 
 export type RemoveGatewayInput = {
@@ -162,7 +162,6 @@ export type RemoveGatewayResult = {
     success: boolean
     gatewayUid: string
     gatewayName: string
-    message: string
 }
 
 export type SetGatewayMaxInstancesInput = {
@@ -175,7 +174,6 @@ export type SetGatewayMaxInstancesResult = {
     gatewayUid: string
     gatewayName: string
     maxInstances: number
-    message: string
 }
 
 export type GatewayJsonPoolInstance = {
