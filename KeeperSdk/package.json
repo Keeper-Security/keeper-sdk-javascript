@@ -9,6 +9,7 @@
     },
     "license": "ISC",
     "main": "dist/index.js",
+    "browser": "dist/browser.js",
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",

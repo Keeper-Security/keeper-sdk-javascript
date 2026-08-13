@@ -42,6 +42,7 @@ import {
     type DeleteTeamResult,
     type FormattedDeleteTeamTable,
 } from './deleteTeam'
+import { changeTeamRoles, type ChangeTeamRolesInput, type TeamRoleResult } from './teamRole'
 
 export type AuthProvider = () => Auth
 
@@ -110,6 +111,10 @@ export class TeamManager {
 
     public renderDeleteTeamAsciiTable(table: FormattedDeleteTeamTable): string {
         return renderDeleteTeamAsciiTable(table)
+    }
+
+    public async changeTeamRoles(input: ChangeTeamRolesInput): Promise<TeamRoleResult> {
+        return changeTeamRoles(this.requireAuth(), input)
     }
 
     private requireAuth(): Auth {

@@ -1,11 +1,11 @@
 import {
-    createInMessage,
     encryptObjectForStorage,
     Enterprise,
     enterpriseAllocateIdsCommand,
     normal64Bytes,
     roleAddCommand,
     roleEnforcementAddCommand,
+    roleTeamAddMessage,
     roleUserAddCommand,
     type Auth,
     type RoleEditRequest,
@@ -293,19 +293,26 @@ async function copyRoleTeams(
     teamUids: string[]
 ): Promise<{ copied: number; failed: number }> {
     if (teamUids.length === 0) return { copied: 0, failed: 0 }
-    try {
-        const payload = Enterprise.RoleTeams.create({
-            roleTeam: teamUids.map((teamUid) =>
-                Enterprise.RoleTeam.create({
-                    roleId: newRoleId,
-                    teamUid: normal64Bytes(teamUid),
-                })
-            ),
-        })
-        const message = createInMessage(payload, 'enterprise/role_team_add', Enterprise.RoleTeams)
-        await auth.executeRestAction(message)
-        return { copied: teamUids.length, failed: 0 }
-    } catch {
-        return { copied: 0, failed: teamUids.length }
+    const ROLE_TEAM_BATCH_SIZE = 100
+    let copied = 0
+    let failed = 0
+    for (let index = 0; index < teamUids.length; index += ROLE_TEAM_BATCH_SIZE) {
+        const chunk = teamUids.slice(index, index + ROLE_TEAM_BATCH_SIZE)
+        try {
+            const payload = Enterprise.RoleTeams.create({
+                roleTeam: chunk.map((teamUid) =>
+                    Enterprise.RoleTeam.create({
+                        roleId: newRoleId,
+                        teamUid: normal64Bytes(teamUid),
+                    })
+                ),
+            })
+            await auth.executeRestAction(roleTeamAddMessage(payload))
+            copied += chunk.length
+        } catch {
+            failed += teamUids.length - index
+            break
+        }
     }
+    return { copied, failed }
 }
