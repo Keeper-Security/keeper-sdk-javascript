@@ -42,7 +42,7 @@ Use the high-level SDK for vault operations, sharing, nested shared folders, and
 
 Before installing the Keeper JavaScript SDK, ensure your system meets the following requirements:
 
-- **Node.js**: 24 LTS or newer (examples target Node 20+; also check the `engines` field on `@keeper-security/keeperapi`)
+- **Node.js**: 24 LTS or newer (examples target Node 24+; also check the `engines` field on `@keeper-security/keeperapi`)
 - **Package Manager**: npm (or a compatible client such as yarn / pnpm)
 - **Operating System**: Windows, macOS, or Linux
 - **Language**: JavaScript or TypeScript
