@@ -1,6 +1,6 @@
 {
     "name": "@keeper-security/keeper-sdk-javascript",
-    "version": "1.1.1",
+    "version": "2.0.1",
     "description": "High-level wrapper for Keeper Security JavaScript SDK",
     "repository": {
         "type": "git",
@@ -24,7 +24,7 @@
         "prepublishOnly": "npm run build"
     },
     "dependencies": {
-        "@keeper-security/keeperapi": "18.0.6",
+        "@keeper-security/keeperapi": "19.0.1",
         "ts-node": "^10.7.0",
         "asmcrypto.js": "^2.3.2",
         "typescript": "^4.6.3"
