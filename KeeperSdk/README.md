@@ -11,10 +11,10 @@
 
 The Keeper SDK for JavaScript provides developers with a toolkit for integrating Keeper Security's password management and secrets management capabilities into Node.js and browser applications. This repository contains two primary packages:
 
-| Package | Purpose |
-|---------|---------|
+| Package                                       | Purpose                                                                         |
+| --------------------------------------------- | ------------------------------------------------------------------------------- |
 | [`@keeper-security/keeper-sdk-javascript`](.) | High-level vault and enterprise API (`KeeperVault`) for Node.js and the browser |
-| [`@keeper-security/keeperapi`](../keeperapi) | Low-level REST/protobuf client (direct use not recommended for most apps) |
+| [`@keeper-security/keeperapi`](../keeperapi)  | Low-level REST/protobuf client (direct use not recommended for most apps)       |
 
 Use the high-level SDK for vault operations, sharing, nested shared folders, and enterprise administration. Runnable examples live under [`examples/sdk_example`](../examples/sdk_example).
 
@@ -22,13 +22,13 @@ Use the high-level SDK for vault operations, sharing, nested shared folders, and
 
 - [Prerequisites](#prerequisites)
 - [Keeper SDK](#keeper-sdk)
-  - [About Keeper SDK](#about-keeper-sdk)
-  - [Implemented Functionality](#implemented-functionality)
-  - [SDK Installation](#sdk-installation)
-  - [SDK Environment Setup](#sdk-environment-setup)
-  - [SDK Configuration](#sdk-configuration)
-  - [Persistent Login](#persistent-login)
-  - [SDK Usage Example](#sdk-usage-example)
+    - [About Keeper SDK](#about-keeper-sdk)
+    - [Implemented Functionality](#implemented-functionality)
+    - [SDK Installation](#sdk-installation)
+    - [SDK Environment Setup](#sdk-environment-setup)
+    - [SDK Configuration](#sdk-configuration)
+    - [Persistent Login](#persistent-login)
+    - [SDK Usage Example](#sdk-usage-example)
 - [Examples](#examples)
 - [Development Setup](#development-setup)
 - [Repository Layout](#repository-layout)
@@ -77,20 +77,20 @@ The primary entry point is the `KeeperVault` class. Domain managers (`FolderMana
 
 `KeeperVault` and the supporting modules expose the operations below. Enterprise features require an enterprise administrator account.
 
-| Area | Capabilities |
-|------|----------------|
-| **Authentication** | Master password login, session token login, device registration, resume persistent session, restore exported session, sync down, logout, whoami |
-| **Records** | List, search/find, add, update, delete, move, history, print/format helpers |
-| **Folders** | List, get, mkdir, rename/update, rmdir, change directory, folder tree |
-| **Shared folders** | List, share with users/teams, update membership, download/apply membership |
-| **Sharing** | Share and unshare records, inspect record share info |
-| **Nested shared folders (NSF)** | List/get, mkdir/rmdir/rename, add/update/remove records, link, shortcut, share folder/record, transfer, record permissions |
-| **Teams** | List, view, add, update, delete, change team roles |
-| **Users** | List, view, add, update, delete; lock/unlock and related actions; aliases; team membership |
-| **Roles** | List, view, add, update, delete, copy, enforcements, role users, managed nodes, privileges |
-| **Nodes** | List, view, add, update, delete |
-| **Enterprise reports** | Audit report, action report, password report |
-| **Utilities** | Config loaders, console auth UI (Node), password generator, logging, typed error codes |
+| Area                            | Capabilities                                                                                                                                    |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Authentication**              | Master password login, session token login, device registration, resume persistent session, restore exported session, sync down, logout, whoami |
+| **Records**                     | List, search/find, add, update, delete, move, history, print/format helpers                                                                     |
+| **Folders**                     | List, get, mkdir, rename/update, rmdir, change directory, folder tree                                                                           |
+| **Shared folders**              | List, share with users/teams, update membership, download/apply membership                                                                      |
+| **Sharing**                     | Share and unshare records, inspect record share info                                                                                            |
+| **Nested shared folders (NSF)** | List/get, mkdir/rmdir/rename, add/update/remove records, link, shortcut, share folder/record, transfer, record permissions                      |
+| **Teams**                       | List, view, add, update, delete, change team roles                                                                                              |
+| **Users**                       | List, view, add, update, delete; lock/unlock and related actions; aliases; team membership                                                      |
+| **Roles**                       | List, view, add, update, delete, copy, enforcements, role users, managed nodes, privileges                                                      |
+| **Nodes**                       | List, view, add, update, delete                                                                                                                 |
+| **Enterprise reports**          | Audit report, action report, password report                                                                                                    |
+| **Utilities**                   | Config loaders, console auth UI (Node), password generator, logging, typed error codes                                                          |
 
 Browser builds use `KeeperSdk/dist/browser.js` (via `src/browser.ts`) and do not include Node-only helpers such as `readline`-based console auth or `~/.keeper` file config. Pass an in-memory `ConfigLoader` / `SessionManager` when embedding in the browser.
 
@@ -186,42 +186,42 @@ A sample structure of `~/.keeper/config.json`:
 
 ```json
 {
-  "last_login": "username@yourcompany.com",
-  "last_server": "keepersecurity.com",
-  "users": [
-    {
-      "user": "username@yourcompany.com",
-      "server": "keepersecurity.com",
-      "last_device": {
-        "device_token": ""
-      }
-    }
-  ],
-  "devices": [
-    {
-      "device_token": "",
-      "private_key": "",
-      "server_info": [
+    "last_login": "username@yourcompany.com",
+    "last_server": "keepersecurity.com",
+    "users": [
         {
-          "server": "keepersecurity.com",
-          "clone_code": ""
+            "user": "username@yourcompany.com",
+            "server": "keepersecurity.com",
+            "last_device": {
+                "device_token": ""
+            }
         }
-      ]
-    }
-  ]
+    ],
+    "devices": [
+        {
+            "device_token": "",
+            "private_key": "",
+            "server_info": [
+                {
+                    "server": "keepersecurity.com",
+                    "clone_code": ""
+                }
+            ]
+        }
+    ]
 }
 ```
 
 **Available Keeper regions** (`KEEPER_PUBLIC_HOSTS`):
 
-| Region | Host |
-|--------|------|
-| US | `keepersecurity.com` |
-| EU | `keepersecurity.eu` |
-| AU | `keepersecurity.com.au` |
-| CA | `keepersecurity.ca` |
-| JP | `keepersecurity.jp` |
-| GOV | `govcloud.keepersecurity.us` |
+| Region | Host                         |
+| ------ | ---------------------------- |
+| US     | `keepersecurity.com`         |
+| EU     | `keepersecurity.eu`          |
+| AU     | `keepersecurity.com.au`      |
+| CA     | `keepersecurity.ca`          |
+| JP     | `keepersecurity.jp`          |
+| GOV    | `govcloud.keepersecurity.us` |
 
 ### Persistent Login
 
@@ -442,12 +442,12 @@ cd ../KeeperSdk && npm install && npm run link-local && npm run build
 
 Useful scripts in this package (`KeeperSdk/`):
 
-| Script | Description |
-|--------|-------------|
-| `npm run build` | Compile TypeScript to `dist/` |
+| Script               | Description                              |
+| -------------------- | ---------------------------------------- |
+| `npm run build`      | Compile TypeScript to `dist/`            |
 | `npm run link-local` | `npm link` the local `keeperapi` package |
-| `npm run format` | Format sources with Prettier |
-| `npm test` | Run tests (when configured) |
+| `npm run format`     | Format sources with Prettier             |
+| `npm test`           | Run tests (when configured)              |
 
 Package-level docs:
 
