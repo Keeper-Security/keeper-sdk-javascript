@@ -1031,7 +1031,6 @@ export const pamGetLeafsMessage = (
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
 
-/** Set PAM configuration network-level permissions. */
 export const pamConfigureNetworkGraphMessage = (
     data: Router.IPAMNetworkConfigurationRequest
 ): RestInMessage<Router.IPAMNetworkConfigurationRequest> =>
@@ -1101,7 +1100,6 @@ export const keeperDriveRecordsAdd = (
 ): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
 
-/** Create a PAM configuration in a nested shared folder. */
 export const addPamConfigurationV3Message = (
     data: record.v3.IRecordsAddRequest
 ): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
