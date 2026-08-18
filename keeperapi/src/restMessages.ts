@@ -12,6 +12,7 @@ import {
     GraphSync,
     PAM,
     Records,
+    Router,
     ServiceLogger,
     SsoCloud,
     Vault,
@@ -972,10 +973,33 @@ export const automatorAdminResetMessage = (
 export const getControllers = (): RestOutMessage<PAM.IPAMControllersResponse> =>
     createOutMessage('pam/get_controllers', PAM.PAMControllersResponse)
 
+export const modifyControllerMessage = (data: PAM.IPAMController): RestInMessage<PAM.IPAMController> =>
+    createInMessage(data, 'pam/modify_controller', PAM.PAMController)
+
+export const removeControllerMessage = (
+    data: PAM.IPAMGenericUidsRequest
+): RestMessage<PAM.IPAMGenericUidsRequest, PAM.IPAMRemoveControllerResponse> =>
+    createMessage(data, 'pam/remove_controller', PAM.PAMGenericUidsRequest, PAM.PAMRemoveControllerResponse)
+
+export const setControllerMaxInstanceCountMessage = (
+    data: PAM.IPAMSetMaxInstanceCountRequest
+): RestInMessage<PAM.IPAMSetMaxInstanceCountRequest> =>
+    createInMessage(data, 'pam/set_controller_max_instance_count', PAM.PAMSetMaxInstanceCountRequest)
+
 export const getConfigurationControllerMessage = (
     data: PAM.IPAMGenericUidRequest
 ): RestMessage<PAM.IPAMGenericUidRequest, PAM.IPAMController> =>
     createMessage(data, 'pam/get_configuration_controller', PAM.PAMGenericUidRequest, PAM.PAMController)
+
+export const addConfigurationRecordMessage = (
+    data: PAM.IConfigurationAddRequest
+): RestInMessage<PAM.IConfigurationAddRequest> =>
+    createInMessage(data, 'pam/add_configuration_record', PAM.ConfigurationAddRequest)
+
+export const setConfigurationControllerMessage = (
+    data: PAM.IPAMConfigurationController
+): RestInMessage<PAM.IPAMConfigurationController> =>
+    createInMessage(data, 'pam/set_configuration_controller', PAM.PAMConfigurationController)
 
 /* -- PAM Router (DAG GraphSync) -- */
 
@@ -1006,6 +1030,11 @@ export const pamGetLeafsMessage = (
 
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
+
+export const pamConfigureNetworkGraphMessage = (
+    data: Router.IPAMNetworkConfigurationRequest
+): RestInMessage<Router.IPAMNetworkConfigurationRequest> =>
+    createInMessage(data, 'api/user/configure_network_graph', Router.PAMNetworkConfigurationRequest)
 
 export const readWorkflowConfigMessage = (
     data: GraphSync.IGraphSyncRef
@@ -1070,6 +1099,16 @@ export const keeperDriveRecordsAdd = (
     data: record.v3.IRecordsAddRequest
 ): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
     createMessage(data, 'vault/records/v3/add', record.v3.RecordsAddRequest, Records.RecordsModifyResponse)
+
+export const addPamConfigurationV3Message = (
+    data: record.v3.IRecordsAddRequest
+): RestMessage<record.v3.IRecordsAddRequest, Records.IRecordsModifyResponse> =>
+    createMessage(
+        data,
+        'vault/records/v3/add_pam_configuration',
+        record.v3.RecordsAddRequest,
+        Records.RecordsModifyResponse
+    )
 
 export const keeperDriveRecordsUpdate = (
     data: Records.IRecordsUpdateRequest
