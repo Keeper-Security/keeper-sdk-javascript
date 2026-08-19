@@ -50,13 +50,9 @@ async function hmacSha512(key: Uint8Array, message: string): Promise<Uint8Array>
             ResultCodes.PAM_GATEWAY_CREATE_FAILED
         )
     }
-    const cryptoKey = await subtle.importKey(
-        'raw',
-        toBufferSource(key),
-        { name: 'HMAC', hash: 'SHA-512' },
-        false,
-        ['sign']
-    )
+    const cryptoKey = await subtle.importKey('raw', toBufferSource(key), { name: 'HMAC', hash: 'SHA-512' }, false, [
+        'sign',
+    ])
     const signature = await subtle.sign('HMAC', cryptoKey, toBufferSource(platform.stringToBytes(message)))
     return new Uint8Array(signature)
 }
@@ -161,9 +157,7 @@ async function initKsmConfigFromToken(
     }
 
     const json = JSON.stringify(configDict)
-    return format === GatewayConfigInitFormat.B64
-        ? platform.bytesToBase64(platform.stringToBytes(json))
-        : json
+    return format === GatewayConfigInitFormat.B64 ? platform.bytesToBase64(platform.stringToBytes(json)) : json
 }
 
 export async function createGateway(

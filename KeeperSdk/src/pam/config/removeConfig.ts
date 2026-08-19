@@ -6,11 +6,7 @@ import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { getPamConfigurationDisplayName } from './configHelpers'
 import { findPamConfigurationByUidOrTitle, readTypedRecordPayload } from './configMutationHelpers'
 import { removePamConfigurationRecord } from './pamConfigFolder'
-import type {
-    RemovePamConfigurationInput,
-    RemovePamConfigurationResult,
-    RemovedPamConfiguration,
-} from './configTypes'
+import type { RemovePamConfigurationInput, RemovePamConfigurationResult, RemovedPamConfiguration } from './configTypes'
 
 function collectConfigurationUidOrTitles(input: RemovePamConfigurationInput): string[] {
     const raw = input.configurationUidOrTitle
@@ -20,7 +16,10 @@ function collectConfigurationUidOrTitles(input: RemovePamConfigurationInput): st
     for (const value of values) {
         if (typeof value !== 'string') continue
         const parts = value.includes(',')
-            ? value.split(',').map((entry) => entry.trim()).filter(Boolean)
+            ? value
+                  .split(',')
+                  .map((entry) => entry.trim())
+                  .filter(Boolean)
             : [value.trim()].filter(Boolean)
         for (const trimmed of parts) {
             const key = trimmed

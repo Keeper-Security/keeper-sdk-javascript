@@ -328,11 +328,7 @@ async function deleteRecordFromSource(
 
 /** @deprecated Prefer deleteRecord(auth, storage, recordUid) so the source folder is resolved correctly. */
 export async function deleteRecord(auth: Auth, recordUid: string): Promise<DeleteRecordResult>
-export async function deleteRecord(
-    auth: Auth,
-    storage: InMemoryStorage,
-    recordUid: string
-): Promise<DeleteRecordResult>
+export async function deleteRecord(auth: Auth, storage: InMemoryStorage, recordUid: string): Promise<DeleteRecordResult>
 export async function deleteRecord(
     auth: Auth,
     storageOrRecordUid: InMemoryStorage | string,

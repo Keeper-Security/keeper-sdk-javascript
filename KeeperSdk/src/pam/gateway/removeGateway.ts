@@ -17,7 +17,10 @@ function collectGatewayUidOrNames(input: RemoveGatewayInput): string[] {
     for (const value of values) {
         if (typeof value !== 'string') continue
         const parts = value.includes(',')
-            ? value.split(',').map((entry) => entry.trim()).filter(Boolean)
+            ? value
+                  .split(',')
+                  .map((entry) => entry.trim())
+                  .filter(Boolean)
             : [value.trim()].filter(Boolean)
         for (const trimmed of parts) {
             const key = trimmed
@@ -73,7 +76,8 @@ export async function removeGateway(auth: Auth, input: RemoveGatewayInput): Prom
         if (failures.length) {
             const details = failures.map((entry) => {
                 const index = controllerUids.findIndex((uid) => controllerUidsEqual(uid, entry.controllerUid))
-                const label = (index >= 0 ? resolved[index]?.gatewayName : '') || webSafeUidFromBytes(entry.controllerUid)
+                const label =
+                    (index >= 0 ? resolved[index]?.gatewayName : '') || webSafeUidFromBytes(entry.controllerUid)
                 return `${label}: ${entry.message!.trim()}`
             })
             throw new KeeperSdkError(

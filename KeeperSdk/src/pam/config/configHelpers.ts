@@ -35,7 +35,9 @@ export function resolvePamConfigurationRecordType(environmentOrType: string): Pa
 }
 
 export function isPamConfigurationRecord(record: DRecord): boolean {
-    return isSupportedPamConfigurationRecordVersion(record.version) && isPamConfigurationRecordType(getRecordType(record))
+    return (
+        isSupportedPamConfigurationRecordVersion(record.version) && isPamConfigurationRecordType(getRecordType(record))
+    )
 }
 
 function fieldValueToStrings(value: unknown): string[] {
