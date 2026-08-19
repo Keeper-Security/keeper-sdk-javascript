@@ -432,4 +432,3 @@ export function formatGatewaysOutput(result: ListGatewaysResult, options: ListGa
     }
     return parts.join('\n')
 }
-
