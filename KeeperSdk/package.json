@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "@keeper-security/keeperapi": "^18.0.4",
+        "@keeper-security/secrets-manager-core": "^17.5.0",
         "ts-node": "^10.7.0",
         "typescript": "^4.6.3"
     },

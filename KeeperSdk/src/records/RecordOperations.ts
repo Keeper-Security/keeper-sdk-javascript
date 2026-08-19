@@ -272,14 +272,24 @@ export async function updateRecord(
     }
 }
 
-export async function deleteRecord(auth: Auth, recordUid: string): Promise<DeleteRecordResult> {
+function toPreDeleteFromType(folderType: FolderKind): RecordPreDeleteObject['from_type'] {
+    if (folderType === FolderKind.UserFolder) return FolderKind.UserFolder
+    return FolderKind.SharedFolderFolder
+}
+
+async function deleteRecordFromSource(
+    auth: Auth,
+    recordUid: string,
+    fromUid: string,
+    fromType: RecordPreDeleteObject['from_type']
+): Promise<DeleteRecordResult> {
     const preDeleteRequest = {
         objects: [
             {
                 object_uid: recordUid,
                 object_type: VaultObjectKind.Record,
-                from_uid: '',
-                from_type: FolderKind.UserFolder,
+                from_uid: fromUid,
+                from_type: fromType,
                 delete_resolution: DeleteResolution.Unlink,
             } as RecordPreDeleteObject,
         ],
@@ -290,7 +300,11 @@ export async function deleteRecord(auth: Auth, recordUid: string): Promise<Delet
         const preDeleteCmd = recordPreDeleteCommand(preDeleteRequest)
         preDeleteResponse = await auth.executeRestCommand(preDeleteCmd)
     } catch (err) {
-        return { recordUid, success: false, message: extractErrorMessage(err) }
+        return {
+            recordUid,
+            success: false,
+            message: `${extractErrorMessage(err)} (source: ${fromType}${fromUid ? `:${fromUid}` : ''})`,
+        }
     }
 
     const token = preDeleteResponse?.pre_delete_response?.pre_delete_token
@@ -310,6 +324,26 @@ export async function deleteRecord(auth: Auth, recordUid: string): Promise<Delet
     }
 
     return { recordUid, success: true, message: ResultCode.Success }
+}
+
+/** @deprecated Prefer deleteRecord(auth, storage, recordUid) so the source folder is resolved correctly. */
+export async function deleteRecord(auth: Auth, recordUid: string): Promise<DeleteRecordResult>
+export async function deleteRecord(auth: Auth, storage: InMemoryStorage, recordUid: string): Promise<DeleteRecordResult>
+export async function deleteRecord(
+    auth: Auth,
+    storageOrRecordUid: InMemoryStorage | string,
+    recordUid?: string
+): Promise<DeleteRecordResult> {
+    if (typeof storageOrRecordUid === 'string') {
+        // Legacy 2-arg form: always delete from the user's root folder (pre-PAM behavior).
+        return deleteRecordFromSource(auth, storageOrRecordUid, '', FolderKind.UserFolder)
+    }
+
+    const uid = recordUid!
+    const srcUid = await findRecordSourceFolder(uid, storageOrRecordUid)
+    const src = resolveFolder(srcUid, storageOrRecordUid)
+    const fromType = toPreDeleteFromType(src.folderType)
+    return deleteRecordFromSource(auth, uid, src.uid || '', fromType)
 }
 
 export type HistoryEntry = {
@@ -426,6 +460,16 @@ function resolveFolder(uid: string, storage: InMemoryStorage): FolderInfo {
 }
 
 async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorage): Promise<string> {
+    // Root user-folder records are linked under the empty folder UID.
+    const rootDependencies = (await storage.getDependencies('')) || []
+    if (
+        rootDependencies.some(
+            (dependency) => dependency.kind === VaultObjectKind.Record && dependency.uid === recordUid
+        )
+    ) {
+        return ''
+    }
+
     const folderKinds = [FolderKind.UserFolder, FolderKind.SharedFolder, FolderKind.SharedFolderFolder] as const
 
     for (const kind of folderKinds) {
@@ -444,7 +488,7 @@ async function findRecordSourceFolder(recordUid: string, storage: InMemoryStorag
     const sharedFolderRecord = storage
         .getAll<DSharedFolderRecord>(VaultObjectKind.SharedFolderRecord)
         .find((candidate) => candidate.recordUid === recordUid)
-    return sharedFolderRecord ? sharedFolderRecord.sharedFolderUid : ''
+    return sharedFolderRecord?.sharedFolderUid || ''
 }
 
 export async function moveRecord(
@@ -466,9 +510,9 @@ export async function moveRecord(
         cascade: false,
         from_type: src.folderType,
         from_uid: src.uid || undefined,
-        can_edit: canEdit,
-        can_reshare: canShare,
     }
+    if (canEdit) moveObj.can_edit = true
+    if (canShare) moveObj.can_reshare = true
 
     const transitionKeys: TransitionKeyObject[] = []
 

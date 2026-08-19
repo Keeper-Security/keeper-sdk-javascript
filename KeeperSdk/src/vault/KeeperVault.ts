@@ -86,6 +86,7 @@ import {
 } from '../enterpriseReport'
 import { UserManager } from '../users/UserManager'
 import { NestedShareFolderManager } from '../nestedShareFolders/NestedShareFolderManager'
+import { PamManager } from '../pam/PamManager'
 import { isNestedShareFolder } from '../nestedShareFolders/nsfHelpers'
 import { formatListNsfTable, renderListNsfAsciiTable, formatListNsfOutput } from '../nestedShareFolders/listNsf'
 import { formatNsfDetail } from '../nestedShareFolders/getNsf'
@@ -142,6 +143,34 @@ import type {
     UpdateNsfRecordResult,
     UpdateNsfRecordResultItem,
 } from '../nestedShareFolders/nsfTypes'
+import type {
+    ListGatewaysOptions,
+    ListGatewaysResult,
+    FormattedGatewaysTable,
+    FormatGatewaysTableOptions,
+    RenderGatewaysAsciiTableOptions,
+    CreateGatewayInput,
+    CreateGatewayResult,
+    EditGatewayInput,
+    EditGatewayResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
+} from '../pam/gateway/gatewayTypes'
+import type {
+    FormatPamConfigurationsTableOptions,
+    FormattedPamConfigurationsTable,
+    ListPamConfigurationsOptions,
+    ListPamConfigurationsResult,
+    RenderPamConfigurationsAsciiTableOptions,
+    CreatePamConfigurationInput,
+    CreatePamConfigurationResult,
+    EditPamConfigurationInput,
+    EditPamConfigurationResult,
+    RemovePamConfigurationInput,
+    RemovePamConfigurationResult,
+} from '../pam/config/configTypes'
 import type {
     ListUserRow,
     ListUsersOptions,
@@ -211,6 +240,7 @@ export class KeeperVault {
     private readonly enterpriseReportManager: EnterpriseReportManager
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
+    private readonly pamManager: PamManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -236,10 +266,23 @@ export class KeeperVault {
         this.enterpriseReportManager = new EnterpriseReportManager(authProvider)
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
+        this.pamManager = new PamManager(this.storage, authProvider)
     }
 
     public getNestedShareFolderManager(): NestedShareFolderManager {
         return this.nestedShareFolderManager
+    }
+
+    public getPamManager(): PamManager {
+        return this.pamManager
+    }
+
+    public getGatewayManager() {
+        return this.pamManager.getGatewayManager()
+    }
+
+    public getConfigManager() {
+        return this.pamManager.getConfigManager()
     }
 
     public getFolderManager(): FolderManager {
@@ -740,7 +783,7 @@ export class KeeperVault {
 
     public async deleteRecord(recordUid: string): Promise<DeleteRecordResult> {
         const auth = this.getAuthOrThrow()
-        const result = await deleteRecordOp(auth, recordUid)
+        const result = await deleteRecordOp(auth, this.storage, recordUid)
         if (result.success) await this.syncIfNeeded()
         return result
     }
@@ -977,6 +1020,91 @@ export class KeeperVault {
         kind: 'GRANT' | 'REVOKE'
     ): string {
         return formatNsfRecordPermissionFailures(failures, kind)
+    }
+
+    public async listGateways(options?: ListGatewaysOptions): Promise<ListGatewaysResult> {
+        return this.pamManager.listGateways(options ?? {})
+    }
+
+    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult> {
+        return this.pamManager.createGateway(input)
+    }
+
+    public async editGateway(input: EditGatewayInput): Promise<EditGatewayResult> {
+        return this.pamManager.editGateway(input)
+    }
+
+    public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
+        return this.pamManager.removeGateway(input)
+    }
+
+    public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
+        return this.pamManager.setGatewayMaxInstances(input)
+    }
+
+    public formatGatewaysTable(
+        result: ListGatewaysResult,
+        options?: FormatGatewaysTableOptions
+    ): FormattedGatewaysTable {
+        return this.pamManager.formatGatewaysTable(result, options ?? {})
+    }
+
+    public renderGatewaysAsciiTable(table: FormattedGatewaysTable, options?: RenderGatewaysAsciiTableOptions): string {
+        return this.pamManager.renderGatewaysAsciiTable(table, options ?? {})
+    }
+
+    public formatGatewaysJson(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
+        return this.pamManager.formatGatewaysJson(result, options ?? {})
+    }
+
+    public formatGatewaysOutput(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
+        return this.pamManager.formatGatewaysOutput(result, options ?? {})
+    }
+
+    public listPamConfigurations(options?: ListPamConfigurationsOptions): ListPamConfigurationsResult {
+        return this.pamManager.listPamConfigurations(options ?? {})
+    }
+
+    public async createPamConfiguration(input: CreatePamConfigurationInput): Promise<CreatePamConfigurationResult> {
+        return this.pamManager.createPamConfiguration(input)
+    }
+
+    public async editPamConfiguration(input: EditPamConfigurationInput): Promise<EditPamConfigurationResult> {
+        return this.pamManager.editPamConfiguration(input)
+    }
+
+    public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
+        const result = await this.pamManager.removePamConfiguration(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatPamConfigurationsTable(
+        result: ListPamConfigurationsResult,
+        options?: FormatPamConfigurationsTableOptions
+    ): FormattedPamConfigurationsTable {
+        return this.pamManager.formatPamConfigurationsTable(result, options ?? {})
+    }
+
+    public renderPamConfigurationsAsciiTable(
+        table: FormattedPamConfigurationsTable,
+        options?: RenderPamConfigurationsAsciiTableOptions
+    ): string {
+        return this.pamManager.renderPamConfigurationsAsciiTable(table, options ?? {})
+    }
+
+    public formatPamConfigurationsJson(
+        result: ListPamConfigurationsResult,
+        options?: ListPamConfigurationsOptions
+    ): string {
+        return this.pamManager.formatPamConfigurationsJson(result, options ?? {})
+    }
+
+    public formatPamConfigurationsOutput(
+        result: ListPamConfigurationsResult,
+        options?: ListPamConfigurationsOptions
+    ): string {
+        return this.pamManager.formatPamConfigurationsOutput(result, options ?? {})
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
