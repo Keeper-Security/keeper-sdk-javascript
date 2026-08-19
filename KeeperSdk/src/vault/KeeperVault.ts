@@ -198,6 +198,22 @@ import type {
     UpdateUsersOnTeamsResult,
     FormattedUpdateTeamUserTable,
 } from '../users/updateTeamUser'
+import { PamManager } from '../pam/PamManager'
+import type {
+    ListGatewaysOptions,
+    ListGatewaysResult,
+    FormattedGatewaysTable,
+    FormatGatewaysTableOptions,
+    RenderGatewaysAsciiTableOptions,
+    CreateGatewayInput,
+    CreateGatewayResult,
+    EditGatewayInput,
+    EditGatewayResult,
+    RemoveGatewayInput,
+    RemoveGatewayResult,
+    SetGatewayMaxInstancesInput,
+    SetGatewayMaxInstancesResult,
+} from '../pam/gateway/gatewayTypes'
 import { buildWhoamiInfo, type WhoamiInfo } from '../account/whoamiInfo'
 import {
     ConsoleLogger,
@@ -254,6 +270,7 @@ export class KeeperVault {
     private readonly enterpriseReportManager: EnterpriseReportManager
     private readonly userManager: UserManager
     private readonly nestedShareFolderManager: NestedShareFolderManager
+    private readonly pamManager: PamManager
 
     constructor(config?: KeeperVaultConfig) {
         this.config = {
@@ -280,6 +297,15 @@ export class KeeperVault {
         this.enterpriseReportManager = new EnterpriseReportManager(authProvider)
         this.userManager = new UserManager(authProvider)
         this.nestedShareFolderManager = new NestedShareFolderManager(this.storage, authProvider)
+        this.pamManager = new PamManager(this.storage, authProvider)
+    }
+
+    public getPamManager(): PamManager {
+        return this.pamManager
+    }
+
+    public getGatewayManager() {
+        return this.pamManager.getGatewayManager()
     }
 
     public getNestedShareFolderManager(): NestedShareFolderManager {
@@ -1281,6 +1307,45 @@ export class KeeperVault {
         kind: 'GRANT' | 'REVOKE'
     ): string {
         return this.nestedShareFolderManager.formatNsfRecordPermissionFailures(failures, kind)
+    }
+
+    public async listGateways(options?: ListGatewaysOptions): Promise<ListGatewaysResult> {
+        return this.pamManager.listGateways(options ?? {})
+    }
+
+    public async createGateway(input: CreateGatewayInput): Promise<CreateGatewayResult> {
+        return this.pamManager.createGateway(input)
+    }
+
+    public async editGateway(input: EditGatewayInput): Promise<EditGatewayResult> {
+        return this.pamManager.editGateway(input)
+    }
+
+    public async removeGateway(input: RemoveGatewayInput): Promise<RemoveGatewayResult> {
+        return this.pamManager.removeGateway(input)
+    }
+
+    public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
+        return this.pamManager.setGatewayMaxInstances(input)
+    }
+
+    public formatGatewaysTable(
+        result: ListGatewaysResult,
+        options?: FormatGatewaysTableOptions
+    ): FormattedGatewaysTable {
+        return this.pamManager.formatGatewaysTable(result, options ?? {})
+    }
+
+    public renderGatewaysAsciiTable(table: FormattedGatewaysTable, options?: RenderGatewaysAsciiTableOptions): string {
+        return this.pamManager.renderGatewaysAsciiTable(table, options ?? {})
+    }
+
+    public formatGatewaysJson(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
+        return this.pamManager.formatGatewaysJson(result, options ?? {})
+    }
+
+    public formatGatewaysOutput(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
+        return this.pamManager.formatGatewaysOutput(result, options ?? {})
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
