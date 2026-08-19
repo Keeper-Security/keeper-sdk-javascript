@@ -1,6 +1,7 @@
 import type { Auth, DRecord } from '@keeper-security/keeperapi'
 import { normal64Bytes, setConfigurationControllerMessage } from '@keeper-security/keeperapi'
 import { VaultObjectKind } from '../../folders/folderHelpers'
+import { getNsfRecordTypeFields } from '../../nestedShareFolders/nsfRecordTypes'
 import { moveRecord } from '../../records/RecordOperations'
 import { getRecordTitle } from '../../records/RecordUtils'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
@@ -33,19 +34,82 @@ export function normalizeFields(
     }))
 }
 
+/**
+ * Seed PAM configuration fields from the Keeper record-type schema (Commander-compatible).
+ * Without this, Azure/GCP/etc. typed slots are missing and Vault may not surface prompted values.
+ */
+export async function seedPamConfigurationFieldsFromRecordType(
+    auth: Auth,
+    configType: string
+): Promise<PamConfigurationRecordFieldInput[]> {
+    const schemaFields = await getNsfRecordTypeFields(auth, configType)
+    if (!schemaFields?.length) return []
+
+    const seeded: PamConfigurationRecordFieldInput[] = []
+    for (const entry of schemaFields) {
+        if (!entry || typeof entry !== 'object') continue
+        const field = entry as { $ref?: unknown; label?: unknown }
+        const type = typeof field.$ref === 'string' ? field.$ref.trim() : ''
+        if (!type) continue
+        const label = typeof field.label === 'string' && field.label.trim() ? field.label.trim() : undefined
+        seeded.push({ type, label, value: [] })
+    }
+    return seeded
+}
+
+/**
+ * Best-effort variant that never throws and reports failures via warning callback.
+ * Use this on create/edit flows to avoid blocking the main mutation path.
+ */
+export async function seedPamConfigurationFieldsFromRecordTypeSoft(
+    auth: Auth,
+    configType: string,
+    onWarning: (message: string) => void
+): Promise<PamConfigurationRecordFieldInput[]> {
+    try {
+        return await seedPamConfigurationFieldsFromRecordType(auth, configType)
+    } catch (err) {
+        onWarning(
+            `Failed to seed typed fields for configuration type "${configType}": ${extractErrorMessage(err)}. Continuing without schema-seeded fields.`
+        )
+        return []
+    }
+}
+
 export function ensureScheduleField(fields: PamConfigurationRecordFieldInput[]): PamConfigurationRecordFieldInput[] {
-    if (fields.some((field) => field.type === SCHEDULE_FIELD_TYPE)) return fields
+    const scheduleIndex = fields.findIndex((field) => field.type === SCHEDULE_FIELD_TYPE)
+    if (scheduleIndex >= 0) {
+        const schedule = fields[scheduleIndex]
+        if (schedule.value?.length) return fields
+        return fields.map((field, index) =>
+            index === scheduleIndex
+                ? {
+                      ...field,
+                      label: field.label || 'defaultRotationSchedule',
+                      value: [...DEFAULT_PAM_CONFIG_SCHEDULE_VALUE],
+                  }
+                : field
+        )
+    }
     return [
         ...fields,
         {
             type: SCHEDULE_FIELD_TYPE,
+            label: 'defaultRotationSchedule',
             value: [...DEFAULT_PAM_CONFIG_SCHEDULE_VALUE],
         },
     ]
 }
 
+function normalizeFieldKeyToken(value: string | undefined): string {
+    return (value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+}
+
 function fieldKey(field: PamConfigurationRecordFieldInput): string {
-    return `${field.type}\0${field.label || ''}`
+    return `${normalizeFieldKeyToken(field.type)}\0${normalizeFieldKeyToken(field.label)}`
 }
 
 export function mergeRecordFields(
@@ -65,9 +129,12 @@ export function mergeRecordFields(
             merged.push({ ...update, value: [...update.value] })
             continue
         }
+        const existingField = merged[existingIndex]
         merged[existingIndex] = {
-            ...merged[existingIndex],
-            ...update,
+            ...existingField,
+            // Keep canonical schema type/label when present.
+            type: existingField.type || update.type,
+            label: existingField.label || update.label,
             value: [...update.value],
         }
     }

@@ -966,9 +966,21 @@ export const modifyControllerMessage = (data: PAM.IPAMController): RestInMessage
     createInMessage(data, 'pam/modify_controller', PAM.PAMController)
 
 export const removeControllerMessage = (
-    data: PAM.IPAMGenericUidRequest
-): RestMessage<PAM.IPAMGenericUidRequest, PAM.IPAMRemoveControllerResponse> =>
-    createMessage(data, 'pam/remove_controller', PAM.PAMGenericUidRequest, PAM.PAMRemoveControllerResponse)
+    data: PAM.IPAMGenericUidRequest | PAM.IPAMGenericUidsRequest
+): RestMessage<PAM.IPAMGenericUidsRequest, PAM.IPAMRemoveControllerResponse> => {
+    const normalized: PAM.IPAMGenericUidsRequest = Array.isArray((data as PAM.IPAMGenericUidsRequest).uids)
+        ? { uids: [...((data as PAM.IPAMGenericUidsRequest).uids || [])] }
+        : {
+              uids: (data as PAM.IPAMGenericUidRequest).uid != null ? [(data as PAM.IPAMGenericUidRequest).uid!] : [],
+          }
+
+    return createMessage<PAM.IPAMGenericUidsRequest, PAM.IPAMRemoveControllerResponse>(
+        normalized,
+        'pam/remove_controller',
+        PAM.PAMGenericUidsRequest,
+        PAM.PAMRemoveControllerResponse
+    )
+}
 
 export const setControllerMaxInstanceCountMessage = (
     data: PAM.IPAMSetMaxInstanceCountRequest

@@ -11,6 +11,7 @@ import {
     readTypedRecordPayload,
     resolveGatewayUidSoft,
     resolveResourceRecordUidsToRemove,
+    seedPamConfigurationFieldsFromRecordTypeSoft,
     upsertPamResourcesField,
 } from './configMutationHelpers'
 import {
@@ -148,6 +149,12 @@ export async function editPamConfiguration(
         }
 
         let fields = mergeRecordFields(existing.fields, input.fields)
+        if (typeChanged) {
+            const seededFields = await seedPamConfigurationFieldsFromRecordTypeSoft(auth, configType, (warning) =>
+                warnings.push(warning)
+            )
+            fields = mergeRecordFields(seededFields, fields)
+        }
         fields = upsertPamResourcesField(fields, {
             gatewayUid,
             sharedFolderUid,

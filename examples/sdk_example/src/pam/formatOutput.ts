@@ -45,7 +45,19 @@ export function formatEditGatewayOutput(result: EditGatewayResult): string {
 }
 
 export function formatRemoveGatewayOutput(result: RemoveGatewayResult): string {
-    return `Gateway ${result.gatewayName} has been removed.`
+    const gateways =
+        result.gateways?.length > 0
+            ? result.gateways
+            : result.gatewayName
+              ? [{ gatewayUid: result.gatewayUid, gatewayName: result.gatewayName }]
+              : []
+    if (gateways.length <= 1) {
+        return `Gateway ${gateways[0]?.gatewayName || result.gatewayName} has been removed.`
+    }
+    return [
+        `${gateways.length} gateways have been removed.`,
+        ...gateways.map((gateway) => `  ${gateway.gatewayName} (${gateway.gatewayUid})`),
+    ].join('\n')
 }
 
 export function formatSetGatewayMaxInstancesOutput(result: SetGatewayMaxInstancesResult): string {
@@ -62,6 +74,23 @@ export function formatCreatePamConfigurationOutput(result: CreatePamConfiguratio
         `Gateway Linked: ${result.gatewayLinked ? 'yes' : 'no'}`,
         `Permissions Applied: ${result.permissionsApplied ? 'yes' : 'no'}`,
     ]
+    const populated = (result.fields || []).filter(
+        (field) =>
+            field.type !== 'pamResources' &&
+            field.type !== 'fileRef' &&
+            Array.isArray(field.value) &&
+            field.value.length > 0
+    )
+    if (populated.length) {
+        lines.push('Fields:')
+        for (const field of populated) {
+            const name = field.label ? `${field.type}.${field.label}` : field.type
+            const values = field.value
+                .map((entry) => (typeof entry === 'string' ? entry : JSON.stringify(entry)))
+                .join(', ')
+            lines.push(`  ${name}: ${values}`)
+        }
+    }
     for (const warning of result.warnings) {
         lines.push(`Warning: ${warning}`)
     }
@@ -93,14 +122,47 @@ export function formatEditPamConfigurationOutput(result: EditPamConfigurationRes
 
 export function formatRemovePamConfigurationOutput(
     result: RemovePamConfigurationResult,
-    configurationUidOrTitle?: string
+    configurationUidOrTitle?: string | string[]
 ): string {
+    const requested = Array.isArray(configurationUidOrTitle)
+        ? configurationUidOrTitle.join(', ')
+        : configurationUidOrTitle || ''
+    const missing = result.notFound?.length ? result.notFound.join(', ') : requested
     if (!result.found) {
-        return `PAM Configuration ${configurationUidOrTitle || ''} not found`.trim()
+        return result.notFound?.length > 1
+            ? `PAM Configuration(s) not found: ${missing}`
+            : `PAM Configuration ${missing || ''} not found`.trim()
     }
-    const lines = ['PAM Configuration was removed successfully.']
-    if (result.configurationUid) lines.push(`UID: ${result.configurationUid}`)
-    if (result.title) lines.push(`Title: ${result.title}`)
-    if (result.configType) lines.push(`Type: ${result.configType}`)
+
+    const configurations =
+        result.configurations?.length > 0
+            ? result.configurations
+            : result.configurationUid
+              ? [
+                    {
+                        configurationUid: result.configurationUid,
+                        title: result.title,
+                        configType: result.configType,
+                    },
+                ]
+              : []
+
+    if (configurations.length <= 1) {
+        const config = configurations[0]
+        const lines = ['PAM Configuration was removed successfully.']
+        if (config?.configurationUid || result.configurationUid) {
+            lines.push(`UID: ${config?.configurationUid || result.configurationUid}`)
+        }
+        if (config?.title || result.title) lines.push(`Title: ${config?.title || result.title}`)
+        if (config?.configType || result.configType) lines.push(`Type: ${config?.configType || result.configType}`)
+        return lines.join('\n')
+    }
+
+    const lines = [`${configurations.length} PAM Configurations were removed successfully.`]
+    for (const config of configurations) {
+        const title = config.title ? ` ${config.title}` : ''
+        const type = config.configType ? ` [${config.configType}]` : ''
+        lines.push(`  ${config.configurationUid}${title}${type}`)
+    }
     return lines.join('\n')
 }

@@ -15,8 +15,10 @@ import {
     ensureScheduleField,
     getPaddedJsonBytes,
     linkConfigurationController,
+    mergeRecordFields,
     normalizeFields,
     resolveGatewayUidSoft,
+    seedPamConfigurationFieldsFromRecordTypeSoft,
     upsertPamResourcesField,
 } from './configMutationHelpers'
 import {
@@ -65,12 +67,18 @@ export async function createPamConfiguration(
             `Failed to resolve gateway "${gateway}": ${error}. Configuration will be created without a gateway controller link.`,
     })
 
-    const fields = upsertPamResourcesField(ensureScheduleField(normalizeFields(input.fields)), {
-        gatewayUid,
-        sharedFolderUid,
-        resourceRecordUids: [],
-        adminCredentialUid: input.adminCredentialUid?.trim() || undefined,
-    })
+    const seededFields = await seedPamConfigurationFieldsFromRecordTypeSoft(auth, configType, (warning) =>
+        warnings.push(warning)
+    )
+    const fields = upsertPamResourcesField(
+        ensureScheduleField(mergeRecordFields(seededFields, normalizeFields(input.fields))),
+        {
+            gatewayUid,
+            sharedFolderUid,
+            resourceRecordUids: [],
+            adminCredentialUid: input.adminCredentialUid?.trim() || undefined,
+        }
+    )
     const custom = normalizeFields(input.custom)
 
     const configurationUidBytes = generateUidBytes()
@@ -178,6 +186,7 @@ export async function createPamConfiguration(
         gatewayUid,
         gatewayLinked,
         permissionsApplied,
+        fields,
         warnings,
     }
 }

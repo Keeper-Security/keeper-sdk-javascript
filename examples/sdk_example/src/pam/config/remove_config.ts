@@ -13,8 +13,11 @@ async function removePamConfigurationExample() {
     const vault = await login()
 
     try {
-        const configurationUidOrTitle = (await prompt('PAM Configuration UID or title: ')).trim()
-        if (!configurationUidOrTitle) {
+        const configurationUidOrTitle = (await prompt('PAM Configuration UID(s) or title(s), comma-separated: '))
+            .split(',')
+            .map((entry) => entry.trim())
+            .filter(Boolean)
+        if (!configurationUidOrTitle.length) {
             logger.info('Configuration UID or title is required.')
             return
         }

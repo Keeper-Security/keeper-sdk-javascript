@@ -47,6 +47,7 @@ export type {
     EditPamConfigurationInput,
     EditPamConfigurationResult,
     RemovePamConfigurationInput,
+    RemovedPamConfiguration,
     RemovePamConfigurationResult,
 } from './configTypes'
 
@@ -95,6 +96,7 @@ export {
     normalizeFields,
     ensureScheduleField,
     mergeRecordFields,
+    seedPamConfigurationFieldsFromRecordType,
     readTypedRecordPayload,
     upsertPamResourcesField,
     resolveSharedFolderUid,

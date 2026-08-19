@@ -155,13 +155,20 @@ export type EditGatewayResult = {
 }
 
 export type RemoveGatewayInput = {
-    gatewayUidOrName: string
+    /** One gateway UID/name, or several to remove in a single API call. */
+    gatewayUidOrName: string | string[]
+}
+
+export type RemovedGateway = {
+    gatewayUid: string
+    gatewayName: string
 }
 
 export type RemoveGatewayResult = {
     success: boolean
     gatewayUid: string
     gatewayName: string
+    gateways: RemovedGateway[]
 }
 
 export type SetGatewayMaxInstancesInput = {

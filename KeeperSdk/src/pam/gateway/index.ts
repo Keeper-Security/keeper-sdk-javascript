@@ -36,6 +36,7 @@ export type {
     EditGatewayInput,
     EditGatewayResult,
     RemoveGatewayInput,
+    RemovedGateway,
     RemoveGatewayResult,
     SetGatewayMaxInstancesInput,
     SetGatewayMaxInstancesResult,

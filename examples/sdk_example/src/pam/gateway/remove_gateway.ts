@@ -13,8 +13,11 @@ async function removeGatewayExample() {
     const vault = await login()
 
     try {
-        const gatewayUidOrName = (await prompt('Gateway UID or name: ')).trim()
-        if (!gatewayUidOrName) {
+        const gatewayUidOrName = (await prompt('Gateway UID(s) or name(s), comma-separated: '))
+            .split(',')
+            .map((entry) => entry.trim())
+            .filter(Boolean)
+        if (!gatewayUidOrName.length) {
             logger.info('Gateway UID or name is required.')
             return
         }

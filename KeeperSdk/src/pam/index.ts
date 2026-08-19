@@ -64,6 +64,7 @@ export type {
     EditGatewayInput,
     EditGatewayResult,
     RemoveGatewayInput,
+    RemovedGateway,
     RemoveGatewayResult,
     SetGatewayMaxInstancesInput,
     SetGatewayMaxInstancesResult,
@@ -115,6 +116,7 @@ export {
     normalizeFields,
     ensureScheduleField,
     mergeRecordFields,
+    seedPamConfigurationFieldsFromRecordType,
     readTypedRecordPayload,
     upsertPamResourcesField,
     resolveSharedFolderUid,
@@ -165,5 +167,6 @@ export type {
     EditPamConfigurationInput,
     EditPamConfigurationResult,
     RemovePamConfigurationInput,
+    RemovedPamConfiguration,
     RemovePamConfigurationResult,
 } from './config'

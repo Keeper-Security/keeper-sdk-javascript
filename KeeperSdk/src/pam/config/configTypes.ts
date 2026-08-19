@@ -193,6 +193,8 @@ export type CreatePamConfigurationResult = {
     gatewayUid: string
     gatewayLinked: boolean
     permissionsApplied: boolean
+    /** Final typed-record fields written (includes schema-seeded Azure/GCP slots). */
+    fields: PamConfigurationRecordFieldInput[]
     warnings: string[]
 }
 
@@ -230,7 +232,13 @@ export type EditPamConfigurationResult = {
 }
 
 export type RemovePamConfigurationInput = {
-    configurationUidOrTitle: string
+    configurationUidOrTitle: string | string[]
+}
+
+export type RemovedPamConfiguration = {
+    configurationUid: string
+    title?: string
+    configType?: string
 }
 
 export type RemovePamConfigurationResult = {
@@ -239,4 +247,6 @@ export type RemovePamConfigurationResult = {
     configurationUid?: string
     title?: string
     configType?: string
+    configurations: RemovedPamConfiguration[]
+    notFound: string[]
 }
