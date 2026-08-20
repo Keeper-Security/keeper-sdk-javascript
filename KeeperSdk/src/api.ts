@@ -277,7 +277,7 @@ export {
     UserActionStatus,
     UserActionSkipReason,
 } from './users/actionUser'
-
+export { AliasOperation } from './users/aliasUser'
 export {
     formatAddTeamResult,
     renderAddTeamAsciiTable,
