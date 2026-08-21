@@ -2,7 +2,6 @@ import type { Auth, DRecord } from '@keeper-security/keeperapi'
 import { normal64Bytes, setConfigurationControllerMessage } from '@keeper-security/keeperapi'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { getNsfRecordTypeFields } from '../../nestedShareFolders/nsfRecordTypes'
-import { moveRecord } from '../../records/RecordOperations'
 import { getRecordTitle } from '../../records/RecordUtils'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
@@ -23,9 +22,7 @@ import {
     isPamConfigurationRecord,
     isPamConfigurationRecordType,
     listPamConfigurationRecords,
-    parsePamResources,
 } from './configHelpers'
-import { resolvePamConfigFolder } from './pamConfigFolder'
 import type { PamConfigurationRecordFieldInput, PamResourcesInfo } from './configTypes'
 
 export { getPaddedJsonBytes } from './configRecordPayload'
@@ -58,11 +55,7 @@ function getFallbackSchemaFields(configType: string): PamConfigurationRecordFiel
     )
 }
 
-/**
- * Seed PAM configuration fields from the Keeper record-type schema (Commander-compatible).
- * Without a full typed-field template, Vault UI will not surface prompted AWS/Azure/GCP values.
- */
-export async function seedPamConfigurationFieldsFromRecordType(
+ async function seedPamConfigurationFieldsFromRecordType(
     auth: Auth,
     configType: string
 ): Promise<PamConfigurationRecordFieldInput[]> {
@@ -83,10 +76,6 @@ export async function seedPamConfigurationFieldsFromRecordType(
     return getFallbackSchemaFields(configType)
 }
 
-/**
- * Best-effort variant that never throws and reports failures via warning callback.
- * Use this on create/edit flows to avoid blocking the main mutation path.
- */
 export async function seedPamConfigurationFieldsFromRecordTypeSoft(
     auth: Auth,
     configType: string,
@@ -157,10 +146,6 @@ function cloneField(field: PamConfigurationRecordFieldInput): PamConfigurationRe
     }
 }
 
-/**
- * Commander-compatible adjust: keep schema field order/labels, apply values into matching slots,
- * and move unmatched valued fields into custom (so Vault UI binds typed slots correctly).
- */
 export function adjustPamConfigurationFields(
     schemaFields: PamConfigurationRecordFieldInput[],
     updates: PamConfigurationRecordFieldInput[] | undefined,
@@ -185,7 +170,6 @@ export function adjustPamConfigurationFields(
                     field.value?.length
             )
 
-        // pamResources / fileRef / pamHostname: match by type when label is unused on either side
         if (!match && (!slot.label || slot.type === PAM_RESOURCES_FIELD_TYPE || slot.type === 'fileRef')) {
             match = valuePool.find(
                 (field) => !used.has(field) && normalizeFieldKeyToken(field.type) === normalizeFieldKeyToken(slot.type)
@@ -235,7 +219,6 @@ export function mergeRecordFields(
         const existingField = merged[existingIndex]
         merged[existingIndex] = {
             ...existingField,
-            // Keep canonical schema type/label when present.
             type: existingField.type || update.type,
             label: existingField.label || update.label,
             required: existingField.required ?? update.required,
@@ -312,14 +295,6 @@ export function upsertPamResourcesField(
         },
         ...fields,
     ]
-}
-
-export function resolveSharedFolderUid(
-    storage: InMemoryStorage,
-    sharedFolder: string,
-    options: { required?: boolean } = {}
-): string {
-    return resolvePamConfigFolder(storage, sharedFolder, options).uid
 }
 
 export type ResolveGatewayUidOptions = {
@@ -445,56 +420,4 @@ export async function linkConfigurationController(
             controllerUid: normal64Bytes(gatewayUid),
         })
     )
-}
-
-export async function moveConfigurationToSharedFolder(
-    auth: Auth,
-    storage: InMemoryStorage,
-    configurationUid: string,
-    sharedFolderUid: string,
-    options: { srcFolderUid?: string } = {}
-): Promise<{ success: boolean; message?: string }> {
-    try {
-        const moveResult = await moveRecord(auth, storage, {
-            recordUid: configurationUid,
-            dstFolderUid: sharedFolderUid,
-            srcFolderUid: options.srcFolderUid,
-            canEdit: true,
-        })
-        return { success: moveResult.success, message: moveResult.message }
-    } catch (err) {
-        return { success: false, message: extractErrorMessage(err) }
-    }
-}
-
-export function getPamResourcesFromFields(fields: PamConfigurationRecordFieldInput[]): PamResourcesInfo {
-    const field = fields.find((entry) => entry.type === PAM_RESOURCES_FIELD_TYPE)
-    const raw = field?.value?.[0]
-    if (!raw || typeof raw !== 'object') {
-        return { gatewayUid: '', sharedFolderUid: '', resourceRecordUids: [] }
-    }
-    const data = raw as {
-        controllerUid?: unknown
-        folderUid?: unknown
-        resourceRef?: unknown
-        adminCredentialRef?: unknown
-    }
-    const resourceRecordUids = Array.isArray(data.resourceRef)
-        ? data.resourceRef.map((uid) => String(uid || '')).filter(Boolean)
-        : typeof data.resourceRef === 'string' && data.resourceRef
-          ? [data.resourceRef]
-          : []
-    return {
-        gatewayUid: data.controllerUid != null ? String(data.controllerUid) : '',
-        sharedFolderUid: data.folderUid != null ? String(data.folderUid) : '',
-        resourceRecordUids,
-        adminCredentialUid:
-            data.adminCredentialRef != null && String(data.adminCredentialRef).trim()
-                ? String(data.adminCredentialRef).trim()
-                : undefined,
-    }
-}
-
-export function parsePamResourcesFromRecord(record: DRecord): PamResourcesInfo {
-    return parsePamResources(record)
 }

@@ -2,9 +2,6 @@ export const SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS = [6] as const
 
 export type PamConfigurationRecordVersion = (typeof SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS)[number]
 
-export const PAM_CONFIGURATION_RECORD_VERSION: PamConfigurationRecordVersion =
-    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS[0]
-
 export const PAM_CONFIGURATION_RECORD_TYPES = [
     'pamAwsConfiguration',
     'pamAzureConfiguration',
@@ -144,8 +141,6 @@ export const PAM_CONFIG_LIST_DEFAULT_HEADERS = [
 ] as const
 
 export const PAM_CONFIG_LIST_VERBOSE_HEADERS = ['Fields'] as const
-
-export const PAM_CONFIG_DETAIL_HEADERS = ['Field', 'Value'] as const
 
 export const PAM_CONFIG_DETAIL_LABELS = [
     'UID',

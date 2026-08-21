@@ -52,8 +52,6 @@ export type {
 } from './configTypes'
 
 export {
-    PAM_CONFIGURATION_RECORD_VERSION,
-    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS,
     PAM_CONFIGURATION_RECORD_TYPES,
     PAM_CONFIG_ENVIRONMENT_TO_RECORD_TYPE,
     PAM_CONFIG_ENVIRONMENTS,
@@ -65,11 +63,11 @@ export {
     EMPTY_PAM_CONFIGURATIONS_MESSAGE,
     PAM_CONFIG_LIST_DEFAULT_HEADERS,
     PAM_CONFIG_LIST_VERBOSE_HEADERS,
-    PAM_CONFIG_DETAIL_HEADERS,
     PAM_CONFIG_DETAIL_LABELS,
     PAM_CONFIG_PERMISSION_DAG_KEYS,
     PAM_CONFIG_PERMISSION_FLAGS,
     PAM_CONFIG_PERMISSION_VALUES,
+    SUPPORTED_PAM_CONFIGURATION_RECORD_VERSIONS,
 } from './configConstants'
 export type {
     PamConfigurationRecordType,
@@ -98,15 +96,13 @@ export {
     ensureScheduleField,
     mergeRecordFields,
     adjustPamConfigurationFields,
-    seedPamConfigurationFieldsFromRecordType,
+    seedPamConfigurationFieldsFromRecordTypeSoft,
     readTypedRecordPayload,
     upsertPamResourcesField,
-    resolveSharedFolderUid,
     resolveGatewayUidSoft,
     findPamConfigurationByUidOrTitle,
     resolveResourceRecordUidsToRemove,
     linkConfigurationController,
-    moveConfigurationToSharedFolder,
 } from './configMutationHelpers'
 
 export {

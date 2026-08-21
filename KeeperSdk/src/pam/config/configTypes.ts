@@ -74,11 +74,7 @@ export type RenderPamConfigurationsAsciiTableOptions = {
     minColWidth?: number
 }
 
-export type PamConfigurationJsonField = {
-    type: string
-    label?: string
-    values: string[]
-}
+export type PamConfigurationJsonField = PamConfigurationField
 
 export type PamConfigurationJsonEntry = {
     uid: string
@@ -194,7 +190,6 @@ export type CreatePamConfigurationResult = {
     gatewayUid: string
     gatewayLinked: boolean
     permissionsApplied: boolean
-    /** Final typed-record fields written (includes schema-seeded Azure/GCP slots). */
     fields: PamConfigurationRecordFieldInput[]
     warnings: string[]
 }

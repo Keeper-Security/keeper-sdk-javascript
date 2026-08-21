@@ -2,13 +2,12 @@ import type { Auth } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { applyPamConfigurationPermissions, hasPermissionsInput } from './applyConfigPermissions'
-import { isPamConfigurationRecordType, resolvePamConfigurationRecordType } from './configHelpers'
+import { isPamConfigurationRecordType, parsePamResources, resolvePamConfigurationRecordType } from './configHelpers'
 import {
     adjustPamConfigurationFields,
     findPamConfigurationByUidOrTitle,
     linkConfigurationController,
     mergeRecordFields,
-    parsePamResourcesFromRecord,
     readTypedRecordPayload,
     resolveGatewayUidSoft,
     resolveResourceRecordUidsToRemove,
@@ -61,7 +60,7 @@ export async function editPamConfiguration(
     const record = findPamConfigurationByUidOrTitle(storage, configurationUidOrTitle)
     const configurationUid = record.uid
     const existing = readTypedRecordPayload(record)
-    const existingResources = parsePamResourcesFromRecord(record)
+    const existingResources = parsePamResources(record)
 
     const warnings: string[] = []
 
