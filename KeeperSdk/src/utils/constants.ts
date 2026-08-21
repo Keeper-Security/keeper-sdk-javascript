@@ -155,6 +155,26 @@ export enum PasswordReportErrorCode {
     PolicyRequired = 'password_report_policy_required',
 }
 
+export enum PamErrorCode {
+    GatewayListFailed = 'pam_gateway_list_failed',
+    GatewayCreateFailed = 'pam_gateway_create_failed',
+    GatewayNameRequired = 'pam_gateway_name_required',
+    KsmAppRequired = 'pam_ksm_app_required',
+    KsmAppNotFound = 'pam_ksm_app_not_found',
+    MultipleKsmAppMatches = 'pam_multiple_ksm_app_matches',
+    InvalidTokenExpiry = 'pam_invalid_token_expiry',
+    ConfigInitFailed = 'pam_config_init_failed',
+    GatewayRequired = 'pam_gateway_required',
+    GatewayNotFound = 'pam_gateway_not_found',
+    GatewayEditNothingToDo = 'pam_gateway_edit_nothing_to_do',
+    GatewayEditFailed = 'pam_gateway_edit_failed',
+    GatewayNodeNotFound = 'pam_gateway_node_not_found',
+    MultipleGatewayNodeMatches = 'pam_multiple_gateway_node_matches',
+    GatewayRemoveFailed = 'pam_gateway_remove_failed',
+    GatewayInvalidMaxInstances = 'pam_gateway_invalid_max_instances',
+    GatewaySetMaxInstancesFailed = 'pam_gateway_set_max_instances_failed',
+}
+
 export enum UserErrorCode {
     NoUsersToUpdate = 'no_users_to_update',
     NoUsersToAdd = 'no_users_to_add',
@@ -303,6 +323,23 @@ export const ResultCodes = {
     ACTION_REPORT_NODE_NOT_FOUND: ActionReportErrorCode.NodeNotFound,
     ACTION_REPORT_NODE_NOT_UNIQUE: ActionReportErrorCode.NodeNotUnique,
     PASSWORD_REPORT_POLICY_REQUIRED: PasswordReportErrorCode.PolicyRequired,
+    PAM_GATEWAY_LIST_FAILED: PamErrorCode.GatewayListFailed,
+    PAM_GATEWAY_CREATE_FAILED: PamErrorCode.GatewayCreateFailed,
+    PAM_GATEWAY_NAME_REQUIRED: PamErrorCode.GatewayNameRequired,
+    PAM_KSM_APP_REQUIRED: PamErrorCode.KsmAppRequired,
+    PAM_KSM_APP_NOT_FOUND: PamErrorCode.KsmAppNotFound,
+    PAM_MULTIPLE_KSM_APP_MATCHES: PamErrorCode.MultipleKsmAppMatches,
+    PAM_INVALID_TOKEN_EXPIRY: PamErrorCode.InvalidTokenExpiry,
+    PAM_CONFIG_INIT_FAILED: PamErrorCode.ConfigInitFailed,
+    PAM_GATEWAY_REQUIRED: PamErrorCode.GatewayRequired,
+    PAM_GATEWAY_NOT_FOUND: PamErrorCode.GatewayNotFound,
+    PAM_GATEWAY_EDIT_NOTHING_TO_DO: PamErrorCode.GatewayEditNothingToDo,
+    PAM_GATEWAY_EDIT_FAILED: PamErrorCode.GatewayEditFailed,
+    PAM_GATEWAY_NODE_NOT_FOUND: PamErrorCode.GatewayNodeNotFound,
+    PAM_MULTIPLE_GATEWAY_NODE_MATCHES: PamErrorCode.MultipleGatewayNodeMatches,
+    PAM_GATEWAY_REMOVE_FAILED: PamErrorCode.GatewayRemoveFailed,
+    PAM_GATEWAY_INVALID_MAX_INSTANCES: PamErrorCode.GatewayInvalidMaxInstances,
+    PAM_GATEWAY_SET_MAX_INSTANCES_FAILED: PamErrorCode.GatewaySetMaxInstancesFailed,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {
