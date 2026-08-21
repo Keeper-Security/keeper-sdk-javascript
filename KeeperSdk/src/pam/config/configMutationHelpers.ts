@@ -55,7 +55,7 @@ function getFallbackSchemaFields(configType: string): PamConfigurationRecordFiel
     )
 }
 
- async function seedPamConfigurationFieldsFromRecordType(
+async function seedPamConfigurationFieldsFromRecordType(
     auth: Auth,
     configType: string
 ): Promise<PamConfigurationRecordFieldInput[]> {
