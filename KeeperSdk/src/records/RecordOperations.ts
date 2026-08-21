@@ -282,8 +282,7 @@ export async function deleteRecord(
         object_uid: recordUid,
         object_type: VaultObjectKind.Record,
         from_uid: src.uid || '',
-        from_type:
-            src.folderType === FolderKind.UserFolder ? FolderKind.UserFolder : FolderKind.SharedFolderFolder,
+        from_type: src.folderType === FolderKind.UserFolder ? FolderKind.UserFolder : FolderKind.SharedFolderFolder,
         delete_resolution: DeleteResolution.Unlink,
     }))
 

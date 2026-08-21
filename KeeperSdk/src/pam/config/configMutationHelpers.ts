@@ -42,11 +42,7 @@ export function normalizeFields(
     }))
 }
 
-function toSeededField(entry: {
-    type: string
-    label?: string
-    required?: boolean
-}): PamConfigurationRecordFieldInput {
+function toSeededField(entry: { type: string; label?: string; required?: boolean }): PamConfigurationRecordFieldInput {
     return {
         type: entry.type,
         label: entry.label,
@@ -170,10 +166,9 @@ export function adjustPamConfigurationFields(
     updates: PamConfigurationRecordFieldInput[] | undefined,
     existingCustom: PamConfigurationRecordFieldInput[] = []
 ): { fields: PamConfigurationRecordFieldInput[]; custom: PamConfigurationRecordFieldInput[] } {
-    const valuePool = [
-        ...schemaFields.filter((field) => field.value?.length),
-        ...normalizeFields(updates),
-    ].map(cloneField)
+    const valuePool = [...schemaFields.filter((field) => field.value?.length), ...normalizeFields(updates)].map(
+        cloneField
+    )
 
     const fields: PamConfigurationRecordFieldInput[] = []
     const used = new Set<PamConfigurationRecordFieldInput>()
@@ -193,8 +188,7 @@ export function adjustPamConfigurationFields(
         // pamResources / fileRef / pamHostname: match by type when label is unused on either side
         if (!match && (!slot.label || slot.type === PAM_RESOURCES_FIELD_TYPE || slot.type === 'fileRef')) {
             match = valuePool.find(
-                (field) =>
-                    !used.has(field) && normalizeFieldKeyToken(field.type) === normalizeFieldKeyToken(slot.type)
+                (field) => !used.has(field) && normalizeFieldKeyToken(field.type) === normalizeFieldKeyToken(slot.type)
             )
         }
 
