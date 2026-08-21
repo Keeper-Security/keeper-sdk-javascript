@@ -60,11 +60,13 @@ export async function getNsfRecordTypeFields(auth: Auth, recordType: string): Pr
     const normalized = recordType.trim()
     if (!normalized || NSF_LEGACY_RECORD_TYPES.has(normalized)) return undefined
 
+    const lowered = normalized.toLowerCase()
     const types = await loadRecordTypes(auth)
     for (const entry of types) {
         if (!entry.content) continue
         const schema = parseRecordTypeSchema(entry.content)
-        if (schema?.id === normalized && schema.fields?.length) {
+        if (!schema?.id || !schema.fields?.length) continue
+        if (schema.id === normalized || schema.id.toLowerCase() === lowered) {
             return schema.fields
         }
     }
