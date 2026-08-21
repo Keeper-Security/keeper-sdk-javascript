@@ -214,6 +214,19 @@ import type {
     SetGatewayMaxInstancesInput,
     SetGatewayMaxInstancesResult,
 } from '../pam/gateway/gatewayTypes'
+import type {
+    FormatPamConfigurationsTableOptions,
+    FormattedPamConfigurationsTable,
+    ListPamConfigurationsOptions,
+    ListPamConfigurationsResult,
+    RenderPamConfigurationsAsciiTableOptions,
+    CreatePamConfigurationInput,
+    CreatePamConfigurationResult,
+    EditPamConfigurationInput,
+    EditPamConfigurationResult,
+    RemovePamConfigurationInput,
+    RemovePamConfigurationResult,
+} from '../pam/config/configTypes'
 import { buildWhoamiInfo, type WhoamiInfo } from '../account/whoamiInfo'
 import {
     ConsoleLogger,
@@ -306,6 +319,10 @@ export class KeeperVault {
 
     public getGatewayManager() {
         return this.pamManager.getGatewayManager()
+    }
+
+    public getConfigManager() {
+        return this.pamManager.getConfigManager()
     }
 
     public getNestedShareFolderManager(): NestedShareFolderManager {
@@ -1346,6 +1363,52 @@ export class KeeperVault {
 
     public formatGatewaysOutput(result: ListGatewaysResult, options?: ListGatewaysOptions): string {
         return this.pamManager.formatGatewaysOutput(result, options ?? {})
+    }
+
+    public listPamConfigurations(options?: ListPamConfigurationsOptions): ListPamConfigurationsResult {
+        return this.pamManager.listPamConfigurations(options ?? {})
+    }
+
+    public async createPamConfiguration(input: CreatePamConfigurationInput): Promise<CreatePamConfigurationResult> {
+        return this.pamManager.createPamConfiguration(input)
+    }
+
+    public async editPamConfiguration(input: EditPamConfigurationInput): Promise<EditPamConfigurationResult> {
+        return this.pamManager.editPamConfiguration(input)
+    }
+
+    public async removePamConfiguration(input: RemovePamConfigurationInput): Promise<RemovePamConfigurationResult> {
+        const result = await this.pamManager.removePamConfiguration(input)
+        if (result.success) await this.syncIfNeeded()
+        return result
+    }
+
+    public formatPamConfigurationsTable(
+        result: ListPamConfigurationsResult,
+        options?: FormatPamConfigurationsTableOptions
+    ): FormattedPamConfigurationsTable {
+        return this.pamManager.formatPamConfigurationsTable(result, options ?? {})
+    }
+
+    public renderPamConfigurationsAsciiTable(
+        table: FormattedPamConfigurationsTable,
+        options?: RenderPamConfigurationsAsciiTableOptions
+    ): string {
+        return this.pamManager.renderPamConfigurationsAsciiTable(table, options ?? {})
+    }
+
+    public formatPamConfigurationsJson(
+        result: ListPamConfigurationsResult,
+        options?: ListPamConfigurationsOptions
+    ): string {
+        return this.pamManager.formatPamConfigurationsJson(result, options ?? {})
+    }
+
+    public formatPamConfigurationsOutput(
+        result: ListPamConfigurationsResult,
+        options?: ListPamConfigurationsOptions
+    ): string {
+        return this.pamManager.formatPamConfigurationsOutput(result, options ?? {})
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {
