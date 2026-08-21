@@ -280,9 +280,9 @@ export async function deleteRecord(
     const folderLinks = await findAllRecordFolderLinks(recordUid, storage)
     const objects: RecordPreDeleteObject[] = folderLinks.map((src) => ({
         object_uid: recordUid,
-        object_type: 'record',
+        object_type: VaultObjectKind.Record,
         from_uid: src.uid || '',
-        from_type: src.folderType,
+        from_type: src.folderType === FolderKind.UserFolder ? FolderKind.UserFolder : FolderKind.SharedFolderFolder,
         delete_resolution: DeleteResolution.Unlink,
     }))
 
