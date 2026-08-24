@@ -634,6 +634,7 @@ export class Auth {
                         wrappedPassword = undefined
                         handleError('auth_failed', loginResponse, e)
                         const error = e as Error
+                        // @ts-ignore
                         if (error.cause?.message === 'No alternate master password found') {
                             return
                         }
