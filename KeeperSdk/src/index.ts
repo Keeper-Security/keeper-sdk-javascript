@@ -16,7 +16,7 @@ export type {
     ConfigurationServerConfig,
     ConfigurationDeviceConfig,
 } from './auth/SessionManager'
-export { login, cleanup, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
+export { login, cleanup, closePrompt, prompt, suppressLogs, loadKeeperConfig, resolveServer } from './auth/ConsoleLogin'
 export { connectSdkPlatform, getSdkPlatform, isSdkPlatformConnected } from './platform'
 export type { SdkPlatform, SdkReadline, SdkRuntime } from './platform'
 export type { SessionRestoreInput } from './auth/sessionRestore'

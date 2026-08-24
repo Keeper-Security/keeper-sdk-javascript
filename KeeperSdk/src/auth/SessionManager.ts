@@ -83,6 +83,30 @@ export class SessionManager implements SessionStorage {
     public createOnDeviceConfig(host: string): (deviceConfig: DeviceConfig) => Promise<void> {
         return async (deviceConfig: DeviceConfig) => {
             this.sessionDevices.set(host, { ...deviceConfig })
+            await this.persistDeviceConfig(host, deviceConfig)
+        }
+    }
+
+    private async persistDeviceConfig(host: string, deviceConfig: DeviceConfig): Promise<void> {
+        if (!deviceConfig.deviceToken || !deviceConfig.privateKey) return
+
+        const username = this._lastUsername
+        if (!username) return
+
+        try {
+            const parsed = await this.configLoader.load()
+            const config: KeeperJsonConfig = parsed && Object.keys(parsed).length > 0 ? parsed : {}
+
+            config.device_token = Buffer.from(deviceConfig.deviceToken).toString('base64url')
+            config.private_key = Buffer.from(deviceConfig.privateKey).toString('base64url')
+            config.user = username
+            config.server = host
+
+            await this.configLoader.save(config)
+            this._keeperConfig = null
+            this._deviceCache = null
+        } catch (err) {
+            logger.warn('Failed to persist device config:', extractErrorMessage(err))
         }
     }
 
@@ -135,12 +159,15 @@ export class SessionManager implements SessionStorage {
                 const device = (parsed.devices || []).find(
                     (configDevice) => configDevice.device_token === user.last_device!.device_token
                 )
-                if (device?.server_info) {
-                    const serverInfo = device.server_info.find((entry) => entry.server === host)
-                    if (serverInfo) {
-                        serverInfo.clone_code = encodedCloneCode
-                        updated = true
+                if (device) {
+                    device.server_info = device.server_info || []
+                    let serverInfo = device.server_info.find((entry) => entry.server === host)
+                    if (!serverInfo) {
+                        serverInfo = { server: host }
+                        device.server_info.push(serverInfo)
                     }
+                    serverInfo.clone_code = encodedCloneCode
+                    updated = true
                 }
             }
 

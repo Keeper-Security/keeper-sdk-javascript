@@ -1031,6 +1031,11 @@ export const pamGetLeafsMessage = (
 export const pamGetOnlineControllersMessage = (): RestOutMessage<PAM.IPAMOnlineControllers> =>
     createOutMessage('api/user/get_controllers', PAM.PAMOnlineControllers)
 
+export const sendControllerMessage = (
+    data: Router.IRouterControllerMessage
+): RestMessage<Router.IRouterControllerMessage, PAM.IControllerResponse> =>
+    createMessage(data, 'api/user/send_controller_message', Router.RouterControllerMessage, PAM.ControllerResponse)
+
 export const pamConfigureNetworkGraphMessage = (
     data: Router.IPAMNetworkConfigurationRequest
 ): RestInMessage<Router.IPAMNetworkConfigurationRequest> =>

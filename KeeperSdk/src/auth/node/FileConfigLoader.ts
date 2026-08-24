@@ -29,6 +29,7 @@ export class FileConfigLoader implements ConfigLoader {
 
     async save(config: KeeperJsonConfig): Promise<void> {
         const configPath = path.join(this.configDir, 'config.json')
+        await fs.mkdir(this.configDir, { recursive: true, mode: 0o700 })
         await fs.writeFile(configPath, JSON.stringify(config, null, 2), {
             mode: 0o600,
         })
