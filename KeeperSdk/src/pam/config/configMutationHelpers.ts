@@ -76,6 +76,39 @@ async function seedPamConfigurationFieldsFromRecordType(
     return getFallbackSchemaFields(configType)
 }
 
+export async function seedPamConfigurationFieldsFromRecordTypeStrict(
+    auth: Auth,
+    configType: string
+): Promise<PamConfigurationRecordFieldInput[]> {
+    const schemaFields = await getNsfRecordTypeFields(auth, configType)
+    if (!schemaFields?.length) {
+        throw new KeeperSdkError(
+            `Record type "${configType}" not found on the server. Ensure the record type is properly configured. Cannot create or edit PAM Configuration without server-defined schema.`,
+            ResultCodes.PAM_CONFIG_TYPE_INVALID
+        )
+    }
+
+    const seeded: PamConfigurationRecordFieldInput[] = []
+    for (const entry of schemaFields) {
+        if (!entry || typeof entry !== 'object') continue
+        const field = entry as { $ref?: unknown; label?: unknown; required?: unknown }
+        const type = typeof field.$ref === 'string' ? field.$ref.trim() : ''
+        if (!type) continue
+        const label = typeof field.label === 'string' && field.label.trim() ? field.label.trim() : undefined
+        const required = field.required === true ? true : undefined
+        seeded.push({ type, label, required, value: [] })
+    }
+
+    if (!seeded.length) {
+        throw new KeeperSdkError(
+            `Record type "${configType}" exists but has no valid fields in its schema. Check server configuration.`,
+            ResultCodes.PAM_CONFIG_TYPE_INVALID
+        )
+    }
+
+    return seeded
+}
+
 export async function seedPamConfigurationFieldsFromRecordTypeSoft(
     auth: Auth,
     configType: string,

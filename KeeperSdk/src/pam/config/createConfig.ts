@@ -18,7 +18,7 @@ import {
     linkConfigurationController,
     normalizeFields,
     resolveGatewayUidSoft,
-    seedPamConfigurationFieldsFromRecordTypeSoft,
+    seedPamConfigurationFieldsFromRecordTypeStrict,
     upsertPamResourcesField,
 } from './configMutationHelpers'
 import {
@@ -67,9 +67,7 @@ export async function createPamConfiguration(
             `Failed to resolve gateway "${gateway}": ${error}. Configuration will be created without a gateway controller link.`,
     })
 
-    const seededFields = await seedPamConfigurationFieldsFromRecordTypeSoft(auth, configType, (warning) =>
-        warnings.push(warning)
-    )
+    const seededFields = await seedPamConfigurationFieldsFromRecordTypeStrict(auth, configType)
     const adjusted = adjustPamConfigurationFields(
         seededFields,
         normalizeFields(input.fields),
