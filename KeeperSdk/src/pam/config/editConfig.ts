@@ -11,7 +11,7 @@ import {
     readTypedRecordPayload,
     resolveGatewayUidSoft,
     resolveResourceRecordUidsToRemove,
-    seedPamConfigurationFieldsFromRecordTypeSoft,
+    seedPamConfigurationFieldsFromRecordTypeStrict,
     upsertPamResourcesField,
 } from './configMutationHelpers'
 import {
@@ -148,12 +148,10 @@ export async function editPamConfiguration(
             adminCredentialUid = trimmed || undefined
         }
 
-        const seededFields = await seedPamConfigurationFieldsFromRecordTypeSoft(auth, configType, (warning) =>
-            warnings.push(warning)
-        )
+        const seededFields = await seedPamConfigurationFieldsFromRecordTypeStrict(auth, configType)
         const valueUpdates = mergeRecordFields(existing.fields, input.fields)
         const adjusted = adjustPamConfigurationFields(
-            seededFields.length ? seededFields : valueUpdates,
+            seededFields,
             valueUpdates,
             mergeRecordFields(existing.custom, input.custom)
         )

@@ -936,6 +936,7 @@ export {
     mergeRecordFields,
     adjustPamConfigurationFields,
     seedPamConfigurationFieldsFromRecordTypeSoft,
+    seedPamConfigurationFieldsFromRecordTypeStrict,
     readTypedRecordPayload,
     upsertPamResourcesField,
     resolveGatewayUidSoft,
