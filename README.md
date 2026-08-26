@@ -19,7 +19,8 @@ keeper-sdk-javascript/
 ├── KeeperSdk/              # @keeper-security/keeper-sdk-javascript
 ├── keeperapi/              # @keeper-security/keeperapi
 └── examples/
-    └── sdk_example/        # Runnable Node scripts (auth, records, folders, …)
+    ├── sdk_example/        # Runnable Node scripts (auth, records, folders, …)
+    └── repl/               # Interactive vault shell (see examples/repl/README.md)
 ```
 
 **Start here for CLI / vault behavior:** [`KeeperSdk/README.md`](KeeperSdk/README.md) — built-in commands, `get` / `whoami` output, and `KeeperCliHost` adapter requirements.
@@ -45,6 +46,15 @@ cd examples/sdk_example && npm install
 npm run auth:restore-session -- --from-json /path/to/session.json
 npm run records:list:shell-cli -- --from-json /path/to/session.json
 ```
+
+Or jump into the interactive vault REPL (needs `KeeperSdk` linked via `npm run link-local` above):
+
+```bash
+cd examples/repl && npm install
+npm start
+```
+
+See [`examples/repl/README.md`](examples/repl/README.md) for the command list.
 
 ## Package docs
 
