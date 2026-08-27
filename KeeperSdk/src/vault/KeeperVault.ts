@@ -227,6 +227,27 @@ import type {
     RemovePamConfigurationInput,
     RemovePamConfigurationResult,
 } from '../pam/config/configTypes'
+import type {
+    FormatRotationSchedulesTableOptions,
+    FormattedRotationSchedulesTable,
+    GetRotationInfoInput,
+    ListRotationSchedulesOptions,
+    ListRotationSchedulesResult,
+    RenderRotationSchedulesAsciiTableOptions,
+    RotationInfoResult,
+    EditRotationInput,
+    EditRotationResult,
+} from '../pam/rotation/rotationTypes'
+import type {
+    ListRotationScriptsOptions,
+    ListRotationScriptsResult,
+    AddRotationScriptInput,
+    AddRotationScriptResult,
+    EditRotationScriptInput,
+    EditRotationScriptResult,
+    DeleteRotationScriptInput,
+    DeleteRotationScriptResult,
+} from '../pam/rotation/rotationScriptTypes'
 import { buildWhoamiInfo, type WhoamiInfo } from '../account/whoamiInfo'
 import {
     ConsoleLogger,
@@ -1409,6 +1430,87 @@ export class KeeperVault {
         options?: ListPamConfigurationsOptions
     ): string {
         return this.pamManager.formatPamConfigurationsOutput(result, options ?? {})
+    }
+
+    public async listRotationSchedules(
+        options?: ListRotationSchedulesOptions
+    ): Promise<ListRotationSchedulesResult> {
+        return this.pamManager.listRotationSchedules(options ?? {})
+    }
+
+    public formatRotationSchedulesTable(
+        result: ListRotationSchedulesResult,
+        options?: FormatRotationSchedulesTableOptions
+    ): FormattedRotationSchedulesTable {
+        return this.pamManager.formatRotationSchedulesTable(result, options ?? {})
+    }
+
+    public renderRotationSchedulesAsciiTable(
+        table: FormattedRotationSchedulesTable,
+        options?: RenderRotationSchedulesAsciiTableOptions
+    ): string {
+        return this.pamManager.renderRotationSchedulesAsciiTable(table, options ?? {})
+    }
+
+    public formatRotationSchedulesJson(
+        result: ListRotationSchedulesResult,
+        options?: ListRotationSchedulesOptions
+    ): string {
+        return this.pamManager.formatRotationSchedulesJson(result, options ?? {})
+    }
+
+    public formatRotationSchedulesOutput(
+        result: ListRotationSchedulesResult,
+        options?: ListRotationSchedulesOptions
+    ): string {
+        return this.pamManager.formatRotationSchedulesOutput(result, options ?? {})
+    }
+
+    public async getRotationInfo(input: GetRotationInfoInput): Promise<RotationInfoResult> {
+        return this.pamManager.getRotationInfo(input)
+    }
+
+    public formatRotationInfoJson(result: RotationInfoResult): string {
+        return this.pamManager.formatRotationInfoJson(result)
+    }
+
+    public formatRotationInfoOutput(
+        result: RotationInfoResult,
+        options?: Pick<GetRotationInfoInput, 'format'>
+    ): string {
+        return this.pamManager.formatRotationInfoOutput(result, options ?? {})
+    }
+
+    public async editRotation(input: EditRotationInput): Promise<EditRotationResult> {
+        return this.pamManager.editRotation(input)
+    }
+
+    public async listRotationScripts(
+        options?: ListRotationScriptsOptions
+    ): Promise<ListRotationScriptsResult> {
+        return this.pamManager.listRotationScripts(options ?? {})
+    }
+
+    public formatRotationScriptsTable(result: ListRotationScriptsResult): string[][] {
+        return this.pamManager.formatRotationScriptsTable(result)
+    }
+
+    public formatRotationScriptsJson(result: ListRotationScriptsResult): string {
+        return this.pamManager.formatRotationScriptsJson(result)
+    }
+
+    public async addRotationScript(input: AddRotationScriptInput): Promise<AddRotationScriptResult> {
+        return this.pamManager.addRotationScript(input)
+    }
+
+    public async editRotationScript(input: EditRotationScriptInput): Promise<EditRotationScriptResult> {
+        return this.pamManager.editRotationScript(input)
+    }
+
+    public async deleteRotationScript(
+        input: DeleteRotationScriptInput
+    ): Promise<DeleteRotationScriptResult> {
+        return this.pamManager.deleteRotationScript(input)
     }
 
     public async shareFolder(input: ShareFolderInput): Promise<ShareFolderResult> {

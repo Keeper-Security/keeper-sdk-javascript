@@ -1036,6 +1036,26 @@ export const sendControllerMessage = (
 ): RestMessage<Router.IRouterControllerMessage, PAM.IControllerResponse> =>
     createMessage(data, 'api/user/send_controller_message', Router.RouterControllerMessage, PAM.ControllerResponse)
 
+export const pamGetRotationSchedulesMessage = (
+    data: PAM.IPAMGenericUidsRequest = {}
+): RestMessage<PAM.IPAMGenericUidsRequest, PAM.IPAMRotationSchedulesResponse> =>
+    createMessage(
+        data,
+        'api/user/get_rotation_schedules',
+        PAM.PAMGenericUidsRequest,
+        PAM.PAMRotationSchedulesResponse
+    )
+
+export const getRotationInfoMessage = (
+    data: PAM.IPAMGenericUidRequest
+): RestMessage<PAM.IPAMGenericUidRequest, Router.IRouterRotationInfo> =>
+    createMessage(data, 'pam/get_rotation_info', PAM.PAMGenericUidRequest, Router.RouterRotationInfo)
+
+export const setRecordRotationMessage = (
+    data: Router.IRouterRecordRotationRequest
+): RestInMessage<Router.IRouterRecordRotationRequest> =>
+    createInMessage(data, 'api/user/set_record_rotation', Router.RouterRecordRotationRequest)
+
 export const pamConfigureNetworkGraphMessage = (
     data: Router.IPAMNetworkConfigurationRequest
 ): RestInMessage<Router.IPAMNetworkConfigurationRequest> =>
