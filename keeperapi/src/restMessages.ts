@@ -1039,12 +1039,7 @@ export const sendControllerMessage = (
 export const pamGetRotationSchedulesMessage = (
     data: PAM.IPAMGenericUidsRequest = {}
 ): RestMessage<PAM.IPAMGenericUidsRequest, PAM.IPAMRotationSchedulesResponse> =>
-    createMessage(
-        data,
-        'api/user/get_rotation_schedules',
-        PAM.PAMGenericUidsRequest,
-        PAM.PAMRotationSchedulesResponse
-    )
+    createMessage(data, 'api/user/get_rotation_schedules', PAM.PAMGenericUidsRequest, PAM.PAMRotationSchedulesResponse)
 
 export const getRotationInfoMessage = (
     data: PAM.IPAMGenericUidRequest
