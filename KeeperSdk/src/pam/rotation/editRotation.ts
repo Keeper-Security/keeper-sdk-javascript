@@ -10,11 +10,7 @@ import {
     RotationProfile,
     ScheduleData,
 } from './rotationTypes'
-import {
-    getVaultRecord,
-    recordExistsInVault,
-    getVaultRecordTitleType,
-} from './rotationHelpers'
+import { getVaultRecord, recordExistsInVault, getVaultRecordTitleType } from './rotationHelpers'
 import { RECORD_ROTATION_KIND } from './rotationConstants'
 
 const DEFAULT_PAM_SPECIAL_CHAR = '!@#$%^&*()_+-=[]{}|;:,.<>?'
@@ -54,15 +50,12 @@ export async function editRotation(
     const skippedRecords: EditRotationResult['skippedRecords'] = []
 
     try {
-        const currentRotation = storage.getByUid<DRecordRotation>(
-            RECORD_ROTATION_KIND,
-            recordUid
-        )
+        const currentRotation = storage.getByUid<DRecordRotation>(RECORD_ROTATION_KIND, recordUid)
 
         if (!currentRotation && !input.configUid && !input.iamAadConfigUid && !input.saasConfigUid) {
             throw new KeeperSdkError(
                 `Record "${recordUid}" does not have rotation configured yet. ` +
-                `You must provide a PAM Configuration UID (--config) to configure rotation for this record.`,
+                    `You must provide a PAM Configuration UID (--config) to configure rotation for this record.`,
                 ResultCodes.PAM_ROTATION_RECORD_REQUIRED
             )
         }
@@ -75,7 +68,7 @@ export async function editRotation(
         if (!configUid && !currentRotation) {
             throw new KeeperSdkError(
                 `PAM Configuration UID is required when setting up rotation for the first time. ` +
-                `Provide it with --config, --iam-aad-config, or --saas-config.`,
+                    `Provide it with --config, --iam-aad-config, or --saas-config.`,
                 ResultCodes.PAM_ROTATION_RECORD_REQUIRED
             )
         }
@@ -93,9 +86,10 @@ export async function editRotation(
         let scheduleData = validateAndBuildScheduleData(input)
         if (!scheduleData && currentRotation?.schedule) {
             try {
-                scheduleData = typeof currentRotation.schedule === 'string'
-                    ? JSON.parse(currentRotation.schedule)
-                    : currentRotation.schedule
+                scheduleData =
+                    typeof currentRotation.schedule === 'string'
+                        ? JSON.parse(currentRotation.schedule)
+                        : currentRotation.schedule
             } catch (e) {
                 scheduleData = null
             }
@@ -109,9 +103,10 @@ export async function editRotation(
         if (currentRotation) {
             if (currentRotation.schedule) {
                 try {
-                    currentSchedule = typeof currentRotation.schedule === 'string'
-                        ? currentRotation.schedule
-                        : JSON.stringify(currentRotation.schedule)
+                    currentSchedule =
+                        typeof currentRotation.schedule === 'string'
+                            ? currentRotation.schedule
+                            : JSON.stringify(currentRotation.schedule)
                 } catch (e) {
                     currentSchedule = ''
                 }
@@ -151,11 +146,7 @@ export async function editRotation(
 
         let passwordComplexityEncrypted = currentComplexity
         if (input.passwordComplexity) {
-            const encrypted = await encryptPasswordComplexity(
-                storage,
-                recordUid,
-                input.passwordComplexity
-            )
+            const encrypted = await encryptPasswordComplexity(storage, recordUid, input.passwordComplexity)
             if (encrypted) {
                 passwordComplexityEncrypted = platform.base64ToBytes(encrypted)
             }
@@ -164,9 +155,7 @@ export async function editRotation(
         let finalScheduleData = scheduleData
         if (!finalScheduleData && currentSchedule) {
             try {
-                finalScheduleData = typeof currentSchedule === 'string'
-                    ? JSON.parse(currentSchedule)
-                    : currentSchedule
+                finalScheduleData = typeof currentSchedule === 'string' ? JSON.parse(currentSchedule) : currentSchedule
             } catch (e) {
                 finalScheduleData = null
             }
@@ -295,10 +284,7 @@ async function encryptPasswordComplexity(
         }
 
         const plainText = JSON.stringify(complexityData)
-        const encrypted = await platform.aesGcmEncrypt(
-            platform.stringToBytes(plainText),
-            recordKey
-        )
+        const encrypted = await platform.aesGcmEncrypt(platform.stringToBytes(plainText), recordKey)
         return platform.bytesToBase64(encrypted)
     } catch (err) {
         throw new KeeperSdkError(

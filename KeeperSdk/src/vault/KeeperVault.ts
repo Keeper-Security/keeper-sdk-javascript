@@ -1432,9 +1432,7 @@ export class KeeperVault {
         return this.pamManager.formatPamConfigurationsOutput(result, options ?? {})
     }
 
-    public async listRotationSchedules(
-        options?: ListRotationSchedulesOptions
-    ): Promise<ListRotationSchedulesResult> {
+    public async listRotationSchedules(options?: ListRotationSchedulesOptions): Promise<ListRotationSchedulesResult> {
         return this.pamManager.listRotationSchedules(options ?? {})
     }
 
@@ -1485,9 +1483,7 @@ export class KeeperVault {
         return this.pamManager.editRotation(input)
     }
 
-    public async listRotationScripts(
-        options?: ListRotationScriptsOptions
-    ): Promise<ListRotationScriptsResult> {
+    public async listRotationScripts(options?: ListRotationScriptsOptions): Promise<ListRotationScriptsResult> {
         return this.pamManager.listRotationScripts(options ?? {})
     }
 
@@ -1507,9 +1503,7 @@ export class KeeperVault {
         return this.pamManager.editRotationScript(input)
     }
 
-    public async deleteRotationScript(
-        input: DeleteRotationScriptInput
-    ): Promise<DeleteRotationScriptResult> {
+    public async deleteRotationScript(input: DeleteRotationScriptInput): Promise<DeleteRotationScriptResult> {
         return this.pamManager.deleteRotationScript(input)
     }
 

@@ -80,7 +80,6 @@ export interface AddRotationScriptResult {
     warnings: string[]
 }
 
-
 export interface EditRotationScriptInput {
     record: string
     script: string

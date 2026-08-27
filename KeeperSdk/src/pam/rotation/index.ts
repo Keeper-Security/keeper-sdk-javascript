@@ -13,11 +13,7 @@ export { getRotationInfo, formatRotationInfoJson, formatRotationInfoOutput } fro
 
 export { editRotation, validateRotationInput } from './editRotation'
 
-export {
-    listRotationScripts,
-    formatRotationScriptsTable,
-    formatRotationScriptsJson,
-} from './listRotationScripts'
+export { listRotationScripts, formatRotationScriptsTable, formatRotationScriptsJson } from './listRotationScripts'
 
 export { addRotationScript } from './addRotationScript'
 export { editRotationScript } from './editRotationScript'

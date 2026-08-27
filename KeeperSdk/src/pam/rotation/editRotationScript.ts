@@ -13,7 +13,6 @@ import {
 } from './rotationScriptHelpers'
 import type { PamRecordData } from './rotationScriptTypes'
 
-
 export async function editRotationScript(
     auth: Auth,
     storage: InMemoryStorage,
@@ -24,10 +23,7 @@ export async function editRotationScript(
     try {
         const scriptName = input.script?.trim()
         if (!scriptName) {
-            throw new KeeperSdkError(
-                'Script UID or name is required',
-                ResultCodes.INVALID_PATTERN
-            )
+            throw new KeeperSdkError('Script UID or name is required', ResultCodes.INVALID_PATTERN)
         }
 
         const record = getSinglePamRecord(storage, input.record)

@@ -2,10 +2,7 @@ import type { Auth } from '@keeper-security/keeperapi'
 import { pamGetOnlineControllersMessage, pamGetRotationSchedulesMessage } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
-import {
-    fetchEnterprisePamControllers,
-    webSafeUidFromBytes,
-} from '../gateway/gatewayHelpers'
+import { fetchEnterprisePamControllers, webSafeUidFromBytes } from '../gateway/gatewayHelpers'
 import {
     EMPTY_ROTATION_SCHEDULES_MESSAGE,
     PAM_USER_RECORD_TYPE,
@@ -142,7 +139,10 @@ export function renderRotationSchedulesAsciiTable(
     })
 
     const formatRow = (cells: string[]): string =>
-        cells.map((cell, i) => (cell || '').padEnd(widths[i])).join('  ').trimEnd()
+        cells
+            .map((cell, i) => (cell || '').padEnd(widths[i]))
+            .join('  ')
+            .trimEnd()
 
     return [
         formatRow([...table.headers]),
@@ -190,7 +190,5 @@ export function formatRotationSchedulesOutput(
 
     if (result.message && result.rotations.length === 0) return result.message
 
-    return renderRotationSchedulesAsciiTable(
-        formatRotationSchedulesTable(result, { verbose: options.verbose })
-    )
+    return renderRotationSchedulesAsciiTable(formatRotationSchedulesTable(result, { verbose: options.verbose }))
 }

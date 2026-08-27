@@ -23,9 +23,7 @@ import type { PasswordComplexityDetail, RotationScheduleType } from './rotationT
 
 export function getVaultRecord(storage: InMemoryStorage, recordUid: string): DRecord | undefined {
     if (!recordUid) return undefined
-    return (
-        storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid) || getKeeperDriveRecord(storage, recordUid)
-    )
+    return storage.getByUid<DRecord>(VaultObjectKind.Record, recordUid) || getKeeperDriveRecord(storage, recordUid)
 }
 
 export function recordExistsInVault(storage: InMemoryStorage, recordUid: string): boolean {
@@ -38,8 +36,7 @@ export function getVaultRecordTitleType(storage: InMemoryStorage, recordUid: str
 
     const title = getRecordTitle(record)
     const type = getRecordType(record)
-    const displayTitle =
-        title && title !== '(untitled)' && title !== '(no data)' ? title : RECORD_UNTITLED_LABEL
+    const displayTitle = title && title !== '(untitled)' && title !== '(no data)' ? title : RECORD_UNTITLED_LABEL
     return [displayTitle, type || RECORD_UNKNOWN_TYPE_LABEL]
 }
 
@@ -88,11 +85,7 @@ export async function decryptPasswordComplexity(
     }
 }
 
-export function isAdminResourceValid(
-    storage: InMemoryStorage,
-    resourceUid: string,
-    configurationUid: string
-): boolean {
+export function isAdminResourceValid(storage: InMemoryStorage, resourceUid: string, configurationUid: string): boolean {
     if (!resourceUid || !configurationUid) return false
     if (!recordExistsInVault(storage, resourceUid)) return false
     const configuration = getVaultRecord(storage, configurationUid)

@@ -164,7 +164,9 @@ export class PamManager {
         return this.configManager.formatPamConfigurationsOutput(result, options)
     }
 
-    public async listRotationSchedules(options: ListRotationSchedulesOptions = {}): Promise<ListRotationSchedulesResult> {
+    public async listRotationSchedules(
+        options: ListRotationSchedulesOptions = {}
+    ): Promise<ListRotationSchedulesResult> {
         return this.rotationManager.listRotationSchedules(options)
     }
 
@@ -215,9 +217,7 @@ export class PamManager {
         return this.rotationManager.editRotation(input)
     }
 
-    public async listRotationScripts(
-        options: ListRotationScriptsOptions = {}
-    ): Promise<ListRotationScriptsResult> {
+    public async listRotationScripts(options: ListRotationScriptsOptions = {}): Promise<ListRotationScriptsResult> {
         return this.rotationManager.listRotationScripts(options)
     }
 
@@ -229,21 +229,15 @@ export class PamManager {
         return this.rotationManager.formatRotationScriptsJson(result)
     }
 
-    public async addRotationScript(
-        input: AddRotationScriptInput
-    ): Promise<AddRotationScriptResult> {
+    public async addRotationScript(input: AddRotationScriptInput): Promise<AddRotationScriptResult> {
         return this.rotationManager.addRotationScript(input)
     }
 
-    public async editRotationScript(
-        input: EditRotationScriptInput
-    ): Promise<EditRotationScriptResult> {
+    public async editRotationScript(input: EditRotationScriptInput): Promise<EditRotationScriptResult> {
         return this.rotationManager.editRotationScript(input)
     }
 
-    public async deleteRotationScript(
-        input: DeleteRotationScriptInput
-    ): Promise<DeleteRotationScriptResult> {
+    public async deleteRotationScript(input: DeleteRotationScriptInput): Promise<DeleteRotationScriptResult> {
         return this.rotationManager.deleteRotationScript(input)
     }
 }
