@@ -79,15 +79,7 @@ export function formatRotationScriptsTable(result: ListRotationScriptsResult): s
         return []
     }
 
-    const headers = [
-        'Record UID',
-        'Record Title',
-        'Record Type',
-        'Script UID',
-        'Script Name',
-        'Credentials',
-        'Command',
-    ]
+    const headers = ['Record UID', 'Record Title', 'Record Type', 'Script UID', 'Script Name', 'Credentials', 'Command']
 
     const rows = result.scripts.map((script) => [
         script.recordUid,

@@ -24,10 +24,7 @@ export async function addRotationScript(
     try {
         const scriptPath = input.scriptPath?.trim()
         if (!scriptPath) {
-            throw new KeeperSdkError(
-                'Script file path is required',
-                ResultCodes.INVALID_PATTERN
-            )
+            throw new KeeperSdkError('Script file path is required', ResultCodes.INVALID_PATTERN)
         }
 
         const expandedPath = validateScriptFileExists(scriptPath)

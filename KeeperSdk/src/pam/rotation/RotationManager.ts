@@ -10,11 +10,7 @@ import {
     renderRotationSchedulesAsciiTable,
 } from './listRotations'
 import { editRotation, validateRotationInput } from './editRotation'
-import {
-    listRotationScripts,
-    formatRotationScriptsTable,
-    formatRotationScriptsJson,
-} from './listRotationScripts'
+import { listRotationScripts, formatRotationScriptsTable, formatRotationScriptsJson } from './listRotationScripts'
 import { addRotationScript } from './addRotationScript'
 import { editRotationScript } from './editRotationScript'
 import { deleteRotationScript } from './deleteRotationScript'
@@ -59,7 +55,9 @@ export class RotationManager {
         return auth
     }
 
-    public async listRotationSchedules(options: ListRotationSchedulesOptions = {}): Promise<ListRotationSchedulesResult> {
+    public async listRotationSchedules(
+        options: ListRotationSchedulesOptions = {}
+    ): Promise<ListRotationSchedulesResult> {
         return listRotationSchedules(this.requireAuth(), this.storage, options)
     }
 
@@ -119,9 +117,7 @@ export class RotationManager {
 
     /* ========== Rotation Script Operations ========== */
 
-    public async listRotationScripts(
-        options: ListRotationScriptsOptions = {}
-    ): Promise<ListRotationScriptsResult> {
+    public async listRotationScripts(options: ListRotationScriptsOptions = {}): Promise<ListRotationScriptsResult> {
         return listRotationScripts(this.requireAuth(), this.storage, options)
     }
 
@@ -133,21 +129,15 @@ export class RotationManager {
         return formatRotationScriptsJson(result)
     }
 
-    public async addRotationScript(
-        input: AddRotationScriptInput
-    ): Promise<AddRotationScriptResult> {
+    public async addRotationScript(input: AddRotationScriptInput): Promise<AddRotationScriptResult> {
         return addRotationScript(this.requireAuth(), this.storage, input)
     }
 
-    public async editRotationScript(
-        input: EditRotationScriptInput
-    ): Promise<EditRotationScriptResult> {
+    public async editRotationScript(input: EditRotationScriptInput): Promise<EditRotationScriptResult> {
         return editRotationScript(this.requireAuth(), this.storage, input)
     }
 
-    public async deleteRotationScript(
-        input: DeleteRotationScriptInput
-    ): Promise<DeleteRotationScriptResult> {
+    public async deleteRotationScript(input: DeleteRotationScriptInput): Promise<DeleteRotationScriptResult> {
         return deleteRotationScript(this.requireAuth(), this.storage, input)
     }
 }

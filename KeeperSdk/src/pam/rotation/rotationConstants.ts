@@ -9,12 +9,7 @@ export const RECORD_UNTITLED_LABEL = '[Untitled]' as const
 export const PAM_USER_RECORD_TYPE = 'pamUser' as const
 export const RECORD_ROTATION_KIND = 'non_shared_data' as const
 export const EMPTY_ROTATION_SCHEDULES_MESSAGE = 'No rotation schedules found' as const
-export const ROTATION_LIST_DEFAULT_HEADERS = [
-    'Record',
-    'Status',
-    'Schedule',
-    'Last',
-] as const
+export const ROTATION_LIST_DEFAULT_HEADERS = ['Record', 'Status', 'Schedule', 'Last'] as const
 export const ROTATION_LIST_VERBOSE_HEADERS = [
     'Record UID',
     'Record Title',

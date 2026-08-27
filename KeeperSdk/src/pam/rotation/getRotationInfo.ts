@@ -1,9 +1,5 @@
 import type { Auth } from '@keeper-security/keeperapi'
-import {
-    getRotationInfoMessage,
-    normal64Bytes,
-    pamGetRotationSchedulesMessage,
-} from '@keeper-security/keeperapi'
+import { getRotationInfoMessage, normal64Bytes, pamGetRotationSchedulesMessage } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
 import { toFiniteNumber, webSafeUidFromBytes } from '../gateway/gatewayHelpers'
@@ -69,9 +65,7 @@ export async function getRotationInfo(
 
     const pamConfigUid = webSafeUidFromBytes(rotationInfo.configurationUid)
     const gatewayUid = webSafeUidFromBytes(rotationInfo.controllerUid) || MISSING_VALUE_LABEL
-    const adminResourceUid = rotationInfo.resourceUid?.length
-        ? webSafeUidFromBytes(rotationInfo.resourceUid)
-        : null
+    const adminResourceUid = rotationInfo.resourceUid?.length ? webSafeUidFromBytes(rotationInfo.resourceUid) : null
     const passwordComplexity = rotationInfo.pwdComplexity || null
     const passwordComplexityDetail = await decryptPasswordComplexity(storage, recordUid, passwordComplexity)
 
@@ -141,9 +135,7 @@ export function formatRotationInfoJson(result: RotationInfoResult): string {
 
 function formatPasswordComplexityData(detail: NonNullable<RotationInfoResult['passwordComplexityDetail']>): string {
     const symbolsChars =
-        detail.specialChars != null && String(detail.specialChars).trim() !== ''
-            ? String(detail.specialChars)
-            : 'None'
+        detail.specialChars != null && String(detail.specialChars).trim() !== '' ? String(detail.specialChars) : 'None'
     return [
         `Length: ${detail.length ?? ''}`,
         `Lowercase: ${detail.lowercase ?? ''}`,
@@ -175,10 +167,7 @@ function formatRotationInfoDetail(result: RotationInfoResult): string {
     if (result.readyToRotate) {
         rows.push(['PAM Config UID', result.pamConfigUid || ''])
         if (result.nodeId != null) rows.push(['Node ID', String(result.nodeId)])
-        rows.push([
-            'Gateway Name where the rotation will be performed',
-            result.gatewayName || MISSING_VALUE_LABEL,
-        ])
+        rows.push(['Gateway Name where the rotation will be performed', result.gatewayName || MISSING_VALUE_LABEL])
         rows.push(['Gateway Uid', result.gatewayUid || MISSING_VALUE_LABEL])
         if (result.adminResourceUid) rows.push(['Admin Resource Uid', result.adminResourceUid])
         if (result.passwordComplexity) rows.push(['Password Complexity', result.passwordComplexity])

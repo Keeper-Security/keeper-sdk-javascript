@@ -7,12 +7,7 @@ import { getRecordTitle, getRecordType } from '../../records/RecordUtils'
 import { updateRecord } from '../../records/RecordOperations'
 import { KeeperSdkError, ResultCodes } from '../../utils'
 import { SCRIPT_FIELD_TYPE } from './rotationConstants'
-import type {
-    PamRecordData,
-    RotationScriptValue,
-    ScriptFieldLocation,
-    ScriptSearchResult,
-} from './rotationScriptTypes'
+import type { PamRecordData, RotationScriptValue, ScriptFieldLocation, ScriptSearchResult } from './rotationScriptTypes'
 
 export function findPamRecordsByName(storage: InMemoryStorage, searchText: string): DRecord[] {
     const results: DRecord[] = []
@@ -52,10 +47,7 @@ export function getSinglePamRecord(storage: InMemoryStorage, recordName: string)
 
     const records = findPamRecordsByName(storage, recordNameTrimmed)
     if (records.length === 0) {
-        throw new KeeperSdkError(
-            `PAM record not found: ${recordNameTrimmed}`,
-            ResultCodes.PAM_CONFIG_NOT_FOUND
-        )
+        throw new KeeperSdkError(`PAM record not found: ${recordNameTrimmed}`, ResultCodes.PAM_CONFIG_NOT_FOUND)
     }
 
     if (records.length > 1) {
@@ -123,10 +115,7 @@ export function findScriptByUidOrName(
 
     const searchLower = searchText.toLowerCase()
     for (const location of scripts) {
-        const scriptFile = storage.getByUid<DRecord>(
-            VaultObjectKind.Record,
-            location.script.fileRef
-        )
+        const scriptFile = storage.getByUid<DRecord>(VaultObjectKind.Record, location.script.fileRef)
         if (scriptFile) {
             const title = (getRecordTitle(scriptFile) || '').toLowerCase()
             if (title.includes(searchLower)) {
@@ -139,18 +128,13 @@ export function findScriptByUidOrName(
 }
 
 export function expandFilePath(filePath: string): string {
-    return filePath.startsWith('~')
-        ? path.join(process.env.HOME || '', filePath.slice(1))
-        : filePath
+    return filePath.startsWith('~') ? path.join(process.env.HOME || '', filePath.slice(1)) : filePath
 }
 
 export function validateScriptFileExists(filePath: string): string {
     const expandedPath = expandFilePath(filePath)
     if (!fs.existsSync(expandedPath)) {
-        throw new KeeperSdkError(
-            `Script file not found: ${filePath}`,
-            ResultCodes.PAM_CONFIG_CREATE_FAILED
-        )
+        throw new KeeperSdkError(`Script file not found: ${filePath}`, ResultCodes.PAM_CONFIG_CREATE_FAILED)
     }
     return expandedPath
 }
