@@ -24,7 +24,7 @@
         "prepublishOnly": "npm run build"
     },
     "dependencies": {
-        "@keeper-security/keeperapi": "18.1.1",
+        "@keeper-security/keeperapi": "^18.1.1",
         "@keeper-security/secrets-manager-core": "^17.5.0",
         "asmcrypto.js": "^2.3.2",
         "ts-node": "^10.7.0",
