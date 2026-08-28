@@ -35,6 +35,7 @@ export type ShareRecordResult = {
     success: boolean
     status: string
     message: string
+    isNew?: boolean
 }
 
 export type RemoveShareInput = {

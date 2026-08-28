@@ -39,6 +39,9 @@ export type ShareFolderInput = {
     action?: ShareFolderActionInput
     manageRecords?: boolean
     manageUsers?: boolean
+    records?: string[]
+    expireAt?: number
+    expireIn?: number
 }
 
 export type ShareFolderUserStatus = {
@@ -46,6 +49,8 @@ export type ShareFolderUserStatus = {
     success: boolean
     status: string
     message?: string
+    isNew?: boolean
+    expiration?: number
 }
 
 export type ShareFolderResult = {
@@ -428,8 +433,11 @@ async function shareWithSharedFolder(
         : sharedFolder.defaultManageRecords
     const newUserManageUsers = isBoolean(input.manageUsers) ? input.manageUsers : sharedFolder.defaultManageUsers
 
+    const emailToIsNew = new Map<string, boolean>()
+
     for (const email of emails) {
         if (existingMembers.has(email)) {
+            emailToIsNew.set(email, false)
             usersToUpdate.push({
                 username: email,
                 manageRecords: toSetBoolean(input.manageRecords),
@@ -477,6 +485,7 @@ async function shareWithSharedFolder(
             continue
         }
 
+        emailToIsNew.set(email, true)
         usersToAdd.push({
             username: email,
             manageRecords: toSetBoolean(newUserManageRecords),
@@ -524,18 +533,24 @@ async function shareWithSharedFolder(
     for (const addUserStatus of innerResponse?.sharedFolderAddUserStatus || []) {
         const status = addUserStatus.status || ShareFolderUserResultStatus.Unknown
         const success = status === FolderResultStatus.Success || status === FolderResultStatus.Invited
+        const email = addUserStatus.username || ''
         userResults.push({
-            email: addUserStatus.username || '',
+            email,
             success,
             status,
+            isNew: emailToIsNew.get(email) ?? true,
+            expiration: input.expireAt,
         })
     }
     for (const updateUserStatus of innerResponse?.sharedFolderUpdateUserStatus || []) {
         const status = updateUserStatus.status || ShareFolderUserResultStatus.Unknown
+        const email = updateUserStatus.username || ''
         userResults.push({
-            email: updateUserStatus.username || '',
+            email,
             success: status === FolderResultStatus.Success,
             status,
+            isNew: emailToIsNew.get(email) ?? false,
+            expiration: input.expireAt,
         })
     }
 
