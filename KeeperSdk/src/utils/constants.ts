@@ -173,6 +173,20 @@ export enum PamErrorCode {
     GatewayRemoveFailed = 'pam_gateway_remove_failed',
     GatewayInvalidMaxInstances = 'pam_gateway_invalid_max_instances',
     GatewaySetMaxInstancesFailed = 'pam_gateway_set_max_instances_failed',
+    ConfigNotFound = 'pam_config_not_found',
+    ConfigInvalid = 'pam_config_invalid',
+    ConfigTitleRequired = 'pam_config_title_required',
+    ConfigTypeRequired = 'pam_config_type_required',
+    ConfigTypeInvalid = 'pam_config_type_invalid',
+    ConfigSharedFolderRequired = 'pam_config_shared_folder_required',
+    ConfigSharedFolderNotFound = 'pam_config_shared_folder_not_found',
+    ConfigCreateFailed = 'pam_config_create_failed',
+    ConfigMoveFailed = 'pam_config_move_failed',
+    ConfigRequired = 'pam_config_required',
+    ConfigEditNothingToDo = 'pam_config_edit_nothing_to_do',
+    ConfigEditFailed = 'pam_config_edit_failed',
+    MultipleConfigMatches = 'pam_multiple_config_matches',
+    ConfigRemoveFailed = 'pam_config_remove_failed',
 }
 
 export enum UserErrorCode {
@@ -340,6 +354,20 @@ export const ResultCodes = {
     PAM_GATEWAY_REMOVE_FAILED: PamErrorCode.GatewayRemoveFailed,
     PAM_GATEWAY_INVALID_MAX_INSTANCES: PamErrorCode.GatewayInvalidMaxInstances,
     PAM_GATEWAY_SET_MAX_INSTANCES_FAILED: PamErrorCode.GatewaySetMaxInstancesFailed,
+    PAM_CONFIG_NOT_FOUND: PamErrorCode.ConfigNotFound,
+    PAM_CONFIG_INVALID: PamErrorCode.ConfigInvalid,
+    PAM_CONFIG_TITLE_REQUIRED: PamErrorCode.ConfigTitleRequired,
+    PAM_CONFIG_TYPE_REQUIRED: PamErrorCode.ConfigTypeRequired,
+    PAM_CONFIG_TYPE_INVALID: PamErrorCode.ConfigTypeInvalid,
+    PAM_CONFIG_SHARED_FOLDER_REQUIRED: PamErrorCode.ConfigSharedFolderRequired,
+    PAM_CONFIG_SHARED_FOLDER_NOT_FOUND: PamErrorCode.ConfigSharedFolderNotFound,
+    PAM_CONFIG_CREATE_FAILED: PamErrorCode.ConfigCreateFailed,
+    PAM_CONFIG_MOVE_FAILED: PamErrorCode.ConfigMoveFailed,
+    PAM_CONFIG_REQUIRED: PamErrorCode.ConfigRequired,
+    PAM_CONFIG_EDIT_NOTHING_TO_DO: PamErrorCode.ConfigEditNothingToDo,
+    PAM_CONFIG_EDIT_FAILED: PamErrorCode.ConfigEditFailed,
+    PAM_MULTIPLE_CONFIG_MATCHES: PamErrorCode.MultipleConfigMatches,
+    PAM_CONFIG_REMOVE_FAILED: PamErrorCode.ConfigRemoveFailed,
 } as const
 
 export const KEEPER_PUBLIC_HOSTS: Record<string, string> = {

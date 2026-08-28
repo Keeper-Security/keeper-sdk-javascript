@@ -429,6 +429,9 @@ Most examples call the shared `login()` helper, which attempts persistent login 
 
 See [`examples/sdk_example/README.md`](../examples/sdk_example/README.md) for the full command list.
 
+Prefer an interactive shell over one-off scripts? See [`examples/repl`](../examples/repl/README.md)
+for a REPL that logs in once and runs vault commands (`ls`, `cd`, `get`, `find`, …) until you exit.
+
 ---
 
 ## Development Setup
@@ -467,6 +470,7 @@ keeper-sdk-javascript/
 ├── keeperapi/                 # @keeper-security/keeperapi
 └── examples/
     ├── sdk_example/           # Runnable Node scripts (auth, records, folders, …)
+    ├── repl/                  # Interactive vault shell
     ├── print-vault-node/      # Additional Node sample
     └── print-vault-browser/   # Browser sample
 ```

@@ -357,6 +357,30 @@ export class Auth {
     }
 
     /**
+     * Send an outbound frame over the router socket opened by connectToRouter.
+     * Pass a string to send a JSON/text frame (used for ephemeral, non-persisted
+     * events such as "typing"), or a Uint8Array for a binary frame. The frame is
+     * dropped if the router socket is not connected. Inbound events are still
+     * received via onRouterMessage.
+     */
+    sendToRouter(message: string | Uint8Array): void {
+        if (!this.routerSocket) {
+            logger.debug('Router socket not connected; dropping outbound frame')
+            return
+        }
+        // Symmetric with the inbound 'Router message received' log in connectToRouter.
+        if (isLevelEnabled('debug')) {
+            const text = typeof message === 'string' ? message : platform.bytesToString(message)
+            try {
+                logger.debug('Router message sent', JSON.parse(text))
+            } catch {
+                logger.debug('Router message sent', text)
+            }
+        }
+        this.routerSocket.send(message)
+    }
+
+    /**
      * @param {LoginPayload} payload - Options for login.
      * @param {boolean} [payload.disableLinkingForAccountWithYubikey2fa] -
      *        Opt-out flag for linking YubiKey 2FA accounts.
@@ -634,6 +658,7 @@ export class Auth {
                         wrappedPassword = undefined
                         handleError('auth_failed', loginResponse, e)
                         const error = e as Error
+                        // @ts-ignore
                         if (error.cause?.message === 'No alternate master password found') {
                             return
                         }

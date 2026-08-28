@@ -341,7 +341,11 @@ async function syncVault(vault: KeeperVault): Promise<KeeperVault> {
     return vault
 }
 
+export function closePrompt(): void {
+    getReadlineManager().close()
+}
+
 export function cleanup(vault: KeeperVault): void {
     vault.disconnect()
-    getReadlineManager().close()
+    closePrompt()
 }
