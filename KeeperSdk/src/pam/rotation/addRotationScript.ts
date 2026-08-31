@@ -1,8 +1,9 @@
-import type { Auth } from '@keeper-security/keeperapi'
-import type { DRecord } from '@keeper-security/keeperapi'
+import * as path from 'path'
+import type { Auth, DRecord } from '@keeper-security/keeperapi'
 import { generateUid } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
-import { getRecordTitle, getRecordType } from '../../records/RecordUtils'
+import { VaultObjectKind } from '../../folders/folderHelpers'
+import { getRecordType } from '../../records/RecordUtils'
 import type { AddRotationScriptInput, AddRotationScriptResult, RotationScriptValue } from './rotationScriptTypes'
 import { KeeperSdkError, ResultCodes, extractErrorMessage } from '../../utils'
 import {
@@ -12,7 +13,6 @@ import {
     updatePamRecordFields,
 } from './rotationScriptHelpers'
 import { SCRIPT_FIELD_TYPE, SCRIPT_FIELD_LABEL } from './rotationConstants'
-import type { PamRecordData } from './rotationScriptTypes'
 
 export async function addRotationScript(
     auth: Auth,
@@ -32,11 +32,8 @@ export async function addRotationScript(
         const recordType = getRecordType(record)
         const currentRevision = record.revision || 0
 
-        const recordData = (record.data as PamRecordData) || { fields: [] }
-        const dataFields = recordData.fields || []
-
-        const fs = require('fs')
-        const path = require('path')
+        const recordData = record.data
+        const dataFields = recordData.fields
         const fileName = path.basename(expandedPath)
 
         const fileUid = generateUid()
@@ -48,7 +45,7 @@ export async function addRotationScript(
 
         if (Array.isArray(input.credentialUids)) {
             for (const credUid of input.credentialUids) {
-                const credRecord = storage.getByUid<DRecord>(1 as any, credUid)
+                const credRecord = storage.getByUid<DRecord>(VaultObjectKind.Record, credUid)
                 if (!credRecord) {
                     warnings.push(`Credential record not found: ${credUid}`)
                     continue
@@ -65,7 +62,7 @@ export async function addRotationScript(
 
         dataFields.push(newScriptField)
         recordData.fields = dataFields
-        ;(record as any).data = recordData
+        record.data = recordData
 
         await updatePamRecordFields(auth, record, recordType, dataFields, currentRevision, storage)
 

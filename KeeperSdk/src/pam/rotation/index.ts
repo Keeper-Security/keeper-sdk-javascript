@@ -1,5 +1,4 @@
 export { RotationManager } from './RotationManager'
-export type { AuthProvider } from './RotationManager'
 
 export {
     listRotationSchedules,
@@ -44,6 +43,10 @@ export type {
 
 export type {
     RotationScriptValue,
+    PamRecord,
+    PamRecordData,
+    RecordField,
+    ScriptField,
     RotationScript,
     ListRotationScriptsResult,
     AddRotationScriptInput,

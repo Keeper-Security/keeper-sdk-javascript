@@ -1,5 +1,6 @@
 import type { Auth } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
+import type { AuthProvider } from '../PamManager'
 import { KeeperSdkError, ResultCodes } from '../../utils'
 import { formatRotationInfoJson, formatRotationInfoOutput, getRotationInfo } from './getRotationInfo'
 import {
@@ -35,8 +36,6 @@ import type {
     DeleteRotationScriptInput,
     DeleteRotationScriptResult,
 } from './rotationScriptTypes'
-
-export type AuthProvider = () => Auth
 
 export class RotationManager {
     private readonly storage: InMemoryStorage

@@ -11,7 +11,7 @@ import {
     ScheduleData,
 } from './rotationTypes'
 import { getVaultRecord, recordExistsInVault, getVaultRecordTitleType } from './rotationHelpers'
-import { RECORD_ROTATION_KIND } from './rotationConstants'
+import { MANUAL_ROTATION_LABEL, RECORD_ROTATION_KIND } from './rotationConstants'
 
 const DEFAULT_PAM_SPECIAL_CHAR = '!@#$%^&*()_+-=[]{}|;:,.<>?'
 
@@ -125,7 +125,7 @@ export async function editRotation(
                     const reencrypted = await encryptPasswordComplexity(
                         storage,
                         recordUid,
-                        currentRotation.pwdComplexity as any
+                        currentRotation.pwdComplexity
                     )
                     if (reencrypted) {
                         currentComplexity = platform.base64ToBytes(reencrypted)
@@ -173,7 +173,7 @@ export async function editRotation(
             finalResourceUidBytes = normal64Bytes(input.resourceUid)
         }
 
-        let schedule = finalScheduleData ? formatScheduleType(finalScheduleData) : 'On-Demand'
+        let schedule = finalScheduleData ? formatScheduleType(finalScheduleData) : MANUAL_ROTATION_LABEL
         let complexity = input.passwordComplexity ? formatComplexity(input.passwordComplexity) : ''
 
         const configUidBytes = configUid ? normal64Bytes(configUid) : new Uint8Array()
@@ -248,9 +248,9 @@ function validateAndBuildScheduleData(input: EditRotationInput): ScheduleData[] 
 
 function formatScheduleType(scheduleData: ScheduleData[] | null): string {
     if (!scheduleData || scheduleData.length === 0) {
-        return 'On-Demand'
+        return MANUAL_ROTATION_LABEL
     }
-    return (scheduleData[0] as any).type || 'Scheduled'
+    return scheduleData[0].type || 'Scheduled'
 }
 
 function formatComplexity(complexity: PasswordComplexityInput): string {

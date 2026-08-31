@@ -1,3 +1,4 @@
+import type { DRecord } from '@keeper-security/keeperapi'
 import type { ListRotationSchedulesResult } from './rotationTypes'
 
 export interface PasswordComplexitySpec {
@@ -27,6 +28,10 @@ export interface PamRecordData {
     fields: RecordField[]
     custom?: RecordField[]
     notes?: string
+}
+
+export type PamRecord = Omit<DRecord, 'data'> & {
+    data: PamRecordData
 }
 
 export interface RotationScriptValue {

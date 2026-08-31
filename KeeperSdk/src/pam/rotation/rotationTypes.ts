@@ -130,7 +130,7 @@ export type ScheduleData = {
     utcTime?: string
     weekday?: string
     intervalCount?: number
-    [key: string]: any
+    [key: string]: unknown
 }
 
 export type EditRotationInput = {
