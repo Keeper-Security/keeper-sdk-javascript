@@ -7,10 +7,18 @@ import { getRecordTitle, getRecordType } from '../../records/RecordUtils'
 import { updateRecord } from '../../records/RecordOperations'
 import { KeeperSdkError, ResultCodes } from '../../utils'
 import { SCRIPT_FIELD_TYPE } from './rotationConstants'
-import type { PamRecordData, RotationScriptValue, ScriptFieldLocation, ScriptSearchResult } from './rotationScriptTypes'
+import type {
+    PamRecord,
+    PamRecordData,
+    RecordField,
+    RotationScriptValue,
+    ScriptField,
+    ScriptFieldLocation,
+    ScriptSearchResult,
+} from './rotationScriptTypes'
 
-export function findPamRecordsByName(storage: InMemoryStorage, searchText: string): DRecord[] {
-    const results: DRecord[] = []
+export function findPamRecordsByName(storage: InMemoryStorage, searchText: string): PamRecord[] {
+    const results: PamRecord[] = []
     const searchLower = searchText.toLowerCase()
 
     const allRecords = storage.getRecords()
@@ -21,6 +29,7 @@ export function findPamRecordsByName(storage: InMemoryStorage, searchText: strin
         if (recordType !== 'pamUser' && recordType !== 'pamDirectory') {
             continue
         }
+        if (!isPamRecord(record)) continue
 
         const title = getRecordTitle(record) || ''
         if (
@@ -39,7 +48,15 @@ export function getRecordTitleSafe(record: DRecord): string {
     return getRecordTitle(record) || record.uid
 }
 
-export function getSinglePamRecord(storage: InMemoryStorage, recordName: string): DRecord {
+function isPamRecordData(data: unknown): data is PamRecordData {
+    return typeof data === 'object' && data !== null && Array.isArray((data as { fields?: unknown }).fields)
+}
+
+export function isPamRecord(record: DRecord): record is PamRecord {
+    return isPamRecordData(record.data)
+}
+
+export function getSinglePamRecord(storage: InMemoryStorage, recordName: string): PamRecord {
     const recordNameTrimmed = recordName?.trim()
     if (!recordNameTrimmed) {
         throw new KeeperSdkError('Record UID or title is required', ResultCodes.INVALID_PATTERN)
@@ -66,7 +83,29 @@ export function getSinglePamRecord(storage: InMemoryStorage, recordName: string)
         )
     }
 
+    if (!isPamRecord(record)) {
+        throw new KeeperSdkError(
+            `PAM record "${recordNameTrimmed}" has invalid record data`,
+            ResultCodes.PAM_CONFIG_INVALID
+        )
+    }
+
     return record
+}
+
+function isRotationScriptValue(value: unknown): value is RotationScriptValue {
+    if (typeof value !== 'object' || value === null) return false
+    const candidate = value as Partial<RotationScriptValue>
+    return (
+        typeof candidate.fileRef === 'string' &&
+        Array.isArray(candidate.recordRef) &&
+        candidate.recordRef.every((uid): uid is string => typeof uid === 'string') &&
+        typeof candidate.command === 'string'
+    )
+}
+
+function isScriptField(field: RecordField): field is ScriptField {
+    return field.type === SCRIPT_FIELD_TYPE && Array.isArray(field.value) && field.value.every(isRotationScriptValue)
 }
 
 export function findScriptFieldsInRecord(recordData: PamRecordData): ScriptFieldLocation[] {
@@ -75,25 +114,14 @@ export function findScriptFieldsInRecord(recordData: PamRecordData): ScriptField
     const dataFields = recordData.fields || []
     for (let i = 0; i < dataFields.length; i++) {
         const field = dataFields[i]
-        if (field.type !== SCRIPT_FIELD_TYPE) continue
+        if (!isScriptField(field)) continue
 
-        const value = field.value as unknown
-        if (!Array.isArray(value)) continue
-
-        for (let j = 0; j < value.length; j++) {
-            const script = value[j]
-            if (
-                script &&
-                typeof script === 'object' &&
-                'fileRef' in script &&
-                typeof (script as any).fileRef === 'string'
-            ) {
-                results.push({
-                    fieldIndex: i,
-                    scriptIndex: j,
-                    script: script as RotationScriptValue,
-                })
-            }
+        for (let j = 0; j < field.value.length; j++) {
+            results.push({
+                fieldIndex: i,
+                scriptIndex: j,
+                script: field.value[j],
+            })
         }
     }
 
@@ -128,12 +156,13 @@ export function findScriptByUidOrName(
 }
 
 export function expandFilePath(filePath: string): string {
-    return filePath.startsWith('~') ? path.join(process.env.HOME || '', filePath.slice(1)) : filePath
+    const expandedPath = filePath.startsWith('~') ? path.join(process.env.HOME || '', filePath.slice(1)) : filePath
+    return path.resolve(expandedPath)
 }
 
 export function validateScriptFileExists(filePath: string): string {
     const expandedPath = expandFilePath(filePath)
-    if (!fs.existsSync(expandedPath)) {
+    if (!fs.existsSync(expandedPath) || !fs.statSync(expandedPath).isFile()) {
         throw new KeeperSdkError(`Script file not found: ${filePath}`, ResultCodes.PAM_CONFIG_CREATE_FAILED)
     }
     return expandedPath
@@ -141,9 +170,9 @@ export function validateScriptFileExists(filePath: string): string {
 
 export async function updatePamRecordFields(
     auth: Auth,
-    record: DRecord,
+    record: PamRecord,
     recordType: string,
-    fields: unknown[],
+    fields: RecordField[],
     currentRevision: number,
     storage: InMemoryStorage
 ): Promise<void> {
@@ -155,14 +184,14 @@ export async function updatePamRecordFields(
         )
     }
 
-    const recordData = (record.data as PamRecordData) || { fields: [] }
+    const recordData = record.data
     const updateResult = await updateRecord(
         auth,
         record.uid,
         {
             type: recordType,
             title: getRecordTitle(record) || '',
-            fields: fields as any,
+            fields,
             notes: recordData.notes || '',
         },
         currentRevision,

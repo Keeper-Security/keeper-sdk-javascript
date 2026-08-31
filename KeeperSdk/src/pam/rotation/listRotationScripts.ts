@@ -4,8 +4,7 @@ import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { getRecordTitle, getRecordType } from '../../records/RecordUtils'
 import type { RotationScript, ListRotationScriptsResult, ListRotationScriptsOptions } from './rotationScriptTypes'
-import { findScriptFieldsInRecord } from './rotationScriptHelpers'
-import type { PamRecordData } from './rotationScriptTypes'
+import { findScriptFieldsInRecord, isPamRecord } from './rotationScriptHelpers'
 
 export async function listRotationScripts(
     _auth: Auth,
@@ -34,7 +33,8 @@ export async function listRotationScripts(
                 }
             }
 
-            const recordData = (record.data as PamRecordData) || { fields: [] }
+            if (!isPamRecord(record)) continue
+            const recordData = record.data
             const scriptFields = findScriptFieldsInRecord(recordData)
 
             if (scriptFields.length > 0) {

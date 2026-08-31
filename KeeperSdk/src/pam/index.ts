@@ -221,7 +221,6 @@ export {
     resolveGatewayName,
 } from './rotation'
 export type {
-    AuthProvider as RotationAuthProvider,
     RotationListFormatInput,
     ListRotationSchedulesOptions,
     RotationListRow,

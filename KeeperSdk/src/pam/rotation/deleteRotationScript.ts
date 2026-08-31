@@ -1,5 +1,4 @@
 import type { Auth } from '@keeper-security/keeperapi'
-import type { DRecord } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { getRecordType } from '../../records/RecordUtils'
 import type { DeleteRotationScriptInput, DeleteRotationScriptResult } from './rotationScriptTypes'
@@ -11,7 +10,6 @@ import {
     findScriptByUidOrName,
     updatePamRecordFields,
 } from './rotationScriptHelpers'
-import type { PamRecordData } from './rotationScriptTypes'
 
 /**
  * Delete a rotation script from a PAM record
@@ -28,8 +26,8 @@ export async function deleteRotationScript(
         const recordType = getRecordType(record)
         const currentRevision = record.revision || 0
 
-        const recordData = (record.data as PamRecordData) || { fields: [] }
-        const dataFields = recordData.fields || []
+        const recordData = record.data
+        const dataFields = recordData.fields
 
         const scriptFields = findScriptFieldsInRecord(recordData)
         if (scriptFields.length === 0) {
@@ -54,7 +52,10 @@ export async function deleteRotationScript(
         }
 
         const field = dataFields[targetScript.fieldIndex]
-        const scriptArray = field.value as any[]
+        if (!field || field.type !== 'script' || !Array.isArray(field.value)) {
+            throw new KeeperSdkError('Rotation script field is invalid', ResultCodes.PAM_CONFIG_INVALID)
+        }
+        const scriptArray = field.value
         scriptArray.splice(targetScript.scriptIndex, 1)
 
         if (scriptArray.length === 0) {
@@ -62,7 +63,7 @@ export async function deleteRotationScript(
         }
 
         recordData.fields = dataFields
-        ;(record as any).data = recordData
+        record.data = recordData
 
         await updatePamRecordFields(auth, record, recordType, dataFields, currentRevision, storage)
 

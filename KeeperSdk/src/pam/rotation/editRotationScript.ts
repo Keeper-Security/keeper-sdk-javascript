@@ -11,7 +11,6 @@ import {
     findScriptByUidOrName,
     updatePamRecordFields,
 } from './rotationScriptHelpers'
-import type { PamRecordData } from './rotationScriptTypes'
 
 export async function editRotationScript(
     auth: Auth,
@@ -30,8 +29,8 @@ export async function editRotationScript(
         const recordType = getRecordType(record)
         const currentRevision = record.revision || 0
 
-        const recordData = (record.data as PamRecordData) || { fields: [] }
-        const dataFields = recordData.fields || []
+        const recordData = record.data
+        const dataFields = recordData.fields
 
         const found = findScriptByUidOrName(storage, recordData, scriptName)
         if (!found) {
@@ -84,7 +83,7 @@ export async function editRotationScript(
         }
 
         recordData.fields = dataFields
-        ;(record as any).data = recordData
+        record.data = recordData
 
         await updatePamRecordFields(auth, record, recordType, dataFields, currentRevision, storage)
 
