@@ -1,7 +1,8 @@
 import type { Auth, DRecordRotation } from '@keeper-security/keeperapi'
 import { normal64Bytes, platform, Router, setRecordRotationMessage } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
-import { extractErrorMessage, KeeperSdkError, ResultCodes } from '../../utils'
+import { resolveNsfRecordIdentifier } from '../../nestedShareFolders/nsfHelpers'
+import { extractErrorMessage, KeeperSdkError, logger, ResultCodes } from '../../utils'
 import { getRecordTitle } from '../../records/RecordUtils'
 import {
     EditRotationInput,
@@ -10,7 +11,7 @@ import {
     RotationProfile,
     ScheduleData,
 } from './rotationTypes'
-import { getVaultRecord, recordExistsInVault, getVaultRecordTitleType } from './rotationHelpers'
+import { getDefaultScheduleFromPamConfig, getVaultRecord } from './rotationHelpers'
 import { MANUAL_ROTATION_LABEL, RECORD_ROTATION_KIND } from './rotationConstants'
 
 const DEFAULT_PAM_SPECIAL_CHAR = '!@#$%^&*()_+-=[]{}|;:,.<>?'
@@ -20,10 +21,27 @@ export async function editRotation(
     storage: InMemoryStorage,
     input: EditRotationInput
 ): Promise<EditRotationResult> {
-    const recordUid = input.recordUid?.trim() || ''
-    if (!recordUid) {
+    const recordIdentifier = input.recordUid?.trim() || ''
+    if (!recordIdentifier) {
         throw new KeeperSdkError(
             'Record UID is required for PAM rotation edit.',
+            ResultCodes.PAM_ROTATION_RECORD_REQUIRED
+        )
+    }
+
+    let recordUid = recordIdentifier
+    let record = getVaultRecord(storage, recordUid)
+    if (!record) {
+        const resolvedNsfRecordUid = resolveNsfRecordIdentifier(storage, recordIdentifier)
+        if (resolvedNsfRecordUid) {
+            recordUid = resolvedNsfRecordUid
+            record = getVaultRecord(storage, recordUid)
+        }
+    }
+
+    if (!record) {
+        throw new KeeperSdkError(
+            `Record UID or title "${recordIdentifier}" not found in vault.`,
             ResultCodes.PAM_ROTATION_RECORD_REQUIRED
         )
     }
@@ -34,14 +52,6 @@ export async function editRotation(
     } catch (err) {
         throw new KeeperSdkError(
             `Invalid record UID "${recordUid}": ${extractErrorMessage(err)}`,
-            ResultCodes.PAM_ROTATION_RECORD_REQUIRED
-        )
-    }
-
-    const record = getVaultRecord(storage, recordUid)
-    if (!record) {
-        throw new KeeperSdkError(
-            `Record UID "${recordUid}" not found in vault.`,
             ResultCodes.PAM_ROTATION_RECORD_REQUIRED
         )
     }
@@ -61,6 +71,9 @@ export async function editRotation(
         }
 
         let configUid = input.configUid?.trim()
+        if (configUid && !getVaultRecord(storage, configUid)) {
+            configUid = resolveNsfRecordIdentifier(storage, configUid) || configUid
+        }
         if (!configUid && currentRotation?.configurationUid) {
             configUid = currentRotation.configurationUid
         }
@@ -74,6 +87,9 @@ export async function editRotation(
         }
 
         let resourceUid = input.resourceUid?.trim()
+        if (resourceUid && !getVaultRecord(storage, resourceUid)) {
+            resourceUid = resolveNsfRecordIdentifier(storage, resourceUid) || resourceUid
+        }
         if (!resourceUid && currentRotation?.resourceUid) {
             resourceUid = currentRotation.resourceUid
         }
@@ -84,7 +100,17 @@ export async function editRotation(
         }
 
         let scheduleData = validateAndBuildScheduleData(input)
-        if (!scheduleData && currentRotation?.schedule) {
+        if (input.scheduleConfig || (!currentRotation && !scheduleData && configUid)) {
+            const configRecord = configUid ? getVaultRecord(storage, configUid) : undefined
+            const configuredSchedule = configRecord ? getDefaultScheduleFromPamConfig(configRecord) : undefined
+            if (!configuredSchedule) {
+                throw new KeeperSdkError(
+                    `PAM Configuration record "${configUid || ''}" does not contain a default rotation schedule.`,
+                    ResultCodes.PAM_ROTATION_RECORD_REQUIRED
+                )
+            }
+            scheduleData = configuredSchedule as ScheduleData[]
+        } else if (!scheduleData && currentRotation?.schedule) {
             try {
                 scheduleData =
                     typeof currentRotation.schedule === 'string'
@@ -169,21 +195,26 @@ export async function editRotation(
         }
 
         let finalResourceUidBytes = currentResourceUid
-        if (input.resourceUid?.trim()) {
-            finalResourceUidBytes = normal64Bytes(input.resourceUid)
+        if (resourceUid) {
+            finalResourceUidBytes = normal64Bytes(resourceUid)
         }
 
         let schedule = finalScheduleData ? formatScheduleType(finalScheduleData) : MANUAL_ROTATION_LABEL
         let complexity = input.passwordComplexity ? formatComplexity(input.passwordComplexity) : ''
 
         const configUidBytes = configUid ? normal64Bytes(configUid) : new Uint8Array()
+        const requestSchedule = input.onDemand
+            ? ''
+            : finalScheduleData && finalScheduleData.length > 0
+              ? JSON.stringify(finalScheduleData)
+              : currentSchedule
 
         const rotationRequest: Router.IRouterRecordRotationRequest = {
             revision: currentRotationRevision,
             recordUid: recordUidBytes,
             configurationUid: configUidBytes,
             resourceUid: finalResourceUidBytes,
-            schedule: finalScheduleData ? JSON.stringify(finalScheduleData) : currentSchedule,
+            schedule: requestSchedule,
             pwdComplexity: passwordComplexityEncrypted,
             disabled: finalDisabled,
             noop: input.scheduleOnly ? true : false,
@@ -231,10 +262,18 @@ function validateAndBuildScheduleData(input: EditRotationInput): ScheduleData[] 
     }
 
     if (input.scheduleCron) {
+        const cron = input.scheduleCron.trim()
+        if (cron.split(/\s+/).length !== 6) {
+            throw new KeeperSdkError(
+                'Rotation CRON schedules require 6 fields including seconds.',
+                ResultCodes.PAM_ROTATION_RECORD_REQUIRED
+            )
+        }
         return [
             {
                 type: 'CRON',
-                expression: input.scheduleCron,
+                cron,
+                tz: 'Etc/UTC',
             },
         ]
     }
@@ -336,7 +375,7 @@ export function validateRotationInput(input: EditRotationInput): string[] {
 
     const scheduleCount =
         (input.onDemand ? 1 : 0) +
-        (input.scheduleJson ? 1 : 0) +
+        (input.scheduleJson && input.scheduleJson.length > 0 ? 1 : 0) +
         (input.scheduleCron ? 1 : 0) +
         (input.scheduleConfig ? 1 : 0)
 

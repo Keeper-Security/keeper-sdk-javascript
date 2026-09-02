@@ -94,7 +94,7 @@ export function isAdminResourceValid(storage: InMemoryStorage, resourceUid: stri
     return resources.includes(resourceUid)
 }
 
-function getDefaultScheduleFromPamConfig(record: DRecord): unknown[] | undefined {
+export function getDefaultScheduleFromPamConfig(record: DRecord): unknown[] | undefined {
     const fields = getRecordFields(record)
     const byLabel = fields.find(
         (field) => field.type === SCHEDULE_FIELD_TYPE && field.label === DEFAULT_ROTATION_SCHEDULE_LABEL
