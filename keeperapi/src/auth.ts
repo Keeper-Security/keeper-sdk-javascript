@@ -12,6 +12,7 @@ import { KeyWrapper, platform } from './platform'
 import {
     generateEncryptionKey,
     generateUidBytes,
+    getKeeperPushSocketUrl,
     normal64,
     normal64Bytes,
     resolvablePromise,
@@ -258,8 +259,7 @@ export class Auth {
     }
 
     async connect() {
-        // When connecting to govcloud, remove the govcloud subdomain. There is no list of urls that do/don't require the govcloud subdomain, so for now do this.
-        const url = `wss://push.services.${this.options.host.replace('govcloud.', '')}/wss_open_connection`
+        const url = getKeeperPushSocketUrl(this.options.host)
         const getConnectionRequest = (messageSessionUid) => this.endpoint.getPushConnectionRequest(messageSessionUid)
 
         this.socket = await createAsyncSocket(url, this.messageSessionUid, getConnectionRequest)

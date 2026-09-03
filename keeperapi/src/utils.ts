@@ -33,6 +33,15 @@ export function getKeeperRouterUrl(host: KeeperHost, forPath: string) {
     }
 }
 
+export function getKeeperPushSocketUrl(host: KeeperHost) {
+    switch (host) {
+        case 'govcloud.keepersecurity.us':
+            return `wss://push.services.keepersecurity.us/wss_open_connection`
+        default:
+            return `wss://push.services.${host}/wss_open_connection`
+    }
+}
+
 export function getKeeperSAMLUrl(host: KeeperHost, forPath: string, serviceProviderId?: number) {
     if (serviceProviderId) {
         return getKeeperUrl(host, `sso/saml/${forPath}/${serviceProviderId}`)
