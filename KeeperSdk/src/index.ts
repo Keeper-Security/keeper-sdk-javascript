@@ -855,6 +855,14 @@ export type {
 
 export {
     PamManager,
+    ActionManager,
+    pamActionRotate,
+    rotatePamAction,
+    rotatePamRecord,
+    editPamConnection,
+    ConnectionManager,
+    editPamRbi,
+    RbiManager,
     GatewayManager,
     listGateways,
     formatGatewaysTable,
@@ -1014,6 +1022,20 @@ export type {
     RemovePamConfigurationResult,
     PamConfigFolderKind,
     PamConfigFolderTarget,
+    PamActionRotateControllerResponse,
+    PamActionRotateInput,
+    PamActionRotateLiveInfo,
+    PamActionRotateOptions,
+    PamActionRotateRecordResult,
+    PamActionRotateResult,
+    PamActionRotateStatus,
+    PamRotateActionPayload,
+    PamConnectionEditInput,
+    PamConnectionEditResult,
+    PamConnectionSetting,
+    PamRbiEditInput,
+    PamRbiEditResult,
+    PamRbiSetting,
 } from './pam'
 
 export type {

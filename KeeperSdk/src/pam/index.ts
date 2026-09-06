@@ -2,6 +2,78 @@ export { PamManager } from './PamManager'
 export type { AuthProvider as PamAuthProvider } from './PamManager'
 
 export {
+    ActionManager,
+    pamActionRotate,
+    rotatePamAction,
+    rotatePamRecord,
+    PAM_ACTION_DEFAULT_PASSWORD_COMPLEXITY,
+    PAM_ACTION_ROTATE,
+    PAM_ACTION_ROTATE_RECORD_TYPE,
+    PAM_ACTION_ROTATE_TIMEOUT,
+    createRotateActionPayload,
+    encryptRotationPasswordComplexity,
+    getCachedRotation,
+    getPamRecord,
+    getRotationUids,
+    isGatewayConnected,
+    isPamUserRecord,
+    parseRotateResponse,
+    resolvePamActionFolderUids,
+    resolvePamActionRecordUids,
+    requireRotateTarget,
+} from './action'
+export type { AuthProvider, PamRotateActionPayload } from './action'
+export type {
+    PamActionRotateControllerResponse,
+    PamActionRotateInput,
+    PamActionRotateLiveInfo,
+    PamActionRotateOptions,
+    PamActionRotateRecordResult,
+    PamActionRotateResult,
+    PamActionRotateStatus,
+} from './action'
+
+export {
+    ConnectionManager,
+    editPamConnection,
+    PAM_CONNECTION_CONFIG_TYPES,
+    PAM_CONNECTION_PROTOCOLS,
+    PAM_CONNECTION_RESOURCE_TYPES,
+    PAM_CONNECTION_SEEDED_RECORD_TYPES,
+    PAM_CONNECTION_SETTING_KEYS,
+    applyResourceRecordSettings,
+    convertConnectionSetting,
+    getCachedConfigurationUid,
+    getTypedRecordData,
+    isConnectionConfig,
+    isConnectionResource,
+    makeAllowedSettings,
+    makeConnectionSettingsBytes,
+    recordUidBytes,
+    resolveConnectionRecord,
+    resolvePamUserUid,
+    validateConnectionInput,
+} from './connection'
+export type { PamConnectionEditInput, PamConnectionEditResult, PamConnectionSetting } from './connection'
+
+export {
+    RbiManager,
+    editPamRbi,
+    PAM_RBI_RECORD_TYPE,
+    PAM_RBI_SETTING_VALUES,
+    PAM_RBI_DEFAULT_SETTINGS,
+    PAM_RBI_BOOLEAN_FIELDS,
+    resolveRbiRecord,
+    validateRbiInput,
+    convertRbiSetting,
+    rbiData,
+    updateRbiSettings,
+    rbiSettingsBytes,
+    rbiRecordUidBytes,
+} from './rbi'
+export type { PamRbiEditInput, PamRbiEditResult, PamRbiSetting } from './rbi'
+
+export {
     GatewayManager,
     listGateways,
     formatGatewaysTable,

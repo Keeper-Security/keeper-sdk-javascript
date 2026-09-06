@@ -991,6 +991,11 @@ export const getConfigurationControllerMessage = (
 ): RestMessage<PAM.IPAMGenericUidRequest, PAM.IPAMController> =>
     createMessage(data, 'pam/get_configuration_controller', PAM.PAMGenericUidRequest, PAM.PAMController)
 
+export const getRecordRotationInfoMessage = (
+    data: PAM.IPAMGenericUidRequest
+): RestMessage<PAM.IPAMGenericUidRequest, Router.IRouterRotationInfo> =>
+    createMessage(data, 'pam/get_rotation_info', PAM.PAMGenericUidRequest, Router.RouterRotationInfo)
+
 export const addConfigurationRecordMessage = (
     data: PAM.IConfigurationAddRequest
 ): RestInMessage<PAM.IConfigurationAddRequest> =>
