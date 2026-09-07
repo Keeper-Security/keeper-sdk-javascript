@@ -4,6 +4,7 @@ import type { Auth, DRecord } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { getRecordTitle, getRecordType } from '../../records/RecordUtils'
+import { PAM_RESOURCES_FIELD_TYPE } from '../config/configConstants'
 import { updateRecord } from '../../records/RecordOperations'
 import { KeeperSdkError, ResultCodes } from '../../utils'
 import { SCRIPT_FIELD_TYPE } from './rotationConstants'
@@ -25,11 +26,7 @@ export function findPamRecordsByName(storage: InMemoryStorage, searchText: strin
     for (const record of allRecords) {
         if (!record) continue
 
-        const recordType = getRecordType(record)
-        if (recordType !== 'pamUser' && recordType !== 'pamDirectory') {
-            continue
-        }
-        if (!isPamRecord(record)) continue
+        if (!isPamRotationRecord(record)) continue
 
         const title = getRecordTitle(record) || ''
         if (
@@ -56,6 +53,17 @@ export function isPamRecord(record: DRecord): record is PamRecord {
     return isPamRecordData(record.data)
 }
 
+function isPamRotationRecord(record: DRecord): record is PamRecord {
+    if (!isPamRecord(record)) return false
+
+    const recordType = getRecordType(record)
+    return (
+        recordType === 'pamUser' ||
+        recordType === 'pamDirectory' ||
+        record.data.fields.some((field) => field?.type === PAM_RESOURCES_FIELD_TYPE)
+    )
+}
+
 export function getSinglePamRecord(storage: InMemoryStorage, recordName: string): PamRecord {
     const recordNameTrimmed = recordName?.trim()
     if (!recordNameTrimmed) {
@@ -75,15 +83,7 @@ export function getSinglePamRecord(storage: InMemoryStorage, recordName: string)
     }
 
     const record = records[0]
-    const recordType = getRecordType(record)
-    if (recordType !== 'pamUser' && recordType !== 'pamDirectory') {
-        throw new KeeperSdkError(
-            `Record "${recordNameTrimmed}" is not a PAM record (pamUser/pamDirectory)`,
-            ResultCodes.PAM_CONFIG_INVALID
-        )
-    }
-
-    if (!isPamRecord(record)) {
+    if (!isPamRotationRecord(record)) {
         throw new KeeperSdkError(
             `PAM record "${recordNameTrimmed}" has invalid record data`,
             ResultCodes.PAM_CONFIG_INVALID
