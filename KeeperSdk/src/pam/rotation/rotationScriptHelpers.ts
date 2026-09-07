@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import type { Auth, DRecord } from '@keeper-security/keeperapi'
+import type { Auth, DRecord, Records } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { VaultObjectKind } from '../../folders/folderHelpers'
 import { getRecordTitle, getRecordType } from '../../records/RecordUtils'
@@ -174,7 +174,8 @@ export async function updatePamRecordFields(
     recordType: string,
     fields: RecordField[],
     currentRevision: number,
-    storage: InMemoryStorage
+    storage: InMemoryStorage,
+    recordLinksAdd?: Records.IRecordLink[]
 ): Promise<void> {
     const recordKey = await storage.getKeyBytes(record.uid)
     if (!recordKey) {
@@ -195,7 +196,8 @@ export async function updatePamRecordFields(
             notes: recordData.notes || '',
         },
         currentRevision,
-        recordKey
+        recordKey,
+        recordLinksAdd
     )
 
     if (!updateResult.success) {
