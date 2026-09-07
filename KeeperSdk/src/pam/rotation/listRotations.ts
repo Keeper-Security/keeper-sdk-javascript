@@ -90,8 +90,6 @@ export async function listRotationSchedules(
         })
     }
 
-    rotations.sort((a, b) => (a.recordTitle || '').localeCompare(b.recordTitle || ''))
-
     return {
         rotations,
         message: rotations.length === 0 ? EMPTY_ROTATION_SCHEDULES_MESSAGE : undefined,
@@ -103,23 +101,34 @@ export function formatRotationSchedulesTable(
     options: FormatRotationSchedulesTableOptions = {}
 ): FormattedRotationSchedulesTable {
     const verbose = options.verbose === true
-    const headers: string[] = [...ROTATION_LIST_DEFAULT_HEADERS]
-    if (verbose) headers.push(...ROTATION_LIST_VERBOSE_HEADERS)
+    const headers: string[] = verbose
+        ? [...ROTATION_LIST_VERBOSE_HEADERS]
+        : [...ROTATION_LIST_DEFAULT_HEADERS]
 
     const rows = result.rotations.map((rotation) => {
-        const row: string[] = [
+        if (verbose) {
+            return [
+                rotation.recordUid,
+                rotation.recordTitle,
+                rotation.recordType,
+                rotation.schedule === 'Manual Rotation' ? '[Manual Rotation]' : rotation.schedule,
+                rotation.gatewayName,
+                rotation.gatewayUid,
+                rotation.pamConfigDisplay === '[No Config Found]'
+                    ? `[No config found. Looks like configuration ${rotation.pamConfigurationUid} was removed but rotation schedule was not modified`
+                    : rotation.pamConfigDisplay,
+                rotation.pamConfigurationUid,
+            ]
+        }
+
+        return [
             rotation.recordUid,
             rotation.recordTitle,
             rotation.recordType,
-            rotation.schedule,
+            rotation.schedule === 'Manual Rotation' ? '[Manual Rotation]' : rotation.schedule,
             rotation.gatewayName,
-            rotation.gatewayOnline ? 'Online' : 'Offline',
-            rotation.pamConfigDisplay,
+            rotation.pamConfigDisplay === '[No Config Found]' ? '[No config found]' : rotation.pamConfigDisplay,
         ]
-        if (verbose) {
-            row.push(rotation.gatewayUid, rotation.pamConfigurationUid)
-        }
-        return row
     })
 
     return { headers, rows }
