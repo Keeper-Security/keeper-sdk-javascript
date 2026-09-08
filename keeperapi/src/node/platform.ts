@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 import { createECDH, hkdfSync } from 'crypto'
 import * as https from 'https'
-import * as FormData from 'form-data'
+import * as FormDataModule from 'form-data'
 import NodeRSA from 'node-rsa'
 import * as WebSocket from 'faye-websocket'
 
@@ -12,6 +12,8 @@ import { SocketProxy, socketSendMessage } from '../socket'
 import { normal64 } from '../utils'
 import { logger } from '../log'
 import type { KeeperHttpResponse } from '../commands'
+
+const FormData = (FormDataModule as unknown as { default?: typeof FormDataModule }).default || FormDataModule
 
 const base64ToBytes = (data: string): Uint8Array => {
     return Buffer.from(data, 'base64')
