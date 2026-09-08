@@ -11,9 +11,6 @@ import {
     updatePamRecordFields,
 } from './rotationScriptHelpers'
 
-/**
- * Delete a rotation script from a PAM record
- */
 export async function deleteRotationScript(
     auth: Auth,
     storage: InMemoryStorage,

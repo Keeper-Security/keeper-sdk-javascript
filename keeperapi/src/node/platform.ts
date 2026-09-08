@@ -13,9 +13,6 @@ import { normal64 } from '../utils'
 import { logger } from '../log'
 import type { KeeperHttpResponse } from '../commands'
 
-// `form-data` uses CommonJS `export =`. Depending on the consumer/build target,
-// a namespace import may expose the constructor as either the module itself or
-// its `default` property.
 const FormData = (FormDataModule as unknown as { default?: typeof FormDataModule }).default || FormDataModule
 
 const base64ToBytes = (data: string): Uint8Array => {

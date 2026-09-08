@@ -114,8 +114,6 @@ export class RotationManager {
         return editRotation(this.requireAuth(), this.storage, input)
     }
 
-    /* ========== Rotation Script Operations ========== */
-
     public async listRotationScripts(options: ListRotationScriptsOptions = {}): Promise<ListRotationScriptsResult> {
         return listRotationScripts(this.requireAuth(), this.storage, options)
     }
