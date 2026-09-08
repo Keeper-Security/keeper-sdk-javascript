@@ -112,9 +112,7 @@ export async function addRotationScript(
             }
         }
 
-        const scriptField = dataFields.find(
-            (field) => field.type === SCRIPT_FIELD_TYPE && Array.isArray(field.value)
-        )
+        const scriptField = dataFields.find((field) => field.type === SCRIPT_FIELD_TYPE && Array.isArray(field.value))
         if (scriptField) {
             scriptField.label = SCRIPT_FIELD_LABEL
             scriptField.required = false

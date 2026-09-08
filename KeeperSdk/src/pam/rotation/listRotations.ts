@@ -101,9 +101,7 @@ export function formatRotationSchedulesTable(
     options: FormatRotationSchedulesTableOptions = {}
 ): FormattedRotationSchedulesTable {
     const verbose = options.verbose === true
-    const headers: string[] = verbose
-        ? [...ROTATION_LIST_VERBOSE_HEADERS]
-        : [...ROTATION_LIST_DEFAULT_HEADERS]
+    const headers: string[] = verbose ? [...ROTATION_LIST_VERBOSE_HEADERS] : [...ROTATION_LIST_DEFAULT_HEADERS]
 
     const rows = result.rotations.map((rotation) => {
         if (verbose) {
