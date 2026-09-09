@@ -226,7 +226,8 @@ export async function updateRecord(
     recordUid: string,
     data: TypedRecordData,
     revision: number,
-    recordKey: Uint8Array
+    recordKey: Uint8Array,
+    recordLinksAdd?: Records.IRecordLink[]
 ): Promise<UpdateRecordResult> {
     if (!data.title || !data.title.trim()) {
         throw new KeeperSdkError('Record title is required.', 'missing_record_title')
@@ -252,6 +253,7 @@ export async function updateRecord(
         clientModifiedTime: Date.now(),
         revision,
         data: encryptedData,
+        ...(recordLinksAdd && recordLinksAdd.length > 0 ? { recordLinksAdd } : {}),
     }
 
     const request: Records.IRecordsUpdateRequest = {
