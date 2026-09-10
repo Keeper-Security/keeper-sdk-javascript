@@ -175,7 +175,7 @@ async function editRotationExample() {
         logger.info(`  Schedule: ${input.onDemand ? "On-Demand" : "Custom"}`);
       }
       if (passwordComplexity) {
-        logger.info(`  Complexity: ${JSON.stringify(passwordComplexity)}`);
+        logger.info("  Complexity: configured");
       }
       if (enable || disable) {
         logger.info(`  Enabled: ${enable === true}`);
@@ -220,8 +220,7 @@ async function editRotationExample() {
         logger.info(`    Config UID: ${record.configUid || "N/A"}`);
         logger.info(`    Resource UID: ${record.resourceUid || "N/A"}`);
         logger.info(`    Schedule: ${record.schedule}`);
-        if (record.complexity)
-          logger.info(`    Complexity: ${record.complexity}`);
+        if (record.complexity) logger.info("    Complexity: configured");
       });
     }
 
