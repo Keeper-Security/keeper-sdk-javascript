@@ -876,10 +876,16 @@ export async function fetchLiveRecordAccessEntries(
     }[]
 > {
     try {
-        const [response, shareUsers] = await Promise.all([
-            auth.executeRest(getRecordAccessMessage({ recordUids: [normal64Bytes(recordUid)] })),
-            loadShareUserMap(auth, storage),
-        ])
+        let response: record.v3.details.IRecordAccessResponse
+        try {
+            response = await auth.executeRest(getRecordAccessMessage({ recordUids: [normal64Bytes(recordUid)] }))
+        } catch (restErr) {
+            if (restErr instanceof Error && restErr.message.includes('decrypt')) {
+                return []
+            }
+            throw restErr
+        }
+        const shareUsers = await loadShareUserMap(auth, storage)
 
         return (response.recordAccesses ?? [])
             .filter((entry) => {
