@@ -1,5 +1,5 @@
 import type { Auth, DRecord, PAM } from '@keeper-security/keeperapi'
-import { normal64Bytes, pamConfigureNetworkGraphMessage } from '@keeper-security/keeperapi'
+import { getConfigRootsForRecordUids, normal64Bytes, pamConfigureNetworkGraphMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { updateRecord } from '../../records/RecordOperations'
 import { updateNestedShareRecord } from '../../nestedShareFolders/updateNsfRecord'
@@ -52,21 +52,53 @@ export async function editPamRbi(
             `Record ${record.uid} is not a pamRemoteBrowser record.`,
             ResultCodes.PAM_RBI_RECORD_INVALID
         )
-    const configRecord = input.configuration ? resolveRbiRecord(storage, input.configuration.trim()) : undefined
-    const configUid =
-        configRecord?.uid ||
-        input.configuration?.trim() ||
-        storage.getByUid<any>('record_rotation', record.uid)?.configurationUid
-    if (!configUid)
-        throw new KeeperSdkError(
-            'Configuration UID is required or must be linked to the RBI record.',
-            ResultCodes.PAM_RBI_CONFIGURATION_REQUIRED
-        )
-    if (input.configuration && !configRecord)
-        throw new KeeperSdkError(
-            `Configuration "${input.configuration}" not found.`,
-            ResultCodes.PAM_RBI_CONFIGURATION_REQUIRED
-        )
+    const hasRecordSettings = [
+        input.keyEvents,
+        input.allowUrlNavigation,
+        input.ignoreServerCert,
+        input.allowedUrls,
+        input.allowedResourceUrls,
+        input.autofillCredentials,
+        input.autofillTargets,
+        input.allowCopy,
+        input.allowPaste,
+        input.disableAudio,
+        input.audioChannels,
+        input.audioBitDepth,
+        input.audioSampleRate,
+    ].some((value) => value !== undefined)
+    const hasConfigSettings =
+        input.configuration !== undefined ||
+        input.remoteBrowserIsolation !== undefined ||
+        input.connectionsRecording !== undefined
+    if (!hasRecordSettings && !hasConfigSettings)
+        throw new KeeperSdkError('At least one parameter is required.', ResultCodes.PAM_RBI_CONFIGURATION_REQUIRED)
+
+    let configUid: string | undefined
+    if (hasConfigSettings) {
+        const configRecord = input.configuration
+            ? resolveRbiRecord(storage, input.configuration.trim())
+            : undefined
+        configUid =
+            configRecord?.uid ||
+            input.configuration?.trim() ||
+            storage.getByUid<any>('record_rotation', record.uid)?.configurationUid
+        if (!configUid) {
+            const refs = await getConfigRootsForRecordUids(auth, [record.uid])
+            const linkedConfig = refs.find((ref) => ref.value && ref.value.length > 0)?.value
+            configUid = linkedConfig ? webSafe64FromBytes(linkedConfig) : undefined
+        }
+        if (!configUid)
+            throw new KeeperSdkError(
+                'Configuration UID is required or must be linked to the RBI record.',
+                ResultCodes.PAM_RBI_CONFIGURATION_REQUIRED
+            )
+        if (input.configuration && !configRecord)
+            throw new KeeperSdkError(
+                `Configuration "${input.configuration}" not found.`,
+                ResultCodes.PAM_RBI_CONFIGURATION_REQUIRED
+            )
+    }
     let normalizedInput = input
     if (input.autofillCredentials) {
         const credential = resolveRbiRecord(storage, input.autofillCredentials)
@@ -79,7 +111,9 @@ export async function editPamRbi(
         }
         normalizedInput = { ...input, autofillCredentials: credential.uid }
     }
-    const modified = updateRbiSettings(record, normalizedInput)
+    const modified = hasRecordSettings
+        ? updateRbiSettings(record, normalizedInput)
+        : { data: rbiData(record), changed: false }
     const recordUpdated = modified.changed ? await persist(auth, storage, record, modified.data) : false
     const allowedSettings: Record<string, boolean | null> = {}
     const rbi =
@@ -100,25 +134,27 @@ export async function editPamRbi(
                 : undefined
     if (rbi !== undefined) allowedSettings.remoteBrowserIsolation = rbi
     if (recording !== undefined) allowedSettings.sessionRecording = recording
-    const resource: PAM.IPAMResourceConfig = {
-        recordUid: normal64Bytes(record.uid),
-        networkUid: normal64Bytes(configUid),
-        connectionSettings: rbiSettingsBytes(modified.data),
+    if (hasConfigSettings) {
+        const resource: PAM.IPAMResourceConfig = {
+            recordUid: normal64Bytes(record.uid),
+            networkUid: normal64Bytes(configUid!),
+            connectionSettings: rbiSettingsBytes(modified.data),
+        }
+        await auth.executeRouterRestAction(
+            pamConfigureNetworkGraphMessage({
+                recordUid: normal64Bytes(configUid!),
+                resources: [resource],
+                networkSettings: Object.keys(allowedSettings).length
+                    ? { allowedSettings: new TextEncoder().encode(JSON.stringify(allowedSettings)) }
+                    : undefined,
+            })
+        )
     }
-    await auth.executeRouterRestAction(
-        pamConfigureNetworkGraphMessage({
-            recordUid: normal64Bytes(configUid),
-            resources: [resource],
-            networkSettings: Object.keys(allowedSettings).length
-                ? { allowedSettings: new TextEncoder().encode(JSON.stringify(allowedSettings)) }
-                : undefined,
-        })
-    )
     return {
         recordUid: record.uid,
-        changed: recordUpdated || true,
+        changed: recordUpdated || hasConfigSettings,
         recordUpdated,
-        dagUpdated: true,
+        dagUpdated: hasConfigSettings,
         configurationUid: configUid,
         warnings: [],
     }

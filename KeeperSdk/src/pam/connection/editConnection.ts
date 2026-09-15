@@ -1,5 +1,10 @@
 import type { Auth, DRecord, PAM, Router } from '@keeper-security/keeperapi'
-import { normal64Bytes, pamConfigureNetworkGraphMessage } from '@keeper-security/keeperapi'
+import {
+    getConfigRootsForRecordUids,
+    normal64Bytes,
+    pamConfigureNetworkGraphMessage,
+    webSafe64FromBytes,
+} from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { updateRecord } from '../../records/RecordOperations'
 import { updateNestedShareRecord } from '../../nestedShareFolders/updateNsfRecord'
@@ -22,50 +27,6 @@ import {
 } from './connectionHelpers'
 import type { PamConnectionEditInput, PamConnectionEditResult } from './connectionTypes'
 
-function resolveConfiguration(
-    storage: InMemoryStorage,
-    record: DRecord,
-    input: PamConnectionEditInput
-): DRecord | undefined {
-    if (input.configuration) return resolveConnectionRecord(storage, input.configuration)
-    if (isConnectionConfig(record)) return record
-    const cachedUid = getCachedConfigurationUid(storage, record.uid)
-    return cachedUid ? resolveConnectionRecord(storage, cachedUid) : undefined
-}
-
-function toFieldEntries(
-    entries: Array<Record<string, unknown>>
-): Array<{ type: string; label?: string; value: unknown[] }> {
-    return entries.map((entry) => ({
-        type: String(entry.type || ''),
-        label: typeof entry.label === 'string' ? entry.label : undefined,
-        value: Array.isArray(entry.value) ? entry.value : [],
-    }))
-}
-
-async function persistResourceRecord(
-    auth: Auth,
-    storage: InMemoryStorage,
-    record: DRecord,
-    data: ReturnType<typeof getTypedRecordData>
-): Promise<boolean> {
-    if (isNestedShareRecord(storage, record.uid)) {
-        const result = await updateNestedShareRecord(storage, auth, {
-            record: record.uid,
-            recordType: data.type,
-            title: data.title,
-            notes: data.notes,
-            fieldEntries: toFieldEntries(data.fields),
-            customEntries: toFieldEntries(data.custom),
-        })
-        return result.success
-    }
-    const key = await storage.getKeyBytes(record.uid)
-    if (!key) throw new KeeperSdkError(`Record key not available for ${record.uid}.`, ResultCodes.NSF_MISSING_KEY)
-    const result = await updateRecord(auth, record.uid, data, record.revision, key)
-    return result.success
-}
-
 export async function editPamConnection(
     auth: Auth,
     storage: InMemoryStorage,
@@ -83,7 +44,7 @@ export async function editPamConnection(
             ResultCodes.PAM_CONNECTION_CONFIGURATION_INVALID
         )
     }
-    const configuration = resolveConfiguration(storage, record, input)
+    const configuration = await resolveConfiguration(auth, storage, record, input)
     if (!configuration) {
         throw new KeeperSdkError(
             'No PAM Configuration UID set. Supply the configuration option or link the resource first.',
@@ -152,4 +113,52 @@ export async function editPamConnection(
         dagUpdated,
         warnings,
     }
+}
+
+async function resolveConfiguration(
+    auth: Auth,
+    storage: InMemoryStorage,
+    record: DRecord,
+    input: PamConnectionEditInput
+): Promise<DRecord | undefined> {
+    if (input.configuration) return resolveConnectionRecord(storage, input.configuration)
+    if (isConnectionConfig(record)) return record
+    const cachedUid = getCachedConfigurationUid(storage, record.uid)
+    if (cachedUid) return resolveConnectionRecord(storage, cachedUid)
+    const refs = await getConfigRootsForRecordUids(auth, [record.uid])
+    const linkedConfigUid = refs.find((ref) => ref.value && ref.value.length > 0)?.value
+    return linkedConfigUid ? resolveConnectionRecord(storage, webSafe64FromBytes(linkedConfigUid)) : undefined
+}
+
+function toFieldEntries(
+    entries: Array<Record<string, unknown>>
+): Array<{ type: string; label?: string; value: unknown[] }> {
+    return entries.map((entry) => ({
+        type: String(entry.type || ''),
+        label: typeof entry.label === 'string' ? entry.label : undefined,
+        value: Array.isArray(entry.value) ? entry.value : [],
+    }))
+}
+
+async function persistResourceRecord(
+    auth: Auth,
+    storage: InMemoryStorage,
+    record: DRecord,
+    data: ReturnType<typeof getTypedRecordData>
+): Promise<boolean> {
+    if (isNestedShareRecord(storage, record.uid)) {
+        const result = await updateNestedShareRecord(storage, auth, {
+            record: record.uid,
+            recordType: data.type,
+            title: data.title,
+            notes: data.notes,
+            fieldEntries: toFieldEntries(data.fields),
+            customEntries: toFieldEntries(data.custom),
+        })
+        return result.success
+    }
+    const key = await storage.getKeyBytes(record.uid)
+    if (!key) throw new KeeperSdkError(`Record key not available for ${record.uid}.`, ResultCodes.NSF_MISSING_KEY)
+    const result = await updateRecord(auth, record.uid, data, record.revision, key)
+    return result.success
 }
