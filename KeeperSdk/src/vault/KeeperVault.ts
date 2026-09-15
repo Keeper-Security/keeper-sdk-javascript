@@ -248,6 +248,9 @@ import type {
     DeleteRotationScriptInput,
     DeleteRotationScriptResult,
 } from '../pam/rotation/rotationScriptTypes'
+import type { PamActionRotateInput, PamActionRotateResult } from '../pam/action/rotateActionTypes'
+import type { PamConnectionEditInput, PamConnectionEditResult } from '../pam/connection/connectionTypes'
+import type { PamRbiEditInput, PamRbiEditResult } from '../pam/rbi/rbiTypes'
 import { buildWhoamiInfo, type WhoamiInfo } from '../account/whoamiInfo'
 import {
     ConsoleLogger,
@@ -1232,6 +1235,10 @@ export class KeeperVault {
         return this.nestedShareFolderManager.formatNsfRecordShareResults(results)
     }
 
+    public formatNsfFolderShareResults(results: ShareNestedShareFolderResult['results']): string {
+        return this.nestedShareFolderManager.formatNsfFolderShareResults(results)
+    }
+
     public listNsfShortcuts(options: ListNsfShortcutsOptions = {}): NsfShortcutRow[] {
         return this.nestedShareFolderManager.listNsfShortcuts(options)
     }
@@ -1365,6 +1372,18 @@ export class KeeperVault {
 
     public async setGatewayMaxInstances(input: SetGatewayMaxInstancesInput): Promise<SetGatewayMaxInstancesResult> {
         return this.pamManager.setGatewayMaxInstances(input)
+    }
+
+    public async rotatePamAction(input: PamActionRotateInput): Promise<PamActionRotateResult> {
+        return this.pamManager.rotatePamAction(input)
+    }
+
+    public async editPamConnection(input: PamConnectionEditInput): Promise<PamConnectionEditResult> {
+        return this.pamManager.editPamConnection(input)
+    }
+
+    public async editPamRbi(input: PamRbiEditInput): Promise<PamRbiEditResult> {
+        return this.pamManager.editPamRbi(input)
     }
 
     public formatGatewaysTable(
