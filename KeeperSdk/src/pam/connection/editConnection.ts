@@ -98,8 +98,7 @@ export async function editPamConnection(
         const resource: PAM.IPAMResourceConfig = {
             recordUid: normal64Bytes(record.uid),
             networkUid: normal64Bytes(configuration.uid),
-            adminUid:
-                adminUid && supportsUserLinks ? normal64Bytes(adminUid) : undefined,
+            adminUid: adminUid && supportsUserLinks ? normal64Bytes(adminUid) : undefined,
             meta: makeResourceMetaBytes(input, recordType),
             connectionSettings: makeConnectionSettingsBytes(modified.data),
             connectUsers: launchUid && supportsUserLinks ? { uids: [normal64Bytes(launchUid)] } : undefined,

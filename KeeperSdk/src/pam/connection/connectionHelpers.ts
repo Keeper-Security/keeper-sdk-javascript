@@ -162,10 +162,7 @@ export function makeAllowedSettings(input: PamConnectionEditInput): Record<strin
     return allowed
 }
 
-export function makeResourceMetaBytes(
-    input: PamConnectionEditInput,
-    recordType: string
-): Uint8Array | undefined {
+export function makeResourceMetaBytes(input: PamConnectionEditInput, recordType: string): Uint8Array | undefined {
     const allowedSettings = makeAllowedSettings(input)
     if (Object.keys(allowedSettings).length === 0) return undefined
     const settingsName = recordType === 'pamRemoteBrowser' ? 'pamRemoteBrowserSettings' : 'allowedSettings'

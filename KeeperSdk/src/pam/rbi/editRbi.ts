@@ -1,5 +1,10 @@
 import type { Auth, DRecord, PAM } from '@keeper-security/keeperapi'
-import { getConfigRootsForRecordUids, normal64Bytes, pamConfigureNetworkGraphMessage, webSafe64FromBytes } from '@keeper-security/keeperapi'
+import {
+    getConfigRootsForRecordUids,
+    normal64Bytes,
+    pamConfigureNetworkGraphMessage,
+    webSafe64FromBytes,
+} from '@keeper-security/keeperapi'
 import type { InMemoryStorage } from '../../storage/InMemoryStorage'
 import { updateRecord } from '../../records/RecordOperations'
 import { updateNestedShareRecord } from '../../nestedShareFolders/updateNsfRecord'
@@ -76,9 +81,7 @@ export async function editPamRbi(
 
     let configUid: string | undefined
     if (hasConfigSettings) {
-        const configRecord = input.configuration
-            ? resolveRbiRecord(storage, input.configuration.trim())
-            : undefined
+        const configRecord = input.configuration ? resolveRbiRecord(storage, input.configuration.trim()) : undefined
         configUid =
             configRecord?.uid ||
             input.configuration?.trim() ||
