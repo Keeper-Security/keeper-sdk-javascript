@@ -40,10 +40,12 @@ async function rotatePamActionExample() {
         }
 
         for (const record of result.records) {
-            const suffix = record.message ? `: ${record.message}` : ''
-            logger.info(`${record.recordUid} — ${record.status}${suffix}`)
-            if (record.conversationId) logger.info(`  Conversation ID: ${record.conversationId}`)
-            if (record.response) logger.info(`  Response: ${JSON.stringify(record.response)}`)
+            if (record.status === 'submitted') {
+                logger.info(`${record.recordUid} — Rotation submitted successfully.`)
+            } else {
+                const suffix = record.message ? `: ${record.message}` : ''
+                logger.info(`${record.recordUid} — ${record.status}${suffix}`)
+            }
         }
         for (const warning of result.warnings) logger.warn(warning)
     } catch (err) {
