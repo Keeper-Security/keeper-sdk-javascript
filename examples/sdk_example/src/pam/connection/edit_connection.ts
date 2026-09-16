@@ -18,8 +18,12 @@ async function editPamConnectionExample() {
     try {
         const record = (await prompt('PAM resource or configuration UID/title: ')).trim()
         const configuration = await optional('Configuration UID/title (Enter to auto-resolve): ')
-        const adminUser = await optional('Admin PAM User UID/title (Enter to skip): ')
-        const launchUser = await optional('Launch PAM User UID/title (Enter to skip): ')
+        const adminUser = await optional(
+            'Admin PAM User UID/title [pamMachine/pamDatabase/pamDirectory] (Enter to skip): '
+        )
+        const launchUser = await optional(
+            'Launch PAM User UID/title [pamMachine/pamDatabase/pamDirectory] (Enter to skip): '
+        )
         const protocol = await optional('Protocol (Enter to keep current): ')
         const connections = await optional('Connections [on/off/default] (Enter to skip): ')
         const connectionsRecording = await optional('Connections recording [on/off/default] (Enter to skip): ')

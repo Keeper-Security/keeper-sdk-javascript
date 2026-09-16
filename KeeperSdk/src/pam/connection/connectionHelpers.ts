@@ -57,12 +57,6 @@ export function validateConnectionInput(input: PamConnectionEditInput): void {
             ResultCodes.PAM_CONNECTION_PORT_INVALID
         )
     }
-    if ((input.protocol || input.connectionsOverridePort != null) && input.connections !== 'on') {
-        throw new KeeperSdkError(
-            'Protocol and connection override port require connections=on.',
-            ResultCodes.PAM_CONNECTION_SETTINGS_INVALID
-        )
-    }
 }
 
 export function getCachedConfigurationUid(storage: InMemoryStorage, recordUid: string): string | undefined {
@@ -166,6 +160,16 @@ export function makeAllowedSettings(input: PamConnectionEditInput): Record<strin
         if (converted !== undefined) allowed[key] = converted
     }
     return allowed
+}
+
+export function makeResourceMetaBytes(
+    input: PamConnectionEditInput,
+    recordType: string
+): Uint8Array | undefined {
+    const allowedSettings = makeAllowedSettings(input)
+    if (Object.keys(allowedSettings).length === 0) return undefined
+    const settingsName = recordType === 'pamRemoteBrowser' ? 'pamRemoteBrowserSettings' : 'allowedSettings'
+    return new TextEncoder().encode(JSON.stringify({ [settingsName]: allowedSettings }))
 }
 
 export function recordUidBytes(uid: string): Uint8Array {
