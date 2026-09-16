@@ -20,6 +20,7 @@ import {
     isConnectionResource,
     makeAllowedSettings,
     makeConnectionSettingsBytes,
+    makeResourceMetaBytes,
     recordUidBytes,
     resolveConnectionRecord,
     resolvePamUserUid,
@@ -64,6 +65,7 @@ export async function editPamConnection(
 
     const adminUid = resolvePamUserUid(storage, input.adminUser)
     const launchUid = resolvePamUserUid(storage, input.launchUser)
+    const supportsUserLinks = ['pamMachine', 'pamDatabase', 'pamDirectory'].includes(recordType)
     let recordUpdated = false
     let dagUpdated = false
     const warnings: string[] = []
@@ -80,6 +82,14 @@ export async function editPamConnection(
             dagUpdated = true
         }
     } else {
+        if (
+            (input.protocol !== undefined || input.connectionsOverridePort !== undefined) &&
+            input.connections !== 'on'
+        ) {
+            warnings.push(
+                'Connection protocol and override port can only be set when connections are enabled with connections=on.'
+            )
+        }
         const modified = applyResourceRecordSettings(record, input)
         if (modified.changed) {
             recordUpdated = await persistResourceRecord(auth, storage, record, modified.data)
@@ -88,17 +98,16 @@ export async function editPamConnection(
         const resource: PAM.IPAMResourceConfig = {
             recordUid: normal64Bytes(record.uid),
             networkUid: normal64Bytes(configuration.uid),
-            adminUid: adminUid ? normal64Bytes(adminUid) : undefined,
+            adminUid:
+                adminUid && supportsUserLinks ? normal64Bytes(adminUid) : undefined,
+            meta: makeResourceMetaBytes(input, recordType),
             connectionSettings: makeConnectionSettingsBytes(modified.data),
-            connectUsers: launchUid ? { uids: [normal64Bytes(launchUid)] } : undefined,
+            connectUsers: launchUid && supportsUserLinks ? { uids: [normal64Bytes(launchUid)] } : undefined,
         }
         await auth.executeRouterRestAction(
             pamConfigureNetworkGraphMessage({
                 recordUid: normal64Bytes(configuration.uid),
                 resources: [resource],
-                networkSettings: Object.keys(makeAllowedSettings(input)).length
-                    ? { allowedSettings: new TextEncoder().encode(JSON.stringify(makeAllowedSettings(input))) }
-                    : undefined,
             })
         )
         dagUpdated = true
