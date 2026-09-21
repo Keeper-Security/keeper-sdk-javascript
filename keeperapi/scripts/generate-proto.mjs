@@ -37,6 +37,26 @@ const FILENAME_OVERRIDES = {
     folder: 'Remove',
 }
 
+/**
+ * protobufjs static-module codegen talks across namespaces via `$root.Other.Type`,
+ * with no ES import. Bundlers then treat Other.js as unused and drop it, so
+ * decode fails at runtime (e.g. sync-down nested Folder / NotificationCenter
+ * fields). Rewrite those lookups to real named imports so the dependency is
+ * visible to tree-shaking. Same-file `$root.Current.Type` lookups are left on
+ * `$root` — that namespace is assigned in this file.
+ */
+function withSiblingImports(body, currentName, allNames, filenameOverrides) {
+    const siblings = allNames.filter((name) => name !== currentName && body.includes(`$root.${name}.`))
+    let rewritten = body
+    for (const name of [...siblings].sort((a, b) => b.length - a.length)) {
+        rewritten = rewritten.split(`$root.${name}.`).join(`${name}.`)
+    }
+    const imports = siblings.map(
+        (name) => `import { ${name} } from './${filenameOverrides[name] ?? name}.js';`
+    )
+    return { rewritten, imports }
+}
+
 const run = (tool, args) =>
     new Promise((resolve, reject) => tool.main(args, (err, output) => (err ? reject(err) : resolve(output))))
 
@@ -87,6 +107,7 @@ async function main() {
 
     if (splits.length === 0) throw new Error('No namespaces found — pbjs output format may have changed')
 
+    const allNames = splits.map((s) => s.name)
     const protoDir = join(ROOT, 'src/proto')
     mkdirSync(protoDir, { recursive: true })
     for (const f of readdirSync(protoDir)) {
@@ -102,12 +123,17 @@ async function main() {
             .filter((l) => l !== 'export { $root as default };')
             .join('\n')
         const filename = FILENAME_OVERRIDES[name] ?? name
+        const { rewritten, imports } = withSiblingImports(body, name, allNames, FILENAME_OVERRIDES)
 
         writeFileSync(
             join(protoDir, `${filename}.js`),
-            [ESLINT_HEADER, `import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';`, '', body].join(
-                '\n'
-            )
+            [
+                ESLINT_HEADER,
+                `import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';`,
+                ...imports,
+                '',
+                rewritten,
+            ].join('\n')
         )
     }
 
