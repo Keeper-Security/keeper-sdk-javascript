@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Enterprise } from './Enterprise.js';
 
 export const Authentication = $root.Authentication = (() => {
 
@@ -14629,7 +14630,7 @@ export const Authentication = $root.Authentication = (() => {
                     object.masterPasswordSecurityData[j] = $root.Authentication.SecurityData.toObject(message.masterPasswordSecurityData[j], options, q + 1);
             }
             if (message.encryptionType != null && Object.hasOwnProperty.call(message, "encryptionType"))
-                object.encryptionType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptionType] === undefined ? message.encryptionType : $root.Enterprise.EncryptedKeyType[message.encryptionType] : message.encryptionType;
+                object.encryptionType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptionType] === undefined ? message.encryptionType : Enterprise.EncryptedKeyType[message.encryptionType] : message.encryptionType;
             if (message.recordSecurityScoreData && message.recordSecurityScoreData.length) {
                 object.recordSecurityScoreData = [];
                 for (let j = 0; j < message.recordSecurityScoreData.length; ++j)
@@ -15075,9 +15076,9 @@ export const Authentication = $root.Authentication = (() => {
                 else
                     object.oldSecurityDataRevision = options.longs === String ? $util.Long.prototype.toString.call(message.oldSecurityDataRevision) : options.longs === Number ? new $util.LongBits(message.oldSecurityDataRevision.low >>> 0, message.oldSecurityDataRevision.high >>> 0).toNumber() : message.oldSecurityDataRevision;
             if (message.currentDataEncryptionType != null && Object.hasOwnProperty.call(message, "currentDataEncryptionType"))
-                object.currentDataEncryptionType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.currentDataEncryptionType] === undefined ? message.currentDataEncryptionType : $root.Enterprise.EncryptedKeyType[message.currentDataEncryptionType] : message.currentDataEncryptionType;
+                object.currentDataEncryptionType = options.enums === String ? Enterprise.EncryptedKeyType[message.currentDataEncryptionType] === undefined ? message.currentDataEncryptionType : Enterprise.EncryptedKeyType[message.currentDataEncryptionType] : message.currentDataEncryptionType;
             if (message.oldDataEncryptionType != null && Object.hasOwnProperty.call(message, "oldDataEncryptionType"))
-                object.oldDataEncryptionType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.oldDataEncryptionType] === undefined ? message.oldDataEncryptionType : $root.Enterprise.EncryptedKeyType[message.oldDataEncryptionType] : message.oldDataEncryptionType;
+                object.oldDataEncryptionType = options.enums === String ? Enterprise.EncryptedKeyType[message.oldDataEncryptionType] === undefined ? message.oldDataEncryptionType : Enterprise.EncryptedKeyType[message.oldDataEncryptionType] : message.oldDataEncryptionType;
             if (message.recordUid != null && Object.hasOwnProperty.call(message, "recordUid"))
                 object.recordUid = options.bytes === String ? $util.base64.encode(message.recordUid, 0, message.recordUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordUid) : message.recordUid;
             return object;
@@ -18911,7 +18912,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.allowedKeyTypes && message.allowedKeyTypes.length) {
                 object.allowedKeyTypes = [];
                 for (let j = 0; j < message.allowedKeyTypes.length; ++j)
-                    object.allowedKeyTypes[j] = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.allowedKeyTypes[j]] === undefined ? message.allowedKeyTypes[j] : $root.Enterprise.EncryptedKeyType[message.allowedKeyTypes[j]] : message.allowedKeyTypes[j];
+                    object.allowedKeyTypes[j] = options.enums === String ? Enterprise.EncryptedKeyType[message.allowedKeyTypes[j]] === undefined ? message.allowedKeyTypes[j] : Enterprise.EncryptedKeyType[message.allowedKeyTypes[j]] : message.allowedKeyTypes[j];
             }
             return object;
         };
@@ -19505,7 +19506,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.key != null && Object.hasOwnProperty.call(message, "key"))
                 object.key = options.bytes === String ? $util.base64.encode(message.key, 0, message.key.length) : options.bytes === Array ? Array.prototype.slice.call(message.key) : message.key;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.keyType] === undefined ? message.keyType : $root.Enterprise.EncryptedKeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Enterprise.EncryptedKeyType[message.keyType] === undefined ? message.keyType : Enterprise.EncryptedKeyType[message.keyType] : message.keyType;
             if (message.status != null && Object.hasOwnProperty.call(message, "status"))
                 object.status = options.enums === String ? $root.Authentication.GenericStatus[message.status] === undefined ? message.status : $root.Authentication.GenericStatus[message.status] : message.status;
             return object;
@@ -20276,7 +20277,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.verificationCode != null && Object.hasOwnProperty.call(message, "verificationCode"))
                 writer.uint32(/* id 22, wireType 2 =*/178).string(message.verificationCode);
             if (message.enterpriseRegistration != null && Object.hasOwnProperty.call(message, "enterpriseRegistration"))
-                $root.Enterprise.EnterpriseRegistration.encode(message.enterpriseRegistration, writer.uint32(/* id 23, wireType 2 =*/186).fork(), q + 1).ldelim();
+                Enterprise.EnterpriseRegistration.encode(message.enterpriseRegistration, writer.uint32(/* id 23, wireType 2 =*/186).fork(), q + 1).ldelim();
             if (message.encryptedVerificationToken != null && Object.hasOwnProperty.call(message, "encryptedVerificationToken"))
                 writer.uint32(/* id 24, wireType 2 =*/194).bytes(message.encryptedVerificationToken);
             if (message.enterpriseUsersDataKey != null && Object.hasOwnProperty.call(message, "enterpriseUsersDataKey"))
@@ -20397,7 +20398,7 @@ export const Authentication = $root.Authentication = (() => {
                         break;
                     }
                 case 23: {
-                        message.enterpriseRegistration = $root.Enterprise.EnterpriseRegistration.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.enterpriseRegistration = Enterprise.EnterpriseRegistration.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 24: {
@@ -20514,7 +20515,7 @@ export const Authentication = $root.Authentication = (() => {
             if (object.enterpriseRegistration != null) {
                 if (!$util.isObject(object.enterpriseRegistration))
                     throw TypeError(".Authentication.CreateUserRequest.enterpriseRegistration: object expected");
-                message.enterpriseRegistration = $root.Enterprise.EnterpriseRegistration.fromObject(object.enterpriseRegistration, long + 1);
+                message.enterpriseRegistration = Enterprise.EnterpriseRegistration.fromObject(object.enterpriseRegistration, long + 1);
             }
             if (object.encryptedVerificationToken != null)
                 if (typeof object.encryptedVerificationToken === "string")
@@ -20696,7 +20697,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.verificationCode != null && Object.hasOwnProperty.call(message, "verificationCode"))
                 object.verificationCode = message.verificationCode;
             if (message.enterpriseRegistration != null && Object.hasOwnProperty.call(message, "enterpriseRegistration"))
-                object.enterpriseRegistration = $root.Enterprise.EnterpriseRegistration.toObject(message.enterpriseRegistration, options, q + 1);
+                object.enterpriseRegistration = Enterprise.EnterpriseRegistration.toObject(message.enterpriseRegistration, options, q + 1);
             if (message.encryptedVerificationToken != null && Object.hasOwnProperty.call(message, "encryptedVerificationToken"))
                 object.encryptedVerificationToken = options.bytes === String ? $util.base64.encode(message.encryptedVerificationToken, 0, message.encryptedVerificationToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedVerificationToken) : message.encryptedVerificationToken;
             if (message.enterpriseUsersDataKey != null && Object.hasOwnProperty.call(message, "enterpriseUsersDataKey"))
@@ -29518,7 +29519,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.encryptedDataKey != null && Object.hasOwnProperty.call(message, "encryptedDataKey"))
                 object.encryptedDataKey = options.bytes === String ? $util.base64.encode(message.encryptedDataKey, 0, message.encryptedDataKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedDataKey) : message.encryptedDataKey;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.keyType] === undefined ? message.keyType : $root.Enterprise.EncryptedKeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Enterprise.EncryptedKeyType[message.keyType] === undefined ? message.keyType : Enterprise.EncryptedKeyType[message.keyType] : message.keyType;
             return object;
         };
 
@@ -31713,7 +31714,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.minimumPbkdf2Iterations != null && Object.hasOwnProperty.call(message, "minimumPbkdf2Iterations"))
                 object.minimumPbkdf2Iterations = message.minimumPbkdf2Iterations;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Enterprise.KeyType[message.keyType] === undefined ? message.keyType : $root.Enterprise.KeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Enterprise.KeyType[message.keyType] === undefined ? message.keyType : Enterprise.KeyType[message.keyType] : message.keyType;
             return object;
         };
 
@@ -35603,7 +35604,7 @@ export const Authentication = $root.Authentication = (() => {
             if (message.id != null && Object.hasOwnProperty.call(message, "id"))
                 object.id = message.id;
             if (message.appClientType != null && Object.hasOwnProperty.call(message, "appClientType"))
-                object.appClientType = options.enums === String ? $root.Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : $root.Enterprise.AppClientType[message.appClientType] : message.appClientType;
+                object.appClientType = options.enums === String ? Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : Enterprise.AppClientType[message.appClientType] : message.appClientType;
             return object;
         };
 
@@ -36686,7 +36687,7 @@ export const Authentication = $root.Authentication = (() => {
                 else
                     object.accessExpireOn = options.longs === String ? $util.Long.prototype.toString.call(message.accessExpireOn) : options.longs === Number ? new $util.LongBits(message.accessExpireOn.low >>> 0, message.accessExpireOn.high >>> 0).toNumber() : message.accessExpireOn;
             if (message.appClientType != null && Object.hasOwnProperty.call(message, "appClientType"))
-                object.appClientType = options.enums === String ? $root.Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : $root.Enterprise.AppClientType[message.appClientType] : message.appClientType;
+                object.appClientType = options.enums === String ? Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : Enterprise.AppClientType[message.appClientType] : message.appClientType;
             if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
                 object.canEdit = message.canEdit;
             return object;
@@ -41439,11 +41440,11 @@ export const Authentication = $root.Authentication = (() => {
             if (message.sessionToken != null && Object.hasOwnProperty.call(message, "sessionToken"))
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.sessionToken);
             if (message.dataKey != null && Object.hasOwnProperty.call(message, "dataKey"))
-                $root.Enterprise.TypedKey.encode(message.dataKey, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                Enterprise.TypedKey.encode(message.dataKey, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
             if (message.rsaPrivateKey != null && Object.hasOwnProperty.call(message, "rsaPrivateKey"))
-                $root.Enterprise.TypedKey.encode(message.rsaPrivateKey, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                Enterprise.TypedKey.encode(message.rsaPrivateKey, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
             if (message.eccPrivateKey != null && Object.hasOwnProperty.call(message, "eccPrivateKey"))
-                $root.Enterprise.TypedKey.encode(message.eccPrivateKey, writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+                Enterprise.TypedKey.encode(message.eccPrivateKey, writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -41476,15 +41477,15 @@ export const Authentication = $root.Authentication = (() => {
                         break;
                     }
                 case 2: {
-                        message.dataKey = $root.Enterprise.TypedKey.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.dataKey = Enterprise.TypedKey.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 3: {
-                        message.rsaPrivateKey = $root.Enterprise.TypedKey.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.rsaPrivateKey = Enterprise.TypedKey.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 4: {
-                        message.eccPrivateKey = $root.Enterprise.TypedKey.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.eccPrivateKey = Enterprise.TypedKey.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -41521,17 +41522,17 @@ export const Authentication = $root.Authentication = (() => {
             if (object.dataKey != null) {
                 if (!$util.isObject(object.dataKey))
                     throw TypeError(".Authentication.EmergencyAccessLoginResponse.dataKey: object expected");
-                message.dataKey = $root.Enterprise.TypedKey.fromObject(object.dataKey, long + 1);
+                message.dataKey = Enterprise.TypedKey.fromObject(object.dataKey, long + 1);
             }
             if (object.rsaPrivateKey != null) {
                 if (!$util.isObject(object.rsaPrivateKey))
                     throw TypeError(".Authentication.EmergencyAccessLoginResponse.rsaPrivateKey: object expected");
-                message.rsaPrivateKey = $root.Enterprise.TypedKey.fromObject(object.rsaPrivateKey, long + 1);
+                message.rsaPrivateKey = Enterprise.TypedKey.fromObject(object.rsaPrivateKey, long + 1);
             }
             if (object.eccPrivateKey != null) {
                 if (!$util.isObject(object.eccPrivateKey))
                     throw TypeError(".Authentication.EmergencyAccessLoginResponse.eccPrivateKey: object expected");
-                message.eccPrivateKey = $root.Enterprise.TypedKey.fromObject(object.eccPrivateKey, long + 1);
+                message.eccPrivateKey = Enterprise.TypedKey.fromObject(object.eccPrivateKey, long + 1);
             }
             return message;
         };
@@ -41568,11 +41569,11 @@ export const Authentication = $root.Authentication = (() => {
             if (message.sessionToken != null && Object.hasOwnProperty.call(message, "sessionToken"))
                 object.sessionToken = options.bytes === String ? $util.base64.encode(message.sessionToken, 0, message.sessionToken.length) : options.bytes === Array ? Array.prototype.slice.call(message.sessionToken) : message.sessionToken;
             if (message.dataKey != null && Object.hasOwnProperty.call(message, "dataKey"))
-                object.dataKey = $root.Enterprise.TypedKey.toObject(message.dataKey, options, q + 1);
+                object.dataKey = Enterprise.TypedKey.toObject(message.dataKey, options, q + 1);
             if (message.rsaPrivateKey != null && Object.hasOwnProperty.call(message, "rsaPrivateKey"))
-                object.rsaPrivateKey = $root.Enterprise.TypedKey.toObject(message.rsaPrivateKey, options, q + 1);
+                object.rsaPrivateKey = Enterprise.TypedKey.toObject(message.rsaPrivateKey, options, q + 1);
             if (message.eccPrivateKey != null && Object.hasOwnProperty.call(message, "eccPrivateKey"))
-                object.eccPrivateKey = $root.Enterprise.TypedKey.toObject(message.eccPrivateKey, options, q + 1);
+                object.eccPrivateKey = Enterprise.TypedKey.toObject(message.eccPrivateKey, options, q + 1);
             return object;
         };
 
@@ -45464,6 +45465,211 @@ export const Authentication = $root.Authentication = (() => {
         };
 
         return TranslationResponse;
+    })();
+
+    /**
+     * LogoutType enum.
+     * @name Authentication.LogoutType
+     * @enum {number}
+     * @property {number} LOGOUT_USER=0 LOGOUT_USER value
+     * @property {number} LOGOUT_TIMEOUT=1 LOGOUT_TIMEOUT value
+     */
+    Authentication.LogoutType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "LOGOUT_USER"] = 0;
+        values[valuesById[1] = "LOGOUT_TIMEOUT"] = 1;
+        return values;
+    })();
+
+    Authentication.LogoutRequest = (function() {
+
+        /**
+         * Properties of a LogoutRequest.
+         * @memberof Authentication
+         * @interface ILogoutRequest
+         * @property {Authentication.LogoutType|null} [logoutType] LogoutRequest logoutType
+         */
+
+        /**
+         * Constructs a new LogoutRequest.
+         * @memberof Authentication
+         * @classdesc Represents a LogoutRequest.
+         * @implements ILogoutRequest
+         * @constructor
+         * @param {Authentication.ILogoutRequest=} [properties] Properties to set
+         */
+        function LogoutRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * LogoutRequest logoutType.
+         * @member {Authentication.LogoutType} logoutType
+         * @memberof Authentication.LogoutRequest
+         * @instance
+         */
+        LogoutRequest.prototype.logoutType = 0;
+
+        /**
+         * Creates a new LogoutRequest instance using the specified properties.
+         * @function create
+         * @memberof Authentication.LogoutRequest
+         * @static
+         * @param {Authentication.ILogoutRequest=} [properties] Properties to set
+         * @returns {Authentication.LogoutRequest} LogoutRequest instance
+         */
+        LogoutRequest.create = function create(properties) {
+            return new LogoutRequest(properties);
+        };
+
+        /**
+         * Encodes the specified LogoutRequest message. Does not implicitly {@link Authentication.LogoutRequest.verify|verify} messages.
+         * @function encode
+         * @memberof Authentication.LogoutRequest
+         * @static
+         * @param {Authentication.ILogoutRequest} message LogoutRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        LogoutRequest.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.logoutType != null && Object.hasOwnProperty.call(message, "logoutType"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.logoutType);
+            return writer;
+        };
+
+        /**
+         * Decodes a LogoutRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof Authentication.LogoutRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Authentication.LogoutRequest} LogoutRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        LogoutRequest.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Authentication.LogoutRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.logoutType = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a LogoutRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Authentication.LogoutRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Authentication.LogoutRequest} LogoutRequest
+         */
+        LogoutRequest.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Authentication.LogoutRequest)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Authentication.LogoutRequest: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Authentication.LogoutRequest();
+            switch (object.logoutType) {
+            default:
+                if (typeof object.logoutType === "number") {
+                    message.logoutType = object.logoutType;
+                    break;
+                }
+                break;
+            case "LOGOUT_USER":
+            case 0:
+                message.logoutType = 0;
+                break;
+            case "LOGOUT_TIMEOUT":
+            case 1:
+                message.logoutType = 1;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a LogoutRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Authentication.LogoutRequest
+         * @static
+         * @param {Authentication.LogoutRequest} message LogoutRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        LogoutRequest.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults)
+                object.logoutType = options.enums === String ? "LOGOUT_USER" : 0;
+            if (message.logoutType != null && Object.hasOwnProperty.call(message, "logoutType"))
+                object.logoutType = options.enums === String ? $root.Authentication.LogoutType[message.logoutType] === undefined ? message.logoutType : $root.Authentication.LogoutType[message.logoutType] : message.logoutType;
+            return object;
+        };
+
+        /**
+         * Converts this LogoutRequest to JSON.
+         * @function toJSON
+         * @memberof Authentication.LogoutRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        LogoutRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for LogoutRequest
+         * @function getTypeUrl
+         * @memberof Authentication.LogoutRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        LogoutRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Authentication.LogoutRequest";
+        };
+
+        return LogoutRequest;
     })();
 
     return Authentication;

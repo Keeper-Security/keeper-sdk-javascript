@@ -1,5 +1,8 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Folder } from './Folder.js';
+import { Records } from './Records.js';
+import { keeper } from './keeper.js';
 
 export const record = $root.record = (() => {
 
@@ -496,7 +499,7 @@ export const record = $root.record = (() => {
                     if (message.useEccKey != null && Object.hasOwnProperty.call(message, "useEccKey"))
                         writer.uint32(/* id 5, wireType 0 =*/40).bool(message.useEccKey);
                     if (message.rules != null && Object.hasOwnProperty.call(message, "rules"))
-                        $root.Folder.RecordAccessData.encode(message.rules, writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+                        Folder.RecordAccessData.encode(message.rules, writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
                     return writer;
                 };
 
@@ -541,7 +544,7 @@ export const record = $root.record = (() => {
                                 break;
                             }
                         case 6: {
-                                message.rules = $root.Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.rules = Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         default:
@@ -590,7 +593,7 @@ export const record = $root.record = (() => {
                     if (object.rules != null) {
                         if (!$util.isObject(object.rules))
                             throw TypeError(".record.v3.sharing.Permissions.rules: object expected");
-                        message.rules = $root.Folder.RecordAccessData.fromObject(object.rules, long + 1);
+                        message.rules = Folder.RecordAccessData.fromObject(object.rules, long + 1);
                     }
                     return message;
                 };
@@ -646,7 +649,7 @@ export const record = $root.record = (() => {
                     if (message.useEccKey != null && Object.hasOwnProperty.call(message, "useEccKey"))
                         object.useEccKey = message.useEccKey;
                     if (message.rules != null && Object.hasOwnProperty.call(message, "rules"))
-                        object.rules = $root.Folder.RecordAccessData.toObject(message.rules, options, q + 1);
+                        object.rules = Folder.RecordAccessData.toObject(message.rules, options, q + 1);
                     return object;
                 };
 
@@ -1146,6 +1149,18 @@ export const record = $root.record = (() => {
                     case 6:
                         message.status = 6;
                         break;
+                    case "FORBIDDEN_KEY_TYPE":
+                    case 7:
+                        message.status = 7;
+                        break;
+                    case "INVALID_RECORD_KEY":
+                    case 8:
+                        message.status = 8;
+                        break;
+                    case "SERVER_ERROR":
+                    case 15:
+                        message.status = 15;
+                        break;
                     }
                     if (object.message != null)
                         message.message = String(object.message);
@@ -1243,6 +1258,9 @@ export const record = $root.record = (() => {
              * @property {number} NOT_ALLOWED_TO_SHARE=4 NOT_ALLOWED_TO_SHARE value
              * @property {number} ACCESS_DENIED=5 ACCESS_DENIED value
              * @property {number} NOT_ALLOWED_TO_SET_PERMISSIONS=6 NOT_ALLOWED_TO_SET_PERMISSIONS value
+             * @property {number} FORBIDDEN_KEY_TYPE=7 FORBIDDEN_KEY_TYPE value
+             * @property {number} INVALID_RECORD_KEY=8 INVALID_RECORD_KEY value
+             * @property {number} SERVER_ERROR=15 SERVER_ERROR value
              */
             sharing.SharingStatus = (function() {
                 const valuesById = {}, values = Object.create(valuesById);
@@ -1253,6 +1271,9 @@ export const record = $root.record = (() => {
                 values[valuesById[4] = "NOT_ALLOWED_TO_SHARE"] = 4;
                 values[valuesById[5] = "ACCESS_DENIED"] = 5;
                 values[valuesById[6] = "NOT_ALLOWED_TO_SET_PERMISSIONS"] = 6;
+                values[valuesById[7] = "FORBIDDEN_KEY_TYPE"] = 7;
+                values[valuesById[8] = "INVALID_RECORD_KEY"] = 8;
+                values[valuesById[15] = "SERVER_ERROR"] = 15;
                 return values;
             })();
 
@@ -1979,7 +2000,7 @@ export const record = $root.record = (() => {
                     else
                         object.clientTime = options.longs === String ? $util.Long.prototype.toString.call(message.clientTime) : options.longs === Number ? new $util.LongBits(message.clientTime.low >>> 0, message.clientTime.high >>> 0).toNumber() : message.clientTime;
                 if (message.securityDataKeyType != null && Object.hasOwnProperty.call(message, "securityDataKeyType"))
-                    object.securityDataKeyType = options.enums === String ? $root.Records.RecordKeyType[message.securityDataKeyType] === undefined ? message.securityDataKeyType : $root.Records.RecordKeyType[message.securityDataKeyType] : message.securityDataKeyType;
+                    object.securityDataKeyType = options.enums === String ? Records.RecordKeyType[message.securityDataKeyType] === undefined ? message.securityDataKeyType : Records.RecordKeyType[message.securityDataKeyType] : message.securityDataKeyType;
                 return object;
             };
 
@@ -2201,13 +2222,13 @@ export const record = $root.record = (() => {
                     writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.folderUid);
                 if (message.recordLinks != null && message.recordLinks.length)
                     for (let i = 0; i < message.recordLinks.length; ++i)
-                        $root.Records.RecordLink.encode(message.recordLinks[i], writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
+                        Records.RecordLink.encode(message.recordLinks[i], writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
                 if (message.audit != null && Object.hasOwnProperty.call(message, "audit"))
-                    $root.Records.RecordAudit.encode(message.audit, writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
+                    Records.RecordAudit.encode(message.audit, writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
                 if (message.securityData != null && Object.hasOwnProperty.call(message, "securityData"))
-                    $root.Records.SecurityData.encode(message.securityData, writer.uint32(/* id 11, wireType 2 =*/90).fork(), q + 1).ldelim();
+                    Records.SecurityData.encode(message.securityData, writer.uint32(/* id 11, wireType 2 =*/90).fork(), q + 1).ldelim();
                 if (message.securityScoreData != null && Object.hasOwnProperty.call(message, "securityScoreData"))
-                    $root.Records.SecurityScoreData.encode(message.securityScoreData, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
+                    Records.SecurityScoreData.encode(message.securityScoreData, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
                 if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
                     writer.uint32(/* id 13, wireType 2 =*/106).bytes(message.recordKeyEncryptedByOwnerKey);
                 return writer;
@@ -2272,19 +2293,19 @@ export const record = $root.record = (() => {
                     case 9: {
                             if (!(message.recordLinks && message.recordLinks.length))
                                 message.recordLinks = [];
-                            message.recordLinks.push($root.Records.RecordLink.decode(reader, reader.uint32(), undefined, long + 1));
+                            message.recordLinks.push(Records.RecordLink.decode(reader, reader.uint32(), undefined, long + 1));
                             break;
                         }
                     case 10: {
-                            message.audit = $root.Records.RecordAudit.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.audit = Records.RecordAudit.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     case 11: {
-                            message.securityData = $root.Records.SecurityData.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.securityData = Records.SecurityData.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     case 12: {
-                            message.securityScoreData = $root.Records.SecurityScoreData.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.securityScoreData = Records.SecurityScoreData.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     case 13: {
@@ -2406,23 +2427,23 @@ export const record = $root.record = (() => {
                     for (let i = 0; i < object.recordLinks.length; ++i) {
                         if (!$util.isObject(object.recordLinks[i]))
                             throw TypeError(".record.v3.RecordAdd.recordLinks: object expected");
-                        message.recordLinks[i] = $root.Records.RecordLink.fromObject(object.recordLinks[i], long + 1);
+                        message.recordLinks[i] = Records.RecordLink.fromObject(object.recordLinks[i], long + 1);
                     }
                 }
                 if (object.audit != null) {
                     if (!$util.isObject(object.audit))
                         throw TypeError(".record.v3.RecordAdd.audit: object expected");
-                    message.audit = $root.Records.RecordAudit.fromObject(object.audit, long + 1);
+                    message.audit = Records.RecordAudit.fromObject(object.audit, long + 1);
                 }
                 if (object.securityData != null) {
                     if (!$util.isObject(object.securityData))
                         throw TypeError(".record.v3.RecordAdd.securityData: object expected");
-                    message.securityData = $root.Records.SecurityData.fromObject(object.securityData, long + 1);
+                    message.securityData = Records.SecurityData.fromObject(object.securityData, long + 1);
                 }
                 if (object.securityScoreData != null) {
                     if (!$util.isObject(object.securityScoreData))
                         throw TypeError(".record.v3.RecordAdd.securityScoreData: object expected");
-                    message.securityScoreData = $root.Records.SecurityScoreData.fromObject(object.securityScoreData, long + 1);
+                    message.securityScoreData = Records.SecurityScoreData.fromObject(object.securityScoreData, long + 1);
                 }
                 if (object.recordKeyEncryptedByOwnerKey != null)
                     if (typeof object.recordKeyEncryptedByOwnerKey === "string")
@@ -2510,9 +2531,9 @@ export const record = $root.record = (() => {
                 if (message.recordKey != null && Object.hasOwnProperty.call(message, "recordKey"))
                     object.recordKey = options.bytes === String ? $util.base64.encode(message.recordKey, 0, message.recordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKey) : message.recordKey;
                 if (message.recordKeyType != null && Object.hasOwnProperty.call(message, "recordKeyType"))
-                    object.recordKeyType = options.enums === String ? $root.Folder.EncryptedKeyType[message.recordKeyType] === undefined ? message.recordKeyType : $root.Folder.EncryptedKeyType[message.recordKeyType] : message.recordKeyType;
+                    object.recordKeyType = options.enums === String ? Folder.EncryptedKeyType[message.recordKeyType] === undefined ? message.recordKeyType : Folder.EncryptedKeyType[message.recordKeyType] : message.recordKeyType;
                 if (message.recordKeyEncryptedBy != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedBy"))
-                    object.recordKeyEncryptedBy = options.enums === String ? $root.Folder.FolderKeyEncryptionType[message.recordKeyEncryptedBy] === undefined ? message.recordKeyEncryptedBy : $root.Folder.FolderKeyEncryptionType[message.recordKeyEncryptedBy] : message.recordKeyEncryptedBy;
+                    object.recordKeyEncryptedBy = options.enums === String ? Folder.FolderKeyEncryptionType[message.recordKeyEncryptedBy] === undefined ? message.recordKeyEncryptedBy : Folder.FolderKeyEncryptionType[message.recordKeyEncryptedBy] : message.recordKeyEncryptedBy;
                 if (message.clientModifiedTime != null && Object.hasOwnProperty.call(message, "clientModifiedTime"))
                     if (typeof BigInt !== "undefined" && options.longs === BigInt)
                         object.clientModifiedTime = typeof message.clientModifiedTime === "number" ? BigInt(message.clientModifiedTime) : $util.Long.fromBits(message.clientModifiedTime.low >>> 0, message.clientModifiedTime.high >>> 0, false).toBigInt();
@@ -2529,14 +2550,14 @@ export const record = $root.record = (() => {
                 if (message.recordLinks && message.recordLinks.length) {
                     object.recordLinks = [];
                     for (let j = 0; j < message.recordLinks.length; ++j)
-                        object.recordLinks[j] = $root.Records.RecordLink.toObject(message.recordLinks[j], options, q + 1);
+                        object.recordLinks[j] = Records.RecordLink.toObject(message.recordLinks[j], options, q + 1);
                 }
                 if (message.audit != null && Object.hasOwnProperty.call(message, "audit"))
-                    object.audit = $root.Records.RecordAudit.toObject(message.audit, options, q + 1);
+                    object.audit = Records.RecordAudit.toObject(message.audit, options, q + 1);
                 if (message.securityData != null && Object.hasOwnProperty.call(message, "securityData"))
-                    object.securityData = $root.Records.SecurityData.toObject(message.securityData, options, q + 1);
+                    object.securityData = Records.SecurityData.toObject(message.securityData, options, q + 1);
                 if (message.securityScoreData != null && Object.hasOwnProperty.call(message, "securityScoreData"))
-                    object.securityScoreData = $root.Records.SecurityScoreData.toObject(message.securityScoreData, options, q + 1);
+                    object.securityScoreData = Records.SecurityScoreData.toObject(message.securityScoreData, options, q + 1);
                 if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
                     object.recordKeyEncryptedByOwnerKey = options.bytes === String ? $util.base64.encode(message.recordKeyEncryptedByOwnerKey, 0, message.recordKeyEncryptedByOwnerKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKeyEncryptedByOwnerKey) : message.recordKeyEncryptedByOwnerKey;
                 return object;
@@ -3020,7 +3041,7 @@ export const record = $root.record = (() => {
                         throw Error("max depth exceeded");
                     if (message.data != null && message.data.length)
                         for (let i = 0; i < message.data.length; ++i)
-                            $root.Records.RecordData.encode(message.data[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                            Records.RecordData.encode(message.data[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
                     if (message.forbiddenRecords != null && message.forbiddenRecords.length)
                         for (let i = 0; i < message.forbiddenRecords.length; ++i)
                             writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.forbiddenRecords[i]);
@@ -3054,7 +3075,7 @@ export const record = $root.record = (() => {
                         case 1: {
                                 if (!(message.data && message.data.length))
                                     message.data = [];
-                                message.data.push($root.Records.RecordData.decode(reader, reader.uint32(), undefined, long + 1));
+                                message.data.push(Records.RecordData.decode(reader, reader.uint32(), undefined, long + 1));
                                 break;
                             }
                         case 2: {
@@ -3096,7 +3117,7 @@ export const record = $root.record = (() => {
                         for (let i = 0; i < object.data.length; ++i) {
                             if (!$util.isObject(object.data[i]))
                                 throw TypeError(".record.v3.details.RecordDataResponse.data: object expected");
-                            message.data[i] = $root.Records.RecordData.fromObject(object.data[i], long + 1);
+                            message.data[i] = Records.RecordData.fromObject(object.data[i], long + 1);
                         }
                     }
                     if (object.forbiddenRecords) {
@@ -3136,7 +3157,7 @@ export const record = $root.record = (() => {
                     if (message.data && message.data.length) {
                         object.data = [];
                         for (let j = 0; j < message.data.length; ++j)
-                            object.data[j] = $root.Records.RecordData.toObject(message.data[j], options, q + 1);
+                            object.data[j] = Records.RecordData.toObject(message.data[j], options, q + 1);
                     }
                     if (message.forbiddenRecords && message.forbiddenRecords.length) {
                         object.forbiddenRecords = [];
@@ -3249,7 +3270,7 @@ export const record = $root.record = (() => {
                     if (q > $util.recursionLimit)
                         throw Error("max depth exceeded");
                     if (message.page != null && Object.hasOwnProperty.call(message, "page"))
-                        $root.keeper.api.common.Page.encode(message.page, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                        keeper.api.common.Page.encode(message.page, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
                     if (message.recordUids != null && message.recordUids.length)
                         for (let i = 0; i < message.recordUids.length; ++i)
                             writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.recordUids[i]);
@@ -3287,7 +3308,7 @@ export const record = $root.record = (() => {
                                 break;
                             }
                         case 2: {
-                                message.page = $root.keeper.api.common.Page.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.page = keeper.api.common.Page.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         default:
@@ -3329,7 +3350,7 @@ export const record = $root.record = (() => {
                     if (object.page != null) {
                         if (!$util.isObject(object.page))
                             throw TypeError(".record.v3.details.RecordAccessRequest.page: object expected");
-                        message.page = $root.keeper.api.common.Page.fromObject(object.page, long + 1);
+                        message.page = keeper.api.common.Page.fromObject(object.page, long + 1);
                     }
                     return message;
                 };
@@ -3356,7 +3377,7 @@ export const record = $root.record = (() => {
                     if (options.defaults)
                         object.page = null;
                     if (message.page != null && Object.hasOwnProperty.call(message, "page"))
-                        object.page = $root.keeper.api.common.Page.toObject(message.page, options, q + 1);
+                        object.page = keeper.api.common.Page.toObject(message.page, options, q + 1);
                     if (message.recordUids && message.recordUids.length) {
                         object.recordUids = [];
                         for (let j = 0; j < message.recordUids.length; ++j)
@@ -3485,7 +3506,7 @@ export const record = $root.record = (() => {
                         for (let i = 0; i < message.forbiddenRecords.length; ++i)
                             writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.forbiddenRecords[i]);
                     if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
-                        $root.keeper.api.common.PageInfo.encode(message.pageInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                        keeper.api.common.PageInfo.encode(message.pageInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
                     return writer;
                 };
 
@@ -3526,7 +3547,7 @@ export const record = $root.record = (() => {
                                 break;
                             }
                         case 3: {
-                                message.pageInfo = $root.keeper.api.common.PageInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.pageInfo = keeper.api.common.PageInfo.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         default:
@@ -3578,7 +3599,7 @@ export const record = $root.record = (() => {
                     if (object.pageInfo != null) {
                         if (!$util.isObject(object.pageInfo))
                             throw TypeError(".record.v3.details.RecordAccessResponse.pageInfo: object expected");
-                        message.pageInfo = $root.keeper.api.common.PageInfo.fromObject(object.pageInfo, long + 1);
+                        message.pageInfo = keeper.api.common.PageInfo.fromObject(object.pageInfo, long + 1);
                     }
                     return message;
                 };
@@ -3617,7 +3638,7 @@ export const record = $root.record = (() => {
                             object.forbiddenRecords[j] = options.bytes === String ? $util.base64.encode(message.forbiddenRecords[j], 0, message.forbiddenRecords[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.forbiddenRecords[j]) : message.forbiddenRecords[j];
                     }
                     if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
-                        object.pageInfo = $root.keeper.api.common.PageInfo.toObject(message.pageInfo, options, q + 1);
+                        object.pageInfo = keeper.api.common.PageInfo.toObject(message.pageInfo, options, q + 1);
                     return object;
                 };
 
@@ -3735,7 +3756,7 @@ export const record = $root.record = (() => {
                     if (message.accessorUid != null && Object.hasOwnProperty.call(message, "accessorUid"))
                         writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.accessorUid);
                     if (message.page != null && Object.hasOwnProperty.call(message, "page"))
-                        $root.keeper.api.common.Page.encode(message.page, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                        keeper.api.common.Page.encode(message.page, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
                     return writer;
                 };
 
@@ -3772,7 +3793,7 @@ export const record = $root.record = (() => {
                                 break;
                             }
                         case 3: {
-                                message.page = $root.keeper.api.common.Page.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.page = keeper.api.common.Page.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         default:
@@ -3814,7 +3835,7 @@ export const record = $root.record = (() => {
                     if (object.page != null) {
                         if (!$util.isObject(object.page))
                             throw TypeError(".record.v3.details.RecordAccessorDetailsRequest.page: object expected");
-                        message.page = $root.keeper.api.common.Page.fromObject(object.page, long + 1);
+                        message.page = keeper.api.common.Page.fromObject(object.page, long + 1);
                     }
                     return message;
                 };
@@ -3858,7 +3879,7 @@ export const record = $root.record = (() => {
                     if (message.accessorUid != null && Object.hasOwnProperty.call(message, "accessorUid"))
                         object.accessorUid = options.bytes === String ? $util.base64.encode(message.accessorUid, 0, message.accessorUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.accessorUid) : message.accessorUid;
                     if (message.page != null && Object.hasOwnProperty.call(message, "page"))
-                        object.page = $root.keeper.api.common.Page.toObject(message.page, options, q + 1);
+                        object.page = keeper.api.common.Page.toObject(message.page, options, q + 1);
                     return object;
                 };
 
@@ -3974,12 +3995,12 @@ export const record = $root.record = (() => {
                     if (q > $util.recursionLimit)
                         throw Error("max depth exceeded");
                     if (message.recordAccessData != null && Object.hasOwnProperty.call(message, "recordAccessData"))
-                        $root.Folder.RecordAccessData.encode(message.recordAccessData, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                        Folder.RecordAccessData.encode(message.recordAccessData, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
                     if (message.folderAccessData != null && message.folderAccessData.length)
                         for (let i = 0; i < message.folderAccessData.length; ++i)
-                            $root.Folder.FolderAccessData.encode(message.folderAccessData[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                            Folder.FolderAccessData.encode(message.folderAccessData[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
                     if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
-                        $root.keeper.api.common.PageInfo.encode(message.pageInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                        keeper.api.common.PageInfo.encode(message.pageInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
                     return writer;
                 };
 
@@ -4008,17 +4029,17 @@ export const record = $root.record = (() => {
                             break;
                         switch (tag >>> 3) {
                         case 1: {
-                                message.recordAccessData = $root.Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.recordAccessData = Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         case 2: {
                                 if (!(message.folderAccessData && message.folderAccessData.length))
                                     message.folderAccessData = [];
-                                message.folderAccessData.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                                message.folderAccessData.push(Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
                                 break;
                             }
                         case 3: {
-                                message.pageInfo = $root.keeper.api.common.PageInfo.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.pageInfo = keeper.api.common.PageInfo.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         default:
@@ -4050,7 +4071,7 @@ export const record = $root.record = (() => {
                     if (object.recordAccessData != null) {
                         if (!$util.isObject(object.recordAccessData))
                             throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.recordAccessData: object expected");
-                        message.recordAccessData = $root.Folder.RecordAccessData.fromObject(object.recordAccessData, long + 1);
+                        message.recordAccessData = Folder.RecordAccessData.fromObject(object.recordAccessData, long + 1);
                     }
                     if (object.folderAccessData) {
                         if (!Array.isArray(object.folderAccessData))
@@ -4059,13 +4080,13 @@ export const record = $root.record = (() => {
                         for (let i = 0; i < object.folderAccessData.length; ++i) {
                             if (!$util.isObject(object.folderAccessData[i]))
                                 throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.folderAccessData: object expected");
-                            message.folderAccessData[i] = $root.Folder.FolderAccessData.fromObject(object.folderAccessData[i], long + 1);
+                            message.folderAccessData[i] = Folder.FolderAccessData.fromObject(object.folderAccessData[i], long + 1);
                         }
                     }
                     if (object.pageInfo != null) {
                         if (!$util.isObject(object.pageInfo))
                             throw TypeError(".record.v3.details.RecordAccessorDetailsResponse.pageInfo: object expected");
-                        message.pageInfo = $root.keeper.api.common.PageInfo.fromObject(object.pageInfo, long + 1);
+                        message.pageInfo = keeper.api.common.PageInfo.fromObject(object.pageInfo, long + 1);
                     }
                     return message;
                 };
@@ -4094,14 +4115,14 @@ export const record = $root.record = (() => {
                         object.pageInfo = null;
                     }
                     if (message.recordAccessData != null && Object.hasOwnProperty.call(message, "recordAccessData"))
-                        object.recordAccessData = $root.Folder.RecordAccessData.toObject(message.recordAccessData, options, q + 1);
+                        object.recordAccessData = Folder.RecordAccessData.toObject(message.recordAccessData, options, q + 1);
                     if (message.folderAccessData && message.folderAccessData.length) {
                         object.folderAccessData = [];
                         for (let j = 0; j < message.folderAccessData.length; ++j)
-                            object.folderAccessData[j] = $root.Folder.FolderAccessData.toObject(message.folderAccessData[j], options, q + 1);
+                            object.folderAccessData[j] = Folder.FolderAccessData.toObject(message.folderAccessData[j], options, q + 1);
                     }
                     if (message.pageInfo != null && Object.hasOwnProperty.call(message, "pageInfo"))
-                        object.pageInfo = $root.keeper.api.common.PageInfo.toObject(message.pageInfo, options, q + 1);
+                        object.pageInfo = keeper.api.common.PageInfo.toObject(message.pageInfo, options, q + 1);
                     return object;
                 };
 
@@ -4205,7 +4226,7 @@ export const record = $root.record = (() => {
                     if (q > $util.recursionLimit)
                         throw Error("max depth exceeded");
                     if (message.data != null && Object.hasOwnProperty.call(message, "data"))
-                        $root.Folder.RecordAccessData.encode(message.data, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                        Folder.RecordAccessData.encode(message.data, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
                     if (message.accessorInfo != null && Object.hasOwnProperty.call(message, "accessorInfo"))
                         $root.record.v3.details.AccessorInfo.encode(message.accessorInfo, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
                     return writer;
@@ -4236,7 +4257,7 @@ export const record = $root.record = (() => {
                             break;
                         switch (tag >>> 3) {
                         case 1: {
-                                message.data = $root.Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
+                                message.data = Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1);
                                 break;
                             }
                         case 2: {
@@ -4272,7 +4293,7 @@ export const record = $root.record = (() => {
                     if (object.data != null) {
                         if (!$util.isObject(object.data))
                             throw TypeError(".record.v3.details.RecordAccess.data: object expected");
-                        message.data = $root.Folder.RecordAccessData.fromObject(object.data, long + 1);
+                        message.data = Folder.RecordAccessData.fromObject(object.data, long + 1);
                     }
                     if (object.accessorInfo != null) {
                         if (!$util.isObject(object.accessorInfo))
@@ -4304,7 +4325,7 @@ export const record = $root.record = (() => {
                         object.accessorInfo = null;
                     }
                     if (message.data != null && Object.hasOwnProperty.call(message, "data"))
-                        object.data = $root.Folder.RecordAccessData.toObject(message.data, options, q + 1);
+                        object.data = Folder.RecordAccessData.toObject(message.data, options, q + 1);
                     if (message.accessorInfo != null && Object.hasOwnProperty.call(message, "accessorInfo"))
                         object.accessorInfo = $root.record.v3.details.AccessorInfo.toObject(message.accessorInfo, options, q + 1);
                     return object;

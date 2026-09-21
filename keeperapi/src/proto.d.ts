@@ -15461,6 +15461,85 @@ export namespace Authentication {
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
+
+    /** LogoutType enum. */
+    enum LogoutType {
+        LOGOUT_USER = 0,
+        LOGOUT_TIMEOUT = 1
+    }
+
+    /** Properties of a LogoutRequest. */
+    interface ILogoutRequest {
+
+        /** LogoutRequest logoutType */
+        logoutType?: (Authentication.LogoutType|null);
+    }
+
+    /** Represents a LogoutRequest. */
+    class LogoutRequest implements ILogoutRequest {
+
+        /**
+         * Constructs a new LogoutRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Authentication.ILogoutRequest);
+
+        /** LogoutRequest logoutType. */
+        public logoutType: Authentication.LogoutType;
+
+        /**
+         * Creates a new LogoutRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns LogoutRequest instance
+         */
+        public static create(properties?: Authentication.ILogoutRequest): Authentication.LogoutRequest;
+
+        /**
+         * Encodes the specified LogoutRequest message. Does not implicitly {@link Authentication.LogoutRequest.verify|verify} messages.
+         * @param message LogoutRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Authentication.ILogoutRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a LogoutRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns LogoutRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Authentication.LogoutRequest;
+
+        /**
+         * Creates a LogoutRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns LogoutRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Authentication.LogoutRequest;
+
+        /**
+         * Creates a plain object from a LogoutRequest message. Also converts values to other types if specified.
+         * @param message LogoutRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Authentication.LogoutRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this LogoutRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for LogoutRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
 }
 
 /** Namespace Enterprise. */
@@ -24044,7 +24123,8 @@ export namespace Enterprise {
         NPS_POPUP_OPT_OUT = 9,
         SHOW_USER_ONBOARD = 10,
         FORBID_KEY_TYPE_1 = 11,
-        KEEPER_DRIVE = 12
+        KEEPER_DRIVE = 12,
+        LOCK_ALERTS_SIEMS_CONFIGS = 13
     }
 
     /** Properties of a SetRestrictVisibilityRequest. */
@@ -25679,6 +25759,9 @@ export namespace Enterprise {
 
         /** ComplianceReportFilter recordTypes */
         recordTypes?: (string[]|null);
+
+        /** ComplianceReportFilter sharedFolderUids */
+        sharedFolderUids?: (Uint8Array[]|null);
     }
 
     /** Represents a ComplianceReportFilter. */
@@ -25704,6 +25787,9 @@ export namespace Enterprise {
 
         /** ComplianceReportFilter recordTypes. */
         public recordTypes: string[];
+
+        /** ComplianceReportFilter sharedFolderUids. */
+        public sharedFolderUids: Uint8Array[];
 
         /**
          * Creates a new ComplianceReportFilter instance using the specified properties.
@@ -25806,6 +25892,12 @@ export namespace Enterprise {
 
         /** ComplianceReportResponse linkedRecords */
         linkedRecords?: (Enterprise.ILinkedRecord[]|null);
+
+        /** ComplianceReportResponse auditFolders */
+        auditFolders?: (Enterprise.IAuditFolder[]|null);
+
+        /** ComplianceReportResponse auditFolderAccessors */
+        auditFolderAccessors?: (Enterprise.IAuditFolderAccessor[]|null);
     }
 
     /** Represents a ComplianceReportResponse. */
@@ -25861,6 +25953,12 @@ export namespace Enterprise {
 
         /** ComplianceReportResponse linkedRecords. */
         public linkedRecords: Enterprise.ILinkedRecord[];
+
+        /** ComplianceReportResponse auditFolders. */
+        public auditFolders: Enterprise.IAuditFolder[];
+
+        /** ComplianceReportResponse auditFolderAccessors. */
+        public auditFolderAccessors: Enterprise.IAuditFolderAccessor[];
 
         /**
          * Creates a new ComplianceReportResponse instance using the specified properties.
@@ -26019,6 +26117,114 @@ export namespace Enterprise {
 
         /**
          * Gets the default type url for AuditRecord
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AuditFolder. */
+    interface IAuditFolder {
+
+        /** AuditFolder folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** AuditFolder encryptedAuditData */
+        encryptedAuditData?: (Uint8Array|null);
+
+        /** AuditFolder parentFolderUid */
+        parentFolderUid?: (Uint8Array|null);
+
+        /** AuditFolder isDriveFolder */
+        isDriveFolder?: (boolean|null);
+    }
+
+    /**
+     * Folder identity and hierarchy carrier on the compliance response — the folder-level
+     * analog of {@link AuditRecord}. One entry per distinct folder that grants access to a
+     * record in the report: Drive folders from the {@code folder} table
+     * ({@code isDriveFolder = true}) and legacy shared folders from {@code shared_folder}
+     * ({@code isDriveFolder = false}).
+     *
+     * <p>Tree contract (Drive folders only): every non-root {@code parentFolderUid} referenced
+     * by a Drive {@code AuditFolder} resolves to another {@code AuditFolder} in the same
+     * response. The response therefore carries the full ancestor chain of every granting
+     * folder, so clients can reconstruct the nested path (e.g.
+     * {@code Engineering / DevOps / Prod Credentials}) without extra round-trips. Root-level
+     * Drive folders leave {@code parentFolderUid} unset. Legacy shared folders have no
+     * server-side hierarchy and are always flat entries ({@code parentFolderUid} unset).
+     *
+     * <p>Populated only when {@code FeatureFlag.KEEPER_DRIVE} is enabled (server-side
+     * population: KA-9098).
+     */
+    class AuditFolder implements IAuditFolder {
+
+        /**
+         * Constructs a new AuditFolder.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IAuditFolder);
+
+        /** AuditFolder folderUid. */
+        public folderUid: Uint8Array;
+
+        /** AuditFolder encryptedAuditData. */
+        public encryptedAuditData: Uint8Array;
+
+        /** AuditFolder parentFolderUid. */
+        public parentFolderUid: Uint8Array;
+
+        /** AuditFolder isDriveFolder. */
+        public isDriveFolder: boolean;
+
+        /**
+         * Creates a new AuditFolder instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AuditFolder instance
+         */
+        public static create(properties?: Enterprise.IAuditFolder): Enterprise.AuditFolder;
+
+        /**
+         * Encodes the specified AuditFolder message. Does not implicitly {@link Enterprise.AuditFolder.verify|verify} messages.
+         * @param message AuditFolder message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IAuditFolder, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AuditFolder message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AuditFolder
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.AuditFolder;
+
+        /**
+         * Creates an AuditFolder message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AuditFolder
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.AuditFolder;
+
+        /**
+         * Creates a plain object from an AuditFolder message. Also converts values to other types if specified.
+         * @param message AuditFolder
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.AuditFolder, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AuditFolder to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditFolder
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -26345,8 +26551,8 @@ export namespace Enterprise {
      * <p>For KeeperDrive records (gated on {@code FeatureFlag.KEEPER_DRIVE}),
      * {@code drive} is set with the Drive-native permission payload instead.
      * The two branches are mutually exclusive: clients should switch on
-     * {@code AuditRecord.source} (or {@code AuditUserRecord.source}) to decide
-     * which branch to read.
+     * {@code AuditRecord.isDriveRecord} (or {@code AuditUserRecord.isDriveRecord})
+     * to decide which branch to read.
      */
     class RecordPermission implements IRecordPermission {
 
@@ -26445,6 +26651,27 @@ export namespace Enterprise {
 
         /** DrivePermission folderPermissions */
         folderPermissions?: (Folder.IFolderPermissions|null);
+
+        /** DrivePermission canViewTitle */
+        canViewTitle?: (boolean|null);
+
+        /** DrivePermission canView */
+        canView?: (boolean|null);
+
+        /** DrivePermission canListAccess */
+        canListAccess?: (boolean|null);
+
+        /** DrivePermission canDelete */
+        canDelete?: (boolean|null);
+
+        /** DrivePermission canChangeOwnership */
+        canChangeOwnership?: (boolean|null);
+
+        /** DrivePermission canRequestAccess */
+        canRequestAccess?: (boolean|null);
+
+        /** DrivePermission canApproveAccess */
+        canApproveAccess?: (boolean|null);
     }
 
     /**
@@ -26456,6 +26683,26 @@ export namespace Enterprise {
      *
      * <p>Reuses {@link Folder.FolderPermissions} for the 13-bit Drive permission
      * set and {@link Folder.AccessType} for the access-type discriminant.
+     *
+     * <p>All permission fields are individual booleans, never an encoded bitmask.
+     *
+     * <p><b>Population by access path:</b>
+     * <ul>
+     * <li><b>Owner / direct record share</b> (entry in {@code UserRecord}): the top-level
+     * booleans are populated per-column from the user's own {@code record_access} row.</li>
+     * <li><b>Folder-derived</b> (entry in {@code SharedFolderRecord}): folder-derived Drive
+     * entries have no {@code record_access} row — permissions come from {@code folder_access}
+     * capability columns, so {@code canEdit <- folder_access.can_edit_records} and
+     * {@code canShare <- folder_access.can_update_access}, and {@code folderPermissions} is
+     * the field-wise OR of <b>all accessors'</b> {@code folder_access} rows on the granting
+     * folder (union semantics; {@code accessType} keeps whichever accessor was processed
+     * first). This union is lossy for individual members — use {@link AuditFolderAccessor}
+     * for per-accessor fidelity.</li>
+     * </ul>
+     *
+     * <p><b>accessType semantics:</b> {@code AT_USER} + {@code owner=true} = owner (see KA-9097
+     * Decision 4 re: AT_OWNER); {@code AT_USER} = direct record share or named shared-folder
+     * member; {@code AT_TEAM} = team-based shared-folder membership.
      */
     class DrivePermission implements IDrivePermission {
 
@@ -26485,6 +26732,27 @@ export namespace Enterprise {
 
         /** DrivePermission folderPermissions. */
         public folderPermissions?: (Folder.IFolderPermissions|null);
+
+        /** DrivePermission canViewTitle. */
+        public canViewTitle: boolean;
+
+        /** DrivePermission canView. */
+        public canView: boolean;
+
+        /** DrivePermission canListAccess. */
+        public canListAccess: boolean;
+
+        /** DrivePermission canDelete. */
+        public canDelete: boolean;
+
+        /** DrivePermission canChangeOwnership. */
+        public canChangeOwnership: boolean;
+
+        /** DrivePermission canRequestAccess. */
+        public canRequestAccess: boolean;
+
+        /** DrivePermission canApproveAccess. */
+        public canApproveAccess: boolean;
 
         /**
          * Creates a new DrivePermission instance using the specified properties.
@@ -27105,6 +27373,127 @@ export namespace Enterprise {
 
         /**
          * Gets the default type url for SharedFolderTeam
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of an AuditFolderAccessor. */
+    interface IAuditFolderAccessor {
+
+        /** AuditFolderAccessor folderUid */
+        folderUid?: (Uint8Array|null);
+
+        /** AuditFolderAccessor accessType */
+        accessType?: (Folder.AccessType|null);
+
+        /** AuditFolderAccessor enterpriseUserId */
+        enterpriseUserId?: (number|null);
+
+        /** AuditFolderAccessor teamUid */
+        teamUid?: (Uint8Array|null);
+
+        /** AuditFolderAccessor permissions */
+        permissions?: (Folder.IFolderPermissions|null);
+    }
+
+    /**
+     * Per-accessor Drive folder permissions — the unmerged counterpart to the folder-wide
+     * union carried in {@code SharedFolderRecord.recordPermissions} ({@link DrivePermission}).
+     *
+     * <p>Drive stores folder capabilities per accessor in {@code folder_access}, but the legacy
+     * compliance shape merges every accessor's row into a single per-(folder, record)
+     * {@code DrivePermission} (field-wise OR, {@code accessType} first-writer-wins), which
+     * over-reports low-privilege members (a view-only member shows {@code canEdit = true} if any
+     * other member has it). This message restores attribution: one entry per (folder, accessor),
+     * sized |accessors| per folder to match {@code folder_access} 1:1 — NOT |accessors| ×
+     * |records| — each carrying that accessor's own access type and folder permission set. The
+     * union {@code DrivePermission} entry on {@code SharedFolderRecord} is retained for backward
+     * compatibility.
+     *
+     * <p>The accessor is either an enterprise user (AT_USER, a named folder member) or a team
+     * (AT_TEAM, team-based membership), carried in the {@code accessor} oneof and disambiguated by
+     * {@code accessType}. User identity uses {@code enterpriseUserId} (anonymized for users outside
+     * the enterprise, exactly like {@code SharedFolderUser.enterpriseUserIds}); team identity uses
+     * {@code teamUid} (like {@code SharedFolderTeam.teamUids}). Populated only when {@code
+     * FeatureFlag.KEEPER_DRIVE} is enabled (server-side population per KA-9097 Decision 2 outcome:
+     * KA-9098).
+     */
+    class AuditFolderAccessor implements IAuditFolderAccessor {
+
+        /**
+         * Constructs a new AuditFolderAccessor.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Enterprise.IAuditFolderAccessor);
+
+        /** AuditFolderAccessor folderUid. */
+        public folderUid: Uint8Array;
+
+        /** AuditFolderAccessor accessType. */
+        public accessType: Folder.AccessType;
+
+        /** AuditFolderAccessor enterpriseUserId. */
+        public enterpriseUserId?: (number|null);
+
+        /** AuditFolderAccessor teamUid. */
+        public teamUid?: (Uint8Array|null);
+
+        /** AuditFolderAccessor permissions. */
+        public permissions?: (Folder.IFolderPermissions|null);
+
+        /** AuditFolderAccessor accessor. */
+        public accessor?: ("enterpriseUserId"|"teamUid");
+
+        /**
+         * Creates a new AuditFolderAccessor instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AuditFolderAccessor instance
+         */
+        public static create(properties?: Enterprise.IAuditFolderAccessor): Enterprise.AuditFolderAccessor;
+
+        /**
+         * Encodes the specified AuditFolderAccessor message. Does not implicitly {@link Enterprise.AuditFolderAccessor.verify|verify} messages.
+         * @param message AuditFolderAccessor message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Enterprise.IAuditFolderAccessor, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AuditFolderAccessor message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AuditFolderAccessor
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Enterprise.AuditFolderAccessor;
+
+        /**
+         * Creates an AuditFolderAccessor message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AuditFolderAccessor
+         */
+        public static fromObject(object: { [k: string]: any }): Enterprise.AuditFolderAccessor;
+
+        /**
+         * Creates a plain object from an AuditFolderAccessor message. Also converts values to other types if specified.
+         * @param message AuditFolderAccessor
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Enterprise.AuditFolderAccessor, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AuditFolderAccessor to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AuditFolderAccessor
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -35061,6 +35450,9 @@ export namespace Folder {
 
         /** FolderAccessData deniedAccess */
         deniedAccess?: (boolean|null);
+
+        /** FolderAccessData accessorName */
+        accessorName?: (string|null);
     }
 
     /** Represents a FolderAccessData. */
@@ -35107,6 +35499,9 @@ export namespace Folder {
 
         /** FolderAccessData deniedAccess. */
         public deniedAccess: boolean;
+
+        /** FolderAccessData accessorName. */
+        public accessorName: string;
 
         /**
          * Creates a new FolderAccessData instance using the specified properties.
@@ -42990,6 +43385,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements disallowedFeatures */
         disallowedFeatures?: (string[]|null);
+
+        /** AccountSummaryElements lockAlertsSiemsConfigs */
+        lockAlertsSiemsConfigs?: (boolean|null);
     }
 
     /** Represents an AccountSummaryElements. */
@@ -43060,6 +43458,9 @@ export namespace AccountSummary {
 
         /** AccountSummaryElements disallowedFeatures. */
         public disallowedFeatures: string[];
+
+        /** AccountSummaryElements lockAlertsSiemsConfigs. */
+        public lockAlertsSiemsConfigs: boolean;
 
         /**
          * Creates a new AccountSummaryElements instance using the specified properties.
@@ -47466,6 +47867,9 @@ export namespace Automator {
 
         /** AdminSetupAutomatorRequest encryptedTreeKey */
         encryptedTreeKey?: (Uint8Array|null);
+
+        /** AdminSetupAutomatorRequest enrollmentSecret */
+        enrollmentSecret?: (string|null);
     }
 
     /**
@@ -47500,6 +47904,9 @@ export namespace Automator {
 
         /** AdminSetupAutomatorRequest encryptedTreeKey. */
         public encryptedTreeKey: Uint8Array;
+
+        /** AdminSetupAutomatorRequest enrollmentSecret. */
+        public enrollmentSecret: string;
 
         /**
          * Creates a new AdminSetupAutomatorRequest instance using the specified properties.
@@ -69448,7 +69855,10 @@ export namespace record {
                 ALREADY_SHARED = 3,
                 NOT_ALLOWED_TO_SHARE = 4,
                 ACCESS_DENIED = 5,
-                NOT_ALLOWED_TO_SET_PERMISSIONS = 6
+                NOT_ALLOWED_TO_SET_PERMISSIONS = 6,
+                FORBIDDEN_KEY_TYPE = 7,
+                INVALID_RECORD_KEY = 8,
+                SERVER_ERROR = 15
             }
 
             /** Properties of a RevokedAccess. */
@@ -83538,6 +83948,9 @@ export namespace Router {
 
         /** RouterRecordRotationRequest serviceResources */
         serviceResources?: (PAM.IUidList|null);
+
+        /** RouterRecordRotationRequest serviceNames */
+        serviceNames?: (PAM.IPAMServiceNames[]|null);
     }
 
     /** Represents a RouterRecordRotationRequest. */
@@ -83591,6 +84004,9 @@ export namespace Router {
         /** RouterRecordRotationRequest serviceResources. */
         public serviceResources?: (PAM.IUidList|null);
 
+        /** RouterRecordRotationRequest serviceNames. */
+        public serviceNames: PAM.IPAMServiceNames[];
+
         /**
          * Creates a new RouterRecordRotationRequest instance using the specified properties.
          * @param [properties] Properties to set
@@ -83639,6 +84055,85 @@ export namespace Router {
 
         /**
          * Gets the default type url for RouterRecordRotationRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a RouterRecordAddRequest. */
+    interface IRouterRecordAddRequest {
+
+        /** RouterRecordAddRequest enterpriseUserId */
+        enterpriseUserId?: (number|null);
+
+        /** RouterRecordAddRequest request */
+        request?: (record.v3.IRecordsAddRequest|null);
+    }
+
+    /** Represents a RouterRecordAddRequest. */
+    class RouterRecordAddRequest implements IRouterRecordAddRequest {
+
+        /**
+         * Constructs a new RouterRecordAddRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Router.IRouterRecordAddRequest);
+
+        /** RouterRecordAddRequest enterpriseUserId. */
+        public enterpriseUserId: number;
+
+        /** RouterRecordAddRequest request. */
+        public request?: (record.v3.IRecordsAddRequest|null);
+
+        /**
+         * Creates a new RouterRecordAddRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RouterRecordAddRequest instance
+         */
+        public static create(properties?: Router.IRouterRecordAddRequest): Router.RouterRecordAddRequest;
+
+        /**
+         * Encodes the specified RouterRecordAddRequest message. Does not implicitly {@link Router.RouterRecordAddRequest.verify|verify} messages.
+         * @param message RouterRecordAddRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Router.IRouterRecordAddRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RouterRecordAddRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RouterRecordAddRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Router.RouterRecordAddRequest;
+
+        /**
+         * Creates a RouterRecordAddRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RouterRecordAddRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Router.RouterRecordAddRequest;
+
+        /**
+         * Creates a plain object from a RouterRecordAddRequest message. Also converts values to other types if specified.
+         * @param message RouterRecordAddRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Router.RouterRecordAddRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RouterRecordAddRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RouterRecordAddRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -86422,6 +86917,79 @@ export namespace Router {
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
+
+    /** Properties of a RecordsChangedRequest. */
+    interface IRecordsChangedRequest {
+
+        /** RecordsChangedRequest sharedFolderUids */
+        sharedFolderUids?: (Uint8Array[]|null);
+    }
+
+    /** Represents a RecordsChangedRequest. */
+    class RecordsChangedRequest implements IRecordsChangedRequest {
+
+        /**
+         * Constructs a new RecordsChangedRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: Router.IRecordsChangedRequest);
+
+        /** RecordsChangedRequest sharedFolderUids. */
+        public sharedFolderUids: Uint8Array[];
+
+        /**
+         * Creates a new RecordsChangedRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RecordsChangedRequest instance
+         */
+        public static create(properties?: Router.IRecordsChangedRequest): Router.RecordsChangedRequest;
+
+        /**
+         * Encodes the specified RecordsChangedRequest message. Does not implicitly {@link Router.RecordsChangedRequest.verify|verify} messages.
+         * @param message RecordsChangedRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: Router.IRecordsChangedRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RecordsChangedRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RecordsChangedRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Router.RecordsChangedRequest;
+
+        /**
+         * Creates a RecordsChangedRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RecordsChangedRequest
+         */
+        public static fromObject(object: { [k: string]: any }): Router.RecordsChangedRequest;
+
+        /**
+         * Creates a plain object from a RecordsChangedRequest message. Also converts values to other types if specified.
+         * @param message RecordsChangedRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: Router.RecordsChangedRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RecordsChangedRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for RecordsChangedRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
 }
 
 /** Namespace PAM. */
@@ -88511,6 +89079,158 @@ export namespace PAM {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a PAMConfigurationControllerInfo. */
+    interface IPAMConfigurationControllerInfo {
+
+        /** PAMConfigurationControllerInfo configurationUid */
+        configurationUid?: (Uint8Array|null);
+
+        /** PAMConfigurationControllerInfo controller */
+        controller?: (PAM.IPAMController|null);
+    }
+
+    /** Represents a PAMConfigurationControllerInfo. */
+    class PAMConfigurationControllerInfo implements IPAMConfigurationControllerInfo {
+
+        /**
+         * Constructs a new PAMConfigurationControllerInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IPAMConfigurationControllerInfo);
+
+        /** PAMConfigurationControllerInfo configurationUid. */
+        public configurationUid: Uint8Array;
+
+        /** PAMConfigurationControllerInfo controller. */
+        public controller?: (PAM.IPAMController|null);
+
+        /**
+         * Creates a new PAMConfigurationControllerInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PAMConfigurationControllerInfo instance
+         */
+        public static create(properties?: PAM.IPAMConfigurationControllerInfo): PAM.PAMConfigurationControllerInfo;
+
+        /**
+         * Encodes the specified PAMConfigurationControllerInfo message. Does not implicitly {@link PAM.PAMConfigurationControllerInfo.verify|verify} messages.
+         * @param message PAMConfigurationControllerInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IPAMConfigurationControllerInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PAMConfigurationControllerInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PAMConfigurationControllerInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.PAMConfigurationControllerInfo;
+
+        /**
+         * Creates a PAMConfigurationControllerInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PAMConfigurationControllerInfo
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.PAMConfigurationControllerInfo;
+
+        /**
+         * Creates a plain object from a PAMConfigurationControllerInfo message. Also converts values to other types if specified.
+         * @param message PAMConfigurationControllerInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.PAMConfigurationControllerInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PAMConfigurationControllerInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PAMConfigurationControllerInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PAMConfigurationControllersResponse. */
+    interface IPAMConfigurationControllersResponse {
+
+        /** PAMConfigurationControllersResponse configurationControllers */
+        configurationControllers?: (PAM.IPAMConfigurationControllerInfo[]|null);
+    }
+
+    /** Represents a PAMConfigurationControllersResponse. */
+    class PAMConfigurationControllersResponse implements IPAMConfigurationControllersResponse {
+
+        /**
+         * Constructs a new PAMConfigurationControllersResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IPAMConfigurationControllersResponse);
+
+        /** PAMConfigurationControllersResponse configurationControllers. */
+        public configurationControllers: PAM.IPAMConfigurationControllerInfo[];
+
+        /**
+         * Creates a new PAMConfigurationControllersResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PAMConfigurationControllersResponse instance
+         */
+        public static create(properties?: PAM.IPAMConfigurationControllersResponse): PAM.PAMConfigurationControllersResponse;
+
+        /**
+         * Encodes the specified PAMConfigurationControllersResponse message. Does not implicitly {@link PAM.PAMConfigurationControllersResponse.verify|verify} messages.
+         * @param message PAMConfigurationControllersResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IPAMConfigurationControllersResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PAMConfigurationControllersResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PAMConfigurationControllersResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.PAMConfigurationControllersResponse;
+
+        /**
+         * Creates a PAMConfigurationControllersResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PAMConfigurationControllersResponse
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.PAMConfigurationControllersResponse;
+
+        /**
+         * Creates a plain object from a PAMConfigurationControllersResponse message. Also converts values to other types if specified.
+         * @param message PAMConfigurationControllersResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.PAMConfigurationControllersResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PAMConfigurationControllersResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PAMConfigurationControllersResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a ConfigurationAddRequest. */
     interface IConfigurationAddRequest {
 
@@ -89407,6 +90127,85 @@ export namespace PAM {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** Properties of a PAMServiceNames. */
+    interface IPAMServiceNames {
+
+        /** PAMServiceNames resourceUid */
+        resourceUid?: (Uint8Array|null);
+
+        /** PAMServiceNames names */
+        names?: (Uint8Array|null);
+    }
+
+    /** Represents a PAMServiceNames. */
+    class PAMServiceNames implements IPAMServiceNames {
+
+        /**
+         * Constructs a new PAMServiceNames.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IPAMServiceNames);
+
+        /** PAMServiceNames resourceUid. */
+        public resourceUid: Uint8Array;
+
+        /** PAMServiceNames names. */
+        public names: Uint8Array;
+
+        /**
+         * Creates a new PAMServiceNames instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PAMServiceNames instance
+         */
+        public static create(properties?: PAM.IPAMServiceNames): PAM.PAMServiceNames;
+
+        /**
+         * Encodes the specified PAMServiceNames message. Does not implicitly {@link PAM.PAMServiceNames.verify|verify} messages.
+         * @param message PAMServiceNames message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IPAMServiceNames, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PAMServiceNames message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PAMServiceNames
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.PAMServiceNames;
+
+        /**
+         * Creates a PAMServiceNames message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PAMServiceNames
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.PAMServiceNames;
+
+        /**
+         * Creates a plain object from a PAMServiceNames message. Also converts values to other types if specified.
+         * @param message PAMServiceNames
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.PAMServiceNames, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PAMServiceNames to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PAMServiceNames
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a PAMResourceConfig. */
     interface IPAMResourceConfig {
 
@@ -89607,6 +90406,183 @@ export namespace PAM {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    /** GitHubScope enum. */
+    enum GitHubScope {
+        REPOSITORY = 0,
+        ORGANIZATION = 1
+    }
+
+    /** GitHubOrganizationVisibility enum. */
+    enum GitHubOrganizationVisibility {
+        ALL = 0,
+        PRIVATE = 1,
+        SELECTED = 2
+    }
+
+    /** Properties of a GitHubRepository. */
+    interface IGitHubRepository {
+
+        /** GitHubRepository name */
+        name?: (Uint8Array|null);
+    }
+
+    /** Represents a GitHubRepository. */
+    class GitHubRepository implements IGitHubRepository {
+
+        /**
+         * Constructs a new GitHubRepository.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IGitHubRepository);
+
+        /** GitHubRepository name. */
+        public name: Uint8Array;
+
+        /**
+         * Creates a new GitHubRepository instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GitHubRepository instance
+         */
+        public static create(properties?: PAM.IGitHubRepository): PAM.GitHubRepository;
+
+        /**
+         * Encodes the specified GitHubRepository message. Does not implicitly {@link PAM.GitHubRepository.verify|verify} messages.
+         * @param message GitHubRepository message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IGitHubRepository, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GitHubRepository message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GitHubRepository
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.GitHubRepository;
+
+        /**
+         * Creates a GitHubRepository message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GitHubRepository
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.GitHubRepository;
+
+        /**
+         * Creates a plain object from a GitHubRepository message. Also converts values to other types if specified.
+         * @param message GitHubRepository
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.GitHubRepository, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GitHubRepository to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GitHubRepository
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GitHubConfig. */
+    interface IGitHubConfig {
+
+        /** GitHubConfig scope */
+        scope?: (PAM.GitHubScope|null);
+
+        /** GitHubConfig owner */
+        owner?: (Uint8Array|null);
+
+        /** GitHubConfig organizationVisibility */
+        organizationVisibility?: (PAM.GitHubOrganizationVisibility|null);
+
+        /** GitHubConfig repos */
+        repos?: (PAM.IGitHubRepository[]|null);
+    }
+
+    /** Represents a GitHubConfig. */
+    class GitHubConfig implements IGitHubConfig {
+
+        /**
+         * Constructs a new GitHubConfig.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: PAM.IGitHubConfig);
+
+        /** GitHubConfig scope. */
+        public scope?: (PAM.GitHubScope|null);
+
+        /** GitHubConfig owner. */
+        public owner: Uint8Array;
+
+        /** GitHubConfig organizationVisibility. */
+        public organizationVisibility?: (PAM.GitHubOrganizationVisibility|null);
+
+        /** GitHubConfig repos. */
+        public repos: PAM.IGitHubRepository[];
+
+        /**
+         * Creates a new GitHubConfig instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GitHubConfig instance
+         */
+        public static create(properties?: PAM.IGitHubConfig): PAM.GitHubConfig;
+
+        /**
+         * Encodes the specified GitHubConfig message. Does not implicitly {@link PAM.GitHubConfig.verify|verify} messages.
+         * @param message GitHubConfig message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: PAM.IGitHubConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GitHubConfig message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GitHubConfig
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): PAM.GitHubConfig;
+
+        /**
+         * Creates a GitHubConfig message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GitHubConfig
+         */
+        public static fromObject(object: { [k: string]: any }): PAM.GitHubConfig;
+
+        /**
+         * Creates a plain object from a GitHubConfig message. Also converts values to other types if specified.
+         * @param message GitHubConfig
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: PAM.GitHubConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GitHubConfig to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GitHubConfig
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
     /** Properties of a PAMUniversalSyncConfig. */
     interface IPAMUniversalSyncConfig {
 
@@ -89627,6 +90603,9 @@ export namespace PAM {
 
         /** PAMUniversalSyncConfig vaultName */
         vaultName?: (Uint8Array|null);
+
+        /** PAMUniversalSyncConfig github */
+        github?: (PAM.IGitHubConfig|null);
     }
 
     /** Represents a PAMUniversalSyncConfig. */
@@ -89655,6 +90634,9 @@ export namespace PAM {
 
         /** PAMUniversalSyncConfig vaultName. */
         public vaultName?: (Uint8Array|null);
+
+        /** PAMUniversalSyncConfig github. */
+        public github?: (PAM.IGitHubConfig|null);
 
         /**
          * Creates a new PAMUniversalSyncConfig instance using the specified properties.
@@ -90919,6 +91901,30 @@ export namespace folder {
                  * @returns Promise
                  */
                 public trashcanRestore(request: folder.v3.remove.ITrashcanRestoreRequest): Promise<folder.v3.remove.TrashcanRestoreResponse>;
+
+                /**
+                 * Permanently delete everything in the caller's trash (KA-9109).
+                 * PREVIEW: Enumerates the trash, returns the aggregate impact, the items it
+                 * will refuse, and a signed confirmation token.
+                 * CONFIRM: Validates the token, re-checks, and destroys the items.
+                 * Has no per-item UID input, hence its own rpc rather than an operation type
+                 * on remove_record / remove_folder.
+                 * @param request EmptyTrashcanRequest message or plain object
+                 * @param callback Node-style callback called with the error, if any, and EmptyTrashcanResponse
+                 */
+                public trashcanEmpty(request: folder.v3.remove.IEmptyTrashcanRequest, callback: folder.v3.remove.RemoveService.TrashcanEmptyCallback): void;
+
+                /**
+                 * Permanently delete everything in the caller's trash (KA-9109).
+                 * PREVIEW: Enumerates the trash, returns the aggregate impact, the items it
+                 * will refuse, and a signed confirmation token.
+                 * CONFIRM: Validates the token, re-checks, and destroys the items.
+                 * Has no per-item UID input, hence its own rpc rather than an operation type
+                 * on remove_record / remove_folder.
+                 * @param request EmptyTrashcanRequest message or plain object
+                 * @returns Promise
+                 */
+                public trashcanEmpty(request: folder.v3.remove.IEmptyTrashcanRequest): Promise<folder.v3.remove.EmptyTrashcanResponse>;
             }
 
             namespace RemoveService {
@@ -90943,6 +91949,13 @@ export namespace folder {
                  * @param [response] TrashcanRestoreResponse
                  */
                 type TrashcanRestoreCallback = (error: (Error|null), response?: folder.v3.remove.TrashcanRestoreResponse) => void;
+
+                /**
+                 * Callback as used by {@link folder.v3.remove.RemoveService#trashcanEmpty}.
+                 * @param error Error, if any
+                 * @param [response] EmptyTrashcanResponse
+                 */
+                type TrashcanEmptyCallback = (error: (Error|null), response?: folder.v3.remove.EmptyTrashcanResponse) => void;
             }
 
             /** RemoveAction enum. */
@@ -90956,7 +91969,8 @@ export namespace folder {
                 RECORD_OPERATION_UNKNOWN = 0,
                 UNLINK_FROM_FOLDER = 1,
                 MOVE_TO_FOLDER_TRASH = 2,
-                MOVE_TO_OWNER_TRASH = 3
+                MOVE_TO_OWNER_TRASH = 3,
+                DELETE_PERMANENT = 4
             }
 
             /** FolderOperationType enum. */
@@ -90974,7 +91988,10 @@ export namespace folder {
                 REMOVE_ERROR_ACCESS_DENIED = 2,
                 REMOVE_ERROR_TRASHCAN_FOLDER = 3,
                 REMOVE_ERROR_ROOT_FOLDER = 4,
-                REMOVE_ERROR_DESCENDANT_DENIED = 5
+                REMOVE_ERROR_DESCENDANT_DENIED = 5,
+                REMOVE_ERROR_NOT_IN_TRASH = 6,
+                REMOVE_ERROR_RETENTION_NOT_MET = 7,
+                REMOVE_ERROR_STILL_REFERENCED = 8
             }
 
             /** RemoveStatus enum. */
@@ -92559,6 +93576,194 @@ export namespace folder {
 
                 /**
                  * Gets the default type url for TrashcanRestoreRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an EmptyTrashcanRequest. */
+            interface IEmptyTrashcanRequest {
+
+                /** EmptyTrashcanRequest action */
+                action?: (folder.v3.remove.RemoveAction|null);
+
+                /** EmptyTrashcanRequest confirmationToken */
+                confirmationToken?: (Uint8Array|null);
+
+                /** EmptyTrashcanRequest trashcanUid */
+                trashcanUid?: (Uint8Array|null);
+            }
+
+            /** Represents an EmptyTrashcanRequest. */
+            class EmptyTrashcanRequest implements IEmptyTrashcanRequest {
+
+                /**
+                 * Constructs a new EmptyTrashcanRequest.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IEmptyTrashcanRequest);
+
+                /** EmptyTrashcanRequest action. */
+                public action: folder.v3.remove.RemoveAction;
+
+                /** EmptyTrashcanRequest confirmationToken. */
+                public confirmationToken: Uint8Array;
+
+                /** EmptyTrashcanRequest trashcanUid. */
+                public trashcanUid: Uint8Array;
+
+                /**
+                 * Creates a new EmptyTrashcanRequest instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns EmptyTrashcanRequest instance
+                 */
+                public static create(properties?: folder.v3.remove.IEmptyTrashcanRequest): folder.v3.remove.EmptyTrashcanRequest;
+
+                /**
+                 * Encodes the specified EmptyTrashcanRequest message. Does not implicitly {@link folder.v3.remove.EmptyTrashcanRequest.verify|verify} messages.
+                 * @param message EmptyTrashcanRequest message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IEmptyTrashcanRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an EmptyTrashcanRequest message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns EmptyTrashcanRequest
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.EmptyTrashcanRequest;
+
+                /**
+                 * Creates an EmptyTrashcanRequest message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns EmptyTrashcanRequest
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.EmptyTrashcanRequest;
+
+                /**
+                 * Creates a plain object from an EmptyTrashcanRequest message. Also converts values to other types if specified.
+                 * @param message EmptyTrashcanRequest
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.EmptyTrashcanRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this EmptyTrashcanRequest to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for EmptyTrashcanRequest
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of an EmptyTrashcanResponse. */
+            interface IEmptyTrashcanResponse {
+
+                /** EmptyTrashcanResponse confirmationToken */
+                confirmationToken?: (Uint8Array|null);
+
+                /** EmptyTrashcanResponse tokenExpiresAt */
+                tokenExpiresAt?: (number|null);
+
+                /** EmptyTrashcanResponse impact */
+                impact?: (folder.v3.remove.IImpact|null);
+
+                /** EmptyTrashcanResponse results */
+                results?: (folder.v3.remove.IRemoveResult[]|null);
+
+                /** EmptyTrashcanResponse errorMessage */
+                errorMessage?: (string|null);
+
+                /** EmptyTrashcanResponse moreRemaining */
+                moreRemaining?: (boolean|null);
+            }
+
+            /** Represents an EmptyTrashcanResponse. */
+            class EmptyTrashcanResponse implements IEmptyTrashcanResponse {
+
+                /**
+                 * Constructs a new EmptyTrashcanResponse.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: folder.v3.remove.IEmptyTrashcanResponse);
+
+                /** EmptyTrashcanResponse confirmationToken. */
+                public confirmationToken: Uint8Array;
+
+                /** EmptyTrashcanResponse tokenExpiresAt. */
+                public tokenExpiresAt: number;
+
+                /** EmptyTrashcanResponse impact. */
+                public impact?: (folder.v3.remove.IImpact|null);
+
+                /** EmptyTrashcanResponse results. */
+                public results: folder.v3.remove.IRemoveResult[];
+
+                /** EmptyTrashcanResponse errorMessage. */
+                public errorMessage: string;
+
+                /** EmptyTrashcanResponse moreRemaining. */
+                public moreRemaining: boolean;
+
+                /**
+                 * Creates a new EmptyTrashcanResponse instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns EmptyTrashcanResponse instance
+                 */
+                public static create(properties?: folder.v3.remove.IEmptyTrashcanResponse): folder.v3.remove.EmptyTrashcanResponse;
+
+                /**
+                 * Encodes the specified EmptyTrashcanResponse message. Does not implicitly {@link folder.v3.remove.EmptyTrashcanResponse.verify|verify} messages.
+                 * @param message EmptyTrashcanResponse message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: folder.v3.remove.IEmptyTrashcanResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes an EmptyTrashcanResponse message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns EmptyTrashcanResponse
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): folder.v3.remove.EmptyTrashcanResponse;
+
+                /**
+                 * Creates an EmptyTrashcanResponse message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns EmptyTrashcanResponse
+                 */
+                public static fromObject(object: { [k: string]: any }): folder.v3.remove.EmptyTrashcanResponse;
+
+                /**
+                 * Creates a plain object from an EmptyTrashcanResponse message. Also converts values to other types if specified.
+                 * @param message EmptyTrashcanResponse
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: folder.v3.remove.EmptyTrashcanResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this EmptyTrashcanResponse to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for EmptyTrashcanResponse
                  * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
                  * @returns The default type url
                  */

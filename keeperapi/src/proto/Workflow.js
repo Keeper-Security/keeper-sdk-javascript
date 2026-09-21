@@ -1,5 +1,7 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { NotificationCenter } from './NotificationCenter.js';
+import { GraphSync } from './GraphSync.js';
 
 export const Workflow = $root.Workflow = (() => {
 
@@ -440,7 +442,7 @@ export const Workflow = $root.Workflow = (() => {
             if (q > $util.recursionLimit)
                 throw Error("max depth exceeded");
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                $root.GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
             if (message.approvalsNeeded != null && Object.hasOwnProperty.call(message, "approvalsNeeded"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.approvalsNeeded);
             if (message.checkoutNeeded != null && Object.hasOwnProperty.call(message, "checkoutNeeded"))
@@ -485,7 +487,7 @@ export const Workflow = $root.Workflow = (() => {
                     break;
                 switch (tag >>> 3) {
                 case 1: {
-                        message.resource = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.resource = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 2: {
@@ -549,7 +551,7 @@ export const Workflow = $root.Workflow = (() => {
             if (object.resource != null) {
                 if (!$util.isObject(object.resource))
                     throw TypeError(".Workflow.WorkflowParameters.resource: object expected");
-                message.resource = $root.GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
+                message.resource = GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
             }
             if (object.approvalsNeeded != null)
                 message.approvalsNeeded = object.approvalsNeeded | 0;
@@ -613,7 +615,7 @@ export const Workflow = $root.Workflow = (() => {
                 object.allowedTimes = null;
             }
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                object.resource = $root.GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
+                object.resource = GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
             if (message.approvalsNeeded != null && Object.hasOwnProperty.call(message, "approvalsNeeded"))
                 object.approvalsNeeded = message.approvalsNeeded;
             if (message.checkoutNeeded != null && Object.hasOwnProperty.call(message, "checkoutNeeded"))
@@ -1564,7 +1566,7 @@ export const Workflow = $root.Workflow = (() => {
             if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int64(message.userId);
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                $root.GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
             if (message.startedOn != null && Object.hasOwnProperty.call(message, "startedOn"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.startedOn);
             if (message.expiresOn != null && Object.hasOwnProperty.call(message, "expiresOn"))
@@ -1579,7 +1581,7 @@ export const Workflow = $root.Workflow = (() => {
                 writer.uint32(/* id 9, wireType 2 =*/74).string(message.user);
             if (message.workflowParameters != null && message.workflowParameters.length)
                 for (let i = 0; i < message.workflowParameters.length; ++i)
-                    $root.NotificationCenter.NotificationParameter.encode(message.workflowParameters[i], writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
+                    NotificationCenter.NotificationParameter.encode(message.workflowParameters[i], writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
             if (message.escalated != null && Object.hasOwnProperty.call(message, "escalated"))
                 writer.uint32(/* id 11, wireType 0 =*/88).bool(message.escalated);
             if (message.ephemeral != null && Object.hasOwnProperty.call(message, "ephemeral"))
@@ -1620,7 +1622,7 @@ export const Workflow = $root.Workflow = (() => {
                         break;
                     }
                 case 3: {
-                        message.resource = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.resource = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 4: {
@@ -1650,7 +1652,7 @@ export const Workflow = $root.Workflow = (() => {
                 case 10: {
                         if (!(message.workflowParameters && message.workflowParameters.length))
                             message.workflowParameters = [];
-                        message.workflowParameters.push($root.NotificationCenter.NotificationParameter.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.workflowParameters.push(NotificationCenter.NotificationParameter.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 11: {
@@ -1704,7 +1706,7 @@ export const Workflow = $root.Workflow = (() => {
             if (object.resource != null) {
                 if (!$util.isObject(object.resource))
                     throw TypeError(".Workflow.WorkflowProcess.resource: object expected");
-                message.resource = $root.GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
+                message.resource = GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
             }
             if (object.startedOn != null)
                 if ($util.Long)
@@ -1745,7 +1747,7 @@ export const Workflow = $root.Workflow = (() => {
                 for (let i = 0; i < object.workflowParameters.length; ++i) {
                     if (!$util.isObject(object.workflowParameters[i]))
                         throw TypeError(".Workflow.WorkflowProcess.workflowParameters: object expected");
-                    message.workflowParameters[i] = $root.NotificationCenter.NotificationParameter.fromObject(object.workflowParameters[i], long + 1);
+                    message.workflowParameters[i] = NotificationCenter.NotificationParameter.fromObject(object.workflowParameters[i], long + 1);
                 }
             }
             if (object.escalated != null)
@@ -1827,7 +1829,7 @@ export const Workflow = $root.Workflow = (() => {
                 else
                     object.userId = options.longs === String ? $util.Long.prototype.toString.call(message.userId) : options.longs === Number ? new $util.LongBits(message.userId.low >>> 0, message.userId.high >>> 0).toNumber() : message.userId;
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                object.resource = $root.GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
+                object.resource = GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
             if (message.startedOn != null && Object.hasOwnProperty.call(message, "startedOn"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.startedOn = typeof message.startedOn === "number" ? BigInt(message.startedOn) : $util.Long.fromBits(message.startedOn.low >>> 0, message.startedOn.high >>> 0, false).toBigInt();
@@ -1853,7 +1855,7 @@ export const Workflow = $root.Workflow = (() => {
             if (message.workflowParameters && message.workflowParameters.length) {
                 object.workflowParameters = [];
                 for (let j = 0; j < message.workflowParameters.length; ++j)
-                    object.workflowParameters[j] = $root.NotificationCenter.NotificationParameter.toObject(message.workflowParameters[j], options, q + 1);
+                    object.workflowParameters[j] = NotificationCenter.NotificationParameter.toObject(message.workflowParameters[j], options, q + 1);
             }
             if (message.escalated != null && Object.hasOwnProperty.call(message, "escalated"))
                 object.escalated = message.escalated;
@@ -2514,7 +2516,7 @@ export const Workflow = $root.Workflow = (() => {
             if (message.flowUid != null && Object.hasOwnProperty.call(message, "flowUid"))
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.flowUid);
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                $root.GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
             if (message.status != null && Object.hasOwnProperty.call(message, "status"))
                 $root.Workflow.WorkflowStatus.encode(message.status, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
             return writer;
@@ -2549,7 +2551,7 @@ export const Workflow = $root.Workflow = (() => {
                         break;
                     }
                 case 2: {
-                        message.resource = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.resource = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 3: {
@@ -2590,7 +2592,7 @@ export const Workflow = $root.Workflow = (() => {
             if (object.resource != null) {
                 if (!$util.isObject(object.resource))
                     throw TypeError(".Workflow.WorkflowState.resource: object expected");
-                message.resource = $root.GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
+                message.resource = GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
             }
             if (object.status != null) {
                 if (!$util.isObject(object.status))
@@ -2631,7 +2633,7 @@ export const Workflow = $root.Workflow = (() => {
             if (message.flowUid != null && Object.hasOwnProperty.call(message, "flowUid"))
                 object.flowUid = options.bytes === String ? $util.base64.encode(message.flowUid, 0, message.flowUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.flowUid) : message.flowUid;
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                object.resource = $root.GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
+                object.resource = GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
             if (message.status != null && Object.hasOwnProperty.call(message, "status"))
                 object.status = $root.Workflow.WorkflowStatus.toObject(message.status, options, q + 1);
             return object;
@@ -2745,7 +2747,7 @@ export const Workflow = $root.Workflow = (() => {
             if (q > $util.recursionLimit)
                 throw Error("max depth exceeded");
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                $root.GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.resource, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.reason);
             if (message.ticket != null && Object.hasOwnProperty.call(message, "ticket"))
@@ -2778,7 +2780,7 @@ export const Workflow = $root.Workflow = (() => {
                     break;
                 switch (tag >>> 3) {
                 case 1: {
-                        message.resource = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.resource = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 2: {
@@ -2818,7 +2820,7 @@ export const Workflow = $root.Workflow = (() => {
             if (object.resource != null) {
                 if (!$util.isObject(object.resource))
                     throw TypeError(".Workflow.WorkflowAccessRequest.resource: object expected");
-                message.resource = $root.GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
+                message.resource = GraphSync.GraphSyncRef.fromObject(object.resource, long + 1);
             }
             if (object.reason != null)
                 if (typeof object.reason === "string")
@@ -2868,7 +2870,7 @@ export const Workflow = $root.Workflow = (() => {
                 }
             }
             if (message.resource != null && Object.hasOwnProperty.call(message, "resource"))
-                object.resource = $root.GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
+                object.resource = GraphSync.GraphSyncRef.toObject(message.resource, options, q + 1);
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
                 object.reason = options.bytes === String ? $util.base64.encode(message.reason, 0, message.reason.length) : options.bytes === Array ? Array.prototype.slice.call(message.reason) : message.reason;
             if (message.ticket != null && Object.hasOwnProperty.call(message, "ticket"))
@@ -3884,9 +3886,9 @@ export const Workflow = $root.Workflow = (() => {
             if (q > $util.recursionLimit)
                 throw Error("max depth exceeded");
             if (message.flowRef != null && Object.hasOwnProperty.call(message, "flowRef"))
-                $root.GraphSync.GraphSyncRef.encode(message.flowRef, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.flowRef, writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
             if (message.approverRef != null && Object.hasOwnProperty.call(message, "approverRef"))
-                $root.GraphSync.GraphSyncRef.encode(message.approverRef, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.approverRef, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
             if (message.kind != null && Object.hasOwnProperty.call(message, "kind"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.kind);
             if (message.notifyAtMs != null && Object.hasOwnProperty.call(message, "notifyAtMs"))
@@ -3923,11 +3925,11 @@ export const Workflow = $root.Workflow = (() => {
                     break;
                 switch (tag >>> 3) {
                 case 1: {
-                        message.flowRef = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.flowRef = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 2: {
-                        message.approverRef = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.approverRef = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 3: {
@@ -3975,12 +3977,12 @@ export const Workflow = $root.Workflow = (() => {
             if (object.flowRef != null) {
                 if (!$util.isObject(object.flowRef))
                     throw TypeError(".Workflow.ApprovalQueueEntry.flowRef: object expected");
-                message.flowRef = $root.GraphSync.GraphSyncRef.fromObject(object.flowRef, long + 1);
+                message.flowRef = GraphSync.GraphSyncRef.fromObject(object.flowRef, long + 1);
             }
             if (object.approverRef != null) {
                 if (!$util.isObject(object.approverRef))
                     throw TypeError(".Workflow.ApprovalQueueEntry.approverRef: object expected");
-                message.approverRef = $root.GraphSync.GraphSyncRef.fromObject(object.approverRef, long + 1);
+                message.approverRef = GraphSync.GraphSyncRef.fromObject(object.approverRef, long + 1);
             }
             switch (object.kind) {
             default:
@@ -4052,9 +4054,9 @@ export const Workflow = $root.Workflow = (() => {
                     object.notifyAtMs = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
             }
             if (message.flowRef != null && Object.hasOwnProperty.call(message, "flowRef"))
-                object.flowRef = $root.GraphSync.GraphSyncRef.toObject(message.flowRef, options, q + 1);
+                object.flowRef = GraphSync.GraphSyncRef.toObject(message.flowRef, options, q + 1);
             if (message.approverRef != null && Object.hasOwnProperty.call(message, "approverRef"))
-                object.approverRef = $root.GraphSync.GraphSyncRef.toObject(message.approverRef, options, q + 1);
+                object.approverRef = GraphSync.GraphSyncRef.toObject(message.approverRef, options, q + 1);
             if (message.kind != null && Object.hasOwnProperty.call(message, "kind"))
                 object.kind = options.enums === String ? $root.Workflow.ApprovalQueueKind[message.kind] === undefined ? message.kind : $root.Workflow.ApprovalQueueKind[message.kind] : message.kind;
             if (message.notifyAtMs != null && Object.hasOwnProperty.call(message, "notifyAtMs"))

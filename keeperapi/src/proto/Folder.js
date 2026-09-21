@@ -1,5 +1,7 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Records } from './Records.js';
+import { common } from './common.js';
 
 export const Folder = $root.Folder = (() => {
 
@@ -3918,7 +3920,7 @@ export const Folder = $root.Folder = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
-                object.timerNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : $root.Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
+                object.timerNotificationType = options.enums === String ? Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
             if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
                 object.rotateOnExpiration = message.rotateOnExpiration;
             return object;
@@ -4316,7 +4318,7 @@ export const Folder = $root.Folder = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
-                object.timerNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : $root.Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
+                object.timerNotificationType = options.enums === String ? Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
             if (message.typedSharedFolderKey != null && Object.hasOwnProperty.call(message, "typedSharedFolderKey"))
                 object.typedSharedFolderKey = $root.Folder.EncryptedDataKey.toObject(message.typedSharedFolderKey, options, q + 1);
             if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
@@ -4689,7 +4691,7 @@ export const Folder = $root.Folder = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.timerNotificationType != null && Object.hasOwnProperty.call(message, "timerNotificationType"))
-                object.timerNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : $root.Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
+                object.timerNotificationType = options.enums === String ? Records.TimerNotificationType[message.timerNotificationType] === undefined ? message.timerNotificationType : Records.TimerNotificationType[message.timerNotificationType] : message.timerNotificationType;
             if (message.typedSharedFolderKey != null && Object.hasOwnProperty.call(message, "typedSharedFolderKey"))
                 object.typedSharedFolderKey = $root.Folder.EncryptedDataKey.toObject(message.typedSharedFolderKey, options, q + 1);
             if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
@@ -7767,7 +7769,7 @@ export const Folder = $root.Folder = (() => {
             if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
                 object.sharedFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderKey, 0, message.sharedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderKey) : message.sharedFolderKey;
             if (message.folderKeyType != null && Object.hasOwnProperty.call(message, "folderKeyType"))
-                object.folderKeyType = options.enums === String ? $root.Records.RecordKeyType[message.folderKeyType] === undefined ? message.folderKeyType : $root.Records.RecordKeyType[message.folderKeyType] : message.folderKeyType;
+                object.folderKeyType = options.enums === String ? Records.RecordKeyType[message.folderKeyType] === undefined ? message.folderKeyType : Records.RecordKeyType[message.folderKeyType] : message.folderKeyType;
             if (message.data != null && Object.hasOwnProperty.call(message, "data"))
                 object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
             if (message.dateDeleted != null && Object.hasOwnProperty.call(message, "dateDeleted"))
@@ -12435,7 +12437,7 @@ export const Folder = $root.Folder = (() => {
             if (message.encryptedRecordKeyType != null && Object.hasOwnProperty.call(message, "encryptedRecordKeyType"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.encryptedRecordKeyType);
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
-                $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+                common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
             if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
                 writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.recordKeyEncryptedByOwnerKey);
             return writer;
@@ -12478,7 +12480,7 @@ export const Folder = $root.Folder = (() => {
                         break;
                     }
                 case 5: {
-                        message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.tlaProperties = common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 6: {
@@ -12552,7 +12554,7 @@ export const Folder = $root.Folder = (() => {
             if (object.tlaProperties != null) {
                 if (!$util.isObject(object.tlaProperties))
                     throw TypeError(".Folder.RecordMetadata.tlaProperties: object expected");
-                message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
+                message.tlaProperties = common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
             }
             if (object.recordKeyEncryptedByOwnerKey != null)
                 if (typeof object.recordKeyEncryptedByOwnerKey === "string")
@@ -12611,7 +12613,7 @@ export const Folder = $root.Folder = (() => {
             if (message.encryptedRecordKeyType != null && Object.hasOwnProperty.call(message, "encryptedRecordKeyType"))
                 object.encryptedRecordKeyType = options.enums === String ? $root.Folder.EncryptedKeyType[message.encryptedRecordKeyType] === undefined ? message.encryptedRecordKeyType : $root.Folder.EncryptedKeyType[message.encryptedRecordKeyType] : message.encryptedRecordKeyType;
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
-                object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+                object.tlaProperties = common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
             if (message.recordKeyEncryptedByOwnerKey != null && Object.hasOwnProperty.call(message, "recordKeyEncryptedByOwnerKey"))
                 object.recordKeyEncryptedByOwnerKey = options.bytes === String ? $util.base64.encode(message.recordKeyEncryptedByOwnerKey, 0, message.recordKeyEncryptedByOwnerKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKeyEncryptedByOwnerKey) : message.recordKeyEncryptedByOwnerKey;
             return object;
@@ -13409,6 +13411,7 @@ export const Folder = $root.Folder = (() => {
          * @property {number|null} [dateCreated] FolderAccessData dateCreated
          * @property {number|null} [lastModified] FolderAccessData lastModified
          * @property {boolean|null} [deniedAccess] FolderAccessData deniedAccess
+         * @property {string|null} [accessorName] FolderAccessData accessorName
          */
 
         /**
@@ -13523,6 +13526,14 @@ export const Folder = $root.Folder = (() => {
         FolderAccessData.prototype.deniedAccess = false;
 
         /**
+         * FolderAccessData accessorName.
+         * @member {string} accessorName
+         * @memberof Folder.FolderAccessData
+         * @instance
+         */
+        FolderAccessData.prototype.accessorName = "";
+
+        /**
          * Creates a new FolderAccessData instance using the specified properties.
          * @function create
          * @memberof Folder.FolderAccessData
@@ -13567,13 +13578,15 @@ export const Folder = $root.Folder = (() => {
             if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
                 $root.Folder.FolderPermissions.encode(message.permissions, writer.uint32(/* id 8, wireType 2 =*/66).fork(), q + 1).ldelim();
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
-                $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
+                common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
             if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
                 writer.uint32(/* id 10, wireType 0 =*/80).int64(message.dateCreated);
             if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
                 writer.uint32(/* id 11, wireType 0 =*/88).int64(message.lastModified);
             if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
                 writer.uint32(/* id 12, wireType 0 =*/96).bool(message.deniedAccess);
+            if (message.accessorName != null && Object.hasOwnProperty.call(message, "accessorName"))
+                writer.uint32(/* id 13, wireType 2 =*/106).string(message.accessorName);
             return writer;
         };
 
@@ -13634,7 +13647,7 @@ export const Folder = $root.Folder = (() => {
                         break;
                     }
                 case 9: {
-                        message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.tlaProperties = common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 10: {
@@ -13647,6 +13660,10 @@ export const Folder = $root.Folder = (() => {
                     }
                 case 12: {
                         message.deniedAccess = reader.bool();
+                        break;
+                    }
+                case 13: {
+                        message.accessorName = reader.string();
                         break;
                     }
                 default:
@@ -13778,7 +13795,7 @@ export const Folder = $root.Folder = (() => {
             if (object.tlaProperties != null) {
                 if (!$util.isObject(object.tlaProperties))
                     throw TypeError(".Folder.FolderAccessData.tlaProperties: object expected");
-                message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
+                message.tlaProperties = common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
             }
             if (object.dateCreated != null)
                 if ($util.Long)
@@ -13800,6 +13817,8 @@ export const Folder = $root.Folder = (() => {
                     message.lastModified = new $util.LongBits(object.lastModified.low >>> 0, object.lastModified.high >>> 0).toNumber();
             if (object.deniedAccess != null)
                 message.deniedAccess = Boolean(object.deniedAccess);
+            if (object.accessorName != null)
+                message.accessorName = String(object.accessorName);
             return message;
         };
 
@@ -13853,6 +13872,7 @@ export const Folder = $root.Folder = (() => {
                 } else
                     object.lastModified = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
                 object.deniedAccess = false;
+                object.accessorName = "";
             }
             if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
                 object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
@@ -13871,7 +13891,7 @@ export const Folder = $root.Folder = (() => {
             if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
                 object.permissions = $root.Folder.FolderPermissions.toObject(message.permissions, options, q + 1);
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
-                object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+                object.tlaProperties = common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
             if (message.dateCreated != null && Object.hasOwnProperty.call(message, "dateCreated"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.dateCreated = typeof message.dateCreated === "number" ? BigInt(message.dateCreated) : $util.Long.fromBits(message.dateCreated.low >>> 0, message.dateCreated.high >>> 0, false).toBigInt();
@@ -13888,6 +13908,8 @@ export const Folder = $root.Folder = (() => {
                     object.lastModified = options.longs === String ? $util.Long.prototype.toString.call(message.lastModified) : options.longs === Number ? new $util.LongBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0).toNumber() : message.lastModified;
             if (message.deniedAccess != null && Object.hasOwnProperty.call(message, "deniedAccess"))
                 object.deniedAccess = message.deniedAccess;
+            if (message.accessorName != null && Object.hasOwnProperty.call(message, "accessorName"))
+                object.accessorName = message.accessorName;
             return object;
         };
 
@@ -14646,7 +14668,7 @@ export const Folder = $root.Folder = (() => {
             if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
                 writer.uint32(/* id 19, wireType 0 =*/152).int64(message.lastModified);
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
-                $root.common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 20, wireType 2 =*/162).fork(), q + 1).ldelim();
+                common.tla.TLAProperties.encode(message.tlaProperties, writer.uint32(/* id 20, wireType 2 =*/162).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -14751,7 +14773,7 @@ export const Folder = $root.Folder = (() => {
                         break;
                     }
                 case 20: {
-                        message.tlaProperties = $root.common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.tlaProperties = common.tla.TLAProperties.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -14913,7 +14935,7 @@ export const Folder = $root.Folder = (() => {
             if (object.tlaProperties != null) {
                 if (!$util.isObject(object.tlaProperties))
                     throw TypeError(".Folder.RecordAccessData.tlaProperties: object expected");
-                message.tlaProperties = $root.common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
+                message.tlaProperties = common.tla.TLAProperties.fromObject(object.tlaProperties, long + 1);
             }
             return message;
         };
@@ -15026,7 +15048,7 @@ export const Folder = $root.Folder = (() => {
                 else
                     object.lastModified = options.longs === String ? $util.Long.prototype.toString.call(message.lastModified) : options.longs === Number ? new $util.LongBits(message.lastModified.low >>> 0, message.lastModified.high >>> 0).toNumber() : message.lastModified;
             if (message.tlaProperties != null && Object.hasOwnProperty.call(message, "tlaProperties"))
-                object.tlaProperties = $root.common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
+                object.tlaProperties = common.tla.TLAProperties.toObject(message.tlaProperties, options, q + 1);
             return object;
         };
 

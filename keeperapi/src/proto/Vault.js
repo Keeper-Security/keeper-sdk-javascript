@@ -1,5 +1,13 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Authentication } from './Authentication.js';
+import { Enterprise } from './Enterprise.js';
+import { Folder } from './Folder.js';
+import { Records } from './Records.js';
+import { BreachWatch } from './BreachWatch.js';
+import { NotificationCenter } from './NotificationCenter.js';
+import { Dag } from './Dag.js';
+import { record } from './record.js';
 
 export const Vault = $root.Vault = (() => {
 
@@ -907,7 +915,7 @@ export const Vault = $root.Vault = (() => {
                     $root.Vault.SecurityScoreData.encode(message.securityScoreData[i], writer.uint32(/* id 46, wireType 2 =*/370).fork(), q + 1).ldelim();
             if (message.notificationSync != null && message.notificationSync.length)
                 for (let i = 0; i < message.notificationSync.length; ++i)
-                    $root.NotificationCenter.NotificationWrapper.encode(message.notificationSync[i], writer.uint32(/* id 47, wireType 2 =*/378).fork(), q + 1).ldelim();
+                    NotificationCenter.NotificationWrapper.encode(message.notificationSync[i], writer.uint32(/* id 47, wireType 2 =*/378).fork(), q + 1).ldelim();
             if (message.keeperDriveData != null && Object.hasOwnProperty.call(message, "keeperDriveData"))
                 $root.Vault.KeeperDriveData.encode(message.keeperDriveData, writer.uint32(/* id 48, wireType 2 =*/386).fork(), q + 1).ldelim();
             return writer;
@@ -1202,7 +1210,7 @@ export const Vault = $root.Vault = (() => {
                 case 47: {
                         if (!(message.notificationSync && message.notificationSync.length))
                             message.notificationSync = [];
-                        message.notificationSync.push($root.NotificationCenter.NotificationWrapper.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.notificationSync.push(NotificationCenter.NotificationWrapper.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 48: {
@@ -1675,7 +1683,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.notificationSync.length; ++i) {
                     if (!$util.isObject(object.notificationSync[i]))
                         throw TypeError(".Vault.SyncDownResponse.notificationSync: object expected");
-                    message.notificationSync[i] = $root.NotificationCenter.NotificationWrapper.fromObject(object.notificationSync[i], long + 1);
+                    message.notificationSync[i] = NotificationCenter.NotificationWrapper.fromObject(object.notificationSync[i], long + 1);
                 }
             }
             if (object.keeperDriveData != null) {
@@ -1973,7 +1981,7 @@ export const Vault = $root.Vault = (() => {
             if (message.notificationSync && message.notificationSync.length) {
                 object.notificationSync = [];
                 for (let j = 0; j < message.notificationSync.length; ++j)
-                    object.notificationSync[j] = $root.NotificationCenter.NotificationWrapper.toObject(message.notificationSync[j], options, q + 1);
+                    object.notificationSync[j] = NotificationCenter.NotificationWrapper.toObject(message.notificationSync[j], options, q + 1);
             }
             if (message.keeperDriveData != null && Object.hasOwnProperty.call(message, "keeperDriveData"))
                 object.keeperDriveData = $root.Vault.KeeperDriveData.toObject(message.keeperDriveData, options, q + 1);
@@ -2870,31 +2878,31 @@ export const Vault = $root.Vault = (() => {
                 throw Error("max depth exceeded");
             if (message.folders != null && message.folders.length)
                 for (let i = 0; i < message.folders.length; ++i)
-                    $root.Folder.FolderData.encode(message.folders[i], writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
+                    Folder.FolderData.encode(message.folders[i], writer.uint32(/* id 10, wireType 2 =*/82).fork(), q + 1).ldelim();
             if (message.folderKeys != null && message.folderKeys.length)
                 for (let i = 0; i < message.folderKeys.length; ++i)
-                    $root.Folder.FolderKey.encode(message.folderKeys[i], writer.uint32(/* id 13, wireType 2 =*/106).fork(), q + 1).ldelim();
+                    Folder.FolderKey.encode(message.folderKeys[i], writer.uint32(/* id 13, wireType 2 =*/106).fork(), q + 1).ldelim();
             if (message.folderAccesses != null && message.folderAccesses.length)
                 for (let i = 0; i < message.folderAccesses.length; ++i)
-                    $root.Folder.FolderAccessData.encode(message.folderAccesses[i], writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
+                    Folder.FolderAccessData.encode(message.folderAccesses[i], writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
             if (message.revokedFolderAccesses != null && message.revokedFolderAccesses.length)
                 for (let i = 0; i < message.revokedFolderAccesses.length; ++i)
-                    $root.Folder.RevokedAccess.encode(message.revokedFolderAccesses[i], writer.uint32(/* id 17, wireType 2 =*/138).fork(), q + 1).ldelim();
+                    Folder.RevokedAccess.encode(message.revokedFolderAccesses[i], writer.uint32(/* id 17, wireType 2 =*/138).fork(), q + 1).ldelim();
             if (message.recordData != null && message.recordData.length)
                 for (let i = 0; i < message.recordData.length; ++i)
-                    $root.Folder.RecordData.encode(message.recordData[i], writer.uint32(/* id 20, wireType 2 =*/162).fork(), q + 1).ldelim();
+                    Folder.RecordData.encode(message.recordData[i], writer.uint32(/* id 20, wireType 2 =*/162).fork(), q + 1).ldelim();
             if (message.nonSharedData != null && message.nonSharedData.length)
                 for (let i = 0; i < message.nonSharedData.length; ++i)
                     $root.Vault.NonSharedData.encode(message.nonSharedData[i], writer.uint32(/* id 21, wireType 2 =*/170).fork(), q + 1).ldelim();
             if (message.recordAccesses != null && message.recordAccesses.length)
                 for (let i = 0; i < message.recordAccesses.length; ++i)
-                    $root.Folder.RecordAccessData.encode(message.recordAccesses[i], writer.uint32(/* id 25, wireType 2 =*/202).fork(), q + 1).ldelim();
+                    Folder.RecordAccessData.encode(message.recordAccesses[i], writer.uint32(/* id 25, wireType 2 =*/202).fork(), q + 1).ldelim();
             if (message.revokedRecordAccesses != null && message.revokedRecordAccesses.length)
                 for (let i = 0; i < message.revokedRecordAccesses.length; ++i)
-                    $root.record.v3.sharing.RevokedAccess.encode(message.revokedRecordAccesses[i], writer.uint32(/* id 27, wireType 2 =*/218).fork(), q + 1).ldelim();
+                    record.v3.sharing.RevokedAccess.encode(message.revokedRecordAccesses[i], writer.uint32(/* id 27, wireType 2 =*/218).fork(), q + 1).ldelim();
             if (message.recordSharingStates != null && message.recordSharingStates.length)
                 for (let i = 0; i < message.recordSharingStates.length; ++i)
-                    $root.record.v3.sharing.RecordSharingState.encode(message.recordSharingStates[i], writer.uint32(/* id 28, wireType 2 =*/226).fork(), q + 1).ldelim();
+                    record.v3.sharing.RecordSharingState.encode(message.recordSharingStates[i], writer.uint32(/* id 28, wireType 2 =*/226).fork(), q + 1).ldelim();
             if (message.recordLinks != null && message.recordLinks.length)
                 for (let i = 0; i < message.recordLinks.length; ++i)
                     $root.Vault.RecordLink.encode(message.recordLinks[i], writer.uint32(/* id 30, wireType 2 =*/242).fork(), q + 1).ldelim();
@@ -2912,13 +2920,13 @@ export const Vault = $root.Vault = (() => {
                     $root.Vault.BreachWatchSecurityData.encode(message.breachWatchSecurityData[i], writer.uint32(/* id 42, wireType 2 =*/338).fork(), q + 1).ldelim();
             if (message.removedFolders != null && message.removedFolders.length)
                 for (let i = 0; i < message.removedFolders.length; ++i)
-                    $root.Folder.FolderRemoved.encode(message.removedFolders[i], writer.uint32(/* id 48, wireType 2 =*/386).fork(), q + 1).ldelim();
+                    Folder.FolderRemoved.encode(message.removedFolders[i], writer.uint32(/* id 48, wireType 2 =*/386).fork(), q + 1).ldelim();
             if (message.removedFolderRecords != null && message.removedFolderRecords.length)
                 for (let i = 0; i < message.removedFolderRecords.length; ++i)
-                    $root.Records.FolderRecordKey.encode(message.removedFolderRecords[i], writer.uint32(/* id 52, wireType 2 =*/418).fork(), q + 1).ldelim();
+                    Records.FolderRecordKey.encode(message.removedFolderRecords[i], writer.uint32(/* id 52, wireType 2 =*/418).fork(), q + 1).ldelim();
             if (message.folderRecords != null && message.folderRecords.length)
                 for (let i = 0; i < message.folderRecords.length; ++i)
-                    $root.Folder.FolderRecord.encode(message.folderRecords[i], writer.uint32(/* id 54, wireType 2 =*/434).fork(), q + 1).ldelim();
+                    Folder.FolderRecord.encode(message.folderRecords[i], writer.uint32(/* id 54, wireType 2 =*/434).fork(), q + 1).ldelim();
             if (message.recordRotationData != null && message.recordRotationData.length)
                 for (let i = 0; i < message.recordRotationData.length; ++i)
                     $root.Vault.RecordRotation.encode(message.recordRotationData[i], writer.uint32(/* id 56, wireType 2 =*/450).fork(), q + 1).ldelim();
@@ -2930,7 +2938,7 @@ export const Vault = $root.Vault = (() => {
                     $root.Vault.FolderSharingState.encode(message.folderSharingState[i], writer.uint32(/* id 60, wireType 2 =*/482).fork(), q + 1).ldelim();
             if (message.rawDagData != null && message.rawDagData.length)
                 for (let i = 0; i < message.rawDagData.length; ++i)
-                    $root.Dag.DebugData.encode(message.rawDagData[i], writer.uint32(/* id 101, wireType 2 =*/810).fork(), q + 1).ldelim();
+                    Dag.DebugData.encode(message.rawDagData[i], writer.uint32(/* id 101, wireType 2 =*/810).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -2961,31 +2969,31 @@ export const Vault = $root.Vault = (() => {
                 case 10: {
                         if (!(message.folders && message.folders.length))
                             message.folders = [];
-                        message.folders.push($root.Folder.FolderData.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.folders.push(Folder.FolderData.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 13: {
                         if (!(message.folderKeys && message.folderKeys.length))
                             message.folderKeys = [];
-                        message.folderKeys.push($root.Folder.FolderKey.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.folderKeys.push(Folder.FolderKey.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 15: {
                         if (!(message.folderAccesses && message.folderAccesses.length))
                             message.folderAccesses = [];
-                        message.folderAccesses.push($root.Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.folderAccesses.push(Folder.FolderAccessData.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 17: {
                         if (!(message.revokedFolderAccesses && message.revokedFolderAccesses.length))
                             message.revokedFolderAccesses = [];
-                        message.revokedFolderAccesses.push($root.Folder.RevokedAccess.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.revokedFolderAccesses.push(Folder.RevokedAccess.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 20: {
                         if (!(message.recordData && message.recordData.length))
                             message.recordData = [];
-                        message.recordData.push($root.Folder.RecordData.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.recordData.push(Folder.RecordData.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 21: {
@@ -2997,19 +3005,19 @@ export const Vault = $root.Vault = (() => {
                 case 25: {
                         if (!(message.recordAccesses && message.recordAccesses.length))
                             message.recordAccesses = [];
-                        message.recordAccesses.push($root.Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.recordAccesses.push(Folder.RecordAccessData.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 27: {
                         if (!(message.revokedRecordAccesses && message.revokedRecordAccesses.length))
                             message.revokedRecordAccesses = [];
-                        message.revokedRecordAccesses.push($root.record.v3.sharing.RevokedAccess.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.revokedRecordAccesses.push(record.v3.sharing.RevokedAccess.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 28: {
                         if (!(message.recordSharingStates && message.recordSharingStates.length))
                             message.recordSharingStates = [];
-                        message.recordSharingStates.push($root.record.v3.sharing.RecordSharingState.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.recordSharingStates.push(record.v3.sharing.RecordSharingState.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 30: {
@@ -3045,19 +3053,19 @@ export const Vault = $root.Vault = (() => {
                 case 48: {
                         if (!(message.removedFolders && message.removedFolders.length))
                             message.removedFolders = [];
-                        message.removedFolders.push($root.Folder.FolderRemoved.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.removedFolders.push(Folder.FolderRemoved.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 52: {
                         if (!(message.removedFolderRecords && message.removedFolderRecords.length))
                             message.removedFolderRecords = [];
-                        message.removedFolderRecords.push($root.Records.FolderRecordKey.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.removedFolderRecords.push(Records.FolderRecordKey.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 54: {
                         if (!(message.folderRecords && message.folderRecords.length))
                             message.folderRecords = [];
-                        message.folderRecords.push($root.Folder.FolderRecord.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.folderRecords.push(Folder.FolderRecord.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 56: {
@@ -3081,7 +3089,7 @@ export const Vault = $root.Vault = (() => {
                 case 101: {
                         if (!(message.rawDagData && message.rawDagData.length))
                             message.rawDagData = [];
-                        message.rawDagData.push($root.Dag.DebugData.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.rawDagData.push(Dag.DebugData.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 default:
@@ -3117,7 +3125,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.folders.length; ++i) {
                     if (!$util.isObject(object.folders[i]))
                         throw TypeError(".Vault.KeeperDriveData.folders: object expected");
-                    message.folders[i] = $root.Folder.FolderData.fromObject(object.folders[i], long + 1);
+                    message.folders[i] = Folder.FolderData.fromObject(object.folders[i], long + 1);
                 }
             }
             if (object.folderKeys) {
@@ -3127,7 +3135,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.folderKeys.length; ++i) {
                     if (!$util.isObject(object.folderKeys[i]))
                         throw TypeError(".Vault.KeeperDriveData.folderKeys: object expected");
-                    message.folderKeys[i] = $root.Folder.FolderKey.fromObject(object.folderKeys[i], long + 1);
+                    message.folderKeys[i] = Folder.FolderKey.fromObject(object.folderKeys[i], long + 1);
                 }
             }
             if (object.folderAccesses) {
@@ -3137,7 +3145,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.folderAccesses.length; ++i) {
                     if (!$util.isObject(object.folderAccesses[i]))
                         throw TypeError(".Vault.KeeperDriveData.folderAccesses: object expected");
-                    message.folderAccesses[i] = $root.Folder.FolderAccessData.fromObject(object.folderAccesses[i], long + 1);
+                    message.folderAccesses[i] = Folder.FolderAccessData.fromObject(object.folderAccesses[i], long + 1);
                 }
             }
             if (object.revokedFolderAccesses) {
@@ -3147,7 +3155,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.revokedFolderAccesses.length; ++i) {
                     if (!$util.isObject(object.revokedFolderAccesses[i]))
                         throw TypeError(".Vault.KeeperDriveData.revokedFolderAccesses: object expected");
-                    message.revokedFolderAccesses[i] = $root.Folder.RevokedAccess.fromObject(object.revokedFolderAccesses[i], long + 1);
+                    message.revokedFolderAccesses[i] = Folder.RevokedAccess.fromObject(object.revokedFolderAccesses[i], long + 1);
                 }
             }
             if (object.recordData) {
@@ -3157,7 +3165,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.recordData.length; ++i) {
                     if (!$util.isObject(object.recordData[i]))
                         throw TypeError(".Vault.KeeperDriveData.recordData: object expected");
-                    message.recordData[i] = $root.Folder.RecordData.fromObject(object.recordData[i], long + 1);
+                    message.recordData[i] = Folder.RecordData.fromObject(object.recordData[i], long + 1);
                 }
             }
             if (object.nonSharedData) {
@@ -3177,7 +3185,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.recordAccesses.length; ++i) {
                     if (!$util.isObject(object.recordAccesses[i]))
                         throw TypeError(".Vault.KeeperDriveData.recordAccesses: object expected");
-                    message.recordAccesses[i] = $root.Folder.RecordAccessData.fromObject(object.recordAccesses[i], long + 1);
+                    message.recordAccesses[i] = Folder.RecordAccessData.fromObject(object.recordAccesses[i], long + 1);
                 }
             }
             if (object.revokedRecordAccesses) {
@@ -3187,7 +3195,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.revokedRecordAccesses.length; ++i) {
                     if (!$util.isObject(object.revokedRecordAccesses[i]))
                         throw TypeError(".Vault.KeeperDriveData.revokedRecordAccesses: object expected");
-                    message.revokedRecordAccesses[i] = $root.record.v3.sharing.RevokedAccess.fromObject(object.revokedRecordAccesses[i], long + 1);
+                    message.revokedRecordAccesses[i] = record.v3.sharing.RevokedAccess.fromObject(object.revokedRecordAccesses[i], long + 1);
                 }
             }
             if (object.recordSharingStates) {
@@ -3197,7 +3205,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.recordSharingStates.length; ++i) {
                     if (!$util.isObject(object.recordSharingStates[i]))
                         throw TypeError(".Vault.KeeperDriveData.recordSharingStates: object expected");
-                    message.recordSharingStates[i] = $root.record.v3.sharing.RecordSharingState.fromObject(object.recordSharingStates[i], long + 1);
+                    message.recordSharingStates[i] = record.v3.sharing.RecordSharingState.fromObject(object.recordSharingStates[i], long + 1);
                 }
             }
             if (object.recordLinks) {
@@ -3257,7 +3265,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.removedFolders.length; ++i) {
                     if (!$util.isObject(object.removedFolders[i]))
                         throw TypeError(".Vault.KeeperDriveData.removedFolders: object expected");
-                    message.removedFolders[i] = $root.Folder.FolderRemoved.fromObject(object.removedFolders[i], long + 1);
+                    message.removedFolders[i] = Folder.FolderRemoved.fromObject(object.removedFolders[i], long + 1);
                 }
             }
             if (object.removedFolderRecords) {
@@ -3267,7 +3275,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.removedFolderRecords.length; ++i) {
                     if (!$util.isObject(object.removedFolderRecords[i]))
                         throw TypeError(".Vault.KeeperDriveData.removedFolderRecords: object expected");
-                    message.removedFolderRecords[i] = $root.Records.FolderRecordKey.fromObject(object.removedFolderRecords[i], long + 1);
+                    message.removedFolderRecords[i] = Records.FolderRecordKey.fromObject(object.removedFolderRecords[i], long + 1);
                 }
             }
             if (object.folderRecords) {
@@ -3277,7 +3285,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.folderRecords.length; ++i) {
                     if (!$util.isObject(object.folderRecords[i]))
                         throw TypeError(".Vault.KeeperDriveData.folderRecords: object expected");
-                    message.folderRecords[i] = $root.Folder.FolderRecord.fromObject(object.folderRecords[i], long + 1);
+                    message.folderRecords[i] = Folder.FolderRecord.fromObject(object.folderRecords[i], long + 1);
                 }
             }
             if (object.recordRotationData) {
@@ -3317,7 +3325,7 @@ export const Vault = $root.Vault = (() => {
                 for (let i = 0; i < object.rawDagData.length; ++i) {
                     if (!$util.isObject(object.rawDagData[i]))
                         throw TypeError(".Vault.KeeperDriveData.rawDagData: object expected");
-                    message.rawDagData[i] = $root.Dag.DebugData.fromObject(object.rawDagData[i], long + 1);
+                    message.rawDagData[i] = Dag.DebugData.fromObject(object.rawDagData[i], long + 1);
                 }
             }
             return message;
@@ -3366,27 +3374,27 @@ export const Vault = $root.Vault = (() => {
             if (message.folders && message.folders.length) {
                 object.folders = [];
                 for (let j = 0; j < message.folders.length; ++j)
-                    object.folders[j] = $root.Folder.FolderData.toObject(message.folders[j], options, q + 1);
+                    object.folders[j] = Folder.FolderData.toObject(message.folders[j], options, q + 1);
             }
             if (message.folderKeys && message.folderKeys.length) {
                 object.folderKeys = [];
                 for (let j = 0; j < message.folderKeys.length; ++j)
-                    object.folderKeys[j] = $root.Folder.FolderKey.toObject(message.folderKeys[j], options, q + 1);
+                    object.folderKeys[j] = Folder.FolderKey.toObject(message.folderKeys[j], options, q + 1);
             }
             if (message.folderAccesses && message.folderAccesses.length) {
                 object.folderAccesses = [];
                 for (let j = 0; j < message.folderAccesses.length; ++j)
-                    object.folderAccesses[j] = $root.Folder.FolderAccessData.toObject(message.folderAccesses[j], options, q + 1);
+                    object.folderAccesses[j] = Folder.FolderAccessData.toObject(message.folderAccesses[j], options, q + 1);
             }
             if (message.revokedFolderAccesses && message.revokedFolderAccesses.length) {
                 object.revokedFolderAccesses = [];
                 for (let j = 0; j < message.revokedFolderAccesses.length; ++j)
-                    object.revokedFolderAccesses[j] = $root.Folder.RevokedAccess.toObject(message.revokedFolderAccesses[j], options, q + 1);
+                    object.revokedFolderAccesses[j] = Folder.RevokedAccess.toObject(message.revokedFolderAccesses[j], options, q + 1);
             }
             if (message.recordData && message.recordData.length) {
                 object.recordData = [];
                 for (let j = 0; j < message.recordData.length; ++j)
-                    object.recordData[j] = $root.Folder.RecordData.toObject(message.recordData[j], options, q + 1);
+                    object.recordData[j] = Folder.RecordData.toObject(message.recordData[j], options, q + 1);
             }
             if (message.nonSharedData && message.nonSharedData.length) {
                 object.nonSharedData = [];
@@ -3396,17 +3404,17 @@ export const Vault = $root.Vault = (() => {
             if (message.recordAccesses && message.recordAccesses.length) {
                 object.recordAccesses = [];
                 for (let j = 0; j < message.recordAccesses.length; ++j)
-                    object.recordAccesses[j] = $root.Folder.RecordAccessData.toObject(message.recordAccesses[j], options, q + 1);
+                    object.recordAccesses[j] = Folder.RecordAccessData.toObject(message.recordAccesses[j], options, q + 1);
             }
             if (message.revokedRecordAccesses && message.revokedRecordAccesses.length) {
                 object.revokedRecordAccesses = [];
                 for (let j = 0; j < message.revokedRecordAccesses.length; ++j)
-                    object.revokedRecordAccesses[j] = $root.record.v3.sharing.RevokedAccess.toObject(message.revokedRecordAccesses[j], options, q + 1);
+                    object.revokedRecordAccesses[j] = record.v3.sharing.RevokedAccess.toObject(message.revokedRecordAccesses[j], options, q + 1);
             }
             if (message.recordSharingStates && message.recordSharingStates.length) {
                 object.recordSharingStates = [];
                 for (let j = 0; j < message.recordSharingStates.length; ++j)
-                    object.recordSharingStates[j] = $root.record.v3.sharing.RecordSharingState.toObject(message.recordSharingStates[j], options, q + 1);
+                    object.recordSharingStates[j] = record.v3.sharing.RecordSharingState.toObject(message.recordSharingStates[j], options, q + 1);
             }
             if (message.recordLinks && message.recordLinks.length) {
                 object.recordLinks = [];
@@ -3436,17 +3444,17 @@ export const Vault = $root.Vault = (() => {
             if (message.removedFolders && message.removedFolders.length) {
                 object.removedFolders = [];
                 for (let j = 0; j < message.removedFolders.length; ++j)
-                    object.removedFolders[j] = $root.Folder.FolderRemoved.toObject(message.removedFolders[j], options, q + 1);
+                    object.removedFolders[j] = Folder.FolderRemoved.toObject(message.removedFolders[j], options, q + 1);
             }
             if (message.removedFolderRecords && message.removedFolderRecords.length) {
                 object.removedFolderRecords = [];
                 for (let j = 0; j < message.removedFolderRecords.length; ++j)
-                    object.removedFolderRecords[j] = $root.Records.FolderRecordKey.toObject(message.removedFolderRecords[j], options, q + 1);
+                    object.removedFolderRecords[j] = Records.FolderRecordKey.toObject(message.removedFolderRecords[j], options, q + 1);
             }
             if (message.folderRecords && message.folderRecords.length) {
                 object.folderRecords = [];
                 for (let j = 0; j < message.folderRecords.length; ++j)
-                    object.folderRecords[j] = $root.Folder.FolderRecord.toObject(message.folderRecords[j], options, q + 1);
+                    object.folderRecords[j] = Folder.FolderRecord.toObject(message.folderRecords[j], options, q + 1);
             }
             if (message.recordRotationData && message.recordRotationData.length) {
                 object.recordRotationData = [];
@@ -3466,7 +3474,7 @@ export const Vault = $root.Vault = (() => {
             if (message.rawDagData && message.rawDagData.length) {
                 object.rawDagData = [];
                 for (let j = 0; j < message.rawDagData.length; ++j)
-                    object.rawDagData[j] = $root.Dag.DebugData.toObject(message.rawDagData[j], options, q + 1);
+                    object.rawDagData[j] = Dag.DebugData.toObject(message.rawDagData[j], options, q + 1);
             }
             return object;
         };
@@ -3822,7 +3830,7 @@ export const Vault = $root.Vault = (() => {
             if (message.userFolderKey != null && Object.hasOwnProperty.call(message, "userFolderKey"))
                 object.userFolderKey = options.bytes === String ? $util.base64.encode(message.userFolderKey, 0, message.userFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.userFolderKey) : message.userFolderKey;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Records.RecordKeyType[message.keyType] === undefined ? message.keyType : $root.Records.RecordKeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Records.RecordKeyType[message.keyType] === undefined ? message.keyType : Records.RecordKeyType[message.keyType] : message.keyType;
             if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
@@ -4340,7 +4348,7 @@ export const Vault = $root.Vault = (() => {
             if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
                 object.sharedFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderKey, 0, message.sharedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderKey) : message.sharedFolderKey;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Records.RecordKeyType[message.keyType] === undefined ? message.keyType : $root.Records.RecordKeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Records.RecordKeyType[message.keyType] === undefined ? message.keyType : Records.RecordKeyType[message.keyType] : message.keyType;
             if (message.data != null && Object.hasOwnProperty.call(message, "data"))
                 object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
             if (message.defaultManageRecords != null && Object.hasOwnProperty.call(message, "defaultManageRecords"))
@@ -4994,7 +5002,7 @@ export const Vault = $root.Vault = (() => {
             if (message.sharedFolderFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderFolderKey"))
                 object.sharedFolderFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderFolderKey, 0, message.sharedFolderFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderFolderKey) : message.sharedFolderFolderKey;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Records.RecordKeyType[message.keyType] === undefined ? message.keyType : $root.Records.RecordKeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Records.RecordKeyType[message.keyType] === undefined ? message.keyType : Records.RecordKeyType[message.keyType] : message.keyType;
             if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.revision = typeof message.revision === "number" ? BigInt(message.revision) : $util.Long.fromBits(message.revision.low >>> 0, message.revision.high >>> 0, false).toBigInt();
@@ -5273,7 +5281,7 @@ export const Vault = $root.Vault = (() => {
             if (message.sharedFolderKey != null && Object.hasOwnProperty.call(message, "sharedFolderKey"))
                 object.sharedFolderKey = options.bytes === String ? $util.base64.encode(message.sharedFolderKey, 0, message.sharedFolderKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderKey) : message.sharedFolderKey;
             if (message.keyType != null && Object.hasOwnProperty.call(message, "keyType"))
-                object.keyType = options.enums === String ? $root.Records.RecordKeyType[message.keyType] === undefined ? message.keyType : $root.Records.RecordKeyType[message.keyType] : message.keyType;
+                object.keyType = options.enums === String ? Records.RecordKeyType[message.keyType] === undefined ? message.keyType : Records.RecordKeyType[message.keyType] : message.keyType;
             return object;
         };
 
@@ -5760,7 +5768,7 @@ export const Vault = $root.Vault = (() => {
             if (message.teamKey != null && Object.hasOwnProperty.call(message, "teamKey"))
                 object.teamKey = options.bytes === String ? $util.base64.encode(message.teamKey, 0, message.teamKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamKey) : message.teamKey;
             if (message.teamKeyType != null && Object.hasOwnProperty.call(message, "teamKeyType"))
-                object.teamKeyType = options.enums === String ? $root.Records.RecordKeyType[message.teamKeyType] === undefined ? message.teamKeyType : $root.Records.RecordKeyType[message.teamKeyType] : message.teamKeyType;
+                object.teamKeyType = options.enums === String ? Records.RecordKeyType[message.teamKeyType] === undefined ? message.teamKeyType : Records.RecordKeyType[message.teamKeyType] : message.teamKeyType;
             if (message.teamPrivateKey != null && Object.hasOwnProperty.call(message, "teamPrivateKey"))
                 object.teamPrivateKey = options.bytes === String ? $util.base64.encode(message.teamPrivateKey, 0, message.teamPrivateKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamPrivateKey) : message.teamPrivateKey;
             if (message.restrictEdit != null && Object.hasOwnProperty.call(message, "restrictEdit"))
@@ -7697,7 +7705,7 @@ export const Vault = $root.Vault = (() => {
             if (message.recordKey != null && Object.hasOwnProperty.call(message, "recordKey"))
                 object.recordKey = options.bytes === String ? $util.base64.encode(message.recordKey, 0, message.recordKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.recordKey) : message.recordKey;
             if (message.recordKeyType != null && Object.hasOwnProperty.call(message, "recordKeyType"))
-                object.recordKeyType = options.enums === String ? $root.Records.RecordKeyType[message.recordKeyType] === undefined ? message.recordKeyType : $root.Records.RecordKeyType[message.recordKeyType] : message.recordKeyType;
+                object.recordKeyType = options.enums === String ? Records.RecordKeyType[message.recordKeyType] === undefined ? message.recordKeyType : Records.RecordKeyType[message.recordKeyType] : message.recordKeyType;
             if (message.canShare != null && Object.hasOwnProperty.call(message, "canShare"))
                 object.canShare = message.canShare;
             if (message.canEdit != null && Object.hasOwnProperty.call(message, "canEdit"))
@@ -7712,7 +7720,7 @@ export const Vault = $root.Vault = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.expirationNotificationType != null && Object.hasOwnProperty.call(message, "expirationNotificationType"))
-                object.expirationNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : $root.Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
+                object.expirationNotificationType = options.enums === String ? Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
             if (message.ownerUsername != null && Object.hasOwnProperty.call(message, "ownerUsername"))
                 object.ownerUsername = message.ownerUsername;
             return object;
@@ -8990,7 +8998,7 @@ export const Vault = $root.Vault = (() => {
             if (message.data != null && Object.hasOwnProperty.call(message, "data"))
                 object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
             if (message.type != null && Object.hasOwnProperty.call(message, "type"))
-                object.type = options.enums === String ? $root.BreachWatch.BreachWatchInfoType[message.type] === undefined ? message.type : $root.BreachWatch.BreachWatchInfoType[message.type] : message.type;
+                object.type = options.enums === String ? BreachWatch.BreachWatchInfoType[message.type] === undefined ? message.type : BreachWatch.BreachWatchInfoType[message.type] : message.type;
             if (message.scannedBy != null && Object.hasOwnProperty.call(message, "scannedBy"))
                 object.scannedBy = message.scannedBy;
             if (message.revision != null && Object.hasOwnProperty.call(message, "revision"))
@@ -9379,7 +9387,7 @@ export const Vault = $root.Vault = (() => {
             if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
                 object.uid = options.bytes === String ? $util.base64.encode(message.uid, 0, message.uid.length) : options.bytes === Array ? Array.prototype.slice.call(message.uid) : message.uid;
             if (message.loginType != null && Object.hasOwnProperty.call(message, "loginType"))
-                object.loginType = options.enums === String ? $root.Authentication.LoginType[message.loginType] === undefined ? message.loginType : $root.Authentication.LoginType[message.loginType] : message.loginType;
+                object.loginType = options.enums === String ? Authentication.LoginType[message.loginType] === undefined ? message.loginType : Authentication.LoginType[message.loginType] : message.loginType;
             if (message.deleted != null && Object.hasOwnProperty.call(message, "deleted"))
                 object.deleted = message.deleted;
             if (message.iterations != null && Object.hasOwnProperty.call(message, "iterations"))
@@ -10297,7 +10305,7 @@ export const Vault = $root.Vault = (() => {
             if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
                 object.owner = message.owner;
             if (message.expirationNotificationType != null && Object.hasOwnProperty.call(message, "expirationNotificationType"))
-                object.expirationNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : $root.Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
+                object.expirationNotificationType = options.enums === String ? Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
             if (message.ownerUsername != null && Object.hasOwnProperty.call(message, "ownerUsername"))
                 object.ownerUsername = message.ownerUsername;
             if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
@@ -10669,7 +10677,7 @@ export const Vault = $root.Vault = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.expirationNotificationType != null && Object.hasOwnProperty.call(message, "expirationNotificationType"))
-                object.expirationNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : $root.Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
+                object.expirationNotificationType = options.enums === String ? Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
             if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
                 object.rotateOnExpiration = message.rotateOnExpiration;
             return object;
@@ -11039,7 +11047,7 @@ export const Vault = $root.Vault = (() => {
                 else
                     object.expiration = options.longs === String ? $util.Long.prototype.toString.call(message.expiration) : options.longs === Number ? new $util.LongBits(message.expiration.low >>> 0, message.expiration.high >>> 0).toNumber() : message.expiration;
             if (message.expirationNotificationType != null && Object.hasOwnProperty.call(message, "expirationNotificationType"))
-                object.expirationNotificationType = options.enums === String ? $root.Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : $root.Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
+                object.expirationNotificationType = options.enums === String ? Records.TimerNotificationType[message.expirationNotificationType] === undefined ? message.expirationNotificationType : Records.TimerNotificationType[message.expirationNotificationType] : message.expirationNotificationType;
             if (message.rotateOnExpiration != null && Object.hasOwnProperty.call(message, "rotateOnExpiration"))
                 object.rotateOnExpiration = message.rotateOnExpiration;
             return object;
@@ -11352,7 +11360,7 @@ export const Vault = $root.Vault = (() => {
             if (message.removed != null && Object.hasOwnProperty.call(message, "removed"))
                 object.removed = message.removed;
             if (message.appClientType != null && Object.hasOwnProperty.call(message, "appClientType"))
-                object.appClientType = options.enums === String ? $root.Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : $root.Enterprise.AppClientType[message.appClientType] : message.appClientType;
+                object.appClientType = options.enums === String ? Enterprise.AppClientType[message.appClientType] === undefined ? message.appClientType : Enterprise.AppClientType[message.appClientType] : message.appClientType;
             if (message.expiration != null && Object.hasOwnProperty.call(message, "expiration"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
                     object.expiration = typeof message.expiration === "number" ? BigInt(message.expiration) : $util.Long.fromBits(message.expiration.low >>> 0, message.expiration.high >>> 0, false).toBigInt();

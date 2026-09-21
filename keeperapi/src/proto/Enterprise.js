@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Folder } from './Folder.js';
 
 export const Enterprise = $root.Enterprise = (() => {
 
@@ -25325,6 +25326,7 @@ export const Enterprise = $root.Enterprise = (() => {
      * @property {number} SHOW_USER_ONBOARD=10 SHOW_USER_ONBOARD value
      * @property {number} FORBID_KEY_TYPE_1=11 FORBID_KEY_TYPE_1 value
      * @property {number} KEEPER_DRIVE=12 KEEPER_DRIVE value
+     * @property {number} LOCK_ALERTS_SIEMS_CONFIGS=13 LOCK_ALERTS_SIEMS_CONFIGS value
      */
     Enterprise.EnterpriseFlagType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
@@ -25341,6 +25343,7 @@ export const Enterprise = $root.Enterprise = (() => {
         values[valuesById[10] = "SHOW_USER_ONBOARD"] = 10;
         values[valuesById[11] = "FORBID_KEY_TYPE_1"] = 11;
         values[valuesById[12] = "KEEPER_DRIVE"] = 12;
+        values[valuesById[13] = "LOCK_ALERTS_SIEMS_CONFIGS"] = 13;
         return values;
     })();
 
@@ -30240,6 +30243,7 @@ export const Enterprise = $root.Enterprise = (() => {
          * @property {Array.<string>|null} [jobTitles] ComplianceReportFilter jobTitles
          * @property {Array.<string>|null} [urls] ComplianceReportFilter urls
          * @property {Array.<string>|null} [recordTypes] ComplianceReportFilter recordTypes
+         * @property {Array.<Uint8Array>|null} [sharedFolderUids] ComplianceReportFilter sharedFolderUids
          */
 
         /**
@@ -30256,6 +30260,7 @@ export const Enterprise = $root.Enterprise = (() => {
             this.jobTitles = [];
             this.urls = [];
             this.recordTypes = [];
+            this.sharedFolderUids = [];
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -30303,6 +30308,14 @@ export const Enterprise = $root.Enterprise = (() => {
         ComplianceReportFilter.prototype.recordTypes = $util.emptyArray;
 
         /**
+         * ComplianceReportFilter sharedFolderUids.
+         * @member {Array.<Uint8Array>} sharedFolderUids
+         * @memberof Enterprise.ComplianceReportFilter
+         * @instance
+         */
+        ComplianceReportFilter.prototype.sharedFolderUids = $util.emptyArray;
+
+        /**
          * Creates a new ComplianceReportFilter instance using the specified properties.
          * @function create
          * @memberof Enterprise.ComplianceReportFilter
@@ -30345,6 +30358,9 @@ export const Enterprise = $root.Enterprise = (() => {
             if (message.recordTypes != null && message.recordTypes.length)
                 for (let i = 0; i < message.recordTypes.length; ++i)
                     writer.uint32(/* id 5, wireType 2 =*/42).string(message.recordTypes[i]);
+            if (message.sharedFolderUids != null && message.sharedFolderUids.length)
+                for (let i = 0; i < message.sharedFolderUids.length; ++i)
+                    writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.sharedFolderUids[i]);
             return writer;
         };
 
@@ -30400,6 +30416,12 @@ export const Enterprise = $root.Enterprise = (() => {
                         if (!(message.recordTypes && message.recordTypes.length))
                             message.recordTypes = [];
                         message.recordTypes.push(reader.string());
+                        break;
+                    }
+                case 6: {
+                        if (!(message.sharedFolderUids && message.sharedFolderUids.length))
+                            message.sharedFolderUids = [];
+                        message.sharedFolderUids.push(reader.bytes());
                         break;
                     }
                 default:
@@ -30466,6 +30488,16 @@ export const Enterprise = $root.Enterprise = (() => {
                 for (let i = 0; i < object.recordTypes.length; ++i)
                     message.recordTypes[i] = String(object.recordTypes[i]);
             }
+            if (object.sharedFolderUids) {
+                if (!Array.isArray(object.sharedFolderUids))
+                    throw TypeError(".Enterprise.ComplianceReportFilter.sharedFolderUids: array expected");
+                message.sharedFolderUids = [];
+                for (let i = 0; i < object.sharedFolderUids.length; ++i)
+                    if (typeof object.sharedFolderUids[i] === "string")
+                        $util.base64.decode(object.sharedFolderUids[i], message.sharedFolderUids[i] = $util.newBuffer($util.base64.length(object.sharedFolderUids[i])), 0);
+                    else if (object.sharedFolderUids[i].length >= 0)
+                        message.sharedFolderUids[i] = object.sharedFolderUids[i];
+            }
             return message;
         };
 
@@ -30492,6 +30524,7 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.jobTitles = [];
                 object.urls = [];
                 object.recordTypes = [];
+                object.sharedFolderUids = [];
             }
             if (message.recordTitles && message.recordTitles.length) {
                 object.recordTitles = [];
@@ -30517,6 +30550,11 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.recordTypes = [];
                 for (let j = 0; j < message.recordTypes.length; ++j)
                     object.recordTypes[j] = message.recordTypes[j];
+            }
+            if (message.sharedFolderUids && message.sharedFolderUids.length) {
+                object.sharedFolderUids = [];
+                for (let j = 0; j < message.sharedFolderUids.length; ++j)
+                    object.sharedFolderUids[j] = options.bytes === String ? $util.base64.encode(message.sharedFolderUids[j], 0, message.sharedFolderUids[j].length) : options.bytes === Array ? Array.prototype.slice.call(message.sharedFolderUids[j]) : message.sharedFolderUids[j];
             }
             return object;
         };
@@ -30571,6 +30609,8 @@ export const Enterprise = $root.Enterprise = (() => {
          * @property {Array.<Enterprise.IAuditTeamUser>|null} [auditTeamUsers] ComplianceReportResponse auditTeamUsers
          * @property {Array.<Enterprise.IAuditRole>|null} [auditRoles] ComplianceReportResponse auditRoles
          * @property {Array.<Enterprise.ILinkedRecord>|null} [linkedRecords] ComplianceReportResponse linkedRecords
+         * @property {Array.<Enterprise.IAuditFolder>|null} [auditFolders] ComplianceReportResponse auditFolders
+         * @property {Array.<Enterprise.IAuditFolderAccessor>|null} [auditFolderAccessors] ComplianceReportResponse auditFolderAccessors
          */
 
         /**
@@ -30592,6 +30632,8 @@ export const Enterprise = $root.Enterprise = (() => {
             this.auditTeamUsers = [];
             this.auditRoles = [];
             this.linkedRecords = [];
+            this.auditFolders = [];
+            this.auditFolderAccessors = [];
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null && keys[i] !== "__proto__")
@@ -30719,6 +30761,22 @@ export const Enterprise = $root.Enterprise = (() => {
         ComplianceReportResponse.prototype.linkedRecords = $util.emptyArray;
 
         /**
+         * ComplianceReportResponse auditFolders.
+         * @member {Array.<Enterprise.IAuditFolder>} auditFolders
+         * @memberof Enterprise.ComplianceReportResponse
+         * @instance
+         */
+        ComplianceReportResponse.prototype.auditFolders = $util.emptyArray;
+
+        /**
+         * ComplianceReportResponse auditFolderAccessors.
+         * @member {Array.<Enterprise.IAuditFolderAccessor>} auditFolderAccessors
+         * @memberof Enterprise.ComplianceReportResponse
+         * @instance
+         */
+        ComplianceReportResponse.prototype.auditFolderAccessors = $util.emptyArray;
+
+        /**
          * Creates a new ComplianceReportResponse instance using the specified properties.
          * @function create
          * @memberof Enterprise.ComplianceReportResponse
@@ -30786,6 +30844,12 @@ export const Enterprise = $root.Enterprise = (() => {
             if (message.linkedRecords != null && message.linkedRecords.length)
                 for (let i = 0; i < message.linkedRecords.length; ++i)
                     $root.Enterprise.LinkedRecord.encode(message.linkedRecords[i], writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
+            if (message.auditFolders != null && message.auditFolders.length)
+                for (let i = 0; i < message.auditFolders.length; ++i)
+                    $root.Enterprise.AuditFolder.encode(message.auditFolders[i], writer.uint32(/* id 16, wireType 2 =*/130).fork(), q + 1).ldelim();
+            if (message.auditFolderAccessors != null && message.auditFolderAccessors.length)
+                for (let i = 0; i < message.auditFolderAccessors.length; ++i)
+                    $root.Enterprise.AuditFolderAccessor.encode(message.auditFolderAccessors[i], writer.uint32(/* id 17, wireType 2 =*/138).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -30891,6 +30955,18 @@ export const Enterprise = $root.Enterprise = (() => {
                         if (!(message.linkedRecords && message.linkedRecords.length))
                             message.linkedRecords = [];
                         message.linkedRecords.push($root.Enterprise.LinkedRecord.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 16: {
+                        if (!(message.auditFolders && message.auditFolders.length))
+                            message.auditFolders = [];
+                        message.auditFolders.push($root.Enterprise.AuditFolder.decode(reader, reader.uint32(), undefined, long + 1));
+                        break;
+                    }
+                case 17: {
+                        if (!(message.auditFolderAccessors && message.auditFolderAccessors.length))
+                            message.auditFolderAccessors = [];
+                        message.auditFolderAccessors.push($root.Enterprise.AuditFolderAccessor.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 default:
@@ -31042,6 +31118,26 @@ export const Enterprise = $root.Enterprise = (() => {
                     message.linkedRecords[i] = $root.Enterprise.LinkedRecord.fromObject(object.linkedRecords[i], long + 1);
                 }
             }
+            if (object.auditFolders) {
+                if (!Array.isArray(object.auditFolders))
+                    throw TypeError(".Enterprise.ComplianceReportResponse.auditFolders: array expected");
+                message.auditFolders = [];
+                for (let i = 0; i < object.auditFolders.length; ++i) {
+                    if (!$util.isObject(object.auditFolders[i]))
+                        throw TypeError(".Enterprise.ComplianceReportResponse.auditFolders: object expected");
+                    message.auditFolders[i] = $root.Enterprise.AuditFolder.fromObject(object.auditFolders[i], long + 1);
+                }
+            }
+            if (object.auditFolderAccessors) {
+                if (!Array.isArray(object.auditFolderAccessors))
+                    throw TypeError(".Enterprise.ComplianceReportResponse.auditFolderAccessors: array expected");
+                message.auditFolderAccessors = [];
+                for (let i = 0; i < object.auditFolderAccessors.length; ++i) {
+                    if (!$util.isObject(object.auditFolderAccessors[i]))
+                        throw TypeError(".Enterprise.ComplianceReportResponse.auditFolderAccessors: object expected");
+                    message.auditFolderAccessors[i] = $root.Enterprise.AuditFolderAccessor.fromObject(object.auditFolderAccessors[i], long + 1);
+                }
+            }
             return message;
         };
 
@@ -31073,6 +31169,8 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.auditTeamUsers = [];
                 object.auditRoles = [];
                 object.linkedRecords = [];
+                object.auditFolders = [];
+                object.auditFolderAccessors = [];
             }
             if (options.defaults) {
                 if ($util.Long) {
@@ -31155,6 +31253,16 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.linkedRecords = [];
                 for (let j = 0; j < message.linkedRecords.length; ++j)
                     object.linkedRecords[j] = $root.Enterprise.LinkedRecord.toObject(message.linkedRecords[j], options, q + 1);
+            }
+            if (message.auditFolders && message.auditFolders.length) {
+                object.auditFolders = [];
+                for (let j = 0; j < message.auditFolders.length; ++j)
+                    object.auditFolders[j] = $root.Enterprise.AuditFolder.toObject(message.auditFolders[j], options, q + 1);
+            }
+            if (message.auditFolderAccessors && message.auditFolderAccessors.length) {
+                object.auditFolderAccessors = [];
+                for (let j = 0; j < message.auditFolderAccessors.length; ++j)
+                    object.auditFolderAccessors[j] = $root.Enterprise.AuditFolderAccessor.toObject(message.auditFolderAccessors[j], options, q + 1);
             }
             return object;
         };
@@ -31502,6 +31610,286 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         return AuditRecord;
+    })();
+
+    Enterprise.AuditFolder = (function() {
+
+        /**
+         * Properties of an AuditFolder.
+         * @memberof Enterprise
+         * @interface IAuditFolder
+         * @property {Uint8Array|null} [folderUid] AuditFolder folderUid
+         * @property {Uint8Array|null} [encryptedAuditData] AuditFolder encryptedAuditData
+         * @property {Uint8Array|null} [parentFolderUid] AuditFolder parentFolderUid
+         * @property {boolean|null} [isDriveFolder] AuditFolder isDriveFolder
+         */
+
+        /**
+         * Constructs a new AuditFolder.
+         * @memberof Enterprise
+         * @classdesc Folder identity and hierarchy carrier on the compliance response — the folder-level
+         * analog of {@link AuditRecord}. One entry per distinct folder that grants access to a
+         * record in the report: Drive folders from the {@code folder} table
+         * ({@code isDriveFolder = true}) and legacy shared folders from {@code shared_folder}
+         * ({@code isDriveFolder = false}).
+         * 
+         * <p>Tree contract (Drive folders only): every non-root {@code parentFolderUid} referenced
+         * by a Drive {@code AuditFolder} resolves to another {@code AuditFolder} in the same
+         * response. The response therefore carries the full ancestor chain of every granting
+         * folder, so clients can reconstruct the nested path (e.g.
+         * {@code Engineering / DevOps / Prod Credentials}) without extra round-trips. Root-level
+         * Drive folders leave {@code parentFolderUid} unset. Legacy shared folders have no
+         * server-side hierarchy and are always flat entries ({@code parentFolderUid} unset).
+         * 
+         * <p>Populated only when {@code FeatureFlag.KEEPER_DRIVE} is enabled (server-side
+         * population: KA-9098).
+         * @implements IAuditFolder
+         * @constructor
+         * @param {Enterprise.IAuditFolder=} [properties] Properties to set
+         */
+        function AuditFolder(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AuditFolder folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Enterprise.AuditFolder
+         * @instance
+         */
+        AuditFolder.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * AuditFolder encryptedAuditData.
+         * @member {Uint8Array} encryptedAuditData
+         * @memberof Enterprise.AuditFolder
+         * @instance
+         */
+        AuditFolder.prototype.encryptedAuditData = $util.newBuffer([]);
+
+        /**
+         * AuditFolder parentFolderUid.
+         * @member {Uint8Array} parentFolderUid
+         * @memberof Enterprise.AuditFolder
+         * @instance
+         */
+        AuditFolder.prototype.parentFolderUid = $util.newBuffer([]);
+
+        /**
+         * AuditFolder isDriveFolder.
+         * @member {boolean} isDriveFolder
+         * @memberof Enterprise.AuditFolder
+         * @instance
+         */
+        AuditFolder.prototype.isDriveFolder = false;
+
+        /**
+         * Creates a new AuditFolder instance using the specified properties.
+         * @function create
+         * @memberof Enterprise.AuditFolder
+         * @static
+         * @param {Enterprise.IAuditFolder=} [properties] Properties to set
+         * @returns {Enterprise.AuditFolder} AuditFolder instance
+         */
+        AuditFolder.create = function create(properties) {
+            return new AuditFolder(properties);
+        };
+
+        /**
+         * Encodes the specified AuditFolder message. Does not implicitly {@link Enterprise.AuditFolder.verify|verify} messages.
+         * @function encode
+         * @memberof Enterprise.AuditFolder
+         * @static
+         * @param {Enterprise.IAuditFolder} message AuditFolder message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AuditFolder.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.encryptedAuditData != null && Object.hasOwnProperty.call(message, "encryptedAuditData"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.encryptedAuditData);
+            if (message.parentFolderUid != null && Object.hasOwnProperty.call(message, "parentFolderUid"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.parentFolderUid);
+            if (message.isDriveFolder != null && Object.hasOwnProperty.call(message, "isDriveFolder"))
+                writer.uint32(/* id 4, wireType 0 =*/32).bool(message.isDriveFolder);
+            return writer;
+        };
+
+        /**
+         * Decodes an AuditFolder message from the specified reader or buffer.
+         * @function decode
+         * @memberof Enterprise.AuditFolder
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Enterprise.AuditFolder} AuditFolder
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AuditFolder.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Enterprise.AuditFolder();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.encryptedAuditData = reader.bytes();
+                        break;
+                    }
+                case 3: {
+                        message.parentFolderUid = reader.bytes();
+                        break;
+                    }
+                case 4: {
+                        message.isDriveFolder = reader.bool();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an AuditFolder message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Enterprise.AuditFolder
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Enterprise.AuditFolder} AuditFolder
+         */
+        AuditFolder.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Enterprise.AuditFolder)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Enterprise.AuditFolder: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Enterprise.AuditFolder();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            if (object.encryptedAuditData != null)
+                if (typeof object.encryptedAuditData === "string")
+                    $util.base64.decode(object.encryptedAuditData, message.encryptedAuditData = $util.newBuffer($util.base64.length(object.encryptedAuditData)), 0);
+                else if (object.encryptedAuditData.length >= 0)
+                    message.encryptedAuditData = object.encryptedAuditData;
+            if (object.parentFolderUid != null)
+                if (typeof object.parentFolderUid === "string")
+                    $util.base64.decode(object.parentFolderUid, message.parentFolderUid = $util.newBuffer($util.base64.length(object.parentFolderUid)), 0);
+                else if (object.parentFolderUid.length >= 0)
+                    message.parentFolderUid = object.parentFolderUid;
+            if (object.isDriveFolder != null)
+                message.isDriveFolder = Boolean(object.isDriveFolder);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AuditFolder message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Enterprise.AuditFolder
+         * @static
+         * @param {Enterprise.AuditFolder} message AuditFolder
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AuditFolder.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                if (options.bytes === String)
+                    object.encryptedAuditData = "";
+                else {
+                    object.encryptedAuditData = [];
+                    if (options.bytes !== Array)
+                        object.encryptedAuditData = $util.newBuffer(object.encryptedAuditData);
+                }
+                if (options.bytes === String)
+                    object.parentFolderUid = "";
+                else {
+                    object.parentFolderUid = [];
+                    if (options.bytes !== Array)
+                        object.parentFolderUid = $util.newBuffer(object.parentFolderUid);
+                }
+                object.isDriveFolder = false;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.encryptedAuditData != null && Object.hasOwnProperty.call(message, "encryptedAuditData"))
+                object.encryptedAuditData = options.bytes === String ? $util.base64.encode(message.encryptedAuditData, 0, message.encryptedAuditData.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedAuditData) : message.encryptedAuditData;
+            if (message.parentFolderUid != null && Object.hasOwnProperty.call(message, "parentFolderUid"))
+                object.parentFolderUid = options.bytes === String ? $util.base64.encode(message.parentFolderUid, 0, message.parentFolderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.parentFolderUid) : message.parentFolderUid;
+            if (message.isDriveFolder != null && Object.hasOwnProperty.call(message, "isDriveFolder"))
+                object.isDriveFolder = message.isDriveFolder;
+            return object;
+        };
+
+        /**
+         * Converts this AuditFolder to JSON.
+         * @function toJSON
+         * @memberof Enterprise.AuditFolder
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AuditFolder.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for AuditFolder
+         * @function getTypeUrl
+         * @memberof Enterprise.AuditFolder
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        AuditFolder.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Enterprise.AuditFolder";
+        };
+
+        return AuditFolder;
     })();
 
     Enterprise.AuditRole = (function() {
@@ -32411,8 +32799,8 @@ export const Enterprise = $root.Enterprise = (() => {
          * <p>For KeeperDrive records (gated on {@code FeatureFlag.KEEPER_DRIVE}),
          * {@code drive} is set with the Drive-native permission payload instead.
          * The two branches are mutually exclusive: clients should switch on
-         * {@code AuditRecord.source} (or {@code AuditUserRecord.source}) to decide
-         * which branch to read.
+         * {@code AuditRecord.isDriveRecord} (or {@code AuditUserRecord.isDriveRecord})
+         * to decide which branch to read.
          * @implements IRecordPermission
          * @constructor
          * @param {Enterprise.IRecordPermission=} [properties] Properties to set
@@ -32658,6 +33046,13 @@ export const Enterprise = $root.Enterprise = (() => {
          * @property {boolean|null} [isShareAdmin] DrivePermission isShareAdmin
          * @property {Folder.AccessType|null} [accessType] DrivePermission accessType
          * @property {Folder.IFolderPermissions|null} [folderPermissions] DrivePermission folderPermissions
+         * @property {boolean|null} [canViewTitle] DrivePermission canViewTitle
+         * @property {boolean|null} [canView] DrivePermission canView
+         * @property {boolean|null} [canListAccess] DrivePermission canListAccess
+         * @property {boolean|null} [canDelete] DrivePermission canDelete
+         * @property {boolean|null} [canChangeOwnership] DrivePermission canChangeOwnership
+         * @property {boolean|null} [canRequestAccess] DrivePermission canRequestAccess
+         * @property {boolean|null} [canApproveAccess] DrivePermission canApproveAccess
          */
 
         /**
@@ -32671,6 +33066,26 @@ export const Enterprise = $root.Enterprise = (() => {
          * 
          * <p>Reuses {@link Folder.FolderPermissions} for the 13-bit Drive permission
          * set and {@link Folder.AccessType} for the access-type discriminant.
+         * 
+         * <p>All permission fields are individual booleans, never an encoded bitmask.
+         * 
+         * <p><b>Population by access path:</b>
+         * <ul>
+         * <li><b>Owner / direct record share</b> (entry in {@code UserRecord}): the top-level
+         * booleans are populated per-column from the user's own {@code record_access} row.</li>
+         * <li><b>Folder-derived</b> (entry in {@code SharedFolderRecord}): folder-derived Drive
+         * entries have no {@code record_access} row — permissions come from {@code folder_access}
+         * capability columns, so {@code canEdit <- folder_access.can_edit_records} and
+         * {@code canShare <- folder_access.can_update_access}, and {@code folderPermissions} is
+         * the field-wise OR of <b>all accessors'</b> {@code folder_access} rows on the granting
+         * folder (union semantics; {@code accessType} keeps whichever accessor was processed
+         * first). This union is lossy for individual members — use {@link AuditFolderAccessor}
+         * for per-accessor fidelity.</li>
+         * </ul>
+         * 
+         * <p><b>accessType semantics:</b> {@code AT_USER} + {@code owner=true} = owner (see KA-9097
+         * Decision 4 re: AT_OWNER); {@code AT_USER} = direct record share or named shared-folder
+         * member; {@code AT_TEAM} = team-based shared-folder membership.
          * @implements IDrivePermission
          * @constructor
          * @param {Enterprise.IDrivePermission=} [properties] Properties to set
@@ -32739,6 +33154,62 @@ export const Enterprise = $root.Enterprise = (() => {
         DrivePermission.prototype.folderPermissions = null;
 
         /**
+         * DrivePermission canViewTitle.
+         * @member {boolean} canViewTitle
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canViewTitle = false;
+
+        /**
+         * DrivePermission canView.
+         * @member {boolean} canView
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canView = false;
+
+        /**
+         * DrivePermission canListAccess.
+         * @member {boolean} canListAccess
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canListAccess = false;
+
+        /**
+         * DrivePermission canDelete.
+         * @member {boolean} canDelete
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canDelete = false;
+
+        /**
+         * DrivePermission canChangeOwnership.
+         * @member {boolean} canChangeOwnership
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canChangeOwnership = false;
+
+        /**
+         * DrivePermission canRequestAccess.
+         * @member {boolean} canRequestAccess
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canRequestAccess = false;
+
+        /**
+         * DrivePermission canApproveAccess.
+         * @member {boolean} canApproveAccess
+         * @memberof Enterprise.DrivePermission
+         * @instance
+         */
+        DrivePermission.prototype.canApproveAccess = false;
+
+        /**
          * Creates a new DrivePermission instance using the specified properties.
          * @function create
          * @memberof Enterprise.DrivePermission
@@ -32779,7 +33250,21 @@ export const Enterprise = $root.Enterprise = (() => {
             if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
                 writer.uint32(/* id 6, wireType 0 =*/48).int32(message.accessType);
             if (message.folderPermissions != null && Object.hasOwnProperty.call(message, "folderPermissions"))
-                $root.Folder.FolderPermissions.encode(message.folderPermissions, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+                Folder.FolderPermissions.encode(message.folderPermissions, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+            if (message.canViewTitle != null && Object.hasOwnProperty.call(message, "canViewTitle"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.canViewTitle);
+            if (message.canView != null && Object.hasOwnProperty.call(message, "canView"))
+                writer.uint32(/* id 9, wireType 0 =*/72).bool(message.canView);
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.canListAccess);
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                writer.uint32(/* id 11, wireType 0 =*/88).bool(message.canDelete);
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.canChangeOwnership);
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                writer.uint32(/* id 13, wireType 0 =*/104).bool(message.canRequestAccess);
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                writer.uint32(/* id 14, wireType 0 =*/112).bool(message.canApproveAccess);
             return writer;
         };
 
@@ -32832,7 +33317,35 @@ export const Enterprise = $root.Enterprise = (() => {
                         break;
                     }
                 case 7: {
-                        message.folderPermissions = $root.Folder.FolderPermissions.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.folderPermissions = Folder.FolderPermissions.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                case 8: {
+                        message.canViewTitle = reader.bool();
+                        break;
+                    }
+                case 9: {
+                        message.canView = reader.bool();
+                        break;
+                    }
+                case 10: {
+                        message.canListAccess = reader.bool();
+                        break;
+                    }
+                case 11: {
+                        message.canDelete = reader.bool();
+                        break;
+                    }
+                case 12: {
+                        message.canChangeOwnership = reader.bool();
+                        break;
+                    }
+                case 13: {
+                        message.canRequestAccess = reader.bool();
+                        break;
+                    }
+                case 14: {
+                        message.canApproveAccess = reader.bool();
                         break;
                     }
                 default:
@@ -32910,8 +33423,22 @@ export const Enterprise = $root.Enterprise = (() => {
             if (object.folderPermissions != null) {
                 if (!$util.isObject(object.folderPermissions))
                     throw TypeError(".Enterprise.DrivePermission.folderPermissions: object expected");
-                message.folderPermissions = $root.Folder.FolderPermissions.fromObject(object.folderPermissions, long + 1);
+                message.folderPermissions = Folder.FolderPermissions.fromObject(object.folderPermissions, long + 1);
             }
+            if (object.canViewTitle != null)
+                message.canViewTitle = Boolean(object.canViewTitle);
+            if (object.canView != null)
+                message.canView = Boolean(object.canView);
+            if (object.canListAccess != null)
+                message.canListAccess = Boolean(object.canListAccess);
+            if (object.canDelete != null)
+                message.canDelete = Boolean(object.canDelete);
+            if (object.canChangeOwnership != null)
+                message.canChangeOwnership = Boolean(object.canChangeOwnership);
+            if (object.canRequestAccess != null)
+                message.canRequestAccess = Boolean(object.canRequestAccess);
+            if (object.canApproveAccess != null)
+                message.canApproveAccess = Boolean(object.canApproveAccess);
             return message;
         };
 
@@ -32940,6 +33467,13 @@ export const Enterprise = $root.Enterprise = (() => {
                 object.isShareAdmin = false;
                 object.accessType = options.enums === String ? "AT_UNKNOWN" : 0;
                 object.folderPermissions = null;
+                object.canViewTitle = false;
+                object.canView = false;
+                object.canListAccess = false;
+                object.canDelete = false;
+                object.canChangeOwnership = false;
+                object.canRequestAccess = false;
+                object.canApproveAccess = false;
             }
             if (message.owner != null && Object.hasOwnProperty.call(message, "owner"))
                 object.owner = message.owner;
@@ -32952,9 +33486,23 @@ export const Enterprise = $root.Enterprise = (() => {
             if (message.isShareAdmin != null && Object.hasOwnProperty.call(message, "isShareAdmin"))
                 object.isShareAdmin = message.isShareAdmin;
             if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
-                object.accessType = options.enums === String ? $root.Folder.AccessType[message.accessType] === undefined ? message.accessType : $root.Folder.AccessType[message.accessType] : message.accessType;
+                object.accessType = options.enums === String ? Folder.AccessType[message.accessType] === undefined ? message.accessType : Folder.AccessType[message.accessType] : message.accessType;
             if (message.folderPermissions != null && Object.hasOwnProperty.call(message, "folderPermissions"))
-                object.folderPermissions = $root.Folder.FolderPermissions.toObject(message.folderPermissions, options, q + 1);
+                object.folderPermissions = Folder.FolderPermissions.toObject(message.folderPermissions, options, q + 1);
+            if (message.canViewTitle != null && Object.hasOwnProperty.call(message, "canViewTitle"))
+                object.canViewTitle = message.canViewTitle;
+            if (message.canView != null && Object.hasOwnProperty.call(message, "canView"))
+                object.canView = message.canView;
+            if (message.canListAccess != null && Object.hasOwnProperty.call(message, "canListAccess"))
+                object.canListAccess = message.canListAccess;
+            if (message.canDelete != null && Object.hasOwnProperty.call(message, "canDelete"))
+                object.canDelete = message.canDelete;
+            if (message.canChangeOwnership != null && Object.hasOwnProperty.call(message, "canChangeOwnership"))
+                object.canChangeOwnership = message.canChangeOwnership;
+            if (message.canRequestAccess != null && Object.hasOwnProperty.call(message, "canRequestAccess"))
+                object.canRequestAccess = message.canRequestAccess;
+            if (message.canApproveAccess != null && Object.hasOwnProperty.call(message, "canApproveAccess"))
+                object.canApproveAccess = message.canApproveAccess;
             return object;
         };
 
@@ -34653,6 +35201,362 @@ export const Enterprise = $root.Enterprise = (() => {
         };
 
         return SharedFolderTeam;
+    })();
+
+    Enterprise.AuditFolderAccessor = (function() {
+
+        /**
+         * Properties of an AuditFolderAccessor.
+         * @memberof Enterprise
+         * @interface IAuditFolderAccessor
+         * @property {Uint8Array|null} [folderUid] AuditFolderAccessor folderUid
+         * @property {Folder.AccessType|null} [accessType] AuditFolderAccessor accessType
+         * @property {number|null} [enterpriseUserId] AuditFolderAccessor enterpriseUserId
+         * @property {Uint8Array|null} [teamUid] AuditFolderAccessor teamUid
+         * @property {Folder.IFolderPermissions|null} [permissions] AuditFolderAccessor permissions
+         */
+
+        /**
+         * Constructs a new AuditFolderAccessor.
+         * @memberof Enterprise
+         * @classdesc Per-accessor Drive folder permissions — the unmerged counterpart to the folder-wide
+         * union carried in {@code SharedFolderRecord.recordPermissions} ({@link DrivePermission}).
+         * 
+         * <p>Drive stores folder capabilities per accessor in {@code folder_access}, but the legacy
+         * compliance shape merges every accessor's row into a single per-(folder, record)
+         * {@code DrivePermission} (field-wise OR, {@code accessType} first-writer-wins), which
+         * over-reports low-privilege members (a view-only member shows {@code canEdit = true} if any
+         * other member has it). This message restores attribution: one entry per (folder, accessor),
+         * sized |accessors| per folder to match {@code folder_access} 1:1 — NOT |accessors| ×
+         * |records| — each carrying that accessor's own access type and folder permission set. The
+         * union {@code DrivePermission} entry on {@code SharedFolderRecord} is retained for backward
+         * compatibility.
+         * 
+         * <p>The accessor is either an enterprise user (AT_USER, a named folder member) or a team
+         * (AT_TEAM, team-based membership), carried in the {@code accessor} oneof and disambiguated by
+         * {@code accessType}. User identity uses {@code enterpriseUserId} (anonymized for users outside
+         * the enterprise, exactly like {@code SharedFolderUser.enterpriseUserIds}); team identity uses
+         * {@code teamUid} (like {@code SharedFolderTeam.teamUids}). Populated only when {@code
+         * FeatureFlag.KEEPER_DRIVE} is enabled (server-side population per KA-9097 Decision 2 outcome:
+         * KA-9098).
+         * @implements IAuditFolderAccessor
+         * @constructor
+         * @param {Enterprise.IAuditFolderAccessor=} [properties] Properties to set
+         */
+        function AuditFolderAccessor(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AuditFolderAccessor folderUid.
+         * @member {Uint8Array} folderUid
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         */
+        AuditFolderAccessor.prototype.folderUid = $util.newBuffer([]);
+
+        /**
+         * AuditFolderAccessor accessType.
+         * @member {Folder.AccessType} accessType
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         */
+        AuditFolderAccessor.prototype.accessType = 0;
+
+        /**
+         * AuditFolderAccessor enterpriseUserId.
+         * @member {number|null|undefined} enterpriseUserId
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         */
+        AuditFolderAccessor.prototype.enterpriseUserId = null;
+
+        /**
+         * AuditFolderAccessor teamUid.
+         * @member {Uint8Array|null|undefined} teamUid
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         */
+        AuditFolderAccessor.prototype.teamUid = null;
+
+        /**
+         * AuditFolderAccessor permissions.
+         * @member {Folder.IFolderPermissions|null|undefined} permissions
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         */
+        AuditFolderAccessor.prototype.permissions = null;
+
+        // OneOf field names bound to virtual getters and setters
+        let $oneOfFields;
+
+        /**
+         * AuditFolderAccessor accessor.
+         * @member {"enterpriseUserId"|"teamUid"|undefined} accessor
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         */
+        Object.defineProperty(AuditFolderAccessor.prototype, "accessor", {
+            get: $util.oneOfGetter($oneOfFields = ["enterpriseUserId", "teamUid"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
+         * Creates a new AuditFolderAccessor instance using the specified properties.
+         * @function create
+         * @memberof Enterprise.AuditFolderAccessor
+         * @static
+         * @param {Enterprise.IAuditFolderAccessor=} [properties] Properties to set
+         * @returns {Enterprise.AuditFolderAccessor} AuditFolderAccessor instance
+         */
+        AuditFolderAccessor.create = function create(properties) {
+            return new AuditFolderAccessor(properties);
+        };
+
+        /**
+         * Encodes the specified AuditFolderAccessor message. Does not implicitly {@link Enterprise.AuditFolderAccessor.verify|verify} messages.
+         * @function encode
+         * @memberof Enterprise.AuditFolderAccessor
+         * @static
+         * @param {Enterprise.IAuditFolderAccessor} message AuditFolderAccessor message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AuditFolderAccessor.encode = function encode(message, writer, q) {
+            if (!writer)
+                writer = $Writer.create();
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.folderUid);
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.accessType);
+            if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.enterpriseUserId);
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.teamUid);
+            if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
+                Folder.FolderPermissions.encode(message.permissions, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+            return writer;
+        };
+
+        /**
+         * Decodes an AuditFolderAccessor message from the specified reader or buffer.
+         * @function decode
+         * @memberof Enterprise.AuditFolderAccessor
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {Enterprise.AuditFolderAccessor} AuditFolderAccessor
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AuditFolderAccessor.decode = function decode(reader, length, error, long) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            if (long === undefined)
+                long = 0;
+            if (long > $Reader.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.Enterprise.AuditFolderAccessor();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                if (tag === error)
+                    break;
+                switch (tag >>> 3) {
+                case 1: {
+                        message.folderUid = reader.bytes();
+                        break;
+                    }
+                case 2: {
+                        message.accessType = reader.int32();
+                        break;
+                    }
+                case 3: {
+                        message.enterpriseUserId = reader.int64();
+                        break;
+                    }
+                case 4: {
+                        message.teamUid = reader.bytes();
+                        break;
+                    }
+                case 5: {
+                        message.permissions = Folder.FolderPermissions.decode(reader, reader.uint32(), undefined, long + 1);
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7, long);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates an AuditFolderAccessor message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof Enterprise.AuditFolderAccessor
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {Enterprise.AuditFolderAccessor} AuditFolderAccessor
+         */
+        AuditFolderAccessor.fromObject = function fromObject(object, long) {
+            if (object instanceof $root.Enterprise.AuditFolderAccessor)
+                return object;
+            if (!$util.isObject(object))
+                throw TypeError(".Enterprise.AuditFolderAccessor: object expected");
+            if (long === undefined)
+                long = 0;
+            if (long > $util.recursionLimit)
+                throw Error("maximum nesting depth exceeded");
+            let message = new $root.Enterprise.AuditFolderAccessor();
+            if (object.folderUid != null)
+                if (typeof object.folderUid === "string")
+                    $util.base64.decode(object.folderUid, message.folderUid = $util.newBuffer($util.base64.length(object.folderUid)), 0);
+                else if (object.folderUid.length >= 0)
+                    message.folderUid = object.folderUid;
+            switch (object.accessType) {
+            default:
+                if (typeof object.accessType === "number") {
+                    message.accessType = object.accessType;
+                    break;
+                }
+                break;
+            case "AT_UNKNOWN":
+            case 0:
+                message.accessType = 0;
+                break;
+            case "AT_OWNER":
+            case 1:
+                message.accessType = 1;
+                break;
+            case "AT_USER":
+            case 2:
+                message.accessType = 2;
+                break;
+            case "AT_TEAM":
+            case 3:
+                message.accessType = 3;
+                break;
+            case "AT_ENTERPRISE":
+            case 4:
+                message.accessType = 4;
+                break;
+            case "AT_FOLDER":
+            case 5:
+                message.accessType = 5;
+                break;
+            case "AT_APPLICATION":
+            case 6:
+                message.accessType = 6;
+                break;
+            }
+            if (object.enterpriseUserId != null)
+                if ($util.Long)
+                    message.enterpriseUserId = $util.Long.fromValue(object.enterpriseUserId, false);
+                else if (typeof object.enterpriseUserId === "string")
+                    message.enterpriseUserId = parseInt(object.enterpriseUserId, 10);
+                else if (typeof object.enterpriseUserId === "number")
+                    message.enterpriseUserId = object.enterpriseUserId;
+                else if (typeof object.enterpriseUserId === "object")
+                    message.enterpriseUserId = new $util.LongBits(object.enterpriseUserId.low >>> 0, object.enterpriseUserId.high >>> 0).toNumber();
+            if (object.teamUid != null)
+                if (typeof object.teamUid === "string")
+                    $util.base64.decode(object.teamUid, message.teamUid = $util.newBuffer($util.base64.length(object.teamUid)), 0);
+                else if (object.teamUid.length >= 0)
+                    message.teamUid = object.teamUid;
+            if (object.permissions != null) {
+                if (!$util.isObject(object.permissions))
+                    throw TypeError(".Enterprise.AuditFolderAccessor.permissions: object expected");
+                message.permissions = Folder.FolderPermissions.fromObject(object.permissions, long + 1);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AuditFolderAccessor message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof Enterprise.AuditFolderAccessor
+         * @static
+         * @param {Enterprise.AuditFolderAccessor} message AuditFolderAccessor
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AuditFolderAccessor.toObject = function toObject(message, options, q) {
+            if (!options)
+                options = {};
+            if (q === undefined)
+                q = 0;
+            if (q > $util.recursionLimit)
+                throw Error("max depth exceeded");
+            let object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.folderUid = "";
+                else {
+                    object.folderUid = [];
+                    if (options.bytes !== Array)
+                        object.folderUid = $util.newBuffer(object.folderUid);
+                }
+                object.accessType = options.enums === String ? "AT_UNKNOWN" : 0;
+                object.permissions = null;
+            }
+            if (message.folderUid != null && Object.hasOwnProperty.call(message, "folderUid"))
+                object.folderUid = options.bytes === String ? $util.base64.encode(message.folderUid, 0, message.folderUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.folderUid) : message.folderUid;
+            if (message.accessType != null && Object.hasOwnProperty.call(message, "accessType"))
+                object.accessType = options.enums === String ? Folder.AccessType[message.accessType] === undefined ? message.accessType : Folder.AccessType[message.accessType] : message.accessType;
+            if (message.enterpriseUserId != null && Object.hasOwnProperty.call(message, "enterpriseUserId")) {
+                if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                    object.enterpriseUserId = typeof message.enterpriseUserId === "number" ? BigInt(message.enterpriseUserId) : $util.Long.fromBits(message.enterpriseUserId.low >>> 0, message.enterpriseUserId.high >>> 0, false).toBigInt();
+                else if (typeof message.enterpriseUserId === "number")
+                    object.enterpriseUserId = options.longs === String ? String(message.enterpriseUserId) : message.enterpriseUserId;
+                else
+                    object.enterpriseUserId = options.longs === String ? $util.Long.prototype.toString.call(message.enterpriseUserId) : options.longs === Number ? new $util.LongBits(message.enterpriseUserId.low >>> 0, message.enterpriseUserId.high >>> 0).toNumber() : message.enterpriseUserId;
+                if (options.oneofs)
+                    object.accessor = "enterpriseUserId";
+            }
+            if (message.teamUid != null && Object.hasOwnProperty.call(message, "teamUid")) {
+                object.teamUid = options.bytes === String ? $util.base64.encode(message.teamUid, 0, message.teamUid.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamUid) : message.teamUid;
+                if (options.oneofs)
+                    object.accessor = "teamUid";
+            }
+            if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
+                object.permissions = Folder.FolderPermissions.toObject(message.permissions, options, q + 1);
+            return object;
+        };
+
+        /**
+         * Converts this AuditFolderAccessor to JSON.
+         * @function toJSON
+         * @memberof Enterprise.AuditFolderAccessor
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AuditFolderAccessor.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for AuditFolderAccessor
+         * @function getTypeUrl
+         * @memberof Enterprise.AuditFolderAccessor
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        AuditFolderAccessor.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/Enterprise.AuditFolderAccessor";
+        };
+
+        return AuditFolderAccessor;
     })();
 
     Enterprise.GetComplianceReportRequest = (function() {

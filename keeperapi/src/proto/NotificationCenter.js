@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { GraphSync } from './GraphSync.js';
 
 export const NotificationCenter = $root.NotificationCenter = (() => {
 
@@ -675,14 +676,14 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
             if (message.category != null && Object.hasOwnProperty.call(message, "category"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.category);
             if (message.sender != null && Object.hasOwnProperty.call(message, "sender"))
-                $root.GraphSync.GraphSyncRef.encode(message.sender, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
+                GraphSync.GraphSyncRef.encode(message.sender, writer.uint32(/* id 3, wireType 2 =*/26).fork(), q + 1).ldelim();
             if (message.senderFullName != null && Object.hasOwnProperty.call(message, "senderFullName"))
                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.senderFullName);
             if (message.encryptedData != null && Object.hasOwnProperty.call(message, "encryptedData"))
                 $root.NotificationCenter.EncryptedData.encode(message.encryptedData, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
             if (message.refs != null && message.refs.length)
                 for (let i = 0; i < message.refs.length; ++i)
-                    $root.GraphSync.GraphSyncRef.encode(message.refs[i], writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+                    GraphSync.GraphSyncRef.encode(message.refs[i], writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
             if (message.categories != null && message.categories.length) {
                 writer.uint32(/* id 7, wireType 2 =*/58).fork();
                 for (let i = 0; i < message.categories.length; ++i)
@@ -728,7 +729,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
                         break;
                     }
                 case 3: {
-                        message.sender = $root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.sender = GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 case 4: {
@@ -742,7 +743,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
                 case 6: {
                         if (!(message.refs && message.refs.length))
                             message.refs = [];
-                        message.refs.push($root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.refs.push(GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 7: {
@@ -931,7 +932,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
             if (object.sender != null) {
                 if (!$util.isObject(object.sender))
                     throw TypeError(".NotificationCenter.Notification.sender: object expected");
-                message.sender = $root.GraphSync.GraphSyncRef.fromObject(object.sender, long + 1);
+                message.sender = GraphSync.GraphSyncRef.fromObject(object.sender, long + 1);
             }
             if (object.senderFullName != null)
                 message.senderFullName = String(object.senderFullName);
@@ -947,7 +948,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
                 for (let i = 0; i < object.refs.length; ++i) {
                     if (!$util.isObject(object.refs[i]))
                         throw TypeError(".NotificationCenter.Notification.refs: object expected");
-                    message.refs[i] = $root.GraphSync.GraphSyncRef.fromObject(object.refs[i], long + 1);
+                    message.refs[i] = GraphSync.GraphSyncRef.fromObject(object.refs[i], long + 1);
                 }
             }
             if (object.categories) {
@@ -1042,7 +1043,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
             if (message.category != null && Object.hasOwnProperty.call(message, "category"))
                 object.category = options.enums === String ? $root.NotificationCenter.NotificationCategory[message.category] === undefined ? message.category : $root.NotificationCenter.NotificationCategory[message.category] : message.category;
             if (message.sender != null && Object.hasOwnProperty.call(message, "sender"))
-                object.sender = $root.GraphSync.GraphSyncRef.toObject(message.sender, options, q + 1);
+                object.sender = GraphSync.GraphSyncRef.toObject(message.sender, options, q + 1);
             if (message.senderFullName != null && Object.hasOwnProperty.call(message, "senderFullName"))
                 object.senderFullName = message.senderFullName;
             if (message.encryptedData != null && Object.hasOwnProperty.call(message, "encryptedData"))
@@ -1050,7 +1051,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
             if (message.refs && message.refs.length) {
                 object.refs = [];
                 for (let j = 0; j < message.refs.length; ++j)
-                    object.refs[j] = $root.GraphSync.GraphSyncRef.toObject(message.refs[j], options, q + 1);
+                    object.refs[j] = GraphSync.GraphSyncRef.toObject(message.refs[j], options, q + 1);
             }
             if (message.categories && message.categories.length) {
                 object.categories = [];
@@ -3058,7 +3059,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
                 throw Error("max depth exceeded");
             if (message.recipients != null && message.recipients.length)
                 for (let i = 0; i < message.recipients.length; ++i)
-                    $root.GraphSync.GraphSyncRef.encode(message.recipients[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
+                    GraphSync.GraphSyncRef.encode(message.recipients[i], writer.uint32(/* id 1, wireType 2 =*/10).fork(), q + 1).ldelim();
             if (message.notification != null && Object.hasOwnProperty.call(message, "notification"))
                 $root.NotificationCenter.Notification.encode(message.notification, writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
             if (message.clientTypeIDs != null && message.clientTypeIDs.length) {
@@ -3105,7 +3106,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
                 case 1: {
                         if (!(message.recipients && message.recipients.length))
                             message.recipients = [];
-                        message.recipients.push($root.GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1));
+                        message.recipients.push(GraphSync.GraphSyncRef.decode(reader, reader.uint32(), undefined, long + 1));
                         break;
                     }
                 case 2: {
@@ -3171,7 +3172,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
                 for (let i = 0; i < object.recipients.length; ++i) {
                     if (!$util.isObject(object.recipients[i]))
                         throw TypeError(".NotificationCenter.NotificationSendRequest.recipients: object expected");
-                    message.recipients[i] = $root.GraphSync.GraphSyncRef.fromObject(object.recipients[i], long + 1);
+                    message.recipients[i] = GraphSync.GraphSyncRef.fromObject(object.recipients[i], long + 1);
                 }
             }
             if (object.notification != null) {
@@ -3235,7 +3236,7 @@ export const NotificationCenter = $root.NotificationCenter = (() => {
             if (message.recipients && message.recipients.length) {
                 object.recipients = [];
                 for (let j = 0; j < message.recipients.length; ++j)
-                    object.recipients[j] = $root.GraphSync.GraphSyncRef.toObject(message.recipients[j], options, q + 1);
+                    object.recipients[j] = GraphSync.GraphSyncRef.toObject(message.recipients[j], options, q + 1);
             }
             if (message.notification != null && Object.hasOwnProperty.call(message, "notification"))
                 object.notification = $root.NotificationCenter.Notification.toObject(message.notification, options, q + 1);

@@ -1,5 +1,8 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Enterprise } from './Enterprise.js';
+import { SsoCloud } from './SsoCloud.js';
+import { SemanticVersion } from './SemanticVersion.js';
 
 export const Automator = $root.Automator = (() => {
 
@@ -502,7 +505,7 @@ export const Automator = $root.Automator = (() => {
             if (message.settingValue != null && Object.hasOwnProperty.call(message, "settingValue"))
                 object.settingValue = message.settingValue;
             if (message.dataType != null && Object.hasOwnProperty.call(message, "dataType"))
-                object.dataType = options.enums === String ? $root.SsoCloud.DataType[message.dataType] === undefined ? message.dataType : $root.SsoCloud.DataType[message.dataType] : message.dataType;
+                object.dataType = options.enums === String ? SsoCloud.DataType[message.dataType] === undefined ? message.dataType : SsoCloud.DataType[message.dataType] : message.dataType;
             if (message.lastModified != null && Object.hasOwnProperty.call(message, "lastModified"))
                 object.lastModified = message.lastModified;
             if (message.fromFile != null && Object.hasOwnProperty.call(message, "fromFile"))
@@ -972,7 +975,7 @@ export const Automator = $root.Automator = (() => {
             if (message.userEncryptedDataKey != null && Object.hasOwnProperty.call(message, "userEncryptedDataKey"))
                 object.userEncryptedDataKey = options.bytes === String ? $util.base64.encode(message.userEncryptedDataKey, 0, message.userEncryptedDataKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.userEncryptedDataKey) : message.userEncryptedDataKey;
             if (message.userEncryptedDataKeyType != null && Object.hasOwnProperty.call(message, "userEncryptedDataKeyType"))
-                object.userEncryptedDataKeyType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.userEncryptedDataKeyType] === undefined ? message.userEncryptedDataKeyType : $root.Enterprise.EncryptedKeyType[message.userEncryptedDataKeyType] : message.userEncryptedDataKeyType;
+                object.userEncryptedDataKeyType = options.enums === String ? Enterprise.EncryptedKeyType[message.userEncryptedDataKeyType] === undefined ? message.userEncryptedDataKeyType : Enterprise.EncryptedKeyType[message.userEncryptedDataKeyType] : message.userEncryptedDataKeyType;
             if (message.ipAddress != null && Object.hasOwnProperty.call(message, "ipAddress"))
                 object.ipAddress = message.ipAddress;
             if (message.isTesting != null && Object.hasOwnProperty.call(message, "isTesting"))
@@ -2882,7 +2885,7 @@ export const Automator = $root.Automator = (() => {
             if (message.approveTeams != null && Object.hasOwnProperty.call(message, "approveTeams"))
                 $root.Automator.ApproveTeamsResponse.encode(message.approveTeams, writer.uint32(/* id 11, wireType 2 =*/90).fork(), q + 1).ldelim();
             if (message.version != null && Object.hasOwnProperty.call(message, "version"))
-                $root.SemanticVersion.Version.encode(message.version, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
+                SemanticVersion.Version.encode(message.version, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
             return writer;
         };
 
@@ -2955,7 +2958,7 @@ export const Automator = $root.Automator = (() => {
                         break;
                     }
                 case 12: {
-                        message.version = $root.SemanticVersion.Version.decode(reader, reader.uint32(), undefined, long + 1);
+                        message.version = SemanticVersion.Version.decode(reader, reader.uint32(), undefined, long + 1);
                         break;
                     }
                 default:
@@ -3074,7 +3077,7 @@ export const Automator = $root.Automator = (() => {
             if (object.version != null) {
                 if (!$util.isObject(object.version))
                     throw TypeError(".Automator.AutomatorResponse.version: object expected");
-                message.version = $root.SemanticVersion.Version.fromObject(object.version, long + 1);
+                message.version = SemanticVersion.Version.fromObject(object.version, long + 1);
             }
             return message;
         };
@@ -3169,7 +3172,7 @@ export const Automator = $root.Automator = (() => {
                     object.response = "approveTeams";
             }
             if (message.version != null && Object.hasOwnProperty.call(message, "version"))
-                object.version = $root.SemanticVersion.Version.toObject(message.version, options, q + 1);
+                object.version = SemanticVersion.Version.toObject(message.version, options, q + 1);
             return object;
         };
 
@@ -3444,7 +3447,7 @@ export const Automator = $root.Automator = (() => {
             if (message.message != null && Object.hasOwnProperty.call(message, "message"))
                 object.message = message.message;
             if (message.encryptedUserDataKeyType != null && Object.hasOwnProperty.call(message, "encryptedUserDataKeyType"))
-                object.encryptedUserDataKeyType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptedUserDataKeyType] === undefined ? message.encryptedUserDataKeyType : $root.Enterprise.EncryptedKeyType[message.encryptedUserDataKeyType] : message.encryptedUserDataKeyType;
+                object.encryptedUserDataKeyType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptedUserDataKeyType] === undefined ? message.encryptedUserDataKeyType : Enterprise.EncryptedKeyType[message.encryptedUserDataKeyType] : message.encryptedUserDataKeyType;
             return object;
         };
 
@@ -6954,6 +6957,7 @@ export const Automator = $root.Automator = (() => {
          * @property {Uint8Array|null} [encryptedRsaEnterprisePrivateKey] AdminSetupAutomatorRequest encryptedRsaEnterprisePrivateKey
          * @property {Array.<Automator.SkillType>|null} [skillTypes] AdminSetupAutomatorRequest skillTypes
          * @property {Uint8Array|null} [encryptedTreeKey] AdminSetupAutomatorRequest encryptedTreeKey
+         * @property {string|null} [enrollmentSecret] AdminSetupAutomatorRequest enrollmentSecret
          */
 
         /**
@@ -7025,6 +7029,14 @@ export const Automator = $root.Automator = (() => {
         AdminSetupAutomatorRequest.prototype.encryptedTreeKey = $util.newBuffer([]);
 
         /**
+         * AdminSetupAutomatorRequest enrollmentSecret.
+         * @member {string} enrollmentSecret
+         * @memberof Automator.AdminSetupAutomatorRequest
+         * @instance
+         */
+        AdminSetupAutomatorRequest.prototype.enrollmentSecret = "";
+
+        /**
          * Creates a new AdminSetupAutomatorRequest instance using the specified properties.
          * @function create
          * @memberof Automator.AdminSetupAutomatorRequest
@@ -7068,6 +7080,8 @@ export const Automator = $root.Automator = (() => {
             }
             if (message.encryptedTreeKey != null && Object.hasOwnProperty.call(message, "encryptedTreeKey"))
                 writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.encryptedTreeKey);
+            if (message.enrollmentSecret != null && Object.hasOwnProperty.call(message, "enrollmentSecret"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.enrollmentSecret);
             return writer;
         };
 
@@ -7124,6 +7138,10 @@ export const Automator = $root.Automator = (() => {
                     }
                 case 6: {
                         message.encryptedTreeKey = reader.bytes();
+                        break;
+                    }
+                case 9: {
+                        message.enrollmentSecret = reader.string();
                         break;
                     }
                 default:
@@ -7241,6 +7259,8 @@ export const Automator = $root.Automator = (() => {
                     $util.base64.decode(object.encryptedTreeKey, message.encryptedTreeKey = $util.newBuffer($util.base64.length(object.encryptedTreeKey)), 0);
                 else if (object.encryptedTreeKey.length >= 0)
                     message.encryptedTreeKey = object.encryptedTreeKey;
+            if (object.enrollmentSecret != null)
+                message.enrollmentSecret = String(object.enrollmentSecret);
             return message;
         };
 
@@ -7291,6 +7311,7 @@ export const Automator = $root.Automator = (() => {
                     if (options.bytes !== Array)
                         object.encryptedTreeKey = $util.newBuffer(object.encryptedTreeKey);
                 }
+                object.enrollmentSecret = "";
             }
             if (message.automatorId != null && Object.hasOwnProperty.call(message, "automatorId"))
                 if (typeof BigInt !== "undefined" && options.longs === BigInt)
@@ -7312,6 +7333,8 @@ export const Automator = $root.Automator = (() => {
             }
             if (message.encryptedTreeKey != null && Object.hasOwnProperty.call(message, "encryptedTreeKey"))
                 object.encryptedTreeKey = options.bytes === String ? $util.base64.encode(message.encryptedTreeKey, 0, message.encryptedTreeKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedTreeKey) : message.encryptedTreeKey;
+            if (message.enrollmentSecret != null && Object.hasOwnProperty.call(message, "enrollmentSecret"))
+                object.enrollmentSecret = message.enrollmentSecret;
             return object;
         };
 
@@ -9823,7 +9846,7 @@ export const Automator = $root.Automator = (() => {
             if (message.encryptedTeamKey != null && Object.hasOwnProperty.call(message, "encryptedTeamKey"))
                 object.encryptedTeamKey = options.bytes === String ? $util.base64.encode(message.encryptedTeamKey, 0, message.encryptedTeamKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedTeamKey) : message.encryptedTeamKey;
             if (message.encryptedTeamKeyType != null && Object.hasOwnProperty.call(message, "encryptedTeamKeyType"))
-                object.encryptedTeamKeyType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptedTeamKeyType] === undefined ? message.encryptedTeamKeyType : $root.Enterprise.EncryptedKeyType[message.encryptedTeamKeyType] : message.encryptedTeamKeyType;
+                object.encryptedTeamKeyType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptedTeamKeyType] === undefined ? message.encryptedTeamKeyType : Enterprise.EncryptedKeyType[message.encryptedTeamKeyType] : message.encryptedTeamKeyType;
             return object;
         };
 
@@ -10492,11 +10515,11 @@ export const Automator = $root.Automator = (() => {
             if (message.userEncryptedTeamKey != null && Object.hasOwnProperty.call(message, "userEncryptedTeamKey"))
                 object.userEncryptedTeamKey = options.bytes === String ? $util.base64.encode(message.userEncryptedTeamKey, 0, message.userEncryptedTeamKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.userEncryptedTeamKey) : message.userEncryptedTeamKey;
             if (message.userEncryptedTeamKeyType != null && Object.hasOwnProperty.call(message, "userEncryptedTeamKeyType"))
-                object.userEncryptedTeamKeyType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyType] === undefined ? message.userEncryptedTeamKeyType : $root.Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyType] : message.userEncryptedTeamKeyType;
+                object.userEncryptedTeamKeyType = options.enums === String ? Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyType] === undefined ? message.userEncryptedTeamKeyType : Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyType] : message.userEncryptedTeamKeyType;
             if (message.userEncryptedTeamKeyByEcc != null && Object.hasOwnProperty.call(message, "userEncryptedTeamKeyByEcc"))
                 object.userEncryptedTeamKeyByEcc = options.bytes === String ? $util.base64.encode(message.userEncryptedTeamKeyByEcc, 0, message.userEncryptedTeamKeyByEcc.length) : options.bytes === Array ? Array.prototype.slice.call(message.userEncryptedTeamKeyByEcc) : message.userEncryptedTeamKeyByEcc;
             if (message.userEncryptedTeamKeyByEccType != null && Object.hasOwnProperty.call(message, "userEncryptedTeamKeyByEccType"))
-                object.userEncryptedTeamKeyByEccType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyByEccType] === undefined ? message.userEncryptedTeamKeyByEccType : $root.Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyByEccType] : message.userEncryptedTeamKeyByEccType;
+                object.userEncryptedTeamKeyByEccType = options.enums === String ? Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyByEccType] === undefined ? message.userEncryptedTeamKeyByEccType : Enterprise.EncryptedKeyType[message.userEncryptedTeamKeyByEccType] : message.userEncryptedTeamKeyByEccType;
             return object;
         };
 
@@ -11734,23 +11757,23 @@ export const Automator = $root.Automator = (() => {
             if (message.encryptedTeamKeyCbc != null && Object.hasOwnProperty.call(message, "encryptedTeamKeyCbc"))
                 object.encryptedTeamKeyCbc = options.bytes === String ? $util.base64.encode(message.encryptedTeamKeyCbc, 0, message.encryptedTeamKeyCbc.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedTeamKeyCbc) : message.encryptedTeamKeyCbc;
             if (message.encryptedTeamKeyCbcType != null && Object.hasOwnProperty.call(message, "encryptedTeamKeyCbcType"))
-                object.encryptedTeamKeyCbcType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptedTeamKeyCbcType] === undefined ? message.encryptedTeamKeyCbcType : $root.Enterprise.EncryptedKeyType[message.encryptedTeamKeyCbcType] : message.encryptedTeamKeyCbcType;
+                object.encryptedTeamKeyCbcType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptedTeamKeyCbcType] === undefined ? message.encryptedTeamKeyCbcType : Enterprise.EncryptedKeyType[message.encryptedTeamKeyCbcType] : message.encryptedTeamKeyCbcType;
             if (message.encryptedTeamKeyGcm != null && Object.hasOwnProperty.call(message, "encryptedTeamKeyGcm"))
                 object.encryptedTeamKeyGcm = options.bytes === String ? $util.base64.encode(message.encryptedTeamKeyGcm, 0, message.encryptedTeamKeyGcm.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedTeamKeyGcm) : message.encryptedTeamKeyGcm;
             if (message.encryptedTeamKeyGcmType != null && Object.hasOwnProperty.call(message, "encryptedTeamKeyGcmType"))
-                object.encryptedTeamKeyGcmType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptedTeamKeyGcmType] === undefined ? message.encryptedTeamKeyGcmType : $root.Enterprise.EncryptedKeyType[message.encryptedTeamKeyGcmType] : message.encryptedTeamKeyGcmType;
+                object.encryptedTeamKeyGcmType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptedTeamKeyGcmType] === undefined ? message.encryptedTeamKeyGcmType : Enterprise.EncryptedKeyType[message.encryptedTeamKeyGcmType] : message.encryptedTeamKeyGcmType;
             if (message.teamPublicKeyRsa != null && Object.hasOwnProperty.call(message, "teamPublicKeyRsa"))
                 object.teamPublicKeyRsa = options.bytes === String ? $util.base64.encode(message.teamPublicKeyRsa, 0, message.teamPublicKeyRsa.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamPublicKeyRsa) : message.teamPublicKeyRsa;
             if (message.encryptedTeamPrivateKeyRsa != null && Object.hasOwnProperty.call(message, "encryptedTeamPrivateKeyRsa"))
                 object.encryptedTeamPrivateKeyRsa = options.bytes === String ? $util.base64.encode(message.encryptedTeamPrivateKeyRsa, 0, message.encryptedTeamPrivateKeyRsa.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedTeamPrivateKeyRsa) : message.encryptedTeamPrivateKeyRsa;
             if (message.encryptedTeamPrivateKeyRsaType != null && Object.hasOwnProperty.call(message, "encryptedTeamPrivateKeyRsaType"))
-                object.encryptedTeamPrivateKeyRsaType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyRsaType] === undefined ? message.encryptedTeamPrivateKeyRsaType : $root.Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyRsaType] : message.encryptedTeamPrivateKeyRsaType;
+                object.encryptedTeamPrivateKeyRsaType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyRsaType] === undefined ? message.encryptedTeamPrivateKeyRsaType : Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyRsaType] : message.encryptedTeamPrivateKeyRsaType;
             if (message.teamPublicKeyEcc != null && Object.hasOwnProperty.call(message, "teamPublicKeyEcc"))
                 object.teamPublicKeyEcc = options.bytes === String ? $util.base64.encode(message.teamPublicKeyEcc, 0, message.teamPublicKeyEcc.length) : options.bytes === Array ? Array.prototype.slice.call(message.teamPublicKeyEcc) : message.teamPublicKeyEcc;
             if (message.encryptedTeamPrivateKeyEcc != null && Object.hasOwnProperty.call(message, "encryptedTeamPrivateKeyEcc"))
                 object.encryptedTeamPrivateKeyEcc = options.bytes === String ? $util.base64.encode(message.encryptedTeamPrivateKeyEcc, 0, message.encryptedTeamPrivateKeyEcc.length) : options.bytes === Array ? Array.prototype.slice.call(message.encryptedTeamPrivateKeyEcc) : message.encryptedTeamPrivateKeyEcc;
             if (message.encryptedTeamPrivateKeyEccType != null && Object.hasOwnProperty.call(message, "encryptedTeamPrivateKeyEccType"))
-                object.encryptedTeamPrivateKeyEccType = options.enums === String ? $root.Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyEccType] === undefined ? message.encryptedTeamPrivateKeyEccType : $root.Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyEccType] : message.encryptedTeamPrivateKeyEccType;
+                object.encryptedTeamPrivateKeyEccType = options.enums === String ? Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyEccType] === undefined ? message.encryptedTeamPrivateKeyEccType : Enterprise.EncryptedKeyType[message.encryptedTeamPrivateKeyEccType] : message.encryptedTeamPrivateKeyEccType;
             return object;
         };
 

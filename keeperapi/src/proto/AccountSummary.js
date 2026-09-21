@@ -1,5 +1,6 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import { $protobuf, $Reader, $Writer, $util, $root } from './root.js';
+import { Authentication } from './Authentication.js';
 
 export const AccountSummary = $root.AccountSummary = (() => {
 
@@ -234,6 +235,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
          * @property {boolean|null} [forbidKeyType2] AccountSummaryElements forbidKeyType2
          * @property {boolean|null} [forbidKeyType1] AccountSummaryElements forbidKeyType1
          * @property {Array.<string>|null} [disallowedFeatures] AccountSummaryElements disallowedFeatures
+         * @property {boolean|null} [lockAlertsSiemsConfigs] AccountSummaryElements lockAlertsSiemsConfigs
          */
 
         /**
@@ -417,6 +419,14 @@ export const AccountSummary = $root.AccountSummary = (() => {
         AccountSummaryElements.prototype.disallowedFeatures = $util.emptyArray;
 
         /**
+         * AccountSummaryElements lockAlertsSiemsConfigs.
+         * @member {boolean} lockAlertsSiemsConfigs
+         * @memberof AccountSummary.AccountSummaryElements
+         * @instance
+         */
+        AccountSummaryElements.prototype.lockAlertsSiemsConfigs = false;
+
+        /**
          * Creates a new AccountSummaryElements instance using the specified properties.
          * @function create
          * @memberof AccountSummary.AccountSummaryElements
@@ -489,6 +499,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.disallowedFeatures != null && message.disallowedFeatures.length)
                 for (let i = 0; i < message.disallowedFeatures.length; ++i)
                     writer.uint32(/* id 20, wireType 2 =*/162).string(message.disallowedFeatures[i]);
+            if (message.lockAlertsSiemsConfigs != null && Object.hasOwnProperty.call(message, "lockAlertsSiemsConfigs"))
+                writer.uint32(/* id 21, wireType 0 =*/168).bool(message.lockAlertsSiemsConfigs);
             return writer;
         };
 
@@ -604,6 +616,10 @@ export const AccountSummary = $root.AccountSummary = (() => {
                         if (!(message.disallowedFeatures && message.disallowedFeatures.length))
                             message.disallowedFeatures = [];
                         message.disallowedFeatures.push(reader.string());
+                        break;
+                    }
+                case 21: {
+                        message.lockAlertsSiemsConfigs = reader.bool();
                         break;
                     }
                 default:
@@ -727,6 +743,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 for (let i = 0; i < object.disallowedFeatures.length; ++i)
                     message.disallowedFeatures[i] = String(object.disallowedFeatures[i]);
             }
+            if (object.lockAlertsSiemsConfigs != null)
+                message.lockAlertsSiemsConfigs = Boolean(object.lockAlertsSiemsConfigs);
             return message;
         };
 
@@ -776,6 +794,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 object.minMasterPasswordLengthNoPrompt = 0;
                 object.forbidKeyType2 = false;
                 object.forbidKeyType1 = false;
+                object.lockAlertsSiemsConfigs = false;
             }
             if (message.clientKey != null && Object.hasOwnProperty.call(message, "clientKey"))
                 object.clientKey = options.bytes === String ? $util.base64.encode(message.clientKey, 0, message.clientKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.clientKey) : message.clientKey;
@@ -832,6 +851,8 @@ export const AccountSummary = $root.AccountSummary = (() => {
                 for (let j = 0; j < message.disallowedFeatures.length; ++j)
                     object.disallowedFeatures[j] = message.disallowedFeatures[j];
             }
+            if (message.lockAlertsSiemsConfigs != null && Object.hasOwnProperty.call(message, "lockAlertsSiemsConfigs"))
+                object.lockAlertsSiemsConfigs = message.lockAlertsSiemsConfigs;
             return object;
         };
 
@@ -1322,7 +1343,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.deviceName != null && Object.hasOwnProperty.call(message, "deviceName"))
                 object.deviceName = message.deviceName;
             if (message.deviceStatus != null && Object.hasOwnProperty.call(message, "deviceStatus"))
-                object.deviceStatus = options.enums === String ? $root.Authentication.DeviceStatus[message.deviceStatus] === undefined ? message.deviceStatus : $root.Authentication.DeviceStatus[message.deviceStatus] : message.deviceStatus;
+                object.deviceStatus = options.enums === String ? Authentication.DeviceStatus[message.deviceStatus] === undefined ? message.deviceStatus : Authentication.DeviceStatus[message.deviceStatus] : message.deviceStatus;
             if (message.devicePublicKey != null && Object.hasOwnProperty.call(message, "devicePublicKey"))
                 object.devicePublicKey = options.bytes === String ? $util.base64.encode(message.devicePublicKey, 0, message.devicePublicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.devicePublicKey) : message.devicePublicKey;
             if (message.encryptedDataKeyDoNotUse != null && Object.hasOwnProperty.call(message, "encryptedDataKeyDoNotUse"))
@@ -1352,7 +1373,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.devicePlatform != null && Object.hasOwnProperty.call(message, "devicePlatform"))
                 object.devicePlatform = message.devicePlatform;
             if (message.clientFormFactor != null && Object.hasOwnProperty.call(message, "clientFormFactor"))
-                object.clientFormFactor = options.enums === String ? $root.Authentication.ClientFormFactor[message.clientFormFactor] === undefined ? message.clientFormFactor : $root.Authentication.ClientFormFactor[message.clientFormFactor] : message.clientFormFactor;
+                object.clientFormFactor = options.enums === String ? Authentication.ClientFormFactor[message.clientFormFactor] === undefined ? message.clientFormFactor : Authentication.ClientFormFactor[message.clientFormFactor] : message.clientFormFactor;
             return object;
         };
 
@@ -4502,7 +4523,7 @@ export const AccountSummary = $root.AccountSummary = (() => {
             if (message.channels && message.channels.length) {
                 object.channels = [];
                 for (let j = 0; j < message.channels.length; ++j)
-                    object.channels[j] = options.enums === String ? $root.Authentication.TwoFactorChannelType[message.channels[j]] === undefined ? message.channels[j] : $root.Authentication.TwoFactorChannelType[message.channels[j]] : message.channels[j];
+                    object.channels[j] = options.enums === String ? Authentication.TwoFactorChannelType[message.channels[j]] === undefined ? message.channels[j] : Authentication.TwoFactorChannelType[message.channels[j]] : message.channels[j];
             }
             if (message.personalUsernames && message.personalUsernames.length) {
                 object.personalUsernames = [];
