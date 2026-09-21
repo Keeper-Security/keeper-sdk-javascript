@@ -51,9 +51,7 @@ function withSiblingImports(body, currentName, allNames, filenameOverrides) {
     for (const name of [...siblings].sort((a, b) => b.length - a.length)) {
         rewritten = rewritten.split(`$root.${name}.`).join(`${name}.`)
     }
-    const imports = siblings.map(
-        (name) => `import { ${name} } from './${filenameOverrides[name] ?? name}.js';`
-    )
+    const imports = siblings.map((name) => `import { ${name} } from './${filenameOverrides[name] ?? name}.js';`)
     return { rewritten, imports }
 }
 
